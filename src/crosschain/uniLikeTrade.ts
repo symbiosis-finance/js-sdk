@@ -18,6 +18,7 @@ export class UniLikeTrade {
     public amountOut!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
+    public routerAddress!: string
 
     private pairs!: Pair[]
 
@@ -43,6 +44,7 @@ export class UniLikeTrade {
         this.slippage = slippage
         this.deadline = deadline
         this.router = router
+        this.routerAddress = router.address
         this.dexFee = dexFee
     }
 

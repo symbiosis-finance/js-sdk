@@ -14,6 +14,7 @@ import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, getExternalId, getInternalId, GetLogTimeoutExceededError } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, Portal, Synthesis, UniLikeRouter } from './contracts'
+import { OneInchTrade } from './oneInchTrade'
 import { BurnRequestEvent } from './contracts/Synthesis'
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { TypedEvent } from './contracts/common'
@@ -47,11 +48,12 @@ export class Swapping {
     private slippage!: number
     private deadline!: number
     private direction!: BridgeDirection
+    private use1Inch!: boolean
 
     private route!: Token[]
     private feeToken!: Token
 
-    private tradeA: UniLikeTrade | undefined
+    private tradeA: UniLikeTrade | OneInchTrade | undefined
     private tradeB!: NerveTrade
     private tradeC: UniLikeTrade | undefined
 
@@ -70,11 +72,13 @@ export class Swapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number
+        deadline: number,
+        use1Inch: boolean = false
     ): SwapExactIn {
         // TODO check slippage.
         //  if slippage too low, the first swap will failed
 
+        this.use1Inch = use1Inch
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
@@ -198,7 +202,7 @@ export class Swapping {
                     firstSwapCalldata: this.tradeA?.callData || [],
                     secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
                     approvedTokens,
-                    firstDexRouter: this.symbiosis.uniLikeRouter(this.tokenAmountIn.token.chainId).address,
+                    firstDexRouter: this.tradeA ? this.tradeA.routerAddress : AddressZero,
                     secondDexRouter: this.tradeB.pool.address,
                     amount: amount.raw.toString(),
                     nativeIn: amount.token.isNative,
@@ -245,9 +249,14 @@ export class Swapping {
         }
     }
 
-    private buildTradeA(): UniLikeTrade {
+    private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStable(chainId)
+
+        if (this.use1Inch) {
+            return new OneInchTrade(this.tokenAmountIn, tokenOut, this.from, this.slippage / 100)
+        }
+
         const to = this.symbiosis.metaRouterV2(chainId).address
         const dexFee = this.symbiosis.dexFee(chainId)
 
