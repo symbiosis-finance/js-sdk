@@ -1,6 +1,6 @@
 {
-    "name": "symbiosis-sdk",
-    "version": "2.3.0",
+    "name": "symbiosis-js-sdk",
+    "version": "2.3.1",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
     "files": [
@@ -9,12 +9,12 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/symbiosis-finance/sdk.git"
+        "url": "git+https://github.com/symbiosis-finance/js-sdk.git"
     },
     "bugs": {
-        "url": "https://github.com/symbiosis-finance/sdk/issues"
+        "url": "https://github.com/symbiosis-finance/js-sdk/issues"
     },
-    "module": "dist/symbiosis-sdk.esm.js",
+    "module": "dist/symbiosis-js-sdk.esm.js",
     "scripts": {
         "lint": "dts lint src test",
         "lint:fix": "dts lint src test --fix",
