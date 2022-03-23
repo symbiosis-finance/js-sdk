@@ -1,0 +1,268 @@
+{
+    "minSwapAmountInUsd": 10,
+    "maxSwapAmountInUsd": 2000,
+    "advisor": {
+        "url": "https://api.symbiosis.finance/calculations"
+    },
+    "chains": [
+        {
+            "id": 1,
+            "rpc": "TYPE YOUR RPC ADDRESS",
+            "filterBlockOffset": 50000,
+            "waitForBlocksCount": 5,
+            "stables": [
+                {
+                    "name": "USD Coin",
+                    "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                    "symbol": "USDC",
+                    "decimals": 6,
+                    "chainId": 1,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                }
+            ],
+            "nerves": [],
+            "router": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+            "dexFee": 30,
+            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
+            "synthesis": "0x0000000000000000000000000000000000000000",
+            "portal": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
+            "fabric": "0x0000000000000000000000000000000000000000"
+        },
+        {
+            "id": 56,
+            "rpc": "TYPE YOUR RPC ADDRESS",
+            "filterBlockOffset": 50000,
+            "waitForBlocksCount": 20,
+            "stables": [
+                {
+                    "name": "Binance USD",
+                    "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+                    "symbol": "BUSD",
+                    "decimals": 18,
+                    "chainId": 56,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic USDC",
+                    "address": "0x2f28Add68e59733D23D5F57d94c31fb965f835D0",
+                    "symbol": "sUSDC",
+                    "decimals": 6,
+                    "chainId": 56,
+                    "chainFromId": 1,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                }
+            ],
+            "nerves": [
+                {
+                    "address": "0xab0738320A21741f12797Ee921461C691673E276",
+                    "tokens": [
+                        "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+                        "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
+                    ],
+                    "decimals": [
+                        18,
+                        6
+                    ]
+                }
+            ],
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+            "dexFee": 25,
+            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
+            "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
+            "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+        },
+        {
+            "id": 43114,
+            "rpc": "TYPE YOUR RPC ADDRESS",
+            "filterBlockOffset": 50000,
+            "waitForBlocksCount": 30,
+            "stables": [
+                {
+                    "name": "USD Coin",
+                    "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+                    "symbol": "USDC.e",
+                    "decimals": 6,
+                    "chainId": 43114,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic USDC",
+                    "address": "0x2f28Add68e59733D23D5F57d94c31fb965f835D0",
+                    "symbol": "sUSDC",
+                    "decimals": 6,
+                    "chainId": 43114,
+                    "chainFromId": 1,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic BUSD",
+                    "address": "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd",
+                    "symbol": "sBUSD",
+                    "decimals": 18,
+                    "chainId": 43114,
+                    "chainFromId": 56,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png"
+                    }
+                }
+            ],
+            "nerves": [
+                {
+                    "address": "0xab0738320A21741f12797Ee921461C691673E276",
+                    "tokens": [
+                        "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+                        "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
+                    ],
+                    "decimals": [
+                        6,
+                        6
+                    ]
+                },
+                {
+                    "address": "0xF4BFF06E02cdF55918e0ec98082bDE1DA85d33Db",
+                    "tokens": [
+                        "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+                        "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd"
+                    ],
+                    "decimals": [
+                        6,
+                        18
+                    ]
+                }
+            ],
+            "router": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106",
+            "dexFee": 30,
+            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
+            "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
+            "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+        },
+        {
+            "id": 137,
+            "rpc": "TYPE YOUR RPC ADDRESS",
+            "filterBlockOffset": 50000,
+            "waitForBlocksCount": 60,
+            "stables": [
+                {
+                    "name": "USD Coin",
+                    "address": "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+                    "symbol": "USDC",
+                    "isStable": true,
+                    "decimals": 6,
+                    "chainId": 137,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic USDC",
+                    "symbol": "sUSDC",
+                    "address": "0x2f28Add68e59733D23D5F57d94c31fb965f835D0",
+                    "chainId": 137,
+                    "chainFromId": 1,
+                    "decimals": 6,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic BUSD",
+                    "symbol": "sBUSD",
+                    "address": "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd",
+                    "chainId": 137,
+                    "chainFromId": 56,
+                    "decimals": 18,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic USDC.e",
+                    "symbol": "sUSDC.e",
+                    "address": "0x8Eb3771A43a8C45AaBE6d61ED709eCe652281DC9",
+                    "chainId": 137,
+                    "chainFromId": 43114,
+                    "decimals": 6,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                }
+            ],
+            "nerves": [
+                {
+                    "address": "0xab0738320A21741f12797Ee921461C691673E276",
+                    "tokens": [
+                        "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                        "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
+                    ],
+                    "decimals": [
+                        6,
+                        6
+                    ]
+                },
+                {
+                    "address": "0xF4BFF06E02cdF55918e0ec98082bDE1DA85d33Db",
+                    "tokens": [
+                        "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                        "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd"
+                    ],
+                    "decimals": [
+                        6,
+                        18
+                    ]
+                },
+                {
+                    "address": "0x3F1bfa6FA3B6D03202538Bf0cdE92BbE551104ac",
+                    "tokens": [
+                        "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                        "0x8Eb3771A43a8C45AaBE6d61ED709eCe652281DC9"
+                    ],
+                    "decimals": [
+                        6,
+                        6
+                    ]
+                }
+            ],
+            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "dexFee": 30,
+            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
+            "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
+            "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+        }
+    ]
+})

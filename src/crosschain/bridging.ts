@@ -1,0 +1,268 @@
+import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import { BigNumber, Signer } from 'ethers'
+import { Token, TokenAmount } from '../entities'
+import type { Symbiosis } from './symbiosis'
+import { BridgeDirection } from './types'
+import { calculateGasMargin, getExternalId, getInternalId } from './utils'
+import { WaitForComplete } from './waitForComplete'
+
+export type WaitForMined = Promise<{
+    receipt: TransactionReceipt
+    waitForComplete: () => Promise<Log>
+}>
+
+export type Execute = Promise<{
+    response: TransactionResponse
+    waitForMined: () => WaitForMined
+}>
+
+export type ExactIn = Promise<{
+    execute: (signer: Signer) => Execute
+    fee: TokenAmount
+    tokenAmountOut: TokenAmount
+    transactionRequest: TransactionRequest
+}>
+
+export class Bridging {
+    public tokenAmountIn: TokenAmount | undefined
+    public tokenOut: Token | undefined
+    public tokenAmountOut: TokenAmount | undefined
+    public direction!: BridgeDirection
+    public to!: string
+    public revertableAddress!: string
+
+    protected fee: TokenAmount | undefined
+
+    private readonly symbiosis: Symbiosis
+
+    public constructor(symbiosis: Symbiosis) {
+        this.symbiosis = symbiosis
+    }
+
+    public async exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, to: string, revertableAddress: string): ExactIn {
+        if (this.tokenAmountIn?.token !== tokenAmountIn.token || this.tokenOut !== tokenOut) {
+            this.fee = undefined
+        }
+
+        this.symbiosis.validateSwapAmounts(tokenAmountIn)
+
+        this.tokenAmountIn = tokenAmountIn
+        this.tokenOut = tokenOut
+        this.to = to
+        this.revertableAddress = revertableAddress
+        this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
+
+        const fee = this.fee || (await this.getFee())
+
+        this.fee = fee
+
+        const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
+        if (tokenAmountOut.lessThan(this.fee)) {
+            throw new Error('Amount out less than fee')
+        }
+
+        this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
+
+        const transactionRequest = this.getTransactionRequest(fee)
+
+        return {
+            execute: (signer: Signer) => this.execute(transactionRequest, signer),
+            fee,
+            tokenAmountOut: this.tokenAmountOut,
+            transactionRequest,
+        }
+    }
+
+    protected async getFee(): Promise<TokenAmount> {
+        if (this.direction === 'mint') {
+            return await this.getMintFee()
+        }
+
+        return await this.getBurnFee()
+    }
+
+    protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
+        const transactionRequestWithGasLimit = { ...transactionRequest }
+
+        const gasLimit = await signer.estimateGas(transactionRequestWithGasLimit)
+
+        transactionRequestWithGasLimit.gasLimit = calculateGasMargin(gasLimit)
+
+        const response = await signer.sendTransaction(transactionRequestWithGasLimit)
+
+        return {
+            response,
+            waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
+        }
+    }
+
+    protected async waitForMined(confirmations: number, response: TransactionResponse): WaitForMined {
+        const receipt = await response.wait(confirmations)
+
+        return {
+            receipt,
+            waitForComplete: () => this.waitForComplete(receipt),
+        }
+    }
+
+    protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const { chainId } = this.tokenAmountIn.token
+
+        // burn
+        if (this.direction === 'burn') {
+            const synthesis = this.symbiosis.synthesis(chainId)
+
+            return {
+                chainId,
+                to: synthesis.address,
+                data: synthesis.interface.encodeFunctionData('burnSyntheticToken', [
+                    fee.raw.toString(),
+                    this.tokenAmountIn.token.address,
+                    this.tokenAmountIn.raw.toString(),
+                    this.to,
+                    this.symbiosis.portal(this.tokenOut.chainId).address,
+                    this.symbiosis.bridge(this.tokenOut.chainId).address,
+                    this.revertableAddress,
+                    this.tokenOut.chainId,
+                ]),
+            }
+        }
+
+        const portal = this.symbiosis.portal(chainId)
+
+        if (this.tokenAmountIn.token.isNative) {
+            return {
+                chainId,
+                to: portal.address,
+                data: portal.interface.encodeFunctionData('synthesizeNative', [
+                    fee.raw.toString(),
+                    this.to,
+                    this.symbiosis.synthesis(this.tokenOut.chainId).address,
+                    this.symbiosis.bridge(this.tokenOut.chainId).address,
+                    this.revertableAddress,
+                    this.tokenOut.chainId,
+                ]),
+                value: BigNumber.from(this.tokenAmountIn.raw.toString()),
+            }
+        }
+
+        return {
+            chainId,
+            to: portal.address,
+            data: portal.interface.encodeFunctionData('synthesize', [
+                fee.raw.toString(),
+                this.tokenAmountIn.token.address,
+                this.tokenAmountIn.raw.toString(),
+                this.to,
+                this.symbiosis.synthesis(this.tokenOut.chainId).address,
+                this.symbiosis.bridge(this.tokenOut.chainId).address,
+                this.revertableAddress,
+                this.tokenOut.chainId,
+            ]),
+        }
+    }
+
+    private async getMintFee(): Promise<TokenAmount> {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const chainIdIn = this.tokenAmountIn.token.chainId
+        const chainIdOut = this.tokenOut.chainId
+
+        const portal = this.symbiosis.portal(chainIdIn)
+        const portalRequestsCount = (await portal.requestCount()).toNumber()
+
+        const synthesis = this.symbiosis.synthesis(chainIdOut)
+
+        const internalId = getInternalId({
+            contractAddress: portal.address,
+            requestCount: portalRequestsCount,
+            chainId: chainIdIn,
+        })
+
+        const externalId = getExternalId({
+            internalId,
+            contractAddress: synthesis.address,
+            revertableAddress: this.revertableAddress,
+            chainId: chainIdOut,
+        })
+
+        const calldata = synthesis.interface.encodeFunctionData('mintSyntheticToken', [
+            '1', // _stableBridgingFee,
+            externalId, // externalID,
+            this.tokenAmountIn.token.address, // _token,
+            chainIdIn, // block.chainid,
+            this.tokenAmountIn.raw.toString(), // _amount,
+            this.to, // _chain2address
+        ])
+
+        const fee = await this.symbiosis.getBridgeFee({
+            receiveSide: synthesis.address,
+            calldata,
+            chainIdFrom: this.tokenAmountIn.token.chainId,
+            chainIdTo: this.tokenOut.chainId,
+        })
+        return new TokenAmount(this.tokenOut, fee.toString())
+    }
+
+    private async getBurnFee(): Promise<TokenAmount> {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const chainIdIn = this.tokenAmountIn.token.chainId
+        const chainIdOut = this.tokenOut.chainId
+
+        const synthesis = this.symbiosis.synthesis(chainIdIn)
+        const synthesisRequestsCount = (await synthesis.requestCount()).toNumber()
+
+        const portal = this.symbiosis.portal(chainIdOut)
+
+        const internalId = getInternalId({
+            contractAddress: synthesis.address,
+            requestCount: synthesisRequestsCount,
+            chainId: chainIdIn,
+        })
+
+        const externalId = getExternalId({
+            internalId,
+            contractAddress: portal.address,
+            revertableAddress: this.revertableAddress,
+            chainId: chainIdOut,
+        })
+
+        const calldata = portal.interface.encodeFunctionData('unsynthesize', [
+            '1', // _stableBridgingFee,
+            externalId, // externalID,
+            this.tokenOut.address, // rtoken,
+            this.tokenAmountIn.raw.toString(), // _amount,
+            this.to, // _chain2address
+        ])
+
+        const fee = await this.symbiosis.getBridgeFee({
+            receiveSide: portal.address,
+            calldata,
+            chainIdFrom: chainIdIn,
+            chainIdTo: chainIdOut,
+        })
+        return new TokenAmount(this.tokenOut, fee.toString())
+    }
+
+    async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+        if (!this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        return new WaitForComplete({
+            direction: this.direction,
+            tokenOut: this.tokenOut,
+            symbiosis: this.symbiosis,
+            revertableAddress: this.revertableAddress,
+        }).waitForComplete(receipt)
+    }
+}
