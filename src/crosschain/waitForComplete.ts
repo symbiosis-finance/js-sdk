@@ -1,16 +1,31 @@
 import { EventFilter } from '@ethersproject/contracts'
 import { Log, TransactionReceipt } from '@ethersproject/providers'
-import { getLogWithTimeout } from './utils'
-import { Token } from '../entities'
+import { ChainId } from '../constants'
+import { Token, TokenAmount } from '../entities'
+import { GetLogTimeoutExceededError, getLogWithTimeout } from './utils'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { getExternalId } from './utils'
+import { Portal, Synthesis } from './contracts'
+import { SynthesizeRequestEvent } from './contracts/Portal'
+import { BurnRequestEvent } from './contracts/Synthesis'
+import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
+import { TypedEvent } from './contracts/common'
+
+type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never
 
 interface WaitForCompleteParams {
     symbiosis: Symbiosis
     tokenOut: Token
     direction: BridgeDirection
     revertableAddress: string
+    chainIdIn: ChainId
+}
+
+export class TransactionStuckError extends Error {
+    constructor(public readonly pendingRequest: PendingRequest) {
+        super(`Transaction stuck: ${JSON.stringify(pendingRequest)}`)
+    }
 }
 
 // TODO: Rework to pure functions and move to utils
@@ -19,12 +34,14 @@ export class WaitForComplete {
     private readonly symbiosis: Symbiosis
     private readonly tokenOut: Token
     private readonly revertableAddress: string
+    private readonly chainIdIn: ChainId
 
-    public constructor({ direction, symbiosis, tokenOut, revertableAddress }: WaitForCompleteParams) {
+    public constructor({ direction, symbiosis, tokenOut, revertableAddress, chainIdIn }: WaitForCompleteParams) {
         this.direction = direction
         this.symbiosis = symbiosis
         this.tokenOut = tokenOut
         this.revertableAddress = revertableAddress
+        this.chainIdIn = chainIdIn
     }
 
     public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
@@ -34,7 +51,48 @@ export class WaitForComplete {
             symbiosis: this.symbiosis,
             chainId: this.tokenOut.chainId,
             filter,
+        }).catch((e) => {
+            if (!(e instanceof GetLogTimeoutExceededError)) {
+                throw e
+            }
+
+            const pendingRequest = this.getPendingRequest(receipt)
+            if (!pendingRequest) {
+                throw e
+            }
+
+            throw new TransactionStuckError(pendingRequest)
         })
+    }
+
+    private getRequestArgs(
+        receipt: TransactionReceipt
+    ): EventArgs<SynthesizeRequestEvent | BurnRequestEvent> | undefined {
+        let contract: Synthesis | Portal
+        let eventName: string
+        if (this.direction === 'burn') {
+            contract = this.symbiosis.synthesis(this.chainIdIn)
+            eventName = 'BurnRequest'
+        } else {
+            contract = this.symbiosis.portal(this.chainIdIn)
+            eventName = 'SynthesizeRequest'
+        }
+
+        let args: EventArgs<SynthesizeRequestEvent | BurnRequestEvent> | undefined
+        receipt.logs.forEach((log) => {
+            let event
+            try {
+                event = contract.interface.parseLog(log)
+            } catch {
+                return
+            }
+
+            if (event.name === eventName) {
+                args = event.args as unknown as EventArgs<SynthesizeRequestEvent | BurnRequestEvent>
+            }
+        })
+
+        return args
     }
 
     private buildOtherSideFilter(receipt: TransactionReceipt): EventFilter {
@@ -42,7 +100,12 @@ export class WaitForComplete {
             throw new Error('Tokens are not set')
         }
 
-        const requestId = this.getRequestId(receipt)
+        const args = this.getRequestArgs(receipt)
+        if (!args) {
+            throw new Error('Log not found')
+        }
+
+        const requestId = args.id
 
         const receiveSide =
             this.direction === 'burn'
@@ -72,31 +135,52 @@ export class WaitForComplete {
         }
     }
 
-    private getRequestId(receipt: TransactionReceipt): string {
-        if (!this.tokenOut) {
-            throw new Error('Tokens are not set')
+    private getPendingRequest(receipt: TransactionReceipt): PendingRequest | undefined {
+        const args = this.getRequestArgs(receipt)
+        if (!args) {
+            return
         }
 
-        const event =
-            this.direction === 'burn'
-                ? this.symbiosis.synthesis(this.tokenOut.chainId).filters.BurnRequest()
-                : this.symbiosis.portal(this.tokenOut.chainId).filters.SynthesizeRequest()
+        const { id, amount: amountFrom, token: tokenIdFrom, from, to, chainID, revertableAddress } = args
 
-        if (!event || !event.topics || event.topics.length === 0) {
-            throw new Error('Event not found')
-        }
-        const topic0 = event.topics[0]
+        const chainId = chainID.toNumber() as ChainId
 
-        const log = receipt.logs.find((i) => i.topics[0] === topic0)
-        if (!log) {
-            throw new Error('Log not found')
+        const fromToken = this.symbiosis.findStable(tokenIdFrom, this.chainIdIn)
+        if (!fromToken) {
+            return
         }
 
-        const chunks = log.data.slice(2).match(/.{1,64}/g)
-        if (!chunks || chunks.length === 0) {
-            throw new Error('RequestId not found')
+        const fromTokenAmount = new TokenAmount(fromToken, amountFrom.toHexString())
+
+        let contractAddress: string
+        let type: PendingRequestType
+        if (this.direction === 'burn') {
+            contractAddress = this.symbiosis.synthesis(this.chainIdIn).address
+            type = 'burn'
+        } else {
+            contractAddress = this.symbiosis.portal(this.chainIdIn).address
+            type = 'synthesize'
         }
 
-        return `0x${chunks[0]}`
+        const externalId = getExternalId({
+            internalId: id,
+            contractAddress,
+            revertableAddress,
+            chainId,
+        })
+
+        return {
+            chainIdFrom: this.chainIdIn,
+            chainIdTo: chainId,
+            externalId,
+            from,
+            fromTokenAmount,
+            internalId: id,
+            revertableAddress,
+            state: PendingRequestState.Default,
+            to,
+            transactionHash: receipt.transactionHash,
+            type,
+        }
     }
 }
