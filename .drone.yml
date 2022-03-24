@@ -8,11 +8,6 @@ steps:
     image: node:lts
     commands:
       - npm i --silent
-    when:
-      branch:
-        - main
-      event:
-        - tag
 
   - name: build/npm-package
     image: node:lts
@@ -20,11 +15,6 @@ steps:
       NODE_ENV: production
     commands:
       - npm run build
-    when:
-      branch:
-        - main
-      event:
-        - tag
 
   - name: publish/npm-package
     image: plugins/npm
@@ -37,8 +27,6 @@ steps:
         from_secret: npm_email
       token:
         from_secret: npm_token
-    when:
-      branch:
-        - main
-      event:
-        - tag
+trigger:
+  event:
+    - tag
