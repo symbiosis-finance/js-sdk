@@ -254,7 +254,7 @@ export class Bridging {
     }
 
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        if (!this.tokenOut) {
+        if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
 
@@ -263,6 +263,7 @@ export class Bridging {
             tokenOut: this.tokenOut,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
+            chainIdIn: this.tokenAmountIn.token.chainId,
         }).waitForComplete(receipt)
     }
 }

@@ -11,16 +11,10 @@ import { NerveTrade } from './nerveTrade'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, getExternalId, getInternalId, GetLogTimeoutExceededError } from './utils'
+import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AvaxRouter, Portal, Synthesis, UniLikeRouter } from './contracts'
+import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
-import { BurnRequestEvent } from './contracts/Synthesis'
-import { SynthesizeRequestEvent } from './contracts/Portal'
-import { TypedEvent } from './contracts/common'
-import { PendingRequest, PendingRequestState } from './pending'
-
-type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -32,12 +26,6 @@ export type SwapExactIn = Promise<{
     amountInUsd: TokenAmount
     transactionRequest: TransactionRequest
 }>
-
-export class SwapStuckedError extends Error {
-    constructor(public readonly pendingRequest: PendingRequest) {
-        super(`Timed out waiting for logs matching filter: ${JSON.stringify(pendingRequest)}`)
-    }
-}
 
 export class Swapping {
     private from!: string
@@ -73,7 +61,7 @@ export class Swapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch: boolean = false
+        use1Inch = false
     ): SwapExactIn {
         // TODO check slippage.
         //  if slippage too low, the first swap will failed
@@ -143,25 +131,13 @@ export class Swapping {
             throw new Error('Tokens are not set')
         }
 
-        const waiter = new WaitForComplete({
+        return new WaitForComplete({
             direction: this.direction,
             tokenOut: this.tokenOut,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
-        })
-
-        return waiter.waitForComplete(receipt).catch((e) => {
-            if (!(e instanceof GetLogTimeoutExceededError)) {
-                throw e
-            }
-
-            const pendingRequest = this.getPendingRequest(receipt)
-            if (!pendingRequest) {
-                throw e
-            }
-
-            throw new SwapStuckedError(pendingRequest)
-        })
+            chainIdIn: this.tokenAmountIn.token.chainId,
+        }).waitForComplete(receipt)
     }
 
     private getTransactionRequest(fee: TokenAmount): TransactionRequest {
@@ -574,70 +550,6 @@ export class Swapping {
         }
 
         return indexIn > indexOut ? 'burn' : 'mint'
-    }
-
-    private getPendingRequest(receipt: TransactionReceipt): PendingRequest | undefined {
-        const chainIdFrom = this.tokenAmountIn.token.chainId
-
-        let contract: Synthesis | Portal
-        let eventName: string
-        if (this.direction === 'burn') {
-            contract = this.symbiosis.synthesis(chainIdFrom)
-            eventName = 'BurnRequest'
-        } else {
-            contract = this.symbiosis.portal(chainIdFrom)
-            eventName = 'SynthesizeRequest'
-        }
-
-        let args: EventArgs<SynthesizeRequestEvent | BurnRequestEvent> | undefined
-        receipt.logs.forEach((log) => {
-            let event
-            try {
-                event = contract.interface.parseLog(log)
-            } catch {
-                return
-            }
-
-            if (event.name === eventName) {
-                args = event.args as unknown as EventArgs<SynthesizeRequestEvent | BurnRequestEvent>
-            }
-        })
-
-        if (!args) {
-            return
-        }
-
-        const { id, amount: amountFrom, token: tokenIdFrom, from, to, chainID, revertableAddress } = args
-
-        const chainId = chainID.toNumber() as ChainId
-
-        const fromToken = this.symbiosis.findStable(tokenIdFrom, chainIdFrom)
-        if (!fromToken) {
-            return
-        }
-
-        const fromTokenAmount = new TokenAmount(fromToken, amountFrom.toHexString())
-
-        const externalId = getExternalId({
-            internalId: id,
-            contractAddress: contract.address,
-            revertableAddress,
-            chainId,
-        })
-
-        return {
-            chainIdFrom,
-            chainIdTo: chainId,
-            externalId,
-            from,
-            fromTokenAmount,
-            internalId: id,
-            revertableAddress,
-            state: PendingRequestState.Default,
-            to,
-            transactionHash: receipt.transactionHash,
-            type: this.direction === 'burn' ? 'burn' : 'synthesize',
-        }
     }
 
     public transitStable(chainId: ChainId): Token {

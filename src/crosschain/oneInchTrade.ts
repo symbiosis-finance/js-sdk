@@ -34,7 +34,7 @@ export class OneInchTrade {
         params.push(`disableEstimate=true`)
         params.push(`allowPartialFill=false`)
 
-        let url = `https://api.1inch.io/v4.0/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
+        const url = `https://api.1inch.io/v4.0/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
 
         const response = await fetch(url)
         const json = await response.json()
