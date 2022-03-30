@@ -10,6 +10,8 @@ export const CHAINS_PRIORITY = [
     ChainId.BSC_TESTNET,
     ChainId.AVAX_MAINNET,
     ChainId.AVAX_TESTNET,
+    ChainId.BOBA_MAINNET,
+    ChainId.BOBA_RINKEBY,
     ChainId.MATIC_MAINNET,
     ChainId.MATIC_MUMBAI,
     ChainId.OKEX_MAINNET,
@@ -36,6 +38,8 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.HECO_TESTNET]: [WETH[ChainId.HECO_TESTNET]],
     [ChainId.OKEX_MAINNET]: [WETH[ChainId.OKEX_MAINNET]],
     [ChainId.OKEX_TESTNET]: [WETH[ChainId.OKEX_TESTNET]],
+    [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET]],
+    [ChainId.BOBA_RINKEBY]: [WETH[ChainId.BOBA_RINKEBY]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -208,6 +212,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Dai Stablecoin',
         }),
     ],
+    [ChainId.BOBA_MAINNET]: []
 }
 
 // used to construct intermediary pairs for trading
@@ -220,6 +225,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.MATIC_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MATIC_MAINNET],
     ],
+    [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_MAINNET]],
 }
 
 /**
@@ -249,4 +255,6 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.HECO_TESTNET]: '0x9a9b5ef5ceabac69d3b4a71c4da782554a35b638',
     [ChainId.OKEX_MAINNET]: AddressZero, // TODO
     [ChainId.OKEX_TESTNET]: '0x9A9b5Ef5CeAbaC69d3B4A71c4da782554A35B638',
+    [ChainId.BOBA_MAINNET]: '0xaeD5b25BE1c3163c907a471082640450F928DDFE',
+    [ChainId.BOBA_RINKEBY]: '0xE7d92C97168CaB02fF6550Ebf1b2Cc5D58f17321',
 }

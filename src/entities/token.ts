@@ -228,4 +228,28 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11132.png',
         },
     }),
+    [ChainId.BOBA_MAINNET]: new Token({
+        chainId: ChainId.BOBA_MAINNET,
+        address: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+        },
+    }),
+    [ChainId.BOBA_RINKEBY]: new Token({
+        chainId: ChainId.BOBA_RINKEBY,
+        address: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+        },
+    }),
 }

@@ -139,6 +139,26 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/294.png',
         },
     }),
+    new Chain({
+        id: ChainId.BOBA_MAINNET,
+        name: 'Boba',
+        disabled: false,
+        explorer: 'https://blockexplorer.boba.network',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.BOBA_RINKEBY,
+        name: 'Boba',
+        disabled: false,
+        explorer: 'https://blockexplorer.rinkeby.boba.network',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
