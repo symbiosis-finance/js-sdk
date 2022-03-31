@@ -285,6 +285,7 @@ export const CUSTOM_BASES: {
 export const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
 export const BIPS_BASE = JSBI.BigInt(10000)
 
+// Multicall2 addresses (tryAggregate method required)
 export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ETH_MAINNET]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
     [ChainId.ETH_RINKEBY]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
@@ -299,5 +300,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.OKEX_MAINNET]: AddressZero, // TODO
     [ChainId.OKEX_TESTNET]: '0x9A9b5Ef5CeAbaC69d3B4A71c4da782554A35B638',
     [ChainId.BOBA_MAINNET]: '0xaeD5b25BE1c3163c907a471082640450F928DDFE',
-    [ChainId.BOBA_RINKEBY]: '0xE7d92C97168CaB02fF6550Ebf1b2Cc5D58f17321',
+    [ChainId.BOBA_RINKEBY]: '0x773ccf8ba321c9f96a100b4b0fa1ecf7046645f5',
 }
