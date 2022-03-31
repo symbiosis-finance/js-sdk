@@ -212,7 +212,50 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Dai Stablecoin',
         }),
     ],
-    [ChainId.BOBA_MAINNET]: []
+    [ChainId.BOBA_MAINNET]: [
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'DAI',
+            name: 'Dai Stablecoin',
+            address: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
+            decimals: 18,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'WBTC',
+            name: 'Wrapped BTC',
+            address: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
+            decimals: 8,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            name: 'USD Coin',
+            address: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
+            symbol: 'USDC',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'USDT',
+            name: 'Tether USD',
+            address: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'BOBA',
+            name: 'Boba Token',
+            address: '0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7',
+            decimals: 18,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'OLO',
+            name: 'OolongSwap Token',
+            address: '0x5008F837883EA9a07271a1b5eB0658404F5a9610',
+            decimals: 18,
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
