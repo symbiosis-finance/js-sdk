@@ -212,7 +212,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Dai Stablecoin',
         }),
     ],
-    [ChainId.BOBA_MAINNET]: []
+    [ChainId.BOBA_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
