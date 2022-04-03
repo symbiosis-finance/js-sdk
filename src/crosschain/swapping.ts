@@ -34,6 +34,7 @@ export class Swapping {
     private tokenOut!: Token
     private slippage!: number
     private deadline!: number
+    private ttl!: number
     private direction!: BridgeDirection
 
     private route!: Token[]
@@ -70,6 +71,7 @@ export class Swapping {
         this.revertableAddress = revertableAddress
         this.slippage = slippage
         this.deadline = deadline
+        this.ttl = Math.floor(Date.now() / 1000) - deadline
         this.direction = Swapping.getDirection(tokenAmountIn, tokenOut)
 
         if (!this.isTransitStable(tokenAmountIn.token)) {
@@ -232,7 +234,7 @@ export class Swapping {
             routerA = this.symbiosis.avaxRouter(chainId)
         }
 
-        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.deadline, routerA, dexFee)
+        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
     }
 
     private async buildTradeB(bridgeFee?: TokenAmount): Promise<NerveTrade> {
@@ -305,7 +307,7 @@ export class Swapping {
             routerC = this.symbiosis.avaxRouter(this.tokenOut.chainId)
         }
 
-        return new UniLikeTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage, this.deadline, routerC, dexFee)
+        return new UniLikeTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)
     }
 
     private burnOtherSideAmount(): TokenAmount {
