@@ -71,7 +71,7 @@ export class Swapping {
         this.revertableAddress = revertableAddress
         this.slippage = slippage
         this.deadline = deadline
-        this.ttl = Math.floor(Date.now() / 1000) - deadline
+        this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.direction = Swapping.getDirection(tokenAmountIn, tokenOut)
 
         if (!this.isTransitStable(tokenAmountIn.token)) {
