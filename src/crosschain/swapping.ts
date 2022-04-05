@@ -184,12 +184,10 @@ export class Swapping {
             },
         ])
 
-        console.log('Metarouter data', data)
-
         return {
             chainId,
             to: metaRouterV2.address,
-            data: data,
+            data,
             value,
         }
     }
@@ -232,12 +230,12 @@ export class Swapping {
     private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStable(chainId)
+        const to = this.symbiosis.metaRouterV2(chainId).address
 
         if (this.use1Inch) {
-            return new OneInchTrade(this.tokenAmountIn, tokenOut, this.from, this.slippage / 100)
+            return new OneInchTrade(this.tokenAmountIn, tokenOut, to, this.slippage / 100)
         }
 
-        const to = this.symbiosis.metaRouterV2(chainId).address
         const dexFee = this.symbiosis.dexFee(chainId)
 
         let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
