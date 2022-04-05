@@ -10,6 +10,8 @@ export const CHAINS_PRIORITY = [
     ChainId.BSC_TESTNET,
     ChainId.AVAX_MAINNET,
     ChainId.AVAX_TESTNET,
+    ChainId.BOBA_MAINNET,
+    ChainId.BOBA_RINKEBY,
     ChainId.MATIC_MAINNET,
     ChainId.MATIC_MUMBAI,
     ChainId.OKEX_MAINNET,
@@ -36,6 +38,8 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.HECO_TESTNET]: [WETH[ChainId.HECO_TESTNET]],
     [ChainId.OKEX_MAINNET]: [WETH[ChainId.OKEX_MAINNET]],
     [ChainId.OKEX_TESTNET]: [WETH[ChainId.OKEX_TESTNET]],
+    [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET]],
+    [ChainId.BOBA_RINKEBY]: [WETH[ChainId.BOBA_RINKEBY]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -208,6 +212,50 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Dai Stablecoin',
         }),
     ],
+    [ChainId.BOBA_MAINNET]: [
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'DAI',
+            name: 'Dai Stablecoin',
+            address: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
+            decimals: 18,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'WBTC',
+            name: 'Wrapped BTC',
+            address: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
+            decimals: 8,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            name: 'USD Coin',
+            address: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
+            symbol: 'USDC',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'USDT',
+            name: 'Tether USD',
+            address: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'BOBA',
+            name: 'Boba Token',
+            address: '0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7',
+            decimals: 18,
+        }),
+        new Token({
+            chainId: ChainId.BOBA_MAINNET,
+            symbol: 'OLO',
+            name: 'OolongSwap Token',
+            address: '0x5008F837883EA9a07271a1b5eB0658404F5a9610',
+            decimals: 18,
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -220,6 +268,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.MATIC_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MATIC_MAINNET],
     ],
+    [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_MAINNET]],
 }
 
 /**
@@ -236,6 +285,7 @@ export const CUSTOM_BASES: {
 export const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
 export const BIPS_BASE = JSBI.BigInt(10000)
 
+// Multicall2 addresses (tryAggregate method required)
 export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ETH_MAINNET]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
     [ChainId.ETH_RINKEBY]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
@@ -249,4 +299,6 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.HECO_TESTNET]: '0x9a9b5ef5ceabac69d3b4a71c4da782554a35b638',
     [ChainId.OKEX_MAINNET]: AddressZero, // TODO
     [ChainId.OKEX_TESTNET]: '0x9A9b5Ef5CeAbaC69d3B4A71c4da782554A35B638',
+    [ChainId.BOBA_MAINNET]: '0xaeD5b25BE1c3163c907a471082640450F928DDFE',
+    [ChainId.BOBA_RINKEBY]: '0x773ccf8ba321c9f96a100b4b0fa1ecf7046645f5',
 }
