@@ -170,22 +170,26 @@ export class Swapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
+        const data = metaRouterV2.interface.encodeFunctionData('metaRouteV2', [
+            {
+                firstSwapCalldata: this.tradeA?.callData || [],
+                secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
+                approvedTokens,
+                firstDexRouter: this.tradeA ? this.tradeA.routerAddress : AddressZero,
+                secondDexRouter: this.tradeB.pool.address,
+                amount: amount.raw.toString(),
+                nativeIn: amount.token.isNative,
+                relayRecipient,
+                otherSideCalldata,
+            },
+        ])
+
+        console.log('Metarouter data', data)
+
         return {
             chainId,
             to: metaRouterV2.address,
-            data: metaRouterV2.interface.encodeFunctionData('metaRouteV2', [
-                {
-                    firstSwapCalldata: this.tradeA?.callData || [],
-                    secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
-                    approvedTokens,
-                    firstDexRouter: this.tradeA ? this.tradeA.routerAddress : AddressZero,
-                    secondDexRouter: this.tradeB.pool.address,
-                    amount: amount.raw.toString(),
-                    nativeIn: amount.token.isNative,
-                    relayRecipient,
-                    otherSideCalldata,
-                },
-            ]),
+            data: data,
             value,
         }
     }
