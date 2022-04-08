@@ -147,30 +147,38 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        let timeout: NodeJS.Timeout
+        let interval: NodeJS.Timeout
 
         const listener = (log: Log) => {
-            clearTimeout(timeout)
+            clearInterval(interval)
             resolve(log)
         }
 
         provider.once(activeFilter, listener)
 
-        timeout = setTimeout(() => {
-            provider.off(activeFilter, listener)
+        const period = 1000 * 60
+        let pastTime = 0
 
+        interval = setInterval(() => {
+            pastTime += period
+            if (pastTime > exceedTimeout) {
+                clearInterval(interval)
+                provider.off(activeFilter, listener)
+                reject(new GetLogTimeoutExceededError(activeFilter))
+                return
+            }
             provider
                 .getLogs(activeFilter)
                 .then((logs) => {
-                    if (!logs.length) {
-                        reject(new GetLogTimeoutExceededError(activeFilter))
+                    if (logs.length > 0) {
+                        resolve(logs[0])
+                        clearInterval(interval)
+                        provider.off(activeFilter, listener)
                     }
-
-                    resolve(logs[0])
                 })
                 .catch((error) => {
                     reject(error)
                 })
-        }, exceedTimeout)
+        }, period)
     })
 }
