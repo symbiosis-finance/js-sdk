@@ -235,7 +235,8 @@ export class Swapping {
         const to = this.symbiosis.metaRouterV2(chainId).address
 
         if (this.use1Inch) {
-            return new OneInchTrade(this.tokenAmountIn, tokenOut, to, this.slippage / 100)
+            const oracle = this.symbiosis.oneInchOracle(this.tokenAmountIn.token.chainId)
+            return new OneInchTrade(this.tokenAmountIn, tokenOut, to, this.slippage / 100, oracle)
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)

@@ -25,6 +25,20 @@ type ChainTokensList = {
     readonly [chainId in ChainId]?: Token[]
 }
 
+export const ONE_INCH_CHAINS: ChainId[] = [
+    ChainId.ETH_MAINNET,
+    ChainId.BSC_MAINNET,
+    ChainId.AVAX_MAINNET,
+    ChainId.MATIC_MAINNET,
+]
+
+export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
+    [ChainId.ETH_MAINNET]: '0x07D91f5fb9Bf7798734C3f606dB065549F6893bb',
+    [ChainId.BSC_MAINNET]: '0xfbD61B037C325b959c0F6A7e69D8f37770C2c550',
+    [ChainId.AVAX_MAINNET]: '0xBd0c7AaF0bF082712EbE919a9dD94b2d978f79A9',
+    [ChainId.MATIC_MAINNET]: '0x7F069df72b7A39bCE9806e3AfaF579E54D8CF2b9',
+}
+
 export const WETH_ONLY: ChainTokensList = {
     [ChainId.ETH_MAINNET]: [WETH[ChainId.ETH_MAINNET]],
     [ChainId.ETH_RINKEBY]: [WETH[ChainId.ETH_RINKEBY]],
