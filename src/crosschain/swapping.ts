@@ -14,6 +14,7 @@ import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, UniLikeRouter } from './contracts'
+import { OneInchTrade } from './oneInchTrade'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -36,11 +37,12 @@ export class Swapping {
     private deadline!: number
     private ttl!: number
     private direction!: BridgeDirection
+    private use1Inch!: boolean
 
     private route!: Token[]
     private feeToken!: Token
 
-    private tradeA: UniLikeTrade | undefined
+    private tradeA: UniLikeTrade | OneInchTrade | undefined
     private tradeB!: NerveTrade
     private tradeC: UniLikeTrade | undefined
 
@@ -59,11 +61,13 @@ export class Swapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number
+        deadline: number,
+        use1Inch = false
     ): SwapExactIn {
         // TODO check slippage.
         //  if slippage too low, the first swap will failed
 
+        this.use1Inch = use1Inch
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
@@ -168,22 +172,24 @@ export class Swapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
+        const data = metaRouterV2.interface.encodeFunctionData('metaRouteV2', [
+            {
+                firstSwapCalldata: this.tradeA?.callData || [],
+                secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
+                approvedTokens,
+                firstDexRouter: this.tradeA ? this.tradeA.routerAddress : AddressZero,
+                secondDexRouter: this.tradeB.pool.address,
+                amount: amount.raw.toString(),
+                nativeIn: amount.token.isNative,
+                relayRecipient,
+                otherSideCalldata,
+            },
+        ])
+
         return {
             chainId,
             to: metaRouterV2.address,
-            data: metaRouterV2.interface.encodeFunctionData('metaRouteV2', [
-                {
-                    firstSwapCalldata: this.tradeA?.callData || [],
-                    secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
-                    approvedTokens,
-                    firstDexRouter: this.symbiosis.uniLikeRouter(this.tokenAmountIn.token.chainId).address,
-                    secondDexRouter: this.tradeB.pool.address,
-                    amount: amount.raw.toString(),
-                    nativeIn: amount.token.isNative,
-                    relayRecipient,
-                    otherSideCalldata,
-                },
-            ]),
+            data,
             value,
         }
     }
@@ -223,10 +229,16 @@ export class Swapping {
         }
     }
 
-    private buildTradeA(): UniLikeTrade {
+    private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStable(chainId)
         const to = this.symbiosis.metaRouterV2(chainId).address
+
+        if (this.use1Inch) {
+            const oracle = this.symbiosis.oneInchOracle(this.tokenAmountIn.token.chainId)
+            return new OneInchTrade(this.tokenAmountIn, tokenOut, to, this.slippage / 100, oracle)
+        }
+
         const dexFee = this.symbiosis.dexFee(chainId)
 
         let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)

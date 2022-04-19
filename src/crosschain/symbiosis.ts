@@ -16,6 +16,8 @@ import {
     MetaRouterV2__factory,
     NervePool,
     NervePool__factory,
+    OneInchOracle,
+    OneInchOracle__factory,
     Portal,
     Portal__factory,
     Synthesis,
@@ -29,6 +31,7 @@ import { getPendingRequests, PendingRequest } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
 import { ChainConfig, Config } from './types'
+import { ONE_INCH_ORACLE_MAP } from './constants'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -157,6 +160,16 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return MetaRouterV2__factory.connect(address, signerOrProvider)
+    }
+
+    public oneInchOracle(chainId: ChainId, signer?: Signer): OneInchOracle {
+        const address = ONE_INCH_ORACLE_MAP[chainId]
+        if (!address) {
+            throw new Error(`Could not find oneInch off-chain oracle on chain ${chainId}`)
+        }
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return OneInchOracle__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
