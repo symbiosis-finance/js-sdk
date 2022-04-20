@@ -27,7 +27,7 @@ export type ChainConstructor = {
     explorer: string
     disabled: boolean
     icons: Icons
-    comingSoon?: boolean
+    swappable?: boolean
 }
 
 export enum ChainId {
