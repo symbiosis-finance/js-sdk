@@ -45,6 +45,8 @@ export enum ChainId {
     OKEX_TESTNET = 65,
     BOBA_MAINNET = 288,
     BOBA_RINKEBY = 28,
+    MILKOMEDA_MAINNET = 2001,
+    MILKOMEDA_DEVNET = 200101,
 }
 
 export enum TradeType {

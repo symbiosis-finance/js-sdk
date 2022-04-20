@@ -159,6 +159,26 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
+    new Chain({
+        id: ChainId.MILKOMEDA_MAINNET,
+        name: 'Milkomeda',
+        disabled: false,
+        explorer: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.MILKOMEDA_DEVNET,
+        name: 'Milkomeda',
+        disabled: false,
+        explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com/',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
