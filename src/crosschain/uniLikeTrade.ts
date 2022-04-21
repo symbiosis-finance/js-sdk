@@ -9,7 +9,7 @@ import { getMulticall } from './multicall'
 import { PairState } from './types'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from './utils'
 import { ChainId } from '../constants'
-import { DataProvider } from './DataProvider'
+import { DataProvider } from './dataProvider'
 
 export class UniLikeTrade {
     public tokenAmountIn: TokenAmount

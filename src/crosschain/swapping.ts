@@ -15,7 +15,7 @@ import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
-import { DataProvider } from './DataProvider'
+import { DataProvider } from './dataProvider'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute

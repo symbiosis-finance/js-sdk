@@ -2,7 +2,7 @@ import { Fraction, Percent, Token, TokenAmount } from '../entities'
 import { NervePool } from './contracts'
 import { basisPointsToPercent, calculatePriceImpact } from './utils'
 import { ONE } from '../constants'
-import { DataProvider } from './DataProvider'
+import { DataProvider } from './dataProvider'
 
 export class NerveTrade {
     public tokenAmountIn: TokenAmount
