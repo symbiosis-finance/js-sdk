@@ -34,15 +34,10 @@ export class NerveTrade {
     public async init(dataProvider: DataProvider) {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        const indexTokenIn = await dataProvider.getTokenIndex(
+        const [indexTokenIn, indexTokenOut] = await dataProvider.getTokensIndex(
             this.tokenAmountIn.token,
             this.tokenOut,
-            this.tokenAmountIn.token.address
-        )
-        const indexTokenOut = await dataProvider.getTokenIndex(
-            this.tokenAmountIn.token,
-            this.tokenOut,
-            this.tokenOut.address
+            [this.tokenAmountIn.token.address, this.tokenOut.address]
         )
         const amountOut = await this.pool.calculateSwap(indexTokenIn, indexTokenOut, this.tokenAmountIn.raw.toString())
         this.amountOut = new TokenAmount(this.tokenOut, amountOut.toString())

@@ -1,5 +1,7 @@
 import { ChainId } from 'src/constants'
 import { Token } from 'src/entities'
+import { NervePool__factory } from './contracts'
+import { getMulticall } from './multicall'
 import { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 
@@ -14,11 +16,26 @@ export class DataProvider {
         )
     }
 
-    async getTokenIndex(tokenIn: Token, tokenOut: Token, address: string) {
-        return this.fromCache(['getTokenIndex', tokenIn.address, tokenIn.address, address], () => {
+    async getTokensIndex(tokenIn: Token, tokenOut: Token, addresses: string[]) {
+        return this.fromCache(['getTokenIndex', tokenIn.address, tokenIn.address, ...addresses], async () => {
             const nervePool = this.symbiosis.nervePool(tokenIn, tokenOut)
+            const nervePoolInterface = NervePool__factory.createInterface()
 
-            return nervePool.getTokenIndex(address)
+            const calls = addresses.map((address) => ({
+                target: nervePool.address,
+                callData: nervePoolInterface.encodeFunctionData('getTokenIndex', [address]),
+            }))
+
+            const provider = this.symbiosis.getProvider(tokenIn.chainId)
+            const multicall = await getMulticall(provider)
+
+            const aggregateResult = await multicall.callStatic.aggregate(calls)
+
+            const indexes = aggregateResult.returnData.map(
+                (value) => nervePoolInterface.decodeFunctionResult('getTokenIndex', value)[0]
+            )
+
+            return indexes
         })
     }
 
