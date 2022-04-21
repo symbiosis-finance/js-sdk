@@ -252,4 +252,28 @@ export const WETH = {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
         },
     }),
+    [ChainId.MILKOMEDA_MAINNET]: new Token({
+        chainId: ChainId.MILKOMEDA_MAINNET,
+        address: '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
+        decimals: 18,
+        symbol: 'WADA',
+        isNative: false,
+        name: 'Wrapped ADA',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
+        },
+    }),
+    [ChainId.MILKOMEDA_DEVNET]: new Token({
+        chainId: ChainId.MILKOMEDA_DEVNET,
+        address: '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9',
+        decimals: 18,
+        symbol: 'WTADA',
+        isNative: false,
+        name: 'Wrapped TADA',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
+        },
+    }),
 }

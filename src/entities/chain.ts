@@ -4,7 +4,7 @@ export class Chain {
     public readonly id: ChainId
     public readonly name: string
     public readonly disabled: boolean
-    public readonly comingSoon: boolean
+    public readonly swappable: boolean
     public readonly explorer: string
     public readonly icons: Icons
 
@@ -14,7 +14,7 @@ export class Chain {
         this.disabled = params.disabled
         this.explorer = params.explorer
         this.icons = params.icons
-        this.comingSoon = params?.comingSoon || false
+        this.swappable = params?.swappable !== false
     }
 }
 
@@ -158,6 +158,28 @@ export const chains: Chain[] = [
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
+    }),
+    new Chain({
+        id: ChainId.MILKOMEDA_MAINNET,
+        name: 'Milkomeda',
+        disabled: false,
+        explorer: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+        },
+        swappable: false
+    }),
+    new Chain({
+        id: ChainId.MILKOMEDA_DEVNET,
+        name: 'Milkomeda',
+        disabled: false,
+        explorer: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
+        },
+        swappable: false
     }),
 ]
 
