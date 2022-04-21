@@ -12,6 +12,8 @@ export {
     ZERO,
 } from './constants'
 
+export { isTerraChainId } from './utils'
+
 export * from './errors'
 export * from './entities'
 export * from './router'

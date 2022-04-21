@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant'
 
 import { ONE, TradeType, ZERO } from '../constants'
-import { sortedInsert } from '../utils'
+import { isTerraChainId, sortedInsert } from '../utils'
 
 import { TokenAmount } from './fractions/tokenAmount'
 import { Fraction } from './fractions/fraction'
@@ -85,11 +85,29 @@ export interface BestTradeOptions {
  * Given a token amount and a chain ID, returns the equivalent representation as the token amount.
  */
 export function wrappedAmount(tokenAmount: TokenAmount): TokenAmount {
-    return tokenAmount.token.isNative ? new TokenAmount(WETH[tokenAmount.token.chainId], tokenAmount.raw) : tokenAmount
+    if (!tokenAmount.token.isNative) {
+        return tokenAmount
+    }
+
+    const chainId = tokenAmount.token.chainId
+    if (isTerraChainId(chainId)) {
+        return tokenAmount
+    }
+
+    return new TokenAmount(WETH[chainId], tokenAmount.raw)
 }
 
 export function wrappedToken(token: Token): Token {
-    return token.isNative ? WETH[token.chainId] : token
+    if (!token.isNative) {
+        return token
+    }
+
+    const chainId = token.chainId
+    if (isTerraChainId(chainId)) {
+        return token
+    }
+
+    return WETH[chainId]
 }
 
 /**

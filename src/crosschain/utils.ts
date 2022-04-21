@@ -1,12 +1,16 @@
 import { Filter, Log } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils } from 'ethers'
+import sha3 from 'js-sha3'
+import { bech32 } from 'bech32'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Fraction, Percent, TokenAmount, Trade } from '../entities'
+import { Fraction, Percent, Token, TokenAmount, Trade } from '../entities'
 import { BIPS_BASE, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
+import { arrayify, hexlify } from '@ethersproject/bytes'
+import { formatBytes32String } from '@ethersproject/strings'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -25,8 +29,36 @@ export const canOneInch = (chainId: ChainId) => {
     return ONE_INCH_CHAINS.includes(chainId)
 }
 
+// Convert terra address to 20 bytes
+export function terraAddressToEthAddress(address: string): string {
+    const { words } = bech32.decode(address)
+
+    // 20 bytes address
+    const encodedAddress = bech32.fromWords(words)
+
+    return hexlify(encodedAddress)
+}
+
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
     return utils.solidityKeccak256(['address', 'uint256', 'uint256'], [contractAddress, requestCount, chainId])
+}
+
+export function getTerraInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams) {
+    const hash = sha3.keccak_256.create()
+
+    // 20 bytes address
+    const encodedAddress = arrayify(terraAddressToEthAddress(contractAddress))
+    hash.update(encodedAddress)
+
+    // uint128 - 16 bytes
+    const requestIdEncoded = utils.zeroPad(BigNumber.from(requestCount).toHexString(), 16)
+    hash.update(requestIdEncoded)
+
+    // uint256 - 32 bytes
+    const chainIdEncoded = utils.zeroPad(BigNumber.from(chainId).toHexString(), 32)
+    hash.update(chainIdEncoded)
+
+    return `0x${hash.hex()}`
 }
 
 export function getExternalId({
@@ -39,6 +71,34 @@ export function getExternalId({
         ['bytes32', 'address', 'address', 'uint256'],
         [internalId, contractAddress, revertableAddress, chainId]
     )
+}
+
+export function getTerraExternalId({
+    internalId,
+    contractAddress,
+    revertableAddress,
+    chainId,
+}: GetExternalIdParams): string {
+    const hash = sha3.keccak_256.create()
+
+    hash.update(arrayify(internalId))
+    hash.update(arrayify(contractAddress))
+    hash.update(arrayify(revertableAddress))
+
+    // uint256 - 32 bytes
+    const chainIdEncoded = utils.zeroPad(BigNumber.from(chainId).toHexString(), 32)
+    hash.update(chainIdEncoded)
+
+    return `0x${hash.hex()}`
+}
+
+// \x00 - native token, \x01 - cw20 token
+export function getTerraTokenFullAddress(token: Token): string {
+    if (!token.isFromTerra()) {
+        throw new Error("Token isn't from Terra")
+    }
+
+    return formatBytes32String(`${token.isNative ? '\x00' : '\x01'}${token.address}`)
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {

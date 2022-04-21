@@ -5,6 +5,7 @@ import { ChainId } from '../constants'
 import { WETH, Token } from './token'
 import { Pair } from './pair'
 import { Price } from './fractions/price'
+import { isTerraChainId } from '../utils'
 
 export class Route {
     public readonly pairs: Pair[]
@@ -15,6 +16,9 @@ export class Route {
 
     public constructor(pairs: Pair[], input: Token, output?: Token) {
         invariant(pairs.length > 0, 'PAIRS')
+        if (isTerraChainId(pairs[0].chainId)) {
+            invariant(false, 'Assets from Terra chain is not supported')
+        }
         invariant(
             pairs.every((pair) => pair.chainId === pairs[0].chainId),
             'CHAIN_IDS'

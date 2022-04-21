@@ -17,7 +17,7 @@ import {
     _1000,
     ChainId,
 } from '../constants'
-import { sqrt, parseBigintIsh } from '../utils'
+import { sqrt, parseBigintIsh, isTerraChainId } from '../utils'
 import { InsufficientReservesError, InsufficientInputAmountError } from '../errors'
 import { Token } from './token'
 
@@ -30,7 +30,10 @@ export class Pair {
     public static getAddress(tokenA: Token, tokenB: Token): string {
         const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
-        if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
+        if (
+            !isTerraChainId(tokens[0].chainId) &&
+            PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined
+        ) {
             PAIR_ADDRESS_CACHE = {
                 ...PAIR_ADDRESS_CACHE,
                 [tokens[0].address]: {

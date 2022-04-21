@@ -28,6 +28,7 @@ export type ChainConstructor = {
     disabled: boolean
     icons: Icons
     comingSoon?: boolean
+    terraChainId?: string
 }
 
 export enum ChainId {
@@ -37,6 +38,8 @@ export enum ChainId {
     BSC_TESTNET = 97,
     MATIC_MAINNET = 137,
     MATIC_MUMBAI = 80001,
+    TERRA_MAINNET = 700_000,
+    TERRA_TESTNET = 700_001,
     AVAX_MAINNET = 43114,
     AVAX_TESTNET = 43113,
     HECO_MAINNET = 128,

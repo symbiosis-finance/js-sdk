@@ -5,6 +5,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
+import { LCDClient } from '@terra-money/terra.js'
 import {
     AvaxRouter,
     AvaxRouter__factory,
@@ -20,7 +21,11 @@ import {
     OneInchOracle__factory,
     Portal,
     Portal__factory,
+    SyntFabricNonEvm,
+    SyntFabricNonEvm__factory,
     Synthesis,
+    SynthesisNonEvm,
+    SynthesisNonEvm__factory,
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
@@ -32,6 +37,7 @@ import { RevertPending } from './revert'
 import { Swapping } from './swapping'
 import { ChainConfig, Config } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
+import { isTerraChainId } from '../utils'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -41,29 +47,34 @@ export class Symbiosis {
     public constructor(config: Config) {
         this.config = config
 
-        this.providers = new Map(
-            config.chains.map((i) => {
-                return [i.id, new StaticJsonRpcProvider(i.rpc, i.id)]
-            })
-        )
+        this.providers = new Map<ChainId, StaticJsonRpcProvider>()
+
+        for (const chain of config.chains) {
+            if (isTerraChainId(chain.id)) {
+                continue
+            }
+
+            this.providers.set(chain.id, new StaticJsonRpcProvider(chain.rpc, chain.id))
+        }
     }
 
     public validateSwapAmounts(amount: TokenAmount) {
         const parsedAmount = parseFloat(amount.toExact(2))
+
         const minAmount = this.config.minSwapAmountInUsd
-        const maxAmount = this.config.maxSwapAmountInUsd
         if (parsedAmount < minAmount) {
             throw new Error(
                 `The amount is too low: $${parsedAmount}. Min amount: $${minAmount}`,
                 ErrorCode.AMOUNT_TOO_LOW
             )
-        } else if (parsedAmount > maxAmount) {
+        }
+
+        const maxAmount = this.config.maxSwapAmountInUsd
+        if (parsedAmount > maxAmount) {
             throw new Error(
                 `The amount is too high: $${parsedAmount}. Max amount: $${maxAmount}`,
                 ErrorCode.AMOUNT_TOO_HIGH
             )
-        } else {
-            // All it`s OK
         }
     }
 
@@ -96,6 +107,16 @@ export class Symbiosis {
         return provider
     }
 
+    public getTerraLCDClient(chainId: ChainId.TERRA_MAINNET | ChainId.TERRA_TESTNET): LCDClient {
+        const chain = this.config.chains.find((chain) => chain.id === chainId)
+
+        if (!chain || !chain.terraChainId) {
+            throw new Error('No terra provider for given chainId')
+        }
+
+        return new LCDClient({ URL: chain.rpc, chainID: chain.terraChainId })
+    }
+
     public portal(chainId: ChainId, signer?: Signer): Portal {
         const address = this.chainConfig(chainId).portal
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -110,6 +131,18 @@ export class Symbiosis {
         return Synthesis__factory.connect(address, signerOrProvider)
     }
 
+    public synthesisNonEvm(chainId: ChainId, signer?: Signer): SynthesisNonEvm {
+        const address = this.chainConfig(chainId).synthesisNonEvm
+
+        if (!address) {
+            throw new Error('No non-EVM synthesis contract on chain')
+        }
+
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return SynthesisNonEvm__factory.connect(address, signerOrProvider)
+    }
+
     public bridge(chainId: ChainId, signer?: Signer): Bridge {
         const address = this.chainConfig(chainId).bridge
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -122,6 +155,18 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return Fabric__factory.connect(address, signerOrProvider)
+    }
+
+    public fabricNonEnv(chainId: ChainId, signer?: Signer): SyntFabricNonEvm {
+        const address = this.chainConfig(chainId).fabricNonEvm
+
+        if (!address) {
+            throw new Error('No non-EVM fabric contract on chain')
+        }
+
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return SyntFabricNonEvm__factory.connect(address, signerOrProvider)
     }
 
     public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {

@@ -1,3 +1,4 @@
+import { isTerraChainId } from '../utils'
 import { ChainConstructor, ChainId, Icons } from '../constants'
 
 export class Chain {
@@ -7,6 +8,7 @@ export class Chain {
     public readonly comingSoon: boolean
     public readonly explorer: string
     public readonly icons: Icons
+    public readonly terraChainId?: string
 
     constructor(params: ChainConstructor) {
         this.id = params.id
@@ -15,6 +17,16 @@ export class Chain {
         this.explorer = params.explorer
         this.icons = params.icons
         this.comingSoon = params?.comingSoon || false
+
+        if (isTerraChainId(params.id) && !params.terraChainId) {
+            throw new Error('Terra chain id is missing')
+        }
+
+        this.terraChainId = params.terraChainId
+    }
+
+    isTerra(): boolean {
+        return isTerraChainId(this.id)
     }
 }
 
@@ -159,9 +171,35 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
+    new Chain({
+        id: ChainId.TERRA_MAINNET,
+        name: 'Terra',
+        disabled: false,
+        explorer: 'https://finder.terra.money',
+        terraChainId: 'columbus-5',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/terra/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/terra/info/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.TERRA_TESTNET,
+        name: 'Terra Testnet',
+        disabled: false,
+        explorer: 'https://finder.terra.money/testnet',
+        terraChainId: 'bombay-12',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/terra/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/terra/info/logo.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
     if (!chainId) return undefined
     return chains.find((chain) => chain.id === chainId)
+}
+
+export function getTerraChainById(terraChainId: string): Chain | undefined {
+    return chains.find((chain) => chain.terraChainId && chain.terraChainId === terraChainId)
 }

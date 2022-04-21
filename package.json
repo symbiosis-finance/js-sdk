@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "2.4.3",
+    "version": "2.3.14",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
     "files": [
@@ -34,6 +34,8 @@
         "*.js": "eslint --cache --fix"
     },
     "dependencies": {
+        "@terra-money/terra.js": "^3.0.9",
+        "bech32": "^2.0.0",
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
         "decimal.js-light": "^2.5.0",
