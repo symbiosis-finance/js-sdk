@@ -1,16 +1,16 @@
+import { arrayify, hexlify } from '@ethersproject/bytes'
 import { Filter, Log } from '@ethersproject/providers'
+import { formatBytes32String } from '@ethersproject/strings'
 import { parseUnits } from '@ethersproject/units'
+import { bech32 } from 'bech32'
 import { BigNumber, utils } from 'ethers'
 import sha3 from 'js-sha3'
-import { bech32 } from 'bech32'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade } from '../entities'
 import { BIPS_BASE, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
-import { arrayify, hexlify } from '@ethersproject/bytes'
-import { formatBytes32String } from '@ethersproject/strings'
 
 interface GetInternalIdParams {
     contractAddress: string

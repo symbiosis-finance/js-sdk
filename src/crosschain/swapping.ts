@@ -4,7 +4,7 @@ import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount } from '../entities'
-import { Execute, WaitForMined } from './bridging'
+import { ExecuteEvm, WaitForMined } from './bridging'
 import { BIPS_BASE, CHAINS_PRIORITY } from './constants'
 import { Error, ErrorCode } from './error'
 import { NerveTrade } from './nerveTrade'
@@ -17,7 +17,7 @@ import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 
 export type SwapExactIn = Promise<{
-    execute: (signer: Signer) => Execute
+    execute: (signer: Signer) => ExecuteEvm
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutWithZeroFee: TokenAmount
@@ -419,7 +419,7 @@ export class Swapping {
         return this.direction === 'burn' ? this.otherSideBurnCallData(fee) : this.otherSideSynthCallData(fee)
     }
 
-    protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
+    protected async execute(transactionRequest: TransactionRequest, signer: Signer): ExecuteEvm {
         const transactionRequestWithGasLimit = { ...transactionRequest }
 
         const gasLimit = await signer.estimateGas(transactionRequest)
