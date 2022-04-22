@@ -222,17 +222,20 @@ export class Symbiosis {
             call_data: calldata,
         }
 
-        const response = await fetch(`${this.config.advisor.url}/v1/swap/price`, {
+        return fetch(`${this.config.advisor.url}/v1/swap/price`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(params),
         })
-
-        const { price } = await response.json()
-
-        return JSBI.BigInt(price)
+        .then(async response => {
+            if (!response.ok) {
+                return Promise.reject(await response.text())
+            }
+            return response.json()
+        })
+        .then(({price}) => JSBI.BigInt(price))
     }
 
     public filterBlockOffset(chainId: ChainId): number {
