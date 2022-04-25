@@ -16,13 +16,14 @@
     },
     "module": "dist/symbiosis-js-sdk.esm.js",
     "scripts": {
-        "lint": "dts lint src test",
-        "lint:fix": "dts lint src test --fix",
         "build": "dts build",
         "start": "dts watch",
         "test": "dts test",
+        "lint": "dts lint src",
+        "lint:fix": "dts lint src --fix",
+        "prettier": "prettier --check --ignore-unknown src",
+        "prettier:fix": "prettier --write --ignore-unknown src",
         "prepublishOnly": "dts build",
-        "prettier": "prettier src --write",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
         "prepare": "husky install"
     },

@@ -31,11 +31,9 @@ export class DataProvider {
 
             const aggregateResult = await multicall.callStatic.aggregate(calls)
 
-            const indexes = aggregateResult.returnData.map(
+            return aggregateResult.returnData.map(
                 (value) => nervePoolInterface.decodeFunctionResult('getTokenIndex', value)[0]
             )
-
-            return indexes
         })
     }
 

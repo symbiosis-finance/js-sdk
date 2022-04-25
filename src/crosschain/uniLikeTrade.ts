@@ -100,11 +100,7 @@ export class UniLikeTrade {
             method = methodName.replace('ETH', 'AVAX')
         }
 
-        return this.router.interface.encodeFunctionData(
-            // @ts-ignore
-            method,
-            args
-        )
+        return this.router.interface.encodeFunctionData(method, args)
     }
 
     static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
@@ -149,7 +145,6 @@ export class UniLikeTrade {
 
         const reserves = aggregateResult.map(([success, returnData]) => {
             if (!success || returnData === '0x') return
-            // @ts-ignore
             return pairInterface.decodeFunctionResult('getReserves', returnData)
         })
 

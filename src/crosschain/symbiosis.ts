@@ -229,13 +229,13 @@ export class Symbiosis {
             },
             body: JSON.stringify(params),
         })
-        .then(async response => {
-            if (!response.ok) {
-                return Promise.reject(await response.text())
-            }
-            return response.json()
-        })
-        .then(({price}) => JSBI.BigInt(price))
+            .then(async (response) => {
+                if (!response.ok) {
+                    return Promise.reject(await response.text())
+                }
+                return response.json()
+            })
+            .then(({ price }) => JSBI.BigInt(price))
     }
 
     public filterBlockOffset(chainId: ChainId): number {

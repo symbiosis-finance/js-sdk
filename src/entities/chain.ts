@@ -168,7 +168,7 @@ export const chains: Chain[] = [
             small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
         },
-        swappable: false
+        swappable: false,
     }),
     new Chain({
         id: ChainId.MILKOMEDA_DEVNET,
@@ -179,7 +179,7 @@ export const chains: Chain[] = [
             small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
         },
-        swappable: false
+        swappable: false,
     }),
 ]
 

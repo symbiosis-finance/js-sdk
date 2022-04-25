@@ -151,19 +151,10 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        let interval: NodeJS.Timeout
-
-        const listener = (log: Log) => {
-            clearInterval(interval)
-            resolve(log)
-        }
-
-        provider.once(activeFilter, listener)
-
         const period = 1000 * 60
         let pastTime = 0
 
-        interval = setInterval(() => {
+        const interval = setInterval(() => {
             pastTime += period
             if (pastTime > exceedTimeout) {
                 clearInterval(interval)
@@ -184,5 +175,12 @@ export async function getLogWithTimeout({
                     reject(error)
                 })
         }, period)
+
+        const listener = (log: Log) => {
+            clearInterval(interval)
+            resolve(log)
+        }
+
+        provider.once(activeFilter, listener)
     })
 }
