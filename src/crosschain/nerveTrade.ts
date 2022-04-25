@@ -2,6 +2,7 @@ import { Fraction, Percent, Token, TokenAmount } from '../entities'
 import { NervePool } from './contracts'
 import { basisPointsToPercent, calculatePriceImpact } from './utils'
 import { ONE } from '../constants'
+import { DataProvider } from './dataProvider'
 
 export class NerveTrade {
     public tokenAmountIn: TokenAmount
@@ -30,11 +31,14 @@ export class NerveTrade {
         this.pool = pool
     }
 
-    public async init() {
+    public async init(dataProvider: DataProvider) {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        const indexTokenIn = await this.pool.getTokenIndex(this.tokenAmountIn.token.address)
-        const indexTokenOut = await this.pool.getTokenIndex(this.tokenOut.address)
+        const [indexTokenIn, indexTokenOut] = await dataProvider.getTokensIndex(
+            this.tokenAmountIn.token,
+            this.tokenOut,
+            [this.tokenAmountIn.token.address, this.tokenOut.address]
+        )
         const amountOut = await this.pool.calculateSwap(indexTokenIn, indexTokenOut, this.tokenAmountIn.raw.toString())
         this.amountOut = new TokenAmount(this.tokenOut, amountOut.toString())
 

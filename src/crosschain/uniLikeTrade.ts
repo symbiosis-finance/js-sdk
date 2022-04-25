@@ -9,6 +9,7 @@ import { getMulticall } from './multicall'
 import { PairState } from './types'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from './utils'
 import { ChainId } from '../constants'
+import { DataProvider } from './dataProvider'
 
 export class UniLikeTrade {
     public tokenAmountIn: TokenAmount
@@ -48,8 +49,12 @@ export class UniLikeTrade {
         this.dexFee = dexFee
     }
 
-    public async init() {
-        this.pairs = await UniLikeTrade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
+    public async init(dataProvider?: DataProvider) {
+        if (dataProvider) {
+            this.pairs = await dataProvider.getPairs(this.tokenAmountIn.token, this.tokenOut)
+        } else {
+            this.pairs = await UniLikeTrade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
+        }
 
         const trade = Trade.bestTradeExactIn(this.pairs, this.tokenAmountIn, this.tokenOut, {
             maxHops: 3,
@@ -102,7 +107,7 @@ export class UniLikeTrade {
         )
     }
 
-    private static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
+    static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
         const allPairCombinations = UniLikeTrade.allPairCombinations(tokenIn, tokenOut)
         const allPairs = await UniLikeTrade.allPairs(provider, allPairCombinations)
 
