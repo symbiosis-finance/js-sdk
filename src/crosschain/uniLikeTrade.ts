@@ -100,7 +100,7 @@ export class UniLikeTrade {
             method = methodName.replace('ETH', 'AVAX')
         }
 
-        return this.router.interface.encodeFunctionData(method, args)
+        return this.router.interface.encodeFunctionData(method as any, args as any)
     }
 
     static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
