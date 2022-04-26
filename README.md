@@ -1,11 +1,11 @@
-# symbiosis-sdk
+# symbiosis-js-sdk
 
 [![Build Status](https://drone.symbiosis.finance/api/badges/symbiosis-finance/sdk/status.svg)](https://drone.symbiosis.finance/symbiosis-finance/sdk)
 
 ## Installation
 
 ```bash
-npm i symbiosis-sdk
+npm i symbiosis-js-sdk
 ```
 
 ## Install dependencies
@@ -37,7 +37,7 @@ The current implementation use [ethers](https://docs.ethers.io/v5/) to interact 
 To work with Symbiosis SDK you should init `Symbiosis` instance with config (check `Config` type).
 
 ```ts
-import { Symbiosis } from 'symbiosis-sdk'
+import { Symbiosis } from 'symbiosis-js-sdk'
 import { CONFIG } from '@app/lib/config'
 
 export const symbiosis = new Symbiosis({
@@ -146,7 +146,7 @@ These requests can be found and cancelled.
 ### Find stuck transactions:
 
 ```ts
-import { getPendingRequests } from 'symbiosis-sdk'
+import { getPendingRequests } from 'symbiosis-js-sdk'
 
 // Get get all pending requests from all chains
 const pendingRequests = await symbiosis.getPendingRequests(
