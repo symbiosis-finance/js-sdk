@@ -231,7 +231,7 @@ export class Symbiosis {
         })
             .then(async (response) => {
                 if (!response.ok) {
-                    return Promise.reject(await response.text())
+                    return Promise.reject(new Error(await response.text()))
                 }
                 return response.json()
             })
