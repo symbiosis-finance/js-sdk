@@ -1,10 +1,10 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount } from '../entities'
-import { ExecuteEvm, WaitForMined } from './bridging'
+import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE, CHAINS_PRIORITY } from './constants'
 import { Error, ErrorCode } from './error'
 import { NerveTrade } from './nerveTrade'
@@ -17,7 +17,7 @@ import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 
 export type SwapExactIn = Promise<{
-    execute: (signer: Signer) => ExecuteEvm
+    execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutWithZeroFee: TokenAmount
@@ -128,7 +128,7 @@ export class Swapping {
         }
     }
 
-    async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+    async waitForComplete(receipt: TransactionReceipt): Promise<string> {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -139,7 +139,7 @@ export class Swapping {
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
+        }).transactionFromEvm(receipt)
     }
 
     private getTransactionRequest(fee: TokenAmount): TransactionRequest {
@@ -419,7 +419,7 @@ export class Swapping {
         return this.direction === 'burn' ? this.otherSideBurnCallData(fee) : this.otherSideSynthCallData(fee)
     }
 
-    protected async execute(transactionRequest: TransactionRequest, signer: Signer): ExecuteEvm {
+    protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
         const transactionRequestWithGasLimit = { ...transactionRequest }
 
         const gasLimit = await signer.estimateGas(transactionRequest)
@@ -429,7 +429,7 @@ export class Swapping {
         const response = await signer.sendTransaction(transactionRequestWithGasLimit)
 
         return {
-            response,
+            transactionHash: response.hash,
             waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
         }
     }
@@ -438,7 +438,7 @@ export class Swapping {
         const receipt = await response.wait(confirmations)
 
         return {
-            receipt,
+            blockNumber: receipt.blockNumber,
             waitForComplete: () => this.waitForComplete(receipt),
         }
     }

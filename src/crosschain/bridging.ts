@@ -1,6 +1,6 @@
 import { hexZeroPad } from '@ethersproject/bytes'
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
-import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult } from '@terra-money/terra.js'
+import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '@terra-money/terra.js'
 import { ConnectedWallet } from '@terra-money/wallet-types'
 import { BigNumber, Signer, utils } from 'ethers'
 import { base64 } from 'ethers/lib/utils'
@@ -17,23 +17,18 @@ import {
     getTerraExternalId,
     getTerraInternalId,
     getTerraTokenFullAddress,
-    terraAddressToEthAddress,
+    encodeTerraAddress,
 } from './utils'
 import { WaitForComplete } from './waitForComplete'
 
 export type WaitForMined = Promise<{
-    receipt: TransactionReceipt
-    waitForComplete: () => Promise<Log>
+    blockNumber: number
+    waitForComplete: () => Promise<string>
 }>
 
-export type ExecuteEvm = Promise<{
-    response: TransactionResponse
+export type Execute = Promise<{
+    transactionHash: string
     waitForMined: () => WaitForMined
-}>
-
-export type ExecuteTerra = Promise<{
-    response: SyncTxBroadcastResult
-    // waitForMined: () => WaitForMined
 }>
 
 interface TerraSynthesizeExecuteMessage {
@@ -59,7 +54,7 @@ interface TerraSynthesizeExecuteMessage {
 
 interface EvmExactIn {
     chainType: 'evm'
-    execute: (signer: Signer) => ExecuteEvm
+    execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     transactionRequest: TransactionRequest
@@ -67,7 +62,7 @@ interface EvmExactIn {
 
 interface TerraExactIn {
     chainType: 'terra'
-    execute: (wallet: ConnectedWallet) => ExecuteTerra
+    execute: (wallet: ConnectedWallet) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     executeMessage: TerraSynthesizeExecuteMessage
@@ -106,9 +101,11 @@ export class Bridging {
         this.revertableAddress = revertableAddress
         this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
 
-        const fee = this.fee || (await this.getFee())
+        if (!this.fee) {
+            this.fee = await this.getFee()
+        }
 
-        this.fee = fee
+        const fee = this.fee
 
         const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
         if (tokenAmountOut.lessThan(this.fee)) {
@@ -118,9 +115,7 @@ export class Bridging {
         this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
 
         if (tokenAmountIn.token.isFromTerra()) {
-            const executeMessage = this.getTerraSynthesizeExecuteMessage()
-
-            console.log(JSON.stringify(executeMessage, undefined, 2))
+            const executeMessage = this.getTerraExecuteMessage()
 
             return {
                 chainType: 'terra',
@@ -150,7 +145,7 @@ export class Bridging {
         return await this.getBurnFee()
     }
 
-    protected async executeEvm(transactionRequest: TransactionRequest, signer: Signer): ExecuteEvm {
+    protected async executeEvm(transactionRequest: TransactionRequest, signer: Signer): Execute {
         const transactionRequestWithGasLimit = { ...transactionRequest }
 
         const gasLimit = await signer.estimateGas(transactionRequestWithGasLimit)
@@ -160,12 +155,12 @@ export class Bridging {
         const response = await signer.sendTransaction(transactionRequestWithGasLimit)
 
         return {
-            response,
-            waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
+            transactionHash: response.hash,
+            waitForMined: (confirmations = 1) => this.waitForEvmMined(confirmations, response),
         }
     }
 
-    protected async executeTerra(executeMessage: TerraSynthesizeExecuteMessage, wallet: ConnectedWallet): ExecuteTerra {
+    protected async executeTerra(executeMessage: TerraSynthesizeExecuteMessage, wallet: ConnectedWallet): Execute {
         if (!this.tokenAmountIn) {
             throw new Error('Tokens are not set')
         }
@@ -186,25 +181,50 @@ export class Bridging {
 
         const signResult = await wallet.sign({ msgs: [execute] })
 
-        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET)
+        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET) // Chain
 
         const response = await lcdcClient.tx.broadcastSync(signResult.result)
 
         return {
-            response,
+            transactionHash: response.txhash,
+            waitForMined: () => this.waitForTerraMined(response),
         }
     }
 
-    protected async waitForMined(confirmations: number, response: TransactionResponse): WaitForMined {
+    protected async waitForTerraMined(result: SyncTxBroadcastResult): WaitForMined {
+        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET) // @@ Chain
+
+        const TIMEOUT = 250 // 250ms
+        const WAITING_TIME = 60 * 2000 // 2min
+
+        for (let attempts = 0; attempts < WAITING_TIME / TIMEOUT; attempts++) {
+            const txInfo = await lcdcClient.tx.txInfo(result.txhash).catch(() => {
+                // nothing
+            })
+
+            if (txInfo) {
+                return {
+                    blockNumber: txInfo.height,
+                    waitForComplete: () => this.terraWaitForComplete(txInfo),
+                }
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, TIMEOUT))
+        }
+
+        throw new Error('The transaction was not broadcasted')
+    }
+
+    protected async waitForEvmMined(confirmations: number, response: TransactionResponse): WaitForMined {
         const receipt = await response.wait(confirmations)
 
         return {
-            receipt,
-            waitForComplete: () => this.waitForComplete(receipt),
+            blockNumber: receipt.blockNumber,
+            waitForComplete: () => this.evmWaitForComplete(receipt),
         }
     }
 
-    protected getTerraSynthesizeExecuteMessage(): TerraSynthesizeExecuteMessage {
+    protected getTerraExecuteMessage(): TerraSynthesizeExecuteMessage {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -213,6 +233,10 @@ export class Bridging {
 
         if (!tokenIn.symbol) {
             throw new Error('Token symbol is not set')
+        }
+
+        if (this.direction === 'burn') {
+            throw new Error(`Burning tokens from Terra is not supported yet`)
         }
 
         return {
@@ -302,6 +326,7 @@ export class Bridging {
             throw new Error(`Terra doesn't support minting yet`)
         }
 
+        // From terra
         if (isTerraChainId(chainIdIn)) {
             const lcdClient = this.symbiosis.getTerraLCDClient(chainIdIn)
             const queryResult = await lcdClient.wasm.contractQuery<{ request_count: number }>(TERRA_PORTAL, {
@@ -396,8 +421,8 @@ export class Bridging {
         let revertableAddress: string
         if (isTerraChainId(chainIdOut)) {
             synthesis = this.symbiosis.synthesis(chainIdIn)
-            portalAddress = terraAddressToEthAddress(TERRA_PORTAL)
-            revertableAddress = terraAddressToEthAddress(this.revertableAddress)
+            portalAddress = encodeTerraAddress(TERRA_PORTAL)
+            revertableAddress = encodeTerraAddress(this.revertableAddress)
         } else {
             synthesis = this.symbiosis.synthesisNonEvm(chainIdIn)
             portalAddress = this.symbiosis.portal(chainIdOut).address
@@ -421,16 +446,17 @@ export class Bridging {
 
         let calldata: string
         if (this.tokenOut.isFromTerra()) {
-            const portalNonEvm = new utils.Interface([
+            // Create the same calldata that we would get in the contract from the portal
+            const portalForNonEvm = new utils.Interface([
                 'function unsynthesize(uint256 _stableBridgingFee, bytes32 externalID, bytes32 rtoken, uint256 _amount, bytes32 _chain2address)',
             ])
 
-            calldata = portalNonEvm.encodeFunctionData('unsynthesize', [
+            calldata = portalForNonEvm.encodeFunctionData('unsynthesize', [
                 '1',
                 externalId,
                 getTerraTokenFullAddress(this.tokenOut),
                 this.tokenAmountIn.raw.toString(),
-                hexZeroPad(terraAddressToEthAddress(this.to), 32),
+                hexZeroPad(encodeTerraAddress(this.to), 32),
             ])
         } else {
             const portal = this.symbiosis.portal(chainIdOut)
@@ -454,7 +480,7 @@ export class Bridging {
         return new TokenAmount(this.tokenOut, fee.toString())
     }
 
-    async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+    async terraWaitForComplete(txInfo: TxInfo): Promise<string> {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -465,6 +491,20 @@ export class Bridging {
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
+        }).transactionFromTerra(txInfo)
+    }
+
+    async evmWaitForComplete(result: TransactionReceipt): Promise<string> {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        return new WaitForComplete({
+            direction: this.direction,
+            tokenOut: this.tokenOut,
+            symbiosis: this.symbiosis,
+            revertableAddress: this.revertableAddress,
+            chainIdIn: this.tokenAmountIn.token.chainId,
+        }).transactionFromEvm(result)
     }
 }

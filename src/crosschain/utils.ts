@@ -29,25 +29,24 @@ export const canOneInch = (chainId: ChainId) => {
     return ONE_INCH_CHAINS.includes(chainId)
 }
 
-// Convert terra address to 20 bytes
-export function terraAddressToEthAddress(address: string): string {
+// Convert terra address to 20 bytes EVM compatible variant
+export function encodeTerraAddress(address: string): string {
     const { words } = bech32.decode(address)
 
-    // 20 bytes address
-    const encodedAddress = bech32.fromWords(words)
+    const addressBytes = bech32.fromWords(words)
 
-    return hexlify(encodedAddress)
+    return hexlify(addressBytes)
 }
 
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
     return utils.solidityKeccak256(['address', 'uint256', 'uint256'], [contractAddress, requestCount, chainId])
 }
 
-export function getTerraInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams) {
+export function getTerraInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
     const hash = sha3.keccak_256.create()
 
     // 20 bytes address
-    const encodedAddress = arrayify(terraAddressToEthAddress(contractAddress))
+    const encodedAddress = arrayify(encodeTerraAddress(contractAddress))
     hash.update(encodedAddress)
 
     // uint128 - 16 bytes
@@ -220,17 +219,19 @@ export async function getLogWithTimeout({
 
         provider.once(activeFilter, listener)
 
-        const period = 1000 * 60
+        const period = 1000 * 60 // 1 minute
         let pastTime = 0
 
         interval = setInterval(() => {
             pastTime += period
+
             if (pastTime > exceedTimeout) {
                 clearInterval(interval)
                 provider.off(activeFilter, listener)
                 reject(new GetLogTimeoutExceededError(activeFilter))
                 return
             }
+
             provider
                 .getLogs(activeFilter)
                 .then((logs) => {
