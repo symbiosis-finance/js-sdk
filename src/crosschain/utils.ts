@@ -126,7 +126,7 @@ export class GetLogTimeoutExceededError extends Error {
     }
 }
 
-const DEFAULT_EXCEED_DELAY = 1000 * 60 * 5 // 5 minutes
+const DEFAULT_EXCEED_DELAY = 1000 * 60 * 20 // 20 minutes
 
 interface GetLogsWithTimeoutParams {
     symbiosis: Symbiosis
