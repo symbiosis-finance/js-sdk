@@ -70,8 +70,6 @@ interface TerraExactIn {
 
 export type ExactIn = Promise<EvmExactIn | TerraExactIn>
 
-const TERRA_PORTAL = 'terra19zr9wkkdx3zepzyv9geqttnven2ndczjdysk2h' // @@ portal address
-
 export class Bridging {
     public tokenAmountIn: TokenAmount | undefined
     public tokenOut: Token | undefined
@@ -165,6 +163,10 @@ export class Bridging {
             throw new Error('Tokens are not set')
         }
 
+        if (!isTerraChainId(this.tokenAmountIn.token.chainId)) {
+            throw new Error('Token not from terra')
+        }
+
         let coins: Coins.Input | undefined
         if ('native_coin' in executeMessage.synthesize.asset_info) {
             coins = [
@@ -172,12 +174,9 @@ export class Bridging {
             ]
         }
 
-        const execute = new MsgExecuteContract(
-            wallet.terraAddress,
-            TERRA_PORTAL, // @@
-            executeMessage,
-            coins
-        )
+        const portalAddress = this.symbiosis.getTerraPortalAddress(this.tokenAmountIn.token.chainId)
+
+        const execute = new MsgExecuteContract(wallet.terraAddress, portalAddress, executeMessage, coins)
 
         const signResult = await wallet.sign({ msgs: [execute] })
 
@@ -329,14 +328,17 @@ export class Bridging {
         // From terra
         if (isTerraChainId(chainIdIn)) {
             const lcdClient = this.symbiosis.getTerraLCDClient(chainIdIn)
-            const queryResult = await lcdClient.wasm.contractQuery<{ request_count: number }>(TERRA_PORTAL, {
+
+            const portalAddress = this.symbiosis.getTerraPortalAddress(chainIdIn)
+
+            const queryResult = await lcdClient.wasm.contractQuery<{ request_count: number }>(portalAddress, {
                 get_request_count: {},
             })
 
             const synthesis = this.symbiosis.synthesisNonEvm(chainIdOut)
 
             const internalId = getTerraInternalId({
-                contractAddress: TERRA_PORTAL,
+                contractAddress: portalAddress,
                 requestCount: queryResult.request_count,
                 chainId: chainIdIn,
             })
@@ -421,7 +423,10 @@ export class Bridging {
         let revertableAddress: string
         if (isTerraChainId(chainIdOut)) {
             synthesis = this.symbiosis.synthesis(chainIdIn)
-            portalAddress = encodeTerraAddress(TERRA_PORTAL)
+
+            const terraPortalAddress = this.symbiosis.getTerraPortalAddress(chainIdOut)
+            portalAddress = encodeTerraAddress(terraPortalAddress)
+
             revertableAddress = encodeTerraAddress(this.revertableAddress)
         } else {
             synthesis = this.symbiosis.synthesisNonEvm(chainIdIn)
@@ -470,8 +475,15 @@ export class Bridging {
             ])
         }
 
+        let receiveSide: string
+        if (isTerraChainId(chainIdOut)) {
+            receiveSide = this.symbiosis.getTerraPortalAddress(chainIdOut)
+        } else {
+            receiveSide = this.symbiosis.portal(chainIdOut).address
+        }
+
         const fee = await this.symbiosis.getBridgeFee({
-            receiveSide: isTerraChainId(chainIdOut) ? TERRA_PORTAL : this.symbiosis.portal(chainIdOut).address,
+            receiveSide,
             calldata,
             chainIdFrom: chainIdIn,
             chainIdTo: chainIdOut,
@@ -506,5 +518,33 @@ export class Bridging {
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
         }).transactionFromEvm(result)
+    }
+
+    // @@ To test simulate advisor
+    async simulate() {
+        const lcdClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET)
+
+        const execute = new MsgExecuteContract(
+            'terra1un5uhazk2uay0c0supetw5vkagstccrz802t87',
+            'terra1xgq5t0k4yamg5f8e875ytpvv5yu8an8a2j5y8m', // @@
+            {
+                receive_request: {
+                    calldata:
+                        'Svu58QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUB0xJtlOM38HyOVUPhKhYqawn0bbwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU5OnL9FZXOkfh8OByt1GW6iC8YGIAAAAAAAAAAAAAAAA=',
+                },
+            }
+        )
+
+        const account = await lcdClient.auth.accountInfo('terra1un5uhazk2uay0c0supetw5vkagstccrz802t87')
+        const signerDataArray = [
+            {
+                publicKey: account.getPublicKey(),
+                sequenceNumber: account.getSequenceNumber(),
+            },
+        ]
+
+        const kek = await lcdClient.tx.estimateFee(signerDataArray, { msgs: [execute] })
+
+        return kek
     }
 }

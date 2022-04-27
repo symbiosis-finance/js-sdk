@@ -38,8 +38,6 @@ export enum ChainId {
     BSC_TESTNET = 97,
     MATIC_MAINNET = 137,
     MATIC_MUMBAI = 80001,
-    TERRA_MAINNET = 700_000,
-    TERRA_TESTNET = 700_001,
     AVAX_MAINNET = 43114,
     AVAX_TESTNET = 43113,
     HECO_MAINNET = 128,
@@ -50,7 +48,13 @@ export enum ChainId {
     BOBA_RINKEBY = 28,
     MILKOMEDA_MAINNET = 2001,
     MILKOMEDA_DEVNET = 200101,
+
+    TERRA_MAINNET = 700_000,
+    TERRA_TESTNET = 700_001,
 }
+
+export type TerraChainId = ChainId.TERRA_MAINNET | ChainId.TERRA_TESTNET
+export type EVMChainId = Exclude<ChainId, TerraChainId>
 
 export enum TradeType {
     EXACT_INPUT,

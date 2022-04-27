@@ -2,7 +2,7 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer } from 'ethers'
 import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants'
+import { ChainId, TerraChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
 import { LCDClient } from '@terra-money/terra.js'
@@ -118,10 +118,14 @@ export class Symbiosis {
     }
 
     public portal(chainId: ChainId, signer?: Signer): Portal {
-        const address = this.chainConfig(chainId).portal
         const signerOrProvider = signer || this.getProvider(chainId)
+        const address = this.chainConfig(chainId).portal
 
         return Portal__factory.connect(address, signerOrProvider)
+    }
+
+    public getTerraPortalAddress(terraChainId: TerraChainId): string {
+        return this.chainConfig(terraChainId).portal
     }
 
     public synthesis(chainId: ChainId, signer?: Signer): Synthesis {

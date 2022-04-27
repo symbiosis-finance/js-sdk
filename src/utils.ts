@@ -3,7 +3,17 @@ import warning from 'tiny-warning'
 import JSBI from 'jsbi'
 import { getAddress } from '@ethersproject/address'
 
-import { BigintIsh, ZERO, ONE, TWO, THREE, SolidityType, SOLIDITY_TYPE_MAXIMA, ChainId } from './constants'
+import {
+    BigintIsh,
+    ZERO,
+    ONE,
+    TWO,
+    THREE,
+    SolidityType,
+    SOLIDITY_TYPE_MAXIMA,
+    ChainId,
+    TerraChainId,
+} from './constants'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
     invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
@@ -85,6 +95,6 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
     }
 }
 
-export function isTerraChainId(chainId: ChainId): chainId is ChainId.TERRA_MAINNET | ChainId.TERRA_TESTNET {
+export function isTerraChainId(chainId: ChainId): chainId is TerraChainId {
     return chainId === ChainId.TERRA_MAINNET || chainId === ChainId.TERRA_TESTNET
 }
