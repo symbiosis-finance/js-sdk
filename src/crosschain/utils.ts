@@ -185,7 +185,7 @@ export class GetLogTimeoutExceededError extends Error {
     }
 }
 
-const DEFAULT_EXCEED_DELAY = 1000 * 60 * 5 // 5 minutes
+const DEFAULT_EXCEED_DELAY = 1000 * 60 * 20 // 20 minutes
 
 interface GetLogsWithTimeoutParams {
     symbiosis: Symbiosis
@@ -210,28 +210,17 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        let interval: NodeJS.Timeout
-
-        const listener = (log: Log) => {
-            clearInterval(interval)
-            resolve(log)
-        }
-
-        provider.once(activeFilter, listener)
-
-        const period = 1000 * 60 // 1 minute
+        const period = 1000 * 60
         let pastTime = 0
 
-        interval = setInterval(() => {
+        const interval = setInterval(() => {
             pastTime += period
-
             if (pastTime > exceedTimeout) {
                 clearInterval(interval)
                 provider.off(activeFilter, listener)
                 reject(new GetLogTimeoutExceededError(activeFilter))
                 return
             }
-
             provider
                 .getLogs(activeFilter)
                 .then((logs) => {
@@ -245,5 +234,12 @@ export async function getLogWithTimeout({
                     reject(error)
                 })
         }, period)
+
+        const listener = (log: Log) => {
+            clearInterval(interval)
+            resolve(log)
+        }
+
+        provider.once(activeFilter, listener)
     })
 }

@@ -93,7 +93,6 @@ export class OneInchTrade {
 
         const data = aggregated.map(([success, returnData], i): BigNumber | undefined => {
             if (!success || returnData === '0x') return
-            // @ts-ignore
             const result = this.oracle.interface.decodeFunctionResult('getRateToEth', returnData)
 
             const numerator = BigNumber.from(10).pow(tokens[i].decimals)

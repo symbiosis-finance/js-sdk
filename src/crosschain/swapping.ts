@@ -15,6 +15,7 @@ import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
+import { DataProvider } from './dataProvider'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -78,13 +79,15 @@ export class Swapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.direction = Swapping.getDirection(tokenAmountIn, tokenOut)
 
+        const dataProvider = new DataProvider(this.symbiosis)
+
         if (!this.isTransitStable(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
         }
 
-        this.tradeB = await this.buildTradeB()
-        await this.tradeB.init()
+        this.tradeB = await this.buildTradeB(dataProvider)
+        await this.tradeB.init(dataProvider)
 
         if (this.direction === 'burn') {
             this.amountInUsd = this.tradeB.amountOut
@@ -95,7 +98,7 @@ export class Swapping {
 
         if (!this.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC()
-            await this.tradeC.init()
+            await this.tradeC.init(dataProvider)
         }
 
         const zeroFee = new TokenAmount(this.feeToken, '0')
@@ -105,12 +108,12 @@ export class Swapping {
         const fee = await this.getFee()
 
         // >>> NOTE create trades with calculated fee
-        this.tradeB = await this.buildTradeB(fee)
-        await this.tradeB.init()
+        this.tradeB = await this.buildTradeB(dataProvider, fee)
+        await this.tradeB.init(dataProvider)
 
         if (!this.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC(fee)
-            await this.tradeC.init()
+            await this.tradeC.init(dataProvider)
         }
         // <<< NOTE create trades with calculated fee
 
@@ -249,7 +252,7 @@ export class Swapping {
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
     }
 
-    private async buildTradeB(bridgeFee?: TokenAmount): Promise<NerveTrade> {
+    private async buildTradeB(dataProvider: DataProvider, bridgeFee?: TokenAmount): Promise<NerveTrade> {
         let tradeBAmountIn: TokenAmount
         let tradeBTokenOut: Token
 
@@ -257,7 +260,7 @@ export class Swapping {
             tradeBAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
             const transitStableOut = this.transitStable(this.tokenOut.chainId) // USDC
             this.feeToken = transitStableOut
-            const rep = await this.symbiosis.getRepresentation(transitStableOut, this.tokenAmountIn.token.chainId) // sUSDC
+            const rep = await dataProvider.getRepresentation(transitStableOut, this.tokenAmountIn.token.chainId) // sUSDC
             if (!rep) {
                 throw new Error(
                     `Representation of ${transitStableOut.symbol} in chain ${this.tokenAmountIn.token.chainId} not found`,
@@ -268,7 +271,7 @@ export class Swapping {
         } else {
             // mint
             const transitStableIn = this.transitStable(this.tokenAmountIn.token.chainId) // USDC
-            const rep = await this.symbiosis.getRepresentation(transitStableIn, this.tokenOut.chainId) // sUSDC
+            const rep = await dataProvider.getRepresentation(transitStableIn, this.tokenOut.chainId) // sUSDC
             if (!rep) {
                 throw new Error(
                     `Representation of ${transitStableIn.symbol} in chain ${this.tokenOut.chainId} not found`,

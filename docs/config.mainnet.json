@@ -1,14 +1,14 @@
 {
-    "minSwapAmountInUsd": 10,
-    "maxSwapAmountInUsd": 2000,
+    "minSwapAmountInUsd": 50,
+    "maxSwapAmountInUsd": 5000000,
     "advisor": {
         "url": "https://api.symbiosis.finance/calculations"
     },
     "chains": [
         {
             "id": 1,
-            "rpc": "TYPE YOUR RPC ADDRESS",
-            "filterBlockOffset": 50000,
+            "rpc": "<TYPE_YOUR_RPC>",
+            "filterBlockOffset": 100000,
             "waitForBlocksCount": 5,
             "stables": [
                 {
@@ -27,7 +27,8 @@
             "nerves": [],
             "router": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
             "dexFee": 30,
-            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "metaRouter": "0x92C5b5B66988E6B8931a8CD3faa418b42003DF2F",
+            "metaRouterGateway": "0x23bcd8398A2BC9aa8d606E47D5Ae0d2f014bEA2e",
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0x0000000000000000000000000000000000000000",
             "portal": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
@@ -35,8 +36,8 @@
         },
         {
             "id": 56,
-            "rpc": "TYPE YOUR RPC ADDRESS",
-            "filterBlockOffset": 50000,
+            "rpc": "<TYPE_YOUR_RPC>",
+            "filterBlockOffset": 100000,
             "waitForBlocksCount": 20,
             "stables": [
                 {
@@ -72,15 +73,13 @@
                         "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
                         "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
                     ],
-                    "decimals": [
-                        18,
-                        6
-                    ]
+                    "decimals": [18, 6]
                 }
             ],
             "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "dexFee": 25,
-            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "metaRouter": "0x8fF99ec3175Edce6b1b809765EDeDECD7e54637e",
+            "metaRouterGateway": "0x6326bce6f1Bed3fE9cBd64081C786122a4c4286E",
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
@@ -88,8 +87,8 @@
         },
         {
             "id": 43114,
-            "rpc": "TYPE YOUR RPC ADDRESS",
-            "filterBlockOffset": 50000,
+            "rpc": "<TYPE_YOUR_RPC>",
+            "filterBlockOffset": 100000,
             "waitForBlocksCount": 30,
             "stables": [
                 {
@@ -138,10 +137,7 @@
                         "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
                         "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
                     ],
-                    "decimals": [
-                        6,
-                        6
-                    ]
+                    "decimals": [6, 6]
                 },
                 {
                     "address": "0xF4BFF06E02cdF55918e0ec98082bDE1DA85d33Db",
@@ -149,15 +145,13 @@
                         "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
                         "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd"
                     ],
-                    "decimals": [
-                        6,
-                        18
-                    ]
+                    "decimals": [6, 18]
                 }
             ],
             "router": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106",
             "dexFee": 30,
-            "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "metaRouter": "0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A",
+            "metaRouterGateway": "0x8A3B5FD29E7172D13B71c3a939B8901e8400b78F",
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
@@ -165,8 +159,8 @@
         },
         {
             "id": 137,
-            "rpc": "TYPE YOUR RPC ADDRESS",
-            "filterBlockOffset": 50000,
+            "rpc": "<TYPE_YOUR_RPC>",
+            "filterBlockOffset": 100000,
             "waitForBlocksCount": 60,
             "stables": [
                 {
@@ -228,10 +222,7 @@
                         "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
                         "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
                     ],
-                    "decimals": [
-                        6,
-                        6
-                    ]
+                    "decimals": [6, 6]
                 },
                 {
                     "address": "0xF4BFF06E02cdF55918e0ec98082bDE1DA85d33Db",
@@ -239,10 +230,7 @@
                         "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
                         "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd"
                     ],
-                    "decimals": [
-                        6,
-                        18
-                    ]
+                    "decimals": [6, 18]
                 },
                 {
                     "address": "0x3F1bfa6FA3B6D03202538Bf0cdE92BbE551104ac",
@@ -250,19 +238,89 @@
                         "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
                         "0x8Eb3771A43a8C45AaBE6d61ED709eCe652281DC9"
                     ],
-                    "decimals": [
-                        6,
-                        6
-                    ]
+                    "decimals": [6, 6]
                 }
             ],
             "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
             "dexFee": 30,
+            "metaRouter": "0xd2B5945829D8254C40f63f476C9F02CF5762F8DF",
+            "metaRouterGateway": "0x5ee04643fe2D63f364F77B38C41F15A54930f5C1",
+            "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
+            "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
+            "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+        },
+        {
+            "id": 288,
+            "rpc": "https://mainnet.boba.network",
+            "filterBlockOffset": 4900,
+            "waitForBlocksCount": 0,
+            "stables": [
+                {
+                    "name": "USD Coin",
+                    "address": "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc",
+                    "symbol": "USDC",
+                    "decimals": 6,
+                    "chainId": 288,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic USDC",
+                    "address": "0x2f28Add68e59733D23D5F57d94c31fb965f835D0",
+                    "symbol": "sUSDC",
+                    "decimals": 6,
+                    "chainId": 288,
+                    "chainFromId": 1,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                },
+                {
+                    "name": "Synthetic BUSD",
+                    "address": "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd",
+                    "symbol": "sBUSD",
+                    "decimals": 18,
+                    "chainId": 288,
+                    "chainFromId": 56,
+                    "isStable": true,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BUSD-BD1/logo.png"
+                    }
+                }
+            ],
+            "nerves": [
+                {
+                    "address": "0xab0738320A21741f12797Ee921461C691673E276",
+                    "tokens": [
+                        "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc",
+                        "0x2f28Add68e59733D23D5F57d94c31fb965f835D0"
+                    ],
+                    "decimals": [6, 6]
+                },
+                {
+                    "address": "0xe0ddd7afC724BD4B320472B5C954c0abF8192344",
+                    "tokens": [
+                        "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc",
+                        "0xf04d3A8Eb17B832Fbebf43610e94BdC4fD5Cf2dd"
+                    ],
+                    "decimals": [6, 18]
+                }
+            ],
+            "router": "0x17C83E2B96ACfb5190d63F5E46d93c107eC0b514",
+            "dexFee": 30,
             "metaRouter": "0xc2299c4a45b7e44fFC23e6ba7aAC4AeFF0DDbccC",
+            "metaRouterGateway": "0xcB9ec7Bfa69c400F97fD667Bf3D8C61359cf50c2",
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
             "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
         }
     ]
-})
+}
