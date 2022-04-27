@@ -16,7 +16,7 @@ import {
     getInternalId,
     getTerraExternalId,
     getTerraInternalId,
-    getTerraTokenFullAddress,
+    terraTokenAddressToBytes32,
     encodeTerraAddress,
 } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -353,7 +353,7 @@ export class Bridging {
             const calldata = synthesis.interface.encodeFunctionData('mintSyntheticToken', [
                 '1', // _stableBridgingFee,
                 externalId, // externalID,
-                getTerraTokenFullAddress(this.tokenAmountIn.token), // _token,
+                terraTokenAddressToBytes32(this.tokenAmountIn.token), // _token,
                 chainIdIn, // block.chainid,
                 this.tokenAmountIn.raw.toString(), // _amount,
                 this.to, // _chain2address
@@ -459,7 +459,7 @@ export class Bridging {
             calldata = portalForNonEvm.encodeFunctionData('unsynthesize', [
                 '1',
                 externalId,
-                getTerraTokenFullAddress(this.tokenOut),
+                terraTokenAddressToBytes32(this.tokenOut),
                 this.tokenAmountIn.raw.toString(),
                 hexZeroPad(encodeTerraAddress(this.to), 32),
             ])

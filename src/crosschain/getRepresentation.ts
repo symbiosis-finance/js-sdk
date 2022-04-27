@@ -5,7 +5,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { parseBytes32String } from '@ethersproject/strings'
 import { isTerraChainId } from '../utils'
 import { Error } from './error'
-import { getTerraTokenFullAddress } from './utils'
+import { terraTokenAddressToBytes32 } from './utils'
 
 export async function getRepresentation(
     symbiosis: Symbiosis,
@@ -18,22 +18,23 @@ export async function getRepresentation(
         throw new Error('Fabric for Terra is not supported yet')
     }
 
-    const isNonEvm = token.isFromTerra() || (token.chainFromId && isTerraChainId(token.chainFromId))
+    // Token from terra or original token from terra
+    const isFromTerra = token.isFromTerra() || (token.chainFromId && isTerraChainId(token.chainFromId))
 
-    const fabric = isNonEvm ? symbiosis.fabricNonEnv(fabricChainId) : symbiosis.fabric(fabricChainId)
+    const fabric = isFromTerra ? symbiosis.fabricNonEnv(fabricChainId) : symbiosis.fabric(fabricChainId)
 
     try {
         let representation: string
         if (token.isSynthetic) {
             representation = await fabric.getRealRepresentation(token.address)
 
-            if (isNonEvm) {
+            if (isFromTerra) {
                 representation = parseBytes32String(representation).replace('\x00', '').replace('\x01', '')
             }
         } else {
             let address: string
             if (token.isFromTerra()) {
-                address = getTerraTokenFullAddress(token)
+                address = terraTokenAddressToBytes32(token)
             } else {
                 address = token.address
             }
@@ -41,15 +42,11 @@ export async function getRepresentation(
             representation = await fabric.getSyntRepresentation(address, token.chainId)
         }
 
-        console.log('rep', representation, chainId)
-
         if (representation === AddressZero) {
             return undefined
         }
 
-        const stable = symbiosis.findStable(representation, chainId)
-        console.log('s', stable)
-        return stable
+        return symbiosis.findStable(representation, chainId)
     } catch (e) {
         console.log(e)
         return undefined

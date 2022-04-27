@@ -91,12 +91,13 @@ export function getTerraExternalId({
     return `0x${hash.hex()}`
 }
 
-// \x00 - native token, \x01 - cw20 token
-export function getTerraTokenFullAddress(token: Token): string {
+// Convert terra token address to 32 bytes EVM compatible variant
+export function terraTokenAddressToBytes32(token: Token): string {
     if (!token.isFromTerra()) {
         throw new Error("Token isn't from Terra")
     }
 
+    // \x00 - native token, \x01 - cw20 token
     return formatBytes32String(`${token.isNative ? '\x00' : '\x01'}${token.address}`)
 }
 
