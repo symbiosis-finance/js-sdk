@@ -10,6 +10,8 @@ export {
     INIT_CODE_HASH,
     MINIMUM_LIQUIDITY,
     ZERO,
+    TerraChainId,
+    EVMChainId,
 } from './constants'
 
 export { isTerraChainId } from './utils'
