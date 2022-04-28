@@ -463,6 +463,14 @@ export class Bridging {
                 this.tokenAmountIn.raw.toString(),
                 hexZeroPad(encodeTerraAddress(this.to), 32),
             ])
+
+            this.simulate(calldata)
+                .then((result) => {
+                    console.log(result)
+                })
+                .catch((e) => {
+                    console.error('simulate', e)
+                })
         } else {
             const portal = this.symbiosis.portal(chainIdOut)
 
@@ -521,7 +529,7 @@ export class Bridging {
     }
 
     // @@ To test simulate advisor
-    async simulate() {
+    async simulate(calldata: string) {
         const lcdClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET)
 
         const execute = new MsgExecuteContract(
@@ -529,8 +537,7 @@ export class Bridging {
             'terra1xgq5t0k4yamg5f8e875ytpvv5yu8an8a2j5y8m', // @@
             {
                 receive_request: {
-                    calldata:
-                        'Svu58QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUB0xJtlOM38HyOVUPhKhYqawn0bbwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU5OnL9FZXOkfh8OByt1GW6iC8YGIAAAAAAAAAAAAAAAA=',
+                    calldata: base64.encode(calldata),
                 },
             }
         )
