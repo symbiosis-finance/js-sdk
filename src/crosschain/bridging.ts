@@ -1,4 +1,3 @@
-import { hexZeroPad } from '@ethersproject/bytes'
 import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '@terra-money/terra.js'
 import { ConnectedWallet } from '@terra-money/wallet-types'
@@ -12,12 +11,12 @@ import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import {
     calculateGasMargin,
+    encodeTerraAddress,
+    encodeTerraAddressToEvmAddress,
     getExternalId,
     getInternalId,
     getTerraExternalId,
     getTerraInternalId,
-    terraTokenAddressToBytes32,
-    encodeTerraAddress,
 } from './utils'
 import { WaitForComplete } from './waitForComplete'
 
@@ -353,7 +352,7 @@ export class Bridging {
             const calldata = synthesis.interface.encodeFunctionData('mintSyntheticToken', [
                 '1', // _stableBridgingFee,
                 externalId, // externalID,
-                terraTokenAddressToBytes32(this.tokenAmountIn.token), // _token,
+                encodeTerraAddressToEvmAddress(this.tokenAmountIn.token), // _token,
                 chainIdIn, // block.chainid,
                 this.tokenAmountIn.raw.toString(), // _amount,
                 this.to, // _chain2address
@@ -453,15 +452,15 @@ export class Bridging {
         if (this.tokenOut.isFromTerra()) {
             // Create the same calldata that we would get in the contract from the portal
             const portalForNonEvm = new utils.Interface([
-                'function unsynthesize(uint256 _stableBridgingFee, bytes32 externalID, bytes32 rtoken, uint256 _amount, bytes32 _chain2address)',
+                'function unsynthesize(uint256 _stableBridgingFee, bytes32 externalID, address rtoken, uint256 _amount, address _chain2address)',
             ])
 
             calldata = portalForNonEvm.encodeFunctionData('unsynthesize', [
                 '1',
                 externalId,
-                terraTokenAddressToBytes32(this.tokenOut),
+                encodeTerraAddressToEvmAddress(this.tokenOut),
                 this.tokenAmountIn.raw.toString(),
-                hexZeroPad(encodeTerraAddress(this.to), 32),
+                encodeTerraAddress(this.to),
             ])
 
             this.simulate(calldata)
@@ -534,10 +533,11 @@ export class Bridging {
 
         const execute = new MsgExecuteContract(
             'terra1un5uhazk2uay0c0supetw5vkagstccrz802t87',
-            'terra1xgq5t0k4yamg5f8e875ytpvv5yu8an8a2j5y8m', // @@
+            'terra132sng4xayl3h7yg5d0wdu6j2aqhdjgxesukktr', // @@
             {
                 receive_request: {
                     calldata: base64.encode(calldata),
+                    receive_side: 'terra1ucsmvpws60je3l7xsactp3efl6f2tn5hyw9yv2',
                 },
             }
         )

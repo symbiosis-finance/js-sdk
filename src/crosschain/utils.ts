@@ -1,7 +1,8 @@
-import { arrayify, hexlify } from '@ethersproject/bytes'
+import { arrayify, concat, hexlify } from '@ethersproject/bytes'
 import { Filter, Log } from '@ethersproject/providers'
-import { formatBytes32String } from '@ethersproject/strings'
+import { toUtf8Bytes } from '@ethersproject/strings'
 import { parseUnits } from '@ethersproject/units'
+import { HashZero } from '@ethersproject/constants'
 import { bech32 } from 'bech32'
 import { BigNumber, utils } from 'ethers'
 import sha3 from 'js-sha3'
@@ -91,14 +92,29 @@ export function getTerraExternalId({
     return `0x${hash.hex()}`
 }
 
-// Convert terra token address to 32 bytes EVM compatible variant
-export function terraTokenAddressToBytes32(token: Token): string {
-    if (!token.isFromTerra()) {
-        throw new Error("Token isn't from Terra")
+export function formatBytesAddressString(text: string): string {
+    // Get the bytes
+    const bytes = toUtf8Bytes(text)
+
+    // Check we have room for null-termination
+    if (bytes.length > 19) {
+        throw new Error('Address string must be less than 20 bytes')
     }
 
-    // \x00 - native token, \x01 - cw20 token
-    return formatBytes32String(`${token.isNative ? '\x00' : '\x01'}${token.address}`)
+    // Zero-pad (implicitly null-terminates)
+    return hexlify(concat([bytes, HashZero]).slice(0, 20))
+}
+
+export function encodeTerraAddressToEvmAddress(token: Token): string {
+    if (!token.isFromTerra()) {
+        throw new Error("Token isn't from Terra network")
+    }
+
+    if (token.isNative) {
+        return formatBytesAddressString(token.address)
+    }
+
+    return encodeTerraAddress(token.address)
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {

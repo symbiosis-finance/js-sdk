@@ -5,7 +5,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { parseBytes32String } from '@ethersproject/strings'
 import { isTerraChainId } from '../utils'
 import { Error } from './error'
-import { terraTokenAddressToBytes32 } from './utils'
+import { encodeTerraAddressToEvmAddress } from './utils'
 
 export async function getRepresentation(
     symbiosis: Symbiosis,
@@ -34,7 +34,7 @@ export async function getRepresentation(
         } else {
             let address: string
             if (token.isFromTerra()) {
-                address = terraTokenAddressToBytes32(token)
+                address = encodeTerraAddressToEvmAddress(token)
             } else {
                 address = token.address
             }
