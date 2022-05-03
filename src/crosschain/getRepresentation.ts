@@ -2,7 +2,6 @@ import { ChainId } from '../constants'
 import { Token } from '../entities'
 import { Symbiosis } from './symbiosis'
 import { AddressZero } from '@ethersproject/constants'
-import { parseBytes32String } from '@ethersproject/strings'
 import { isTerraChainId } from '../utils'
 import { Error } from './error'
 import { encodeTerraAddressToEvmAddress } from './utils'
@@ -19,18 +18,19 @@ export async function getRepresentation(
     }
 
     // Token from terra or original token from terra
-    const isFromTerra = token.isFromTerra() || (token.chainFromId && isTerraChainId(token.chainFromId))
+    // TODO: Fix get representation for synthetic tokens
+    // const isFromTerra = token.isFromTerra() || (token.chainFromId && isTerraChainId(token.chainFromId))
 
-    const fabric = isFromTerra ? symbiosis.fabricNonEnv(fabricChainId) : symbiosis.fabric(fabricChainId)
+    const fabric = symbiosis.fabric(fabricChainId)
 
     try {
         let representation: string
         if (token.isSynthetic) {
             representation = await fabric.getRealRepresentation(token.address)
 
-            if (isFromTerra) {
-                representation = parseBytes32String(representation).replace('\x00', '').replace('\x01', '')
-            }
+            // if (isFromTerra) {
+            //     representation = parseU(representation)
+            // }
         } else {
             let address: string
             if (token.isFromTerra()) {

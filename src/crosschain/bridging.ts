@@ -1,12 +1,12 @@
 import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '@terra-money/terra.js'
 import { ConnectedWallet } from '@terra-money/wallet-types'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import { base64 } from 'ethers/lib/utils'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { isTerraChainId } from '../utils'
-import { Synthesis, SynthesisNonEvm } from './contracts'
+import { Portal__factory } from './contracts'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import {
@@ -334,7 +334,7 @@ export class Bridging {
                 get_request_count: {},
             })
 
-            const synthesis = this.symbiosis.synthesisNonEvm(chainIdOut)
+            const synthesis = this.symbiosis.synthesis(chainIdOut)
 
             const internalId = getTerraInternalId({
                 contractAddress: portalAddress,
@@ -355,7 +355,7 @@ export class Bridging {
                 encodeTerraAddressToEvmAddress(this.tokenAmountIn.token), // _token,
                 chainIdIn, // block.chainid,
                 this.tokenAmountIn.raw.toString(), // _amount,
-                this.to, // _chain2address
+                encodeTerraAddress(this.to), // _chain2address
             ])
 
             console.log(calldata)
@@ -417,18 +417,16 @@ export class Bridging {
             throw new Error(`Burning tokens from Terra is not supported yet`)
         }
 
-        let synthesis: SynthesisNonEvm | Synthesis
+        const synthesis = this.symbiosis.synthesis(chainIdIn)
+
         let portalAddress: string
         let revertableAddress: string
         if (isTerraChainId(chainIdOut)) {
-            synthesis = this.symbiosis.synthesis(chainIdIn)
-
             const terraPortalAddress = this.symbiosis.getTerraPortalAddress(chainIdOut)
-            portalAddress = encodeTerraAddress(terraPortalAddress)
 
+            portalAddress = encodeTerraAddress(terraPortalAddress)
             revertableAddress = encodeTerraAddress(this.revertableAddress)
         } else {
-            synthesis = this.symbiosis.synthesisNonEvm(chainIdIn)
             portalAddress = this.symbiosis.portal(chainIdOut).address
             revertableAddress = this.revertableAddress
         }
@@ -448,21 +446,26 @@ export class Bridging {
             chainId: chainIdOut,
         })
 
-        let calldata: string
+        let receiverTokenAddress: string
+        let chainToAddress: string
         if (this.tokenOut.isFromTerra()) {
-            // Create the same calldata that we would get in the contract from the portal
-            const portalForNonEvm = new utils.Interface([
-                'function unsynthesize(uint256 _stableBridgingFee, bytes32 externalID, address rtoken, uint256 _amount, address _chain2address)',
-            ])
+            receiverTokenAddress = encodeTerraAddressToEvmAddress(this.tokenOut)
+            chainToAddress = encodeTerraAddress(this.to)
+        } else {
+            receiverTokenAddress = this.tokenOut.address
+            chainToAddress = this.to
+        }
 
-            calldata = portalForNonEvm.encodeFunctionData('unsynthesize', [
-                '1',
-                externalId,
-                encodeTerraAddressToEvmAddress(this.tokenOut),
-                this.tokenAmountIn.raw.toString(),
-                encodeTerraAddress(this.to),
-            ])
+        const calldata = Portal__factory.createInterface().encodeFunctionData('unsynthesize', [
+            '1', // _stableBridgingFee,
+            externalId, // externalID,
+            receiverTokenAddress, // rtoken,
+            this.tokenAmountIn.raw.toString(), // _amount,
+            chainToAddress, // _chain2address
+        ])
 
+        // @@ To test calldata
+        if (this.tokenOut.isFromTerra()) {
             this.simulate(calldata)
                 .then((result) => {
                     console.log(result)
@@ -470,16 +473,6 @@ export class Bridging {
                 .catch((e) => {
                     console.error('simulate', e)
                 })
-        } else {
-            const portal = this.symbiosis.portal(chainIdOut)
-
-            calldata = portal.interface.encodeFunctionData('unsynthesize', [
-                '1', // _stableBridgingFee,
-                externalId, // externalID,
-                this.tokenOut.address, // rtoken,
-                this.tokenAmountIn.raw.toString(), // _amount,
-                this.to, // _chain2address
-            ])
         }
 
         let receiveSide: string

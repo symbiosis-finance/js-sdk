@@ -21,11 +21,7 @@ import {
     OneInchOracle__factory,
     Portal,
     Portal__factory,
-    SyntFabricNonEvm,
-    SyntFabricNonEvm__factory,
     Synthesis,
-    SynthesisNonEvm,
-    SynthesisNonEvm__factory,
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
@@ -135,18 +131,6 @@ export class Symbiosis {
         return Synthesis__factory.connect(address, signerOrProvider)
     }
 
-    public synthesisNonEvm(chainId: ChainId, signer?: Signer): SynthesisNonEvm {
-        const address = this.chainConfig(chainId).synthesisNonEvm
-
-        if (!address) {
-            throw new Error('No non-EVM synthesis contract on chain')
-        }
-
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return SynthesisNonEvm__factory.connect(address, signerOrProvider)
-    }
-
     public bridge(chainId: ChainId, signer?: Signer): Bridge {
         const address = this.chainConfig(chainId).bridge
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -159,18 +143,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return Fabric__factory.connect(address, signerOrProvider)
-    }
-
-    public fabricNonEnv(chainId: ChainId, signer?: Signer): SyntFabricNonEvm {
-        const address = this.chainConfig(chainId).fabricNonEvm
-
-        if (!address) {
-            throw new Error('No non-EVM fabric contract on chain')
-        }
-
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return SyntFabricNonEvm__factory.connect(address, signerOrProvider)
     }
 
     public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {
