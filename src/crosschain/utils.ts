@@ -1,10 +1,10 @@
 import { arrayify, concat, hexlify } from '@ethersproject/bytes'
 import { Filter, Log } from '@ethersproject/providers'
-import { toUtf8Bytes } from '@ethersproject/strings'
+import { toUtf8Bytes, toUtf8String } from '@ethersproject/strings'
 import { parseUnits } from '@ethersproject/units'
 import { HashZero } from '@ethersproject/constants'
 import { bech32 } from 'bech32'
-import { BigNumber, utils } from 'ethers'
+import { BigNumber, utils, BytesLike } from 'ethers'
 import sha3 from 'js-sha3'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
@@ -92,7 +92,7 @@ export function getTerraExternalId({
     return `0x${hash.hex()}`
 }
 
-export function formatBytesAddressString(text: string): string {
+export function formatBytesTerraAddressString(text: string): string {
     // Get the bytes
     const bytes = toUtf8Bytes(text)
 
@@ -105,13 +105,37 @@ export function formatBytesAddressString(text: string): string {
     return hexlify(concat([bytes, HashZero]).slice(0, 20))
 }
 
+const COIN_DENOM_MAX_LENGTH = 4
+
+export function parseBytesTerraAddressString(bytes: BytesLike): string {
+    const data = arrayify(bytes)
+
+    // Must be 20 bytes
+    if (data.length !== 20) {
+        throw new Error('invalid address - not 20 bytes long')
+    }
+
+    // Find the null termination
+    let length = 19
+    while (data[length - 1] === 0) {
+        length--
+    }
+
+    if (length > COIN_DENOM_MAX_LENGTH) {
+        return hexlify(data)
+    }
+
+    // Determine the string value
+    return toUtf8String(data.slice(0, length))
+}
+
 export function encodeTerraAddressToEvmAddress(token: Token): string {
     if (!token.isFromTerra()) {
         throw new Error("Token isn't from Terra network")
     }
 
     if (token.isNative) {
-        return formatBytesAddressString(token.address)
+        return formatBytesTerraAddressString(token.address)
     }
 
     return encodeTerraAddress(token.address)
