@@ -355,10 +355,10 @@ export class Bridging {
                 encodeTerraAddressToEvmAddress(this.tokenAmountIn.token), // _token,
                 chainIdIn, // block.chainid,
                 this.tokenAmountIn.raw.toString(), // _amount,
-                encodeTerraAddress(this.to), // _chain2address
+                this.to, // _chain2address
             ])
 
-            console.log(calldata)
+            console.log('calldata', calldata)
 
             // const fee = await this.symbiosis.getBridgeFee({
             //     receiveSide: synthesis.address,
