@@ -63,6 +63,7 @@
         "@ethersproject/providers": "^5.0.5",
         "@ethersproject/solidity": "^5.0.2",
         "@ethersproject/units": "^5.2.0",
+        "@terra-money/wallet-types": "^3.8.1",
         "@typechain/ethers-v5": "^9.0.0",
         "@types/big.js": "^4.0.5",
         "@types/jest": "^27.0.3",
