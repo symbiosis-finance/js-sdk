@@ -245,8 +245,8 @@ export class Bridging {
                 asset_info: tokenIn.isNative
                     ? { native_coin: { denom: tokenIn.address } }
                     : { cw20_token: { address: tokenIn.address } },
-                opposite_bridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
-                opposite_synthesis: this.symbiosis.portal(this.tokenOut.chainId).address,
+                opposite_bridge: base64.encode(this.symbiosis.bridge(this.tokenOut.chainId).address),
+                opposite_synthesis: base64.encode(this.symbiosis.portal(this.tokenOut.chainId).address),
             },
         }
     }
