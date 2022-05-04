@@ -1,7 +1,7 @@
 import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '@terra-money/terra.js'
 import { ConnectedWallet } from '@terra-money/wallet-types'
-import { BigNumber, Signer } from 'ethers'
+import { BigNumber, Signer, utils } from 'ethers'
 import { base64 } from 'ethers/lib/utils'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
@@ -464,9 +464,23 @@ export class Bridging {
             chainToAddress, // _chain2address
         ])
 
+        const portalForNonEvm = new utils.Interface([
+            'function unsynthesize(uint256 _stableBridgingFee, bytes externalID, address rtoken, uint256 _amount, address _chain2address)',
+        ])
+
+        let patchedCalldata = portalForNonEvm.encodeFunctionData('unsynthesize', [
+            '1', // _stableBridgingFee,
+            externalId, // externalID,
+            receiverTokenAddress, // rtoken,
+            this.tokenAmountIn.raw.toString(), // _amount,
+            chainToAddress, // _chain2address
+        ])
+
+        patchedCalldata = calldata.substring(0, 10) + patchedCalldata.substring(10)
+
         // @@ To test calldata
         if (this.tokenOut.isFromTerra()) {
-            this.simulate(calldata)
+            this.simulate(patchedCalldata)
                 .then((result) => {
                     console.log(result)
                 })
@@ -484,7 +498,7 @@ export class Bridging {
 
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
-            calldata,
+            calldata: patchedCalldata,
             chainIdFrom: chainIdIn,
             chainIdTo: chainIdOut,
         })
