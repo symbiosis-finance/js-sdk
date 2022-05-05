@@ -1,7 +1,7 @@
 import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '@terra-money/terra.js'
 import { ConnectedWallet } from '@terra-money/wallet-types'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import { base64 } from 'ethers/lib/utils'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
@@ -179,7 +179,7 @@ export class Bridging {
 
         const signResult = await wallet.sign({ msgs: [execute] })
 
-        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET) // Chain
+        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET) // @@ Chain
 
         const response = await lcdcClient.tx.broadcastSync(signResult.result)
 
@@ -358,16 +358,20 @@ export class Bridging {
                 this.to, // _chain2address
             ])
 
-            console.log('calldata', calldata)
+            // @@ Try to call advisor
+            try {
+                const fee = await this.symbiosis.getBridgeFee({
+                    receiveSide: synthesis.address,
+                    calldata,
+                    chainIdFrom: this.tokenAmountIn.token.chainId,
+                    chainIdTo: this.tokenOut.chainId,
+                })
 
-            // const fee = await this.symbiosis.getBridgeFee({
-            //     receiveSide: synthesis.address,
-            //     calldata,
-            //     chainIdFrom: this.tokenAmountIn.token.chainId,
-            //     chainIdTo: this.tokenOut.chainId,
-            // })
-
-            return new TokenAmount(this.tokenOut, '100000')
+                return new TokenAmount(this.tokenOut, fee.toString())
+            } catch {
+                // @@ 2$ fee
+                return new TokenAmount(this.tokenOut, '2000000')
+            }
         }
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -464,31 +468,6 @@ export class Bridging {
             chainToAddress, // _chain2address
         ])
 
-        const portalForNonEvm = new utils.Interface([
-            'function unsynthesize(uint256 _stableBridgingFee, bytes externalID, address rtoken, uint256 _amount, address _chain2address)',
-        ])
-
-        let patchedCalldata = portalForNonEvm.encodeFunctionData('unsynthesize', [
-            '1', // _stableBridgingFee,
-            externalId, // externalID,
-            receiverTokenAddress, // rtoken,
-            this.tokenAmountIn.raw.toString(), // _amount,
-            chainToAddress, // _chain2address
-        ])
-
-        patchedCalldata = calldata.substring(0, 10) + patchedCalldata.substring(10)
-
-        // @@ To test calldata
-        if (this.tokenOut.isFromTerra()) {
-            this.simulate(patchedCalldata)
-                .then((result) => {
-                    console.log(result)
-                })
-                .catch((e) => {
-                    console.error('simulate', e)
-                })
-        }
-
         let receiveSide: string
         if (isTerraChainId(chainIdOut)) {
             receiveSide = this.symbiosis.getTerraPortalAddress(chainIdOut)
@@ -496,14 +475,32 @@ export class Bridging {
             receiveSide = this.symbiosis.portal(chainIdOut).address
         }
 
-        const fee = await this.symbiosis.getBridgeFee({
-            receiveSide,
-            calldata: patchedCalldata,
-            chainIdFrom: chainIdIn,
-            chainIdTo: chainIdOut,
-        })
+        try {
+            const fee = await this.symbiosis.getBridgeFee({
+                receiveSide,
+                calldata,
+                chainIdFrom: chainIdIn,
+                chainIdTo: chainIdOut,
+            })
 
-        return new TokenAmount(this.tokenOut, fee.toString())
+            return new TokenAmount(this.tokenOut, fee.toString())
+        } catch (e) {
+            // @@ Get price by simulation
+            if (this.tokenOut.isFromTerra()) {
+                const fee = await this.simulate(calldata)
+
+                let feeBN = BigNumber.from(fee)
+
+                if (feeBN.lt('1000000')) {
+                    // 1 USD fee is minimum
+                    feeBN = BigNumber.from('1000000')
+                }
+
+                return new TokenAmount(this.tokenOut, feeBN.toString())
+            }
+
+            throw e
+        }
     }
 
     async terraWaitForComplete(txInfo: TxInfo): Promise<string> {
@@ -540,11 +537,11 @@ export class Bridging {
 
         const execute = new MsgExecuteContract(
             'terra1un5uhazk2uay0c0supetw5vkagstccrz802t87',
-            'terra132sng4xayl3h7yg5d0wdu6j2aqhdjgxesukktr', // @@
+            'terra1xpw03ctkj56jjs2jpfjrzwheutua46ugvjgcwn', // @@
             {
                 receive_request: {
                     calldata: base64.encode(calldata),
-                    receive_side: 'terra1ucsmvpws60je3l7xsactp3efl6f2tn5hyw9yv2',
+                    receive_side: 'terra182yc9nt6289gy4hanh7ae5fh0xwr4wsf8pgy7j',
                 },
             }
         )
@@ -557,8 +554,21 @@ export class Bridging {
             },
         ]
 
-        const kek = await lcdClient.tx.estimateFee(signerDataArray, { msgs: [execute] })
+        const fee = await lcdClient.tx.estimateFee(signerDataArray, { msgs: [execute], feeDenoms: ['uusd'] })
 
-        return kek
+        let amount
+        for (const coin of fee.amount.toArray()) {
+            if (coin.denom !== 'uusd') {
+                continue
+            }
+
+            amount = coin.amount.toString()
+        }
+
+        if (amount === undefined) {
+            throw new Error('Cant calculate fee in uusd')
+        }
+
+        return amount
     }
 }
