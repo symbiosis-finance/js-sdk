@@ -124,6 +124,10 @@ export class Symbiosis {
         return this.chainConfig(terraChainId).portal
     }
 
+    public getTerraBridgeAddress(terraChainId: TerraChainId): string {
+        return this.chainConfig(terraChainId).bridge
+    }
+
     public synthesis(chainId: ChainId, signer?: Signer): Synthesis {
         const address = this.chainConfig(chainId).synthesis
         const signerOrProvider = signer || this.getProvider(chainId)

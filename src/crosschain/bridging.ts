@@ -3,7 +3,7 @@ import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '
 import { ConnectedWallet } from '@terra-money/wallet-types'
 import { BigNumber, Signer } from 'ethers'
 import { base64 } from 'ethers/lib/utils'
-import { ChainId } from '../constants'
+import { TerraChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { isTerraChainId } from '../utils'
 import { Portal__factory } from './contracts'
@@ -162,7 +162,9 @@ export class Bridging {
             throw new Error('Tokens are not set')
         }
 
-        if (!isTerraChainId(this.tokenAmountIn.token.chainId)) {
+        const { chainId } = this.tokenAmountIn.token
+
+        if (!isTerraChainId(chainId)) {
             throw new Error('Token not from terra')
         }
 
@@ -173,24 +175,24 @@ export class Bridging {
             ]
         }
 
-        const portalAddress = this.symbiosis.getTerraPortalAddress(this.tokenAmountIn.token.chainId)
+        const portalAddress = this.symbiosis.getTerraPortalAddress(chainId)
 
         const execute = new MsgExecuteContract(wallet.terraAddress, portalAddress, executeMessage, coins)
 
         const signResult = await wallet.sign({ msgs: [execute] })
 
-        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET) // @@ Chain
+        const lcdcClient = this.symbiosis.getTerraLCDClient(chainId)
 
         const response = await lcdcClient.tx.broadcastSync(signResult.result)
 
         return {
             transactionHash: response.txhash,
-            waitForMined: () => this.waitForTerraMined(response),
+            waitForMined: () => this.waitForTerraMined(response, chainId),
         }
     }
 
-    protected async waitForTerraMined(result: SyncTxBroadcastResult): WaitForMined {
-        const lcdcClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET) // @@ Chain
+    protected async waitForTerraMined(result: SyncTxBroadcastResult, chainId: TerraChainId): WaitForMined {
+        const lcdcClient = this.symbiosis.getTerraLCDClient(chainId)
 
         const TIMEOUT = 250 // 250ms
         const WAITING_TIME = 60 * 2000 // 2min
@@ -487,7 +489,7 @@ export class Bridging {
         } catch (e) {
             // @@ Get price by simulation
             if (this.tokenOut.isFromTerra()) {
-                const fee = await this.simulate(calldata)
+                const fee = await this.simulate(calldata, this.tokenOut.chainId as TerraChainId)
 
                 let feeBN = BigNumber.from(fee)
 
@@ -532,21 +534,27 @@ export class Bridging {
     }
 
     // @@ To test simulate advisor
-    async simulate(calldata: string) {
-        const lcdClient = this.symbiosis.getTerraLCDClient(ChainId.TERRA_TESTNET)
+    async simulate(calldata: string, chainId: TerraChainId) {
+        const lcdClient = this.symbiosis.getTerraLCDClient(chainId)
+
+        const portalAddress = this.symbiosis.getTerraPortalAddress(chainId)
+        const bridgeAddress = this.symbiosis.getTerraBridgeAddress(chainId)
+
+        // @@
+        const TERRA_MPC_ADDRESS = 'terra1un5uhazk2uay0c0supetw5vkagstccrz802t87'
 
         const execute = new MsgExecuteContract(
-            'terra1un5uhazk2uay0c0supetw5vkagstccrz802t87',
-            'terra1xpw03ctkj56jjs2jpfjrzwheutua46ugvjgcwn', // @@
+            TERRA_MPC_ADDRESS,
+            bridgeAddress, // @@
             {
                 receive_request: {
                     calldata: base64.encode(calldata),
-                    receive_side: 'terra182yc9nt6289gy4hanh7ae5fh0xwr4wsf8pgy7j',
+                    receive_side: portalAddress,
                 },
             }
         )
 
-        const account = await lcdClient.auth.accountInfo('terra1un5uhazk2uay0c0supetw5vkagstccrz802t87')
+        const account = await lcdClient.auth.accountInfo(TERRA_MPC_ADDRESS)
         const signerDataArray = [
             {
                 publicKey: account.getPublicKey(),
