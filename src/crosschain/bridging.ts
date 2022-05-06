@@ -19,6 +19,7 @@ import {
     getTerraInternalId,
 } from './utils'
 import { WaitForComplete } from './waitForComplete'
+import { Error, ErrorCode } from './error'
 
 export type WaitForMined = Promise<{
     blockNumber: number
@@ -106,7 +107,10 @@ export class Bridging {
 
         const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
         if (tokenAmountOut.lessThan(this.fee)) {
-            throw new Error('Amount out less than fee')
+            throw new Error(
+                `Amount $${tokenAmountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
         }
 
         this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
@@ -119,7 +123,7 @@ export class Bridging {
                 executeMessage,
                 execute: (wallet: ConnectedWallet) => this.executeTerra(executeMessage, wallet),
                 fee,
-                tokenAmountOut,
+                tokenAmountOut: this.tokenAmountOut,
             }
         }
 
@@ -360,20 +364,14 @@ export class Bridging {
                 this.to, // _chain2address
             ])
 
-            // @@ Try to call advisor
-            try {
-                const fee = await this.symbiosis.getBridgeFee({
-                    receiveSide: synthesis.address,
-                    calldata,
-                    chainIdFrom: this.tokenAmountIn.token.chainId,
-                    chainIdTo: this.tokenOut.chainId,
-                })
+            const fee = await this.symbiosis.getBridgeFee({
+                receiveSide: synthesis.address,
+                calldata,
+                chainIdFrom: this.tokenAmountIn.token.chainId,
+                chainIdTo: this.tokenOut.chainId,
+            })
 
-                return new TokenAmount(this.tokenOut, fee.toString())
-            } catch {
-                // @@ 2$ fee
-                return new TokenAmount(this.tokenOut, '2000000')
-            }
+            return new TokenAmount(this.tokenOut, fee.toString())
         }
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -477,32 +475,14 @@ export class Bridging {
             receiveSide = this.symbiosis.portal(chainIdOut).address
         }
 
-        try {
-            const fee = await this.symbiosis.getBridgeFee({
-                receiveSide,
-                calldata,
-                chainIdFrom: chainIdIn,
-                chainIdTo: chainIdOut,
-            })
+        const fee = await this.symbiosis.getBridgeFee({
+            receiveSide,
+            calldata,
+            chainIdFrom: chainIdIn,
+            chainIdTo: chainIdOut,
+        })
 
-            return new TokenAmount(this.tokenOut, fee.toString())
-        } catch (e) {
-            // @@ Get price by simulation
-            if (this.tokenOut.isFromTerra()) {
-                const fee = await this.simulate(calldata, this.tokenOut.chainId as TerraChainId)
-
-                let feeBN = BigNumber.from(fee)
-
-                if (feeBN.lt('1000000')) {
-                    // 1 USD fee is minimum
-                    feeBN = BigNumber.from('1000000')
-                }
-
-                return new TokenAmount(this.tokenOut, feeBN.toString())
-            }
-
-            throw e
-        }
+        return new TokenAmount(this.tokenOut, fee.toString())
     }
 
     async terraWaitForComplete(txInfo: TxInfo): Promise<string> {
