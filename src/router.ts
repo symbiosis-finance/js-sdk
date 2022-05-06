@@ -45,6 +45,11 @@ export interface SwapParameters {
      * The amount of wei to send in hex.
      */
     value: string
+
+    /**
+     * The offset of amount.
+     */
+    offset: number
 }
 
 function toHex(tokenAmount: TokenAmount) {
@@ -77,6 +82,7 @@ export abstract class Router {
         let methodName: string
         let args: (string | string[])[]
         let value: string
+        let offset: number
         switch (trade.tradeType) {
             case TradeType.EXACT_INPUT:
                 if (trade.inputAmount.token.isNative) {
@@ -86,6 +92,7 @@ export abstract class Router {
                     // (uint amountOutMin, address[] call  data path, address to, uint deadline)
                     args = [amountOut, path, to, deadline]
                     value = amountIn
+                    offset = 0
                 } else if (trade.outputAmount.token.isNative) {
                     methodName = useFeeOnTransfer
                         ? 'swapExactTokensForETHSupportingFeeOnTransferTokens'
@@ -93,6 +100,7 @@ export abstract class Router {
                     // (uint amountIn, uint amountOutMin, address[] call data path, address to, uint deadline)
                     args = [amountIn, amountOut, path, to, deadline]
                     value = ZERO_HEX
+                    offset = 36
                 } else {
                     methodName = useFeeOnTransfer
                         ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
@@ -100,6 +108,7 @@ export abstract class Router {
                     // (uint amountIn, uint amountOutMin, address[] call data path, address to, uint deadline)
                     args = [amountIn, amountOut, path, to, deadline]
                     value = ZERO_HEX
+                    offset = 36
                 }
                 break
             case TradeType.EXACT_OUTPUT:
@@ -109,16 +118,19 @@ export abstract class Router {
                     // (uint amountOut, address[] call data path, address to, uint deadline)
                     args = [amountOut, path, to, deadline]
                     value = amountIn
+                    offset = 0
                 } else if (trade.outputAmount.token.isNative) {
                     methodName = 'swapTokensForExactETH'
                     // (uint amountOut, uint amountInMax, address[] call data path, address to, uint deadline)
                     args = [amountOut, amountIn, path, to, deadline]
                     value = ZERO_HEX
+                    offset = 68
                 } else {
                     methodName = 'swapTokensForExactTokens'
                     // (uint amountOut, uint amountInMax, address[] call data path, address to, uint deadline)
                     args = [amountOut, amountIn, path, to, deadline]
                     value = ZERO_HEX
+                    offset = 68
                 }
                 break
         }
@@ -126,6 +138,7 @@ export abstract class Router {
             methodName,
             args,
             value,
+            offset,
         }
     }
 }

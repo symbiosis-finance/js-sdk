@@ -12,8 +12,8 @@ import {
     Bridge__factory,
     Fabric,
     Fabric__factory,
-    MetaRouterV2,
-    MetaRouterV2__factory,
+    MetaRouter,
+    MetaRouter__factory,
     NervePool,
     NervePool__factory,
     OneInchOracle,
@@ -155,11 +155,11 @@ export class Symbiosis {
         return NervePool__factory.connect(address, signerOrProvider)
     }
 
-    public metaRouterV2(chainId: ChainId, signer?: Signer): MetaRouterV2 {
+    public metaRouter(chainId: ChainId, signer?: Signer): MetaRouter {
         const address = this.chainConfig(chainId).metaRouter
         const signerOrProvider = signer || this.getProvider(chainId)
 
-        return MetaRouterV2__factory.connect(address, signerOrProvider)
+        return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
     public oneInchOracle(chainId: ChainId, signer?: Signer): OneInchOracle {
