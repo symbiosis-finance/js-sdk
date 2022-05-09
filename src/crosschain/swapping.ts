@@ -3,7 +3,7 @@ import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@et
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Percent, Token, TokenAmount } from '../entities'
+import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE, CHAINS_PRIORITY } from './constants'
 import { Error, ErrorCode } from './error'
@@ -45,7 +45,7 @@ export class Swapping {
 
     private tradeA: UniLikeTrade | OneInchTrade | undefined
     private tradeB!: NerveTrade
-    private tradeC: UniLikeTrade | undefined
+    private tradeC: UniLikeTrade | OneInchTrade | undefined
 
     public amountInUsd: TokenAmount | undefined
 
@@ -147,7 +147,7 @@ export class Swapping {
 
     private getTransactionRequest(fee: TokenAmount): TransactionRequest {
         const chainId = this.tokenAmountIn.token.chainId
-        const metaRouterV2 = this.symbiosis.metaRouterV2(chainId)
+        const metaRouter = this.symbiosis.metaRouter(chainId)
 
         const [relayRecipient, otherSideCalldata] = this.otherSideData(fee)
 
@@ -175,7 +175,7 @@ export class Swapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
-        const data = metaRouterV2.interface.encodeFunctionData('metaRouteV2', [
+        const data = metaRouter.interface.encodeFunctionData('metaRoute', [
             {
                 firstSwapCalldata: this.tradeA?.callData || [],
                 secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
@@ -191,7 +191,7 @@ export class Swapping {
 
         return {
             chainId,
-            to: metaRouterV2.address,
+            to: metaRouter.address,
             data,
             value,
         }
@@ -235,7 +235,7 @@ export class Swapping {
     private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStable(chainId)
-        const to = this.symbiosis.metaRouterV2(chainId).address
+        const to = this.symbiosis.metaRouter(chainId).address
 
         if (this.use1Inch) {
             const oracle = this.symbiosis.oneInchOracle(this.tokenAmountIn.token.chainId)
@@ -315,6 +315,11 @@ export class Swapping {
             tradeCAmountIn = this.tradeB.amountOut
         }
 
+        if (this.use1Inch) {
+            const oracle = this.symbiosis.oneInchOracle(tradeCAmountIn.token.chainId)
+            return new OneInchTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage / 100, oracle)
+        }
+
         const dexFee = this.symbiosis.dexFee(this.tokenOut.chainId)
 
         let routerC: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(this.tokenOut.chainId)
@@ -366,9 +371,10 @@ export class Swapping {
                     stableBridgingFee: fee.raw.toString(),
                     amount: this.burnOtherSideAmount().raw.toString(),
                     syntCaller: this.from,
-                    finalDexRouter: this.symbiosis.uniLikeRouter(this.tokenOut.chainId).address,
+                    finalReceiveSide: this.symbiosis.uniLikeRouter(this.tokenOut.chainId).address,
                     sToken: this.tradeB.amountOut.token.address,
-                    swapCallData: this.tradeC?.callData || [],
+                    finalCallData: this.tradeC?.callData || [],
+                    finalOffset: this.tradeC?.callDataOffset || 0,
                     chain2address: this.to,
                     receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
                     oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
@@ -386,7 +392,7 @@ export class Swapping {
 
         const swapTokens = this.tradeB.route.map((i) => i?.address)
         if (this.tradeC?.callData) {
-            swapTokens.push(AddressZero)
+            swapTokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
@@ -410,8 +416,9 @@ export class Swapping {
                     swapTokens,
                     secondDexRouter: this.tradeB.pool.address,
                     secondSwapCalldata: this.tradeB.callData,
-                    finalDexRouter: this.symbiosis.uniLikeRouter(chainIdOut).address,
-                    finalSwapCalldata: this.tradeC?.callData || [],
+                    finalReceiveSide: this.symbiosis.uniLikeRouter(chainIdOut).address,
+                    finalCalldata: this.tradeC?.callData || [],
+                    finalOffset: this.tradeC?.callDataOffset || 0,
                     revertableAddress: this.revertableAddress,
                 },
             ]),
@@ -473,7 +480,7 @@ export class Swapping {
 
         const swapTokens = this.tradeB.route.map((i) => i.address)
         if (this.tradeC?.callData) {
-            swapTokens.push(AddressZero)
+            swapTokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         }
 
         const callData = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
@@ -487,8 +494,9 @@ export class Swapping {
                 swapTokens: swapTokens,
                 secondDexRouter: this.tradeB.pool.address,
                 secondSwapCalldata: this.tradeB.callData,
-                finalDexRouter: router.address,
-                finalSwapCalldata: this.tradeC?.callData || [],
+                finalReceiveSide: router.address,
+                finalCalldata: this.tradeC?.callData || [],
+                finalOffset: this.tradeC?.callDataOffset || 0,
             },
         ])
 
@@ -523,13 +531,14 @@ export class Swapping {
         })
 
         const calldata = portal.interface.encodeFunctionData('metaUnsynthesize', [
-            fee?.raw.toString() || '1', // bridge fee
-            externalId, // txID,
-            this.to, // _metaBurnTransaction.chain2address,
-            amount, // _metaBurnTransaction.amount,
-            token.address, // rtoken,
-            router.address, // _metaBurnTransaction.finalDexRouter,
-            this.tradeC?.callData || [], // _metaBurnTransaction.swapCallData
+            fee?.raw.toString() || '1', // _stableBridgingFee
+            externalId, // _externalID,
+            this.to, // _to
+            amount, // _amount
+            token.address, // _rToken
+            router.address, // _finalReceiveSide
+            this.tradeC?.callData || [], // _finalCalldata
+            this.tradeC?.callDataOffset || 0, // _finalOffset
         ])
         return [portal.address, calldata]
     }

@@ -31,8 +31,9 @@ export declare namespace MetaRouteStructs {
         swapTokens: string[]
         secondDexRouter: string
         secondSwapCalldata: BytesLike
-        finalDexRouter: string
-        finalSwapCalldata: BytesLike
+        finalReceiveSide: string
+        finalCalldata: BytesLike
+        finalOffset: BigNumberish
         revertableAddress: string
     }
 
@@ -50,6 +51,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
+        BigNumber,
         string
     ] & {
         stableBridgingFee: BigNumber
@@ -63,8 +65,9 @@ export declare namespace MetaRouteStructs {
         swapTokens: string[]
         secondDexRouter: string
         secondSwapCalldata: string
-        finalDexRouter: string
-        finalSwapCalldata: string
+        finalReceiveSide: string
+        finalCalldata: string
+        finalOffset: BigNumber
         revertableAddress: string
     }
 }
@@ -77,8 +80,8 @@ export interface PortalInterface extends utils.Interface {
         'initialize(address,address,address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
         'metaRouter()': FunctionFragment
-        'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,address))': FunctionFragment
-        'metaUnsynthesize(uint256,bytes32,address,uint256,address,address,bytes)': FunctionFragment
+        'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address))': FunctionFragment
+        'metaUnsynthesize(uint256,bytes32,address,uint256,address,address,bytes,uint256)': FunctionFragment
         'owner()': FunctionFragment
         'pause()': FunctionFragment
         'paused()': FunctionFragment
@@ -114,7 +117,7 @@ export interface PortalInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'metaUnsynthesize',
-        values: [BigNumberish, BytesLike, string, BigNumberish, string, string, BytesLike]
+        values: [BigNumberish, BytesLike, string, BigNumberish, string, string, BytesLike, BigNumberish]
     ): string
     encodeFunctionData(functionFragment: 'owner', values?: undefined): string
     encodeFunctionData(functionFragment: 'pause', values?: undefined): string
@@ -300,8 +303,9 @@ export interface Portal extends BaseContract {
             _to: string,
             _amount: BigNumberish,
             _rToken: string,
-            _finalDexRouter: string,
-            _finalSwapCalldata: BytesLike,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -450,8 +454,9 @@ export interface Portal extends BaseContract {
         _to: string,
         _amount: BigNumberish,
         _rToken: string,
-        _finalDexRouter: string,
-        _finalSwapCalldata: BytesLike,
+        _finalReceiveSide: string,
+        _finalCalldata: BytesLike,
+        _finalOffset: BigNumberish,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -600,8 +605,9 @@ export interface Portal extends BaseContract {
             _to: string,
             _amount: BigNumberish,
             _rToken: string,
-            _finalDexRouter: string,
-            _finalSwapCalldata: BytesLike,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -797,8 +803,9 @@ export interface Portal extends BaseContract {
             _to: string,
             _amount: BigNumberish,
             _rToken: string,
-            _finalDexRouter: string,
-            _finalSwapCalldata: BytesLike,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -937,8 +944,9 @@ export interface Portal extends BaseContract {
             _to: string,
             _amount: BigNumberish,
             _rToken: string,
-            _finalDexRouter: string,
-            _finalSwapCalldata: BytesLike,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

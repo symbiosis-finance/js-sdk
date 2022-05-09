@@ -21,6 +21,7 @@ export interface BridgeInterface extends utils.Interface {
     contractName: 'Bridge'
     functions: {
         'changeMPC(address)': FunctionFragment
+        'changeMPCSigned(address,bytes)': FunctionFragment
         'currentChainId()': FunctionFragment
         'initialize(address)': FunctionFragment
         'isAdmin(address)': FunctionFragment
@@ -41,6 +42,7 @@ export interface BridgeInterface extends utils.Interface {
     }
 
     encodeFunctionData(functionFragment: 'changeMPC', values: [string]): string
+    encodeFunctionData(functionFragment: 'changeMPCSigned', values: [string, BytesLike]): string
     encodeFunctionData(functionFragment: 'currentChainId', values?: undefined): string
     encodeFunctionData(functionFragment: 'initialize', values: [string]): string
     encodeFunctionData(functionFragment: 'isAdmin', values: [string]): string
@@ -60,6 +62,7 @@ export interface BridgeInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'withdrawFee', values: [string, string, BigNumberish]): string
 
     decodeFunctionResult(functionFragment: 'changeMPC', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'changeMPCSigned', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'currentChainId', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'isAdmin', data: BytesLike): Result
@@ -159,6 +162,12 @@ export interface Bridge extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
+        changeMPCSigned(
+            _newMPC: string,
+            signature: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
         currentChainId(overrides?: CallOverrides): Promise<[BigNumber]>
 
         initialize(
@@ -233,6 +242,12 @@ export interface Bridge extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
+    changeMPCSigned(
+        _newMPC: string,
+        signature: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     currentChainId(overrides?: CallOverrides): Promise<BigNumber>
 
     initialize(_mpc: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
@@ -300,6 +315,8 @@ export interface Bridge extends BaseContract {
 
     callStatic: {
         changeMPC(_newMPC: string, overrides?: CallOverrides): Promise<boolean>
+
+        changeMPCSigned(_newMPC: string, signature: BytesLike, overrides?: CallOverrides): Promise<boolean>
 
         currentChainId(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -395,6 +412,12 @@ export interface Bridge extends BaseContract {
     estimateGas: {
         changeMPC(_newMPC: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
+        changeMPCSigned(
+            _newMPC: string,
+            signature: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
         currentChainId(overrides?: CallOverrides): Promise<BigNumber>
 
         initialize(_mpc: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
@@ -464,6 +487,12 @@ export interface Bridge extends BaseContract {
     populateTransaction: {
         changeMPC(
             _newMPC: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        changeMPCSigned(
+            _newMPC: string,
+            signature: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

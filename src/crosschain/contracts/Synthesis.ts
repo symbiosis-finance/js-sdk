@@ -22,9 +22,10 @@ export declare namespace MetaRouteStructs {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
         syntCaller: string
-        finalDexRouter: string
+        finalReceiveSide: string
         sToken: string
-        swapCallData: BytesLike
+        finalCallData: BytesLike
+        finalOffset: BigNumberish
         chain2address: string
         receiveSide: string
         oppositeBridge: string
@@ -39,6 +40,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
+        BigNumber,
         string,
         string,
         string,
@@ -48,9 +50,10 @@ export declare namespace MetaRouteStructs {
         stableBridgingFee: BigNumber
         amount: BigNumber
         syntCaller: string
-        finalDexRouter: string
+        finalReceiveSide: string
         sToken: string
-        swapCallData: string
+        finalCallData: string
+        finalOffset: BigNumber
         chain2address: string
         receiveSide: string
         oppositeBridge: string
@@ -68,8 +71,9 @@ export declare namespace MetaRouteStructs {
         swapTokens: string[]
         secondDexRouter: string
         secondSwapCalldata: BytesLike
-        finalDexRouter: string
-        finalSwapCalldata: BytesLike
+        finalReceiveSide: string
+        finalCalldata: BytesLike
+        finalOffset: BigNumberish
     }
 
     export type MetaMintTransactionStructOutput = [
@@ -83,7 +87,8 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
-        string
+        string,
+        BigNumber
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -94,8 +99,9 @@ export declare namespace MetaRouteStructs {
         swapTokens: string[]
         secondDexRouter: string
         secondSwapCalldata: string
-        finalDexRouter: string
-        finalSwapCalldata: string
+        finalReceiveSide: string
+        finalCalldata: string
+        finalOffset: BigNumber
     }
 }
 
@@ -107,8 +113,8 @@ export interface SynthesisInterface extends utils.Interface {
         'fabric()': FunctionFragment
         'initialize(address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
-        'metaBurnSyntheticToken((uint256,uint256,address,address,address,bytes,address,address,address,address,uint256))': FunctionFragment
-        'metaMintSyntheticToken((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes))': FunctionFragment
+        'metaBurnSyntheticToken((uint256,uint256,address,address,address,bytes,uint256,address,address,address,address,uint256))': FunctionFragment
+        'metaMintSyntheticToken((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRouter()': FunctionFragment
         'mintSyntheticToken(uint256,bytes32,address,uint256,uint256,address)': FunctionFragment
         'owner()': FunctionFragment
