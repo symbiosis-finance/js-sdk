@@ -180,7 +180,7 @@ export class Swapping {
                 firstSwapCalldata: this.tradeA?.callData || [],
                 secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
                 approvedTokens,
-                firstDexRouter: this.tradeA ? this.tradeA.routerAddress : AddressZero,
+                firstDexRouter: this.tradeA?.routerAddress || AddressZero,
                 secondDexRouter: this.tradeB.pool.address,
                 amount: amount.raw.toString(),
                 nativeIn: amount.token.isNative,
@@ -235,17 +235,18 @@ export class Swapping {
     private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStable(chainId)
-        const to = this.symbiosis.metaRouter(chainId).address
+        const from = this.symbiosis.metaRouter(chainId).address
+        const to = from
 
         if (this.use1Inch) {
-            const oracle = this.symbiosis.oneInchOracle(this.tokenAmountIn.token.chainId)
-            return new OneInchTrade(this.tokenAmountIn, tokenOut, to, this.slippage / 100, oracle)
+            const oracle = this.symbiosis.oneInchOracle(chainId)
+            return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
         let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
-        if (this.tokenAmountIn.token.chainId === ChainId.AVAX_MAINNET) {
+        if (chainId === ChainId.AVAX_MAINNET) {
             routerA = this.symbiosis.avaxRouter(chainId)
         }
 
@@ -315,16 +316,26 @@ export class Swapping {
             tradeCAmountIn = this.tradeB.amountOut
         }
 
+        const chainId = this.tokenOut.chainId
+
         if (this.use1Inch) {
-            const oracle = this.symbiosis.oneInchOracle(tradeCAmountIn.token.chainId)
-            return new OneInchTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage / 100, oracle)
+            const from = this.symbiosis.metaRouter(chainId).address
+            const oracle = this.symbiosis.oneInchOracle(chainId)
+            return new OneInchTrade(
+                tradeCAmountIn,
+                wrappedToken(this.tokenOut),
+                from,
+                this.to,
+                this.slippage / 100,
+                oracle
+            )
         }
 
-        const dexFee = this.symbiosis.dexFee(this.tokenOut.chainId)
+        const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerC: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(this.tokenOut.chainId)
-        if (this.tokenOut.chainId === ChainId.AVAX_MAINNET) {
-            routerC = this.symbiosis.avaxRouter(this.tokenOut.chainId)
+        let routerC: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
+        if (chainId === ChainId.AVAX_MAINNET) {
+            routerC = this.symbiosis.avaxRouter(chainId)
         }
 
         return new UniLikeTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)
@@ -371,7 +382,7 @@ export class Swapping {
                     stableBridgingFee: fee.raw.toString(),
                     amount: this.burnOtherSideAmount().raw.toString(),
                     syntCaller: this.from,
-                    finalReceiveSide: this.symbiosis.uniLikeRouter(this.tokenOut.chainId).address,
+                    finalReceiveSide: this.tradeC?.routerAddress || AddressZero,
                     sToken: this.tradeB.amountOut.token.address,
                     finalCallData: this.tradeC?.callData || [],
                     finalOffset: this.tradeC?.callDataOffset || 0,
@@ -416,7 +427,7 @@ export class Swapping {
                     swapTokens,
                     secondDexRouter: this.tradeB.pool.address,
                     secondSwapCalldata: this.tradeB.callData,
-                    finalReceiveSide: this.symbiosis.uniLikeRouter(chainIdOut).address,
+                    finalReceiveSide: this.tradeC?.routerAddress || AddressZero,
                     finalCalldata: this.tradeC?.callData || [],
                     finalOffset: this.tradeC?.callDataOffset || 0,
                     revertableAddress: this.revertableAddress,
@@ -461,8 +472,6 @@ export class Swapping {
         const portalRequestsCount = (await portal.requestCount()).toNumber()
         const synthesis = this.symbiosis.synthesis(chainIdOut)
 
-        const router = this.symbiosis.uniLikeRouter(chainIdOut)
-
         const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const internalId = getInternalId({
@@ -491,10 +500,10 @@ export class Swapping {
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
-                swapTokens: swapTokens,
+                swapTokens,
                 secondDexRouter: this.tradeB.pool.address,
                 secondSwapCalldata: this.tradeB.callData,
-                finalReceiveSide: router.address,
+                finalReceiveSide: this.tradeC?.routerAddress || AddressZero,
                 finalCalldata: this.tradeC?.callData || [],
                 finalOffset: this.tradeC?.callDataOffset || 0,
             },
@@ -511,7 +520,6 @@ export class Swapping {
         const synthesisRequestsCount = (await synthesis.requestCount()).toNumber()
 
         const portal = this.symbiosis.portal(chainIdOut)
-        const router = this.symbiosis.uniLikeRouter(chainIdOut)
 
         const token = this.tradeC ? this.tradeC.tokenAmountIn.token : this.tokenOut
 
@@ -536,7 +544,7 @@ export class Swapping {
             this.to, // _to
             amount, // _amount
             token.address, // _rToken
-            router.address, // _finalReceiveSide
+            this.tradeC?.routerAddress || AddressZero, // _finalReceiveSide
             this.tradeC?.callData || [], // _finalCalldata
             this.tradeC?.callDataOffset || 0, // _finalOffset
         ])

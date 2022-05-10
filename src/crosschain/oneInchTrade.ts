@@ -19,18 +19,21 @@ export class OneInchTrade {
 
     private readonly tokenOut: Token
     private readonly from: string
+    private readonly to: string
     private readonly slippage: number
 
     public constructor(
         tokenAmountIn: TokenAmount,
         tokenOut: Token,
         from: string,
+        to: string,
         slippage: number,
         oracle: OneInchOracle
     ) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
+        this.to = to
         this.slippage = slippage
         this.oracle = oracle
     }
@@ -52,6 +55,7 @@ export class OneInchTrade {
         params.push(`toTokenAddress=${toTokenAddress}`)
         params.push(`amount=${this.tokenAmountIn.raw.toString()}`)
         params.push(`fromAddress=${this.from}`)
+        params.push(`destReceiver=${this.to}`)
         params.push(`slippage=${this.slippage}`)
         params.push(`disableEstimate=true`)
         params.push(`allowPartialFill=false`)
@@ -96,7 +100,7 @@ export class OneInchTrade {
             },
             {
                 sigHash: '7c025200',
-                offset: 228,
+                offset: 260,
             },
             {
                 sigHash: 'e449022e',
