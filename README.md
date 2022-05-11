@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-npm i symbiosis-js-sdk
+npm i symbiosis-js-sdk@2.5.5
 ```
 
 ## Install dependencies
@@ -107,7 +107,8 @@ const { execute, fee, tokenAmountOut, route, priceImpact } = await swapping.exac
     to, // to account address
     revertableAddress, // account who can revert stucked transaction
     slippage, // slippage
-    deadline // deadline date in seconds
+    deadline, // deadline date in seconds
+    use1Inch // boolean (use 1inch router for swaps)
 )
 
 // Execute transaction

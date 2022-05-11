@@ -11,7 +11,7 @@ import { NerveTrade } from './nerveTrade'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, getExternalId, getInternalId } from './utils'
+import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
@@ -238,7 +238,7 @@ export class Swapping {
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (this.use1Inch) {
+        if (this.use1Inch && canOneInch(chainId)) {
             const oracle = this.symbiosis.oneInchOracle(chainId)
             return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
         }
@@ -318,7 +318,7 @@ export class Swapping {
 
         const chainId = this.tokenOut.chainId
 
-        if (this.use1Inch) {
+        if (this.use1Inch && canOneInch(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
             return new OneInchTrade(tradeCAmountIn, this.tokenOut, from, this.to, this.slippage / 100, oracle)
