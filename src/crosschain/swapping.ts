@@ -321,14 +321,7 @@ export class Swapping {
         if (this.use1Inch) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(
-                tradeCAmountIn,
-                wrappedToken(this.tokenOut),
-                from,
-                this.to,
-                this.slippage / 100,
-                oracle
-            )
+            return new OneInchTrade(tradeCAmountIn, this.tokenOut, from, this.to, this.slippage / 100, oracle)
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
