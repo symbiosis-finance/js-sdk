@@ -21,8 +21,6 @@ export interface FabricInterface extends utils.Interface {
     contractName: 'Fabric'
     functions: {
         'createRepresentationByAdmin(address,uint256,string,string,uint8)': FunctionFragment
-        'getAddressComplex(address,uint256)': FunctionFragment
-        'getAddressSalted(address,bytes32,uint256)': FunctionFragment
         'getRealRepresentation(address)': FunctionFragment
         'getSyntRepresentation(address,uint256)': FunctionFragment
         'getSyntRepresentationByKey(bytes32)': FunctionFragment
@@ -39,8 +37,6 @@ export interface FabricInterface extends utils.Interface {
         functionFragment: 'createRepresentationByAdmin',
         values: [string, BigNumberish, string, string, BigNumberish]
     ): string
-    encodeFunctionData(functionFragment: 'getAddressComplex', values: [string, BigNumberish]): string
-    encodeFunctionData(functionFragment: 'getAddressSalted', values: [string, BytesLike, BigNumberish]): string
     encodeFunctionData(functionFragment: 'getRealRepresentation', values: [string]): string
     encodeFunctionData(functionFragment: 'getSyntRepresentation', values: [string, BigNumberish]): string
     encodeFunctionData(functionFragment: 'getSyntRepresentationByKey', values: [BytesLike]): string
@@ -53,8 +49,6 @@ export interface FabricInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'unsynthesize', values: [string, BigNumberish, string]): string
 
     decodeFunctionResult(functionFragment: 'createRepresentationByAdmin', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'getAddressComplex', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'getAddressSalted', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'getRealRepresentation', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'getSyntRepresentation', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'getSyntRepresentationByKey', data: BytesLike): Result
@@ -119,15 +113,6 @@ export interface Fabric extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
-        getAddressComplex(_origin: string, _nonce: BigNumberish, overrides?: CallOverrides): Promise<[string]>
-
-        getAddressSalted(
-            _creator: string,
-            _bytecodeHash: BytesLike,
-            _salt: BigNumberish,
-            overrides?: CallOverrides
-        ): Promise<[string]>
-
         getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<[string]>
 
         getSyntRepresentation(
@@ -178,15 +163,6 @@ export interface Fabric extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
-    getAddressComplex(_origin: string, _nonce: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-    getAddressSalted(
-        _creator: string,
-        _bytecodeHash: BytesLike,
-        _salt: BigNumberish,
-        overrides?: CallOverrides
-    ): Promise<string>
-
     getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<string>
 
     getSyntRepresentation(_realTokenAdr: string, _chainID: BigNumberish, overrides?: CallOverrides): Promise<string>
@@ -233,15 +209,6 @@ export interface Fabric extends BaseContract {
             overrides?: CallOverrides
         ): Promise<void>
 
-        getAddressComplex(_origin: string, _nonce: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-        getAddressSalted(
-            _creator: string,
-            _bytecodeHash: BytesLike,
-            _salt: BigNumberish,
-            overrides?: CallOverrides
-        ): Promise<string>
-
         getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<string>
 
         getSyntRepresentation(_realTokenAdr: string, _chainID: BigNumberish, overrides?: CallOverrides): Promise<string>
@@ -286,15 +253,6 @@ export interface Fabric extends BaseContract {
             _stokenSymbol: string,
             _decimals: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        getAddressComplex(_origin: string, _nonce: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-        getAddressSalted(
-            _creator: string,
-            _bytecodeHash: BytesLike,
-            _salt: BigNumberish,
-            overrides?: CallOverrides
         ): Promise<BigNumber>
 
         getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<BigNumber>
@@ -343,19 +301,6 @@ export interface Fabric extends BaseContract {
             _stokenSymbol: string,
             _decimals: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        getAddressComplex(
-            _origin: string,
-            _nonce: BigNumberish,
-            overrides?: CallOverrides
-        ): Promise<PopulatedTransaction>
-
-        getAddressSalted(
-            _creator: string,
-            _bytecodeHash: BytesLike,
-            _salt: BigNumberish,
-            overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
         getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<PopulatedTransaction>

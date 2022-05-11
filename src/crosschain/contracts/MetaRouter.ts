@@ -29,8 +29,9 @@ export declare namespace MetaRouteStructs {
         swapTokens: string[]
         secondDexRouter: string
         secondSwapCalldata: BytesLike
-        finalDexRouter: string
-        finalSwapCalldata: BytesLike
+        finalReceiveSide: string
+        finalCalldata: BytesLike
+        finalOffset: BigNumberish
     }
 
     export type MetaMintTransactionStructOutput = [
@@ -44,7 +45,8 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
-        string
+        string,
+        BigNumber
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -55,11 +57,12 @@ export declare namespace MetaRouteStructs {
         swapTokens: string[]
         secondDexRouter: string
         secondSwapCalldata: string
-        finalDexRouter: string
-        finalSwapCalldata: string
+        finalReceiveSide: string
+        finalCalldata: string
+        finalOffset: BigNumber
     }
 
-    export type MetaRouteTransactionV2Struct = {
+    export type MetaRouteTransactionStruct = {
         firstSwapCalldata: BytesLike
         secondSwapCalldata: BytesLike
         approvedTokens: string[]
@@ -71,7 +74,7 @@ export declare namespace MetaRouteStructs {
         otherSideCalldata: BytesLike
     }
 
-    export type MetaRouteTransactionV2StructOutput = [
+    export type MetaRouteTransactionStructOutput = [
         string,
         string,
         string[],
@@ -94,32 +97,38 @@ export declare namespace MetaRouteStructs {
     }
 }
 
-export interface MetaRouterV2Interface extends utils.Interface {
-    contractName: 'MetaRouterV2'
+export interface MetaRouterInterface extends utils.Interface {
+    contractName: 'MetaRouter'
     functions: {
-        'metaMintSwap((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes))': FunctionFragment
-        'metaRouteV2((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
-        'swap(address,uint256,address,bytes)': FunctionFragment
+        'externalCall(address,uint256,address,bytes,uint256)': FunctionFragment
+        'metaMintSwap((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
+        'metaRouterGateway()': FunctionFragment
     }
 
+    encodeFunctionData(
+        functionFragment: 'externalCall',
+        values: [string, BigNumberish, string, BytesLike, BigNumberish]
+    ): string
     encodeFunctionData(functionFragment: 'metaMintSwap', values: [MetaRouteStructs.MetaMintTransactionStruct]): string
-    encodeFunctionData(functionFragment: 'metaRouteV2', values: [MetaRouteStructs.MetaRouteTransactionV2Struct]): string
-    encodeFunctionData(functionFragment: 'swap', values: [string, BigNumberish, string, BytesLike]): string
+    encodeFunctionData(functionFragment: 'metaRoute', values: [MetaRouteStructs.MetaRouteTransactionStruct]): string
+    encodeFunctionData(functionFragment: 'metaRouterGateway', values?: undefined): string
 
+    decodeFunctionResult(functionFragment: 'externalCall', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaMintSwap', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'metaRouteV2', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'swap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRoute', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRouterGateway', data: BytesLike): Result
 
     events: {}
 }
 
-export interface MetaRouterV2 extends BaseContract {
-    contractName: 'MetaRouterV2'
+export interface MetaRouter extends BaseContract {
+    contractName: 'MetaRouter'
     connect(signerOrProvider: Signer | Provider | string): this
     attach(addressOrName: string): this
     deployed(): Promise<this>
 
-    interface: MetaRouterV2Interface
+    interface: MetaRouterInterface
 
     queryFilter<TEvent extends TypedEvent>(
         event: TypedEventFilter<TEvent>,
@@ -137,102 +146,117 @@ export interface MetaRouterV2 extends BaseContract {
     removeListener: OnEvent<this>
 
     functions: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
         metaMintSwap(
             _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
-        metaRouteV2(
-            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionV2Struct,
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
             overrides?: PayableOverrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
-        swap(
-            _token: string,
-            _amount: BigNumberish,
-            _router: string,
-            _swapCalldata: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
+        metaRouterGateway(overrides?: CallOverrides): Promise<[string]>
     }
+
+    externalCall(
+        _token: string,
+        _amount: BigNumberish,
+        _receiveSide: string,
+        _calldata: BytesLike,
+        _offset: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     metaMintSwap(
         _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
-    metaRouteV2(
-        _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionV2Struct,
+    metaRoute(
+        _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
         overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
-    swap(
-        _token: string,
-        _amount: BigNumberish,
-        _router: string,
-        _swapCalldata: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+    metaRouterGateway(overrides?: CallOverrides): Promise<string>
 
     callStatic: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
+
         metaMintSwap(
             _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
             overrides?: CallOverrides
         ): Promise<void>
 
-        metaRouteV2(
-            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionV2Struct,
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
             overrides?: CallOverrides
         ): Promise<void>
 
-        swap(
-            _token: string,
-            _amount: BigNumberish,
-            _router: string,
-            _swapCalldata: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
+        metaRouterGateway(overrides?: CallOverrides): Promise<string>
     }
 
     filters: {}
 
     estimateGas: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
         metaMintSwap(
             _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
-        metaRouteV2(
-            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionV2Struct,
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
             overrides?: PayableOverrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
-        swap(
-            _token: string,
-            _amount: BigNumberish,
-            _router: string,
-            _swapCalldata: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
+        metaRouterGateway(overrides?: CallOverrides): Promise<BigNumber>
     }
 
     populateTransaction: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
         metaMintSwap(
             _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
-        metaRouteV2(
-            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionV2Struct,
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
             overrides?: PayableOverrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
-        swap(
-            _token: string,
-            _amount: BigNumberish,
-            _router: string,
-            _swapCalldata: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
+        metaRouterGateway(overrides?: CallOverrides): Promise<PopulatedTransaction>
     }
 }

@@ -15,36 +15,47 @@ export class OneInchTrade {
     public priceImpact!: Percent
     public routerAddress!: string
     public oracle: OneInchOracle
+    public callDataOffset?: number
 
     private readonly tokenOut: Token
     private readonly from: string
+    private readonly to: string
     private readonly slippage: number
 
     public constructor(
         tokenAmountIn: TokenAmount,
         tokenOut: Token,
         from: string,
+        to: string,
         slippage: number,
         oracle: OneInchOracle
     ) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
+        this.to = to
         this.slippage = slippage
         this.oracle = oracle
     }
 
     public async init() {
+        const nativeAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
-            fromTokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+            fromTokenAddress = nativeAddress
+        }
+
+        let toTokenAddress = this.tokenOut.address
+        if (this.tokenOut.isNative) {
+            toTokenAddress = nativeAddress
         }
 
         const params = []
         params.push(`fromTokenAddress=${fromTokenAddress}`)
-        params.push(`toTokenAddress=${this.tokenOut.address}`)
+        params.push(`toTokenAddress=${toTokenAddress}`)
         params.push(`amount=${this.tokenAmountIn.raw.toString()}`)
         params.push(`fromAddress=${this.from}`)
+        params.push(`destReceiver=${this.to}`)
         params.push(`slippage=${this.slippage}`)
         params.push(`disableEstimate=true`)
         params.push(`allowPartialFill=false`)
@@ -69,11 +80,45 @@ export class OneInchTrade {
 
         this.routerAddress = tx.to
         this.callData = tx.data
+        this.callDataOffset = this.getOffset(tx.data)
         this.amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
         this.route = [this.tokenAmountIn.token, this.tokenOut]
         this.priceImpact = await this.calculatePriceImpact(this.tokenAmountIn, this.amountOut)
 
         return this
+    }
+
+    private getOffset(callData: string) {
+        const methods = [
+            {
+                sigHash: 'b0431182',
+                offset: 100,
+            },
+            {
+                sigHash: 'd0a3b665',
+                offset: 100,
+            },
+            {
+                sigHash: '7c025200',
+                offset: 260,
+            },
+            {
+                sigHash: 'e449022e',
+                offset: 36,
+            },
+            {
+                sigHash: '2e95b6c8',
+                offset: 68,
+            },
+        ]
+
+        const sigHash = callData.slice(2, 10)
+
+        const method = methods.find((i) => {
+            return i.sigHash === sigHash
+        })
+
+        return method?.offset
     }
 
     private async calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {

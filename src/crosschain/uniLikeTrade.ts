@@ -20,6 +20,7 @@ export class UniLikeTrade {
     public callData!: string
     public priceImpact!: Percent
     public routerAddress!: string
+    public callDataOffset?: number
 
     private pairs!: Pair[]
 
@@ -79,7 +80,10 @@ export class UniLikeTrade {
         }
         this.amountOut = amountOut
 
-        this.callData = this.buildCallData(trade)
+        const { data, offset } = this.buildCallData(trade)
+        this.callData = data
+        this.callDataOffset = offset
+
         if (!this.callData) {
             throw new Error('Cannot build callData')
         }
@@ -87,8 +91,8 @@ export class UniLikeTrade {
         return this
     }
 
-    private buildCallData(trade: Trade): string {
-        const { methodName, args } = Router.swapCallParameters(trade, {
+    private buildCallData(trade: Trade): { data: string; offset: number } {
+        const { methodName, args, offset } = Router.swapCallParameters(trade, {
             allowedSlippage: new Percent(JSBI.BigInt(Math.floor(this.slippage)), BIPS_BASE),
             recipient: this.to,
             ttl: this.deadline,
@@ -100,7 +104,10 @@ export class UniLikeTrade {
             method = methodName.replace('ETH', 'AVAX')
         }
 
-        return this.router.interface.encodeFunctionData(method as any, args as any)
+        return {
+            data: this.router.interface.encodeFunctionData(method as any, args as any),
+            offset,
+        }
     }
 
     static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
