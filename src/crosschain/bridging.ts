@@ -254,7 +254,7 @@ export class Bridging {
                     ? { native_coin: { denom: tokenIn.address } }
                     : { cw20_token: { address: tokenIn.address } },
                 opposite_bridge: base64.encode(this.symbiosis.bridge(this.tokenOut.chainId).address),
-                opposite_synthesis: base64.encode(this.symbiosis.portal(this.tokenOut.chainId).address),
+                opposite_synthesis: base64.encode(this.symbiosis.synthesis(this.tokenOut.chainId).address),
             },
         }
     }
@@ -338,15 +338,20 @@ export class Bridging {
 
             const portalAddress = this.symbiosis.getTerraPortalAddress(chainIdIn)
 
-            const queryResult = await lcdClient.wasm.contractQuery<{ request_count: number }>(portalAddress, {
+            const queryResult = await lcdClient.wasm.contractQuery<{ request_count: string }>(portalAddress, {
                 get_request_count: {},
             })
+
+            const requestCount = Number(queryResult.request_count)
+            if (Number.isNaN(requestCount)) {
+                throw new Error('Invalid request count')
+            }
 
             const synthesis = this.symbiosis.synthesis(chainIdOut)
 
             const internalId = getTerraInternalId({
                 contractAddress: portalAddress,
-                requestCount: queryResult.request_count,
+                requestCount: requestCount + 1,
                 chainId: chainIdIn,
             })
 
