@@ -265,6 +265,26 @@ export class Bridging {
         }
 
         const { chainId } = this.tokenAmountIn.token
+        const outChainId = this.tokenOut.chainId
+
+        if (this.direction === 'burn' && isTerraChainId(outChainId)) {
+            const synthesis = this.symbiosis.synthesis(chainId)
+
+            return {
+                chainId,
+                to: synthesis.address,
+                data: synthesis.interface.encodeFunctionData('burnSyntheticToken', [
+                    fee.raw.toString(),
+                    this.tokenAmountIn.token.address,
+                    this.tokenAmountIn.raw.toString(),
+                    encodeTerraAddress(this.to),
+                    encodeTerraAddress(this.symbiosis.getTerraPortalAddress(outChainId)),
+                    encodeTerraAddress(this.symbiosis.getTerraBridgeAddress(outChainId)),
+                    encodeTerraAddress(this.revertableAddress),
+                    outChainId,
+                ]),
+            }
+        }
 
         // burn
         if (this.direction === 'burn') {
@@ -278,10 +298,10 @@ export class Bridging {
                     this.tokenAmountIn.token.address,
                     this.tokenAmountIn.raw.toString(),
                     this.to,
-                    this.symbiosis.portal(this.tokenOut.chainId).address,
-                    this.symbiosis.bridge(this.tokenOut.chainId).address,
+                    this.symbiosis.portal(outChainId).address,
+                    this.symbiosis.bridge(outChainId).address,
                     this.revertableAddress,
-                    this.tokenOut.chainId,
+                    outChainId,
                 ]),
             }
         }
@@ -295,10 +315,10 @@ export class Bridging {
                 data: portal.interface.encodeFunctionData('synthesizeNative', [
                     fee.raw.toString(),
                     this.to,
-                    this.symbiosis.synthesis(this.tokenOut.chainId).address,
-                    this.symbiosis.bridge(this.tokenOut.chainId).address,
+                    this.symbiosis.synthesis(outChainId).address,
+                    this.symbiosis.bridge(outChainId).address,
                     this.revertableAddress,
-                    this.tokenOut.chainId,
+                    outChainId,
                 ]),
                 value: BigNumber.from(this.tokenAmountIn.raw.toString()),
             }
@@ -312,10 +332,10 @@ export class Bridging {
                 this.tokenAmountIn.token.address,
                 this.tokenAmountIn.raw.toString(),
                 this.to,
-                this.symbiosis.synthesis(this.tokenOut.chainId).address,
-                this.symbiosis.bridge(this.tokenOut.chainId).address,
+                this.symbiosis.synthesis(outChainId).address,
+                this.symbiosis.bridge(outChainId).address,
                 this.revertableAddress,
-                this.tokenOut.chainId,
+                outChainId,
             ]),
         }
     }
