@@ -36,6 +36,7 @@ interface TerraSynthesizeExecuteMessage {
         amount: string
         target: string
         chain_id: string
+        stablecoin_fee: string
         asset_info:
             | {
                   cw20_token: {
@@ -116,7 +117,7 @@ export class Bridging {
         this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
 
         if (tokenAmountIn.token.isFromTerra()) {
-            const executeMessage = this.getTerraExecuteMessage()
+            const executeMessage = this.getTerraExecuteMessage(this.fee)
 
             return {
                 chainType: 'terra',
@@ -228,7 +229,7 @@ export class Bridging {
         }
     }
 
-    protected getTerraExecuteMessage(): TerraSynthesizeExecuteMessage {
+    protected getTerraExecuteMessage(fee: TokenAmount): TerraSynthesizeExecuteMessage {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -245,6 +246,7 @@ export class Bridging {
 
         return {
             synthesize: {
+                stablecoin_fee: fee.raw.toString(),
                 amount: this.tokenAmountIn.raw.toString(),
                 target: base64.encode(this.to),
                 chain_id: this.tokenOut.chainId.toString(),
