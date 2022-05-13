@@ -288,4 +288,16 @@ export class Symbiosis {
         if (!config) throw new Error(`Could not config by given chainId: ${chainId}`)
         return config
     }
+
+    public transitStable(chainId: ChainId): Token {
+        const stable = this.findTransitStable(chainId)
+        if (stable === undefined) {
+            throw new Error(`Cannot find transit stable token for chain ${chainId}`)
+        }
+        return stable
+    }
+
+    public isTransitStable(token: Token): boolean {
+        return token.address === this.transitStable(token.chainId).address
+    }
 }

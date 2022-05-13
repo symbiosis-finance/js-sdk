@@ -11,7 +11,7 @@ import { NerveTrade } from './nerveTrade'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, getExternalId, getInternalId } from './utils'
+import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
@@ -81,7 +81,7 @@ export class Swapping {
 
         const dataProvider = new DataProvider(this.symbiosis)
 
-        if (!this.isTransitStable(tokenAmountIn.token)) {
+        if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
         }
@@ -96,7 +96,7 @@ export class Swapping {
         }
         this.symbiosis.validateSwapAmounts(this.amountInUsd)
 
-        if (!this.isTransitStable(tokenOut)) {
+        if (!this.symbiosis.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init(dataProvider)
         }
@@ -111,7 +111,7 @@ export class Swapping {
         this.tradeB = await this.buildTradeB(dataProvider, fee)
         await this.tradeB.init(dataProvider)
 
-        if (!this.isTransitStable(tokenOut)) {
+        if (!this.symbiosis.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC(fee)
             await this.tradeC.init(dataProvider)
         }
@@ -234,11 +234,11 @@ export class Swapping {
 
     private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.transitStable(chainId)
+        const tokenOut = this.symbiosis.transitStable(chainId)
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (this.use1Inch) {
+        if (this.use1Inch && canOneInch(chainId)) {
             const oracle = this.symbiosis.oneInchOracle(chainId)
             return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
         }
@@ -259,7 +259,7 @@ export class Swapping {
 
         if (this.direction === 'burn') {
             tradeBAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-            const transitStableOut = this.transitStable(this.tokenOut.chainId) // USDC
+            const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
             this.feeToken = transitStableOut
             const rep = await dataProvider.getRepresentation(transitStableOut, this.tokenAmountIn.token.chainId) // sUSDC
             if (!rep) {
@@ -271,7 +271,7 @@ export class Swapping {
             tradeBTokenOut = rep
         } else {
             // mint
-            const transitStableIn = this.transitStable(this.tokenAmountIn.token.chainId) // USDC
+            const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId) // USDC
             const rep = await dataProvider.getRepresentation(transitStableIn, this.tokenOut.chainId) // sUSDC
             if (!rep) {
                 throw new Error(
@@ -291,7 +291,7 @@ export class Swapping {
                 tradeBAmountIn = tradeBAmountIn.subtract(bridgeFee)
             }
 
-            tradeBTokenOut = this.transitStable(this.tokenOut.chainId) // BUSD
+            tradeBTokenOut = this.symbiosis.transitStable(this.tokenOut.chainId) // BUSD
         }
         const nervePool = this.symbiosis.nervePool(tradeBAmountIn.token, tradeBTokenOut)
 
@@ -318,7 +318,7 @@ export class Swapping {
 
         const chainId = this.tokenOut.chainId
 
-        if (this.use1Inch) {
+        if (this.use1Inch && canOneInch(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
             return new OneInchTrade(tradeCAmountIn, this.tokenOut, from, this.to, this.slippage / 100, oracle)
@@ -568,17 +568,5 @@ export class Swapping {
         }
 
         return indexIn > indexOut ? 'burn' : 'mint'
-    }
-
-    public transitStable(chainId: ChainId): Token {
-        const stable = this.symbiosis.findTransitStable(chainId)
-        if (stable === undefined) {
-            throw new Error(`Cannot find transit stable token for chain ${chainId}`)
-        }
-        return stable
-    }
-
-    public isTransitStable(token: Token): boolean {
-        return token.address === this.transitStable(token.chainId).address
     }
 }
