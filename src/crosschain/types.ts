@@ -22,6 +22,7 @@ export type NerveConfig = {
 
 export type ChainConfig = {
     id: ChainId
+    terraChainId?: string
     rpc: string
     dexFee: number
     filterBlockOffset: number
@@ -31,8 +32,10 @@ export type ChainConfig = {
     router: string
     bridge: string
     synthesis: string
+    synthesisNonEvm: string
     portal: string
     fabric: string
+    fabricNonEvm?: string
     waitForBlocksCount: number
 }
 

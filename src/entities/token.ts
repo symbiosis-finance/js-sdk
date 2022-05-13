@@ -1,7 +1,8 @@
 import JSBI from 'jsbi'
+import { AccAddress } from '@terra-money/terra.js'
 
 import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
+import { isTerraChainId, validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import invariant from 'tiny-invariant'
 import { Chain, getChainById } from './chain'
 
@@ -28,11 +29,23 @@ export class Token {
     constructor(params: TokenConstructor) {
         validateSolidityTypeInstance(JSBI.BigInt(params.decimals), SolidityType.uint8)
 
+        const isFromTerra = params.chainId === ChainId.TERRA_MAINNET || params.chainId === ChainId.TERRA_TESTNET
+
+        let address: string
+        if (isFromTerra && !params.isNative) {
+            invariant(AccAddress.validate(params.address), `${params.address} is not a valid address.`)
+            address = params.address
+        } else if (isFromTerra) {
+            address = params.address
+        } else {
+            address = validateAndParseAddress(params.address)
+        }
+
         this.decimals = params.decimals
         this.symbol = params.symbol
         this.name = params.name
         this.chainId = params.chainId
-        this.address = validateAndParseAddress(params.address)
+        this.address = address
         this.isNative = !!params.isNative
         this.icons = params.icons
         this.chainFromId = params.chainFromId
@@ -63,6 +76,11 @@ export class Token {
         invariant(this.address !== other.address, 'ADDRESSES')
         return this.address.toLowerCase() < other.address.toLowerCase()
     }
+
+    public isFromTerra() {
+        return isTerraChainId(this.chainId)
+    }
+
     get isSynthetic() {
         return !!this.chainFromId
     }

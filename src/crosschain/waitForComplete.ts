@@ -1,16 +1,19 @@
 import { EventFilter } from '@ethersproject/contracts'
-import { Log, TransactionReceipt } from '@ethersproject/providers'
+import { TransactionReceipt } from '@ethersproject/providers'
+import { hexlify } from '@ethersproject/bytes'
+import { TxInfo } from '@terra-money/terra.js'
+import { isTerraChainId } from '../utils'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
-import { GetLogTimeoutExceededError, getLogWithTimeout } from './utils'
+import { Portal, Synthesis } from './contracts'
+import { TypedEvent } from './contracts/common'
+import { BurnCompletedEventFilter, SynthesizeRequestEvent } from './contracts/Portal'
+import { BurnRequestEvent, SynthesizeCompletedEventFilter } from './contracts/Synthesis'
+import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
-import { getExternalId } from './utils'
-import { Portal, Synthesis } from './contracts'
-import { SynthesizeRequestEvent } from './contracts/Portal'
-import { BurnRequestEvent } from './contracts/Synthesis'
-import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
-import { TypedEvent } from './contracts/common'
+import { getExternalId, GetLogTimeoutExceededError, getLogWithTimeout } from './utils'
+import { base64 } from 'ethers/lib/utils'
 
 type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never
 
@@ -28,7 +31,12 @@ export class TransactionStuckError extends Error {
     }
 }
 
-// TODO: Rework to pure functions and move to utils
+export class LogNotFoundError extends Error {
+    constructor() {
+        super('Log not found')
+    }
+}
+
 export class WaitForComplete {
     private readonly direction: BridgeDirection
     private readonly symbiosis: Symbiosis
@@ -44,25 +52,74 @@ export class WaitForComplete {
         this.chainIdIn = chainIdIn
     }
 
-    public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        const filter = this.buildOtherSideFilter(receipt)
+    public async transactionFromTerra(txInfo: TxInfo): Promise<string> {
+        if (!isTerraChainId(this.chainIdIn)) {
+            throw new Error('Wrong out chain id')
+        }
 
-        return getLogWithTimeout({
+        if (this.tokenOut.isFromTerra()) {
+            throw new Error('Terra is not supported')
+        }
+
+        const filter = this.getFilterFromTxInfo(txInfo)
+
+        // TODO: Check pending requests on terra
+        const log = await getLogWithTimeout({
             symbiosis: this.symbiosis,
             chainId: this.tokenOut.chainId,
             filter,
-        }).catch((e) => {
-            if (!(e instanceof GetLogTimeoutExceededError)) {
-                throw e
+        })
+
+        return log.transactionHash
+    }
+
+    public async transactionFromEvm(receipt: TransactionReceipt): Promise<string> {
+        if (this.tokenOut.isFromTerra()) {
+            throw new Error('Not implemented')
+        }
+
+        const filter = this.buildOtherSideFilter(receipt)
+
+        try {
+            const log = await getLogWithTimeout({
+                symbiosis: this.symbiosis,
+                chainId: this.tokenOut.chainId,
+                filter,
+            })
+
+            return log.transactionHash
+        } catch (error) {
+            if (!(error instanceof GetLogTimeoutExceededError)) {
+                throw error
             }
 
             const pendingRequest = this.getPendingRequest(receipt)
             if (!pendingRequest) {
-                throw e
+                throw error
             }
 
             throw new TransactionStuckError(pendingRequest)
-        })
+        }
+    }
+
+    private getFilterFromTxInfo(txInfo: TxInfo): EventFilter {
+        if (!txInfo.logs || !txInfo.logs.length) {
+            throw new LogNotFoundError()
+        }
+
+        const [{ eventsByType }] = txInfo.logs
+
+        const wasmEvent = eventsByType['wasm']
+
+        if (!wasmEvent) {
+            throw new LogNotFoundError()
+        }
+
+        const [externalId] = wasmEvent.external_id
+
+        const hexExternalId = hexlify(base64.decode(externalId))
+
+        return this.getFilterFromExternalId(hexExternalId)
     }
 
     private getRequestArgs(
@@ -78,31 +135,26 @@ export class WaitForComplete {
             eventName = 'SynthesizeRequest'
         }
 
-        let args: EventArgs<SynthesizeRequestEvent | BurnRequestEvent> | undefined
-        receipt.logs.forEach((log) => {
+        for (const log of receipt.logs) {
             let event
             try {
                 event = contract.interface.parseLog(log)
             } catch {
-                return
+                continue
             }
 
             if (event.name === eventName) {
-                args = event.args as unknown as EventArgs<SynthesizeRequestEvent | BurnRequestEvent>
+                return event.args as unknown as EventArgs<SynthesizeRequestEvent | BurnRequestEvent>
             }
-        })
+        }
 
-        return args
+        return undefined
     }
 
     private buildOtherSideFilter(receipt: TransactionReceipt): EventFilter {
-        if (!this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
         const args = this.getRequestArgs(receipt)
         if (!args) {
-            throw new Error('Log not found')
+            throw new LogNotFoundError()
         }
 
         const requestId = args.id
@@ -119,15 +171,26 @@ export class WaitForComplete {
             chainId: this.tokenOut.chainId,
         })
 
-        const event =
-            this.direction === 'burn'
-                ? this.symbiosis.portal(this.tokenOut.chainId).filters.BurnCompleted()
-                : this.symbiosis.synthesis(this.tokenOut.chainId).filters.SynthesizeCompleted()
+        return this.getFilterFromExternalId(externalId)
+    }
 
-        if (!event || !event.topics || event.topics.length === 0) {
+    private getFilterFromExternalId(externalId: string): EventFilter {
+        let receiveSide: string
+        let eventFilter: BurnCompletedEventFilter | SynthesizeCompletedEventFilter
+        if (this.direction === 'burn') {
+            const portal = this.symbiosis.portal(this.tokenOut.chainId)
+            receiveSide = portal.address
+            eventFilter = portal.filters.BurnCompleted()
+        } else {
+            const synthesis = this.symbiosis.synthesis(this.tokenOut.chainId)
+            receiveSide = synthesis.address
+            eventFilter = synthesis.filters.SynthesizeCompleted()
+        }
+
+        if (!eventFilter || !eventFilter.topics || eventFilter.topics.length === 0) {
             throw new Error('Event not found')
         }
-        const topic0 = event.topics[0]
+        const topic0 = eventFilter.topics[0]
 
         return {
             address: receiveSide,

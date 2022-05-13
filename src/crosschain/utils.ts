@@ -1,9 +1,14 @@
+import { arrayify, concat, hexlify } from '@ethersproject/bytes'
 import { Filter, Log } from '@ethersproject/providers'
+import { toUtf8Bytes, toUtf8String } from '@ethersproject/strings'
 import { parseUnits } from '@ethersproject/units'
-import { BigNumber, utils } from 'ethers'
+import { HashZero } from '@ethersproject/constants'
+import { bech32 } from 'bech32'
+import { BigNumber, utils, BytesLike } from 'ethers'
+import sha3 from 'js-sha3'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Fraction, Percent, TokenAmount, Trade } from '../entities'
+import { Fraction, Percent, Token, TokenAmount, Trade } from '../entities'
 import { BIPS_BASE, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
@@ -25,8 +30,43 @@ export const canOneInch = (chainId: ChainId) => {
     return ONE_INCH_CHAINS.includes(chainId)
 }
 
+// Convert terra address to 20 bytes EVM compatible variant
+export function encodeTerraAddress(address: string): string {
+    const { words } = bech32.decode(address)
+
+    const addressBytes = bech32.fromWords(words)
+
+    return hexlify(addressBytes)
+}
+
+export function decodeTerraAddress(address: string): string {
+    const addressBytes = arrayify(address)
+
+    const words = bech32.toWords(addressBytes)
+
+    return bech32.encode('terra', words)
+}
+
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
     return utils.solidityKeccak256(['address', 'uint256', 'uint256'], [contractAddress, requestCount, chainId])
+}
+
+export function getTerraInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
+    const hash = sha3.keccak_256.create()
+
+    // 20 bytes address
+    const encodedAddress = arrayify(encodeTerraAddress(contractAddress))
+    hash.update(encodedAddress)
+
+    // uint128 - 16 bytes
+    const requestIdEncoded = utils.zeroPad(BigNumber.from(requestCount).toHexString(), 16)
+    hash.update(requestIdEncoded)
+
+    // uint256 - 32 bytes
+    const chainIdEncoded = utils.zeroPad(BigNumber.from(chainId).toHexString(), 32)
+    hash.update(chainIdEncoded)
+
+    return `0x${hash.hex()}`
 }
 
 export function getExternalId({
@@ -39,6 +79,74 @@ export function getExternalId({
         ['bytes32', 'address', 'address', 'uint256'],
         [internalId, contractAddress, revertableAddress, chainId]
     )
+}
+
+export function getTerraExternalId({
+    internalId,
+    contractAddress,
+    revertableAddress,
+    chainId,
+}: GetExternalIdParams): string {
+    const hash = sha3.keccak_256.create()
+
+    hash.update(arrayify(internalId))
+    hash.update(arrayify(contractAddress))
+    hash.update(arrayify(revertableAddress))
+
+    // uint256 - 32 bytes
+    const chainIdEncoded = utils.zeroPad(BigNumber.from(chainId).toHexString(), 32)
+    hash.update(chainIdEncoded)
+
+    return `0x${hash.hex()}`
+}
+
+export function formatBytesTerraAddressString(text: string): string {
+    // Get the bytes
+    const bytes = toUtf8Bytes(text)
+
+    // Check we have room for null-termination
+    if (bytes.length > 19) {
+        throw new Error('Address string must be less than 20 bytes')
+    }
+
+    // Zero-pad (implicitly null-terminates)
+    return hexlify(concat([bytes, HashZero]).slice(0, 20))
+}
+
+const COIN_DENOM_MAX_LENGTH = 4
+
+export function parseBytesTerraAddressString(bytes: BytesLike): string {
+    const data = arrayify(bytes)
+
+    // Must be 20 bytes
+    if (data.length !== 20) {
+        throw new Error('invalid address - not 20 bytes long')
+    }
+
+    // Find the null termination
+    let length = 19
+    while (data[length - 1] === 0) {
+        length--
+    }
+
+    if (length > COIN_DENOM_MAX_LENGTH) {
+        return hexlify(data)
+    }
+
+    // Determine the string value
+    return toUtf8String(data.slice(0, length))
+}
+
+export function encodeTerraAddressToEvmAddress(token: Token): string {
+    if (!token.isFromTerra()) {
+        throw new Error("Token isn't from Terra network")
+    }
+
+    if (token.isNative) {
+        return formatBytesTerraAddressString(token.address)
+    }
+
+    return encodeTerraAddress(token.address)
 }
 
 export function calculateGasMargin(value: BigNumber): BigNumber {
