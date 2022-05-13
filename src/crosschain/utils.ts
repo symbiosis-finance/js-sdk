@@ -39,6 +39,14 @@ export function encodeTerraAddress(address: string): string {
     return hexlify(addressBytes)
 }
 
+export function decodeTerraAddress(address: string): string {
+    const addressBytes = arrayify(address)
+
+    const words = bech32.toWords(addressBytes)
+
+    return bech32.encode('terra', words)
+}
+
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
     return utils.solidityKeccak256(['address', 'uint256', 'uint256'], [contractAddress, requestCount, chainId])
 }
