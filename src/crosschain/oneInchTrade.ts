@@ -111,15 +111,15 @@ export class OneInchTrade {
                 offset: 68,
             },
             {
-                sigHash: '0x9994dd15',
+                sigHash: '9994dd15',
                 offset: 132,
             },
             {
-                sigHash: '0xbaba5855',
+                sigHash: 'baba5855',
                 offset: 292,
             },
             {
-                sigHash: '0xbc80f1a8',
+                sigHash: 'bc80f1a8',
                 offset: 68,
             },
         ]
