@@ -110,6 +110,18 @@ export class OneInchTrade {
                 sigHash: '2e95b6c8',
                 offset: 68,
             },
+            {
+                sigHash: '0x9994dd15',
+                offset: 132,
+            },
+            {
+                sigHash: '0xbaba5855',
+                offset: 292,
+            },
+            {
+                sigHash: '0xbc80f1a8',
+                offset: 68,
+            },
         ]
 
         const sigHash = callData.slice(2, 10)
