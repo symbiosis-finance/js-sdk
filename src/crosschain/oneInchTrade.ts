@@ -59,6 +59,7 @@ export class OneInchTrade {
         params.push(`slippage=${this.slippage}`)
         params.push(`disableEstimate=true`)
         params.push(`allowPartialFill=false`)
+        params.push(`usePatching=true`)
 
         const url = `https://api.1inch.io/v4.0/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
 
