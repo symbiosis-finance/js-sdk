@@ -155,6 +155,12 @@ export class Symbiosis {
         return NervePool__factory.connect(address, signerOrProvider)
     }
 
+    public nervePoolByAddress(address: string, chainId: ChainId, signer?: Signer): NervePool {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return NervePool__factory.connect(address, signerOrProvider)
+    }
+
     public metaRouter(chainId: ChainId, signer?: Signer): MetaRouter {
         const address = this.chainConfig(chainId).metaRouter
         const signerOrProvider = signer || this.getProvider(chainId)
