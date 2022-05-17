@@ -11,7 +11,7 @@ export class NerveLiquidity {
     public amountOut!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
-    public callDataOffset = 32
+    public callDataOffset = 4 + 32 * 6
 
     private readonly to: string
     private readonly deadline!: number
