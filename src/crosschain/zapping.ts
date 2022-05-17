@@ -207,6 +207,8 @@ export class Zapping {
 
         const portal = this.symbiosis.portal(chainIdIn)
 
+        const swapTokens = [tokenAmount.token.address, fee.token.address]
+
         return [
             portal.address,
             portal.interface.encodeFunctionData('metaSynthesize', [
@@ -219,7 +221,7 @@ export class Zapping {
                     oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
                     syntCaller: this.from,
                     chainID: chainIdOut,
-                    swapTokens: [],
+                    swapTokens,
                     secondDexRouter: AddressZero,
                     secondSwapCalldata: [],
                     finalReceiveSide: this.nerveLiquidity.pool.address,
@@ -278,6 +280,18 @@ export class Zapping {
             chainId: chainIdOut,
         })
 
+        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
+        const rep = await this.symbiosis.getRepresentation(transitStableIn, this.poolChainId)
+
+        if (!rep) {
+            throw new Error(
+                `Representation of ${transitStableIn.symbol} in chain ${this.poolChainId} not found`,
+                ErrorCode.NO_ROUTE
+            )
+        }
+
+        const swapTokens = [amount.token.address, rep.address]
+
         const calldata = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
                 stableBridgingFee: '1',
@@ -286,7 +300,7 @@ export class Zapping {
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
-                swapTokens: [], // @@
+                swapTokens,
                 secondDexRouter: AddressZero,
                 secondSwapCalldata: [],
                 finalReceiveSide: this.nerveLiquidity.pool.address,
@@ -301,16 +315,6 @@ export class Zapping {
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: chainIdOut,
         })
-
-        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
-        const rep = await this.symbiosis.getRepresentation(transitStableIn, this.poolChainId)
-
-        if (!rep) {
-            throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${this.poolChainId} not found`,
-                ErrorCode.NO_ROUTE
-            )
-        }
 
         return new TokenAmount(rep, fee.toString())
     }
