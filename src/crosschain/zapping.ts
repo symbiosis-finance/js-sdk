@@ -3,7 +3,7 @@ import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Percent, TokenAmount } from '../entities'
+import { Percent, Token, TokenAmount } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { Error, ErrorCode } from './error'
@@ -36,6 +36,8 @@ export class Zapping {
     private use1Inch!: boolean
 
     private tradeA: UniLikeTrade | OneInchTrade | undefined
+
+    private synthToken!: Token
 
     private nerveLiquidity!: NerveLiquidity
 
@@ -79,6 +81,11 @@ export class Zapping {
         }
 
         this.symbiosis.validateSwapAmounts(amountInUsd)
+
+        this.synthToken = await this.getSynthToken()
+
+        this.nerveLiquidity = this.buildNerveLiquidity()
+        await this.nerveLiquidity.init()
 
         const fee = await this.getFee()
 
@@ -186,10 +193,15 @@ export class Zapping {
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
     }
 
-    private buildNerveLiquidity(fee: TokenAmount): NerveLiquidity {
-        let tokenAmountIn = new TokenAmount(fee.token, this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw)
+    private buildNerveLiquidity(fee?: TokenAmount): NerveLiquidity {
+        let tokenAmountIn = new TokenAmount(
+            this.synthToken,
+            this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw
+        )
 
-        tokenAmountIn = tokenAmountIn.subtract(fee)
+        if (fee) {
+            tokenAmountIn = tokenAmountIn.subtract(fee)
+        }
 
         const pool = this.symbiosis.nervePoolByAddress(this.poolAddress, this.poolChainId)
 
@@ -257,6 +269,20 @@ export class Zapping {
         }
     }
 
+    private async getSynthToken(): Promise<Token> {
+        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
+        const rep = await this.symbiosis.getRepresentation(transitStableIn, this.poolChainId)
+
+        if (!rep) {
+            throw new Error(
+                `Representation of ${transitStableIn.symbol} in chain ${this.poolChainId} not found`,
+                ErrorCode.NO_ROUTE
+            )
+        }
+
+        return rep
+    }
+
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.poolChainId
@@ -280,17 +306,7 @@ export class Zapping {
             chainId: chainIdOut,
         })
 
-        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
-        const rep = await this.symbiosis.getRepresentation(transitStableIn, this.poolChainId)
-
-        if (!rep) {
-            throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${this.poolChainId} not found`,
-                ErrorCode.NO_ROUTE
-            )
-        }
-
-        const swapTokens = [amount.token.address, rep.address]
+        const swapTokens = [amount.token.address, this.synthToken.address]
 
         const calldata = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
@@ -316,6 +332,6 @@ export class Zapping {
             chainIdTo: chainIdOut,
         })
 
-        return new TokenAmount(rep, fee.toString())
+        return new TokenAmount(this.synthToken, fee.toString())
     }
 }
