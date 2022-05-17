@@ -32,6 +32,7 @@ import { RevertPending } from './revert'
 import { Swapping } from './swapping'
 import { ChainConfig, Config } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
+import { Zapping } from './zapping'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -82,6 +83,10 @@ export class Symbiosis {
 
     public newRevertPending(request: PendingRequest) {
         return new RevertPending(this, request)
+    }
+
+    public newZapping() {
+        return new Zapping(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
