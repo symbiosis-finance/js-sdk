@@ -20,6 +20,7 @@ export type SwapExactIn = Promise<{
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     priceImpact: Percent
+    amountInUsd: TokenAmount
     transactionRequest: TransactionRequest
 }>
 
@@ -101,6 +102,7 @@ export class Zapping {
             fee,
             tokenAmountOut: this.nerveLiquidity.amountOut,
             priceImpact: this.calculatePriceImpact(),
+            amountInUsd: this.getSynthAmount(fee),
             transactionRequest,
         }
     }
@@ -169,6 +171,19 @@ export class Zapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
+    private getSynthAmount(fee?: TokenAmount): TokenAmount {
+        let synthAmount = new TokenAmount(
+            this.synthToken,
+            this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw
+        )
+
+        if (fee) {
+            synthAmount = synthAmount.subtract(fee)
+        }
+
+        return synthAmount
+    }
+
     private buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
@@ -191,14 +206,7 @@ export class Zapping {
     }
 
     private buildNerveLiquidity(pool: NervePool, fee?: TokenAmount): NerveLiquidity {
-        let tokenAmountIn = new TokenAmount(
-            this.synthToken,
-            this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw
-        )
-
-        if (fee) {
-            tokenAmountIn = tokenAmountIn.subtract(fee)
-        }
+        const tokenAmountIn = this.getSynthAmount(fee)
 
         return new NerveLiquidity(tokenAmountIn, this.to, this.slippage, this.deadline, pool)
     }
