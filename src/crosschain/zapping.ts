@@ -11,7 +11,7 @@ import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AvaxRouter, UniLikeRouter } from './contracts'
+import { AvaxRouter, NervePool, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { NerveLiquidity } from './nerveLiquidity'
 
@@ -84,12 +84,14 @@ export class Zapping {
 
         this.synthToken = await this.getSynthToken()
 
-        this.nerveLiquidity = this.buildNerveLiquidity()
+        const pool = this.symbiosis.nervePoolByAddress(this.poolAddress, this.poolChainId)
+
+        this.nerveLiquidity = this.buildNerveLiquidity(pool)
         await this.nerveLiquidity.init()
 
         const fee = await this.getFee()
 
-        this.nerveLiquidity = this.buildNerveLiquidity(fee)
+        this.nerveLiquidity = this.buildNerveLiquidity(pool, fee)
         await this.nerveLiquidity.init()
 
         const transactionRequest = this.getTransactionRequest(fee)
@@ -125,7 +127,6 @@ export class Zapping {
             firstToken = AddressZero
         }
 
-        const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const approvedTokens = [
             firstToken,
             this.tradeA ? this.tradeA.amountOut.token.address : this.tokenAmountIn.token.address,
@@ -143,8 +144,8 @@ export class Zapping {
                 approvedTokens,
                 firstDexRouter: this.tradeA?.routerAddress || AddressZero,
                 secondDexRouter: AddressZero,
-                amount: amount.raw.toString(),
-                nativeIn: amount.token.isNative,
+                amount: this.tokenAmountIn.raw.toString(),
+                nativeIn: this.tokenAmountIn.token.isNative,
                 relayRecipient,
                 otherSideCalldata,
             },
@@ -160,11 +161,7 @@ export class Zapping {
 
     private calculatePriceImpact(): Percent {
         const zero = new Percent(JSBI.BigInt(0), BIPS_BASE) // 0%
-        const pia = this.tradeA?.priceImpact || zero
-
-        // console.log([pia, pib, pic].map((i) => i.toSignificant()))
-
-        let pi = pia
+        let pi = this.tradeA?.priceImpact || zero
 
         const max = new Percent(JSBI.BigInt(10000), BIPS_BASE) // 100%
         if (pi.greaterThan(max)) pi = max
@@ -193,7 +190,7 @@ export class Zapping {
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
     }
 
-    private buildNerveLiquidity(fee?: TokenAmount): NerveLiquidity {
+    private buildNerveLiquidity(pool: NervePool, fee?: TokenAmount): NerveLiquidity {
         let tokenAmountIn = new TokenAmount(
             this.synthToken,
             this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw
@@ -203,9 +200,7 @@ export class Zapping {
             tokenAmountIn = tokenAmountIn.subtract(fee)
         }
 
-        const pool = this.symbiosis.nervePoolByAddress(this.poolAddress, this.poolChainId)
-
-        return new NerveLiquidity(tokenAmountIn, this.to, this.slippage, this.deadline, pool, this.poolChainId)
+        return new NerveLiquidity(tokenAmountIn, this.to, this.slippage, this.deadline, pool)
     }
 
     private otherSideSynthCallData(fee: TokenAmount): [string, string] {
@@ -219,7 +214,7 @@ export class Zapping {
 
         const portal = this.symbiosis.portal(chainIdIn)
 
-        const swapTokens = [tokenAmount.token.address, fee.token.address]
+        const swapTokens = [this.synthToken.address, this.nerveLiquidity.poolLpToken.address]
 
         return [
             portal.address,
@@ -306,7 +301,7 @@ export class Zapping {
             chainId: chainIdOut,
         })
 
-        const swapTokens = [amount.token.address, this.synthToken.address]
+        const swapTokens = [this.synthToken.address, this.nerveLiquidity.poolLpToken.address]
 
         const calldata = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {

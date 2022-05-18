@@ -1,4 +1,4 @@
-import { ChainId, ONE } from '../constants'
+import { ONE } from '../constants'
 import { Fraction, Percent, Token, TokenAmount } from '../entities'
 import { NervePool } from './contracts'
 import { basisPointsToPercent } from './utils'
@@ -6,7 +6,7 @@ import { basisPointsToPercent } from './utils'
 export class NerveLiquidity {
     public tokenAmountIn: TokenAmount
     public pool: NervePool
-    public chainId: ChainId
+    public poolLpToken!: Token
 
     public amountOut!: TokenAmount
     public callData!: string
@@ -17,23 +17,16 @@ export class NerveLiquidity {
     private readonly deadline!: number
     private readonly slippage!: number
 
-    public constructor(
-        tokenAmountIn: TokenAmount,
-        to: string,
-        slippage: number,
-        deadline: number,
-        pool: NervePool,
-        chainId: ChainId
-    ) {
+    public constructor(tokenAmountIn: TokenAmount, to: string, slippage: number, deadline: number, pool: NervePool) {
         this.tokenAmountIn = tokenAmountIn
         this.to = to
         this.deadline = deadline
         this.slippage = slippage
         this.pool = pool
-        this.chainId = chainId
     }
 
     public async init() {
+        const network = await this.pool.provider.getNetwork()
         const storage = await this.pool.swapStorage()
         const lpTokenAmount = await this.pool.calculateTokenAmount(
             this.to,
@@ -41,12 +34,12 @@ export class NerveLiquidity {
             true
         )
 
-        const token = new Token({
+        this.poolLpToken = new Token({
             address: storage.lpToken,
             decimals: 18,
-            chainId: this.chainId,
+            chainId: network.chainId,
         })
-        this.amountOut = new TokenAmount(token, lpTokenAmount.toString())
+        this.amountOut = new TokenAmount(this.poolLpToken, lpTokenAmount.toString())
 
         const slippageTolerance = basisPointsToPercent(this.slippage)
         const slippageAdjustedAmountOut = new Fraction(ONE)
