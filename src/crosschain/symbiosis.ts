@@ -12,6 +12,10 @@ import {
     AvaxRouter__factory,
     Bridge,
     Bridge__factory,
+    CreamCErc20,
+    CreamCErc20__factory,
+    CreamComptroller,
+    CreamComptroller__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -38,6 +42,7 @@ import { ChainConfig, Config } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
+import { ZappingCream } from './zappingCream'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -96,6 +101,10 @@ export class Symbiosis {
 
     public newZappingAave() {
         return new ZappingAave(this)
+    }
+
+    public newZappingCream() {
+        return new ZappingCream(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
@@ -173,6 +182,19 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return NervePool__factory.connect(address, signerOrProvider)
+    }
+
+    public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return CreamCErc20__factory.connect(address, signerOrProvider)
+    }
+
+    public creamComptroller(chainId: ChainId, signer?: Signer): CreamComptroller {
+        const address = this.chainConfig(chainId).creamComptroller
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return CreamComptroller__factory.connect(address, signerOrProvider)
     }
 
     public aavePool(chainId: ChainId, signer?: Signer): Aave {

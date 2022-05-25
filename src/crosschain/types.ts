@@ -30,6 +30,7 @@ export type ChainConfig = {
     metaRouter: string
     multicallRouter: string
     aavePool: string
+    creamComptroller: string
     router: string
     bridge: string
     synthesis: string
