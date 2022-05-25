@@ -1,7 +1,14 @@
 import { SwapExactIn, Swapping } from './swapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
-import { CreamCErc20__factory, MulticallRouter } from './contracts'
+import { CreamCErc20__factory, CreamComptroller__factory, Multicall, MulticallRouter } from './contracts'
 import { getMulticall } from './multicall'
+import { ChainId } from '../constants'
+
+type Market = {
+    market: string
+    underlying: string
+    paused: boolean
+}
 
 export class ZappingCream extends Swapping {
     protected multicallRouter!: MulticallRouter
@@ -9,6 +16,59 @@ export class ZappingCream extends Swapping {
     protected callData!: string
 
     private creamPoolAddress!: string
+
+    public async getAllMarkets(chainId: ChainId): Promise<Market[]> {
+        const comptroller = this.symbiosis.creamComptroller(chainId)
+        const multicall = await getMulticall(comptroller.provider)
+        const markets = await comptroller.getAllMarkets()
+        const marketsWithUnderlying = await this.reduceUnderlying(multicall, markets)
+        return this.reducePaused(multicall, comptroller.address, marketsWithUnderlying)
+    }
+
+    private async reduceUnderlying(multicall: Multicall, markets: string[]): Promise<Market[]> {
+        const creamCErc20Interface = CreamCErc20__factory.createInterface()
+        const calls = markets.map((market) => {
+            return {
+                target: market,
+                callData: creamCErc20Interface.encodeFunctionData('underlying'),
+            }
+        })
+
+        const aggregated = await multicall.callStatic.tryAggregate(false, calls)
+        return aggregated
+            .map(([success, returnData], i): Market | undefined => {
+                if (!success || returnData === '0x') return
+                return {
+                    market: markets[i],
+                    underlying: creamCErc20Interface
+                        .decodeFunctionResult('underlying', returnData)
+                        .toString()
+                        .toLowerCase(),
+                    paused: false,
+                }
+            })
+            .filter((i) => i !== undefined) as Market[]
+    }
+
+    private async reducePaused(multicall: Multicall, target: string, markets: Market[]): Promise<Market[]> {
+        const comptrollerInterface = CreamComptroller__factory.createInterface()
+
+        const calls = markets.map((marketWithUnderlying) => {
+            return {
+                target,
+                callData: comptrollerInterface.encodeFunctionData('mintGuardianPaused', [marketWithUnderlying.market]),
+            }
+        })
+        const aggregated = await multicall.callStatic.tryAggregate(false, calls)
+        return aggregated
+            .map(([success, returnData], i): Market | undefined => {
+                if (!success || returnData === '0x') return
+                const paused = comptrollerInterface.decodeFunctionResult('mintGuardianPaused', returnData)[0]
+
+                return { ...markets[i], paused }
+            })
+            .filter((i) => !!i) as Market[]
+    }
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
@@ -26,32 +86,20 @@ export class ZappingCream extends Swapping {
         this.multicallRouter = this.symbiosis.multicallRouter(chainIdOut)
         this.userAddress = to
 
-        const comptroller = this.symbiosis.creamComptroller(chainIdOut)
-        const markets = await comptroller.getAllMarkets()
+        const markets = await this.getAllMarkets(chainIdOut)
 
-        const creamCErc20Interface = CreamCErc20__factory.createInterface()
-        const calls = markets.map((market) => {
-            return {
-                target: market,
-                callData: creamCErc20Interface.encodeFunctionData('underlying'),
-            }
-        })
-
-        const multicall = await getMulticall(comptroller.provider)
-        const aggregated = await multicall.callStatic.tryAggregate(false, calls)
-
-        const underlying = aggregated.map(([success, returnData]): string | undefined => {
-            if (!success || returnData === '0x') return
-            return creamCErc20Interface.decodeFunctionResult('underlying', returnData).toString().toLowerCase()
-        })
-
-        const index = underlying.indexOf(wrappedTokenOut.address.toLowerCase())
+        const index = markets.map((i) => i.underlying).indexOf(wrappedTokenOut.address.toLowerCase())
         if (index === -1) {
             throw new Error(
                 `Cream: cannot to find underlying token ${wrappedTokenOut.address} on chain ${wrappedTokenOut.chain?.name}`
             )
         }
-        this.creamPoolAddress = calls[index].target
+
+        if (markets[index].paused) {
+            throw new Error(`Cream: market ${markets[index].market} on chain ${wrappedTokenOut.chain?.name} is paused`)
+        }
+
+        this.creamPoolAddress = markets[index].market
 
         return super.exactIn(
             tokenAmountIn,
