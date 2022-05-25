@@ -2,13 +2,13 @@ import { SwapExactIn, Swapping } from './swapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
 import { CreamCErc20__factory, MulticallRouter } from './contracts'
 import { getMulticall } from './multicall'
-import { BigNumber } from 'ethers'
-import { Result } from '@ethersproject/abi'
 
 export class ZappingCream extends Swapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
     protected callData!: string
+
+    private creamPoolAddress!: string
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
@@ -20,7 +20,9 @@ export class ZappingCream extends Swapping {
         deadline: number,
         use1Inch = false
     ): SwapExactIn {
-        const chainIdOut = tokenOut.chainId
+        const wrappedTokenOut = wrappedToken(tokenOut)
+        const chainIdOut = wrappedTokenOut.chainId
+
         this.multicallRouter = this.symbiosis.multicallRouter(chainIdOut)
         this.userAddress = to
 
@@ -38,18 +40,22 @@ export class ZappingCream extends Swapping {
         const multicall = await getMulticall(comptroller.provider)
         const aggregated = await multicall.callStatic.tryAggregate(false, calls)
 
-        const underlying = aggregated.map(([success, returnData]): Result | undefined => {
+        const underlying = aggregated.map(([success, returnData]): string | undefined => {
             if (!success || returnData === '0x') return
-            return creamCErc20Interface.decodeFunctionResult('underlying', returnData)
+            return creamCErc20Interface.decodeFunctionResult('underlying', returnData).toString().toLowerCase()
         })
 
-        if (underlying) {
-            throw new Error('OneInch oracle: cannot to receive rate to ETH')
+        const index = underlying.indexOf(wrappedTokenOut.address.toLowerCase())
+        if (index === -1) {
+            throw new Error(
+                `Cream: cannot to find underlying token ${wrappedTokenOut.address} on chain ${wrappedTokenOut.chain?.name}`
+            )
         }
+        this.creamPoolAddress = calls[index].target
 
         return super.exactIn(
             tokenAmountIn,
-            wrappedToken(tokenOut),
+            wrappedTokenOut,
             from,
             this.multicallRouter.address,
             revertableAddress,
@@ -94,13 +100,13 @@ export class ZappingCream extends Swapping {
             supplyTokenAmount = this.tradeB.amountOut
         }
 
-        const cream = this.symbiosis.creamCErc20ByAddress('', supplyTokenAmount.token.chainId)
+        const cream = this.symbiosis.creamCErc20ByAddress(this.creamPoolAddress, supplyTokenAmount.token.chainId)
         const supplyCalldata = cream.interface.encodeFunctionData('mint', [supplyTokenAmount.raw.toString()])
 
         callDatas.push(supplyCalldata)
         receiveSides.push(cream.address)
         path.push(supplyTokenAmount.token.address)
-        offsets.push(68)
+        offsets.push(36)
 
         this.callData = this.multicallRouter.interface.encodeFunctionData('multicall', [
             amount,

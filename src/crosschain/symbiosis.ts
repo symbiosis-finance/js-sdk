@@ -42,6 +42,7 @@ import { ChainConfig, Config } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
+import { ZappingCream } from './zappingCream'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -100,6 +101,10 @@ export class Symbiosis {
 
     public newZappingAave() {
         return new ZappingAave(this)
+    }
+
+    public newZappingCream() {
+        return new ZappingCream(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
