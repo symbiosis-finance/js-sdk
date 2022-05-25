@@ -28,6 +28,8 @@ export type ChainConfig = {
     stables: TokenConstructor[]
     nerves: NerveConfig[]
     metaRouter: string
+    multicallRouter: string
+    aavePool: string
     router: string
     bridge: string
     synthesis: string

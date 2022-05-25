@@ -6,6 +6,8 @@ import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
 import {
+    Aave,
+    Aave__factory,
     AvaxRouter,
     AvaxRouter__factory,
     Bridge,
@@ -14,6 +16,8 @@ import {
     Fabric__factory,
     MetaRouter,
     MetaRouter__factory,
+    MulticallRouter,
+    MulticallRouter__factory,
     NervePool,
     NervePool__factory,
     OneInchOracle,
@@ -33,6 +37,7 @@ import { Swapping } from './swapping'
 import { ChainConfig, Config } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
+import { ZappingAave } from './zappingAave'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -87,6 +92,10 @@ export class Symbiosis {
 
     public newZapping() {
         return new Zapping(this)
+    }
+
+    public newZappingAave() {
+        return new ZappingAave(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
@@ -164,6 +173,20 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return NervePool__factory.connect(address, signerOrProvider)
+    }
+
+    public aavePool(chainId: ChainId, signer?: Signer): Aave {
+        const address = this.chainConfig(chainId).aavePool
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return Aave__factory.connect(address, signerOrProvider)
+    }
+
+    public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {
+        const address = this.chainConfig(chainId).multicallRouter
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return MulticallRouter__factory.connect(address, signerOrProvider)
     }
 
     public metaRouter(chainId: ChainId, signer?: Signer): MetaRouter {

@@ -29,27 +29,27 @@ export type SwapExactIn = Promise<{
 }>
 
 export class Swapping {
-    private from!: string
-    private to!: string
-    private revertableAddress!: string
-    private tokenAmountIn!: TokenAmount
-    private tokenOut!: Token
-    private slippage!: number
-    private deadline!: number
-    private ttl!: number
-    private direction!: BridgeDirection
-    private use1Inch!: boolean
+    protected from!: string
+    protected to!: string
+    protected revertableAddress!: string
+    protected tokenAmountIn!: TokenAmount
+    protected tokenOut!: Token
+    protected slippage!: number
+    protected deadline!: number
+    protected ttl!: number
+    protected direction!: BridgeDirection
+    protected use1Inch!: boolean
 
-    private route!: Token[]
-    private feeToken!: Token
+    protected route!: Token[]
+    protected feeToken!: Token
 
-    private tradeA: UniLikeTrade | OneInchTrade | undefined
-    private tradeB!: NerveTrade
-    private tradeC: UniLikeTrade | OneInchTrade | undefined
+    protected tradeA: UniLikeTrade | OneInchTrade | undefined
+    protected tradeB!: NerveTrade
+    protected tradeC: UniLikeTrade | OneInchTrade | undefined
 
     public amountInUsd: TokenAmount | undefined
 
-    private readonly symbiosis: Symbiosis
+    protected readonly symbiosis: Symbiosis
 
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
@@ -145,7 +145,7 @@ export class Swapping {
         }).waitForComplete(receipt)
     }
 
-    private getTransactionRequest(fee: TokenAmount): TransactionRequest {
+    protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
         const chainId = this.tokenAmountIn.token.chainId
         const metaRouter = this.symbiosis.metaRouter(chainId)
 
@@ -197,7 +197,7 @@ export class Swapping {
         }
     }
 
-    private calculatePriceImpact(): Percent {
+    protected calculatePriceImpact(): Percent {
         const zero = new Percent(JSBI.BigInt(0), BIPS_BASE) // 0%
         const pia = this.tradeA?.priceImpact || zero
         const pib = this.tradeB?.priceImpact || zero
@@ -213,7 +213,7 @@ export class Swapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
-    private tokenAmountOut(fee: TokenAmount): TokenAmount {
+    protected tokenAmountOut(fee: TokenAmount): TokenAmount {
         if (this.tradeC) {
             return this.tradeC.amountOut
         }
@@ -232,7 +232,7 @@ export class Swapping {
         }
     }
 
-    private buildTradeA(): UniLikeTrade | OneInchTrade {
+    protected buildTradeA(): UniLikeTrade | OneInchTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
         const from = this.symbiosis.metaRouter(chainId).address
@@ -253,7 +253,7 @@ export class Swapping {
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
     }
 
-    private async buildTradeB(dataProvider: DataProvider, bridgeFee?: TokenAmount): Promise<NerveTrade> {
+    protected async buildTradeB(dataProvider: DataProvider, bridgeFee?: TokenAmount): Promise<NerveTrade> {
         let tradeBAmountIn: TokenAmount
         let tradeBTokenOut: Token
 
@@ -298,7 +298,7 @@ export class Swapping {
         return new NerveTrade(tradeBAmountIn, tradeBTokenOut, this.slippage, this.deadline, nervePool)
     }
 
-    private buildTradeC(bridgeFee?: TokenAmount) {
+    protected buildTradeC(bridgeFee?: TokenAmount) {
         let tradeCAmountIn: TokenAmount
         if (this.direction === 'burn') {
             tradeCAmountIn = this.burnOtherSideAmount()
@@ -334,7 +334,7 @@ export class Swapping {
         return new UniLikeTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)
     }
 
-    private burnOtherSideAmount(): TokenAmount {
+    protected burnOtherSideAmount(): TokenAmount {
         if (!this.feeToken) {
             throw new Error('Fee token is not set')
         }
@@ -344,7 +344,7 @@ export class Swapping {
         return new TokenAmount(this.feeToken, this.tradeB.amountOut.raw)
     }
 
-    private getRoute(): Token[] {
+    protected getRoute(): Token[] {
         const started = this.tradeA ? [] : [this.tokenAmountIn.token]
         const terminated = this.tradeC ? [] : [this.tokenOut]
 
@@ -361,7 +361,7 @@ export class Swapping {
         }, [])
     }
 
-    private otherSideBurnCallData(fee: TokenAmount): [string, string] {
+    protected otherSideBurnCallData(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -375,10 +375,10 @@ export class Swapping {
                     stableBridgingFee: fee.raw.toString(),
                     amount: this.burnOtherSideAmount().raw.toString(),
                     syntCaller: this.from,
-                    finalReceiveSide: this.tradeC?.routerAddress || AddressZero,
+                    finalReceiveSide: this.finalReceiveSide(),
                     sToken: this.tradeB.amountOut.token.address,
-                    finalCallData: this.tradeC?.callData || [],
-                    finalOffset: this.tradeC?.callDataOffset || 0,
+                    finalCallData: this.finalCalldata(),
+                    finalOffset: this.finalOffset(),
                     chain2address: this.to,
                     receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
                     oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
@@ -389,13 +389,13 @@ export class Swapping {
         ]
     }
 
-    private otherSideSynthCallData(fee: TokenAmount): [string, string] {
+    protected otherSideSynthCallData(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
 
         const swapTokens = this.tradeB.route.map((i) => i?.address)
-        if (this.tradeC?.callData) {
+        if (this.tradeC) {
             swapTokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         }
 
@@ -420,16 +420,16 @@ export class Swapping {
                     swapTokens,
                     secondDexRouter: this.tradeB.pool.address,
                     secondSwapCalldata: this.tradeB.callData,
-                    finalReceiveSide: this.tradeC?.routerAddress || AddressZero,
-                    finalCalldata: this.tradeC?.callData || [],
-                    finalOffset: this.tradeC?.callDataOffset || 0,
+                    finalReceiveSide: this.finalReceiveSide(),
+                    finalCalldata: this.finalCalldata(),
+                    finalOffset: this.finalOffset(),
                     revertableAddress: this.revertableAddress,
                 },
             ]),
         ]
     }
 
-    private otherSideData(fee: TokenAmount): [string, string] {
+    protected otherSideData(fee: TokenAmount): [string, string] {
         return this.direction === 'burn' ? this.otherSideBurnCallData(fee) : this.otherSideSynthCallData(fee)
     }
 
@@ -457,7 +457,7 @@ export class Swapping {
         }
     }
 
-    private async feeMintCallData(fee?: TokenAmount): Promise<[string, string]> {
+    protected async feeMintCallData(fee?: TokenAmount): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
@@ -481,7 +481,7 @@ export class Swapping {
         })
 
         const swapTokens = this.tradeB.route.map((i) => i.address)
-        if (this.tradeC?.callData) {
+        if (this.tradeC) {
             swapTokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         }
 
@@ -496,16 +496,16 @@ export class Swapping {
                 swapTokens,
                 secondDexRouter: this.tradeB.pool.address,
                 secondSwapCalldata: this.tradeB.callData,
-                finalReceiveSide: this.tradeC?.routerAddress || AddressZero,
-                finalCalldata: this.tradeC?.callData || [],
-                finalOffset: this.tradeC?.callDataOffset || 0,
+                finalReceiveSide: this.finalReceiveSide(),
+                finalCalldata: this.finalCalldata(),
+                finalOffset: this.finalOffset(),
             },
         ])
 
         return [synthesis.address, callData]
     }
 
-    private async feeBurnCallData(fee?: TokenAmount): Promise<[string, string]> {
+    protected async feeBurnCallData(fee?: TokenAmount): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
@@ -537,9 +537,9 @@ export class Swapping {
             this.to, // _to
             amount, // _amount
             token.address, // _rToken
-            this.tradeC?.routerAddress || AddressZero, // _finalReceiveSide
-            this.tradeC?.callData || [], // _finalCalldata
-            this.tradeC?.callDataOffset || 0, // _finalOffset
+            this.finalReceiveSide(), // _finalReceiveSide
+            this.finalCalldata(), // _finalCalldata
+            this.finalOffset(), // _finalOffset
         ])
         return [portal.address, calldata]
     }
@@ -557,7 +557,7 @@ export class Swapping {
         return new TokenAmount(this.feeToken, fee.toString())
     }
 
-    private static getDirection(tokenAmountIn: TokenAmount, tokenOut: Token) {
+    protected static getDirection(tokenAmountIn: TokenAmount, tokenOut: Token) {
         const indexIn = CHAINS_PRIORITY.indexOf(tokenAmountIn.token.chainId)
         const indexOut = CHAINS_PRIORITY.indexOf(tokenOut.chainId)
         if (indexIn === -1) {
@@ -568,5 +568,17 @@ export class Swapping {
         }
 
         return indexIn > indexOut ? 'burn' : 'mint'
+    }
+
+    protected finalReceiveSide(): string {
+        return this.tradeC?.routerAddress || AddressZero
+    }
+
+    protected finalCalldata(): string | [] {
+        return this.tradeC?.callData || []
+    }
+
+    protected finalOffset(): number {
+        return this.tradeC?.callDataOffset || 0
     }
 }
