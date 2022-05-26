@@ -144,7 +144,7 @@ export class ZappingCream extends Swapping {
             path.push(this.tradeC.tokenAmountIn.token.address)
             offsets.push(this.tradeC.callDataOffset!)
         } else {
-            amount = this.tradeB.tokenAmountIn.raw.toString()
+            amount = this.tradeB.amountOut.raw.toString()
             supplyTokenAmount = this.tradeB.amountOut
         }
 
@@ -154,6 +154,7 @@ export class ZappingCream extends Swapping {
         callDatas.push(supplyCalldata)
         receiveSides.push(cream.address)
         path.push(supplyTokenAmount.token.address)
+        path.push(cream.address)
         offsets.push(36)
 
         this.callData = this.multicallRouter.interface.encodeFunctionData('multicall', [

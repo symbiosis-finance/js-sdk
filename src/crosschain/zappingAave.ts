@@ -63,7 +63,7 @@ export class ZappingAave extends Swapping {
             path.push(this.tradeC.tokenAmountIn.token.address)
             offsets.push(this.tradeC.callDataOffset!)
         } else {
-            amount = this.tradeB.tokenAmountIn.raw.toString()
+            amount = this.tradeB.amountOut.raw.toString()
             supplyTokenAmount = this.tradeB.amountOut
         }
 
