@@ -1,5 +1,5 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer } from 'ethers'
+import { Signer, utils } from 'ethers'
 import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
@@ -48,9 +48,11 @@ export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
     public readonly config: Config
+    public readonly clientId: string
 
-    public constructor(config: Config) {
+    public constructor(config: Config, clientId: string) {
         this.config = config
+        this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
             config.chains.map((i) => {

@@ -384,6 +384,7 @@ export class Swapping {
                     oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
                     revertableAddress: this.revertableAddress,
                     chainID: this.tokenOut.chainId,
+                    clientID: this.symbiosis.clientId,
                 },
             ]),
         ]
@@ -419,6 +420,7 @@ export class Swapping {
                     finalCalldata: this.finalCalldata(),
                     finalOffset: this.finalOffset(),
                     revertableAddress: this.revertableAddress,
+                    clientID: this.symbiosis.clientId,
                 },
             ]),
         ]

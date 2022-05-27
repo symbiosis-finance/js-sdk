@@ -35,6 +35,7 @@ export declare namespace MetaRouteStructs {
         finalCalldata: BytesLike
         finalOffset: BigNumberish
         revertableAddress: string
+        clientID: BytesLike
     }
 
     export type MetaSynthesizeTransactionStructOutput = [
@@ -52,6 +53,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         BigNumber,
+        string,
         string
     ] & {
         stableBridgingFee: BigNumber
@@ -69,6 +71,46 @@ export declare namespace MetaRouteStructs {
         finalCalldata: string
         finalOffset: BigNumber
         revertableAddress: string
+        clientID: string
+    }
+}
+
+export declare namespace Portal {
+    export type SynthesizeWithPermitTransactionStruct = {
+        stableBridgingFee: BigNumberish
+        approvalData: BytesLike
+        token: string
+        amount: BigNumberish
+        chain2address: string
+        receiveSide: string
+        oppositeBridge: string
+        revertableAddress: string
+        chainID: BigNumberish
+        clientID: BytesLike
+    }
+
+    export type SynthesizeWithPermitTransactionStructOutput = [
+        BigNumber,
+        string,
+        string,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        string
+    ] & {
+        stableBridgingFee: BigNumber
+        approvalData: string
+        token: string
+        amount: BigNumber
+        chain2address: string
+        receiveSide: string
+        oppositeBridge: string
+        revertableAddress: string
+        chainID: BigNumber
+        clientID: string
     }
 }
 
@@ -80,7 +122,7 @@ export interface PortalInterface extends utils.Interface {
         'initialize(address,address,address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
         'metaRouter()': FunctionFragment
-        'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address))': FunctionFragment
+        'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address,bytes32))': FunctionFragment
         'metaUnsynthesize(uint256,bytes32,address,uint256,address,address,bytes,uint256)': FunctionFragment
         'owner()': FunctionFragment
         'pause()': FunctionFragment
@@ -88,14 +130,14 @@ export interface PortalInterface extends utils.Interface {
         'renounceOwnership()': FunctionFragment
         'requestCount()': FunctionFragment
         'requests(bytes32)': FunctionFragment
-        'revertBurnRequest(uint256,bytes32,address,address,uint256)': FunctionFragment
+        'revertBurnRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
         'revertSynthesize(uint256,bytes32)': FunctionFragment
         'setMetaRouter(address)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
         'setWhitelistToken(address,bool)': FunctionFragment
-        'synthesize(uint256,address,uint256,address,address,address,address,uint256)': FunctionFragment
-        'synthesizeNative(uint256,address,address,address,address,uint256)': FunctionFragment
-        'synthesizeWithPermit(uint256,bytes,address,uint256,address,address,address,address,uint256)': FunctionFragment
+        'synthesize(uint256,address,uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
+        'synthesizeNative(uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
+        'synthesizeWithPermit((uint256,bytes,address,uint256,address,address,address,address,uint256,bytes32))': FunctionFragment
         'tokenThreshold(address)': FunctionFragment
         'tokenWhitelist(address)': FunctionFragment
         'transferOwnership(address)': FunctionFragment
@@ -127,7 +169,7 @@ export interface PortalInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'requests', values: [BytesLike]): string
     encodeFunctionData(
         functionFragment: 'revertBurnRequest',
-        values: [BigNumberish, BytesLike, string, string, BigNumberish]
+        values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
     ): string
     encodeFunctionData(functionFragment: 'revertSynthesize', values: [BigNumberish, BytesLike]): string
     encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
@@ -135,15 +177,15 @@ export interface PortalInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'setWhitelistToken', values: [string, boolean]): string
     encodeFunctionData(
         functionFragment: 'synthesize',
-        values: [BigNumberish, string, BigNumberish, string, string, string, string, BigNumberish]
+        values: [BigNumberish, string, BigNumberish, string, string, string, string, BigNumberish, BytesLike]
     ): string
     encodeFunctionData(
         functionFragment: 'synthesizeNative',
-        values: [BigNumberish, string, string, string, string, BigNumberish]
+        values: [BigNumberish, string, string, string, string, BigNumberish, BytesLike]
     ): string
     encodeFunctionData(
         functionFragment: 'synthesizeWithPermit',
-        values: [BigNumberish, BytesLike, string, BigNumberish, string, string, string, string, BigNumberish]
+        values: [Portal.SynthesizeWithPermitTransactionStruct]
     ): string
     encodeFunctionData(functionFragment: 'tokenThreshold', values: [string]): string
     encodeFunctionData(functionFragment: 'tokenWhitelist', values: [string]): string
@@ -189,17 +231,29 @@ export interface PortalInterface extends utils.Interface {
 
     events: {
         'BurnCompleted(bytes32,address,uint256,uint256,address)': EventFragment
+        'ClientIdLog(bytes32,bytes32)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
+        'Paused(address)': EventFragment
         'RevertBurnRequest(bytes32,address)': EventFragment
         'RevertSynthesizeCompleted(bytes32,address,uint256,uint256,address)': EventFragment
+        'SetMetaRouter(address)': EventFragment
+        'SetTokenThreshold(address,uint256)': EventFragment
+        'SetWhitelistToken(address,bool)': EventFragment
         'SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)': EventFragment
+        'Unpaused(address)': EventFragment
     }
 
     getEvent(nameOrSignatureOrTopic: 'BurnCompleted'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertBurnRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertSynthesizeCompleted'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetMetaRouter'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetTokenThreshold'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetWhitelistToken'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'SynthesizeRequest'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
 }
 
 export type BurnCompletedEvent = TypedEvent<
@@ -215,9 +269,17 @@ export type BurnCompletedEvent = TypedEvent<
 
 export type BurnCompletedEventFilter = TypedEventFilter<BurnCompletedEvent>
 
+export type ClientIdLogEvent = TypedEvent<[string, string], { requestId: string; clientId: string }>
+
+export type ClientIdLogEventFilter = TypedEventFilter<ClientIdLogEvent>
+
 export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
 export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
+
+export type PausedEvent = TypedEvent<[string], { account: string }>
+
+export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
 export type RevertBurnRequestEvent = TypedEvent<[string, string], { id: string; to: string }>
 
@@ -236,6 +298,18 @@ export type RevertSynthesizeCompletedEvent = TypedEvent<
 
 export type RevertSynthesizeCompletedEventFilter = TypedEventFilter<RevertSynthesizeCompletedEvent>
 
+export type SetMetaRouterEvent = TypedEvent<[string], { metaRouter: string }>
+
+export type SetMetaRouterEventFilter = TypedEventFilter<SetMetaRouterEvent>
+
+export type SetTokenThresholdEvent = TypedEvent<[string, BigNumber], { token: string; threshold: BigNumber }>
+
+export type SetTokenThresholdEventFilter = TypedEventFilter<SetTokenThresholdEvent>
+
+export type SetWhitelistTokenEvent = TypedEvent<[string, boolean], { token: string; activate: boolean }>
+
+export type SetWhitelistTokenEventFilter = TypedEventFilter<SetWhitelistTokenEvent>
+
 export type SynthesizeRequestEvent = TypedEvent<
     [string, string, BigNumber, string, string, BigNumber, string],
     {
@@ -250,6 +324,10 @@ export type SynthesizeRequestEvent = TypedEvent<
 >
 
 export type SynthesizeRequestEventFilter = TypedEventFilter<SynthesizeRequestEvent>
+
+export type UnpausedEvent = TypedEvent<[string], { account: string }>
+
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
 
 export interface Portal extends BaseContract {
     contractName: 'Portal'
@@ -338,6 +416,7 @@ export interface Portal extends BaseContract {
             _receiveSide: string,
             _oppositeBridge: string,
             _chainId: BigNumberish,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -373,6 +452,7 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -383,19 +463,12 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: PayableOverrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
         synthesizeWithPermit(
-            _stableBridgingFee: BigNumberish,
-            _approvalData: BytesLike,
-            _token: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -489,6 +562,7 @@ export interface Portal extends BaseContract {
         _receiveSide: string,
         _oppositeBridge: string,
         _chainId: BigNumberish,
+        _clientID: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -524,6 +598,7 @@ export interface Portal extends BaseContract {
         _oppositeBridge: string,
         _revertableAddress: string,
         _chainID: BigNumberish,
+        _clientID: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -534,19 +609,12 @@ export interface Portal extends BaseContract {
         _oppositeBridge: string,
         _revertableAddress: string,
         _chainID: BigNumberish,
+        _clientID: BytesLike,
         overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
     synthesizeWithPermit(
-        _stableBridgingFee: BigNumberish,
-        _approvalData: BytesLike,
-        _token: string,
-        _amount: BigNumberish,
-        _chain2address: string,
-        _receiveSide: string,
-        _oppositeBridge: string,
-        _revertableAddress: string,
-        _chainID: BigNumberish,
+        _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -640,6 +708,7 @@ export interface Portal extends BaseContract {
             _receiveSide: string,
             _oppositeBridge: string,
             _chainId: BigNumberish,
+            _clientID: BytesLike,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -664,6 +733,7 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: CallOverrides
         ): Promise<string>
 
@@ -674,19 +744,12 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: CallOverrides
         ): Promise<string>
 
         synthesizeWithPermit(
-            _stableBridgingFee: BigNumberish,
-            _approvalData: BytesLike,
-            _token: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
             overrides?: CallOverrides
         ): Promise<string>
 
@@ -730,11 +793,17 @@ export interface Portal extends BaseContract {
             token?: null
         ): BurnCompletedEventFilter
 
+        'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
+        ClientIdLog(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
+
         'OwnershipTransferred(address,address)'(
             previousOwner?: string | null,
             newOwner?: string | null
         ): OwnershipTransferredEventFilter
         OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+
+        'Paused(address)'(account?: null): PausedEventFilter
+        Paused(account?: null): PausedEventFilter
 
         'RevertBurnRequest(bytes32,address)'(id?: BytesLike | null, to?: string | null): RevertBurnRequestEventFilter
         RevertBurnRequest(id?: BytesLike | null, to?: string | null): RevertBurnRequestEventFilter
@@ -754,6 +823,15 @@ export interface Portal extends BaseContract {
             token?: null
         ): RevertSynthesizeCompletedEventFilter
 
+        'SetMetaRouter(address)'(metaRouter?: null): SetMetaRouterEventFilter
+        SetMetaRouter(metaRouter?: null): SetMetaRouterEventFilter
+
+        'SetTokenThreshold(address,uint256)'(token?: null, threshold?: null): SetTokenThresholdEventFilter
+        SetTokenThreshold(token?: null, threshold?: null): SetTokenThresholdEventFilter
+
+        'SetWhitelistToken(address,bool)'(token?: null, activate?: null): SetWhitelistTokenEventFilter
+        SetWhitelistToken(token?: null, activate?: null): SetWhitelistTokenEventFilter
+
         'SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)'(
             id?: null,
             from?: string | null,
@@ -772,6 +850,9 @@ export interface Portal extends BaseContract {
             amount?: null,
             token?: null
         ): SynthesizeRequestEventFilter
+
+        'Unpaused(address)'(account?: null): UnpausedEventFilter
+        Unpaused(account?: null): UnpausedEventFilter
     }
 
     estimateGas: {
@@ -827,6 +908,7 @@ export interface Portal extends BaseContract {
             _receiveSide: string,
             _oppositeBridge: string,
             _chainId: BigNumberish,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -862,6 +944,7 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -872,19 +955,12 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: PayableOverrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
         synthesizeWithPermit(
-            _stableBridgingFee: BigNumberish,
-            _approvalData: BytesLike,
-            _token: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -968,6 +1044,7 @@ export interface Portal extends BaseContract {
             _receiveSide: string,
             _oppositeBridge: string,
             _chainId: BigNumberish,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
@@ -1003,6 +1080,7 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
@@ -1013,19 +1091,12 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _revertableAddress: string,
             _chainID: BigNumberish,
+            _clientID: BytesLike,
             overrides?: PayableOverrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
         synthesizeWithPermit(
-            _stableBridgingFee: BigNumberish,
-            _approvalData: BytesLike,
-            _token: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
