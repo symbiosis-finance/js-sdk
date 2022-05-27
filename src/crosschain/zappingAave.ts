@@ -1,11 +1,12 @@
 import { SwapExactIn, Swapping } from './swapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
-import { MulticallRouter } from './contracts'
+import { Aave, MulticallRouter } from './contracts'
 
 export class ZappingAave extends Swapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
-    protected callData!: string
+    protected aavePool!: Aave
+    protected aToken!: string
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
@@ -19,6 +20,10 @@ export class ZappingAave extends Swapping {
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to
+
+        this.aavePool = this.symbiosis.aavePool(tokenOut.chainId)
+        const data = await this.aavePool.getReserveData(tokenOut.address)
+        this.aToken = data.aTokenAddress
 
         return super.exactIn(
             tokenAmountIn,
@@ -37,12 +42,21 @@ export class ZappingAave extends Swapping {
     }
 
     protected finalCalldata(): string | [] {
-        this.buildMulticall()
-        return this.callData
+        return this.buildMulticall()
     }
 
     protected finalOffset(): number {
         return 36
+    }
+
+    protected swapTokens(): string[] {
+        const tokens = this.tradeB.route.map((i) => i.address)
+        if (this.tradeC) {
+            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
+        } else {
+            tokens.push(this.aToken)
+        }
+        return tokens
     }
 
     private buildMulticall() {
@@ -67,8 +81,7 @@ export class ZappingAave extends Swapping {
             supplyTokenAmount = this.tradeB.amountOut
         }
 
-        const aavePool = this.symbiosis.aavePool(supplyTokenAmount.token.chainId)
-        const supplyCalldata = aavePool.interface.encodeFunctionData('supply', [
+        const supplyCalldata = this.aavePool.interface.encodeFunctionData('supply', [
             supplyTokenAmount.token.address,
             supplyTokenAmount.raw.toString(),
             this.userAddress,
@@ -76,11 +89,11 @@ export class ZappingAave extends Swapping {
         ])
 
         callDatas.push(supplyCalldata)
-        receiveSides.push(aavePool.address)
+        receiveSides.push(this.aavePool.address)
         path.push(supplyTokenAmount.token.address)
         offsets.push(68)
 
-        this.callData = this.multicallRouter.interface.encodeFunctionData('multicall', [
+        return this.multicallRouter.interface.encodeFunctionData('multicall', [
             amount,
             callDatas,
             receiveSides,

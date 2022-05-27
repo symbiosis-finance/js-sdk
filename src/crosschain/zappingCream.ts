@@ -13,7 +13,6 @@ type Market = {
 export class ZappingCream extends Swapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
-    protected callData!: string
 
     private creamPoolAddress!: string
 
@@ -118,12 +117,23 @@ export class ZappingCream extends Swapping {
     }
 
     protected finalCalldata(): string | [] {
-        this.buildMulticall()
-        return this.callData
+        const { callData } = this.buildMulticall()
+        return callData
     }
 
     protected finalOffset(): number {
         return 36
+    }
+
+    protected swapTokens(): string[] {
+        const tokens = this.tradeB.route.map((i) => i.address)
+        if (this.tradeC) {
+            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
+        } else {
+            const { supplyAddress } = this.buildMulticall()
+            tokens.push(supplyAddress)
+        }
+        return tokens
     }
 
     private buildMulticall() {
@@ -157,7 +167,7 @@ export class ZappingCream extends Swapping {
         path.push(cream.address)
         offsets.push(36)
 
-        this.callData = this.multicallRouter.interface.encodeFunctionData('multicall', [
+        const callData = this.multicallRouter.interface.encodeFunctionData('multicall', [
             amount,
             callDatas,
             receiveSides,
@@ -165,5 +175,10 @@ export class ZappingCream extends Swapping {
             offsets,
             this.userAddress,
         ])
+
+        return {
+            callData,
+            supplyAddress: cream.address,
+        }
     }
 }

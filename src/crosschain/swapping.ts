@@ -394,11 +394,6 @@ export class Swapping {
             throw new Error('Tokens are not set')
         }
 
-        const swapTokens = this.tradeB.route.map((i) => i?.address)
-        if (this.tradeC) {
-            swapTokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        }
-
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
         const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
@@ -417,7 +412,7 @@ export class Swapping {
                     oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
                     syntCaller: this.from,
                     chainID: chainIdOut,
-                    swapTokens,
+                    swapTokens: this.swapTokens(),
                     secondDexRouter: this.tradeB.pool.address,
                     secondSwapCalldata: this.tradeB.callData,
                     finalReceiveSide: this.finalReceiveSide(),
@@ -480,11 +475,6 @@ export class Swapping {
             chainId: chainIdOut,
         })
 
-        const swapTokens = this.tradeB.route.map((i) => i.address)
-        if (this.tradeC) {
-            swapTokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        }
-
         const callData = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
                 stableBridgingFee: fee?.raw.toString() || '1',
@@ -493,7 +483,7 @@ export class Swapping {
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
-                swapTokens,
+                swapTokens: this.swapTokens(),
                 secondDexRouter: this.tradeB.pool.address,
                 secondSwapCalldata: this.tradeB.callData,
                 finalReceiveSide: this.finalReceiveSide(),
@@ -580,5 +570,13 @@ export class Swapping {
 
     protected finalOffset(): number {
         return this.tradeC?.callDataOffset || 0
+    }
+
+    protected swapTokens(): string[] {
+        const tokens = this.tradeB.route.map((i) => i.address)
+        if (this.tradeC) {
+            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
+        }
+        return tokens
     }
 }
