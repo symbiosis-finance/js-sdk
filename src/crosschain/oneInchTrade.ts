@@ -7,6 +7,15 @@ import { OneInchOracle } from './contracts'
 import { getMulticall } from './multicall'
 import { BIPS_BASE } from './constants'
 
+const API_URL = 'https://api.1inch.io/v4.0'
+
+type Protocol = {
+    id: string
+    title: string
+    img: string
+    img_color: string
+}
+
 export class OneInchTrade {
     public tokenAmountIn: TokenAmount
     public route!: Token[]
@@ -50,6 +59,8 @@ export class OneInchTrade {
             toTokenAddress = nativeAddress
         }
 
+        const protocols = await this.getProtocols()
+
         const params = []
         params.push(`fromTokenAddress=${fromTokenAddress}`)
         params.push(`toTokenAddress=${toTokenAddress}`)
@@ -60,8 +71,9 @@ export class OneInchTrade {
         params.push(`disableEstimate=true`)
         params.push(`allowPartialFill=false`)
         params.push(`usePatching=true`)
+        params.push(`protocols=${protocols.map((i) => i.id).join(',')}`)
 
-        const url = `https://api.1inch.io/v4.0/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
+        const url = `${API_URL}/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
 
         const response = await fetch(url)
         const json = await response.json()
@@ -87,6 +99,22 @@ export class OneInchTrade {
         this.priceImpact = await this.calculatePriceImpact(this.tokenAmountIn, this.amountOut)
 
         return this
+    }
+
+    private async getProtocols(): Promise<Protocol[]> {
+        const url = `${API_URL}/${this.tokenAmountIn.token.chainId}/liquidity-sources`
+        const response = await fetch(url)
+        const json = await response.json()
+        if (response.status === 400) {
+            throw new Error(`Cannot get 1inch protocols: ${json['description']}`)
+        }
+        return json['protocols'].reduce((acc: Protocol[], protocol: Protocol) => {
+            if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
+                return acc
+            }
+            acc.push(protocol)
+            return acc
+        }, [])
     }
 
     private getOffset(callData: string) {
