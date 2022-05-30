@@ -143,11 +143,11 @@ export class ZappingCream extends Swapping {
         const offsets = []
 
         let amount
-        let supplyTokenAmount
+        let supplyToken
 
         if (this.tradeC) {
             amount = this.tradeC.tokenAmountIn.raw.toString()
-            supplyTokenAmount = this.tradeC.amountOut
+            supplyToken = this.tradeC.amountOut.token
 
             callDatas.push(this.tradeC.callData)
             receiveSides.push(this.tradeC.routerAddress)
@@ -155,15 +155,19 @@ export class ZappingCream extends Swapping {
             offsets.push(this.tradeC.callDataOffset!)
         } else {
             amount = this.tradeB.amountOut.raw.toString()
-            supplyTokenAmount = this.tradeB.amountOut
+            if (this.direction === 'mint') {
+                supplyToken = this.tradeB.amountOut.token
+            } else {
+                supplyToken = this.feeToken
+            }
         }
 
-        const cream = this.symbiosis.creamCErc20ByAddress(this.creamPoolAddress, supplyTokenAmount.token.chainId)
-        const supplyCalldata = cream.interface.encodeFunctionData('mint', [supplyTokenAmount.raw.toString()])
+        const cream = this.symbiosis.creamCErc20ByAddress(this.creamPoolAddress, supplyToken.chainId)
+        const supplyCalldata = cream.interface.encodeFunctionData('mint', ['0']) // amount will be patched
 
         callDatas.push(supplyCalldata)
         receiveSides.push(cream.address)
-        path.push(supplyTokenAmount.token.address)
+        path.push(supplyToken.address)
         path.push(cream.address)
         offsets.push(36)
 

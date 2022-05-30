@@ -66,11 +66,11 @@ export class ZappingAave extends Swapping {
         const offsets = []
 
         let amount
-        let supplyTokenAmount
+        let supplyToken
 
         if (this.tradeC) {
             amount = this.tradeC.tokenAmountIn.raw.toString()
-            supplyTokenAmount = this.tradeC.amountOut
+            supplyToken = this.tradeC.amountOut.token
 
             callDatas.push(this.tradeC.callData)
             receiveSides.push(this.tradeC.routerAddress)
@@ -78,19 +78,23 @@ export class ZappingAave extends Swapping {
             offsets.push(this.tradeC.callDataOffset!)
         } else {
             amount = this.tradeB.amountOut.raw.toString()
-            supplyTokenAmount = this.tradeB.amountOut
+            if (this.direction === 'mint') {
+                supplyToken = this.tradeB.amountOut.token
+            } else {
+                supplyToken = this.feeToken
+            }
         }
 
         const supplyCalldata = this.aavePool.interface.encodeFunctionData('supply', [
-            supplyTokenAmount.token.address,
-            supplyTokenAmount.raw.toString(),
+            supplyToken.address,
+            '0', // amount will be patched
             this.userAddress,
             '0',
         ])
 
         callDatas.push(supplyCalldata)
         receiveSides.push(this.aavePool.address)
-        path.push(supplyTokenAmount.token.address)
+        path.push(supplyToken.address)
         offsets.push(68)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
