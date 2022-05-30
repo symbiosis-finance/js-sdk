@@ -32,7 +32,12 @@
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0x0000000000000000000000000000000000000000",
             "portal": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
-            "fabric": "0x0000000000000000000000000000000000000000"
+            "fabric": "0x0000000000000000000000000000000000000000",
+            "multicallRouter": "0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A",
+            "aavePool": "0x0000000000000000000000000000000000000000",
+            "aavePoolDataProvider": "0x0000000000000000000000000000000000000000",
+            "creamComptroller": "0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258",
+            "blocksPerYear": 2336000
         },
         {
             "id": 56,
@@ -83,7 +88,12 @@
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
-            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848",
+            "multicallRouter": "0x44b5d0F16Ad55c4e7113310614745e8771b963bB",
+            "aavePool": "0x0000000000000000000000000000000000000000",
+            "aavePoolDataProvider": "0x0000000000000000000000000000000000000000",
+            "creamComptroller": "0x589de0f0ccf905477646599bb3e5c622c84cc0ba",
+            "blocksPerYear": 10512000
         },
         {
             "id": 43114,
@@ -155,7 +165,12 @@
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
-            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848",
+            "multicallRouter": "0xDc9a6a26209A450caC415fb78487e907c660cf6a",
+            "aavePool": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+            "aavePoolDataProvider": "0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654",
+            "creamComptroller": "0x0000000000000000000000000000000000000000",
+            "blocksPerYear": 10512000
         },
         {
             "id": 137,
@@ -248,7 +263,12 @@
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
-            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848",
+            "multicallRouter": "0xc5B61b9abC3C6229065cAD0e961aF585C5E0135c",
+            "aavePool": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+            "aavePoolDataProvider": "0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654",
+            "creamComptroller": "0x20CA53E2395FA571798623F1cFBD11Fe2C114c24",
+            "blocksPerYear": 15768000
         },
         {
             "id": 288,
@@ -320,7 +340,12 @@
             "bridge": "0xd5F0f8dB993D26F5df89E70a83d32b369DcCdaa0",
             "synthesis": "0xb80fDAA74dDA763a8A158ba85798d373A5E84d84",
             "portal": "0xD7F9989bE0d15319d13d6FA5d468211C89F0b147",
-            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848"
+            "fabric": "0x947a0d452b40013190295a4151A090E1638Fb848",
+            "multicallRouter": "0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3",
+            "aavePool": "0x0000000000000000000000000000000000000000",
+            "aavePoolDataProvider": "0x0000000000000000000000000000000000000000",
+            "creamComptroller": "0x0000000000000000000000000000000000000000",
+            "blocksPerYear": 2336000
         }
     ]
 }

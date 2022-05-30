@@ -31,7 +31,10 @@
             "bridge": "0x38b07a83b691bB221d0710B0eA6Ebd7494E106D3",
             "synthesis": "0xBA7c80bb5d316c4eE55F96F47d1a1477fFD1aFb6",
             "portal": "0x68801662cab0D678E5216CB67DaD350271375024",
-            "fabric": "0xB5ec93b32320Adb12Eef81cB97B68a3C69f8bc4E"
+            "fabric": "0xB5ec93b32320Adb12Eef81cB97B68a3C69f8bc4E",
+            "multicallRouter": "0xAc44af87159D415A121BB084d62B1fFC1F3207a0",
+            "aavePool": "0xE039BdF1d874d27338e09B55CB09879Dedca52D8",
+            "aavePoolDataProvider": "0xBAB2E7afF5acea53a43aEeBa2BA6298D8056DcE5"
         },
         {
             "id": 97,
@@ -174,7 +177,10 @@
             "bridge": "0x68d12DD9cd42BD62A6F707A96B3dc8D1A6a9f076",
             "synthesis": "0x9A857D526A9e53697a9Df5fFc40bCCD70E7A0388",
             "portal": "0x14be03e34B05a87A028acfF0292C1AF135D26699",
-            "fabric": "0x69fA0Ae9E3065B9d6c4c1909E101807bAaf3227e"
+            "fabric": "0x69fA0Ae9E3065B9d6c4c1909E101807bAaf3227e",
+            "multicallRouter": "0xc15688798C18e0F2DC2BEb747f91fb5292CD1C4e",
+            "aavePool": "0xb47673b7a73D78743AFF1487AF69dBB5763F00cA",
+            "aavePoolDataProvider": "0x8e0988b28f9CdDe0134A206dfF94111578498C63"
         },
         {
             "id": 80001,
