@@ -101,6 +101,7 @@ export class RevertPending {
                 otherPortal.address,
                 otherBridge.address,
                 chainIdFrom,
+                this.symbiosis.clientId,
             ]),
             chainId: chainIdTo,
         }
@@ -121,6 +122,7 @@ export class RevertPending {
                 otherSynthesis.address,
                 otherBridge.address,
                 chainIdFrom,
+                this.symbiosis.clientId,
             ]),
             chainId: chainIdTo,
         }

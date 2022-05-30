@@ -128,6 +128,7 @@ export class Bridging {
                     this.symbiosis.bridge(this.tokenOut.chainId).address,
                     this.revertableAddress,
                     this.tokenOut.chainId,
+                    this.symbiosis.clientId,
                 ]),
             }
         }
@@ -145,6 +146,7 @@ export class Bridging {
                     this.symbiosis.bridge(this.tokenOut.chainId).address,
                     this.revertableAddress,
                     this.tokenOut.chainId,
+                    this.symbiosis.clientId,
                 ]),
                 value: BigNumber.from(this.tokenAmountIn.raw.toString()),
             }
@@ -162,6 +164,7 @@ export class Bridging {
                 this.symbiosis.bridge(this.tokenOut.chainId).address,
                 this.revertableAddress,
                 this.tokenOut.chainId,
+                this.symbiosis.clientId,
             ]),
         }
     }

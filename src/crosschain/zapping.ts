@@ -243,6 +243,7 @@ export class Zapping {
                     finalCalldata: this.nerveLiquidity.callData,
                     finalOffset: this.nerveLiquidity.callDataOffset,
                     revertableAddress: this.revertableAddress,
+                    clientID: this.symbiosis.clientId,
                 },
             ]),
         ]
