@@ -266,7 +266,8 @@ export const WETH = {
     }),
     [ChainId.MILKOMEDA_DEVNET]: new Token({
         chainId: ChainId.MILKOMEDA_DEVNET,
-        address: '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9',
+        // address: '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9',
+        address: '0x01bbbb9c97fc43e3393e860fc8bbead47b6960db',
         decimals: 18,
         symbol: 'WTADA',
         isNative: false,
