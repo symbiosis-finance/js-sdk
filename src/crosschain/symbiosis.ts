@@ -62,6 +62,7 @@ export class Symbiosis {
     }
 
     public validateSwapAmounts(amount: TokenAmount) {
+        console.log('validateSwapAmounts', amount.toSignificant(), amount.token.symbol)
         const parsedAmount = parseFloat(amount.toExact(2))
         const minAmount = this.config.minSwapAmountInUsd
         const maxAmount = this.config.maxSwapAmountInUsd

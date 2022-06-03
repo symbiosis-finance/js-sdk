@@ -15,7 +15,7 @@ export class Transit {
     public callData: string | []
     public route: Token[]
     public priceImpact: Percent
-    public amountOut: TokenAmount
+    public amountOut!: TokenAmount
 
     public feeToken!: Token
 
@@ -30,34 +30,77 @@ export class Transit {
         protected deadline: number,
         protected fee?: TokenAmount
     ) {
-        this.symbiosis.validateSwapAmounts(this.amountIn)
-
         this.direction = Transit.getDirection(amountIn.token.chainId, chainIdOut)
         this.route = []
         this.receiveSide = AddressZero
         this.callData = []
         this.priceImpact = new Percent('0')
-
-        const transitStableOut = symbiosis.transitStable(chainIdOut)
-        this.amountOut = new TokenAmount(transitStableOut, amountIn.raw)
     }
 
     public async init(): Promise<Transit> {
         this.feeToken = await this.getFeeToken()
 
         if (!this.isTradeRequired()) {
-            return this
-        }
+            this.amountOut = this.getBridgeAmountOut() // depends on this.feeToken
+        } else {
+            this.tradeB = await this.buildTradeB()
+            await this.tradeB.init(this.dataProvider)
 
-        this.tradeB = await this.buildTradeB()
-        await this.tradeB.init(this.dataProvider)
-        this.receiveSide = this.tradeB.pool.address
-        this.callData = this.tradeB.callData
-        this.amountOut = this.tradeB.amountOut
-        this.route = this.tradeB.route
-        this.priceImpact = this.tradeB.priceImpact
+            this.receiveSide = this.tradeB.pool.address
+            this.callData = this.tradeB.callData
+            this.amountOut = this.getTradeBAmountOut()
+            this.route = this.tradeB.route
+            this.priceImpact = this.tradeB.priceImpact
+        }
+        this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
 
         return this
+    }
+
+    public getBridgeAmountIn(): TokenAmount {
+        if (this.direction === 'mint') {
+            return this.amountIn
+        }
+
+        return this.tradeB ? this.tradeB.amountOut : this.amountIn
+    }
+
+    public getBridgeAmountOut(): TokenAmount {
+        const amountOut = new TokenAmount(this.feeToken, this.amountIn.raw)
+        if (!this.fee) {
+            return amountOut
+        }
+        if (amountOut.lessThan(this.fee)) {
+            throw new Error(
+                `Amount $${amountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
+        return amountOut.subtract(this.fee)
+    }
+
+    protected getTradeBAmountOut(): TokenAmount {
+        if (!this.tradeB) {
+            throw new Error('TradeB is undefined')
+        }
+        if (this.direction === 'mint') {
+            return this.tradeB.amountOut
+        }
+
+        const transitStableOut = this.symbiosis.transitStable(this.chainIdOut)
+        const amountOut = new TokenAmount(transitStableOut, this.tradeB.amountOut.raw)
+
+        if (!this.fee) {
+            return amountOut
+        }
+
+        if (amountOut.lessThan(this.fee)) {
+            throw new Error(
+                `Amount $${amountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
+        return amountOut.subtract(this.fee)
     }
 
     public amount(): TokenAmount {
@@ -83,7 +126,7 @@ export class Transit {
     }
 
     protected async getFeeToken(): Promise<Token> {
-        if (this.direction === 'burn') {
+        if (this.direction === 'burn' || !this.isTradeRequired()) {
             return this.symbiosis.transitStable(this.chainIdOut) // USDC
         }
 
@@ -98,21 +141,12 @@ export class Transit {
         return rep
     }
 
-    protected async getTradeBAmountIn(fee?: TokenAmount) {
+    protected getTradeBAmountIn(): TokenAmount {
         if (this.direction === 'burn') {
             return this.amountIn
         }
 
-        const tradeBAmountIn = new TokenAmount(this.feeToken, this.amountIn.raw) // sUSDC
-        if (!fee) return tradeBAmountIn
-
-        if (tradeBAmountIn.lessThan(fee)) {
-            throw new Error(
-                `Amount $${tradeBAmountIn.toSignificant()} less than fee $${fee.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
-        }
-        return tradeBAmountIn.subtract(fee)
+        return this.getBridgeAmountOut()
     }
 
     protected async getTradeBTokenOut(): Promise<Token> {
@@ -131,8 +165,8 @@ export class Transit {
         return rep
     }
 
-    protected async buildTradeB(fee?: TokenAmount): Promise<NerveTrade> {
-        const amountIn = await this.getTradeBAmountIn(fee)
+    protected async buildTradeB(): Promise<NerveTrade> {
+        const amountIn = await this.getTradeBAmountIn()
         const tokenOut = await this.getTradeBTokenOut()
 
         const nervePool = this.symbiosis.nervePool(amountIn.token, tokenOut)

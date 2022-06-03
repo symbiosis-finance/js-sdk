@@ -7,7 +7,6 @@ import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import type { Symbiosis } from './symbiosis'
-import { BridgeDirection } from './types'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -38,7 +37,6 @@ export class Swapping {
     protected slippage!: number
     protected deadline!: number
     protected ttl!: number
-    protected direction!: BridgeDirection
     protected use1Inch!: boolean
 
     protected route!: Token[]
@@ -179,7 +177,7 @@ export class Swapping {
                 firstDexRouter: this.firstDexRouter(),
                 firstSwapCalldata: this.firstSwapCalldata(),
                 secondDexRouter: this.secondDexRouter(),
-                secondSwapCalldata: this.secondSwapCalldata(),
+                secondSwapCalldata: this.transit.direction === 'burn' ? this.secondSwapCalldata() : [],
                 relayRecipient,
                 otherSideCalldata,
             },
@@ -239,11 +237,10 @@ export class Swapping {
     }
 
     protected buildTransit(fee?: TokenAmount): Transit {
-        const amountIn = this.transitTokenAmount()
         return new Transit(
             this.symbiosis,
             this.dataProvider,
-            amountIn,
+            this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
             this.tokenOut.chainId,
             this.slippage,
             this.deadline,
@@ -295,7 +292,7 @@ export class Swapping {
 
         const synthesis = this.symbiosis.synthesis(this.tokenAmountIn.token.chainId)
 
-        const amount = this.transit.amountOut // FIXME нужен amount без комиссии
+        const amount = this.transit.getBridgeAmountIn()
 
         return [
             synthesis.address,
@@ -326,7 +323,7 @@ export class Swapping {
 
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
-        const tokenAmount = this.transitTokenAmount()
+        const tokenAmount = this.transit.getBridgeAmountIn()
 
         const portal = this.symbiosis.portal(chainIdIn)
 
@@ -380,7 +377,7 @@ export class Swapping {
             chainId: chainIdOut,
         })
 
-        const amount = this.transitTokenAmount()
+        const amount = this.transit.getBridgeAmountIn()
 
         const callData = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
@@ -450,11 +447,6 @@ export class Swapping {
             chainIdTo: this.tokenOut.chainId,
         })
         return new TokenAmount(feeToken, fee.toString())
-    }
-
-    // FIXME naming
-    protected transitTokenAmount(): TokenAmount {
-        return this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
     }
 
     protected approvedTokens(): string[] {
