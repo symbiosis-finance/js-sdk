@@ -5,9 +5,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
-import { BIPS_BASE, CHAINS_PRIORITY } from './constants'
-import { Error, ErrorCode } from './error'
-import { NerveTrade } from './nerveTrade'
+import { BIPS_BASE } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { UniLikeTrade } from './uniLikeTrade'
@@ -16,6 +14,7 @@ import { WaitForComplete } from './waitForComplete'
 import { AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
+import { Transit } from './transit'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -29,6 +28,8 @@ export type SwapExactIn = Promise<{
 }>
 
 export class Swapping {
+    public amountInUsd: TokenAmount | undefined
+
     protected from!: string
     protected to!: string
     protected revertableAddress!: string
@@ -41,18 +42,18 @@ export class Swapping {
     protected use1Inch!: boolean
 
     protected route!: Token[]
-    protected feeToken!: Token
 
     protected tradeA: UniLikeTrade | OneInchTrade | undefined
-    protected tradeB!: NerveTrade
+    protected transit!: Transit
     protected tradeC: UniLikeTrade | OneInchTrade | undefined
 
-    public amountInUsd: TokenAmount | undefined
+    protected dataProvider: DataProvider
 
     protected readonly symbiosis: Symbiosis
 
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
+        this.dataProvider = new DataProvider(symbiosis)
     }
 
     public async exactIn(
@@ -65,9 +66,6 @@ export class Swapping {
         deadline: number,
         use1Inch = false
     ): SwapExactIn {
-        // TODO check slippage.
-        //  if slippage too low, the first swap will failed
-
         this.use1Inch = use1Inch
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -77,43 +75,35 @@ export class Swapping {
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
-        this.direction = Swapping.getDirection(tokenAmountIn, tokenOut)
-
-        const dataProvider = new DataProvider(this.symbiosis)
 
         if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
         }
 
-        this.tradeB = await this.buildTradeB(dataProvider)
-        await this.tradeB.init(dataProvider)
+        this.transit = this.buildTransit()
+        await this.transit.init()
 
-        if (this.direction === 'burn') {
-            this.amountInUsd = this.tradeB.amountOut
-        } else {
-            this.amountInUsd = this.tradeB.tokenAmountIn
-        }
-        this.symbiosis.validateSwapAmounts(this.amountInUsd)
+        this.amountInUsd = this.transit.amount()
 
         if (!this.symbiosis.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC()
-            await this.tradeC.init(dataProvider)
+            await this.tradeC.init()
         }
 
-        const zeroFee = new TokenAmount(this.feeToken, '0')
-        const tokenAmountOutWithZeroFee = this.tokenAmountOut(zeroFee)
-
         this.route = this.getRoute()
-        const fee = await this.getFee()
+
+        const fee = await this.getFee(this.transit.feeToken)
+
+        const tokenAmountOutWithZeroFee = this.tokenAmountOut()
 
         // >>> NOTE create trades with calculated fee
-        this.tradeB = await this.buildTradeB(dataProvider, fee)
-        await this.tradeB.init(dataProvider)
+        this.transit = await this.buildTransit(fee)
+        await this.transit.init()
 
         if (!this.symbiosis.isTransitStable(tokenOut)) {
-            this.tradeC = this.buildTradeC(fee)
-            await this.tradeC.init(dataProvider)
+            this.tradeC = this.buildTradeC()
+            await this.tradeC.init()
         }
         // <<< NOTE create trades with calculated fee
 
@@ -122,312 +112,13 @@ export class Swapping {
         return {
             execute: (signer: Signer) => this.execute(transactionRequest, signer),
             fee,
-            tokenAmountOut: this.tokenAmountOut(fee),
-            tokenAmountOutWithZeroFee,
+            tokenAmountOut: this.tokenAmountOut(),
+            tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
             route: this.route,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.amountInUsd,
             transactionRequest,
         }
-    }
-
-    async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        if (!this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
-        return new WaitForComplete({
-            direction: this.direction,
-            tokenOut: this.tokenOut,
-            symbiosis: this.symbiosis,
-            revertableAddress: this.revertableAddress,
-            chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
-    }
-
-    protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
-        const chainId = this.tokenAmountIn.token.chainId
-        const metaRouter = this.symbiosis.metaRouter(chainId)
-
-        const [relayRecipient, otherSideCalldata] = this.otherSideData(fee)
-
-        let firstToken = this.tradeA ? this.tradeA.tokenAmountIn.token.address : this.tokenAmountIn.token.address
-        if (!firstToken) {
-            // AddressZero if first token is GasToken
-            firstToken = AddressZero
-        }
-
-        let amount: TokenAmount
-        let approvedTokens: string[]
-        if (this.direction === 'burn') {
-            amount = this.tradeA ? this.tradeA.tokenAmountIn : this.tradeB.tokenAmountIn
-            approvedTokens = [firstToken, this.tradeB.route[0].address, this.tradeB.route[1].address]
-        } else {
-            amount = this.tradeA ? this.tradeA.tokenAmountIn : this.tokenAmountIn
-            approvedTokens = [
-                firstToken,
-                this.tradeA ? this.tradeA.amountOut.token.address : this.tokenAmountIn.token.address,
-            ]
-        }
-
-        const value =
-            this.tradeA && this.tokenAmountIn.token.isNative
-                ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
-                : undefined
-
-        const data = metaRouter.interface.encodeFunctionData('metaRoute', [
-            {
-                firstSwapCalldata: this.tradeA?.callData || [],
-                secondSwapCalldata: this.direction === 'burn' ? this.tradeB.callData : [],
-                approvedTokens,
-                firstDexRouter: this.tradeA?.routerAddress || AddressZero,
-                secondDexRouter: this.tradeB.pool.address,
-                amount: amount.raw.toString(),
-                nativeIn: amount.token.isNative,
-                relayRecipient,
-                otherSideCalldata,
-            },
-        ])
-
-        return {
-            chainId,
-            to: metaRouter.address,
-            data,
-            value,
-        }
-    }
-
-    protected calculatePriceImpact(): Percent {
-        const zero = new Percent(JSBI.BigInt(0), BIPS_BASE) // 0%
-        const pia = this.tradeA?.priceImpact || zero
-        const pib = this.tradeB?.priceImpact || zero
-        const pic = this.tradeC?.priceImpact || zero
-
-        // console.log([pia, pib, pic].map((i) => i.toSignificant()))
-
-        let pi = pia.add(pib).add(pic)
-
-        const max = new Percent(JSBI.BigInt(10000), BIPS_BASE) // 100%
-        if (pi.greaterThan(max)) pi = max
-
-        return new Percent(pi.numerator, pi.denominator)
-    }
-
-    protected tokenAmountOut(fee: TokenAmount): TokenAmount {
-        if (this.tradeC) {
-            return this.tradeC.amountOut
-        }
-
-        if (this.direction === 'burn') {
-            const amount = this.burnOtherSideAmount()
-            if (amount.lessThan(fee)) {
-                throw new Error(
-                    `Amount $${amount.toSignificant()} less than fee $${fee.toSignificant()}`,
-                    ErrorCode.AMOUNT_LESS_THAN_FEE
-                )
-            }
-            return amount.subtract(fee)
-        } else {
-            return this.tradeB.amountOut
-        }
-    }
-
-    protected buildTradeA(): UniLikeTrade | OneInchTrade {
-        const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.symbiosis.transitStable(chainId)
-        const from = this.symbiosis.metaRouter(chainId).address
-        const to = from
-
-        if (this.use1Inch && canOneInch(chainId)) {
-            const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
-        }
-
-        const dexFee = this.symbiosis.dexFee(chainId)
-
-        let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
-        if (chainId === ChainId.AVAX_MAINNET) {
-            routerA = this.symbiosis.avaxRouter(chainId)
-        }
-
-        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
-    }
-
-    protected async buildTradeB(dataProvider: DataProvider, bridgeFee?: TokenAmount): Promise<NerveTrade> {
-        let tradeBAmountIn: TokenAmount
-        let tradeBTokenOut: Token
-
-        if (this.direction === 'burn') {
-            tradeBAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-            const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
-            this.feeToken = transitStableOut
-            const rep = await dataProvider.getRepresentation(transitStableOut, this.tokenAmountIn.token.chainId) // sUSDC
-            if (!rep) {
-                throw new Error(
-                    `Representation of ${transitStableOut.symbol} in chain ${this.tokenAmountIn.token.chainId} not found`,
-                    ErrorCode.NO_ROUTE
-                )
-            }
-            tradeBTokenOut = rep
-        } else {
-            // mint
-            const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId) // USDC
-            const rep = await dataProvider.getRepresentation(transitStableIn, this.tokenOut.chainId) // sUSDC
-            if (!rep) {
-                throw new Error(
-                    `Representation of ${transitStableIn.symbol} in chain ${this.tokenOut.chainId} not found`,
-                    ErrorCode.NO_ROUTE
-                )
-            }
-            this.feeToken = rep
-            tradeBAmountIn = new TokenAmount(rep, this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw) // sUSDC
-            if (bridgeFee) {
-                if (tradeBAmountIn.lessThan(bridgeFee)) {
-                    throw new Error(
-                        `Amount $${tradeBAmountIn.toSignificant()} less than fee $${bridgeFee.toSignificant()}`,
-                        ErrorCode.AMOUNT_LESS_THAN_FEE
-                    )
-                }
-                tradeBAmountIn = tradeBAmountIn.subtract(bridgeFee)
-            }
-
-            tradeBTokenOut = this.symbiosis.transitStable(this.tokenOut.chainId) // BUSD
-        }
-        const nervePool = this.symbiosis.nervePool(tradeBAmountIn.token, tradeBTokenOut)
-
-        return new NerveTrade(tradeBAmountIn, tradeBTokenOut, this.slippage, this.deadline, nervePool)
-    }
-
-    protected buildTradeC(bridgeFee?: TokenAmount) {
-        let tradeCAmountIn: TokenAmount
-        if (this.direction === 'burn') {
-            tradeCAmountIn = this.burnOtherSideAmount()
-            if (bridgeFee) {
-                if (tradeCAmountIn.lessThan(bridgeFee)) {
-                    throw new Error(
-                        `Amount $${tradeCAmountIn.toSignificant()} less than fee $${bridgeFee.toSignificant()}`,
-                        ErrorCode.AMOUNT_LESS_THAN_FEE
-                    )
-                }
-                tradeCAmountIn = tradeCAmountIn.subtract(bridgeFee)
-            }
-        } else {
-            // mint
-            tradeCAmountIn = this.tradeB.amountOut
-        }
-
-        const chainId = this.tokenOut.chainId
-
-        if (this.use1Inch && canOneInch(chainId)) {
-            const from = this.symbiosis.metaRouter(chainId).address
-            const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(tradeCAmountIn, this.tokenOut, from, this.to, this.slippage / 100, oracle)
-        }
-
-        const dexFee = this.symbiosis.dexFee(chainId)
-
-        let routerC: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
-        if (chainId === ChainId.AVAX_MAINNET) {
-            routerC = this.symbiosis.avaxRouter(chainId)
-        }
-
-        return new UniLikeTrade(tradeCAmountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)
-    }
-
-    protected burnOtherSideAmount(): TokenAmount {
-        if (!this.feeToken) {
-            throw new Error('Fee token is not set')
-        }
-        if (this.direction !== 'burn') {
-            throw new Error('Cannot call with direction !== "burn"')
-        }
-        return new TokenAmount(this.feeToken, this.tradeB.amountOut.raw)
-    }
-
-    protected getRoute(): Token[] {
-        const started = this.tradeA ? [] : [this.tokenAmountIn.token]
-        const terminated = this.tradeC ? [] : [this.tokenOut]
-
-        return [
-            ...started,
-            ...(this.tradeA ? this.tradeA.route : []),
-            ...(this.tradeB ? this.tradeB.route : []),
-            ...(this.tradeC ? this.tradeC.route : []),
-            ...terminated,
-        ].reduce((acc: Token[], token: Token) => {
-            const found = acc.find((i) => i.equals(token))
-            if (found) return acc
-            return [...acc, token]
-        }, [])
-    }
-
-    protected otherSideBurnCallData(fee: TokenAmount): [string, string] {
-        if (!this.tokenAmountIn || !this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
-        const synthesis = this.symbiosis.synthesis(this.tokenAmountIn.token.chainId)
-
-        return [
-            synthesis.address,
-            synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
-                {
-                    stableBridgingFee: fee.raw.toString(),
-                    amount: this.burnOtherSideAmount().raw.toString(),
-                    syntCaller: this.from,
-                    finalReceiveSide: this.finalReceiveSide(),
-                    sToken: this.tradeB.amountOut.token.address,
-                    finalCallData: this.finalCalldata(),
-                    finalOffset: this.finalOffset(),
-                    chain2address: this.to,
-                    receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
-                    oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
-                    revertableAddress: this.revertableAddress,
-                    chainID: this.tokenOut.chainId,
-                    clientID: this.symbiosis.clientId,
-                },
-            ]),
-        ]
-    }
-
-    protected otherSideSynthCallData(fee: TokenAmount): [string, string] {
-        if (!this.tokenAmountIn || !this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
-        const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.tokenOut.chainId
-        const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-
-        const portal = this.symbiosis.portal(chainIdIn)
-
-        return [
-            portal.address,
-            portal.interface.encodeFunctionData('metaSynthesize', [
-                {
-                    stableBridgingFee: fee.raw.toString(),
-                    amount: tokenAmount.raw.toString(),
-                    rtoken: tokenAmount.token.address,
-                    chain2address: this.to,
-                    receiveSide: this.symbiosis.synthesis(chainIdOut).address,
-                    oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
-                    syntCaller: this.from,
-                    chainID: chainIdOut,
-                    swapTokens: this.swapTokens(),
-                    secondDexRouter: this.tradeB.pool.address,
-                    secondSwapCalldata: this.tradeB.callData,
-                    finalReceiveSide: this.finalReceiveSide(),
-                    finalCalldata: this.finalCalldata(),
-                    finalOffset: this.finalOffset(),
-                    revertableAddress: this.revertableAddress,
-                    clientID: this.symbiosis.clientId,
-                },
-            ]),
-        ]
-    }
-
-    protected otherSideData(fee: TokenAmount): [string, string] {
-        return this.direction === 'burn' ? this.otherSideBurnCallData(fee) : this.otherSideSynthCallData(fee)
     }
 
     protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
@@ -454,15 +145,227 @@ export class Swapping {
         }
     }
 
-    protected async feeMintCallData(fee?: TokenAmount): Promise<[string, string]> {
+    protected async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+        if (!this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        return new WaitForComplete({
+            direction: this.transit.direction,
+            tokenOut: this.tokenOut,
+            symbiosis: this.symbiosis,
+            revertableAddress: this.revertableAddress,
+            chainIdIn: this.tokenAmountIn.token.chainId,
+        }).waitForComplete(receipt)
+    }
+
+    protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
+        const chainId = this.tokenAmountIn.token.chainId
+        const metaRouter = this.symbiosis.metaRouter(chainId)
+
+        const [relayRecipient, otherSideCalldata] = this.otherSideData(fee)
+
+        const amount = this.tradeA ? this.tradeA.tokenAmountIn : this.tokenAmountIn
+        const value =
+            this.tradeA && this.tokenAmountIn.token.isNative
+                ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
+                : undefined
+
+        const data = metaRouter.interface.encodeFunctionData('metaRoute', [
+            {
+                amount: amount.raw.toString(),
+                nativeIn: amount.token.isNative,
+                approvedTokens: this.approvedTokens(),
+                firstDexRouter: this.firstDexRouter(),
+                firstSwapCalldata: this.firstSwapCalldata(),
+                secondDexRouter: this.secondDexRouter(),
+                secondSwapCalldata: this.secondSwapCalldata(),
+                relayRecipient,
+                otherSideCalldata,
+            },
+        ])
+
+        return {
+            chainId,
+            to: metaRouter.address,
+            data,
+            value,
+        }
+    }
+
+    protected calculatePriceImpact(): Percent {
+        const zero = new Percent(JSBI.BigInt(0), BIPS_BASE) // 0%
+        const pia = this.tradeA?.priceImpact || zero
+        const pib = this.transit.priceImpact || zero
+        const pic = this.tradeC?.priceImpact || zero
+
+        // console.log([pia, pib, pic].map((i) => i.toSignificant()))
+
+        let pi = pia.add(pib).add(pic)
+
+        const max = new Percent(JSBI.BigInt(10000), BIPS_BASE) // 100%
+        if (pi.greaterThan(max)) pi = max
+
+        return new Percent(pi.numerator, pi.denominator)
+    }
+
+    protected tokenAmountOut(): TokenAmount {
+        if (this.tradeC) {
+            return this.tradeC.amountOut
+        }
+
+        return this.transit.amountOut
+    }
+
+    protected buildTradeA(): UniLikeTrade | OneInchTrade {
+        const chainId = this.tokenAmountIn.token.chainId
+        const tokenOut = this.symbiosis.transitStable(chainId)
+        const from = this.symbiosis.metaRouter(chainId).address
+        const to = from
+
+        if (this.use1Inch && canOneInch(chainId)) {
+            const oracle = this.symbiosis.oneInchOracle(chainId)
+            return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
+        }
+
+        const dexFee = this.symbiosis.dexFee(chainId)
+
+        let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
+        if (chainId === ChainId.AVAX_MAINNET) {
+            routerA = this.symbiosis.avaxRouter(chainId)
+        }
+
+        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
+    }
+
+    protected buildTransit(fee?: TokenAmount): Transit {
+        const amountIn = this.transitTokenAmount()
+        return new Transit(
+            this.symbiosis,
+            this.dataProvider,
+            amountIn,
+            this.tokenOut.chainId,
+            this.slippage,
+            this.deadline,
+            fee
+        )
+    }
+
+    protected buildTradeC() {
+        const chainId = this.tokenOut.chainId
+        const amountIn = this.transit.amountOut
+
+        if (this.use1Inch && canOneInch(chainId)) {
+            const from = this.symbiosis.metaRouter(chainId).address
+            const oracle = this.symbiosis.oneInchOracle(chainId)
+            return new OneInchTrade(amountIn, this.tokenOut, from, this.to, this.slippage / 100, oracle)
+        }
+
+        const dexFee = this.symbiosis.dexFee(chainId)
+
+        let routerC: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
+        if (chainId === ChainId.AVAX_MAINNET) {
+            routerC = this.symbiosis.avaxRouter(chainId)
+        }
+
+        return new UniLikeTrade(amountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)
+    }
+
+    protected getRoute(): Token[] {
+        const started = this.tradeA ? [] : [this.tokenAmountIn.token]
+        const terminated = this.tradeC ? [] : [this.tokenOut]
+
+        return [
+            ...started,
+            ...(this.tradeA ? this.tradeA.route : []),
+            ...this.transit.route,
+            ...(this.tradeC ? this.tradeC.route : []),
+            ...terminated,
+        ].reduce((acc: Token[], token: Token) => {
+            const found = acc.find((i) => i.equals(token))
+            if (found) return acc
+            return [...acc, token]
+        }, [])
+    }
+
+    protected otherSideBurnCallData(fee: TokenAmount): [string, string] {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const synthesis = this.symbiosis.synthesis(this.tokenAmountIn.token.chainId)
+
+        const amount = this.transit.amountOut // FIXME нужен amount без комиссии
+
+        return [
+            synthesis.address,
+            synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
+                {
+                    stableBridgingFee: fee.raw.toString(),
+                    amount: amount.raw.toString(),
+                    syntCaller: this.from,
+                    finalReceiveSide: this.finalReceiveSide(),
+                    sToken: amount.token.address,
+                    finalCallData: this.finalCalldata(),
+                    finalOffset: this.finalOffset(),
+                    chain2address: this.to,
+                    receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
+                    oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
+                    revertableAddress: this.revertableAddress,
+                    chainID: this.tokenOut.chainId,
+                    clientID: this.symbiosis.clientId,
+                },
+            ]),
+        ]
+    }
+
+    protected otherSideSynthCallData(fee: TokenAmount): [string, string] {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const chainIdIn = this.tokenAmountIn.token.chainId
+        const chainIdOut = this.tokenOut.chainId
+        const tokenAmount = this.transitTokenAmount()
+
+        const portal = this.symbiosis.portal(chainIdIn)
+
+        return [
+            portal.address,
+            portal.interface.encodeFunctionData('metaSynthesize', [
+                {
+                    stableBridgingFee: fee.raw.toString(),
+                    amount: tokenAmount.raw.toString(),
+                    rtoken: tokenAmount.token.address,
+                    chain2address: this.to,
+                    receiveSide: this.symbiosis.synthesis(chainIdOut).address,
+                    oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
+                    syntCaller: this.from,
+                    chainID: chainIdOut,
+                    swapTokens: this.swapTokens(),
+                    secondDexRouter: this.secondDexRouter(),
+                    secondSwapCalldata: this.secondSwapCalldata(),
+                    finalReceiveSide: this.finalReceiveSide(),
+                    finalCalldata: this.finalCalldata(),
+                    finalOffset: this.finalOffset(),
+                    revertableAddress: this.revertableAddress,
+                    clientID: this.symbiosis.clientId,
+                },
+            ]),
+        ]
+    }
+
+    protected otherSideData(fee: TokenAmount): [string, string] {
+        return this.transit.direction === 'burn' ? this.otherSideBurnCallData(fee) : this.otherSideSynthCallData(fee)
+    }
+
+    protected async feeMintCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const portalRequestsCount = (await portal.requestCount()).toNumber()
         const synthesis = this.symbiosis.synthesis(chainIdOut)
-
-        const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const internalId = getInternalId({
             contractAddress: portal.address,
@@ -477,17 +380,19 @@ export class Swapping {
             chainId: chainIdOut,
         })
 
+        const amount = this.transitTokenAmount()
+
         const callData = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
-                stableBridgingFee: fee?.raw.toString() || '1',
+                stableBridgingFee: '1',
                 amount: amount.raw.toString(),
                 externalID: externalId,
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
                 swapTokens: this.swapTokens(),
-                secondDexRouter: this.tradeB.pool.address,
-                secondSwapCalldata: this.tradeB.callData,
+                secondDexRouter: this.secondDexRouter(),
+                secondSwapCalldata: this.secondSwapCalldata(),
                 finalReceiveSide: this.finalReceiveSide(),
                 finalCalldata: this.finalCalldata(),
                 finalOffset: this.finalOffset(),
@@ -497,7 +402,7 @@ export class Swapping {
         return [synthesis.address, callData]
     }
 
-    protected async feeBurnCallData(fee?: TokenAmount): Promise<[string, string]> {
+    protected async feeBurnCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
@@ -505,10 +410,6 @@ export class Swapping {
         const synthesisRequestsCount = (await synthesis.requestCount()).toNumber()
 
         const portal = this.symbiosis.portal(chainIdOut)
-
-        const token = this.tradeC ? this.tradeC.tokenAmountIn.token : this.tokenOut
-
-        const amount = this.burnOtherSideAmount().raw.toString()
 
         const internalId = getInternalId({
             contractAddress: synthesis.address,
@@ -523,12 +424,14 @@ export class Swapping {
             chainId: chainIdOut,
         })
 
+        const amount = this.transit.amountOut
+
         const calldata = portal.interface.encodeFunctionData('metaUnsynthesize', [
-            fee?.raw.toString() || '1', // _stableBridgingFee
+            '1', // _stableBridgingFee
             externalId, // _externalID,
             this.to, // _to
-            amount, // _amount
-            token.address, // _rToken
+            amount.raw.toString(), // _amount
+            amount.token.address, // _rToken
             this.finalReceiveSide(), // _finalReceiveSide
             this.finalCalldata(), // _finalCalldata
             this.finalOffset(), // _finalOffset
@@ -536,9 +439,9 @@ export class Swapping {
         return [portal.address, calldata]
     }
 
-    protected async getFee(newFee?: TokenAmount): Promise<TokenAmount> {
+    protected async getFee(feeToken: Token): Promise<TokenAmount> {
         const [receiveSide, calldata] =
-            this.direction === 'burn' ? await this.feeBurnCallData(newFee) : await this.feeMintCallData(newFee)
+            this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData()
 
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
@@ -546,20 +449,43 @@ export class Swapping {
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
-        return new TokenAmount(this.feeToken, fee.toString())
+        return new TokenAmount(feeToken, fee.toString())
     }
 
-    protected static getDirection(tokenAmountIn: TokenAmount, tokenOut: Token) {
-        const indexIn = CHAINS_PRIORITY.indexOf(tokenAmountIn.token.chainId)
-        const indexOut = CHAINS_PRIORITY.indexOf(tokenOut.chainId)
-        if (indexIn === -1) {
-            throw new Error(`Chain ${tokenAmountIn.token.chainId} not found in chains priority`)
-        }
-        if (indexOut === -1) {
-            throw new Error(`Chain ${tokenOut.chainId} not found in chains priority`)
+    // FIXME naming
+    protected transitTokenAmount(): TokenAmount {
+        return this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
+    }
+
+    protected approvedTokens(): string[] {
+        let firstToken = this.tradeA ? this.tradeA.tokenAmountIn.token.address : this.tokenAmountIn.token.address
+        if (!firstToken) {
+            firstToken = AddressZero // AddressZero if first token is GasToken
         }
 
-        return indexIn > indexOut ? 'burn' : 'mint'
+        let tokens: string[]
+        if (this.transit.direction === 'burn') {
+            tokens = [firstToken, ...this.transit.route.map((i) => i.address)]
+        } else {
+            tokens = [firstToken, this.tradeA ? this.tradeA.amountOut.token.address : this.tokenAmountIn.token.address]
+        }
+        return tokens
+    }
+
+    protected firstDexRouter(): string {
+        return this.tradeA?.routerAddress || AddressZero
+    }
+
+    protected firstSwapCalldata(): string | [] {
+        return this.tradeA?.callData || []
+    }
+
+    protected secondDexRouter(): string {
+        return this.transit.receiveSide
+    }
+
+    protected secondSwapCalldata(): string | [] {
+        return this.transit.callData
     }
 
     protected finalReceiveSide(): string {
@@ -575,7 +501,8 @@ export class Swapping {
     }
 
     protected swapTokens(): string[] {
-        const tokens = this.tradeB.route.map((i) => i.address)
+        const tokens = this.transit.route.map((i) => i.address)
+
         if (this.tradeC) {
             tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         }

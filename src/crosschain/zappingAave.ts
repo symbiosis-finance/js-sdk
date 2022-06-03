@@ -50,7 +50,7 @@ export class ZappingAave extends Swapping {
     }
 
     protected swapTokens(): string[] {
-        const tokens = this.tradeB.route.map((i) => i.address)
+        const tokens = this.transit.route.map((i) => i.address)
         if (this.tradeC) {
             tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         } else {
@@ -77,11 +77,11 @@ export class ZappingAave extends Swapping {
             path.push(this.tradeC.tokenAmountIn.token.address)
             offsets.push(this.tradeC.callDataOffset!)
         } else {
-            amount = this.tradeB.amountOut.raw.toString()
+            amount = this.transit.amountOut.raw.toString()
             if (this.direction === 'mint') {
-                supplyToken = this.tradeB.amountOut.token
+                supplyToken = this.transit.amountOut.token
             } else {
-                supplyToken = this.feeToken
+                supplyToken = this.transit.feeToken
             }
         }
 

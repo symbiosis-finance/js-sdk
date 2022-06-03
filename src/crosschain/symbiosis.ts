@@ -314,7 +314,7 @@ export class Symbiosis {
         return this.chainConfig(chainId).dexFee
     }
 
-    private chainConfig(chainId: ChainId): ChainConfig {
+    public chainConfig(chainId: ChainId): ChainConfig {
         const config = this.config.chains.find((item) => {
             return item.id === chainId
         })
