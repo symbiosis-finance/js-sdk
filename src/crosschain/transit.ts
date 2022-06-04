@@ -25,12 +25,12 @@ export class Transit {
         protected symbiosis: Symbiosis,
         protected dataProvider: DataProvider,
         protected amountIn: TokenAmount,
-        protected chainIdOut: ChainId,
+        protected tokenOut: Token,
         protected slippage: number,
         protected deadline: number,
         protected fee?: TokenAmount
     ) {
-        this.direction = Transit.getDirection(amountIn.token.chainId, chainIdOut)
+        this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId)
         this.route = []
         this.receiveSide = AddressZero
         this.callData = []
@@ -42,6 +42,14 @@ export class Transit {
 
         if (!this.isTradeRequired()) {
             this.amountOut = this.getBridgeAmountOut() // depends on this.feeToken
+            const transitTokenOut = this.symbiosis.transitStable(this.tokenOut.chainId)
+            if (this.direction === 'mint') {
+                if (!this.tokenOut.equals(transitTokenOut)) {
+                    this.route = [transitTokenOut]
+                }
+            } else {
+                this.route = [this.symbiosis.transitStable(this.amountIn.token.chainId)]
+            }
         } else {
             this.tradeB = await this.buildTradeB()
             await this.tradeB.init(this.dataProvider)
@@ -87,7 +95,7 @@ export class Transit {
             return this.tradeB.amountOut
         }
 
-        const transitStableOut = this.symbiosis.transitStable(this.chainIdOut)
+        const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId)
         const amountOut = new TokenAmount(transitStableOut, this.tradeB.amountOut.raw)
 
         if (!this.fee) {
@@ -121,20 +129,20 @@ export class Transit {
     }
 
     protected isTradeRequired(): boolean {
-        const chainId = this.direction === 'mint' ? this.chainIdOut : this.amountIn.token.chainId
+        const chainId = this.direction === 'mint' ? this.tokenOut.chainId : this.amountIn.token.chainId
         return this.symbiosis.chainConfig(chainId).nerves.length > 0
     }
 
     protected async getFeeToken(): Promise<Token> {
         if (this.direction === 'burn' || !this.isTradeRequired()) {
-            return this.symbiosis.transitStable(this.chainIdOut) // USDC
+            return this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
         }
 
         const transitStableIn = this.symbiosis.transitStable(this.amountIn.token.chainId) // USDC
-        const rep = await this.dataProvider.getRepresentation(transitStableIn, this.chainIdOut) // sUSDC
+        const rep = await this.dataProvider.getRepresentation(transitStableIn, this.tokenOut.chainId) // sUSDC
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${this.chainIdOut} not found`,
+                `Representation of ${transitStableIn.symbol} in chain ${this.tokenOut.chainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -151,10 +159,10 @@ export class Transit {
 
     protected async getTradeBTokenOut(): Promise<Token> {
         if (this.direction === 'mint') {
-            return this.symbiosis.transitStable(this.chainIdOut)
+            return this.symbiosis.transitStable(this.tokenOut.chainId)
         }
 
-        const transitStableOut = this.symbiosis.transitStable(this.chainIdOut) // USDC
+        const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
         const rep = await this.dataProvider.getRepresentation(transitStableOut, this.amountIn.token.chainId) // sUSDC
         if (!rep) {
             throw new Error(

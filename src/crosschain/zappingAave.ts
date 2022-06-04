@@ -78,7 +78,7 @@ export class ZappingAave extends Swapping {
             offsets.push(this.tradeC.callDataOffset!)
         } else {
             amount = this.transit.amountOut.raw.toString()
-            if (this.direction === 'mint') {
+            if (this.transit.direction === 'mint') {
                 supplyToken = this.transit.amountOut.token
             } else {
                 supplyToken = this.transit.feeToken

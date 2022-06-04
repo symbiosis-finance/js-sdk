@@ -10,7 +10,7 @@ import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AvaxRouter, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
 import { Transit } from './transit'
@@ -228,9 +228,12 @@ export class Swapping {
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
+        let routerA: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
         if (chainId === ChainId.AVAX_MAINNET) {
             routerA = this.symbiosis.avaxRouter(chainId)
+        }
+        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
+            routerA = this.symbiosis.adaRouter(chainId)
         }
 
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
@@ -241,7 +244,7 @@ export class Swapping {
             this.symbiosis,
             this.dataProvider,
             this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
-            this.tokenOut.chainId,
+            this.tokenOut,
             this.slippage,
             this.deadline,
             fee
@@ -260,9 +263,12 @@ export class Swapping {
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerC: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
+        let routerC: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
         if (chainId === ChainId.AVAX_MAINNET) {
             routerC = this.symbiosis.avaxRouter(chainId)
+        }
+        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
+            routerC = this.symbiosis.adaRouter(chainId)
         }
 
         return new UniLikeTrade(amountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)

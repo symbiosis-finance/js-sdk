@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Aave } from './Aave'
+export type { AdaRouter } from './AdaRouter'
 export type { AvaxRouter } from './AvaxRouter'
 export type { Bridge } from './Bridge'
 export type { CreamCErc20 } from './CreamCErc20'
@@ -18,6 +19,7 @@ export type { Synthesis } from './Synthesis'
 export type { UniLikeRouter } from './UniLikeRouter'
 
 export { Aave__factory } from './factories/Aave__factory'
+export { AdaRouter__factory } from './factories/AdaRouter__factory'
 export { AvaxRouter__factory } from './factories/AvaxRouter__factory'
 export { Bridge__factory } from './factories/Bridge__factory'
 export { CreamCErc20__factory } from './factories/CreamCErc20__factory'

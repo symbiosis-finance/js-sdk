@@ -8,6 +8,8 @@ import { Bridging } from './bridging'
 import {
     Aave,
     Aave__factory,
+    AdaRouter,
+    AdaRouter__factory,
     AvaxRouter,
     AvaxRouter__factory,
     Bridge,
@@ -62,7 +64,6 @@ export class Symbiosis {
     }
 
     public validateSwapAmounts(amount: TokenAmount) {
-        console.log('validateSwapAmounts', amount.toSignificant(), amount.token.symbol)
         const parsedAmount = parseFloat(amount.toExact(2))
         const minAmount = this.config.minSwapAmountInUsd
         const maxAmount = this.config.maxSwapAmountInUsd
@@ -162,6 +163,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return AvaxRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public adaRouter(chainId: ChainId, signer?: Signer): AdaRouter {
+        const address = this.chainConfig(chainId).router
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return AdaRouter__factory.connect(address, signerOrProvider)
     }
 
     public nervePool(tokenIn: Token, tokenOut: Token, signer?: Signer): NervePool {

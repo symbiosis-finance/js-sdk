@@ -11,7 +11,7 @@ import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AvaxRouter, NervePool, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, NervePool, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { NerveLiquidity } from './nerveLiquidity'
 
@@ -197,9 +197,12 @@ export class Zapping {
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerA: UniLikeRouter | AvaxRouter = this.symbiosis.uniLikeRouter(chainId)
+        let routerA: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
         if (chainId === ChainId.AVAX_MAINNET) {
             routerA = this.symbiosis.avaxRouter(chainId)
+        }
+        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
+            routerA = this.symbiosis.adaRouter(chainId)
         }
 
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)

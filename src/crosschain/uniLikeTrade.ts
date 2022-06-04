@@ -4,7 +4,7 @@ import flatMap from 'lodash.flatmap'
 import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../entities'
 import { Router } from '../router'
 import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from './constants'
-import { AvaxRouter, Pair__factory, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, Pair__factory, UniLikeRouter } from './contracts'
 import { getMulticall } from './multicall'
 import { PairState } from './types'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from './utils'
@@ -28,7 +28,7 @@ export class UniLikeTrade {
     private readonly to: string
     private readonly deadline: number
     private readonly slippage: number
-    private readonly router: UniLikeRouter | AvaxRouter
+    private readonly router: UniLikeRouter | AvaxRouter | AdaRouter
     private readonly dexFee: number
 
     public constructor(
@@ -37,7 +37,7 @@ export class UniLikeTrade {
         to: string,
         slippage: number,
         deadline: number,
-        router: UniLikeRouter | AvaxRouter,
+        router: UniLikeRouter | AvaxRouter | AdaRouter,
         dexFee: number
     ) {
         this.tokenAmountIn = tokenAmountIn
@@ -102,6 +102,9 @@ export class UniLikeTrade {
         // TODO replace if condition to method mapping
         if (trade.inputAmount.token.chainId === ChainId.AVAX_MAINNET) {
             method = methodName.replace('ETH', 'AVAX')
+        }
+        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(trade.inputAmount.token.chainId)) {
+            method = methodName.replace('ETH', 'ADA')
         }
 
         return {
