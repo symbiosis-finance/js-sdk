@@ -274,6 +274,22 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             decimals: 18,
         }),
     ],
+    [ChainId.MILKOMEDA_MAINNET]: [
+        new Token({
+            chainId: ChainId.MILKOMEDA_MAINNET,
+            symbol: 'sUSDC',
+            name: 'USDC from Ethereum',
+            address: '0x42110A5133F91B49E32B671Db86E2C44Edc13832',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.MILKOMEDA_MAINNET,
+            symbol: 'SIS',
+            name: 'SIS from Ethereum',
+            address: '0xedd4D7DAa6bf8746997CEbbF974a60B838757601',
+            decimals: 18,
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
