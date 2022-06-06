@@ -61,8 +61,9 @@ export async function getChainPendingRequests({
 
         const topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            address, // address
+            undefined, // from
             otherChains, // chains IDs
+            address, // revertableAddress
         ])
 
         events = await selectedContract.queryFilter<SynthesizeRequestEvent>({ address, topics }, fromBlock)
@@ -73,8 +74,9 @@ export async function getChainPendingRequests({
 
         const topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            address, // address
+            undefined, // from
             otherChains, // chains IDs
+            address, // revertableAddress
         ])
 
         events = await selectedContract.queryFilter<BurnRequestEvent>({ address, topics }, fromBlock)
