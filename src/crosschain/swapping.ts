@@ -1,4 +1,5 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
@@ -367,12 +368,11 @@ export class Swapping {
         const chainIdOut = this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
-        const portalRequestsCount = (await portal.requestCount()).toNumber()
         const synthesis = this.symbiosis.synthesis(chainIdOut)
 
         const internalId = getInternalId({
             contractAddress: portal.address,
-            requestCount: portalRequestsCount,
+            requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
@@ -410,13 +410,11 @@ export class Swapping {
         const chainIdOut = this.tokenOut.chainId
 
         const synthesis = this.symbiosis.synthesis(chainIdIn)
-        const synthesisRequestsCount = (await synthesis.requestCount()).toNumber()
-
         const portal = this.symbiosis.portal(chainIdOut)
 
         const internalId = getInternalId({
             contractAddress: synthesis.address,
-            requestCount: synthesisRequestsCount,
+            requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 

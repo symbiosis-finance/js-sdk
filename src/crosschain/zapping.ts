@@ -1,4 +1,5 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
@@ -295,14 +296,13 @@ export class Zapping {
         const chainIdOut = this.poolChainId
 
         const portal = this.symbiosis.portal(chainIdIn)
-        const portalRequestsCount = (await portal.requestCount()).toNumber()
         const synthesis = this.symbiosis.synthesis(chainIdOut)
 
         const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const internalId = getInternalId({
             contractAddress: portal.address,
-            requestCount: portalRequestsCount,
+            requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
