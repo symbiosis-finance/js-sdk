@@ -1,5 +1,5 @@
-import { ChainId } from 'src/constants'
-import { Token } from 'src/entities'
+import { ChainId } from '../constants'
+import { Token } from '../entities'
 import { NervePool__factory } from './contracts'
 import { getMulticall } from './multicall'
 import { Symbiosis } from './symbiosis'
