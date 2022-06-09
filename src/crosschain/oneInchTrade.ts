@@ -112,6 +112,9 @@ export class OneInchTrade {
             if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
                 return acc
             }
+            if (protocol.id.includes('PMM')) {
+                return acc
+            }
             acc.push(protocol)
             return acc
         }, [])
