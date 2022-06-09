@@ -287,6 +287,7 @@ export class Symbiosis {
             chain_id_to: chainIdTo,
             receive_side: receiveSide,
             call_data: calldata,
+            client_id: utils.parseBytes32String(this.clientId),
         }
 
         return fetch(`${this.config.advisor.url}/v1/swap/price`, {
