@@ -144,7 +144,7 @@ export class Swapping {
         }
     }
 
-    protected async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+    public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
