@@ -6,6 +6,7 @@ import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
 import { calculateGasMargin, getExternalId, getLogWithTimeout } from './utils'
 import { ChainId } from '../constants'
+import { Portal__factory, Synthesis__factory } from './contracts'
 
 // export interface RevertRequest {
 //     transactionHash: string
@@ -21,6 +22,29 @@ export class RevertRequest {
 
         const receipt = await provider.getTransactionReceipt(this.transactionHash)
         console.log({ receipt })
+
+        let log = receipt.logs.find((log) => {
+            const portalInterface = Portal__factory.createInterface()
+            const event =
+                portalInterface.events['SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)']
+            const topic = portalInterface.getEventTopic(event)
+            return log.topics[0] === topic
+        })
+
+        if (!log) {
+            log = receipt.logs.find((log) => {
+                const synthesizeInterface = Synthesis__factory.createInterface()
+                const event =
+                    synthesizeInterface.events['BurnRequest(bytes32,address,uint256,address,address,uint256,address)']
+                const topic = synthesizeInterface.getEventTopic(event)
+                return log.topics[0] === topic
+            })
+        }
+
+        if (!log) {
+            throw new Error('Is not symbiosis tx')
+        }
+        console.log({ log })
     }
 }
 
