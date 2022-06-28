@@ -1,16 +1,17 @@
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
-import { Token, TokenAmount, wrappedToken } from '../entities'
-import { Aave, MulticallRouter } from './contracts'
+import { Token, TokenAmount } from '../entities'
+import { MulticallRouter, RenMintGatewayV3 } from './contracts'
+import { ChainId } from 'src/constants'
 
-export class ZappingAave extends BaseSwapping {
+export class ZappingRenBTC extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
-    protected aavePool!: Aave
-    protected aToken!: string
+    protected renMintGatewayV3!: RenMintGatewayV3
+    protected renBTCAddress!: string
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
-        tokenOut: Token,
+        renChainId: ChainId,
         from: string,
         to: string,
         revertableAddress: string,
@@ -18,16 +19,27 @@ export class ZappingAave extends BaseSwapping {
         deadline: number,
         use1Inch = false
     ): SwapExactIn {
-        this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
+        this.multicallRouter = this.symbiosis.multicallRouter(renChainId)
         this.userAddress = to
 
-        this.aavePool = this.symbiosis.aavePool(tokenOut.chainId)
-        const data = await this.aavePool.getReserveData(tokenOut.address)
-        this.aToken = data.aTokenAddress
+        const renRenGatewayRegistry = this.symbiosis.renRenGatewayRegistry(renChainId)
+
+        this.renBTCAddress = await renRenGatewayRegistry.getRenAssetBySymbol('BTC')
+
+        const renBTC = new Token({
+            address: this.renBTCAddress,
+            chainId: renChainId,
+            decimals: 8,
+            name: 'renBTC',
+        })
+
+        const mintGatewayAddress = await renRenGatewayRegistry.getMintGatewayBySymbol('BTC')
+
+        this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
         return this.doExactIn(
             tokenAmountIn,
-            wrappedToken(tokenOut),
+            renBTC,
             from,
             this.multicallRouter.address,
             revertableAddress,
@@ -47,16 +59,6 @@ export class ZappingAave extends BaseSwapping {
 
     protected finalOffset(): number {
         return 36
-    }
-
-    protected swapTokens(): string[] {
-        const tokens = this.transit.route.map((i) => i.address)
-        if (this.tradeC) {
-            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        } else {
-            tokens.push(this.aToken)
-        }
-        return tokens
     }
 
     private buildMulticall() {
@@ -85,15 +87,10 @@ export class ZappingAave extends BaseSwapping {
             }
         }
 
-        const supplyCalldata = this.aavePool.interface.encodeFunctionData('supply', [
-            supplyToken.address,
-            '0', // amount will be patched
-            this.userAddress,
-            '0',
-        ])
+        const supplyCalldata = this.renMintGatewayV3.interface.encodeFunctionData('burn', [this.to, amount])
 
         callDatas.push(supplyCalldata)
-        receiveSides.push(this.aavePool.address)
+        receiveSides.push(this.renMintGatewayV3.address)
         path.push(supplyToken.address)
         offsets.push(68)
 

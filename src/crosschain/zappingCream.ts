@@ -1,4 +1,4 @@
-import { SwapExactIn, Swapping } from './swapping'
+import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
 import { CreamCErc20__factory, CreamComptroller__factory, Multicall, MulticallRouter } from './contracts'
 import { getMulticall } from './multicall'
@@ -10,7 +10,7 @@ type Market = {
     paused: boolean
 }
 
-export class ZappingCream extends Swapping {
+export class ZappingCream extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
 
@@ -100,7 +100,7 @@ export class ZappingCream extends Swapping {
 
         this.creamPoolAddress = markets[index].market
 
-        return super.exactIn(
+        return this.doExactIn(
             tokenAmountIn,
             wrappedTokenOut,
             from,

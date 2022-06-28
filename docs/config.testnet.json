@@ -37,6 +37,36 @@
             "aavePoolDataProvider": "0xBAB2E7afF5acea53a43aEeBa2BA6298D8056DcE5"
         },
         {
+            "id": 42,
+            "rpc": "<TYPE_YOUR_RPC>",
+            "filterBlockOffset": 5000,
+            "waitForBlocksCount": 5,
+            "stables": [
+                {
+                    "name": "USD Coin",
+                    "address": "0xc2569dd7d0fd715B054fBf16E75B001E5c0C1115",
+                    "symbol": "USDC",
+                    "isStable": true,
+                    "decimals": 6,
+                    "chainId": 4,
+                    "icons": {
+                        "large": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+                        "small": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+                    }
+                }
+            ],
+            "nerves": [],
+            "router": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+            "metaRouter": "0xE52e3c838CC91C60a701E78B5043ba9eeEeb55db",
+            "metaRouterGateway": "0x13fF611B06bEb2A29a49cc3c825cD0eE74967bE3",
+            "bridge": "0x9D15297f42fEf485f2d061a012cfE699Cc49132B",
+            "synthesis": "0xc098feAc51a186d3E0B446146007e1d87E34D6f2",
+            "portal": "0xF3Cfa393be621097669BcD2bD4923CEC347E1210",
+            "fabric": "0x12a957e285c9D678E72CB529510008D9f1daf3d3",
+            "multicallRouter": "0x7dc13B605508F91Fcd3bf7803C2b96B43941B4E8",
+            "renGatewayRegistry": "0x5076a1F237531fa4dC8ad99bb68024aB6e1Ff701"
+        },
+        {
             "id": 97,
             "rpc": "<TYPE_YOUR_RPC>",
             "filterBlockOffset": 5000,

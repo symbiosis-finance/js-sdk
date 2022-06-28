@@ -30,6 +30,10 @@ import {
     OneInchOracle__factory,
     Portal,
     Portal__factory,
+    RenGatewayRegistryV2,
+    RenGatewayRegistryV2__factory,
+    RenMintGatewayV3,
+    RenMintGatewayV3__factory,
     Synthesis,
     Synthesis__factory,
     UniLikeRouter,
@@ -237,6 +241,19 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OneInchOracle__factory.connect(address, signerOrProvider)
+    }
+
+    public renRenGatewayRegistry(chainId: ChainId, signer?: Signer): RenGatewayRegistryV2 {
+        const address = this.chainConfig(chainId).renGatewayRegistry
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return RenGatewayRegistryV2__factory.connect(address, signerOrProvider)
+    }
+
+    public renMintGatewayByAddress(address: string, chainId: ChainId, signer?: Signer): RenMintGatewayV3 {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return RenMintGatewayV3__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
