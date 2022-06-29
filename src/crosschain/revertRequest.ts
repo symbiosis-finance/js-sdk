@@ -1,4 +1,3 @@
-import { Error } from './error'
 import type { Symbiosis } from './symbiosis'
 import { ChainId } from '../constants'
 import { Portal__factory, Synthesis__factory } from './contracts'
@@ -16,7 +15,11 @@ export class RevertRequest {
         await provider.ready
 
         const receipt = await provider.getTransactionReceipt(this.transactionHash)
-
+        if (!receipt) {
+            throw new Error(
+                `Tx ${this.transactionHash} does not exist on chain ${this.chainId}. Provider ${provider.connection.url}`
+            )
+        }
         let type: PendingRequestType = 'synthesize'
         let log = this.findSynthesizeRequest(receipt)
         if (!log) {
