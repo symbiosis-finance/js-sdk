@@ -1,7 +1,8 @@
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { ChainId } from 'src/constants'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { MulticallRouter, RenMintGatewayV3 } from './contracts'
-import { ChainId } from 'src/constants'
 
 export class ZappingRenBTC extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -62,45 +63,31 @@ export class ZappingRenBTC extends BaseSwapping {
     }
 
     private buildMulticall() {
-        const callDatas = []
-        const receiveSides = []
-        const path = []
-        const offsets = []
-
-        let amount
-        let supplyToken
-
-        if (this.tradeC) {
-            amount = this.tradeC.tokenAmountIn.raw.toString()
-            supplyToken = this.tradeC.amountOut.token
-
-            callDatas.push(this.tradeC.callData)
-            receiveSides.push(this.tradeC.routerAddress)
-            path.push(this.tradeC.tokenAmountIn.token.address)
-            offsets.push(this.tradeC.callDataOffset!)
-        } else {
-            amount = this.transit.amountOut.raw.toString()
-            if (this.transit.direction === 'mint') {
-                supplyToken = this.transit.amountOut.token
-            } else {
-                supplyToken = this.transit.feeToken
-            }
+        if (!this.tradeC) {
+            throw new Error('TradeC is not set')
         }
 
-        const supplyCalldata = this.renMintGatewayV3.interface.encodeFunctionData('burn', [this.to, amount])
+        if (!this.tradeC.callDataOffset) {
+            throw new Error('TradeC is not initialized')
+        }
 
-        callDatas.push(supplyCalldata)
-        receiveSides.push(this.renMintGatewayV3.address)
-        path.push(supplyToken.address)
-        offsets.push(68)
+        const burnCalldata = this.renMintGatewayV3.interface.encodeFunctionData('burn', [
+            this.userAddress,
+            this.tradeC.amountOut.raw.toString(),
+        ])
+
+        const callDatas = [this.tradeC.callData, burnCalldata]
+        const receiveSides = [this.tradeC.routerAddress, this.renMintGatewayV3.address]
+        const path = [this.tradeC.amountOut.token.address, this.tradeC.tokenAmountIn.token.address]
+        const offsets = [68, this.tradeC.callDataOffset]
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
-            amount,
+            this.tradeC.tokenAmountIn.raw.toString(),
             callDatas,
             receiveSides,
             path,
             offsets,
-            this.userAddress,
+            AddressZero,
         ])
     }
 }
