@@ -60,7 +60,7 @@ export class RevertRequest {
             } else {
                 state = await this.symbiosis.portal(chainIdTo).unsynthesizeStates(externalId)
             }
-            if (state == 1) {
+            if (state === 1) {
                 throw new Error(`Tx is success and cannot be reverted.`)
             }
         }
