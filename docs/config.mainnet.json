@@ -1,5 +1,5 @@
 {
-    "minSwapAmountInUsd": 50,
+    "minSwapAmountInUsd": 10,
     "maxSwapAmountInUsd": 5000000,
     "advisor": {
         "url": "https://api.symbiosis.finance/calculations"
