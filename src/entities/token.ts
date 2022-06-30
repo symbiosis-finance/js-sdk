@@ -107,6 +107,18 @@ export const WETH = {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
         },
     }),
+    [ChainId.ETH_KOVAN]: new Token({
+        chainId: ChainId.ETH_KOVAN,
+        address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+        },
+    }),
     [ChainId.BSC_MAINNET]: new Token({
         chainId: ChainId.BSC_MAINNET,
         address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
