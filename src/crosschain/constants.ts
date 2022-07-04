@@ -6,6 +6,7 @@ import { Percent, Token, WETH } from '../entities'
 export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
+    ChainId.ETH_KOVAN,
     ChainId.BSC_MAINNET,
     ChainId.BSC_TESTNET,
     ChainId.AVAX_MAINNET,
@@ -44,6 +45,7 @@ export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
 export const WETH_ONLY: ChainTokensList = {
     [ChainId.ETH_MAINNET]: [WETH[ChainId.ETH_MAINNET]],
     [ChainId.ETH_RINKEBY]: [WETH[ChainId.ETH_RINKEBY]],
+    [ChainId.ETH_KOVAN]: [WETH[ChainId.ETH_KOVAN]],
     [ChainId.BSC_MAINNET]: [WETH[ChainId.BSC_MAINNET]],
     [ChainId.BSC_TESTNET]: [WETH[ChainId.BSC_TESTNET]],
     [ChainId.MATIC_MAINNET]: [WETH[ChainId.MATIC_MAINNET]],
