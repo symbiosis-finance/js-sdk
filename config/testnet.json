@@ -7,8 +7,8 @@
     "chains": [
         {
             "id": 4,
-            "rpc": "<TYPE_YOUR_RPC>",
-            "filterBlockOffset": 5000,
+            "rpc": "https://rpc.ankr.com/eth_rinkeby",
+            "filterBlockOffset": 3000,
             "waitForBlocksCount": 5,
             "stables": [
                 {
@@ -32,14 +32,12 @@
             "synthesis": "0xBA7c80bb5d316c4eE55F96F47d1a1477fFD1aFb6",
             "portal": "0x68801662cab0D678E5216CB67DaD350271375024",
             "fabric": "0xB5ec93b32320Adb12Eef81cB97B68a3C69f8bc4E",
-            "multicallRouter": "0xAc44af87159D415A121BB084d62B1fFC1F3207a0",
-            "aavePool": "0xE039BdF1d874d27338e09B55CB09879Dedca52D8",
-            "aavePoolDataProvider": "0xBAB2E7afF5acea53a43aEeBa2BA6298D8056DcE5"
+            "multicallRouter": "0x4D497d76bB2D1696478BDe75cFe41635d4e3489B"
         },
         {
             "id": 97,
-            "rpc": "<TYPE_YOUR_RPC>",
-            "filterBlockOffset": 5000,
+            "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
+            "filterBlockOffset": 3000,
             "waitForBlocksCount": 20,
             "stables": [
                 {
@@ -85,12 +83,13 @@
             "bridge": "0x67e2696fb65641902AA26DC9bABf76cE134CA377",
             "synthesis": "0xF0f4F93CE9A0Ee6e9ad9406e0fea81843164fD74",
             "portal": "0x1EE47a7DF64a8A23FA47458d9d7b148559b728ac",
-            "fabric": "0xdBfb647247E4e402437f717FB154a990a6f5372d"
+            "fabric": "0xdBfb647247E4e402437f717FB154a990a6f5372d",
+            "multicallRouter": "0x11F86290B2E223Ff66B89d9BED8004815436ee77"
         },
         {
             "id": 43113,
-            "rpc": "<TYPE_YOUR_RPC>",
-            "filterBlockOffset": 5000,
+            "rpc": "https://rpc.ankr.com/avalanche_fuji",
+            "filterBlockOffset": 3000,
             "waitForBlocksCount": 20,
             "stables": [
                 {
@@ -178,14 +177,12 @@
             "synthesis": "0x9A857D526A9e53697a9Df5fFc40bCCD70E7A0388",
             "portal": "0x14be03e34B05a87A028acfF0292C1AF135D26699",
             "fabric": "0x69fA0Ae9E3065B9d6c4c1909E101807bAaf3227e",
-            "multicallRouter": "0xc15688798C18e0F2DC2BEb747f91fb5292CD1C4e",
-            "aavePool": "0xb47673b7a73D78743AFF1487AF69dBB5763F00cA",
-            "aavePoolDataProvider": "0x8e0988b28f9CdDe0134A206dfF94111578498C63"
+            "multicallRouter": "0x20c6f13c168bA6C90b0AD0cC0C021d01D1DFA820"
         },
         {
             "id": 80001,
-            "rpc": "<TYPE_YOUR_RPC>",
-            "filterBlockOffset": 5000,
+            "rpc": "https://rpc.ankr.com/polygon_mumbai",
+            "filterBlockOffset": 3000,
             "waitForBlocksCount": 60,
             "stables": [
                 {
@@ -251,7 +248,8 @@
             "bridge": "0xEdCAeb1D346396B3e4E861e4A6F0B72b9850fCC5",
             "synthesis": "0xEE0F117Db9ED4d1A4421cdCa7d32a1F878eF4F7C",
             "portal": "0xfF0a032e793bAf78C4153CD96135013D6A468b39",
-            "fabric": "0xe0A0CEb6f3e740C4fc4A1eb38e4135440470175A"
+            "fabric": "0xe0A0CEb6f3e740C4fc4A1eb38e4135440470175A",
+            "multicallRouter": "0xd44a28f1d6Cc17389597e415FAd6c6338dA0F0dC"
         }
     ]
 }
