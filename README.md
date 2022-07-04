@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-npm i symbiosis-js-sdk@2.6.3
+npm i symbiosis-js-sdk
 ```
 
 ## Install dependencies
