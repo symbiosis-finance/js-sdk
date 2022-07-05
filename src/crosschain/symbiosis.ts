@@ -46,7 +46,10 @@ import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
 
-import DEFAULT_CONFIG from '../../config/mainnet.json'
+import { config as mainnet } from './config/mainnet'
+import { config as testnet } from './config/testnet'
+
+type ConfigName = 'testnet' | 'mainnet'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -54,8 +57,14 @@ export class Symbiosis {
     public readonly config: Config
     public readonly clientId: string
 
-    public constructor(clientId: string, config?: Config) {
-        this.config = config || DEFAULT_CONFIG
+    public constructor(config: ConfigName | Config, clientId: string) {
+        if (config === 'mainnet') {
+            this.config = mainnet
+        } else if (config === 'testnet') {
+            this.config = testnet
+        } else {
+            this.config = config
+        }
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
