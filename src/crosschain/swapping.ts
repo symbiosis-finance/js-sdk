@@ -25,6 +25,7 @@ export type SwapExactIn = Promise<{
     priceImpact: Percent
     amountInUsd: TokenAmount
     transactionRequest: TransactionRequest
+    approveTo: string
 }>
 
 export class Swapping {
@@ -63,7 +64,7 @@ export class Swapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = false
+        use1Inch = true
     ): SwapExactIn {
         this.use1Inch = use1Inch
         this.tokenAmountIn = tokenAmountIn
@@ -117,7 +118,12 @@ export class Swapping {
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.amountInUsd,
             transactionRequest,
+            approveTo: this.approveTo(),
         }
+    }
+
+    protected approveTo(): string {
+        return this.symbiosis.chainConfig(this.tokenAmountIn.token.chainId).metaRouterGateway
     }
 
     protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
