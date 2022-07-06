@@ -71,7 +71,7 @@ export class ZappingRenBTC extends BaseSwapping {
             throw new Error('TradeC is not initialized')
         }
 
-        const burnCalldata = this.renMintGatewayV3.interface.encodeFunctionData('burn', [
+        const burnCalldata = (this.renMintGatewayV3.interface as any).encodeFunctionData('burn(string,uint256)', [
             this.userAddress,
             this.tradeC.amountOut.raw.toString(),
         ])
