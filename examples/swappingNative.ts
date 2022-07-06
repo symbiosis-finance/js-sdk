@@ -1,5 +1,5 @@
 /**
- * Example swapping of 15 USDC from Rinkeby
+ * Example swapping of some ETH from Rinkeby
  * to BNB on BNB Chain Testnet
  */
 
@@ -34,7 +34,7 @@ const tokenOut = new Token({
     decimals: 18,
 })
 
-;(async () => {
+async function swapNative() {
     const swapping = symbiosis.newSwapping()
 
     // Calculates fee for swapping between chains and transactionRequest
@@ -74,4 +74,4 @@ const tokenOut = new Token({
     } catch (e) {
         console.error(e)
     }
-})()
+}

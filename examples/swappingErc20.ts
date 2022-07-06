@@ -54,7 +54,7 @@ const tokenOut = new Token({
     decimals: 18,
 })
 
-;(async () => {
+async function swapErc20() {
     try {
         const swapping = symbiosis.newSwapping()
 
@@ -102,4 +102,4 @@ const tokenOut = new Token({
     } catch (e) {
         console.error(e)
     }
-})()
+}
