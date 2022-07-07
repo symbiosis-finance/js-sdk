@@ -3,6 +3,22 @@ import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { MulticallRouter, RenMintGatewayV3 } from './contracts'
 
+const fromUTF8String = (input: string): Uint8Array => {
+    const a = []
+    const encodedInput = encodeURIComponent(input)
+    for (let i = 0; i < encodedInput.length; i++) {
+        if (encodedInput[i] === '%') {
+            // Load the next two characters of encodedInput and treat them
+            // as a UTF-8 code.
+            a.push(parseInt(encodedInput.substr(i + 1, 2), 16))
+            i += 2
+        } else {
+            a.push(encodedInput.charCodeAt(i))
+        }
+    }
+    return new Uint8Array(a)
+}
+
 export class ZappingRenBTC extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
@@ -70,8 +86,8 @@ export class ZappingRenBTC extends BaseSwapping {
             throw new Error('TradeC is not initialized')
         }
 
-        const burnCalldata = (this.renMintGatewayV3.interface as any).encodeFunctionData('burn(string,uint256)', [
-            this.userAddress,
+        const burnCalldata = (this.renMintGatewayV3.interface as any).encodeFunctionData('burn(bytes,uint256)', [
+            fromUTF8String(this.userAddress),
             this.tradeC.amountOut.raw.toString(),
         ])
 
