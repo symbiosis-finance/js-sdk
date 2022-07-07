@@ -11,7 +11,7 @@ export class Swapping extends BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = false
+        use1Inch = true
     ): SwapExactIn {
         return this.doExactIn(tokenAmountIn, tokenOut, from, to, revertableAddress, slippage, deadline, use1Inch)
     }
