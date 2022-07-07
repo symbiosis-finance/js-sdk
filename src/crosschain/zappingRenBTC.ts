@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { ChainId } from 'src/constants'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
@@ -78,8 +77,8 @@ export class ZappingRenBTC extends BaseSwapping {
 
         const callDatas = [this.tradeC.callData, burnCalldata]
         const receiveSides = [this.tradeC.routerAddress, this.renMintGatewayV3.address]
-        const path = [this.tradeC.amountOut.token.address, this.tradeC.tokenAmountIn.token.address]
-        const offsets = [68, this.tradeC.callDataOffset]
+        const path = [this.tradeC.tokenAmountIn.token.address, this.tradeC.amountOut.token.address]
+        const offsets = [this.tradeC.callDataOffset, 68]
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
             this.tradeC.tokenAmountIn.raw.toString(),
@@ -87,7 +86,7 @@ export class ZappingRenBTC extends BaseSwapping {
             receiveSides,
             path,
             offsets,
-            AddressZero,
+            this.from,
         ])
     }
 }
