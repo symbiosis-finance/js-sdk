@@ -38,6 +38,7 @@ export const config: Config = {
             multicallRouter: '0x4D497d76bB2D1696478BDe75cFe41635d4e3489B',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x5076a1F237531fa4dC8ad99bb68024aB6e1Ff701',
         },
         {
             id: 97,
@@ -92,6 +93,7 @@ export const config: Config = {
             multicallRouter: '0x11F86290B2E223Ff66B89d9BED8004815436ee77',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 43113,
@@ -188,6 +190,7 @@ export const config: Config = {
             multicallRouter: '0x20c6f13c168bA6C90b0AD0cC0C021d01D1DFA820',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 80001,
@@ -263,6 +266,7 @@ export const config: Config = {
             multicallRouter: '0xd44a28f1d6Cc17389597e415FAd6c6338dA0F0dC',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
     ],
 }
