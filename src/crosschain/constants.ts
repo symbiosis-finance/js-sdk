@@ -6,6 +6,7 @@ import { Percent, Token, WETH } from '../entities'
 export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
+    ChainId.ETH_KOVAN,
     ChainId.BSC_MAINNET,
     ChainId.BSC_TESTNET,
     ChainId.AVAX_MAINNET,
@@ -44,6 +45,7 @@ export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
 export const WETH_ONLY: ChainTokensList = {
     [ChainId.ETH_MAINNET]: [WETH[ChainId.ETH_MAINNET]],
     [ChainId.ETH_RINKEBY]: [WETH[ChainId.ETH_RINKEBY]],
+    [ChainId.ETH_KOVAN]: [WETH[ChainId.ETH_KOVAN]],
     [ChainId.BSC_MAINNET]: [WETH[ChainId.BSC_MAINNET]],
     [ChainId.BSC_TESTNET]: [WETH[ChainId.BSC_TESTNET]],
     [ChainId.MATIC_MAINNET]: [WETH[ChainId.MATIC_MAINNET]],
@@ -323,6 +325,7 @@ export const BIPS_BASE = JSBI.BigInt(10000)
 export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ETH_MAINNET]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
     [ChainId.ETH_RINKEBY]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
+    [ChainId.ETH_KOVAN]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
     [ChainId.BSC_MAINNET]: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B',
     [ChainId.BSC_TESTNET]: '0xbC4F726A6dB460DcFE49E6a56886470B94Dfc302',
     [ChainId.MATIC_MAINNET]: '0x275617327c958bD06b5D6b871E7f491D76113dd8',
