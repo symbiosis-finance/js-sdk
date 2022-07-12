@@ -67,7 +67,7 @@ export class ZappingRenBTC extends BaseSwapping {
             use1Inch
         )
 
-        const btcAmountOut = await this.estimateBTCOutput(renChainId)
+        const btcAmountOut = await this.estimateBTCOutput(renChainId, tokenAmountOut)
 
         return {
             ...result,
@@ -116,7 +116,7 @@ export class ZappingRenBTC extends BaseSwapping {
         ])
     }
 
-    private async estimateBTCOutput(renChainId: ChainId): Promise<TokenAmount> {
+    private async estimateBTCOutput(renChainId: ChainId, tokenAmountOut: TokenAmount): Promise<TokenAmount> {
         const provider = this.symbiosis.providers.get(renChainId)
         if (!provider) {
             throw new Error(`Provider not found for chain ${renChainId}`)
@@ -152,7 +152,7 @@ export class ZappingRenBTC extends BaseSwapping {
             to: 'Bitcoin',
         })
 
-        const estimateOutput = fees.estimateOutput(this.tokenAmountOut().raw.toString()).toString()
+        const estimateOutput = fees.estimateOutput(tokenAmountOut.raw.toString()).toString()
 
         return new TokenAmount(
             new Token({
