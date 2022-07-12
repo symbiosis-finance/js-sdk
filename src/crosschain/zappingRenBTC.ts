@@ -1,6 +1,9 @@
-import { ChainId } from 'src/constants'
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
+import RenJS from '@renproject/ren'
+import { Ethereum, Bitcoin, BinanceSmartChain } from '@renproject/chains'
+import { AddressZero } from '@ethersproject/constants'
+import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
+import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { MulticallRouter, RenMintGatewayV3 } from './contracts'
 
 const fromUTF8String = (input: string): Uint8Array => {
@@ -53,7 +56,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        return this.doExactIn(
+        const { tokenAmountOut, ...result } = await this.doExactIn(
             tokenAmountIn,
             renBTC,
             from,
@@ -63,6 +66,13 @@ export class ZappingRenBTC extends BaseSwapping {
             deadline,
             use1Inch
         )
+
+        const btcAmountOut = await this.estimateBTCOutput(renChainId)
+
+        return {
+            ...result,
+            tokenAmountOut: btcAmountOut,
+        }
     }
 
     protected finalReceiveSide(): string {
@@ -104,5 +114,59 @@ export class ZappingRenBTC extends BaseSwapping {
             offsets,
             this.from,
         ])
+    }
+
+    private async estimateBTCOutput(renChainId: ChainId): Promise<TokenAmount> {
+        const provider = this.symbiosis.providers.get(renChainId)
+        if (!provider) {
+            throw new Error(`Provider not found for chain ${renChainId}`)
+        }
+
+        let network: 'mainnet' | 'testnet'
+        let ethereum: Ethereum | BinanceSmartChain
+
+        if (renChainId === ChainId.ETH_KOVAN) {
+            network = 'testnet'
+
+            ethereum = new Ethereum({
+                network,
+                provider,
+            })
+        } else if (renChainId === ChainId.BSC_MAINNET) {
+            network = 'mainnet'
+
+            ethereum = new BinanceSmartChain({
+                network,
+                provider,
+            })
+        } else {
+            throw new Error(`Unsupported chain ${renChainId}`)
+        }
+
+        const bitcoin = new Bitcoin({ network })
+        const renJS = new RenJS('testnet').withChains(ethereum, bitcoin)
+
+        const fees = await renJS.getFees({
+            asset: 'BTC',
+            from: ethereum.Account(),
+            to: 'Bitcoin',
+        })
+
+        const estimateOutput = fees.estimateOutput(this.tokenAmountOut().raw.toString()).toString()
+
+        return new TokenAmount(
+            new Token({
+                chainId: 0,
+                symbol: 'BTC',
+                name: 'Bitcoin',
+                address: AddressZero,
+                decimals: 8,
+                icons: {
+                    small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
+                    large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
+                },
+            }),
+            estimateOutput
+        )
     }
 }

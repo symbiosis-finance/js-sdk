@@ -35,6 +35,8 @@
         "*.js": "eslint --cache --fix"
     },
     "dependencies": {
+        "@renproject/ren": "~3.3.0",
+        "@renproject/chains": "~3.4.0",
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
         "decimal.js-light": "^2.5.0",
