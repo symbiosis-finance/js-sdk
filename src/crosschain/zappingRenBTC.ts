@@ -1,5 +1,5 @@
 import RenJS from '@renproject/ren'
-import { Ethereum, Bitcoin, BinanceSmartChain } from '@renproject/chains'
+import { Ethereum, Bitcoin, BinanceSmartChain, Polygon } from '@renproject/chains'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
@@ -123,7 +123,7 @@ export class ZappingRenBTC extends BaseSwapping {
         }
 
         let network: 'mainnet' | 'testnet'
-        let ethereum: Ethereum | BinanceSmartChain
+        let ethereum: Ethereum | BinanceSmartChain | Polygon
 
         if (renChainId === ChainId.ETH_KOVAN) {
             network = 'testnet'
@@ -139,12 +139,19 @@ export class ZappingRenBTC extends BaseSwapping {
                 network,
                 provider,
             })
+        } else if (renChainId === ChainId.MATIC_MAINNET) {
+            network = 'mainnet'
+
+            ethereum = new Polygon({
+                network,
+                provider,
+            })
         } else {
             throw new Error(`Unsupported chain ${renChainId}`)
         }
 
         const bitcoin = new Bitcoin({ network })
-        const renJS = new RenJS('testnet').withChains(ethereum, bitcoin)
+        const renJS = new RenJS(network).withChains(ethereum, bitcoin)
 
         const fees = await renJS.getFees({
             asset: 'BTC',
