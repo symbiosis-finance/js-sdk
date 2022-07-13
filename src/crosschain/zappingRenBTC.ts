@@ -168,6 +168,10 @@ export class ZappingRenBTC extends BaseSwapping {
                 name: 'Bitcoin',
                 address: AddressZero,
                 decimals: 8,
+                icons: {
+                    small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
+                    large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
+                },
             }),
             estimateOutput
         )
