@@ -38,7 +38,7 @@ export const config: Config = {
             multicallRouter: '0x4D497d76bB2D1696478BDe75cFe41635d4e3489B',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x5076a1F237531fa4dC8ad99bb68024aB6e1Ff701',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 97,
