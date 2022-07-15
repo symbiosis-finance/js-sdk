@@ -83,6 +83,16 @@ export function tokenEquals(tokenA: Token, tokenB: Token): boolean {
 }
 
 export const WETH = {
+    [ChainId.BTC_MAINNET]: new Token({
+        chainId: ChainId.BTC_MAINNET,
+        address: '',
+        decimals: 8,
+    }),
+    [ChainId.BTC_TESTNET]: new Token({
+        chainId: ChainId.BTC_TESTNET,
+        address: '',
+        decimals: 8,
+    }),
     [ChainId.ETH_MAINNET]: new Token({
         chainId: ChainId.ETH_MAINNET,
         address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
