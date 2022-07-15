@@ -28,6 +28,7 @@ export type ChainConstructor = {
     disabled: boolean
     icons: Icons
     swappable?: boolean
+    evm?: boolean
 }
 
 export enum ChainId {
@@ -48,6 +49,8 @@ export enum ChainId {
     BOBA_RINKEBY = 28,
     MILKOMEDA_MAINNET = 2001,
     MILKOMEDA_DEVNET = 200101,
+    BTC_MAINNET = 5555,
+    BTC_TESTNET = 55555,
 }
 
 export enum TradeType {
