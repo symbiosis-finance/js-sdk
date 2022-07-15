@@ -50,6 +50,11 @@ export class ZappingRenBTC extends BaseSwapping {
             chainId: renChainId,
             decimals: 8,
             name: 'renBTC',
+            symbol: 'renBTC',
+            icons: {
+                small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5777.png',
+                large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5777.png',
+            },
         })
 
         const mintGatewayAddress = await renRenGatewayRegistry.getMintGatewayBySymbol('BTC')
@@ -168,9 +173,10 @@ export class ZappingRenBTC extends BaseSwapping {
                 name: 'Bitcoin',
                 address: AddressZero,
                 decimals: 8,
+                isNative: true,
                 icons: {
-                    small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
-                    large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                 },
             }),
             estimateOutput
