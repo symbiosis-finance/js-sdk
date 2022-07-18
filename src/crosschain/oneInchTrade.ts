@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { formatUnits } from '@ethersproject/units'
+import fetch from 'node-fetch-native'
 
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { OneInchOracle } from './contracts'
@@ -128,34 +129,22 @@ export class OneInchTrade {
     private getOffset(callData: string) {
         const methods = [
             {
-                sigHash: 'b0431182',
-                offset: 100,
-            },
-            {
-                sigHash: 'd0a3b665',
-                offset: 100,
-            },
-            {
+                // swap(address,(address,address,address,address,uint256,uint256,uint256,bytes),bytes)
                 sigHash: '7c025200',
                 offset: 260,
             },
             {
-                sigHash: 'e449022e',
-                offset: 36,
-            },
-            {
-                sigHash: '2e95b6c8',
-                offset: 68,
-            },
-            {
+                // clipperSwapTo(address,address,address,uint256,uint256)
                 sigHash: '9994dd15',
                 offset: 132,
             },
             {
+                // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,uint256,address)
                 sigHash: 'baba5855',
                 offset: 292,
             },
             {
+                // uniswapV3SwapTo(address,uint256,uint256,uint256[])
                 sigHash: 'bc80f1a8',
                 offset: 68,
             },

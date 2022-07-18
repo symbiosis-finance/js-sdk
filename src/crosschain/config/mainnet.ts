@@ -38,6 +38,7 @@ export const config: Config = {
             multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 56,
@@ -92,6 +93,7 @@ export const config: Config = {
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x589de0f0ccf905477646599bb3e5c622c84cc0ba',
+            renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
         },
         {
             id: 43114,
@@ -167,6 +169,7 @@ export const config: Config = {
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 137,
@@ -263,6 +266,7 @@ export const config: Config = {
             multicallRouter: '0xc5B61b9abC3C6229065cAD0e961aF585C5E0135c',
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
             creamComptroller: '0x20CA53E2395FA571798623F1cFBD11Fe2C114c24',
+            renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
         },
         {
             id: 288,
@@ -338,6 +342,7 @@ export const config: Config = {
             multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 2001,
@@ -371,6 +376,7 @@ export const config: Config = {
             multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
     ],
 }

@@ -1,8 +1,8 @@
-import { SwapExactIn, Swapping } from './swapping'
+import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
 import { Aave, MulticallRouter } from './contracts'
 
-export class ZappingAave extends Swapping {
+export class ZappingAave extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
     protected aavePool!: Aave
@@ -25,7 +25,7 @@ export class ZappingAave extends Swapping {
         const data = await this.aavePool.getReserveData(tokenOut.address)
         this.aToken = data.aTokenAddress
 
-        return super.exactIn(
+        return this.doExactIn(
             tokenAmountIn,
             wrappedToken(tokenOut),
             from,

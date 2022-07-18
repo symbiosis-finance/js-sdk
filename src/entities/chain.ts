@@ -5,6 +5,7 @@ export class Chain {
     public readonly name: string
     public readonly disabled: boolean
     public readonly swappable: boolean
+    public readonly evm: boolean
     public readonly explorer: string
     public readonly icons: Icons
 
@@ -15,10 +16,33 @@ export class Chain {
         this.explorer = params.explorer
         this.icons = params.icons
         this.swappable = params?.swappable !== false
+        this.evm = params?.evm !== false
     }
 }
 
 export const chains: Chain[] = [
+    new Chain({
+        id: ChainId.BTC_MAINNET,
+        name: 'Bitcoin',
+        disabled: false,
+        explorer: 'https://www.blockchain.com/btc',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.BTC_TESTNET,
+        name: 'Bitcoin',
+        disabled: false,
+        explorer: 'https://www.blockchain.com/btc-testnet',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        },
+        evm: false,
+    }),
     new Chain({
         id: ChainId.ETH_MAINNET,
         name: 'Ethereum',
@@ -34,6 +58,16 @@ export const chains: Chain[] = [
         name: 'Rinkeby',
         disabled: false,
         explorer: 'https://rinkeby.etherscan.io',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ETH_KOVAN,
+        name: 'Kovan',
+        disabled: false,
+        explorer: 'https://kovan.etherscan.io',
         icons: {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',

@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
-import fetch from 'isomorphic-unfetch'
+import fetch from 'node-fetch-native'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
@@ -30,6 +30,10 @@ import {
     OneInchOracle__factory,
     Portal,
     Portal__factory,
+    RenGatewayRegistryV2,
+    RenGatewayRegistryV2__factory,
+    RenMintGatewayV3,
+    RenMintGatewayV3__factory,
     Synthesis,
     Synthesis__factory,
     UniLikeRouter,
@@ -45,6 +49,7 @@ import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
+import { ZappingRenBTC } from './zappingRenBTC'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
@@ -120,6 +125,10 @@ export class Symbiosis {
 
     public newZappingCream() {
         return new ZappingCream(this)
+    }
+
+    public newZappingRenBTC() {
+        return new ZappingRenBTC(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
@@ -271,6 +280,19 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OneInchOracle__factory.connect(address, signerOrProvider)
+    }
+
+    public renRenGatewayRegistry(chainId: ChainId, signer?: Signer): RenGatewayRegistryV2 {
+        const address = this.chainConfig(chainId).renGatewayRegistry
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return RenGatewayRegistryV2__factory.connect(address, signerOrProvider)
+    }
+
+    public renMintGatewayByAddress(address: string, chainId: ChainId, signer?: Signer): RenMintGatewayV3 {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return RenMintGatewayV3__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
