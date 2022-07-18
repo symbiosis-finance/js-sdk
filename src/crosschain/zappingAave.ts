@@ -16,7 +16,7 @@ export class ZappingAave extends BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = false
+        use1Inch = true
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to

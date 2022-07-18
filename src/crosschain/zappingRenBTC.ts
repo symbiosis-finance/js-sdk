@@ -36,7 +36,7 @@ export class ZappingRenBTC extends BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = false
+        use1Inch = true
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(renChainId)
         this.userAddress = to
