@@ -1,6 +1,6 @@
 /**
- * Example swapping of 15 USDC from Rinkeby
- * to BNB on BNB Chain Testnet
+ * Example swapping(zapping) of 15 BUSD from BNB chain
+ * to BTC via renBTC on Polygon
  */
 
 import { ChainId, Symbiosis, Token, TokenAmount } from 'symbiosis-js-sdk'
@@ -27,42 +27,36 @@ const privateKey = '' // TODO paste your private key
 
 const wallet = new ethers.Wallet(privateKey as BytesLike)
 
-// Create Symbiosis instance using TESTNET config
+// Create Symbiosis instance using MAINNET config
 // with clientId = `sdk-example-app`
-const symbiosis = new Symbiosis('testnet', 'sdk-example-app')
-const provider = symbiosis.getProvider(ChainId.ETH_RINKEBY)
+const symbiosis = new Symbiosis('mainnet', 'sdk-example-app')
+const provider = symbiosis.getProvider(ChainId.BSC_MAINNET)
 const signer = wallet.connect(provider)
 
 const tokenIn = new Token({
-    chainId: ChainId.ETH_RINKEBY,
-    address: '0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b',
-    name: 'USD Coin',
-    symbol: 'USDC',
-    decimals: 6,
+    chainId: ChainId.BSC_MAINNET,
+    address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+    name: 'Binance USD',
+    symbol: 'BUSD',
+    decimals: 18,
 })
 
 const tokenAmountIn = new TokenAmount(
     tokenIn,
-    '15000000' // 15 USDC
+    '15000000000000000000' // 15 BUSD
 )
 
-const tokenOut = new Token({
-    chainId: ChainId.BSC_TESTNET,
-    isNative: true,
-    address: '',
-    symbol: 'BNB',
-    decimals: 18,
-})
+const renChainId = ChainId.MATIC_MAINNET
 
-async function swapErc20() {
+async function zapErc20ToBTC() {
     try {
-        const swapping = symbiosis.newSwapping()
+        const zapping = symbiosis.newZappingRenBTC()
 
-        // Calculates fee for swapping between chains and transactionRequest
-        console.log('Calculating swap...')
-        const { transactionRequest, fee, tokenAmountOut, route, priceImpact, approveTo } = await swapping.exactIn(
+        // Calculates fee for zapping between chains and transactionRequest
+        console.log('Calculating zap...')
+        const { transactionRequest, fee, tokenAmountOut, route, priceImpact, approveTo } = await zapping.exactIn(
             tokenAmountIn, // TokenAmount object
-            tokenOut, // Token object
+            renChainId, // Ren chain id
             wallet.address, // from account address
             wallet.address, // to account address
             wallet.address, // account who can revert stucked transaction
@@ -97,14 +91,14 @@ async function swapErc20() {
         console.log('Transaction mined', receipt.transactionHash)
 
         // Wait for transaction to be completed on recipient chain
-        const log = await swapping.waitForComplete(receipt)
-        console.log('Cross-chain swap completed', log.transactionHash)
+        const log = await zapping.waitForComplete(receipt)
+        console.log('Cross-chain zap completed', log.transactionHash)
     } catch (e) {
         console.error(e)
     }
 }
 
 console.log('>>>')
-swapErc20().then(() => {
+zapErc20ToBTC().then(() => {
     console.log('<<<')
 })

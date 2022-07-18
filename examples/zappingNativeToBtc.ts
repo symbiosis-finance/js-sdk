@@ -1,6 +1,6 @@
 /**
- * Example swapping of some ETH from Rinkeby
- * to BNB on BNB Chain Testnet
+ * Example swapping(zapping) of some ETH
+ * to BTC via renBTC on BNB Chain
  */
 
 import { ChainId, Symbiosis, Token, TokenAmount } from 'symbiosis-js-sdk'
@@ -9,12 +9,12 @@ import { BytesLike, ethers } from 'ethers'
 const privateKey = '' // TODO paste your private key
 const wallet = new ethers.Wallet(privateKey as BytesLike)
 
-// Create Symbiosis instance using TESTNET config
+// Create Symbiosis instance using MAINNET config
 // with clientId = `sdk-example-app`
-const symbiosis = new Symbiosis('testnet', 'sdk-example-app')
+const symbiosis = new Symbiosis('mainnet', 'sdk-example-app')
 
 const tokenIn = new Token({
-    chainId: ChainId.ETH_RINKEBY,
+    chainId: ChainId.ETH_MAINNET,
     address: '',
     symbol: 'ETH',
     decimals: 18,
@@ -26,35 +26,32 @@ const tokenAmountIn = new TokenAmount(
     '100000000000' // 0.000001 ETH // TODO change amount if needed
 )
 
-const tokenOut = new Token({
-    chainId: ChainId.BSC_TESTNET,
-    isNative: true,
-    address: '',
-    symbol: 'BNB',
-    decimals: 18,
-})
+const btcAddress = '' // TODO set your address
 
-async function swapNative() {
-    const swapping = symbiosis.newSwapping()
+const renChainId = ChainId.BSC_MAINNET
 
-    // Calculates fee for swapping between chains and transactionRequest
-    console.log('Calculating swap...')
+async function zapNativeToBtc() {
+    const zapping = symbiosis.newZappingRenBTC()
+
+    // Calculates fee for zapping between chains and transactionRequest
+    console.log('Calculating zap...')
     try {
-        const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
+        const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await zapping.exactIn(
             tokenAmountIn, // TokenAmount object
-            tokenOut, // Token object
+            renChainId, // Ren chain id
             wallet.address, // from account address
-            wallet.address, // to account address
+            btcAddress, // to account address
             wallet.address, // account who can revert stucked transaction
             300, // 3% slippage
-            Date.now() + 20 * 60 // 20 minutes deadline
+            Date.now() + 20 * 60, // 20 minutes deadline
+            true
         )
 
         console.log({
             tokenAmountIn: tokenAmountIn.toSignificant(),
             fee: fee.toSignificant(),
-            tokenAmountOut: tokenAmountOut.toSignificant(),
             route: route.map((i) => i.symbol).join(' -> '),
+            tokenAmountOut: tokenAmountOut.toSignificant(),
             priceImpact: priceImpact.toSignificant(),
         })
 
@@ -69,14 +66,13 @@ async function swapNative() {
         console.log('Transaction mined', receipt.transactionHash)
 
         // Wait for transaction to be completed on recipient chain
-        const log = await swapping.waitForComplete(receipt)
-        console.log('Cross-chain swap completed', log.transactionHash)
+        const log = await zapping.waitForComplete(receipt)
+        console.log('Cross-chain zap completed', log.transactionHash)
     } catch (e) {
         console.error(e)
     }
 }
 
-console.log('>>>')
-swapNative().then(() => {
+zapNativeToBtc().then(() => {
     console.log('<<<')
 })
