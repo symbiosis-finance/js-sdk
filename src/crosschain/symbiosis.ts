@@ -209,6 +209,29 @@ export class Symbiosis {
         return NervePool__factory.connect(address, signerOrProvider)
     }
 
+    public getNerveTokenIndexes(chainId: ChainId, tokenA: string, tokenB: string) {
+        const pool = this.chainConfig(chainId).nerves.find((data) => {
+            return (
+                data.tokens.find((token) => token.toLowerCase() === tokenA.toLowerCase()) &&
+                data.tokens.find((token) => token.toLowerCase() === tokenB.toLowerCase())
+            )
+        })
+
+        if (!pool) {
+            throw new Error('Nerve pool not found')
+        }
+
+        const tokens = pool.tokens.map((i) => i.toLowerCase())
+        const indexA = tokens.indexOf(tokenA.toLowerCase())
+        const indexB = tokens.indexOf(tokenB.toLowerCase())
+
+        if (indexA === -1 || indexB === -1) {
+            throw new Error('Cannot find token')
+        }
+
+        return [indexA, indexB]
+    }
+
     public nervePoolByAddress(address: string, chainId: ChainId, signer?: Signer): NervePool {
         const signerOrProvider = signer || this.getProvider(chainId)
 

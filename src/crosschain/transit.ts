@@ -52,7 +52,7 @@ export class Transit {
             }
         } else {
             this.tradeB = await this.buildTradeB()
-            await this.tradeB.init(this.dataProvider)
+            await this.tradeB.init()
 
             this.receiveSide = this.tradeB.pool.address
             this.callData = this.tradeB.callData
@@ -174,11 +174,11 @@ export class Transit {
     }
 
     protected async buildTradeB(): Promise<NerveTrade> {
-        const amountIn = await this.getTradeBAmountIn()
+        const amountIn = this.getTradeBAmountIn()
         const tokenOut = await this.getTradeBTokenOut()
 
         const nervePool = this.symbiosis.nervePool(amountIn.token, tokenOut)
 
-        return new NerveTrade(amountIn, tokenOut, this.slippage, this.deadline, nervePool)
+        return new NerveTrade(amountIn, tokenOut, this.slippage, this.deadline, nervePool, this.symbiosis)
     }
 }

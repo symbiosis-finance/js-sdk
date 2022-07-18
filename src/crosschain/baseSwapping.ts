@@ -230,7 +230,15 @@ export abstract class BaseSwapping {
 
         if (this.use1Inch && canOneInch(chainId)) {
             const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
+            return new OneInchTrade(
+                this.tokenAmountIn,
+                tokenOut,
+                from,
+                to,
+                this.slippage / 100,
+                oracle,
+                this.dataProvider
+            )
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
@@ -265,7 +273,15 @@ export abstract class BaseSwapping {
         if (this.use1Inch && canOneInch(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(amountIn, this.tokenOut, from, this.to, this.slippage / 100, oracle)
+            return new OneInchTrade(
+                amountIn,
+                this.tokenOut,
+                from,
+                this.to,
+                this.slippage / 100,
+                oracle,
+                this.dataProvider
+            )
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
