@@ -15,6 +15,7 @@ import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, NervePool, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { NerveLiquidity } from './nerveLiquidity'
+import { DataProvider } from './dataProvider'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -26,6 +27,8 @@ export type SwapExactIn = Promise<{
 }>
 
 export class Zapping {
+    protected dataProvider: DataProvider
+
     private from!: string
     private to!: string
     private revertableAddress!: string
@@ -47,6 +50,7 @@ export class Zapping {
 
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
+        this.dataProvider = new DataProvider(symbiosis)
     }
 
     public async exactIn(
@@ -58,7 +62,7 @@ export class Zapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = false
+        use1Inch = true
     ): SwapExactIn {
         this.use1Inch = use1Inch
         this.tokenAmountIn = tokenAmountIn
@@ -193,7 +197,15 @@ export class Zapping {
 
         if (this.use1Inch && canOneInch(chainId)) {
             const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100, oracle)
+            return new OneInchTrade(
+                this.tokenAmountIn,
+                tokenOut,
+                from,
+                to,
+                this.slippage / 100,
+                oracle,
+                this.dataProvider
+            )
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
