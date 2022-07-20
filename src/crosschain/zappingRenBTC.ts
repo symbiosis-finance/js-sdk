@@ -1,10 +1,21 @@
 import RenJS from '@renproject/ren'
+import { Signer } from 'ethers'
 import { Ethereum, Bitcoin, BinanceSmartChain, Polygon } from '@renproject/chains'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { MulticallRouter, RenMintGatewayV3 } from './contracts'
+import { Log, TransactionReceipt } from '@ethersproject/providers'
+
+interface ZappingRenBTCWaitForComplete {
+    log: Log
+    waitForREN: () => Promise<string | undefined>
+}
+
+export type ZappingRenBTCExactIn = Omit<SwapExactIn, 'execute'> & {
+    execute: ReturnType<ZappingRenBTC['buildExecute']>
+}
 
 const fromUTF8String = (input: string): Uint8Array => {
     const a = []
@@ -37,7 +48,7 @@ export class ZappingRenBTC extends BaseSwapping {
         slippage: number,
         deadline: number,
         use1Inch = true
-    ): SwapExactIn {
+    ): Promise<ZappingRenBTCExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(renChainId)
         this.userAddress = to
 
@@ -61,7 +72,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        const { tokenAmountOut, ...result } = await this.doExactIn(
+        const { tokenAmountOut, execute, ...result } = await this.doExactIn(
             tokenAmountIn,
             renBTC,
             from,
@@ -76,8 +87,15 @@ export class ZappingRenBTC extends BaseSwapping {
 
         return {
             ...result,
+            execute: this.buildExecute(execute),
             tokenAmountOut: btcAmountOut,
         }
+    }
+
+    public async waitForComplete(receipt: TransactionReceipt): Promise<ZappingRenBTCWaitForComplete> {
+        const log = await this.doWaitForComplete(receipt)
+
+        return { log, waitForREN: () => this.waitForREN(log.transactionHash) }
     }
 
     protected finalReceiveSide(): string {
@@ -181,5 +199,70 @@ export class ZappingRenBTC extends BaseSwapping {
             }),
             estimateOutput
         )
+    }
+
+    private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
+        return async (signer: Signer) => {
+            const { response, waitForMined } = await execute(signer)
+
+            return {
+                response,
+                waitForMined: async () => {
+                    const { receipt } = await waitForMined()
+
+                    return {
+                        receipt,
+                        waitForComplete: () => this.waitForComplete(receipt),
+                    }
+                },
+            }
+        }
+    }
+
+    private async waitForREN(transactionHas: string): Promise<string | undefined> {
+        const provider = this.symbiosis.getProvider(ChainId.ETH_KOVAN)
+        if (!provider) {
+            return
+        }
+
+        const ethereum = new Ethereum({
+            network: 'testnet',
+            provider,
+        })
+
+        const bitcoin = new Bitcoin({ network: 'testnet' })
+        const renJS = new RenJS('testnet').withChains(ethereum, bitcoin)
+
+        const gateway = await renJS.gateway({
+            asset: bitcoin.assets.BTC,
+            from: ethereum.Transaction({
+                txHash: transactionHas,
+            }),
+            to: bitcoin.Address(this.userAddress),
+        })
+
+        const result = new Promise<string | undefined>((resolve) => {
+            gateway.on('transaction', async (tx) => {
+                console.log(tx)
+
+                await tx.renVM.submit()
+                await tx.renVM.wait()
+
+                await tx.out.submit?.()
+                await tx.out.wait()
+
+                const outTx = tx.out.progress.transaction
+                console.log('Done:', outTx)
+
+                console.log(tx.toChain.transactionExplorerLink(outTx!))
+
+                resolve(outTx ? tx.toChain.transactionExplorerLink(outTx) : undefined)
+            })
+        })
+
+        await gateway.in?.submit?.()
+        await gateway.in?.wait(1)
+
+        return result
     }
 }

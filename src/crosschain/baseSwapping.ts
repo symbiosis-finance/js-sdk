@@ -146,11 +146,11 @@ export abstract class BaseSwapping {
 
         return {
             receipt,
-            waitForComplete: () => this.waitForComplete(receipt),
+            waitForComplete: () => this.doWaitForComplete(receipt),
         }
     }
 
-    public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+    protected async doWaitForComplete(receipt: TransactionReceipt): Promise<Log> {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
