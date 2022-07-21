@@ -1,4 +1,3 @@
-import { Log, TransactionReceipt } from '@ethersproject/providers'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
 import { CreamCErc20__factory, CreamComptroller__factory, Multicall, MulticallRouter } from './contracts'
@@ -111,10 +110,6 @@ export class ZappingCream extends BaseSwapping {
             deadline,
             use1Inch
         )
-    }
-
-    public waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        return this.doWaitForComplete(receipt)
     }
 
     protected finalReceiveSide(): string {

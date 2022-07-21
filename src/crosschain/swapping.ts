@@ -1,4 +1,3 @@
-import { Log, TransactionReceipt } from '@ethersproject/providers'
 import { Token, TokenAmount } from '../entities'
 
 import { BaseSwapping, SwapExactIn } from './baseSwapping'
@@ -15,9 +14,5 @@ export class Swapping extends BaseSwapping {
         use1Inch = true
     ): SwapExactIn {
         return this.doExactIn(tokenAmountIn, tokenOut, from, to, revertableAddress, slippage, deadline, use1Inch)
-    }
-
-    public waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        return this.doWaitForComplete(receipt)
     }
 }
