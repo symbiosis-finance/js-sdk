@@ -118,9 +118,8 @@ export class ZappingRenBTC extends BaseSwapping {
                 }
 
                 const outTx = tx.out.progress.transaction
-                console.log('Done:', outTx)
 
-                resolve(outTx?.txid)
+                resolve(outTx?.txHash)
             })
         })
 
