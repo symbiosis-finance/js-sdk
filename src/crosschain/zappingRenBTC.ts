@@ -1,7 +1,6 @@
 import RenJS from '@renproject/ren'
 import { Signer } from 'ethers'
 import { Ethereum, Bitcoin, BinanceSmartChain, Polygon } from '@renproject/chains'
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
@@ -223,10 +222,10 @@ export class ZappingRenBTC extends BaseSwapping {
 
         return new TokenAmount(
             new Token({
-                chainId: this.renChainId,
+                chainId: ChainId.BTC_MAINNET,
                 symbol: 'BTC',
                 name: 'Bitcoin',
-                address: AddressZero,
+                address: '',
                 decimals: 8,
                 isNative: true,
                 icons: {
