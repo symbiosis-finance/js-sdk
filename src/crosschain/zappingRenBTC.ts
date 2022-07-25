@@ -8,8 +8,8 @@ import { MulticallRouter, RenMintGatewayV3 } from './contracts'
 
 export type ZappingRenBTCExactIn = Promise<
     Omit<Awaited<SwapExactIn>, 'execute'> & {
-        btcAmountOut: TokenAmount
         execute: ReturnType<ZappingRenBTC['buildExecute']>
+        renBTCAmountOut: TokenAmount
     }
 >
 
@@ -85,9 +85,9 @@ export class ZappingRenBTC extends BaseSwapping {
 
         return {
             ...result,
-            btcAmountOut,
             execute: this.buildExecute(execute),
-            tokenAmountOut,
+            renBTCAmountOut: tokenAmountOut,
+            tokenAmountOut: btcAmountOut,
         }
     }
 
