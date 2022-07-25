@@ -1,10 +1,17 @@
 import RenJS from '@renproject/ren'
+import { Signer } from 'ethers'
 import { Ethereum, Bitcoin, BinanceSmartChain, Polygon } from '@renproject/chains'
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { MulticallRouter, RenMintGatewayV3 } from './contracts'
+
+export type ZappingRenBTCExactIn = Promise<
+    Omit<Awaited<SwapExactIn>, 'execute'> & {
+        execute: ReturnType<ZappingRenBTC['buildExecute']>
+        renBTCAmountOut: TokenAmount
+    }
+>
 
 const fromUTF8String = (input: string): Uint8Array => {
     const a = []
@@ -27,6 +34,7 @@ export class ZappingRenBTC extends BaseSwapping {
     protected userAddress!: string
     protected renMintGatewayV3!: RenMintGatewayV3
     protected renBTCAddress!: string
+    protected renChainId!: ChainId
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
@@ -37,7 +45,8 @@ export class ZappingRenBTC extends BaseSwapping {
         slippage: number,
         deadline: number,
         use1Inch = true
-    ): SwapExactIn {
+    ): ZappingRenBTCExactIn {
+        this.renChainId = renChainId
         this.multicallRouter = this.symbiosis.multicallRouter(renChainId)
         this.userAddress = to
 
@@ -61,7 +70,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        const { tokenAmountOut, ...result } = await this.doExactIn(
+        const { tokenAmountOut, execute, ...result } = await this.doExactIn(
             tokenAmountIn,
             renBTC,
             from,
@@ -72,12 +81,51 @@ export class ZappingRenBTC extends BaseSwapping {
             use1Inch
         )
 
-        const btcAmountOut = await this.estimateBTCOutput(renChainId, tokenAmountOut)
+        const btcAmountOut = await this.estimateBTCOutput(tokenAmountOut)
 
         return {
             ...result,
+            execute: this.buildExecute(execute),
+            renBTCAmountOut: tokenAmountOut,
             tokenAmountOut: btcAmountOut,
         }
+    }
+
+    public async waitForREN(transactionHash: string): Promise<string | undefined> {
+        const { bitcoin, ethereum, renJS } = this.createRENJS()
+
+        const gateway = await renJS.gateway({
+            asset: bitcoin.assets.BTC,
+            from: ethereum.Transaction({
+                txHash: transactionHash,
+            }),
+            to: bitcoin.Address(this.userAddress),
+        })
+
+        const result = new Promise<string | undefined>((resolve, reject) => {
+            gateway.on('transaction', async (tx) => {
+                try {
+                    await tx.renVM.submit()
+                    await tx.renVM.wait()
+
+                    await tx.out.submit?.()
+                    await tx.out.wait()
+                } catch (e) {
+                    reject(e)
+
+                    return
+                }
+
+                const outTx = tx.out.progress.transaction
+
+                resolve(outTx?.txHash)
+            })
+        })
+
+        await gateway.in?.submit?.()
+        await gateway.in?.wait(1)
+
+        return result
     }
 
     protected finalReceiveSide(): string {
@@ -121,30 +169,30 @@ export class ZappingRenBTC extends BaseSwapping {
         ])
     }
 
-    private async estimateBTCOutput(renChainId: ChainId, tokenAmountOut: TokenAmount): Promise<TokenAmount> {
-        const provider = this.symbiosis.providers.get(renChainId)
+    private createRENJS() {
+        const provider = this.symbiosis.providers.get(this.renChainId)
         if (!provider) {
-            throw new Error(`Provider not found for chain ${renChainId}`)
+            throw new Error(`Provider not found for chain ${this.renChainId}`)
         }
 
         let network: 'mainnet' | 'testnet'
         let ethereum: Ethereum | BinanceSmartChain | Polygon
 
-        if (renChainId === ChainId.ETH_KOVAN) {
+        if (this.renChainId === ChainId.ETH_KOVAN) {
             network = 'testnet'
 
             ethereum = new Ethereum({
                 network,
                 provider,
             })
-        } else if (renChainId === ChainId.BSC_MAINNET) {
+        } else if (this.renChainId === ChainId.BSC_MAINNET) {
             network = 'mainnet'
 
             ethereum = new BinanceSmartChain({
                 network,
                 provider,
             })
-        } else if (renChainId === ChainId.MATIC_MAINNET) {
+        } else if (this.renChainId === ChainId.MATIC_MAINNET) {
             network = 'mainnet'
 
             ethereum = new Polygon({
@@ -152,11 +200,17 @@ export class ZappingRenBTC extends BaseSwapping {
                 provider,
             })
         } else {
-            throw new Error(`Unsupported chain ${renChainId}`)
+            throw new Error(`Unsupported chain ${this.renChainId}`)
         }
 
         const bitcoin = new Bitcoin({ network })
         const renJS = new RenJS(network).withChains(ethereum, bitcoin)
+
+        return { bitcoin, ethereum, renJS }
+    }
+
+    private async estimateBTCOutput(tokenAmountOut: TokenAmount): Promise<TokenAmount> {
+        const { ethereum, renJS } = this.createRENJS()
 
         const fees = await renJS.getFees({
             asset: 'BTC',
@@ -168,10 +222,10 @@ export class ZappingRenBTC extends BaseSwapping {
 
         return new TokenAmount(
             new Token({
-                chainId: renChainId,
+                chainId: ChainId.BTC_MAINNET,
                 symbol: 'BTC',
                 name: 'Bitcoin',
-                address: AddressZero,
+                address: '',
                 decimals: 8,
                 isNative: true,
                 icons: {
@@ -181,5 +235,27 @@ export class ZappingRenBTC extends BaseSwapping {
             }),
             estimateOutput
         )
+    }
+
+    private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
+        return async (signer: Signer) => {
+            const { response, waitForMined } = await execute(signer)
+
+            return {
+                response,
+                waitForMined: async () => {
+                    const { receipt } = await waitForMined()
+
+                    return {
+                        receipt,
+                        waitForComplete: async () => {
+                            const log = await this.waitForComplete(receipt)
+
+                            return { log, waitForREN: () => this.waitForREN(log.transactionHash) }
+                        },
+                    }
+                },
+            }
+        }
     }
 }
