@@ -72,6 +72,9 @@ async function zapNativeToBtc() {
         // Wait for transaction to be completed on recipient chain
         const log = await zapping.waitForComplete(receipt)
         console.log('Cross-chain zap completed', log.transactionHash)
+
+        const btcHash = await zapping.waitForREN(log.transactionHash)
+        console.log('BTC received', btcHash)
     } catch (e) {
         console.error(e)
     }
