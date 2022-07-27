@@ -9,12 +9,13 @@ import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
+import { calculateGasMargin, canOneInch, canRango, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
 import { Transit } from './transit'
+import { RangoTrade } from './rangoTrade'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -43,9 +44,9 @@ export abstract class BaseSwapping {
 
     protected route!: Token[]
 
-    protected tradeA: UniLikeTrade | OneInchTrade | undefined
+    protected tradeA: UniLikeTrade | OneInchTrade | RangoTrade | undefined
     protected transit!: Transit
-    protected tradeC: UniLikeTrade | OneInchTrade | undefined
+    protected tradeC: UniLikeTrade | OneInchTrade | RangoTrade | undefined
 
     protected dataProvider: DataProvider
 
@@ -222,7 +223,7 @@ export abstract class BaseSwapping {
         return this.transit.amountOut
     }
 
-    protected buildTradeA(): UniLikeTrade | OneInchTrade {
+    protected buildTradeA(): UniLikeTrade | OneInchTrade | RangoTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
         const from = this.symbiosis.metaRouter(chainId).address
@@ -239,6 +240,10 @@ export abstract class BaseSwapping {
                 oracle,
                 this.dataProvider
             )
+        }
+
+        if (canRango(chainId)) {
+            return new RangoTrade(this.tokenAmountIn, tokenOut, from, to, this.slippage / 100)
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
@@ -266,7 +271,7 @@ export abstract class BaseSwapping {
         )
     }
 
-    protected buildTradeC() {
+    protected buildTradeC(): UniLikeTrade | OneInchTrade | RangoTrade {
         const chainId = this.tokenOut.chainId
         const amountIn = this.transit.amountOut
 
@@ -282,6 +287,11 @@ export abstract class BaseSwapping {
                 oracle,
                 this.dataProvider
             )
+        }
+
+        if (canRango(chainId)) {
+            const from = this.symbiosis.metaRouter(chainId).address
+            return new RangoTrade(amountIn, this.tokenOut, from, this.to, this.slippage / 100)
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)

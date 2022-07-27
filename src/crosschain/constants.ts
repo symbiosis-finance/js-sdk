@@ -35,6 +35,14 @@ export const ONE_INCH_CHAINS: ChainId[] = [
     ChainId.MATIC_MAINNET,
 ]
 
+export const RANGO_CHAINS: ChainId[] = [
+    ChainId.ETH_MAINNET,
+    ChainId.BSC_MAINNET,
+    ChainId.AVAX_MAINNET,
+    ChainId.MATIC_MAINNET,
+    ChainId.BOBA_MAINNET,
+]
+
 export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
     [ChainId.ETH_MAINNET]: '0x07D91f5fb9Bf7798734C3f606dB065549F6893bb',
     [ChainId.BSC_MAINNET]: '0xfbD61B037C325b959c0F6A7e69D8f37770C2c550',

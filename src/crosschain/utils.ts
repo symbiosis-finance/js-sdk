@@ -4,7 +4,7 @@ import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Fraction, Percent, TokenAmount, Trade } from '../entities'
-import { BIPS_BASE, ONE_INCH_CHAINS } from './constants'
+import { BIPS_BASE, ONE_INCH_CHAINS, RANGO_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 
@@ -23,6 +23,10 @@ interface GetExternalIdParams {
 
 export const canOneInch = (chainId: ChainId) => {
     return ONE_INCH_CHAINS.includes(chainId)
+}
+
+export const canRango = (chainId: ChainId) => {
+    return RANGO_CHAINS.includes(chainId)
 }
 
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
