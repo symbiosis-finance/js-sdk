@@ -22,6 +22,17 @@ export class Chain {
 
 export const chains: Chain[] = [
     new Chain({
+        id: ChainId.NEAR_TESTNET,
+        name: 'Near',
+        disabled: false,
+        explorer: 'https://testnet.nearblocks.io/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
+        },
+        evm: false,
+    }),
+    new Chain({
         id: ChainId.BTC_MAINNET,
         name: 'Bitcoin',
         disabled: false,
