@@ -1,6 +1,5 @@
 import { Filter, TransactionRequest } from '@ethersproject/providers'
 import { ContractTransaction, Signer } from 'ethers'
-import JSBI from 'jsbi'
 import { TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
 import { PendingRequest } from './pending'
@@ -42,7 +41,7 @@ export class RevertPending {
         return log.transactionHash
     }
 
-    private async getFee() {
+    private async getFee(): Promise<TokenAmount> {
         const { type, chainIdTo, chainIdFrom } = this.request
 
         const externalId = this.getExternalId()
@@ -67,7 +66,7 @@ export class RevertPending {
             chainIdTo: chainIdFrom,
         })
 
-        const feeTokenAmount = new TokenAmount(this.request.fromTokenAmount.token, fee.toString())
+        const feeTokenAmount = new TokenAmount(this.request.fromTokenAmount.token, fee)
         if (this.request.fromTokenAmount.lessThan(feeTokenAmount)) {
             throw new Error(
                 `Amount $${this.request.fromTokenAmount.toSignificant()} less than fee $${feeTokenAmount.toSignificant()}`,
@@ -75,10 +74,10 @@ export class RevertPending {
             )
         }
 
-        return fee
+        return feeTokenAmount
     }
 
-    private getTransactionRequest(fee: JSBI): TransactionRequest {
+    private getTransactionRequest(fee: TokenAmount): TransactionRequest {
         if (this.request.type === 'synthesize') {
             return this.getRevertSynthesizeTransactionRequest(fee)
         }
@@ -86,7 +85,7 @@ export class RevertPending {
         return this.getRevertBurnTransactionRequest(fee)
     }
 
-    private getRevertSynthesizeTransactionRequest(fee: JSBI): TransactionRequest {
+    private getRevertSynthesizeTransactionRequest(fee: TokenAmount): TransactionRequest {
         const { internalId, chainIdTo, chainIdFrom } = this.request
 
         const synthesis = this.symbiosis.synthesis(chainIdTo)
@@ -96,17 +95,18 @@ export class RevertPending {
         return {
             to: synthesis.address,
             data: synthesis.interface.encodeFunctionData('revertSynthesizeRequest', [
-                fee.toString(),
+                fee.raw.toString(),
                 internalId,
                 otherPortal.address,
                 otherBridge.address,
                 chainIdFrom,
+                this.symbiosis.clientId,
             ]),
             chainId: chainIdTo,
         }
     }
 
-    private getRevertBurnTransactionRequest(fee: JSBI): TransactionRequest {
+    private getRevertBurnTransactionRequest(fee: TokenAmount): TransactionRequest {
         const { internalId, chainIdTo, chainIdFrom } = this.request
 
         const otherBridge = this.symbiosis.bridge(chainIdFrom)
@@ -116,11 +116,12 @@ export class RevertPending {
         return {
             to: portal.address,
             data: portal.interface.encodeFunctionData('revertBurnRequest', [
-                fee.toString(),
+                fee.raw.toString(),
                 internalId,
                 otherSynthesis.address,
                 otherBridge.address,
                 chainIdFrom,
+                this.symbiosis.clientId,
             ]),
             chainId: chainIdTo,
         }

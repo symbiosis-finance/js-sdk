@@ -15,7 +15,7 @@ import { Field } from './types'
 
 interface GetInternalIdParams {
     contractAddress: string
-    requestCount: number
+    requestCount: BigNumber
     chainId: ChainId
 }
 

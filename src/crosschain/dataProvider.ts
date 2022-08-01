@@ -1,9 +1,9 @@
-import { ChainId } from 'src/constants'
-import { Token } from 'src/entities'
-import { NervePool__factory } from './contracts'
-import { getMulticall } from './multicall'
+import { ChainId } from '../constants'
+import { Token } from '../entities'
+import { OneInchOracle } from './contracts'
 import { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
+import { OneInchTrade } from './oneInchTrade'
 
 export class DataProvider {
     private cache = new Map<string, any>()
@@ -16,32 +16,23 @@ export class DataProvider {
         )
     }
 
-    async getTokensIndex(tokenIn: Token, tokenOut: Token, addresses: string[]) {
-        return this.fromCache(['getTokenIndex', tokenIn.address, tokenIn.address, ...addresses], async () => {
-            const nervePool = this.symbiosis.nervePool(tokenIn, tokenOut)
-            const nervePoolInterface = NervePool__factory.createInterface()
-
-            const calls = addresses.map((address) => ({
-                target: nervePool.address,
-                callData: nervePoolInterface.encodeFunctionData('getTokenIndex', [address]),
-            }))
-
-            const provider = this.symbiosis.getProvider(tokenIn.chainId)
-            const multicall = await getMulticall(provider)
-
-            const aggregateResult = await multicall.callStatic.aggregate(calls)
-
-            return aggregateResult.returnData.map(
-                (value) => nervePoolInterface.decodeFunctionResult('getTokenIndex', value)[0]
-            )
-        })
-    }
-
     async getPairs(tokenIn: Token, tokenOut: Token) {
         return this.fromCache(['getPairs', tokenIn.address, tokenIn.address], () => {
             const provider = this.symbiosis.getProvider(tokenIn.chainId)
 
             return UniLikeTrade.getPairs(provider, tokenIn, tokenOut)
+        })
+    }
+
+    async getOneInchProtocols(chainId: ChainId) {
+        return this.fromCache(['getOneInchProtocols', chainId], () => {
+            return OneInchTrade.getProtocols(chainId)
+        })
+    }
+
+    async getOneInchRateToEth(tokens: Token[], oracle: OneInchOracle) {
+        return this.fromCache(['getOneInchRateToEth', ...tokens.map((i) => i.address)], () => {
+            return OneInchTrade.getRateToEth(tokens, oracle)
         })
     }
 

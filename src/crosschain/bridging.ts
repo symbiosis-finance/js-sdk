@@ -1,6 +1,7 @@
 import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Coin, Coins, MsgExecuteContract, SyncTxBroadcastResult, TxInfo } from '@terra-money/terra.js'
 import { ConnectedWallet } from '@terra-money/wallet-types'
+import { MaxUint256 } from '@ethersproject/constants'
 import { BigNumber, Signer } from 'ethers'
 import { base64 } from 'ethers/lib/utils'
 import { TerraChainId } from '../constants'
@@ -302,6 +303,7 @@ export class Bridging {
                     this.symbiosis.bridge(outChainId).address,
                     this.revertableAddress,
                     outChainId,
+                    this.symbiosis.clientId,
                 ]),
             }
         }
@@ -319,6 +321,7 @@ export class Bridging {
                     this.symbiosis.bridge(outChainId).address,
                     this.revertableAddress,
                     outChainId,
+                    this.symbiosis.clientId,
                 ]),
                 value: BigNumber.from(this.tokenAmountIn.raw.toString()),
             }
@@ -336,6 +339,7 @@ export class Bridging {
                 this.symbiosis.bridge(outChainId).address,
                 this.revertableAddress,
                 outChainId,
+                this.symbiosis.clientId,
             ]),
         }
     }
@@ -466,7 +470,7 @@ export class Bridging {
 
         const internalId = getInternalId({
             contractAddress: synthesis.address,
-            requestCount: synthesisRequestsCount,
+            requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 

@@ -101,6 +101,16 @@ export function tokenEquals(tokenA: Token, tokenB: Token): boolean {
 }
 
 export const WETH = {
+    [ChainId.BTC_MAINNET]: new Token({
+        chainId: ChainId.BTC_MAINNET,
+        address: '',
+        decimals: 8,
+    }),
+    [ChainId.BTC_TESTNET]: new Token({
+        chainId: ChainId.BTC_TESTNET,
+        address: '',
+        decimals: 8,
+    }),
     [ChainId.ETH_MAINNET]: new Token({
         chainId: ChainId.ETH_MAINNET,
         address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -116,6 +126,18 @@ export const WETH = {
     [ChainId.ETH_RINKEBY]: new Token({
         chainId: ChainId.ETH_RINKEBY,
         address: '0xc778417e063141139fce010982780140aa0cd5ab',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+        },
+    }),
+    [ChainId.ETH_KOVAN]: new Token({
+        chainId: ChainId.ETH_KOVAN,
+        address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
         decimals: 18,
         symbol: 'WETH',
         isNative: false,
@@ -284,7 +306,8 @@ export const WETH = {
     }),
     [ChainId.MILKOMEDA_DEVNET]: new Token({
         chainId: ChainId.MILKOMEDA_DEVNET,
-        address: '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9',
+        // address: '0x65a51E52eCD17B641f8F0D1d56a6c9738951FDC9',
+        address: '0x01bbbb9c97fc43e3393e860fc8bbead47b6960db',
         decimals: 18,
         symbol: 'WTADA',
         isNative: false,

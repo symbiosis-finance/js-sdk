@@ -1,26 +1,40 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer } from 'ethers'
-import fetch from 'isomorphic-unfetch'
+import { Signer, utils } from 'ethers'
+import fetch from 'node-fetch-native'
 import JSBI from 'jsbi'
 import { ChainId, TerraChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
 import { LCDClient } from '@terra-money/terra.js'
 import {
+    Aave,
+    Aave__factory,
+    AdaRouter,
+    AdaRouter__factory,
     AvaxRouter,
     AvaxRouter__factory,
     Bridge,
     Bridge__factory,
+    CreamCErc20,
+    CreamCErc20__factory,
+    CreamComptroller,
+    CreamComptroller__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
     MetaRouter__factory,
+    MulticallRouter,
+    MulticallRouter__factory,
     NervePool,
     NervePool__factory,
     OneInchOracle,
     OneInchOracle__factory,
     Portal,
     Portal__factory,
+    RenGatewayRegistryV2,
+    RenGatewayRegistryV2__factory,
+    RenMintGatewayV3,
+    RenMintGatewayV3__factory,
     Synthesis,
     Synthesis__factory,
     UniLikeRouter,
@@ -33,19 +47,36 @@ import { RevertPending } from './revert'
 import { Swapping } from './swapping'
 import { ChainConfig, Config } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
+import { Zapping } from './zapping'
+import { ZappingAave } from './zappingAave'
+import { ZappingCream } from './zappingCream'
+import { ZappingRenBTC } from './zappingRenBTC'
+
+import { config as mainnet } from './config/mainnet'
+import { config as testnet } from './config/testnet'
+
+type ConfigName = 'testnet' | 'mainnet'
 import { isTerraChainId } from '../utils'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
     public readonly config: Config
+    public readonly clientId: string
 
-    public constructor(config: Config) {
-        this.config = config
+    public constructor(config: ConfigName | Config, clientId: string) {
+        if (config === 'mainnet') {
+            this.config = mainnet
+        } else if (config === 'testnet') {
+            this.config = testnet
+        } else {
+            this.config = config
+        }
+        this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map<ChainId, StaticJsonRpcProvider>()
 
-        for (const chain of config.chains) {
+        for (const chain of this.config.chains) {
             if (isTerraChainId(chain.id)) {
                 continue
             }
@@ -89,6 +120,22 @@ export class Symbiosis {
 
     public newRevertPending(request: PendingRequest) {
         return new RevertPending(this, request)
+    }
+
+    public newZapping() {
+        return new Zapping(this)
+    }
+
+    public newZappingAave() {
+        return new ZappingAave(this)
+    }
+
+    public newZappingCream() {
+        return new ZappingCream(this)
+    }
+
+    public newZappingRenBTC() {
+        return new ZappingRenBTC(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
@@ -163,6 +210,13 @@ export class Symbiosis {
         return AvaxRouter__factory.connect(address, signerOrProvider)
     }
 
+    public adaRouter(chainId: ChainId, signer?: Signer): AdaRouter {
+        const address = this.chainConfig(chainId).router
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return AdaRouter__factory.connect(address, signerOrProvider)
+    }
+
     public nervePool(tokenIn: Token, tokenOut: Token, signer?: Signer): NervePool {
         const chainId = tokenIn.chainId
         const address = this.chainConfig(chainId).nerves.find((data) => {
@@ -180,6 +234,62 @@ export class Symbiosis {
         return NervePool__factory.connect(address, signerOrProvider)
     }
 
+    public getNerveTokenIndexes(chainId: ChainId, tokenA: string, tokenB: string) {
+        const pool = this.chainConfig(chainId).nerves.find((data) => {
+            return (
+                data.tokens.find((token) => token.toLowerCase() === tokenA.toLowerCase()) &&
+                data.tokens.find((token) => token.toLowerCase() === tokenB.toLowerCase())
+            )
+        })
+
+        if (!pool) {
+            throw new Error('Nerve pool not found')
+        }
+
+        const tokens = pool.tokens.map((i) => i.toLowerCase())
+        const indexA = tokens.indexOf(tokenA.toLowerCase())
+        const indexB = tokens.indexOf(tokenB.toLowerCase())
+
+        if (indexA === -1 || indexB === -1) {
+            throw new Error('Cannot find token')
+        }
+
+        return [indexA, indexB]
+    }
+
+    public nervePoolByAddress(address: string, chainId: ChainId, signer?: Signer): NervePool {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return NervePool__factory.connect(address, signerOrProvider)
+    }
+
+    public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return CreamCErc20__factory.connect(address, signerOrProvider)
+    }
+
+    public creamComptroller(chainId: ChainId, signer?: Signer): CreamComptroller {
+        const address = this.chainConfig(chainId).creamComptroller
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return CreamComptroller__factory.connect(address, signerOrProvider)
+    }
+
+    public aavePool(chainId: ChainId, signer?: Signer): Aave {
+        const address = this.chainConfig(chainId).aavePool
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return Aave__factory.connect(address, signerOrProvider)
+    }
+
+    public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {
+        const address = this.chainConfig(chainId).multicallRouter
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return MulticallRouter__factory.connect(address, signerOrProvider)
+    }
+
     public metaRouter(chainId: ChainId, signer?: Signer): MetaRouter {
         const address = this.chainConfig(chainId).metaRouter
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -195,6 +305,19 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OneInchOracle__factory.connect(address, signerOrProvider)
+    }
+
+    public renRenGatewayRegistry(chainId: ChainId, signer?: Signer): RenGatewayRegistryV2 {
+        const address = this.chainConfig(chainId).renGatewayRegistry
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return RenGatewayRegistryV2__factory.connect(address, signerOrProvider)
+    }
+
+    public renMintGatewayByAddress(address: string, chainId: ChainId, signer?: Signer): RenMintGatewayV3 {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return RenMintGatewayV3__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
@@ -245,6 +368,7 @@ export class Symbiosis {
             chain_id_to: chainIdTo,
             receive_side: receiveSide,
             call_data: calldata,
+            client_id: utils.parseBytes32String(this.clientId),
         }
 
         return fetch(`${this.config.advisor.url}/v1/swap/price`, {
@@ -281,7 +405,7 @@ export class Symbiosis {
         return this.chainConfig(chainId).dexFee
     }
 
-    private chainConfig(chainId: ChainId): ChainConfig {
+    public chainConfig(chainId: ChainId): ChainConfig {
         const config = this.config.chains.find((item) => {
             return item.id === chainId
         })

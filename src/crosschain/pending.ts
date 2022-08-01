@@ -36,6 +36,8 @@ interface GetChainPendingRequestsParams {
     type: PendingRequestType
 }
 
+const WINDOWS_COUNT = 3
+
 export async function getChainPendingRequests({
     symbiosis,
     activeChainId,
@@ -49,36 +51,57 @@ export async function getChainPendingRequests({
 
     const otherChains = chainsIds.filter((chainId) => chainId !== activeChainId)
 
-    let events: SynthesizeRequestEvent[] | BurnRequestEvent[]
+    const blockOffset = symbiosis.filterBlockOffset(activeChainId)
+
+    const windows: { fromBlock: number; toBlock: number }[] = []
+
+    let toBlock = await provider.getBlockNumber()
+
+    while (toBlock !== 0 && windows.length < WINDOWS_COUNT) {
+        const fromBlock = Math.max(toBlock - blockOffset, 0)
+
+        windows.push({ fromBlock, toBlock })
+
+        toBlock = Math.max(fromBlock - 1, 0)
+    }
+
     let selectedContract: Portal | Synthesis
-
-    const fromBlock = await symbiosis.getFromBlockWithOffset(activeChainId)
-
+    let topics: (string | string[])[]
     if (type === 'synthesize') {
         selectedContract = symbiosis.portal(activeChainId)
 
         const eventFragment = selectedContract.interface.getEvent('SynthesizeRequest')
 
-        const topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
+        topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            address, // address
+            undefined, // from
             otherChains, // chains IDs
+            address, // revertableAddress
         ])
-
-        events = await selectedContract.queryFilter<SynthesizeRequestEvent>({ address, topics }, fromBlock)
     } else {
         selectedContract = symbiosis.synthesis(activeChainId)
 
         const eventFragment = selectedContract.interface.getEvent('BurnRequest')
 
-        const topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
+        topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            address, // address
+            undefined, // from
             otherChains, // chains IDs
+            address, // revertableAddress
         ])
-
-        events = await selectedContract.queryFilter<BurnRequestEvent>({ address, topics }, fromBlock)
     }
+
+    const eventsByWindow = await Promise.all(
+        windows.map(({ fromBlock, toBlock }) => {
+            return selectedContract.queryFilter<BurnRequestEvent | SynthesizeRequestEvent>(
+                { address, topics },
+                fromBlock,
+                toBlock
+            )
+        })
+    )
+
+    const events: SynthesizeRequestEvent[] | BurnRequestEvent[] = eventsByWindow.flat()
 
     const pendingRequests: (PendingRequest | null)[] = await Promise.all(
         events.map(async (event) => {

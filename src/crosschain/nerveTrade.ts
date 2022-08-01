@@ -2,7 +2,7 @@ import { Fraction, Percent, Token, TokenAmount } from '../entities'
 import { NervePool } from './contracts'
 import { basisPointsToPercent, calculatePriceImpact } from './utils'
 import { ONE } from '../constants'
-import { DataProvider } from './dataProvider'
+import { Symbiosis } from './symbiosis'
 
 export class NerveTrade {
     public tokenAmountIn: TokenAmount
@@ -12,6 +12,7 @@ export class NerveTrade {
     public amountOut!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
+    public symbiosis: Symbiosis
 
     private readonly tokenOut: Token
     private readonly deadline!: number
@@ -22,22 +23,25 @@ export class NerveTrade {
         tokenOut: Token,
         slippage: number,
         deadline: number,
-        pool: NervePool
+        pool: NervePool,
+        symbiosis: Symbiosis
     ) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.deadline = deadline
         this.slippage = slippage
         this.pool = pool
+        this.symbiosis = symbiosis
     }
 
-    public async init(dataProvider: DataProvider) {
+    public async init() {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        const [indexTokenIn, indexTokenOut] = await dataProvider.getTokensIndex(
-            this.tokenAmountIn.token,
-            this.tokenOut,
-            [this.tokenAmountIn.token.address, this.tokenOut.address]
+        const chainId = this.tokenAmountIn.token.chainId
+        const [indexTokenIn, indexTokenOut] = this.symbiosis.getNerveTokenIndexes(
+            chainId,
+            this.tokenAmountIn.token.address,
+            this.tokenOut.address
         )
         const amountOut = await this.pool.calculateSwap(indexTokenIn, indexTokenOut, this.tokenAmountIn.raw.toString())
         this.amountOut = new TokenAmount(this.tokenOut, amountOut.toString())

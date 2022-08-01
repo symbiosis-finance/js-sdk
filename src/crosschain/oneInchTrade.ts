@@ -1,11 +1,23 @@
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { formatUnits } from '@ethersproject/units'
+import fetch from 'node-fetch-native'
 
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { OneInchOracle } from './contracts'
 import { getMulticall } from './multicall'
 import { BIPS_BASE } from './constants'
+import { ChainId } from '../constants'
+import { DataProvider } from './dataProvider'
+
+const API_URL = 'https://api.1inch.io/v4.0'
+
+type Protocol = {
+    id: string
+    title: string
+    img: string
+    img_color: string
+}
 
 export class OneInchTrade {
     public tokenAmountIn: TokenAmount
@@ -21,6 +33,7 @@ export class OneInchTrade {
     private readonly from: string
     private readonly to: string
     private readonly slippage: number
+    private readonly dataProvider: DataProvider
 
     public constructor(
         tokenAmountIn: TokenAmount,
@@ -28,7 +41,8 @@ export class OneInchTrade {
         from: string,
         to: string,
         slippage: number,
-        oracle: OneInchOracle
+        oracle: OneInchOracle,
+        dataProvider: DataProvider
     ) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -36,6 +50,7 @@ export class OneInchTrade {
         this.to = to
         this.slippage = slippage
         this.oracle = oracle
+        this.dataProvider = dataProvider
     }
 
     public async init() {
@@ -50,6 +65,8 @@ export class OneInchTrade {
             toTokenAddress = nativeAddress
         }
 
+        const protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+
         const params = []
         params.push(`fromTokenAddress=${fromTokenAddress}`)
         params.push(`toTokenAddress=${toTokenAddress}`)
@@ -59,8 +76,10 @@ export class OneInchTrade {
         params.push(`slippage=${this.slippage}`)
         params.push(`disableEstimate=true`)
         params.push(`allowPartialFill=false`)
+        params.push(`usePatching=true`)
+        params.push(`protocols=${protocols.map((i) => i.id).join(',')}`)
 
-        const url = `https://api.1inch.io/v4.0/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
+        const url = `${API_URL}/${this.tokenAmountIn.token.chainId}/swap?${params.join('&')}`
 
         const response = await fetch(url)
         const json = await response.json()
@@ -88,26 +107,45 @@ export class OneInchTrade {
         return this
     }
 
+    static async getProtocols(chainId: ChainId): Promise<Protocol[]> {
+        const url = `${API_URL}/${chainId}/liquidity-sources`
+        const response = await fetch(url)
+        const json = await response.json()
+        if (response.status === 400) {
+            throw new Error(`Cannot get 1inch protocols: ${json['description']}`)
+        }
+        return json['protocols'].reduce((acc: Protocol[], protocol: Protocol) => {
+            if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
+                return acc
+            }
+            if (protocol.id.includes('PMM')) {
+                return acc
+            }
+            acc.push(protocol)
+            return acc
+        }, [])
+    }
+
     private getOffset(callData: string) {
         const methods = [
             {
-                sigHash: 'b0431182',
-                offset: 100,
-            },
-            {
-                sigHash: 'd0a3b665',
-                offset: 100,
-            },
-            {
+                // swap(address,(address,address,address,address,uint256,uint256,uint256,bytes),bytes)
                 sigHash: '7c025200',
                 offset: 260,
             },
             {
-                sigHash: 'e449022e',
-                offset: 36,
+                // clipperSwapTo(address,address,address,uint256,uint256)
+                sigHash: '9994dd15',
+                offset: 132,
             },
             {
-                sigHash: '2e95b6c8',
+                // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,uint256,address)
+                sigHash: 'baba5855',
+                offset: 292,
+            },
+            {
+                // uniswapV3SwapTo(address,uint256,uint256,uint256[])
+                sigHash: 'bc80f1a8',
                 offset: 68,
             },
         ]
@@ -121,18 +159,22 @@ export class OneInchTrade {
         return method?.offset
     }
 
-    private async calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
-        const tokens = [wrappedToken(tokenAmountIn.token), wrappedToken(tokenAmountOut.token)]
-
+    static async getRateToEth(tokens: Token[], oracle: OneInchOracle) {
         const calls = tokens.map((token) => ({
-            target: this.oracle.address,
-            callData: this.oracle.interface.encodeFunctionData(
+            target: oracle.address,
+            callData: oracle.interface.encodeFunctionData(
                 'getRateToEth',
                 [token.address, true] // use wrapper
             ),
         }))
-        const multicall = await getMulticall(this.oracle.provider)
-        const aggregated = await multicall.callStatic.tryAggregate(false, calls)
+        const multicall = await getMulticall(oracle.provider)
+        return await multicall.callStatic.tryAggregate(false, calls)
+    }
+
+    private async calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
+        const tokens = [wrappedToken(tokenAmountIn.token), wrappedToken(tokenAmountOut.token)]
+
+        const aggregated = await this.dataProvider.getOneInchRateToEth(tokens, this.oracle)
 
         const denominator = BigNumber.from(10).pow(18) // eth decimals
 
