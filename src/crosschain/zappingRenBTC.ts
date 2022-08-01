@@ -206,11 +206,11 @@ export class ZappingRenBTC extends BaseSwapping {
         const bitcoin = new Bitcoin({ network })
         const renJS = new RenJS(network).withChains(ethereum, bitcoin)
 
-        return { bitcoin, ethereum, renJS }
+        return { bitcoin, ethereum, renJS, network }
     }
 
     private async estimateBTCOutput(tokenAmountOut: TokenAmount): Promise<TokenAmount> {
-        const { ethereum, renJS } = this.createRENJS()
+        const { ethereum, renJS, network } = this.createRENJS()
 
         const fees = await renJS.getFees({
             asset: 'BTC',
@@ -222,7 +222,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         return new TokenAmount(
             new Token({
-                chainId: ChainId.BTC_MAINNET,
+                chainId: network === 'mainnet' ? ChainId.BTC_MAINNET : ChainId.BTC_TESTNET,
                 symbol: 'BTC',
                 name: 'Bitcoin',
                 address: '',
