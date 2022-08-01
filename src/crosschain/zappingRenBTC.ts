@@ -239,15 +239,15 @@ export class ZappingRenBTC extends BaseSwapping {
 
     private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
         return async (signer: Signer) => {
-            const { response, waitForMined } = await execute(signer)
+            const { transactionHash, waitForMined } = await execute(signer)
 
             return {
-                response,
+                transactionHash,
                 waitForMined: async () => {
-                    const { receipt } = await waitForMined()
+                    const { blockNumber } = await waitForMined()
 
                     return {
-                        receipt,
+                        blockNumber,
                         waitForComplete: async () => {
                             const log = await this.waitForComplete(receipt)
 

@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { MaxUint256 } from '@ethersproject/constants'
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
@@ -112,14 +112,14 @@ export class Zapping {
         }
     }
 
-    async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+    async waitForComplete(receipt: TransactionReceipt): Promise<string> {
         return new WaitForComplete({
             direction: 'mint',
             tokenOut: this.nerveLiquidity.amountOut.token,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
+        }).transactionFromEvm(receipt)
     }
 
     private getTransactionRequest(fee: TokenAmount): TransactionRequest {
@@ -275,7 +275,7 @@ export class Zapping {
         const response = await signer.sendTransaction(transactionRequestWithGasLimit)
 
         return {
-            response,
+            transactionHash: response.hash,
             waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
         }
     }
@@ -284,7 +284,7 @@ export class Zapping {
         const receipt = await response.wait(confirmations)
 
         return {
-            receipt,
+            blockNumber: receipt.blockNumber,
             waitForComplete: () => this.waitForComplete(receipt),
         }
     }

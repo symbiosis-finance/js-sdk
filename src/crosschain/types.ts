@@ -37,7 +37,6 @@ export type ChainConfig = {
     router: string
     bridge: string
     synthesis: string
-    synthesisNonEvm: string
     portal: string
     fabric: string
     fabricNonEvm?: string

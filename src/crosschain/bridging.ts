@@ -283,6 +283,7 @@ export class Bridging {
                     encodeTerraAddress(this.symbiosis.getTerraBridgeAddress(outChainId)),
                     encodeTerraAddress(this.revertableAddress),
                     outChainId,
+                    this.symbiosis.clientId,
                 ]),
             }
         }
@@ -375,7 +376,7 @@ export class Bridging {
 
             const internalId = getTerraInternalId({
                 contractAddress: portalAddress,
-                requestCount: requestCount + 1,
+                requestCount: BigNumber.from(requestCount + 1),
                 chainId: chainIdIn,
             })
 
@@ -406,10 +407,9 @@ export class Bridging {
         }
 
         const portal = this.symbiosis.portal(chainIdIn)
-        const portalRequestCountBN = await portal.requestCount()
+        const requestCount = await portal.requestCount()
 
         const contractAddress = portal.address
-        const requestCount = portalRequestCountBN.toNumber()
 
         const internalId = getInternalId({ contractAddress, requestCount, chainId: chainIdIn })
 
@@ -465,8 +465,6 @@ export class Bridging {
             portalAddress = this.symbiosis.portal(chainIdOut).address
             revertableAddress = this.revertableAddress
         }
-
-        const synthesisRequestsCount = (await synthesis.requestCount()).toNumber()
 
         const internalId = getInternalId({
             contractAddress: synthesis.address,

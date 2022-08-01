@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { MaxUint256 } from '@ethersproject/constants'
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
@@ -136,7 +136,7 @@ export abstract class BaseSwapping {
         const response = await signer.sendTransaction(transactionRequestWithGasLimit)
 
         return {
-            response,
+            transactionHash: response.hash,
             waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
         }
     }
@@ -145,12 +145,12 @@ export abstract class BaseSwapping {
         const receipt = await response.wait(confirmations)
 
         return {
-            receipt,
+            blockNumber: receipt.blockNumber,
             waitForComplete: () => this.waitForComplete(receipt),
         }
     }
 
-    public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
+    public async waitForComplete(receipt: TransactionReceipt): Promise<string> {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -161,7 +161,7 @@ export abstract class BaseSwapping {
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
+        }).transactionFromEvm(receipt)
     }
 
     protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
