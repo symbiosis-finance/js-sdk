@@ -213,6 +213,26 @@ export const chains: Chain[] = [
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
         },
     }),
+    new Chain({
+        id: ChainId.AURORA_MAINNET,
+        name: 'Aurora',
+        disabled: false,
+        explorer: 'https://aurorascan.dev',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.AURORA_TESTNET,
+        name: 'Aurora',
+        disabled: false,
+        explorer: 'https://testnet.aurorascan.dev/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

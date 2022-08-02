@@ -299,4 +299,28 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
         },
     }),
+    [ChainId.AURORA_MAINNET]: new Token({
+        chainId: ChainId.AURORA_MAINNET,
+        address: '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
+        },
+    }),
+    [ChainId.AURORA_TESTNET]: new Token({
+        chainId: ChainId.AURORA_TESTNET,
+        address: '0x1b6A3d5B5DCdF7a37CFE35CeBC0C4bD28eA7e946',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
+        },
+    }),
 }
