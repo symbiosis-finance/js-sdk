@@ -43,13 +43,13 @@ export type ChainConfig = {
     renGatewayRegistry: string
     router: string
     bridge: string
-    bridgeV2NonEvm: string
+    bridgeV2NonEvm?: string
     synthesis: string
-    synthesisNonEvm: string
+    synthesisNonEvm?: string
     portal: string
-    portalNonEvm: string
+    portalNonEvm?: string
     fabric: string
-    syntFabricNonEvm: string
+    syntFabricNonEvm?: string
     waitForBlocksCount: number
 }
 

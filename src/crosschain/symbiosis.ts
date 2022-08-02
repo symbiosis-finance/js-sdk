@@ -191,6 +191,11 @@ export class Symbiosis {
 
     public synthesisNonEvm(chainId: ChainId, signer?: Signer): SynthesisNonEvm {
         const address = this.chainConfig(chainId).synthesisNonEvm
+
+        if (!address) {
+            throw new Error('No SynthesisNonEvm contract address for given chainId')
+        }
+
         const signerOrProvider = signer ?? this.getProvider(chainId)
 
         return SynthesisNonEvm__factory.connect(address, signerOrProvider)
@@ -205,6 +210,11 @@ export class Symbiosis {
 
     public bridgeV2NonEvm(chainId: ChainId, signer?: Signer): BridgeV2NonEvm {
         const address = this.chainConfig(chainId).bridgeV2NonEvm
+
+        if (!address) {
+            throw new Error('No bridgeV2NonEvm address for given chainId')
+        }
+
         const signerOrProvider = signer ?? this.getProvider(chainId)
 
         return BridgeV2NonEvm__factory.connect(address, signerOrProvider)
@@ -219,6 +229,11 @@ export class Symbiosis {
 
     public fabricNonEvm(chainId: ChainId, signer?: Signer): SyntFabricNonEvm {
         const address = this.chainConfig(chainId).syntFabricNonEvm
+
+        if (!address) {
+            throw new Error('No fabricNonEvm address for given chainId')
+        }
+
         const signerOrProvider = signer ?? this.getProvider(chainId)
 
         return SyntFabricNonEvm__factory.connect(address, signerOrProvider)
