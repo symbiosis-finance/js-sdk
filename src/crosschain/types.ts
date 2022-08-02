@@ -20,10 +20,18 @@ export type NerveConfig = {
     decimals: number[]
 }
 
+export interface ChainNearParams {
+    networkId: string
+    nodeUrl: string
+    walletUrl: string
+    helperUrl: string
+}
+
 export type ChainConfig = {
     id: ChainId
     rpc: string
     dexFee: number
+    nonEvmParams?: ChainNearParams
     filterBlockOffset: number
     stables: TokenConstructor[]
     nerves: NerveConfig[]

@@ -1,4 +1,5 @@
 import JSBI from 'jsbi'
+import { ChainNearParams } from './crosschain'
 
 // exports for external consumption
 export type BigintIsh = JSBI | bigint | string
@@ -19,6 +20,7 @@ export type TokenConstructor = {
     chainFromId?: ChainId
     icons?: Icons
     userToken?: boolean
+    evm?: boolean
 }
 
 export type ChainConstructor = {
@@ -29,6 +31,7 @@ export type ChainConstructor = {
     icons: Icons
     swappable?: boolean
     evm?: boolean
+    nonEvmParams?: ChainNearParams
 }
 
 export enum ChainId {

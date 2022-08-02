@@ -5,6 +5,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
+import { ConnectConfig, Near, connect as nearConnect } from 'near-api-js'
 import {
     Aave,
     Aave__factory,
@@ -53,6 +54,7 @@ import { ZappingRenBTC } from './zappingRenBTC'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
+import { isNearChainId } from '../utils'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -70,13 +72,17 @@ export class Symbiosis {
         } else {
             this.config = config
         }
+
         this.clientId = utils.formatBytes32String(clientId)
 
-        this.providers = new Map(
-            this.config.chains.map((i) => {
-                return [i.id, new StaticJsonRpcProvider(i.rpc, i.id)]
-            })
-        )
+        this.providers = new Map<ChainId, StaticJsonRpcProvider>()
+        for (const chain of this.config.chains) {
+            if (isNearChainId(chain.id)) {
+                continue
+            }
+
+            this.providers.set(chain.id, new StaticJsonRpcProvider(chain.rpc, chain.id))
+        }
     }
 
     public validateSwapAmounts(amount: TokenAmount) {
@@ -137,10 +143,30 @@ export class Symbiosis {
 
     public getProvider(chainId: ChainId): StaticJsonRpcProvider {
         const provider = this.providers.get(chainId)
+
         if (!provider) {
             throw new Error('No provider for given chainId')
         }
+
         return provider
+    }
+
+    public getNearConnection(chainId: ChainId, configOverride?: Partial<ConnectConfig>): Promise<Near> {
+        if (!isNearChainId(chainId)) {
+            throw new Error('Not a near ChainID')
+        }
+
+        const chain = this.config.chains.find((chain) => chain.id === chainId)
+
+        if (!chain || !chain.nonEvmParams) {
+            throw new Error('No chain config for given chainId')
+        }
+
+        return nearConnect({
+            headers: {},
+            ...chain.nonEvmParams,
+            ...configOverride,
+        })
     }
 
     public portal(chainId: ChainId, signer?: Signer): Portal {

@@ -1,3 +1,4 @@
+import { ChainNearParams } from 'src/crosschain'
 import { ChainConstructor, ChainId, Icons } from '../constants'
 
 export class Chain {
@@ -8,15 +9,32 @@ export class Chain {
     public readonly evm: boolean
     public readonly explorer: string
     public readonly icons: Icons
+    public readonly nonEvmParams?: ChainNearParams
 
     constructor(params: ChainConstructor) {
+        let evm: boolean
+        if (params.nonEvmParams) {
+            evm = false
+        } else {
+            evm = params.evm === undefined || params.evm
+        }
+
         this.id = params.id
         this.name = params.name
         this.disabled = params.disabled
         this.explorer = params.explorer
         this.icons = params.icons
         this.swappable = params?.swappable !== false
-        this.evm = params?.evm !== false
+        this.evm = evm
+        this.nonEvmParams = params.nonEvmParams
+    }
+
+    isEvm(): boolean {
+        return this.evm
+    }
+
+    isNearChain(): boolean {
+        return !this.evm && !!this.nonEvmParams && 'nodeUrl' in this.nonEvmParams
     }
 }
 
@@ -31,6 +49,12 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
         },
         evm: false,
+        nonEvmParams: {
+            networkId: 'testnet',
+            nodeUrl: 'https://rpc.testnet.near.org',
+            walletUrl: 'https://wallet.testnet.near.org',
+            helperUrl: 'https://helper.testnet.near.org',
+        },
     }),
     new Chain({
         id: ChainId.BTC_MAINNET,
@@ -226,7 +250,10 @@ export const chains: Chain[] = [
     }),
 ]
 
-export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
-    if (!chainId) return undefined
+export function getChainById(chainId: ChainId | undefined): Chain | undefined {
+    if (!chainId) {
+        return undefined
+    }
+
     return chains.find((chain) => chain.id === chainId)
 }

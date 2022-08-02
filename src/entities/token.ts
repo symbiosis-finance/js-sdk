@@ -20,6 +20,7 @@ export class Token {
     public readonly isNative: boolean
     public readonly isStable?: boolean
     public readonly userToken?: boolean
+    public readonly evm?: boolean
 
     /**
      * Constructs an instance of the base class `Token`.
@@ -28,16 +29,19 @@ export class Token {
     constructor(params: TokenConstructor) {
         validateSolidityTypeInstance(JSBI.BigInt(params.decimals), SolidityType.uint8)
 
+        const evm = params.evm === undefined ?? params.evm
+
         this.decimals = params.decimals
         this.symbol = params.symbol
         this.name = params.name
         this.chainId = params.chainId
-        this.address = validateAndParseAddress(params.address)
+        this.address = evm ? validateAndParseAddress(params.address) : params.address
         this.isNative = !!params.isNative
         this.icons = params.icons
         this.chainFromId = params.chainFromId
         this.isStable = params.isStable
         this.userToken = params.userToken
+        this.evm = evm
     }
 
     /**
