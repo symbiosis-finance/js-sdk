@@ -296,6 +296,22 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             decimals: 18,
         }),
     ],
+    [ChainId.AURORA_MAINNET]: [
+        new Token({
+            chainId: ChainId.AURORA_MAINNET,
+            symbol: 'USDC',
+            name: 'USD Coin',
+            address: '0xB12BFcA5A55806AaF64E99521918A4bf0fC40802',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.AURORA_MAINNET,
+            symbol: 'USDT',
+            name: 'Tether USD',
+            address: '0x4988a896b1227218e4A686fdE5EabdcAbd91571f',
+            decimals: 6,
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -309,6 +325,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MATIC_MAINNET],
     ],
     [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_MAINNET]],
+    [ChainId.AURORA_MAINNET]: [
+        WETH[ChainId.AURORA_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.AURORA_MAINNET],
+    ],
 }
 
 /**
