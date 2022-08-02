@@ -1,6 +1,7 @@
 import RenJS from '@renproject/ren'
 import { Signer } from 'ethers'
-import { Ethereum, Bitcoin, BinanceSmartChain, Polygon } from '@renproject/chains'
+import { Bitcoin } from '@renproject/chains-bitcoin'
+import { Ethereum, BinanceSmartChain, Polygon } from '@renproject/chains-ethereum'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
