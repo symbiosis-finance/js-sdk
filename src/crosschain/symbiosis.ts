@@ -14,6 +14,8 @@ import {
     AvaxRouter,
     AvaxRouter__factory,
     Bridge,
+    BridgeV2NonEvm,
+    BridgeV2NonEvm__factory,
     Bridge__factory,
     CreamCErc20,
     CreamCErc20__factory,
@@ -35,7 +37,11 @@ import {
     RenGatewayRegistryV2__factory,
     RenMintGatewayV3,
     RenMintGatewayV3__factory,
+    SyntFabricNonEvm,
+    SyntFabricNonEvm__factory,
     Synthesis,
+    SynthesisNonEvm,
+    SynthesisNonEvm__factory,
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
@@ -178,23 +184,44 @@ export class Symbiosis {
 
     public synthesis(chainId: ChainId, signer?: Signer): Synthesis {
         const address = this.chainConfig(chainId).synthesis
-        const signerOrProvider = signer || this.getProvider(chainId)
+        const signerOrProvider = signer ?? this.getProvider(chainId)
 
         return Synthesis__factory.connect(address, signerOrProvider)
     }
 
+    public synthesisNonEvm(chainId: ChainId, signer?: Signer): SynthesisNonEvm {
+        const address = this.chainConfig(chainId).synthesisNonEvm
+        const signerOrProvider = signer ?? this.getProvider(chainId)
+
+        return SynthesisNonEvm__factory.connect(address, signerOrProvider)
+    }
+
     public bridge(chainId: ChainId, signer?: Signer): Bridge {
         const address = this.chainConfig(chainId).bridge
-        const signerOrProvider = signer || this.getProvider(chainId)
+        const signerOrProvider = signer ?? this.getProvider(chainId)
 
         return Bridge__factory.connect(address, signerOrProvider)
     }
 
+    public bridgeV2NonEvm(chainId: ChainId, signer?: Signer): BridgeV2NonEvm {
+        const address = this.chainConfig(chainId).bridgeV2NonEvm
+        const signerOrProvider = signer ?? this.getProvider(chainId)
+
+        return BridgeV2NonEvm__factory.connect(address, signerOrProvider)
+    }
+
     public fabric(chainId: ChainId, signer?: Signer): Fabric {
         const address = this.chainConfig(chainId).fabric
-        const signerOrProvider = signer || this.getProvider(chainId)
+        const signerOrProvider = signer ?? this.getProvider(chainId)
 
         return Fabric__factory.connect(address, signerOrProvider)
+    }
+
+    public fabricNonEvm(chainId: ChainId, signer?: Signer): SyntFabricNonEvm {
+        const address = this.chainConfig(chainId).syntFabricNonEvm
+        const signerOrProvider = signer ?? this.getProvider(chainId)
+
+        return SyntFabricNonEvm__factory.connect(address, signerOrProvider)
     }
 
     public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {
