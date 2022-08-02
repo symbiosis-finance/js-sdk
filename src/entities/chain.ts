@@ -227,7 +227,7 @@ export const chains: Chain[] = [
         id: ChainId.AURORA_TESTNET,
         name: 'Aurora',
         disabled: false,
-        explorer: 'https://testnet.aurorascan.dev/',
+        explorer: 'https://testnet.aurorascan.dev',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
