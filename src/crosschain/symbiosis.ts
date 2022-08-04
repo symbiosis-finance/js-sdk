@@ -193,7 +193,7 @@ export class Symbiosis {
         const address = this.chainConfig(chainId).synthesisNonEvm
 
         if (!address) {
-            throw new Error('No SynthesisNonEvm contract address for given chainId')
+            throw new Error(`No SynthesisNonEvm contract address for given chainId ${chainId}`)
         }
 
         const signerOrProvider = signer ?? this.getProvider(chainId)
@@ -212,7 +212,7 @@ export class Symbiosis {
         const address = this.chainConfig(chainId).bridgeV2NonEvm
 
         if (!address) {
-            throw new Error('No bridgeV2NonEvm address for given chainId')
+            throw new Error(`No bridgeV2NonEvm address for given chainId ${chainId}`)
         }
 
         const signerOrProvider = signer ?? this.getProvider(chainId)
@@ -231,7 +231,7 @@ export class Symbiosis {
         const address = this.chainConfig(chainId).syntFabricNonEvm
 
         if (!address) {
-            throw new Error('No fabricNonEvm address for given chainId')
+            throw new Error(`No fabricNonEvm address for given chainId ${chainId}`)
         }
 
         const signerOrProvider = signer ?? this.getProvider(chainId)
