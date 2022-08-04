@@ -54,7 +54,7 @@ export enum ChainId {
     MILKOMEDA_DEVNET = 200_101,
     BTC_MAINNET = 5555,
     BTC_TESTNET = 55_555,
-    NEAR_TESTNET = 77_777,
+    NEAR_TESTNET = 30001,
 }
 
 export enum TradeType {
