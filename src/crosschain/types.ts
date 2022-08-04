@@ -33,6 +33,7 @@ export type ChainConfig = {
     aavePool: string
     creamComptroller: string
     renGatewayRegistry: string
+    autoFarm: string
     router: string
     bridge: string
     synthesis: string

@@ -39,6 +39,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            autoFarm: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 56,
@@ -94,6 +95,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x589de0f0ccf905477646599bb3e5c622c84cc0ba',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
+            autoFarm: '0x0895196562c7868c5be92459fae7f877ed450452',
         },
         {
             id: 43114,
@@ -170,6 +172,7 @@ export const config: Config = {
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            autoFarm: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 137,
@@ -267,6 +270,7 @@ export const config: Config = {
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
             creamComptroller: '0x20CA53E2395FA571798623F1cFBD11Fe2C114c24',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
+            autoFarm: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 288,
@@ -343,6 +347,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            autoFarm: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 2001,
@@ -377,6 +382,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            autoFarm: '0x0000000000000000000000000000000000000000',
         },
     ],
 }

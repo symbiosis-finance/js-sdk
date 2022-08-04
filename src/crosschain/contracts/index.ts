@@ -3,6 +3,8 @@
 /* eslint-disable */
 export type { Aave } from './Aave'
 export type { AdaRouter } from './AdaRouter'
+export type { AlpacaVault } from './AlpacaVault'
+export type { AutoFarmV2 } from './AutoFarmV2'
 export type { AvaxRouter } from './AvaxRouter'
 export type { Bridge } from './Bridge'
 export type { CreamCErc20 } from './CreamCErc20'
@@ -22,6 +24,8 @@ export type { UniLikeRouter } from './UniLikeRouter'
 
 export { Aave__factory } from './factories/Aave__factory'
 export { AdaRouter__factory } from './factories/AdaRouter__factory'
+export { AlpacaVault__factory } from './factories/AlpacaVault__factory'
+export { AutoFarmV2__factory } from './factories/AutoFarmV2__factory'
 export { AvaxRouter__factory } from './factories/AvaxRouter__factory'
 export { Bridge__factory } from './factories/Bridge__factory'
 export { CreamCErc20__factory } from './factories/CreamCErc20__factory'

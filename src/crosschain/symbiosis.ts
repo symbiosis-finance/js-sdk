@@ -10,6 +10,10 @@ import {
     Aave__factory,
     AdaRouter,
     AdaRouter__factory,
+    AlpacaVault,
+    AlpacaVault__factory,
+    AutoFarmV2,
+    AutoFarmV2__factory,
     AvaxRouter,
     AvaxRouter__factory,
     Bridge,
@@ -50,6 +54,7 @@ import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
 import { ZappingRenBTC } from './zappingRenBTC'
+import { ZappingAutoFarm } from './zappingAutofarm'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
@@ -129,6 +134,10 @@ export class Symbiosis {
 
     public newZappingRenBTC() {
         return new ZappingRenBTC(this)
+    }
+
+    public newZappingAutoFarm() {
+        return new ZappingAutoFarm(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
@@ -293,6 +302,19 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return RenMintGatewayV3__factory.connect(address, signerOrProvider)
+    }
+
+    public alpacaVault(address: string, chainId: ChainId, signer?: Signer): AlpacaVault {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return AlpacaVault__factory.connect(address, signerOrProvider)
+    }
+
+    public autoFarm(chainId: ChainId, signer?: Signer): AutoFarmV2 {
+        const address = this.chainConfig(chainId).autoFarm
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return AutoFarmV2__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {

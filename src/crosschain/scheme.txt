@@ -1,0 +1,25 @@
+1. burn:
+- On chain:
+-- tradeA <- BNB
+          -> BUSD
+-- tradeB <- BUSD
+          -> sUSDC *
+-- router <- sUSDC
+
+- Other side:
+-- router -> USDC
+-- tradeC <- USDC
+          -> ETH
+
+2. mint:
+- On chain:
+-- tradeA <- ETH
+          -> USDC
+-- router <- USDC
+
+- Other side:
+-- router -> sUSDC *
+-- tradeB <- sUSDC
+          -> BUSD
+-- tradeC <- BUSD
+          -> BNB
