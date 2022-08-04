@@ -1,7 +1,7 @@
 import JSBI from 'jsbi'
 
 import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
+import { isNearChainId, validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import invariant from 'tiny-invariant'
 import { Chain, getChainById } from './chain'
 
@@ -20,7 +20,7 @@ export class Token {
     public readonly isNative: boolean
     public readonly isStable?: boolean
     public readonly userToken?: boolean
-    public readonly evm?: boolean
+    public readonly evm: boolean
 
     /**
      * Constructs an instance of the base class `Token`.
@@ -77,6 +77,14 @@ export class Token {
 
     get chainFrom(): Chain | undefined {
         return getChainById(this.chainFromId)
+    }
+
+    isEvm(): boolean {
+        return this.evm
+    }
+
+    isFromNear(): boolean {
+        return isNearChainId(this.chainId)
     }
 }
 /**
