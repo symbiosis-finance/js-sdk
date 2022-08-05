@@ -104,7 +104,10 @@ export class ZappingAutoFarm extends BaseSwapping {
         }
 
         const alpacaCalldata = this.alpacaVault.interface.encodeFunctionData('deposit', ['0']) // amount will be patched
-        const autoFarmCalldata = this.autoFarm.interface.encodeFunctionData('deposit', [this.autoFarmPID, '0']) // amount will be patched
+        const autoFarmCalldata = this.autoFarm.interface.encodeFunctionData('deposit', [
+            this.autoFarmPID.toString(),
+            '0',
+        ]) // amount will be patched
 
         callDatas.push(alpacaCalldata, autoFarmCalldata)
         receiveSides.push(this.alpacaVault.address, this.autoFarm.address)

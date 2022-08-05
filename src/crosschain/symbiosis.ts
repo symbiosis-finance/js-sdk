@@ -54,7 +54,7 @@ import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
 import { ZappingRenBTC } from './zappingRenBTC'
-import { ZappingAutoFarm } from './zappingAutofarm'
+import { ZappingAutoFarm } from './zappingAutoFarm'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
