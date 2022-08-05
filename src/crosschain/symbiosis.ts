@@ -12,6 +12,8 @@ import {
     AdaRouter__factory,
     AvaxRouter,
     AvaxRouter__factory,
+    BenqiQiErc20,
+    BenqiQiErc20__factory,
     Bridge,
     Bridge__factory,
     CreamCErc20,
@@ -242,6 +244,12 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return CreamCErc20__factory.connect(address, signerOrProvider)
+    }
+
+    public benqiQiErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): BenqiQiErc20 {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return BenqiQiErc20__factory.connect(address, signerOrProvider)
     }
 
     public creamComptroller(chainId: ChainId, signer?: Signer): CreamComptroller {
