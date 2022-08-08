@@ -168,7 +168,7 @@ export const config: Config = {
             fabric: '0x947a0d452b40013190295a4151A090E1638Fb848',
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x486Af39519B4Dc9a7fCcd318217352830E8AD9b4',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
