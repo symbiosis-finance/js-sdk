@@ -1,9 +1,8 @@
 import { AddressZero } from '@ethersproject/constants'
-import { toUtf8String } from '@ethersproject/strings'
+import { toUtf8String, toUtf8Bytes } from '@ethersproject/strings'
 import { ChainId } from '../constants'
 import { Token } from '../entities'
 import { isNearChainId } from '../utils'
-import { Fabric, SyntFabricNonEvm } from './contracts'
 import { Symbiosis } from './symbiosis'
 
 export async function getRepresentation(
@@ -11,23 +10,29 @@ export async function getRepresentation(
     token: Token,
     chainId: ChainId
 ): Promise<Token | undefined> {
-    const fabricChainId = token.isSynthetic ? token.chainId : chainId
+    const needDecodeNearAddress = token.isSynthetic && !!token.chainFromId && isNearChainId(token.chainFromId)
 
-    let fabric: Fabric | SyntFabricNonEvm
-    let isFromNear = false
-
-    if (token.isSynthetic && token.chainFromId && isNearChainId(token.chainFromId)) {
-        isFromNear = true
-        fabric = symbiosis.fabricNonEvm(fabricChainId)
-    } else {
-        fabric = symbiosis.fabric(fabricChainId)
-    }
+    let representation: string
 
     try {
-        let representation: string
-        if (token.isSynthetic) {
+        if (isNearChainId(token.chainId)) {
+            const fabric = symbiosis.fabricNonEvm(chainId)
+
+            representation = await fabric.getSyntRepresentation(
+                toUtf8Bytes(token.address) as unknown as string,
+                token.chainId
+            )
+        } else if (needDecodeNearAddress) {
+            const fabric = symbiosis.fabricNonEvm(token.chainId)
+
+            representation = await fabric.getRealRepresentation(token.address)
+        } else if (token.isSynthetic) {
+            const fabric = symbiosis.fabric(token.chainId)
+
             representation = await fabric.getRealRepresentation(token.address)
         } else {
+            const fabric = symbiosis.fabric(chainId)
+
             representation = await fabric.getSyntRepresentation(token.address, token.chainId)
         }
 
@@ -35,7 +40,7 @@ export async function getRepresentation(
             return undefined
         }
 
-        if (isFromNear) {
+        if (needDecodeNearAddress) {
             representation = toUtf8String(representation)
         }
 
