@@ -12,6 +12,8 @@ import {
     AdaRouter__factory,
     AvaxRouter,
     AvaxRouter__factory,
+    BeefyVault,
+    BeefyVault__factory,
     BenqiQiErc20,
     BenqiQiErc20__factory,
     Bridge,
@@ -55,6 +57,7 @@ import { ZappingRenBTC } from './zappingRenBTC'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
+import { ZappingBeefy } from './zappingBeefy'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -131,6 +134,10 @@ export class Symbiosis {
 
     public newZappingRenBTC() {
         return new ZappingRenBTC(this)
+    }
+
+    public newZappingBeefy() {
+        return new ZappingBeefy(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
@@ -301,6 +308,12 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return RenMintGatewayV3__factory.connect(address, signerOrProvider)
+    }
+
+    public beefyVault(address: string, chainId: ChainId, signer?: Signer): BeefyVault {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return BeefyVault__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
