@@ -26,6 +26,14 @@ export type ExactIn = Promise<{
     nearExecute?: (account: Account) => Promise<void>
 }>
 
+interface BridgingParams {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    to: string
+    revertableAddress: string
+    fee: string
+}
+
 export class Bridging {
     public tokenAmountIn: TokenAmount | undefined
     public tokenOut: Token | undefined
@@ -40,6 +48,20 @@ export class Bridging {
 
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
+    }
+
+    public restoreFromParams(params: BridgingParams): void {
+        const { revertableAddress, to, tokenAmountIn, tokenOut, fee } = params
+
+        this.tokenAmountIn = tokenAmountIn
+        this.tokenOut = tokenOut
+        this.to = to
+        this.revertableAddress = revertableAddress
+        this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
+        this.fee = new TokenAmount(this.tokenOut, fee.toString())
+
+        const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
+        this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
     }
 
     public async exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, to: string, revertableAddress: string): ExactIn {
@@ -321,6 +343,22 @@ export class Bridging {
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
+            receiveSide: this.tokenOut.address,
         }).waitForComplete(receipt)
+    }
+
+    waitForCompleteFromExternalId(externalId: string): Promise<Log> {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        return new WaitForComplete({
+            direction: this.direction,
+            tokenOut: this.tokenOut,
+            symbiosis: this.symbiosis,
+            revertableAddress: this.revertableAddress,
+            chainIdIn: this.tokenAmountIn.token.chainId,
+            receiveSide: this.tokenOut.address,
+        }).waitForCompleteFromExternalId(externalId)
     }
 }
