@@ -20,7 +20,6 @@ interface WaitForCompleteParams {
     direction: BridgeDirection
     revertableAddress: string
     chainIdIn: ChainId
-    receiveSide: string
 }
 
 export class TransactionStuckError extends Error {
@@ -36,26 +35,17 @@ export class WaitForComplete {
     private readonly tokenOut: Token
     private readonly revertableAddress: string
     private readonly chainIdIn: ChainId
-    private readonly receiveSide: string
 
-    public constructor({
-        chainIdIn,
-        direction,
-        receiveSide,
-        revertableAddress,
-        symbiosis,
-        tokenOut,
-    }: WaitForCompleteParams) {
+    public constructor({ chainIdIn, direction, revertableAddress, symbiosis, tokenOut }: WaitForCompleteParams) {
         this.chainIdIn = chainIdIn
         this.direction = direction
-        this.receiveSide = receiveSide
         this.revertableAddress = revertableAddress
         this.symbiosis = symbiosis
         this.tokenOut = tokenOut
     }
 
-    public async waitForCompleteFromExternalId(externalId: string): Promise<Log> {
-        const filter = this.buildOwnSideFilter(externalId)
+    public async waitForCompleteFromParams(externalId: string, receiveSide: string): Promise<Log> {
+        const filter = this.buildOwnSideFilter(externalId, receiveSide)
 
         return getLogWithTimeout({
             symbiosis: this.symbiosis,
@@ -68,9 +58,9 @@ export class WaitForComplete {
     }
 
     public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        const externalId = this.getExternalId(receipt)
+        const { externalId, receiveSide } = this.getTransactionParams(receipt)
 
-        const filter = this.buildOwnSideFilter(externalId)
+        const filter = this.buildOwnSideFilter(externalId, receiveSide)
 
         return getLogWithTimeout({
             symbiosis: this.symbiosis,
@@ -120,7 +110,7 @@ export class WaitForComplete {
         return args
     }
 
-    private buildOwnSideFilter(externalId: string): EventFilter {
+    private buildOwnSideFilter(externalId: string, receiveSide: string): EventFilter {
         const event =
             this.direction === 'burn'
                 ? this.symbiosis.portal(this.tokenOut.chainId).filters.BurnCompleted()
@@ -132,12 +122,12 @@ export class WaitForComplete {
         const topic0 = event.topics[0]
 
         return {
-            address: this.receiveSide,
+            address: receiveSide,
             topics: [topic0, externalId],
         }
     }
 
-    private getExternalId(receipt: TransactionReceipt): string {
+    private getTransactionParams(receipt: TransactionReceipt): { externalId: string; receiveSide: string } {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -161,7 +151,7 @@ export class WaitForComplete {
             chainId: this.tokenOut.chainId,
         })
 
-        return externalId
+        return { externalId, receiveSide }
     }
 
     private getPendingRequest(receipt: TransactionReceipt): PendingRequest | undefined {
