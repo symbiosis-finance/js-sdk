@@ -1,12 +1,14 @@
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { MaxUint256 } from '@ethersproject/constants'
+import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import { toUtf8Bytes } from '@ethersproject/strings'
 import { BigNumber, Signer, utils } from 'ethers'
+import { Account, Contract } from 'near-api-js'
+import { isNearChainId } from 'src/utils'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { Account, Contract } from 'near-api-js'
 
 export type WaitForMined = Promise<{
     receipt: TransactionReceipt
@@ -190,6 +192,31 @@ export class Bridging {
         }
 
         const { chainId } = this.tokenAmountIn.token
+        const outChainId = this.tokenOut.chainId
+
+        if (this.direction === 'burn' && isNearChainId(chainId)) {
+            throw new Error('Burn from near not supported for now')
+        }
+
+        if (this.direction === 'burn' && isNearChainId(outChainId)) {
+            const synthesis = this.symbiosis.synthesisNonEvm(chainId)
+
+            return {
+                chainId,
+                to: synthesis.address,
+                data: synthesis.interface.encodeFunctionData('burnSyntheticToken', [
+                    fee.raw.toString(),
+                    this.tokenAmountIn.token.address,
+                    this.tokenAmountIn.raw.toString(),
+                    toUtf8Bytes(this.to),
+                    toUtf8Bytes('portal.symbiosis-finance.testnet'),
+                    toUtf8Bytes('bridge.symbiosis-finance.testnet'),
+                    toUtf8Bytes(this.revertableAddress),
+                    outChainId,
+                    this.symbiosis.clientId,
+                ]),
+            }
+        }
 
         // burn
         if (this.direction === 'burn') {
