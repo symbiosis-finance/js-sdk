@@ -25,7 +25,6 @@ export class ZappingBeefy extends BaseSwapping {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
 
-        console.log(vaultAddress, vaultChainId)
         this.beefyVault = this.symbiosis.beefyVault(vaultAddress, vaultChainId)
 
         const tokenAddress = await this.beefyVault.want()
