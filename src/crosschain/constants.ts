@@ -9,8 +9,6 @@ export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
     ChainId.ETH_KOVAN,
-    ChainId.BSC_MAINNET,
-    ChainId.BSC_TESTNET,
     ChainId.AVAX_MAINNET,
     ChainId.AVAX_TESTNET,
     ChainId.BOBA_MAINNET,
@@ -25,6 +23,9 @@ export const CHAINS_PRIORITY = [
     ChainId.OKEX_TESTNET,
     ChainId.HECO_MAINNET,
     ChainId.HECO_TESTNET,
+    // manager chain is cheapest
+    ChainId.BSC_MAINNET,
+    ChainId.BSC_TESTNET,
 ]
 
 // a list of tokens by chain

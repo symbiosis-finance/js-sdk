@@ -270,7 +270,12 @@ export abstract class BaseSwapping {
 
     protected buildTradeC() {
         const chainId = this.tokenOut.chainId
-        const amountIn = this.transit.amountOut
+        let amountIn = this.transit.amountOut
+
+        if (this.transit.isV2()) {
+            const tokenOut = this.symbiosis.transitStable(chainId)
+            amountIn = new TokenAmount(tokenOut, amountIn.raw)
+        }
 
         if (this.use1Inch && canOneInch(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
@@ -549,7 +554,7 @@ export abstract class BaseSwapping {
     protected swapTokens(): string[] {
         const tokens = [this.transit.route[0].address, this.transit.route[this.transit.route.length - 1].address]
 
-        if (this.tradeC) {
+        if (this.tradeC && !this.transit.isV2()) {
             tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
         }
         return tokens
