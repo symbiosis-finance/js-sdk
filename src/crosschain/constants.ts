@@ -3,6 +3,8 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
 
+export const MANAGER_CHAIN = ChainId.BSC_TESTNET
+
 export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,

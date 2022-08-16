@@ -12,7 +12,7 @@ export enum PairState {
     INVALID,
 }
 
-export type BridgeDirection = 'burn' | 'mint'
+export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
 export type NerveConfig = {
     address: string

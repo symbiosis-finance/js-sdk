@@ -6,12 +6,12 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
-import { BIPS_BASE } from './constants'
+import { BIPS_BASE, MANAGER_CHAIN } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AdaRouter, AvaxRouter, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, Synthesis, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
 import { Transit } from './transit'
@@ -50,6 +50,7 @@ export abstract class BaseSwapping {
     protected dataProvider: DataProvider
 
     protected readonly symbiosis: Symbiosis
+    protected synthesisV2!: Synthesis
 
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
@@ -75,6 +76,7 @@ export abstract class BaseSwapping {
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
+        this.synthesisV2 = this.symbiosis.synthesis(MANAGER_CHAIN)
 
         if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
@@ -84,7 +86,7 @@ export abstract class BaseSwapping {
         this.transit = this.buildTransit()
         await this.transit.init()
 
-        this.amountInUsd = this.transit.amount()
+        this.amountInUsd = this.transit.getBridgeAmountIn()
 
         if (!this.symbiosis.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC()
@@ -314,7 +316,7 @@ export abstract class BaseSwapping {
         }, [])
     }
 
-    protected otherSideBurnCallData(fee: TokenAmount): [string, string] {
+    protected metaBurnSyntheticToken(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
@@ -345,13 +347,13 @@ export abstract class BaseSwapping {
         ]
     }
 
-    protected otherSideSynthCallData(fee: TokenAmount): [string, string] {
+    protected metaSynthesize(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId
         const tokenAmount = this.transit.getBridgeAmountIn()
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -382,12 +384,12 @@ export abstract class BaseSwapping {
     }
 
     protected otherSideData(fee: TokenAmount): [string, string] {
-        return this.transit.direction === 'burn' ? this.otherSideBurnCallData(fee) : this.otherSideSynthCallData(fee)
+        return this.transit.direction === 'burn' ? this.metaBurnSyntheticToken(fee) : this.metaSynthesize(fee) // mint or v2
     }
 
     protected async feeMintCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
@@ -409,7 +411,7 @@ export abstract class BaseSwapping {
 
         const callData = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
-                stableBridgingFee: '1',
+                stableBridgingFee: '0',
                 amount: amount.raw.toString(),
                 externalID: externalId,
                 tokenReal: amount.token.address,
@@ -464,13 +466,13 @@ export abstract class BaseSwapping {
 
     protected async getFee(feeToken: Token): Promise<TokenAmount> {
         const [receiveSide, calldata] =
-            this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData()
+            this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData() // mint or v2
 
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
-            chainIdTo: this.tokenOut.chainId,
+            chainIdTo: this.transit.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId,
         })
         return new TokenAmount(feeToken, fee.toString())
     }
@@ -507,19 +509,45 @@ export abstract class BaseSwapping {
     }
 
     protected finalReceiveSide(): string {
+        if (this.transit.isV2()) {
+            return this.synthesisV2.address
+        }
         return this.tradeC?.routerAddress || AddressZero
     }
 
     protected finalCalldata(): string | [] {
-        return this.tradeC?.callData || []
+        if (this.transit.isV2()) {
+            return this.synthesisV2.interface.encodeFunctionData('metaBurnSyntheticToken', [
+                {
+                    stableBridgingFee: '0', // uint256 stableBridgingFee; // FIXME pass correct fee
+                    amount: this.transit.amountOut.raw.toString(), // uint256 amount;
+                    syntCaller: this.from, // address syntCaller;
+                    finalReceiveSide: this.tradeC?.routerAddress || AddressZero, // address finalReceiveSide;
+                    sToken: this.transit.amountOut.token.address, // address sToken;
+                    finalCallData: this.tradeC?.callData || [], // bytes finalCallData;
+                    finalOffset: this.tradeC?.callDataOffset || 0, // uint256 finalOffset;
+                    chain2address: this.to, // address chain2address;
+                    receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
+                    oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
+                    revertableAddress: this.revertableAddress,
+                    chainID: this.tokenOut.chainId,
+                    clientID: this.symbiosis.clientId,
+                },
+            ])
+        } else {
+            return this.tradeC?.callData || []
+        }
     }
 
     protected finalOffset(): number {
+        if (this.transit.isV2()) {
+            return 100
+        }
         return this.tradeC?.callDataOffset || 0
     }
 
     protected swapTokens(): string[] {
-        const tokens = this.transit.route.map((i) => i.address)
+        const tokens = [this.transit.route[0].address, this.transit.route[this.transit.route.length - 1].address]
 
         if (this.tradeC) {
             tokens.push(wrappedToken(this.tradeC.amountOut.token).address)

@@ -11,7 +11,7 @@ export class DataProvider {
     constructor(private readonly symbiosis: Symbiosis) {}
 
     async getRepresentation(token: Token, chainId: ChainId) {
-        return this.fromCache(['getRepresentation', token.address, chainId], () =>
+        return this.fromCache(['getRepresentation', token.address, token.chainId, chainId], () =>
             this.symbiosis.getRepresentation(token, chainId)
         )
     }
