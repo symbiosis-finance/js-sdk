@@ -1,6 +1,5 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
-import fetch from 'node-fetch-native'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
