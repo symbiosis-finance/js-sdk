@@ -7,8 +7,8 @@ import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { getExternalId } from './utils'
 import { Portal, Synthesis } from './contracts'
-import { SynthesizeRequestEvent } from './contracts/Portal'
-import { BurnRequestEvent } from './contracts/Synthesis'
+import { BurnCompletedEventFilter, SynthesizeRequestEvent } from './contracts/Portal'
+import { BurnRequestEvent, SynthesizeCompletedEventFilter } from './contracts/Synthesis'
 import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
 import { TypedEvent } from './contracts/common'
 
@@ -111,10 +111,12 @@ export class WaitForComplete {
     }
 
     private buildOwnSideFilter(externalId: string, receiveSide: string): EventFilter {
-        const event =
-            this.direction === 'burn'
-                ? this.symbiosis.portal(this.tokenOut.chainId).filters.BurnCompleted()
-                : this.symbiosis.synthesis(this.tokenOut.chainId).filters.SynthesizeCompleted()
+        let event: SynthesizeCompletedEventFilter | BurnCompletedEventFilter
+        if (this.direction === 'burn') {
+            event = this.symbiosis.portal(this.tokenOut.chainId).filters.BurnCompleted()
+        } else {
+            event = this.symbiosis.synthesis(this.tokenOut.chainId).filters.SynthesizeCompleted()
+        }
 
         if (!event || !event.topics || event.topics.length === 0) {
             throw new Error('Event not found')

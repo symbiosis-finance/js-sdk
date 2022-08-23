@@ -3,7 +3,7 @@ import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { BigNumber, Signer, utils } from 'ethers'
 import { Account, Contract } from 'near-api-js'
-import { isNearChainId } from 'src/utils'
+import { isNearChainId } from '../utils'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
@@ -136,8 +136,8 @@ export class Bridging {
             changeMethods: ['ft_transfer_call'],
         }) as Contract & { ft_transfer_call: any }
 
-        const bridge = this.symbiosis.bridge(this.tokenOut.chainId).address
-        const synthesis = this.symbiosis.synthesis(this.tokenOut.chainId).address
+        const bridge = this.symbiosis.bridgeV2NonEvm(this.tokenOut.chainId).address
+        const synthesis = this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address
         const amount = this.tokenAmountIn.raw.toString()
 
         await token.ft_transfer_call(
