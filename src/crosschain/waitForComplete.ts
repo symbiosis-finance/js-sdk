@@ -6,7 +6,7 @@ import { GetLogTimeoutExceededError, getLogWithTimeout } from './utils'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { getExternalId } from './utils'
-import { Portal, Synthesis } from './contracts'
+import { Portal, SynthesisNonEvm } from './contracts'
 import { BurnCompletedEventFilter, SynthesizeRequestEvent } from './contracts/Portal'
 import { BurnRequestEvent, SynthesizeCompletedEventFilter } from './contracts/Synthesis'
 import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
@@ -47,6 +47,8 @@ export class WaitForComplete {
     public async waitForCompleteFromParams(externalId: string, receiveSide: string): Promise<Log> {
         const filter = this.buildOwnSideFilter(externalId, receiveSide)
 
+        console.log(filter)
+
         return getLogWithTimeout({
             symbiosis: this.symbiosis,
             chainId: this.tokenOut.chainId,
@@ -83,10 +85,10 @@ export class WaitForComplete {
     private getRequestArgs(
         receipt: TransactionReceipt
     ): EventArgs<SynthesizeRequestEvent | BurnRequestEvent> | undefined {
-        let contract: Synthesis | Portal
+        let contract: SynthesisNonEvm | Portal
         let eventName: string
         if (this.direction === 'burn') {
-            contract = this.symbiosis.synthesis(this.chainIdIn)
+            contract = this.symbiosis.synthesisNonEvm(this.chainIdIn)
             eventName = 'BurnRequest'
         } else {
             contract = this.symbiosis.portal(this.chainIdIn)
@@ -115,7 +117,7 @@ export class WaitForComplete {
         if (this.direction === 'burn') {
             event = this.symbiosis.portal(this.tokenOut.chainId).filters.BurnCompleted()
         } else {
-            event = this.symbiosis.synthesis(this.tokenOut.chainId).filters.SynthesizeCompleted()
+            event = this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).filters.SynthesizeCompleted()
         }
 
         if (!event || !event.topics || event.topics.length === 0) {
@@ -144,7 +146,7 @@ export class WaitForComplete {
         const receiveSide =
             this.direction === 'burn'
                 ? this.symbiosis.portal(this.tokenOut.chainId).address
-                : this.symbiosis.synthesis(this.tokenOut.chainId).address
+                : this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address
 
         const externalId = getExternalId({
             internalId: requestId,
@@ -176,7 +178,7 @@ export class WaitForComplete {
         let contractAddress: string
         let type: PendingRequestType
         if (this.direction === 'burn') {
-            contractAddress = this.symbiosis.synthesis(this.chainIdIn).address
+            contractAddress = this.symbiosis.synthesisNonEvm(this.chainIdIn).address
             type = 'burn'
         } else {
             contractAddress = this.symbiosis.portal(this.chainIdIn).address

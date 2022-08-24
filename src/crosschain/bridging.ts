@@ -384,6 +384,6 @@ export class Bridging {
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForCompleteFromParams(externalId, this.tokenOut.address)
+        }).waitForCompleteFromParams(externalId, this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address)
     }
 }

@@ -47,7 +47,6 @@ export type ChainConfig = {
     synthesis: string
     synthesisNonEvm?: string
     portal: string
-    portalNonEvm?: string
     fabric: string
     syntFabricNonEvm?: string
     waitForBlocksCount: number

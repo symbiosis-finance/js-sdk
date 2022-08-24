@@ -154,14 +154,7 @@ export async function getLogWithTimeout({
         const period = 1000 * 60
         let pastTime = 0
 
-        const interval = setInterval(() => {
-            pastTime += period
-            if (pastTime > exceedTimeout) {
-                clearInterval(interval)
-                provider.off(activeFilter, listener)
-                reject(new GetLogTimeoutExceededError(activeFilter))
-                return
-            }
+        const getLogs = () => {
             provider
                 .getLogs(activeFilter)
                 .then((logs) => {
@@ -172,8 +165,26 @@ export async function getLogWithTimeout({
                     }
                 })
                 .catch((error) => {
+                    clearInterval(interval)
+                    provider.off(activeFilter, listener)
                     reject(error)
                 })
+        }
+
+        // Initial get logs
+        getLogs()
+
+        const interval = setInterval(() => {
+            pastTime += period
+
+            if (pastTime > exceedTimeout) {
+                clearInterval(interval)
+                provider.off(activeFilter, listener)
+                reject(new GetLogTimeoutExceededError(activeFilter))
+                return
+            }
+
+            getLogs()
         }, period)
 
         const listener = (log: Log) => {
