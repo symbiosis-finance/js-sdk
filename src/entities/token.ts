@@ -323,4 +323,28 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
         },
     }),
+    [ChainId.TELOS_MAINNET]: new Token({
+        chainId: ChainId.TELOS_MAINNET,
+        address: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
+        decimals: 18,
+        symbol: 'WTLOS',
+        isNative: false,
+        name: 'Wrapped TLOS',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
+        },
+    }),
+    [ChainId.TELOS_TESTNET]: new Token({
+        chainId: ChainId.TELOS_TESTNET,
+        address: '0xaE85Bf723A9e74d6c663dd226996AC1b8d075AA9',
+        decimals: 18,
+        symbol: 'WTLOS',
+        isNative: false,
+        name: 'Wrapped TLOS',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
+        },
+    }),
 }

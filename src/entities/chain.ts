@@ -233,6 +233,26 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
         },
     }),
+    new Chain({
+        id: ChainId.TELOS_MAINNET,
+        name: 'Telos',
+        disabled: false,
+        explorer: 'https://teloscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.TELOS_TESTNET,
+        name: 'Telos',
+        disabled: false,
+        explorer: 'https://testnet.teloscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
