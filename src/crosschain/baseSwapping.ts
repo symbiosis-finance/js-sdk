@@ -156,10 +156,31 @@ export abstract class BaseSwapping {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
+        if (this.transit.isV2()) {
+            const wfc1 = new WaitForComplete({
+                direction: 'mint',
+                symbiosis: this.symbiosis,
+                revertableAddress: this.revertableAddress,
+                chainIdIn: this.tokenAmountIn.token.chainId,
+                chainIdOut: MANAGER_CHAIN,
+            })
+            const log = await wfc1.waitForComplete(receipt)
 
+            const provider = this.symbiosis.getProvider(MANAGER_CHAIN)
+            const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
+
+            const wfc2 = new WaitForComplete({
+                direction: 'burn',
+                symbiosis: this.symbiosis,
+                revertableAddress: this.revertableAddress,
+                chainIdIn: MANAGER_CHAIN,
+                chainIdOut: this.tokenOut.chainId,
+            })
+            return wfc2.waitForComplete(receipt2)
+        }
         return new WaitForComplete({
             direction: this.transit.direction,
-            tokenOut: this.tokenOut,
+            chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
@@ -219,6 +240,10 @@ export abstract class BaseSwapping {
     protected tokenAmountOut(): TokenAmount {
         if (this.tradeC) {
             return this.tradeC.amountOut
+        }
+        if (this.transit.isV2()) {
+            // FIXME stable bridging fee
+            return new TokenAmount(this.tokenOut, this.transit.amountOut.raw)
         }
 
         return this.transit.amountOut

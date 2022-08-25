@@ -115,7 +115,7 @@ export class Zapping {
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
         return new WaitForComplete({
             direction: 'mint',
-            tokenOut: this.nerveLiquidity.amountOut.token,
+            chainIdOut: this.nerveLiquidity.amountOut.token.chainId,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,

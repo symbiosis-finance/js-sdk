@@ -1,7 +1,7 @@
 import { EventFilter } from '@ethersproject/contracts'
 import { Log, TransactionReceipt } from '@ethersproject/providers'
 import { ChainId } from '../constants'
-import { Token, TokenAmount } from '../entities'
+import { TokenAmount } from '../entities'
 import { GetLogTimeoutExceededError, getLogWithTimeout } from './utils'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
@@ -16,7 +16,7 @@ type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgs
 
 interface WaitForCompleteParams {
     symbiosis: Symbiosis
-    tokenOut: Token
+    chainIdOut: ChainId
     direction: BridgeDirection
     revertableAddress: string
     chainIdIn: ChainId
@@ -32,14 +32,14 @@ export class TransactionStuckError extends Error {
 export class WaitForComplete {
     private readonly direction: BridgeDirection
     private readonly symbiosis: Symbiosis
-    private readonly tokenOut: Token
+    private readonly chainIdOut: ChainId
     private readonly revertableAddress: string
     private readonly chainIdIn: ChainId
 
-    public constructor({ direction, symbiosis, tokenOut, revertableAddress, chainIdIn }: WaitForCompleteParams) {
+    public constructor({ direction, symbiosis, chainIdOut, revertableAddress, chainIdIn }: WaitForCompleteParams) {
         this.direction = direction
         this.symbiosis = symbiosis
-        this.tokenOut = tokenOut
+        this.chainIdOut = chainIdOut
         this.revertableAddress = revertableAddress
         this.chainIdIn = chainIdIn
     }
@@ -49,7 +49,7 @@ export class WaitForComplete {
 
         return getLogWithTimeout({
             symbiosis: this.symbiosis,
-            chainId: this.tokenOut.chainId,
+            chainId: this.chainIdOut,
             filter,
         }).catch((e) => {
             if (!(e instanceof GetLogTimeoutExceededError)) {
@@ -96,7 +96,7 @@ export class WaitForComplete {
     }
 
     private buildOtherSideFilter(receipt: TransactionReceipt): EventFilter {
-        if (!this.tokenOut) {
+        if (!this.chainIdOut) {
             throw new Error('Tokens are not set')
         }
 
@@ -109,20 +109,20 @@ export class WaitForComplete {
 
         const receiveSide =
             this.direction === 'burn'
-                ? this.symbiosis.portal(this.tokenOut.chainId).address
-                : this.symbiosis.synthesis(this.tokenOut.chainId).address
+                ? this.symbiosis.portal(this.chainIdOut).address
+                : this.symbiosis.synthesis(this.chainIdOut).address
 
         const externalId = getExternalId({
             internalId: requestId,
             contractAddress: receiveSide,
             revertableAddress: this.revertableAddress,
-            chainId: this.tokenOut.chainId,
+            chainId: this.chainIdOut,
         })
 
         const event =
             this.direction === 'burn'
-                ? this.symbiosis.portal(this.tokenOut.chainId).filters.BurnCompleted()
-                : this.symbiosis.synthesis(this.tokenOut.chainId).filters.SynthesizeCompleted()
+                ? this.symbiosis.portal(this.chainIdOut).filters.BurnCompleted()
+                : this.symbiosis.synthesis(this.chainIdOut).filters.SynthesizeCompleted()
 
         if (!event || !event.topics || event.topics.length === 0) {
             throw new Error('Event not found')

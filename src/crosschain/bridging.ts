@@ -261,7 +261,7 @@ export class Bridging {
 
         return new WaitForComplete({
             direction: this.direction,
-            tokenOut: this.tokenOut,
+            chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
