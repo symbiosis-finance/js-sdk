@@ -248,6 +248,46 @@ export const chains: Chain[] = [
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/milkomeda/logo.png',
         },
     }),
+    new Chain({
+        id: ChainId.AURORA_MAINNET,
+        name: 'Aurora',
+        disabled: false,
+        explorer: 'https://aurorascan.dev',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.AURORA_TESTNET,
+        name: 'Aurora',
+        disabled: false,
+        explorer: 'https://testnet.aurorascan.dev',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14803.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.TELOS_MAINNET,
+        name: 'Telos',
+        disabled: false,
+        explorer: 'https://teloscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.TELOS_TESTNET,
+        name: 'Telos',
+        disabled: false,
+        explorer: 'https://testnet.teloscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
+        },
+    }),
 ]
 
 export function getChainById(chainId: ChainId | undefined): Chain | undefined {

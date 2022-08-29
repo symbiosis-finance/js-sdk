@@ -13,6 +13,10 @@ export const CHAINS_PRIORITY = [
     ChainId.AVAX_TESTNET,
     ChainId.BOBA_MAINNET,
     ChainId.BOBA_RINKEBY,
+    ChainId.AURORA_MAINNET,
+    ChainId.AURORA_TESTNET,
+    ChainId.TELOS_MAINNET,
+    ChainId.TELOS_TESTNET,
     ChainId.MATIC_MAINNET,
     ChainId.MATIC_MUMBAI,
     ChainId.MILKOMEDA_MAINNET,
@@ -60,6 +64,10 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.BOBA_RINKEBY]: [WETH[ChainId.BOBA_RINKEBY]],
     [ChainId.MILKOMEDA_MAINNET]: [WETH[ChainId.MILKOMEDA_MAINNET]],
     [ChainId.MILKOMEDA_DEVNET]: [WETH[ChainId.MILKOMEDA_DEVNET]],
+    [ChainId.AURORA_MAINNET]: [WETH[ChainId.AURORA_MAINNET]],
+    [ChainId.AURORA_TESTNET]: [WETH[ChainId.AURORA_TESTNET]],
+    [ChainId.TELOS_MAINNET]: [WETH[ChainId.TELOS_MAINNET]],
+    [ChainId.TELOS_TESTNET]: [WETH[ChainId.TELOS_TESTNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -292,6 +300,22 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             decimals: 18,
         }),
     ],
+    [ChainId.AURORA_MAINNET]: [
+        new Token({
+            chainId: ChainId.AURORA_MAINNET,
+            symbol: 'USDC',
+            name: 'USD Coin',
+            address: '0xB12BFcA5A55806AaF64E99521918A4bf0fC40802',
+            decimals: 6,
+        }),
+        new Token({
+            chainId: ChainId.AURORA_MAINNET,
+            symbol: 'USDT',
+            name: 'Tether USD',
+            address: '0x4988a896b1227218e4A686fdE5EabdcAbd91571f',
+            decimals: 6,
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -305,6 +329,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MATIC_MAINNET],
     ],
     [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_MAINNET]],
+    [ChainId.AURORA_MAINNET]: [
+        WETH[ChainId.AURORA_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.AURORA_MAINNET],
+    ],
 }
 
 /**
@@ -340,4 +368,8 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.BOBA_RINKEBY]: '0x773ccf8ba321c9f96a100b4b0fa1ecf7046645f5',
     [ChainId.MILKOMEDA_MAINNET]: '0xa46157Cda2D019Ba4cDcd8cE12A04760c15C355b',
     [ChainId.MILKOMEDA_DEVNET]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
+    [ChainId.AURORA_MAINNET]: '0xbf69a56d35b8d6f5a8e0e96b245a72f735751e54',
+    [ChainId.AURORA_TESTNET]: '0x4a5143B13C84DB00E6d8c19b9EA00f3b91416d20',
+    [ChainId.TELOS_MAINNET]: '0x53dC7535028e2fcaCa0d847AD108b9240C0801b1',
+    [ChainId.TELOS_TESTNET]: '0x9a01bf917477dd9f5d715d188618fc8b7350cd22',
 }
