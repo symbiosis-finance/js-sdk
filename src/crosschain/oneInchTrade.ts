@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { formatUnits } from '@ethersproject/units'
-import fetch from 'node-fetch-native'
+import fetch from 'isomorphic-unfetch'
 
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { OneInchOracle } from './contracts'
