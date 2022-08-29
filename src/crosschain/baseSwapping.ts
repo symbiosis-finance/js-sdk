@@ -97,7 +97,7 @@ export abstract class BaseSwapping {
 
         const fee = await this.getFee(this.transit.feeToken)
 
-        const feeV2 = await this.getFeeV2()
+        const feeV2 = this.transit.isV2() ? await this.getFeeV2() : undefined
 
         const tokenAmountOutWithZeroFee = this.tokenAmountOut()
 
@@ -239,7 +239,7 @@ export abstract class BaseSwapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
-    protected tokenAmountOut(feeV2?: TokenAmount): TokenAmount {
+    protected tokenAmountOut(feeV2?: TokenAmount | undefined): TokenAmount {
         if (this.tradeC) {
             return this.tradeC.amountOut
         }
