@@ -43,7 +43,7 @@ export const chains: Chain[] = [
         id: ChainId.NEAR_TESTNET,
         name: 'Near',
         disabled: false,
-        explorer: 'https://testnet.nearblocks.io/',
+        explorer: 'https://explorer.testnet.near.org',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
