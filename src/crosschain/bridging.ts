@@ -152,7 +152,7 @@ export class Bridging {
                         chain_to_address: utils.base64.encode(this.to), // получатель в евм
                         opposite_bridge: utils.base64.encode(bridge), // адрес бриджа
                         receive_side: utils.base64.encode(synthesis), // адрес синтезиса
-                        revertable_address: account.accountId, // мой адрес
+                        revertable_address: utils.base64.encode(this.revertableAddress), // мой адрес
                         chain_id: this.tokenOut.chainId.toString(), // идентификатор блокчейна
                     },
                 }),
