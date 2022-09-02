@@ -1,16 +1,18 @@
+import { LogDescription } from '@ethersproject/abi'
 import { EventFilter } from '@ethersproject/contracts'
-import { Log, TransactionReceipt } from '@ethersproject/providers'
+import { Filter, Log, TransactionReceipt } from '@ethersproject/providers'
+import fetch from 'node-fetch-native'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
-import { GetLogTimeoutExceededError, getLogWithTimeout } from './utils'
-import type { Symbiosis } from './symbiosis'
-import { BridgeDirection } from './types'
-import { getExternalId } from './utils'
+import { isNearChainId } from '../utils'
 import { Portal, SynthesisNonEvm } from './contracts'
+import { TypedEvent } from './contracts/common'
 import { BurnCompletedEventFilter, SynthesizeRequestEvent } from './contracts/Portal'
 import { BurnRequestEvent, SynthesizeCompletedEventFilter } from './contracts/Synthesis'
 import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
-import { TypedEvent } from './contracts/common'
+import type { Symbiosis } from './symbiosis'
+import { BridgeDirection } from './types'
+import { GetLogTimeoutExceededError, getLogWithTimeout, getNoNEvmExternalId } from './utils'
 
 type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never
 
@@ -47,8 +49,6 @@ export class WaitForComplete {
     public async waitForCompleteFromParams(externalId: string, receiveSide: string): Promise<Log> {
         const filter = this.buildOwnSideFilter(externalId, receiveSide)
 
-        console.log(filter)
-
         return getLogWithTimeout({
             symbiosis: this.symbiosis,
             chainId: this.tokenOut.chainId,
@@ -61,6 +61,31 @@ export class WaitForComplete {
 
     public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
         const { externalId, receiveSide } = this.getTransactionParams(receipt)
+
+        // @@
+        if (this.tokenOut.isFromNear()) {
+            let tries = 0
+            while (tries < 10) {
+                tries++
+
+                const result = await fetch(
+                    `https://api-near.dev.symbiosis.finance/crosschain/v1/near-bridge-tx/${externalId}`,
+                    { headers: { 'Content-Type': 'application/json' } }
+                )
+
+                if (!result.ok) {
+                    await new Promise((resolve) => setTimeout(resolve, 1000 * 20)) // 20 sec
+                    continue
+                }
+
+                const json = await result.json()
+                const { transactionHash } = json
+
+                return { transactionHash } as Log
+            }
+
+            throw new GetLogTimeoutExceededError({ externalId } as Filter) // @@
+        }
 
         const filter = this.buildOwnSideFilter(externalId, receiveSide)
 
@@ -96,8 +121,9 @@ export class WaitForComplete {
         }
 
         let args: EventArgs<SynthesizeRequestEvent | BurnRequestEvent> | undefined
+
         receipt.logs.forEach((log) => {
-            let event
+            let event: LogDescription
             try {
                 event = contract.interface.parseLog(log)
             } catch {
@@ -105,7 +131,14 @@ export class WaitForComplete {
             }
 
             if (event.name === eventName) {
-                args = event.args as unknown as EventArgs<SynthesizeRequestEvent | BurnRequestEvent>
+                // @@
+                const argsCopy: any[] & Record<string, any> = Array.from(event.args)
+                event.eventFragment.inputs.forEach((fragment, index) => {
+                    argsCopy[fragment.name] = event.args[index]
+                })
+
+                // @@
+                args = argsCopy as unknown as EventArgs<SynthesizeRequestEvent | BurnRequestEvent>
             }
         })
 
@@ -143,12 +176,19 @@ export class WaitForComplete {
 
         const requestId = args.id
 
-        const receiveSide =
-            this.direction === 'burn'
-                ? this.symbiosis.portal(this.tokenOut.chainId).address
-                : this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address
+        const chainIdOut = this.tokenOut.chainId
 
-        const externalId = getExternalId({
+        let receiveSide: string
+        if (isNearChainId(chainIdOut)) {
+            receiveSide = 'portal.symbiosis-finance.testnet' // @@
+        } else {
+            receiveSide =
+                this.direction === 'burn'
+                    ? this.symbiosis.portal(this.tokenOut.chainId).address
+                    : this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address
+        }
+
+        const externalId = getNoNEvmExternalId({
             internalId: requestId,
             contractAddress: receiveSide,
             revertableAddress: this.revertableAddress,
@@ -185,7 +225,7 @@ export class WaitForComplete {
             type = 'synthesize'
         }
 
-        const externalId = getExternalId({
+        const externalId = getNoNEvmExternalId({
             internalId: id,
             contractAddress,
             revertableAddress,

@@ -1,4 +1,5 @@
 import { Filter, Log } from '@ethersproject/providers'
+import { toUtf8Bytes } from '@ethersproject/strings'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
@@ -27,6 +28,18 @@ export const canOneInch = (chainId: ChainId) => {
 
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
     return utils.solidityKeccak256(['address', 'uint256', 'uint256'], [contractAddress, requestCount, chainId])
+}
+
+export function getNoNEvmExternalId({
+    internalId,
+    contractAddress,
+    revertableAddress,
+    chainId,
+}: GetExternalIdParams): string {
+    return utils.solidityKeccak256(
+        ['bytes32', 'bytes', 'bytes', 'uint256'],
+        [internalId, toUtf8Bytes(contractAddress), toUtf8Bytes(revertableAddress), chainId]
+    )
 }
 
 export function getExternalId({
