@@ -104,6 +104,7 @@ export interface MetaRouterInterface extends utils.Interface {
         'metaMintSwap((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
         'metaRouterGateway()': FunctionFragment
+        'returnSwap(address,uint256,address,bytes,address,address,bytes)': FunctionFragment
     }
 
     encodeFunctionData(
@@ -113,11 +114,16 @@ export interface MetaRouterInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'metaMintSwap', values: [MetaRouteStructs.MetaMintTransactionStruct]): string
     encodeFunctionData(functionFragment: 'metaRoute', values: [MetaRouteStructs.MetaRouteTransactionStruct]): string
     encodeFunctionData(functionFragment: 'metaRouterGateway', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'returnSwap',
+        values: [string, BigNumberish, string, BytesLike, string, string, BytesLike]
+    ): string
 
     decodeFunctionResult(functionFragment: 'externalCall', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaMintSwap', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaRoute', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaRouterGateway', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'returnSwap', data: BytesLike): Result
 
     events: {}
 }
@@ -166,6 +172,17 @@ export interface MetaRouter extends BaseContract {
         ): Promise<ContractTransaction>
 
         metaRouterGateway(overrides?: CallOverrides): Promise<[string]>
+
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
     }
 
     externalCall(
@@ -189,6 +206,17 @@ export interface MetaRouter extends BaseContract {
 
     metaRouterGateway(overrides?: CallOverrides): Promise<string>
 
+    returnSwap(
+        _token: string,
+        _amount: BigNumberish,
+        _router: string,
+        _swapCalldata: BytesLike,
+        _burnToken: string,
+        _synthesis: string,
+        _burnCalldata: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     callStatic: {
         externalCall(
             _token: string,
@@ -210,6 +238,17 @@ export interface MetaRouter extends BaseContract {
         ): Promise<void>
 
         metaRouterGateway(overrides?: CallOverrides): Promise<string>
+
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
     }
 
     filters: {}
@@ -235,6 +274,17 @@ export interface MetaRouter extends BaseContract {
         ): Promise<BigNumber>
 
         metaRouterGateway(overrides?: CallOverrides): Promise<BigNumber>
+
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
     }
 
     populateTransaction: {
@@ -258,5 +308,16 @@ export interface MetaRouter extends BaseContract {
         ): Promise<PopulatedTransaction>
 
         metaRouterGateway(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
     }
 }

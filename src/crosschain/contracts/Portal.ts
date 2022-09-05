@@ -19,6 +19,52 @@ import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace MetaRouteStructs {
+    export type MetaRevertTransactionStruct = {
+        stableBridgingFee: BigNumberish
+        internalID: BytesLike
+        receiveSide: string
+        managerChainBridge: string
+        sourceChainBridge: string
+        managerChainId: BigNumberish
+        sourceChainId: BigNumberish
+        router: string
+        swapCalldata: BytesLike
+        sourceChainSynthesis: string
+        burnToken: string
+        burnCalldata: BytesLike
+        clientID: BytesLike
+    }
+
+    export type MetaRevertTransactionStructOutput = [
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+    ] & {
+        stableBridgingFee: BigNumber
+        internalID: string
+        receiveSide: string
+        managerChainBridge: string
+        sourceChainBridge: string
+        managerChainId: BigNumber
+        sourceChainId: BigNumber
+        router: string
+        swapCalldata: string
+        sourceChainSynthesis: string
+        burnToken: string
+        burnCalldata: string
+        clientID: string
+    }
+
     export type MetaSynthesizeTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
@@ -121,6 +167,7 @@ export interface PortalInterface extends utils.Interface {
         'bridge()': FunctionFragment
         'initialize(address,address,address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
+        'metaRevertRequest((uint256,bytes32,address,address,address,uint256,uint256,address,bytes,address,address,bytes,bytes32))': FunctionFragment
         'metaRouter()': FunctionFragment
         'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address,bytes32))': FunctionFragment
         'metaUnsynthesize(uint256,bytes32,address,uint256,address,address,bytes,uint256)': FunctionFragment
@@ -131,6 +178,7 @@ export interface PortalInterface extends utils.Interface {
         'requestCount()': FunctionFragment
         'requests(bytes32)': FunctionFragment
         'revertBurnRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
+        'revertBurnRequestByBridge(uint256,bytes32,address,address,uint256,address)': FunctionFragment
         'revertSynthesize(uint256,bytes32)': FunctionFragment
         'setMetaRouter(address)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
@@ -152,6 +200,10 @@ export interface PortalInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'bridge', values?: undefined): string
     encodeFunctionData(functionFragment: 'initialize', values: [string, string, string, string, string]): string
     encodeFunctionData(functionFragment: 'isTrustedForwarder', values: [string]): string
+    encodeFunctionData(
+        functionFragment: 'metaRevertRequest',
+        values: [MetaRouteStructs.MetaRevertTransactionStruct]
+    ): string
     encodeFunctionData(functionFragment: 'metaRouter', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'metaSynthesize',
@@ -170,6 +222,10 @@ export interface PortalInterface extends utils.Interface {
     encodeFunctionData(
         functionFragment: 'revertBurnRequest',
         values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'revertBurnRequestByBridge',
+        values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
     ): string
     encodeFunctionData(functionFragment: 'revertSynthesize', values: [BigNumberish, BytesLike]): string
     encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
@@ -203,6 +259,7 @@ export interface PortalInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'isTrustedForwarder', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRevertRequest', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaRouter', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaSynthesize', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaUnsynthesize', data: BytesLike): Result
@@ -213,6 +270,7 @@ export interface PortalInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'requestCount', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'requests', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'revertBurnRequest', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'revertBurnRequestByBridge', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'revertSynthesize', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setMetaRouter', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
@@ -232,6 +290,7 @@ export interface PortalInterface extends utils.Interface {
     events: {
         'BurnCompleted(bytes32,address,uint256,uint256,address)': EventFragment
         'ClientIdLog(bytes32,bytes32)': EventFragment
+        'MetaRevertRequest(bytes32,address)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
         'RevertBurnRequest(bytes32,address)': EventFragment
@@ -245,6 +304,7 @@ export interface PortalInterface extends utils.Interface {
 
     getEvent(nameOrSignatureOrTopic: 'BurnCompleted'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'MetaRevertRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertBurnRequest'): EventFragment
@@ -272,6 +332,10 @@ export type BurnCompletedEventFilter = TypedEventFilter<BurnCompletedEvent>
 export type ClientIdLogEvent = TypedEvent<[string, string], { requestId: string; clientId: string }>
 
 export type ClientIdLogEventFilter = TypedEventFilter<ClientIdLogEvent>
+
+export type MetaRevertRequestEvent = TypedEvent<[string, string], { id: string; to: string }>
+
+export type MetaRevertRequestEventFilter = TypedEventFilter<MetaRevertRequestEvent>
 
 export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
@@ -368,6 +432,11 @@ export interface Portal extends BaseContract {
 
         isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<[boolean]>
 
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
         metaRouter(overrides?: CallOverrides): Promise<[string]>
 
         metaSynthesize(
@@ -417,6 +486,16 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _chainId: BigNumberish,
             _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        revertBurnRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -514,6 +593,11 @@ export interface Portal extends BaseContract {
 
     isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<boolean>
 
+    metaRevertRequest(
+        _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     metaRouter(overrides?: CallOverrides): Promise<string>
 
     metaSynthesize(
@@ -563,6 +647,16 @@ export interface Portal extends BaseContract {
         _oppositeBridge: string,
         _chainId: BigNumberish,
         _clientID: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    revertBurnRequestByBridge(
+        _stableBridgingFee: BigNumberish,
+        _internalID: BytesLike,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _chainId: BigNumberish,
+        _sender: string,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -660,6 +754,11 @@ export interface Portal extends BaseContract {
 
         isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<boolean>
 
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: CallOverrides
+        ): Promise<void>
+
         metaRouter(overrides?: CallOverrides): Promise<string>
 
         metaSynthesize(
@@ -709,6 +808,16 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _chainId: BigNumberish,
             _clientID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
+
+        revertBurnRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _sender: string,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -796,6 +905,9 @@ export interface Portal extends BaseContract {
         'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
         ClientIdLog(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
 
+        'MetaRevertRequest(bytes32,address)'(id?: BytesLike | null, to?: string | null): MetaRevertRequestEventFilter
+        MetaRevertRequest(id?: BytesLike | null, to?: string | null): MetaRevertRequestEventFilter
+
         'OwnershipTransferred(address,address)'(
             previousOwner?: string | null,
             newOwner?: string | null
@@ -871,6 +983,11 @@ export interface Portal extends BaseContract {
 
         isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<BigNumber>
 
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
         metaRouter(overrides?: CallOverrides): Promise<BigNumber>
 
         metaSynthesize(
@@ -909,6 +1026,16 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _chainId: BigNumberish,
             _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        revertBurnRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -1007,6 +1134,11 @@ export interface Portal extends BaseContract {
 
         isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
         metaRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         metaSynthesize(
@@ -1045,6 +1177,16 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _chainId: BigNumberish,
             _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        revertBurnRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

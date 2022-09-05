@@ -127,7 +127,10 @@ export interface SynthesisInterface extends utils.Interface {
         'requestCount()': FunctionFragment
         'requests(bytes32)': FunctionFragment
         'revertBurn(uint256,bytes32)': FunctionFragment
+        'revertBurnAndBurn(uint256,bytes32,address,address,uint256,address)': FunctionFragment
+        'revertMetaBurn(uint256,bytes32,address,bytes,address,address,bytes)': FunctionFragment
         'revertSynthesizeRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
+        'revertSynthesizeRequestByBridge(uint256,bytes32,address,address,uint256,address)': FunctionFragment
         'setFabric(address)': FunctionFragment
         'setMetaRouter(address)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
@@ -167,8 +170,20 @@ export interface SynthesisInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'requests', values: [BytesLike]): string
     encodeFunctionData(functionFragment: 'revertBurn', values: [BigNumberish, BytesLike]): string
     encodeFunctionData(
+        functionFragment: 'revertBurnAndBurn',
+        values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'revertMetaBurn',
+        values: [BigNumberish, BytesLike, string, BytesLike, string, string, BytesLike]
+    ): string
+    encodeFunctionData(
         functionFragment: 'revertSynthesizeRequest',
         values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'revertSynthesizeRequestByBridge',
+        values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
     ): string
     encodeFunctionData(functionFragment: 'setFabric', values: [string]): string
     encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
@@ -195,7 +210,10 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'requestCount', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'requests', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'revertBurn', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'revertBurnAndBurn', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'revertMetaBurn', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'revertSynthesizeRequest', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'revertSynthesizeRequestByBridge', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setFabric', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setMetaRouter', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
@@ -210,6 +228,7 @@ export interface SynthesisInterface extends utils.Interface {
         'ClientIdLog(bytes32,bytes32)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
+        'RevertBurnAndBurnRequest(bytes32,address,bytes32,address,uint256,address,address,uint256,address)': EventFragment
         'RevertBurnCompleted(bytes32,address,uint256,uint256,address)': EventFragment
         'RevertSynthesizeRequest(bytes32,address)': EventFragment
         'SetFabric(address)': EventFragment
@@ -223,6 +242,7 @@ export interface SynthesisInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'RevertBurnAndBurnRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertBurnCompleted'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertSynthesizeRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'SetFabric'): EventFragment
@@ -258,6 +278,23 @@ export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransfer
 export type PausedEvent = TypedEvent<[string], { account: string }>
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>
+
+export type RevertBurnAndBurnRequestEvent = TypedEvent<
+    [string, string, string, string, BigNumber, string, string, BigNumber, string],
+    {
+        externalID: string
+        recipient: string
+        internalId: string
+        from: string
+        chainID: BigNumber
+        revertableAddress: string
+        to: string
+        amount: BigNumber
+        token: string
+    }
+>
+
+export type RevertBurnAndBurnRequestEventFilter = TypedEventFilter<RevertBurnAndBurnRequestEvent>
 
 export type RevertBurnCompletedEvent = TypedEvent<
     [string, string, BigNumber, BigNumber, string],
@@ -407,6 +444,27 @@ export interface Synthesis extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
+        revertBurnAndBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _revertableAddress: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        revertMetaBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _synthesis: string,
+            _burnToken: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
         revertSynthesizeRequest(
             _stableBridgingFee: BigNumberish,
             _internalID: BytesLike,
@@ -414,6 +472,16 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        revertSynthesizeRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -525,6 +593,27 @@ export interface Synthesis extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
+    revertBurnAndBurn(
+        _stableBridgingFee: BigNumberish,
+        _externalID: BytesLike,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _chainID: BigNumberish,
+        _revertableAddress: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    revertMetaBurn(
+        _stableBridgingFee: BigNumberish,
+        _externalID: BytesLike,
+        _router: string,
+        _swapCalldata: BytesLike,
+        _synthesis: string,
+        _burnToken: string,
+        _burnCalldata: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     revertSynthesizeRequest(
         _stableBridgingFee: BigNumberish,
         _internalID: BytesLike,
@@ -532,6 +621,16 @@ export interface Synthesis extends BaseContract {
         _oppositeBridge: string,
         _chainID: BigNumberish,
         _clientID: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    revertSynthesizeRequestByBridge(
+        _stableBridgingFee: BigNumberish,
+        _internalID: BytesLike,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _chainID: BigNumberish,
+        _sender: string,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -639,6 +738,27 @@ export interface Synthesis extends BaseContract {
 
         revertBurn(_stableBridgingFee: BigNumberish, _externalID: BytesLike, overrides?: CallOverrides): Promise<void>
 
+        revertBurnAndBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _revertableAddress: string,
+            overrides?: CallOverrides
+        ): Promise<void>
+
+        revertMetaBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _synthesis: string,
+            _burnToken: string,
+            _burnCalldata: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
+
         revertSynthesizeRequest(
             _stableBridgingFee: BigNumberish,
             _internalID: BytesLike,
@@ -646,6 +766,16 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _clientID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
+
+        revertSynthesizeRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _sender: string,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -697,6 +827,29 @@ export interface Synthesis extends BaseContract {
 
         'Paused(address)'(account?: null): PausedEventFilter
         Paused(account?: null): PausedEventFilter
+
+        'RevertBurnAndBurnRequest(bytes32,address,bytes32,address,uint256,address,address,uint256,address)'(
+            externalID?: null,
+            recipient?: null,
+            internalId?: null,
+            from?: string | null,
+            chainID?: BigNumberish | null,
+            revertableAddress?: string | null,
+            to?: null,
+            amount?: null,
+            token?: null
+        ): RevertBurnAndBurnRequestEventFilter
+        RevertBurnAndBurnRequest(
+            externalID?: null,
+            recipient?: null,
+            internalId?: null,
+            from?: string | null,
+            chainID?: BigNumberish | null,
+            revertableAddress?: string | null,
+            to?: null,
+            amount?: null,
+            token?: null
+        ): RevertBurnAndBurnRequestEventFilter
 
         'RevertBurnCompleted(bytes32,address,uint256,uint256,address)'(
             id?: BytesLike | null,
@@ -814,6 +967,27 @@ export interface Synthesis extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
+        revertBurnAndBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _revertableAddress: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        revertMetaBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _synthesis: string,
+            _burnToken: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
         revertSynthesizeRequest(
             _stableBridgingFee: BigNumberish,
             _internalID: BytesLike,
@@ -821,6 +995,16 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        revertSynthesizeRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -918,6 +1102,27 @@ export interface Synthesis extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
+        revertBurnAndBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _revertableAddress: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        revertMetaBurn(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _synthesis: string,
+            _burnToken: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
         revertSynthesizeRequest(
             _stableBridgingFee: BigNumberish,
             _internalID: BytesLike,
@@ -925,6 +1130,16 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        revertSynthesizeRequestByBridge(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainID: BigNumberish,
+            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

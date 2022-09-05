@@ -609,7 +609,7 @@ export abstract class BaseSwapping {
             {
                 stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
                 amount: this.transit.amountOut.raw.toString(), // uint256 amount;
-                syntCaller: this.from, // address syntCaller;
+                syntCaller: this.symbiosis.metaRouter(MANAGER_CHAIN).address, // address syntCaller;
                 finalReceiveSide: this.tradeC?.routerAddress || AddressZero, // address finalReceiveSide;
                 sToken: this.transit.amountOut.token.address, // address sToken;
                 finalCallData: this.tradeC?.callData || [], // bytes finalCallData;
