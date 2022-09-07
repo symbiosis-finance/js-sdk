@@ -9,7 +9,9 @@ import { calculateGasMargin, getExternalId, getLogWithTimeout } from './utils'
 import { ChainId } from '../constants'
 import { MANAGER_CHAIN } from './constants'
 import { NerveTrade } from './nerveTrade'
-import { MulticallRouter } from './contracts'
+import { MulticallRouter, Portal } from './contracts'
+import { symbiosis } from 'symbiosis-web-app/src/app/lib/symbiosis'
+import { SynthesizeRequestEvent } from './contracts/Portal'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
@@ -25,10 +27,32 @@ export class RevertPending {
         this.slippage = slippage
         this.deadline = deadline
 
-        console.log({ slippage, deadline })
+        if (this.request.type === 'v2') {
+            // find source chain
+            console.log({ request: this.request })
+
+            const chains = symbiosis.chains()
+            for (let i = 0; i < chains.length; i++) {
+                const chainId = chains[i].id
+                if (chainId === MANAGER_CHAIN) {
+                    continue
+                }
+                const portal = symbiosis.portal(chainId) as Portal
+                const eventFragment = portal.interface.getEvent('SynthesizeRequest')
+                const topics = portal.interface.encodeFilterTopics(eventFragment, [
+                    undefined,
+                    undefined, // from
+                    MANAGER_CHAIN, // chains IDs
+                    this.request.revertableAddress, // revertableAddress
+                ])
+                const toBlock = await portal.provider.getBlockNumber()
+                const fromBlock = toBlock - 50000
+                const events = portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
+                console.log({ chainId, events })
+            }
+        }
 
         const fee = await this.getFee()
-        console.log({ fee: fee.toSignificant() })
 
         const transactionRequest = await this.getTransactionRequest(fee)
 
@@ -203,13 +227,14 @@ export class RevertPending {
         )
         await nerveTrade1.init()
 
-        console.log('nerveTrade1', {
-            tokenAmountIn: nerveTrade1.tokenAmountIn.toSignificant(),
-            amountOut: nerveTrade1.amountOut.toSignificant(),
-        })
-
-        const tokenOut = this.symbiosis.findStable('0xBB44A9662f58467351cBE88A18c44B0508AF4182', 97) // FIXME
+        // FIXME find source chain stable synth
+        const tokenOut = this.symbiosis.findStable(
+            '0xBB44A9662f58467351cBE88A18c44B0508AF4182',
+            MANAGER_CHAIN,
+            ChainId.MATIC_MUMBAI
+        )
         if (!tokenOut) throw new Error('Stable not found')
+
         const nervePool2 = this.symbiosis.nervePool(managerStable, tokenOut)
         const nerveTrade2 = new NerveTrade(
             nerveTrade1.amountOut,
@@ -221,10 +246,6 @@ export class RevertPending {
         )
         await nerveTrade2.init()
 
-        console.log('nerveTrade2', {
-            tokenAmountIn: nerveTrade2.tokenAmountIn.toSignificant(),
-            amountOut: nerveTrade2.amountOut.toSignificant(),
-        })
         const trades = [nerveTrade1, nerveTrade2]
 
         return [

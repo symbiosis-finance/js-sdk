@@ -5,6 +5,7 @@ import { SynthesizeRequestEvent } from './contracts/Portal'
 import { BurnRequestEvent } from './contracts/Synthesis'
 import type { Symbiosis } from './symbiosis'
 import { getExternalId } from './utils'
+import { MANAGER_CHAIN } from './constants'
 
 export enum PendingRequestState {
     Default = 0,
@@ -12,7 +13,7 @@ export enum PendingRequestState {
     Reverted,
 }
 
-export type PendingRequestType = 'burn' | 'synthesize'
+export type PendingRequestType = 'burn' | 'synthesize' | 'v2'
 
 export interface PendingRequest {
     fromTokenAmount: TokenAmount
@@ -78,7 +79,6 @@ export async function getChainPendingRequests({
             otherChains, // chains IDs
             address, // revertableAddress
         ])
-        console.log('SynthesizeRequest', { topics })
     } else {
         selectedContract = symbiosis.synthesis(activeChainId)
 
@@ -86,11 +86,10 @@ export async function getChainPendingRequests({
 
         topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            undefined, // from
+            type === 'v2' ? symbiosis.metaRouter(MANAGER_CHAIN).address : undefined, // from
             otherChains, // chains IDs
             address, // revertableAddress
         ])
-        console.log('BurnRequest', { topics })
     }
 
     const eventsByWindow = await Promise.all(
@@ -105,7 +104,6 @@ export async function getChainPendingRequests({
 
     const events: SynthesizeRequestEvent[] | BurnRequestEvent[] = eventsByWindow.flat()
 
-    console.log({ events })
     const pendingRequests: (PendingRequest | null)[] = await Promise.all(
         events.map(async (event) => {
             try {
@@ -133,7 +131,6 @@ export async function getChainPendingRequests({
                     const portal = symbiosis.portal(chainId)
                     contractAddress = portal.address
                     getState = portal.unsynthesizeStates
-                    console.log({ portal })
                 }
 
                 const externalId = getExternalId({
@@ -145,15 +142,12 @@ export async function getChainPendingRequests({
 
                 const { state: otherState } = await selectedContract.requests(externalId)
 
-                console.log({ otherState, selectedContract })
                 // The transaction was not sent from the sender network
                 if (otherState !== PendingRequestState.Sent) {
                     return null
                 }
 
                 const state = await getState(externalId)
-
-                console.log({ state })
 
                 // The transaction still new/reverted in the receiver network
                 if (state === PendingRequestState.Sent) {
@@ -203,9 +197,12 @@ export async function getPendingRequests(symbiosis: Symbiosis, address: string):
         }
 
         pendingRequestsPromises.push(
-            // getChainPendingRequests({ ...params, type: 'synthesize' }).catch(() => {
-            //     return []
-            // }),
+            getChainPendingRequests({ ...params, type: 'synthesize' }).catch(() => {
+                return []
+            }),
+            getChainPendingRequests({ ...params, type: 'v2' }).catch(() => {
+                return []
+            }),
             getChainPendingRequests({ ...params, type: 'burn' }).catch(() => {
                 return []
             })
@@ -214,5 +211,11 @@ export async function getPendingRequests(symbiosis: Symbiosis, address: string):
 
     const pendingRequests = await Promise.all(pendingRequestsPromises)
 
-    return pendingRequests.flat()
+    return pendingRequests.flat().reduce((acc, r) => {
+        const ids = acc.map((i) => i.internalId)
+        if (ids.includes(r.internalId)) {
+            return acc
+        }
+        return [...acc, r]
+    }, [] as PendingRequest[])
 }
