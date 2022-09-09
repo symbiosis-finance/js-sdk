@@ -3,7 +3,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
 
-export const MANAGER_CHAIN = ChainId.BSC_TESTNET
+export const MANAGER_CHAIN = ChainId.BSC_TESTNET // FIXME get manager chain from client
 
 export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,

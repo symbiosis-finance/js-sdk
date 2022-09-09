@@ -1,4 +1,4 @@
-import { TokenAmount } from '../entities'
+import { Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Portal, Synthesis } from './contracts'
 import { SynthesizeRequestEvent } from './contracts/Portal'
@@ -35,6 +35,56 @@ interface GetChainPendingRequestsParams {
     chainsIds: ChainId[]
     address: string
     type: PendingRequestType
+}
+
+const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingRequest): Promise<Token | undefined> => {
+    const synthesis = symbiosis.synthesis(MANAGER_CHAIN)
+    const filter = synthesis.filters.SynthesizeCompleted()
+    const tx = await synthesis.provider.getTransactionReceipt(request.transactionHash)
+    const foundSynthesizeCompleted = tx.logs.find((i) => {
+        return i.topics[0] === filter.topics?.[0]
+    })
+    if (!foundSynthesizeCompleted) return undefined
+
+    let sourceChainId = undefined
+
+    const chains = symbiosis.chains()
+    for (let i = 0; i < chains.length; i++) {
+        const chainId = chains[i].id
+        if (chainId === request.chainIdFrom || chainId === request.chainIdTo) {
+            continue
+        }
+        const portal = symbiosis.portal(chainId)
+        const eventFragment = portal.interface.getEvent('SynthesizeRequest')
+        const topics = portal.interface.encodeFilterTopics(eventFragment, [
+            undefined,
+            undefined, // from
+            MANAGER_CHAIN, // chains IDs
+            request.revertableAddress, // revertableAddress
+        ])
+        const toBlock = await portal.provider.getBlockNumber()
+        const fromBlock = toBlock - 100000
+        const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
+
+        const foundSynthesizeRequest = events.find((e) => {
+            const { id } = e.args
+            const externalId = getExternalId({
+                internalId: id,
+                contractAddress: synthesis.address,
+                revertableAddress: request.revertableAddress,
+                chainId: MANAGER_CHAIN,
+            })
+            return foundSynthesizeCompleted.topics?.[1] === externalId
+        })
+        if (foundSynthesizeRequest) {
+            sourceChainId = chainId
+            break
+        }
+    }
+    if (!sourceChainId) {
+        return
+    }
+    return symbiosis.findTransitStable(sourceChainId)
 }
 
 const WINDOWS_COUNT = 3
@@ -111,8 +161,6 @@ export async function getChainPendingRequests({
 
                 const chainId = chainID.toNumber() as ChainId
 
-                console.log({ chainId, activeChainId })
-
                 const fromToken = symbiosis.findStable(tokenIdFrom, activeChainId)
                 if (!fromToken) {
                     return null
@@ -154,7 +202,7 @@ export async function getChainPendingRequests({
                     return null
                 }
 
-                return {
+                const pendingRequest = {
                     internalId: id,
                     externalId,
                     from,
@@ -169,13 +217,24 @@ export async function getChainPendingRequests({
                     status: 'new',
                     transactionHashReverted: undefined,
                 }
+                if (type === 'v2') {
+                    const sourceChainToken = await findSourceChainToken(symbiosis, pendingRequest)
+                    if (sourceChainToken) {
+                        pendingRequest.chainIdFrom = sourceChainToken.chainId
+                        pendingRequest.fromTokenAmount = new TokenAmount(
+                            sourceChainToken,
+                            pendingRequest.fromTokenAmount.raw
+                        )
+                    }
+                }
+
+                return pendingRequest
             } catch {
                 // TODO: Capture errors?
                 return null
             }
         })
     )
-
     // Remove failed requests
     return pendingRequests.filter((pendingRequest): pendingRequest is PendingRequest => {
         return pendingRequest !== null

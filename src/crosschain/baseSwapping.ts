@@ -545,7 +545,7 @@ export abstract class BaseSwapping {
         return new TokenAmount(feeToken, fee.toString())
     }
 
-    protected async getFeeV2() {
+    protected async getFeeV2(): Promise<TokenAmount> {
         const feeToken = this.symbiosis.transitStable(this.tokenOut.chainId)
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
