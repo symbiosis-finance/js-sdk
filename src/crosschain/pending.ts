@@ -1,3 +1,4 @@
+import { utils } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Portal, Synthesis } from './contracts'
@@ -13,7 +14,7 @@ export enum PendingRequestState {
     Reverted,
 }
 
-export type PendingRequestType = 'burn' | 'synthesize' | 'v2'
+export type PendingRequestType = 'burn' | 'synthesize' | 'burn-v2' | 'burn-v2-revert' | 'synthesize-v2'
 
 export interface PendingRequest {
     fromTokenAmount: TokenAmount
@@ -27,6 +28,7 @@ export interface PendingRequest {
     revertableAddress: string
     chainIdFrom: ChainId
     chainIdTo: ChainId
+    revertChainId: ChainId
 }
 
 interface GetChainPendingRequestsParams {
@@ -63,7 +65,7 @@ const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingReques
             request.revertableAddress, // revertableAddress
         ])
         const toBlock = await portal.provider.getBlockNumber()
-        const fromBlock = toBlock - 100000
+        const fromBlock = toBlock - 100000 // FIXME
         const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
 
         const foundSynthesizeRequest = events.find((e) => {
@@ -85,6 +87,16 @@ const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingReques
         return
     }
     return symbiosis.findTransitStable(sourceChainId)
+}
+
+const isSynthesizeV2 = async (symbiosis: Symbiosis, request: PendingRequest): Promise<boolean> => {
+    const id = utils.id(
+        'metaBurnSyntheticToken((uint256,uint256,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))'
+    )
+    const hash = id.slice(2, 10)
+    const tx = await symbiosis.getProvider(request.chainIdFrom).getTransaction(request.transactionHash)
+
+    return tx.data.includes(hash)
 }
 
 const WINDOWS_COUNT = 3
@@ -118,7 +130,7 @@ export async function getChainPendingRequests({
 
     let selectedContract: Portal | Synthesis
     let topics: (string | string[])[]
-    if (type === 'synthesize') {
+    if (['synthesize', 'synthesize-v2'].includes(type)) {
         selectedContract = symbiosis.portal(activeChainId)
 
         const eventFragment = selectedContract.interface.getEvent('SynthesizeRequest')
@@ -130,13 +142,14 @@ export async function getChainPendingRequests({
             address, // revertableAddress
         ])
     } else {
+        // burn, burn-v2, burn-v2-revert
         selectedContract = symbiosis.synthesis(activeChainId)
 
         const eventFragment = selectedContract.interface.getEvent('BurnRequest')
 
         topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            type === 'v2' ? symbiosis.metaRouter(MANAGER_CHAIN).address : undefined, // from
+            type === 'burn-v2' ? symbiosis.metaRouter(MANAGER_CHAIN).address : undefined, // from
             otherChains, // chains IDs
             address, // revertableAddress
         ])
@@ -171,7 +184,7 @@ export async function getChainPendingRequests({
                 let contractAddress: string
                 let getState: (externalId: string) => Promise<number>
 
-                if (type === 'synthesize') {
+                if (['synthesize', 'synthesize-v2'].includes(type)) {
                     const synthesis = symbiosis.synthesis(chainId)
                     contractAddress = synthesis.address
                     getState = synthesis.synthesizeStates
@@ -216,8 +229,9 @@ export async function getChainPendingRequests({
                     chainIdFrom: activeChainId,
                     status: 'new',
                     transactionHashReverted: undefined,
+                    revertChainId: chainId,
                 }
-                if (type === 'v2') {
+                if (type === 'burn-v2') {
                     const sourceChainToken = await findSourceChainToken(symbiosis, pendingRequest)
                     if (sourceChainToken) {
                         pendingRequest.chainIdFrom = sourceChainToken.chainId
@@ -225,6 +239,16 @@ export async function getChainPendingRequests({
                             sourceChainToken,
                             pendingRequest.fromTokenAmount.raw
                         )
+                    } else {
+                        pendingRequest.type = 'burn-v2-revert'
+                    }
+                }
+                if (type === 'synthesize-v2') {
+                    const isV2 = await isSynthesizeV2(symbiosis, pendingRequest)
+                    if (isV2) {
+                        pendingRequest.revertChainId = activeChainId
+                    } else {
+                        pendingRequest.type = 'synthesize'
                     }
                 }
 
@@ -256,10 +280,13 @@ export async function getPendingRequests(symbiosis: Symbiosis, address: string):
         }
 
         pendingRequestsPromises.push(
-            getChainPendingRequests({ ...params, type: 'synthesize' }).catch(() => {
+            getChainPendingRequests({ ...params, type: 'synthesize-v2' }).catch(() => {
                 return []
             }),
-            getChainPendingRequests({ ...params, type: 'v2' }).catch(() => {
+            getChainPendingRequests({ ...params, type: 'burn-v2' }).catch(() => {
+                return []
+            }),
+            getChainPendingRequests({ ...params, type: 'synthesize' }).catch(() => {
                 return []
             }),
             getChainPendingRequests({ ...params, type: 'burn' }).catch(() => {
