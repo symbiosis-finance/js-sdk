@@ -20,6 +20,7 @@
         "sourceType": "module"
     },
     "plugins": ["@typescript-eslint", "prettier"],
+    "ignorePatterns": ["src/crosschain/nearSmartRoute"],
     "rules": {
         "prettier/prettier": "error"
     }
