@@ -1,6 +1,7 @@
 import { Filter, Log } from '@ethersproject/providers'
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { parseUnits } from '@ethersproject/units'
+import * as base64 from '@ethersproject/base64'
 import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
@@ -207,4 +208,8 @@ export async function getLogWithTimeout({
 
         provider.once(activeFilter, listener)
     })
+}
+
+export function objectToBase64(value: unknown): string {
+    return base64.encode(toUtf8Bytes(JSON.stringify(value)))
 }

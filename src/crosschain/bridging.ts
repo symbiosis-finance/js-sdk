@@ -131,14 +131,14 @@ export class Bridging {
             throw new Error('Tokens are not set')
         }
 
+        const bridge = this.symbiosis.bridgeV2NonEvm(this.tokenOut.chainId).address
+        const synthesis = this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address
+        const amount = this.tokenAmountIn.raw.toString()
+
         const token = new Contract(account, 'usdc.fakes.testnet', {
             viewMethods: [],
             changeMethods: ['ft_transfer_call'],
         }) as Contract & { ft_transfer_call: any }
-
-        const bridge = this.symbiosis.bridgeV2NonEvm(this.tokenOut.chainId).address
-        const synthesis = this.symbiosis.synthesisNonEvm(this.tokenOut.chainId).address
-        const amount = this.tokenAmountIn.raw.toString()
 
         await token.ft_transfer_call(
             {

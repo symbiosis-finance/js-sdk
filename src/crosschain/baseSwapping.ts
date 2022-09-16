@@ -1,22 +1,30 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { MaxUint256 } from '@ethersproject/constants'
+import { MaxUint256, AddressZero } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
+import * as base64 from '@ethersproject/base64'
+import { toUtf8Bytes } from '@ethersproject/strings'
+import { hexlify } from '@ethersproject/bytes'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
+import { transactions } from 'near-api-js'
+import BN from 'bn.js'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
+import { calculateGasMargin, canOneInch, getExternalId, getInternalId, objectToBase64 } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
 import { Transit } from './transit'
+import { NearTrade } from './nearTrade'
+
+export type NearTransactionRequest = Record<string, unknown>
 
 export type SwapExactIn = Promise<{
+    nearTransactionRequest?: NearTransactionRequest
     execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
@@ -43,9 +51,9 @@ export abstract class BaseSwapping {
 
     protected route!: Token[]
 
-    protected tradeA: UniLikeTrade | OneInchTrade | undefined
+    protected tradeA: UniLikeTrade | OneInchTrade | NearTrade | undefined
     protected transit!: Transit
-    protected tradeC: UniLikeTrade | OneInchTrade | undefined
+    protected tradeC: UniLikeTrade | OneInchTrade | NearTrade | undefined
 
     protected dataProvider: DataProvider
 
@@ -107,6 +115,25 @@ export abstract class BaseSwapping {
         }
         // <<< NOTE create trades with calculated fee
 
+        if (tokenAmountIn.token.isFromNear()) {
+            const transactionRequest = {} // @@
+
+            const nearTransactionRequest = this.getNearTransactionRequest(fee)
+
+            return {
+                execute: (signer: Signer) => this.execute(transactionRequest, signer),
+                fee,
+                tokenAmountOut: this.tokenAmountOut(),
+                tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
+                route: this.route,
+                priceImpact: this.calculatePriceImpact(),
+                amountInUsd: this.amountInUsd,
+                transactionRequest,
+                approveTo: this.approveTo(),
+                nearTransactionRequest,
+            }
+        }
+
         const transactionRequest = this.getTransactionRequest(fee)
 
         return {
@@ -164,9 +191,96 @@ export abstract class BaseSwapping {
         }).waitForComplete(receipt)
     }
 
+    protected getNearTransactionRequest(fee: TokenAmount): NearTransactionRequest {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const chainIdOut = this.tokenOut.chainId
+        const tokenAmount = this.transit.getBridgeAmountIn()
+
+        let finalCalldata: Uint8Array | string | [] = this.finalCalldata()
+        if (Array.isArray(finalCalldata)) {
+            finalCalldata = toUtf8Bytes('')
+        }
+
+        const bridgeAmount = tokenAmount.raw.toString()
+
+        const otherSideSynthCallData = {
+            MetaSynthesize: {
+                stable_bridging_fee: fee.raw.toString(), // This fee is deducted from amount and sent to Bridge
+                amount: bridgeAmount, // Amount of transferred token
+                real_token: tokenAmount.token.address, // Token to be held on Near and synthesized on other chain
+                chain_to_address: base64.encode(this.to), // 20-byte eth address
+                receive_side: base64.encode(this.symbiosis.synthesisNonEvm(chainIdOut).address), // 20-byte eth address
+                opposite_bridge: base64.encode(this.symbiosis.bridgeV2NonEvm(chainIdOut).address), // 20-byte eth address
+                synth_caller: this.from, // caller
+                chain_id: chainIdOut.toString(), // Chain id on which we should synthesize held tokens
+                swap_tokens: this.swapTokens().map((address) => base64.encode(address)),
+                second_dex_router: base64.encode(this.secondDexRouter()), // First swap's contract address
+                second_swap_calldata: base64.encode(this.secondSwapCalldata()), // Second swap contract address (not needed on Near)
+                final_receive_side: base64.encode(this.finalReceiveSide()), // Final contract to call address
+                final_calldata: base64.encode(finalCalldata), // For example Portal.meta_synthesize method's call
+                final_offset: this.finalOffset().toString(), // Not used on Near. Used to change amount on EVM side via inline assembly
+                revertable_address: base64.encode(this.revertableAddress), // 20-byte Ethereum address to return money on in case of error
+            },
+        }
+
+        if (!this.tradeA) {
+            const token = this.tokenAmountIn.token
+            const address = token.address
+
+            return {
+                receiverId: address,
+                actions: [
+                    transactions.functionCall(
+                        'ft_transfer_call',
+                        {
+                            amount: bridgeAmount,
+                            receiver_id: 'portal.symbiosis-finance.testnet', // @@
+                            msg: JSON.stringify(otherSideSynthCallData),
+                        },
+                        new BN('300000000000000'), // gas
+                        new BN('1') // amount
+                    ),
+                ],
+            }
+        }
+
+        if (!(this.tradeA instanceof NearTrade)) {
+            throw new Error('NearTrade expected')
+        }
+
+        const { route, callData } = this.tradeA
+
+        const args = {
+            first_gas_limit: '170000000000000',
+            second_gas_limit: '80000000000000',
+            first_account: route[0].address,
+            first_function_name: 'ft_transfer_call',
+            first_msg: callData,
+            approved_tokens: route.map((token) => token.address),
+            second_account: 'portal.symbiosis-finance.testnet', // @@
+            second_function_name: 'meta_synthesize',
+            second_msg: objectToBase64(otherSideSynthCallData),
+        }
+
+        // TODO: Swap not only Near token
+        return {
+            receiverId: 'metarouter.symbiosis-finance.testnet',
+            actions: [
+                transactions.functionCall(
+                    'native_meta_route',
+                    { args },
+                    new BN('300000000000000'), // gas,
+                    new BN(this.tokenAmountIn.raw.toString()) // amount,
+                ),
+            ],
+        }
+    }
+
     protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
         const chainId = this.tokenAmountIn.token.chainId
-        const metaRouter = this.symbiosis.metaRouter(chainId)
 
         const [relayRecipient, otherSideCalldata] = this.otherSideData(fee)
 
@@ -176,6 +290,7 @@ export abstract class BaseSwapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
+        const metaRouter = this.symbiosis.metaRouter(chainId)
         const data = metaRouter.interface.encodeFunctionData('metaRoute', [
             {
                 amount: amount.raw.toString(),
@@ -222,9 +337,14 @@ export abstract class BaseSwapping {
         return this.transit.amountOut
     }
 
-    protected buildTradeA(): UniLikeTrade | OneInchTrade {
+    protected buildTradeA(): UniLikeTrade | OneInchTrade | NearTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
+
+        if (this.tokenAmountIn.token.isFromNear()) {
+            return new NearTrade(this.tokenAmountIn, tokenOut)
+        }
+
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
@@ -269,6 +389,10 @@ export abstract class BaseSwapping {
     protected buildTradeC() {
         const chainId = this.tokenOut.chainId
         const amountIn = this.transit.amountOut
+
+        if (this.tokenOut.isFromNear()) {
+            return new NearTrade(amountIn, this.tokenOut)
+        }
 
         if (this.use1Inch && canOneInch(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
@@ -319,9 +443,14 @@ export abstract class BaseSwapping {
             throw new Error('Tokens are not set')
         }
 
-        const synthesis = this.symbiosis.synthesis(this.tokenAmountIn.token.chainId)
+        const synthesis = this.symbiosis.synthesisNonEvm(this.tokenAmountIn.token.chainId)
 
         const amount = this.transit.getBridgeAmountIn()
+
+        let finalCallData: Uint8Array | string | [] = this.finalCalldata()
+        if (Array.isArray(finalCallData)) {
+            finalCallData = toUtf8Bytes('')
+        }
 
         return [
             synthesis.address,
@@ -330,14 +459,14 @@ export abstract class BaseSwapping {
                     stableBridgingFee: fee.raw.toString(),
                     amount: amount.raw.toString(),
                     syntCaller: this.from,
-                    finalReceiveSide: this.finalReceiveSide(),
+                    finalReceiveSide: toUtf8Bytes(this.tradeC?.routerAddress ?? ''),
                     sToken: amount.token.address,
-                    finalCallData: this.finalCalldata(),
+                    finalCallData,
                     finalOffset: this.finalOffset(),
-                    chain2address: this.to,
-                    receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
-                    oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
-                    revertableAddress: this.revertableAddress,
+                    chain2address: toUtf8Bytes(this.to), // @@
+                    revertableAddress: toUtf8Bytes(this.revertableAddress), // @@
+                    receiveSide: toUtf8Bytes('portal.symbiosis-finance.testnet'), // @@
+                    oppositeBridge: toUtf8Bytes('bridge.symbiosis-finance.testnet'), // @@
                     chainID: this.tokenOut.chainId,
                     clientID: this.symbiosis.clientId,
                 },
@@ -390,7 +519,7 @@ export abstract class BaseSwapping {
         const chainIdOut = this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
-        const synthesis = this.symbiosis.synthesis(chainIdOut)
+        const synthesis = this.symbiosis.synthesisNonEvm(chainIdOut)
 
         const internalId = getInternalId({
             contractAddress: portal.address,
@@ -463,6 +592,26 @@ export abstract class BaseSwapping {
     }
 
     protected async getFee(feeToken: Token): Promise<TokenAmount> {
+        if (!this.tokenOut || !this.tokenAmountIn) {
+            throw new Error('Set tokens')
+        }
+
+        // @@
+        if (this.tokenAmountIn.token.isFromNear()) {
+            const synth = this.symbiosis.findSyntheticStable(this.tokenOut.chainId, this.tokenAmountIn.token.chainId)
+
+            if (!synth) {
+                throw new Error('Cant synth stable')
+            }
+
+            return new TokenAmount(synth, '1000000') // @@ fake
+        }
+
+        // @@
+        if (this.tokenOut.isFromNear()) {
+            return new TokenAmount(feeToken, '1000000') // @@ fake
+        }
+
         const [receiveSide, calldata] =
             this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData()
 
@@ -511,6 +660,31 @@ export abstract class BaseSwapping {
     }
 
     protected finalCalldata(): string | [] {
+        if (!this.tradeC?.callData) {
+            return []
+        }
+
+        if (this.tradeC instanceof NearTrade) {
+            // @@ Move to NearTrade class?
+            return hexlify(
+                toUtf8Bytes(
+                    JSON.stringify({
+                        MetaRoute: {
+                            first_function_name: 'ft_transfer_call',
+                            first_gas_limit: '150000000000000',
+                            second_gas_limit: '50000000000000',
+                            first_msg: this.tradeC.callData,
+                            approved_tokens: this.tradeC.route.map((token) => token.address),
+                            first_account: this.tradeC.route[0].address,
+                            second_account: this.to,
+                            second_function_name: '',
+                            second_msg: '',
+                        },
+                    })
+                )
+            )
+        }
+
         return this.tradeC?.callData || []
     }
 

@@ -4,6 +4,7 @@ import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
 
 export const CHAINS_PRIORITY = [
+    ChainId.NEAR_TESTNET,
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
     ChainId.ETH_KOVAN,

@@ -416,6 +416,12 @@ export class Symbiosis {
         return getRepresentation(this, token, chainId)
     }
 
+    public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
+        return this.stables().find((token) => {
+            return token.chainId === chainId && token.chainFromId === chainFromId && token.isSynthetic
+        })
+    }
+
     public async getBridgeFee({
         calldata,
         receiveSide,
