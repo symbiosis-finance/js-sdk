@@ -76,6 +76,7 @@ export class RevertRequest {
             chainIdFrom: this.chainId,
             chainIdTo,
             fromTokenAmount: new TokenAmount(token, amount),
+            revertChainId: chainIdTo,
         }
     }
 
