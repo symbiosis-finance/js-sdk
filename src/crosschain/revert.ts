@@ -505,7 +505,7 @@ export class RevertPending {
         const { type, internalId, chainIdTo, revertableAddress } = this.request
 
         let contractAddress: string
-        if (type === 'synthesize') {
+        if (type === 'synthesize' || type === 'synthesize-v2') {
             contractAddress = this.symbiosis.synthesis(chainIdTo).address
         } else {
             contractAddress = this.symbiosis.portal(chainIdTo).address
