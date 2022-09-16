@@ -8,7 +8,6 @@ import { Error, ErrorCode } from './error'
 import { PendingRequest } from './pending'
 import type { Symbiosis } from './symbiosis'
 import { calculateGasMargin, getExternalId, getInternalId, getLogWithTimeout } from './utils'
-import { MANAGER_CHAIN } from './constants'
 import { NerveTrade } from './nerveTrade'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
@@ -21,7 +20,7 @@ export class RevertPending {
     private slippage!: number
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
-        this.multicallRouter = this.symbiosis.multicallRouter(MANAGER_CHAIN)
+        this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.mChainId)
     }
 
     async revert(slippage: number, deadline: number) {
@@ -50,22 +49,43 @@ export class RevertPending {
             revertableAddress,
             contractAddress: this.symbiosis.portal(chainIdTo).address,
         })
-        const managerSynthesis = this.symbiosis.synthesis(MANAGER_CHAIN)
+        const mChainSynthesis = this.symbiosis.synthesis(this.symbiosis.mChainId)
 
         const revertBurnLog = await getLogWithTimeout({
-            chainId: MANAGER_CHAIN,
-            filter: managerSynthesis.filters.RevertBurnCompleted(externalId),
+            chainId: this.symbiosis.mChainId,
+            filter: mChainSynthesis.filters.RevertBurnCompleted(externalId),
             symbiosis: this.symbiosis,
         })
 
-        const receipt = await managerSynthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
+        const receipt = await mChainSynthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
 
         const wfc = new WaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
             revertableAddress: revertableAddress,
-            chainIdIn: MANAGER_CHAIN,
+            chainIdIn: this.symbiosis.mChainId,
             chainIdOut: chainIdFrom,
+        })
+        const log = await wfc.waitForComplete(receipt)
+
+        return log.transactionHash
+    }
+
+    private async waitForCompleteV2Revert() {
+        const { chainIdFrom, chainIdTo, revertableAddress } = this.request
+        const synthesis = this.symbiosis.synthesis(chainIdFrom)
+        const externalId = this.getExternalId()
+        const filter = synthesis.filters.RevertBurnCompleted(externalId)
+        const revertBurnLog = await getLogWithTimeout({ chainId: chainIdFrom, filter, symbiosis: this.symbiosis })
+
+        const receipt = await synthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
+
+        const wfc = new WaitForComplete({
+            direction: 'burn',
+            symbiosis: this.symbiosis,
+            revertableAddress: revertableAddress,
+            chainIdIn: chainIdFrom,
+            chainIdOut: chainIdTo,
         })
         const log = await wfc.waitForComplete(receipt)
 
@@ -77,6 +97,10 @@ export class RevertPending {
         const { type } = this.request
         if (type === 'burn-v2') {
             return this.waitForCompleteV2()
+        }
+
+        if (type === 'burn-v2-revert') {
+            return this.waitForCompleteV2Revert()
         }
 
         const { chainIdFrom } = this.request
@@ -103,13 +127,13 @@ export class RevertPending {
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
-            chainIdFrom: MANAGER_CHAIN,
+            chainIdFrom: this.symbiosis.mChainId,
             chainIdTo: this.request.chainIdFrom,
         })
         return new TokenAmount(feeToken, fee.toString())
     }
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
-        const chainIdIn = MANAGER_CHAIN
+        const chainIdIn = this.symbiosis.mChainId
         const chainIdOut = this.request.chainIdFrom
         const { revertableAddress, fromTokenAmount } = this.request
 
@@ -145,13 +169,13 @@ export class RevertPending {
     private buildMetaBurnCalldata(feeV2?: TokenAmount) {
         const chainId = this.request.chainIdFrom
         const { to } = this.request
-        const synthesis = this.symbiosis.synthesis(MANAGER_CHAIN)
-        const sToken = this.symbiosis.findSyntheticStable(MANAGER_CHAIN, chainId)?.address
+        const synthesis = this.symbiosis.synthesis(this.symbiosis.mChainId)
+        const sToken = this.symbiosis.findSyntheticStable(this.symbiosis.mChainId, chainId)?.address
         if (!sToken) {
-            throw new Error(`Cannot find synthetic token between manager chain and ${chainId}`)
+            throw new Error(`Cannot find synthetic token between mChain and ${chainId}`)
         }
 
-        const metarouter = this.symbiosis.metaRouter(MANAGER_CHAIN)
+        const metarouter = this.symbiosis.metaRouter(this.symbiosis.mChainId)
 
         const calldata = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
             {
@@ -206,8 +230,8 @@ export class RevertPending {
             ])
             receiveSide = synthesis.address
         } else if (type === 'burn-v2') {
-            advisorChainIdTo = MANAGER_CHAIN
-            const synthesis = this.symbiosis.synthesis(MANAGER_CHAIN)
+            advisorChainIdTo = this.symbiosis.mChainId
+            const synthesis = this.symbiosis.synthesis(this.symbiosis.mChainId)
             const [router, swapCalldata] = await this.buildSwapCalldata()
             const [burnToken, burnCalldata] = this.buildMetaBurnCalldata()
 
@@ -223,17 +247,16 @@ export class RevertPending {
             receiveSide = synthesis.address
         } else {
             // burn-v2-revert
-            const portal = this.symbiosis.portal(chainIdTo)
-
-            calldata = portal.interface.encodeFunctionData('revertBurnRequestByBridge', [
+            const synthesis = this.symbiosis.synthesis(chainIdFrom)
+            calldata = synthesis.interface.encodeFunctionData('revertBurnAndBurn', [
                 '0', // stableBridgingFee
-                internalId,
-                this.symbiosis.synthesis(MANAGER_CHAIN).address, // _receiveSide
-                this.symbiosis.bridge(MANAGER_CHAIN).address, // _oppositeBridge
-                MANAGER_CHAIN, // _chainId
-                revertableAddress, // _sender
+                externalId,
+                this.symbiosis.portal(chainIdTo).address, // _receiveSide
+                this.symbiosis.bridge(chainIdTo).address, // _oppositeBridge
+                chainIdTo, // _chainId
+                revertableAddress, // _revertableAddress
             ])
-            receiveSide = portal.address
+            receiveSide = synthesis.address
         }
 
         const fee = await this.symbiosis.getBridgeFee({
@@ -271,7 +294,7 @@ export class RevertPending {
             return await this.getRevertBurnTransactionRequestV2(fee, feeV2)
         }
 
-        return await this.getMetaRevertBurnTransactionRequest2(fee)
+        return await this.getRevertBurnTransactionRequestV2Revert(fee)
     }
 
     private getRevertSynthesizeTransactionRequestV2(fee: TokenAmount): TransactionRequest {
@@ -285,11 +308,11 @@ export class RevertPending {
                     stableBridgingFee: fee.raw.toString(),
                     internalID: internalId,
                     receiveSide: portal.address,
-                    managerChainBridge: this.symbiosis.bridge(MANAGER_CHAIN).address,
-                    managerChainId: MANAGER_CHAIN,
+                    managerChainBridge: this.symbiosis.bridge(this.symbiosis.mChainId).address,
+                    managerChainId: this.symbiosis.mChainId,
                     sourceChainBridge: this.symbiosis.bridge(chainIdFrom).address,
                     sourceChainId: chainIdFrom,
-                    sourceChainSynthesis: this.symbiosis.synthesis(MANAGER_CHAIN).address,
+                    sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.mChainId).address,
                     router: AddressZero, // multicall router
                     swapCalldata: [], // swapCalldata,
                     burnToken: AddressZero, //burnToken,
@@ -346,29 +369,22 @@ export class RevertPending {
     private async buildSwapCalldata(fee?: TokenAmount): Promise<[string, string]> {
         const { fromTokenAmount, chainIdFrom, chainIdTo } = this.request
 
-        const tokenIn = this.symbiosis.findSyntheticStable(MANAGER_CHAIN, chainIdTo)
+        const tokenIn = this.symbiosis.findSyntheticStable(this.symbiosis.mChainId, chainIdTo)
         if (!tokenIn) {
-            throw new Error(`Cannot find synthetic token between manager chain and ${chainIdTo}`)
+            throw new Error(`Cannot find synthetic token between mChain and ${chainIdTo}`)
         }
         const tokenAmountIn = new TokenAmount(tokenIn, fromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
-        const managerStable = this.symbiosis.transitStable(MANAGER_CHAIN)
-        const nervePool1 = this.symbiosis.nervePool(tokenIn, managerStable)
-        const nerveTrade1 = new NerveTrade(
-            amount,
-            managerStable,
-            this.slippage,
-            this.deadline,
-            nervePool1,
-            this.symbiosis
-        )
+        const mStable = this.symbiosis.transitStable(this.symbiosis.mChainId)
+        const nervePool1 = this.symbiosis.nervePool(tokenIn, mStable)
+        const nerveTrade1 = new NerveTrade(amount, mStable, this.slippage, this.deadline, nervePool1, this.symbiosis)
         await nerveTrade1.init()
 
-        const tokenOut = this.symbiosis.findSyntheticStable(MANAGER_CHAIN, chainIdFrom)
+        const tokenOut = this.symbiosis.findSyntheticStable(this.symbiosis.mChainId, chainIdFrom)
         if (!tokenOut) throw new Error('Stable not found')
 
-        const nervePool2 = this.symbiosis.nervePool(managerStable, tokenOut)
+        const nervePool2 = this.symbiosis.nervePool(mStable, tokenOut)
         const nerveTrade2 = new NerveTrade(
             nerveTrade1.amountOut,
             tokenOut,
@@ -392,7 +408,7 @@ export class RevertPending {
                     trades[trades.length - 1].amountOut.token.address,
                 ],
                 trades.map(() => 100), // offset
-                this.symbiosis.metaRouter(MANAGER_CHAIN).address,
+                this.symbiosis.metaRouter(this.symbiosis.mChainId).address,
             ]),
         ]
     }
@@ -403,9 +419,9 @@ export class RevertPending {
     ): Promise<TransactionRequest> {
         const { internalId, chainIdTo } = this.request
 
-        const managerChainBridge = this.symbiosis.bridge(MANAGER_CHAIN)
+        const mChainBridge = this.symbiosis.bridge(this.symbiosis.mChainId)
         const portal = this.symbiosis.portal(chainIdTo)
-        const managerChainSynthesis = this.symbiosis.synthesis(MANAGER_CHAIN)
+        const mChainSynthesis = this.symbiosis.synthesis(this.symbiosis.mChainId)
 
         const [router, swapCalldata] = await this.buildSwapCalldata(fee)
         const [burnToken, burnCalldata] = this.buildMetaBurnCalldata(feeV2)
@@ -416,12 +432,12 @@ export class RevertPending {
                 {
                     stableBridgingFee: fee.raw.toString(),
                     internalID: internalId,
-                    receiveSide: managerChainSynthesis.address,
-                    managerChainBridge: managerChainBridge.address,
-                    managerChainId: MANAGER_CHAIN,
+                    receiveSide: mChainSynthesis.address,
+                    managerChainBridge: mChainBridge.address,
+                    managerChainId: this.symbiosis.mChainId,
                     sourceChainBridge: AddressZero,
                     sourceChainId: this.request.chainIdFrom,
-                    sourceChainSynthesis: managerChainSynthesis.address,
+                    sourceChainSynthesis: mChainSynthesis.address,
                     router, // multicall router
                     swapCalldata,
                     burnToken,
@@ -433,7 +449,7 @@ export class RevertPending {
         }
     }
 
-    private async getMetaRevertBurnTransactionRequest2(fee: TokenAmount): Promise<TransactionRequest> {
+    private async getRevertBurnTransactionRequestV2Revert(fee: TokenAmount): Promise<TransactionRequest> {
         const { internalId, chainIdTo } = this.request
 
         const portal = this.symbiosis.portal(chainIdTo)
@@ -445,11 +461,11 @@ export class RevertPending {
                     stableBridgingFee: fee.raw.toString(),
                     internalID: internalId,
                     receiveSide: portal.address,
-                    managerChainBridge: this.symbiosis.bridge(MANAGER_CHAIN).address,
-                    managerChainId: MANAGER_CHAIN,
+                    managerChainBridge: this.symbiosis.bridge(this.symbiosis.mChainId).address,
+                    managerChainId: this.symbiosis.mChainId,
                     sourceChainBridge: AddressZero,
-                    sourceChainId: this.request.chainIdFrom,
-                    sourceChainSynthesis: this.symbiosis.synthesis(MANAGER_CHAIN).address,
+                    sourceChainId: chainIdTo,
+                    sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.mChainId).address,
                     router: AddressZero, // multicall router
                     swapCalldata: [],
                     burnToken: AddressZero,

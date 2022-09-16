@@ -181,6 +181,7 @@ export class WaitForComplete {
             to,
             transactionHash: receipt.transactionHash,
             type,
+            revertChainId: chainId, // FIXME depends of type
         }
     }
 }

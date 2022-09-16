@@ -5,7 +5,7 @@ import { DataProvider } from './dataProvider'
 import { Percent, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { CHAINS_PRIORITY, MANAGER_CHAIN } from './constants'
+import { CHAINS_PRIORITY } from './constants'
 import { BridgeDirection } from './types'
 import { MulticallRouter } from './contracts'
 
@@ -34,7 +34,7 @@ export class Transit {
     ) {
         this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId)
 
-        this.multicallRouter = this.symbiosis.multicallRouter(MANAGER_CHAIN)
+        this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.mChainId)
 
         this.route = []
         this.receiveSide = AddressZero
@@ -103,14 +103,16 @@ export class Transit {
 
     // PROTECTED
 
-    protected static getDirection(chainIdIn: ChainId, chainIdOut: ChainId): BridgeDirection {
-        const withManagerChain = chainIdIn === MANAGER_CHAIN || chainIdOut === MANAGER_CHAIN
+    protected static getDirection(chainIdIn: ChainId, chainIdOut: ChainId, mChainId?: ChainId): BridgeDirection {
+        const withManagerChain = chainIdIn === mChainId || chainIdOut === mChainId
         if (!withManagerChain) {
             return 'v2'
         }
 
-        const indexIn = CHAINS_PRIORITY.indexOf(chainIdIn)
-        const indexOut = CHAINS_PRIORITY.indexOf(chainIdOut)
+        const chainsPriorityWithMChain = [...CHAINS_PRIORITY, mChainId]
+
+        const indexIn = chainsPriorityWithMChain.indexOf(chainIdIn)
+        const indexOut = chainsPriorityWithMChain.indexOf(chainIdOut)
         if (indexIn === -1) {
             throw new Error(`Chain ${chainIdIn} not found in chains priority`)
         }
@@ -135,7 +137,7 @@ export class Transit {
                 this.getLastTradeAmountOut().token.address, // output token
             ], // path
             this.trades.map(() => 100), // offset
-            this.symbiosis.metaRouter(MANAGER_CHAIN).address,
+            this.symbiosis.metaRouter(this.symbiosis.mChainId).address,
         ])
     }
 
@@ -215,7 +217,7 @@ export class Transit {
     }
 
     protected async getFeeToken(): Promise<Token> {
-        const transitStableOutChainId = this.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId
+        const transitStableOutChainId = this.isV2() ? this.symbiosis.mChainId : this.tokenOut.chainId
 
         if (this.direction === 'burn' || !this.isTradesRequired()) {
             return this.symbiosis.transitStable(transitStableOutChainId) // USDC | BUSD
@@ -238,7 +240,7 @@ export class Transit {
             return this.symbiosis.transitStable(this.tokenOut.chainId)
         }
 
-        const transitStableInChainId = this.isV2() ? MANAGER_CHAIN : this.amountIn.token.chainId
+        const transitStableInChainId = this.isV2() ? this.symbiosis.mChainId : this.amountIn.token.chainId
         const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
         const rep = await this.dataProvider.getRepresentation(transitStableOut, transitStableInChainId) // sUSDC
         if (!rep) {
@@ -269,20 +271,13 @@ export class Transit {
             return [nerveTrade]
         }
 
-        const managerStable = this.symbiosis.transitStable(MANAGER_CHAIN)
+        const mStable = this.symbiosis.transitStable(this.symbiosis.mChainId)
 
-        const nervePool1 = this.symbiosis.nervePool(amountIn.token, managerStable)
-        const nerveTrade1 = new NerveTrade(
-            amountIn,
-            managerStable,
-            this.slippage,
-            this.deadline,
-            nervePool1,
-            this.symbiosis
-        )
+        const nervePool1 = this.symbiosis.nervePool(amountIn.token, mStable)
+        const nerveTrade1 = new NerveTrade(amountIn, mStable, this.slippage, this.deadline, nervePool1, this.symbiosis)
         await nerveTrade1.init()
 
-        const nervePool2 = this.symbiosis.nervePool(managerStable, tokenOut)
+        const nervePool2 = this.symbiosis.nervePool(mStable, tokenOut)
         const nerveTrade2 = new NerveTrade(
             nerveTrade1.amountOut,
             tokenOut,

@@ -66,6 +66,7 @@ export class Symbiosis {
 
     public readonly config: Config
     public readonly clientId: string
+    public readonly mChainId: ChainId
 
     public constructor(config: ConfigName | Config, clientId: string) {
         if (config === 'mainnet') {
@@ -75,6 +76,7 @@ export class Symbiosis {
         } else {
             this.config = config
         }
+        this.mChainId = this.config.mChainId
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(

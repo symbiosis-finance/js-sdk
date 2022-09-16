@@ -3,8 +3,6 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
 
-export const MANAGER_CHAIN = ChainId.BSC_TESTNET // FIXME get manager chain from client
-
 export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
@@ -25,9 +23,6 @@ export const CHAINS_PRIORITY = [
     ChainId.OKEX_TESTNET,
     ChainId.HECO_MAINNET,
     ChainId.HECO_TESTNET,
-    // manager chain is cheapest
-    ChainId.BSC_MAINNET,
-    ChainId.BSC_TESTNET,
 ]
 
 // a list of tokens by chain

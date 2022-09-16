@@ -47,6 +47,7 @@ export type AdvisorConfig = {
 
 export type Config = {
     advisor: AdvisorConfig
+    mChainId: ChainId
     chains: ChainConfig[]
     minSwapAmountInUsd: number
     maxSwapAmountInUsd: number

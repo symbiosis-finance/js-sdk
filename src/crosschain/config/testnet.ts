@@ -6,6 +6,7 @@ export const config: Config = {
     advisor: {
         url: 'https://api.testnet.symbiosis.finance/calculations',
     },
+    mChainId: 97,
     chains: [
         {
             id: 4,

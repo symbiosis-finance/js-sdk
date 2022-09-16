@@ -6,7 +6,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
-import { BIPS_BASE, MANAGER_CHAIN } from './constants'
+import { BIPS_BASE } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
@@ -76,7 +76,7 @@ export abstract class BaseSwapping {
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
-        this.synthesisV2 = this.symbiosis.synthesis(MANAGER_CHAIN)
+        this.synthesisV2 = this.symbiosis.synthesis(this.symbiosis.mChainId)
 
         if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
@@ -164,18 +164,18 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 revertableAddress: this.revertableAddress,
                 chainIdIn: this.tokenAmountIn.token.chainId,
-                chainIdOut: MANAGER_CHAIN,
+                chainIdOut: this.symbiosis.mChainId,
             })
             const log = await wfc1.waitForComplete(receipt)
 
-            const provider = this.symbiosis.getProvider(MANAGER_CHAIN)
+            const provider = this.symbiosis.getProvider(this.symbiosis.mChainId)
             const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
 
             const wfc2 = new WaitForComplete({
                 direction: 'burn',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.revertableAddress,
-                chainIdIn: MANAGER_CHAIN,
+                chainIdIn: this.symbiosis.mChainId,
                 chainIdOut: this.tokenOut.chainId,
             })
             return wfc2.waitForComplete(receipt2)
@@ -388,7 +388,7 @@ export abstract class BaseSwapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.transit.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? this.symbiosis.mChainId : this.tokenOut.chainId
         const tokenAmount = this.transit.getBridgeAmountIn()
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -424,7 +424,7 @@ export abstract class BaseSwapping {
 
     protected async feeMintCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.transit.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? this.symbiosis.mChainId : this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
@@ -500,7 +500,7 @@ export abstract class BaseSwapping {
     }
 
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
-        const chainIdIn = MANAGER_CHAIN
+        const chainIdIn = this.symbiosis.mChainId
         const chainIdOut = this.tokenOut.chainId
 
         const synthesis = this.symbiosis.synthesis(chainIdIn)
@@ -540,7 +540,7 @@ export abstract class BaseSwapping {
             receiveSide,
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
-            chainIdTo: this.transit.isV2() ? MANAGER_CHAIN : this.tokenOut.chainId,
+            chainIdTo: this.transit.isV2() ? this.symbiosis.mChainId : this.tokenOut.chainId,
         })
         return new TokenAmount(feeToken, fee.toString())
     }
@@ -552,7 +552,7 @@ export abstract class BaseSwapping {
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
-            chainIdFrom: MANAGER_CHAIN,
+            chainIdFrom: this.symbiosis.mChainId,
             chainIdTo: this.tokenOut.chainId,
         })
         return new TokenAmount(feeToken, fee.toString())
@@ -609,7 +609,7 @@ export abstract class BaseSwapping {
             {
                 stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
                 amount: this.transit.amountOut.raw.toString(), // uint256 amount;
-                syntCaller: this.symbiosis.metaRouter(MANAGER_CHAIN).address, // address syntCaller;
+                syntCaller: this.symbiosis.metaRouter(this.symbiosis.mChainId).address, // address syntCaller;
                 finalReceiveSide: this.tradeC?.routerAddress || AddressZero, // address finalReceiveSide;
                 sToken: this.transit.amountOut.token.address, // address sToken;
                 finalCallData: this.tradeC?.callData || [], // bytes finalCallData;
