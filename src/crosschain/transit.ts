@@ -32,7 +32,7 @@ export class Transit {
         protected deadline: number,
         protected fee?: TokenAmount
     ) {
-        this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId)
+        this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, symbiosis.mChainId)
 
         this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.mChainId)
 
