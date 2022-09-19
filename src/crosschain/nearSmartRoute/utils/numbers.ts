@@ -81,9 +81,9 @@ export function scientificNotationToString(strParam: string) {
 
   const negative = Number(strParam) < 0 ? '-' : '';
 
-  let index = Number(strParam.match(/\d+$/)[0]);
+  let index = Number(strParam.match(/\d+$/)![0]);
 
-  let basis = strParam.match(/[\d\.]+/)[0];
+  let basis = strParam.match(/[\d\.]+/)![0];
 
   const ifFraction = basis.includes('.');
 
