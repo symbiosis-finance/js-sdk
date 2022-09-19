@@ -1,16 +1,7 @@
+import { Context } from '../context';
 import { toNonDivisibleNumber, toReadableNumber } from '../utils/numbers';
 import { PoolRPCView } from './api';
-import { STABLE_POOL_ID, POOL_TOKEN_REFRESH_INTERVAL } from './near';
-import moment from 'moment';
-import { isRatedPool, isStablePool } from './near';
-
-export const STABLE_LP_TOKEN_DECIMALS = 18;
-export const RATED_POOL_LP_TOKEN_DECIMALS = 24;
-
-export const getStablePoolDecimal = (id: string | number) => {
-  if (isRatedPool(id)) return RATED_POOL_LP_TOKEN_DECIMALS;
-  else if (isStablePool(id)) return STABLE_LP_TOKEN_DECIMALS;
-};
+import { STABLE_LP_TOKEN_DECIMALS } from './near';
 
 export const DEFAULT_PAGE_LIMIT = 100;
 const getStablePoolKey = (id: string) => `STABLE_POOL_VALUE_${id}`;
@@ -46,7 +37,7 @@ export interface StablePool {
 }
 
 export const parsePool = (pool: PoolRPCView, id?: number): Pool => ({
-  id: Number(id >= 0 ? id : pool.id),
+  id: Number(id !== undefined && id >= 0 ? id : pool.id),
   tokenIds: pool.token_account_ids,
   supplies: pool.amounts.reduce(
     (acc: { [tokenId: string]: string }, amount: string, i: number) => {
@@ -61,27 +52,21 @@ export const parsePool = (pool: PoolRPCView, id?: number): Pool => ({
   token0_ref_price: pool.token0_ref_price,
 });
 
-// @@
-const refFiViewFunction = ({
-  methodName,
-  args,
-}: {
-  methodName: string;
-  args?: object;
-}) => {
-  return {} as any;
+export const getPool = async (context: Context, id: number): Promise<Pool> => {
+  return context
+    .refFiViewFunction({
+      methodName: 'get_pool',
+      args: { pool_id: id },
+    })
+    .then((pool: PoolRPCView) => parsePool(pool, id));
 };
 
-export const getPool = async (id: number): Promise<Pool> => {
-  return refFiViewFunction({
-    methodName: 'get_pool',
-    args: { pool_id: id },
-  }).then((pool: PoolRPCView) => parsePool(pool, id));
-};
-
-export const getStablePool = async (pool_id: number): Promise<StablePool> => {
-  if (isRatedPool(pool_id)) {
-    const pool_info = await refFiViewFunction({
+export const getStablePool = async (
+  context: Context,
+  pool_id: number
+): Promise<StablePool> => {
+  if (context.nearUtils.isRatedPool(pool_id)) {
+    const pool_info = await context.refFiViewFunction({
       methodName: 'get_rated_pool',
       args: { pool_id },
     });
@@ -92,7 +77,7 @@ export const getStablePool = async (pool_id: number): Promise<StablePool> => {
     };
   }
 
-  const pool_info = await refFiViewFunction({
+  const pool_info = await context.refFiViewFunction({
     methodName: 'get_stable_pool',
     args: { pool_id },
   });
@@ -107,10 +92,11 @@ export const getStablePool = async (pool_id: number): Promise<StablePool> => {
 };
 
 export const getStablePoolFromCache = async (
+  context: Context,
   id?: string,
   loadingTrigger?: boolean
 ) => {
-  const stable_pool_id = id || STABLE_POOL_ID.toString();
+  const stable_pool_id = id || context.config.STABLE_POOL_ID.toString();
 
   const pool_key = getStablePoolKey(stable_pool_id);
 
@@ -123,12 +109,12 @@ export const getStablePoolFromCache = async (
   const isStablePoolCached =
     stablePoolCache?.update_time &&
     Number(stablePoolCache.update_time) >
-      Number(moment().unix() - Number(POOL_TOKEN_REFRESH_INTERVAL));
+      Number(Date.now() - Number(context.config.POOL_TOKEN_REFRESH_INTERVAL));
 
   const isStablePoolInfoCached =
     stablePoolInfoCache?.update_time &&
     Number(stablePoolInfoCache.update_time) >
-      Number(moment().unix() - Number(POOL_TOKEN_REFRESH_INTERVAL));
+      Number(Date.now() - Number(context.config.POOL_TOKEN_REFRESH_INTERVAL));
 
   const loadingTriggerSig =
     typeof loadingTrigger === 'undefined' ||
@@ -137,31 +123,31 @@ export const getStablePoolFromCache = async (
   const stablePool =
     isStablePoolCached || !loadingTriggerSig
       ? stablePoolCache
-      : await getPool(Number(stable_pool_id));
+      : await getPool(context, Number(stable_pool_id));
 
   const stablePoolInfo =
     isStablePoolInfoCached || !loadingTriggerSig
       ? stablePoolInfoCache
-      : await getStablePool(Number(stable_pool_id));
+      : await getStablePool(context, Number(stable_pool_id));
 
   if (!isStablePoolCached && loadingTriggerSig) {
     localStorage.setItem(
       pool_key,
-      JSON.stringify({ ...stablePool, update_time: moment().unix() })
+      JSON.stringify({ ...stablePool, update_time: Date.now() })
     );
   }
 
   if (!isStablePoolInfoCached && loadingTriggerSig) {
     localStorage.setItem(
       info,
-      JSON.stringify({ ...stablePoolInfo, update_time: moment().unix() })
+      JSON.stringify({ ...stablePoolInfo, update_time: Date.now() })
     );
   }
   stablePool.rates = stablePoolInfo.token_account_ids.reduce(
     (acc: any, cur: any, i: number) => ({
       ...acc,
       [cur]: toReadableNumber(
-        getStablePoolDecimal(stablePool.id),
+        context.nearUtils.getStablePoolDecimal(stablePool.id),
         stablePoolInfo.rates[i]
       ),
     }),

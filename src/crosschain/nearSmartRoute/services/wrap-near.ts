@@ -1,6 +1,4 @@
-import getConfig from './config';
 import { TokenMetadata } from './ft-contract';
-export const { WRAP_NEAR_CONTRACT_ID } = getConfig();
 
 export const nearMetadata: TokenMetadata = {
   id: 'NEAR',

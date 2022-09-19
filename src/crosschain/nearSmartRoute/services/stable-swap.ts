@@ -5,10 +5,10 @@ import {
   toReadableNumber,
 } from '../utils/numbers';
 import { TokenMetadata } from './ft-contract';
-import { Pool, StablePool, getStablePoolDecimal } from './pool';
+import { Pool, StablePool } from './pool';
 import _ from 'lodash';
 import { PoolMode } from './swap';
-import { getStableTokenIndex } from './near';
+import { Context } from '../context';
 const FEE_DIVISOR = 10000;
 
 // export interface EstimateSwapView {
@@ -142,6 +142,7 @@ export const calc_swap = (
 };
 
 export const getSwappedAmount = (
+  context: Context,
   tokenInId: string,
   tokenOutId: string,
   amountIn: string,
@@ -150,12 +151,16 @@ export const getSwappedAmount = (
   const amp = stablePool.amp;
   const trade_fee = stablePool.total_fee;
 
-  const STABLE_TOKEN_INDEX = getStableTokenIndex(stablePool.id);
+  const STABLE_TOKEN_INDEX = context.nearUtils.getStableTokenIndex(
+    stablePool.id
+  );
 
   const in_token_idx = STABLE_TOKEN_INDEX[tokenInId];
   const out_token_idx = STABLE_TOKEN_INDEX[tokenOutId];
 
-  const STABLE_LP_TOKEN_DECIMALS = getStablePoolDecimal(stablePool.id);
+  const STABLE_LP_TOKEN_DECIMALS = context.nearUtils.getStablePoolDecimal(
+    stablePool.id
+  );
 
   const rates = stablePool.rates.map((r) =>
     toReadableNumber(STABLE_LP_TOKEN_DECIMALS, r)

@@ -1,4 +1,66 @@
-export function getExtendConfig(env: string = process.env.NEAR_ENV) {
+export interface Config {
+  networkId: string;
+  nodeUrl: string;
+  walletUrl: string;
+  helperUrl: string;
+  explorerUrl: string;
+  indexerUrl: string;
+  sodakiApiUrl: string;
+  blackList: string[];
+  REF_FI_CONTRACT_ID: string;
+  WRAP_NEAR_CONTRACT_ID: string;
+  REF_ADBOARD_CONTRACT_ID: string;
+  REF_FARM_CONTRACT_ID: string;
+  REF_TOKEN_ID: string;
+  XREF_TOKEN_ID: string;
+  REF_VE_CONTRACT_ID?: string;
+  REF_AIRDROP_CONTRACT_ID: string;
+  TOP_POOLS_TOKEN_REFRESH_INTERVAL: number;
+  POOL_TOKEN_REFRESH_INTERVAL: number;
+  BTC_POOL_ID?: string;
+  BTCIDS?: string[];
+  BTC_IDS_INDEX?: Record<string, number>;
+  STABLE_POOL_USN_ID: number;
+  STABLE_TOKEN_USN_IDS: string[];
+  STABLE_TOKEN_USN_INDEX: Record<string, number>;
+  STABLE_POOL_ID: number;
+  STABLE_POOL_IDS: string[];
+  STABLE_TOKEN_IDS: string[];
+  STABLE_TOKEN_INDEX: Record<string, number>;
+  USN_ID: string;
+  TOTAL_PLATFORM_FEE_REVENUE: string;
+  CUMULATIVE_REF_BUYBACK: string;
+  BLACKLIST_POOL_IDS: string[];
+  FARM_LOCK_SWITCH: number;
+  VotingGauge: string[];
+  kitWalletOn?: boolean;
+  REF_FARM_BOOST_CONTRACT_ID: string;
+}
+
+interface ExtendConfig {
+  RPC_LIST: Record<string, { url: string; simpleName: string }>;
+}
+
+export interface ExtraStablePoolConfig {
+  BTCIDS: string[];
+  BTC_STABLE_POOL_INDEX: Record<string, number>;
+  BTC_STABLE_POOL_ID: string;
+  CUSDIDS: string[];
+  CUSD_STABLE_POOL_INDEX: Record<string, number>;
+  CUSD_STABLE_POOL_ID: string;
+  STNEAR_POOL_ID: string;
+  LINEAR_POOL_ID: string;
+  STNEARIDS: string[];
+  LINEARIDS: string[];
+  STNEAR_POOL_INDEX: Record<string, number>;
+  LINEAR_POOL_INDEX: Record<string, number>;
+  NEAX_POOL_ID: string;
+  NEARXIDS: string[];
+  NEAX_POOL_INDEX: Record<string, number>;
+  RATED_POOLS_IDS: string[];
+}
+
+export function getExtendConfig(env?: string): ExtendConfig {
   switch (env) {
     case 'production':
     case 'mainnet':
@@ -86,7 +148,7 @@ export function getCustomConfig() {
   }
   return customRpcMap;
 }
-export default function getConfig(env: string = process.env.NEAR_ENV) {
+export default function getConfig(env: string): Config {
   const RPC_LIST_system = getExtendConfig().RPC_LIST;
   const RPC_LIST_custom = getCustomConfig();
   const RPC_LIST = Object.assign(RPC_LIST_system, RPC_LIST_custom);
@@ -109,21 +171,17 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
         explorerUrl: 'https://nearblocks.io',
         indexerUrl: 'https://indexer.ref.finance',
         sodakiApiUrl: 'https://api.stats.ref.finance/api',
-        blackList: process.env.FARM_BLACK_LIST || ['1371#3', '2769#2'],
-        REF_FI_CONTRACT_ID:
-          process.env.REF_FI_CONTRACT_ID || 'v2.ref-finance.near',
-        WRAP_NEAR_CONTRACT_ID: process.env.WRAP_NEAR_CONTRACT_ID || 'wrap.near',
+        blackList: ['1371#3', '2769#2'],
+        REF_FI_CONTRACT_ID: 'v2.ref-finance.near',
+        WRAP_NEAR_CONTRACT_ID: 'wrap.near',
         REF_ADBOARD_CONTRACT_ID: 'ref-adboard.near',
-        REF_FARM_CONTRACT_ID:
-          process.env.REF_FARM_CONTRACT_ID || 'v2.ref-farming.near',
+        REF_FARM_CONTRACT_ID: 'v2.ref-farming.near',
         REF_TOKEN_ID: 'token.v2.ref-finance.near',
         XREF_TOKEN_ID: 'xtoken.ref-finance.near',
         REF_AIRDROP_CONTRACT_ID: 's01.ref-airdrop.near',
-        TOP_POOLS_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 60,
-        POOL_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 20,
-        STABLE_POOL_USN_ID: process.env.STABLE_POOL_USN_ID || 3020,
+        TOP_POOLS_TOKEN_REFRESH_INTERVAL: 60,
+        POOL_TOKEN_REFRESH_INTERVAL: 20,
+        STABLE_POOL_USN_ID: 3020,
         STABLE_TOKEN_USN_IDS: [
           'usn',
           'dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near',
@@ -132,13 +190,8 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           usn: 0,
           'dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near': 1,
         },
-        STABLE_POOL_ID: process.env.STABLE_POOL_ID || 1910,
-        STABLE_POOL_IDS: process.env.STABLE_POOL_IDS || [
-          '1910',
-          '3020',
-          '3364',
-          '3433',
-        ],
+        STABLE_POOL_ID: 1910,
+        STABLE_POOL_IDS: ['1910', '3020', '3364', '3433'],
         STABLE_TOKEN_IDS: [
           'dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near',
           'a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near',
@@ -150,15 +203,12 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           '6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near': 2,
         },
         USN_ID: 'usn',
-        TOTAL_PLATFORM_FEE_REVENUE:
-          process.env.TOTAL_PLATFORM_FEE_REVENUE || '717058.623',
-        CUMULATIVE_REF_BUYBACK:
-          process.env.CUMULATIVE_REF_BUYBACK || '947340.47447',
+        TOTAL_PLATFORM_FEE_REVENUE: '717058.623',
+        CUMULATIVE_REF_BUYBACK: '947340.47447',
         BLACKLIST_POOL_IDS: [''],
-        FARM_LOCK_SWITCH: process.env.FARM_LOCK_SWITCH || 0,
+        FARM_LOCK_SWITCH: 0,
         VotingGauge: ['10%', '10%'],
-        REF_FARM_BOOST_CONTRACT_ID:
-          process.env.REF_FARM_BOOST_CONTRACT_ID || 'boostfarm.ref-labs.near',
+        REF_FARM_BOOST_CONTRACT_ID: 'boostfarm.ref-labs.near',
       };
     case 'pub-testnet':
       return {
@@ -169,31 +219,21 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
         explorerUrl: 'https://testnet.nearblocks.io',
         indexerUrl: 'https://testnet-indexer.ref-finance.com',
         sodakiApiUrl: 'https://api.stats.ref.finance/api',
-        blackList: process.env.FARM_BLACK_LIST || ['1371#3'],
-        REF_FI_CONTRACT_ID:
-          process.env.REF_FI_CONTRACT_ID || 'ref-finance-101.testnet',
-        WRAP_NEAR_CONTRACT_ID:
-          process.env.WRAP_NEAR_CONTRACT_ID || 'wrap.testnet',
+        blackList: ['1371#3'],
+        REF_FI_CONTRACT_ID: 'ref-finance-101.testnet',
+        WRAP_NEAR_CONTRACT_ID: 'wrap.testnet',
         REF_ADBOARD_CONTRACT_ID: 'ref-adboard.near',
-        REF_FARM_CONTRACT_ID:
-          process.env.REF_FARM_CONTRACT_ID || 'v2.ref-farming.testnet',
+        REF_FARM_CONTRACT_ID: 'v2.ref-farming.testnet',
         REF_TOKEN_ID: 'ref.fakes.testnet',
         XREF_TOKEN_ID: 'xref.ref-finance.testnet',
         REF_VE_CONTRACT_ID: 'v010.refve.testnet',
         REF_AIRDROP_CONTRACT_ID: 'locker002.ref-dev.testnet',
-        TOP_POOLS_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 60,
-        POOL_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 20,
-        STABLE_POOL_ID: process.env.STABLE_POOL_ID || 218,
-        STABLE_POOL_IDS: process.env.STABLE_POOL_IDS || [
-          '218',
-          '356',
-          '456',
-          '494',
-        ],
+        TOP_POOLS_TOKEN_REFRESH_INTERVAL: 60,
+        POOL_TOKEN_REFRESH_INTERVAL: 20,
+        STABLE_POOL_ID: 218,
+        STABLE_POOL_IDS: ['218', '356', '456', '494'],
         USN_ID: 'usdn.testnet',
-        STABLE_POOL_USN_ID: process.env.STABLE_POOL_USN_ID || 356,
+        STABLE_POOL_USN_ID: 356,
         STABLE_TOKEN_IDS: [
           'usdt.fakes.testnet',
           'usdc.fakes.testnet',
@@ -209,15 +249,11 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           'usdc.fakes.testnet': 1,
           'dai.fakes.testnet': 2,
         },
-        TOTAL_PLATFORM_FEE_REVENUE:
-          process.env.TOTAL_PLATFORM_FEE_REVENUE || '717058.623',
-        CUMULATIVE_REF_BUYBACK:
-          process.env.CUMULATIVE_REF_BUYBACK || '947340.47447',
+        TOTAL_PLATFORM_FEE_REVENUE: '717058.623',
+        CUMULATIVE_REF_BUYBACK: '947340.47447',
         BLACKLIST_POOL_IDS: [''],
-        REF_FARM_BOOST_CONTRACT_ID:
-          process.env.REF_FARM_BOOST_CONTRACT_ID ||
-          'boostfarm.ref-finance.testnet',
-        FARM_LOCK_SWITCH: process.env.FARM_LOCK_SWITCH || 0,
+        REF_FARM_BOOST_CONTRACT_ID: 'boostfarm.ref-finance.testnet',
+        FARM_LOCK_SWITCH: 0,
         VotingGauge: ['10%', '10%'],
         kitWalletOn: true,
       };
@@ -230,31 +266,21 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
         explorerUrl: 'https://testnet.nearblocks.io',
         indexerUrl: 'https://dev-indexer.ref-finance.com',
         sodakiApiUrl: 'https://api.stats.ref.finance/api',
-        blackList: process.env.FARM_BLACK_LIST || ['1371#3'],
-        REF_FI_CONTRACT_ID:
-          process.env.REF_FI_CONTRACT_ID || 'exchange.ref-dev.testnet',
-        WRAP_NEAR_CONTRACT_ID:
-          process.env.WRAP_NEAR_CONTRACT_ID || 'wrap.testnet',
+        blackList: ['1371#3'],
+        REF_FI_CONTRACT_ID: 'exchange.ref-dev.testnet',
+        WRAP_NEAR_CONTRACT_ID: 'wrap.testnet',
         REF_ADBOARD_CONTRACT_ID: 'ref-adboard.near',
-        REF_FARM_CONTRACT_ID:
-          process.env.REF_FARM_CONTRACT_ID || 'farm-dev.ref-dev.testnet',
+        REF_FARM_CONTRACT_ID: 'farm-dev.ref-dev.testnet',
         // REF_VE_CONTRACT_ID: 'dev-20220623151446-29039416013661',
         REF_TOKEN_ID: 'ref.fakes.testnet',
         XREF_TOKEN_ID: 'xref.ref-dev.testnet',
         REF_AIRDROP_CONTRACT_ID: 'locker002.ref-dev.testnet',
-        TOP_POOLS_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 60,
-        POOL_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 20,
-        STABLE_POOL_ID: process.env.STABLE_POOL_ID || 79,
-        STABLE_POOL_IDS: process.env.STABLE_POOL_IDS || [
-          '79',
-          '603',
-          '604',
-          '608',
-        ],
+        TOP_POOLS_TOKEN_REFRESH_INTERVAL: 60,
+        POOL_TOKEN_REFRESH_INTERVAL: 20,
+        STABLE_POOL_ID: 79,
+        STABLE_POOL_IDS: ['79', '603', '604', '608'],
         USN_ID: 'usdn.testnet',
-        STABLE_POOL_USN_ID: process.env.STABLE_POOL_USN_ID || 603,
+        STABLE_POOL_USN_ID: 603,
         STABLE_TOKEN_IDS: [
           'usdt.fakes.testnet',
           'usdc.fakes.testnet',
@@ -270,15 +296,11 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           'usdc.fakes.testnet': 1,
           'dai.fakes.testnet': 2,
         },
-        TOTAL_PLATFORM_FEE_REVENUE:
-          process.env.TOTAL_PLATFORM_FEE_REVENUE || '717058.623',
-        CUMULATIVE_REF_BUYBACK:
-          process.env.CUMULATIVE_REF_BUYBACK || '947340.47447',
+        TOTAL_PLATFORM_FEE_REVENUE: '717058.623',
+        CUMULATIVE_REF_BUYBACK: '947340.47447',
         BLACKLIST_POOL_IDS: [''],
-        REF_FARM_BOOST_CONTRACT_ID:
-          process.env.REF_FARM_BOOST_CONTRACT_ID ||
-          'boostfarm024.ref-dev.testnet',
-        FARM_LOCK_SWITCH: process.env.FARM_LOCK_SWITCH || 0,
+        REF_FARM_BOOST_CONTRACT_ID: 'boostfarm024.ref-dev.testnet',
+        FARM_LOCK_SWITCH: 0,
         VotingGauge: ['5%', '10%'],
         kitWalletOn: true,
       };
@@ -291,20 +313,16 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
         explorerUrl: 'https://nearblocks.io',
         indexerUrl: 'https://indexer.ref.finance',
         sodakiApiUrl: 'https://api.stats.ref.finance/api',
-        blackList: process.env.FARM_BLACK_LIST || ['1371#3', '2769#2'],
-        REF_FI_CONTRACT_ID:
-          process.env.REF_FI_CONTRACT_ID || 'v2.ref-finance.near',
-        WRAP_NEAR_CONTRACT_ID: process.env.WRAP_NEAR_CONTRACT_ID || 'wrap.near',
+        blackList: ['1371#3', '2769#2'],
+        REF_FI_CONTRACT_ID: 'v2.ref-finance.near',
+        WRAP_NEAR_CONTRACT_ID: 'wrap.near',
         REF_ADBOARD_CONTRACT_ID: 'ref-adboard.near',
-        REF_FARM_CONTRACT_ID:
-          process.env.REF_FARM_CONTRACT_ID || 'v2.ref-farming.near',
+        REF_FARM_CONTRACT_ID: 'v2.ref-farming.near',
         REF_TOKEN_ID: 'token.v2.ref-finance.near',
         XREF_TOKEN_ID: 'xtoken.ref-finance.near',
         REF_AIRDROP_CONTRACT_ID: 's01.ref-airdrop.near',
-        TOP_POOLS_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 60,
-        POOL_TOKEN_REFRESH_INTERVAL:
-          process.env.POOL_TOKEN_REFRESH_INTERVAL || 20,
+        TOP_POOLS_TOKEN_REFRESH_INTERVAL: 60,
+        POOL_TOKEN_REFRESH_INTERVAL: 20,
         BTC_POOL_ID: '3364',
         BTCIDS: [
           '2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near',
@@ -314,7 +332,7 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           '2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near': 0,
           '0316eb71485b0ab14103307bf65a021042c6d380.factory.bridge.near': 1,
         },
-        STABLE_POOL_USN_ID: process.env.STABLE_POOL_USN_ID || 3020,
+        STABLE_POOL_USN_ID: 3020,
         STABLE_TOKEN_USN_IDS: [
           'usn',
           'dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near',
@@ -323,13 +341,8 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           usn: 0,
           'dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near': 1,
         },
-        STABLE_POOL_ID: process.env.STABLE_POOL_ID || 1910,
-        STABLE_POOL_IDS: process.env.STABLE_POOL_IDS || [
-          '1910',
-          '3020',
-          '3364',
-          '3433',
-        ],
+        STABLE_POOL_ID: 1910,
+        STABLE_POOL_IDS: ['1910', '3020', '3364', '3433'],
         STABLE_TOKEN_IDS: [
           'dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near',
           'a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near',
@@ -341,20 +354,17 @@ export default function getConfig(env: string = process.env.NEAR_ENV) {
           '6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near': 2,
         },
         USN_ID: 'usn',
-        TOTAL_PLATFORM_FEE_REVENUE:
-          process.env.TOTAL_PLATFORM_FEE_REVENUE || '717058.623',
-        CUMULATIVE_REF_BUYBACK:
-          process.env.CUMULATIVE_REF_BUYBACK || '947340.47447',
+        TOTAL_PLATFORM_FEE_REVENUE: '717058.623',
+        CUMULATIVE_REF_BUYBACK: '947340.47447',
         BLACKLIST_POOL_IDS: [''],
-        FARM_LOCK_SWITCH: process.env.FARM_LOCK_SWITCH || 0,
+        FARM_LOCK_SWITCH: 0,
         VotingGauge: ['10%', '10%'],
-        REF_FARM_BOOST_CONTRACT_ID:
-          process.env.REF_FARM_BOOST_CONTRACT_ID || 'boostfarm.ref-labs.near',
+        REF_FARM_BOOST_CONTRACT_ID: 'boostfarm.ref-labs.near',
       };
   }
 }
 
-export function getExtraStablePoolConfig(env: string = process.env.NEAR_ENV) {
+export function getExtraStablePoolConfig(env: string): ExtraStablePoolConfig {
   switch (env) {
     case 'production':
     case 'mainnet':

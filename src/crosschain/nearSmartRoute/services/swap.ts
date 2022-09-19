@@ -5,15 +5,11 @@ import {
   toReadableNumber,
 } from '../utils/numbers';
 import { TokenMetadata } from './ft-contract';
-import {
-  StablePool,
-  getStablePoolFromCache,
-  getStablePoolDecimal,
-} from './pool';
+import { StablePool, getStablePoolFromCache } from './pool';
 import { BigNumber } from 'bignumber.js';
 import { getSwappedAmount } from './stable-swap';
-import { isStablePool } from './near';
 import { Pool } from './pool';
+import { Context } from '../context';
 
 // Big.strict = false;
 const FEE_DIVISOR = 10000;
@@ -71,21 +67,26 @@ export interface EstimateSwapView {
 }
 
 const getStablePoolEstimate = ({
+  context,
   tokenIn,
   tokenOut,
   amountIn,
   stablePoolInfo,
   stablePool,
 }: {
+  context: Context;
   tokenIn: TokenMetadata;
   tokenOut: TokenMetadata;
   amountIn: string;
   stablePoolInfo: StablePool;
   stablePool: Pool;
 }) => {
-  const STABLE_LP_TOKEN_DECIMALS = getStablePoolDecimal(stablePool.id);
+  const STABLE_LP_TOKEN_DECIMALS = context.nearUtils.getStablePoolDecimal(
+    stablePool.id
+  );
 
   const [amount_swapped, fee, dy] = getSwappedAmount(
+    context,
     tokenIn.id,
     tokenOut.id,
     amountIn,
@@ -148,22 +149,25 @@ const getSinglePoolEstimate = (
   };
 };
 export const getPoolEstimate = async ({
+  context,
   tokenIn,
   tokenOut,
   amountIn,
   Pool,
 }: {
+  context: Context;
   tokenIn: TokenMetadata;
   tokenOut: TokenMetadata;
   amountIn: string;
   Pool: Pool;
 }) => {
-  if (isStablePool(Pool.id)) {
+  if (context.nearUtils.isStablePool(Pool.id)) {
     const stablePoolInfo = (
-      await getStablePoolFromCache(Pool.id.toString())
+      await getStablePoolFromCache(context, Pool.id.toString())
     )[1];
 
     return getStablePoolEstimate({
+      context,
       tokenIn,
       tokenOut,
       amountIn: toReadableNumber(tokenIn.decimals, amountIn),

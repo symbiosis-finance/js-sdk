@@ -1282,6 +1282,7 @@ function* combinations(arr, r) {
 //     # toward these 2nd hop routes in the same ratio as their route input allocations.
 
 export async function getSmartRouteSwapActions(
+  context,
   pools,
   inputToken,
   outputToken,
@@ -1649,8 +1650,14 @@ export async function getSmartRouteSwapActions(
   // console.log(hops);
 
   for (var i in hops) {
-    let hopInputTokenMeta = await ftGetTokenMetadata(hops[i].inputToken);
-    let hopOutputTokenMeta = await ftGetTokenMetadata(hops[i].outputToken);
+    let hopInputTokenMeta = await ftGetTokenMetadata(
+      context,
+      hops[i].inputToken
+    );
+    let hopOutputTokenMeta = await ftGetTokenMetadata(
+      context,
+      hops[i].outputToken
+    );
     let hopOutputTokenDecimals = hopOutputTokenMeta.decimals;
 
     let expectedHopOutput = getOutputSingleHop(
@@ -1691,7 +1698,7 @@ export async function getSmartRouteSwapActions(
     }
 
     let tokens = await Promise.all(
-      hops[i].nodeRoute.map(async (t) => await ftGetTokenMetadata(t))
+      hops[i].nodeRoute.map(async (t) => await ftGetTokenMetadata(context, t))
     );
 
     actions[i] = {
@@ -1789,7 +1796,7 @@ async function calculateSmartRouteV2PriceImpact(actions) {
     let route = routes[i];
     let nodeRoute = nodeRoutes[i];
     let tokens = await Promise.all(
-      nodeRoute.map(async (t) => await ftGetTokenMetadata(t))
+      nodeRoute.map(async (t) => await ftGetTokenMetadata(context, t))
     );
     let weight = weights[i];
     if (route.length == 1) {
@@ -2559,6 +2566,7 @@ export function getExpectedOutputFromActionsORIG(actions, outputToken) {
 }
 
 export async function getExpectedOutputFromActions(
+  context,
   actions,
   outputToken,
   slippageTolerance
@@ -2591,6 +2599,7 @@ export async function getExpectedOutputFromActions(
           curRoute[0].estimate
         );
         const secondEstimateOut = await getPoolEstimate({
+          context,
           tokenIn: curRoute[1].tokens[1],
           tokenOut: curRoute[1].tokens[2],
           amountIn: toNonDivisibleNumber(
