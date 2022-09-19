@@ -16,7 +16,7 @@ import { GetLogTimeoutExceededError, getLogWithTimeout, getNoNEvmExternalId } fr
 
 type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never
 
-interface WaitForCompleteParams {
+export interface WaitForCompleteParams {
     symbiosis: Symbiosis
     tokenOut: Token
     direction: BridgeDirection

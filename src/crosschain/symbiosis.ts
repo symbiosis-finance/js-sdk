@@ -1,4 +1,4 @@
-import { StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import fetch from 'node-fetch-native'
 import JSBI from 'jsbi'
@@ -66,6 +66,7 @@ import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
 import { isNearChainId } from '../utils'
+import { WaitForComplete, WaitForCompleteParams } from './waitForComplete'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -493,5 +494,15 @@ export class Symbiosis {
 
     public isTransitStable(token: Token): boolean {
         return token.address === this.transitStable(token.chainId).address
+    }
+
+    public waitForComplete({
+        externalId,
+        ...params
+    }: Omit<WaitForCompleteParams, 'symbiosis'> & { externalId: string }): Promise<Log> {
+        return new WaitForComplete({ ...params, symbiosis: this }).waitForCompleteFromParams(
+            externalId,
+            this.synthesisNonEvm(params.tokenOut.chainId).address
+        )
     }
 }
