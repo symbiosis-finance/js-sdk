@@ -155,25 +155,25 @@ export const getSwappedAmount = (
     stablePool.id
   );
 
-  const in_token_idx = STABLE_TOKEN_INDEX[tokenInId];
-  const out_token_idx = STABLE_TOKEN_INDEX[tokenOutId];
+  const in_token_idx = STABLE_TOKEN_INDEX![tokenInId];
+  const out_token_idx = STABLE_TOKEN_INDEX![tokenOutId];
 
   const STABLE_LP_TOKEN_DECIMALS = context.nearUtils.getStablePoolDecimal(
     stablePool.id
   );
 
   const rates = stablePool.rates.map((r) =>
-    toReadableNumber(STABLE_LP_TOKEN_DECIMALS, r)
+    toReadableNumber(STABLE_LP_TOKEN_DECIMALS!, r)
   );
 
   const base_old_c_amounts = stablePool.c_amounts.map((amount) =>
-    toReadableNumber(STABLE_LP_TOKEN_DECIMALS, amount)
+    toReadableNumber(STABLE_LP_TOKEN_DECIMALS!, amount)
   );
 
   const old_c_amounts = base_old_c_amounts
     .map((amount, i) =>
       toNonDivisibleNumber(
-        STABLE_LP_TOKEN_DECIMALS,
+        STABLE_LP_TOKEN_DECIMALS!,
         scientificNotationToString(
           new Big(amount || 0).times(new Big(rates[i])).toString()
         )
@@ -183,7 +183,7 @@ export const getSwappedAmount = (
 
   const in_c_amount = Number(
     toNonDivisibleNumber(
-      STABLE_LP_TOKEN_DECIMALS,
+      STABLE_LP_TOKEN_DECIMALS!,
       scientificNotationToString(
         new Big(amountIn).times(new Big(rates[in_token_idx])).toString()
       )

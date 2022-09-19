@@ -85,7 +85,7 @@ export const getStablePool = async (
   return {
     ...pool_info,
     id: pool_id,
-    rates: pool_info.c_amounts.map((i: any) =>
+    rates: pool_info.c_amounts.map(() =>
       toNonDivisibleNumber(STABLE_LP_TOKEN_DECIMALS, '1')
     ),
   };
@@ -102,9 +102,9 @@ export const getStablePoolFromCache = async (
 
   const info = getStablePoolInfoKey(stable_pool_id);
 
-  const stablePoolCache = JSON.parse(localStorage.getItem(pool_key));
+  const stablePoolCache = JSON.parse(localStorage.getItem(pool_key)!);
 
-  const stablePoolInfoCache = JSON.parse(localStorage.getItem(info));
+  const stablePoolInfoCache = JSON.parse(localStorage.getItem(info)!);
 
   const isStablePoolCached =
     stablePoolCache?.update_time &&
@@ -147,7 +147,7 @@ export const getStablePoolFromCache = async (
     (acc: any, cur: any, i: number) => ({
       ...acc,
       [cur]: toReadableNumber(
-        context.nearUtils.getStablePoolDecimal(stablePool.id),
+        context.nearUtils.getStablePoolDecimal(stablePool.id)!,
         stablePoolInfo.rates[i]
       ),
     }),

@@ -85,7 +85,7 @@ const getStablePoolEstimate = ({
     stablePool.id
   );
 
-  const [amount_swapped, fee, dy] = getSwappedAmount(
+  const [amount_swapped, _, dy] = getSwappedAmount(
     context,
     tokenIn.id,
     tokenOut.id,
@@ -104,8 +104,8 @@ const getStablePoolEstimate = ({
       : toPrecision(scientificNotationToString(dy.toString()), 0);
 
   return {
-    estimate: toReadableNumber(STABLE_LP_TOKEN_DECIMALS, amountOut),
-    noFeeAmountOut: toReadableNumber(STABLE_LP_TOKEN_DECIMALS, dyOut),
+    estimate: toReadableNumber(STABLE_LP_TOKEN_DECIMALS!, amountOut),
+    noFeeAmountOut: toReadableNumber(STABLE_LP_TOKEN_DECIMALS!, dyOut),
     pool: { ...stablePool, Dex: 'ref' },
     token: tokenIn,
     outputToken: tokenOut.id,
