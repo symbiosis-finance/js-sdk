@@ -10,9 +10,6 @@ const CUCUMBER_ID = 'farm.berryclub.ek.near';
 const HAPI_ID = 'd9c2d319cd7e6177336b0a9c93c21cb48d84fb54.factory.bridge.near';
 const WOO_ID = '4691937a7508860f876c9c0a2a617e7d9e945d4b.factory.bridge.near';
 
-// @@
-const db = {} as any;
-
 export interface TokenMetadata {
   id: string;
   name: string;
@@ -35,19 +32,9 @@ export const ftGetTokenMetadata = async (
   accountPage?: boolean
 ): Promise<TokenMetadata> => {
   try {
-    let metadata = await db.allTokens().where({ id: id }).first();
-    if (!metadata) {
-      metadata = await context.ftViewFunction(id, {
-        methodName: 'ft_metadata',
-      });
-      await db.allTokens().put({
-        id: id,
-        name: metadata.name,
-        symbol: metadata.symbol,
-        decimals: metadata.decimals,
-        icon: metadata.icon,
-      });
-    }
+    const metadata = await context.ftViewFunction(id, {
+      methodName: 'ft_metadata',
+    });
 
     if (metadata.id === context.config.WRAP_NEAR_CONTRACT_ID) {
       if (accountPage)

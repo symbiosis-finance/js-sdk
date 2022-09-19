@@ -1,6 +1,7 @@
 import { Context } from '../context';
 import { toNonDivisibleNumber, toReadableNumber } from '../utils/numbers';
 import { PoolRPCView } from './api';
+import { memoryStorage } from './memorySotrage';
 import { STABLE_LP_TOKEN_DECIMALS } from './near';
 
 export const DEFAULT_PAGE_LIMIT = 100;
@@ -102,9 +103,9 @@ export const getStablePoolFromCache = async (
 
   const info = getStablePoolInfoKey(stable_pool_id);
 
-  const stablePoolCache = JSON.parse(localStorage.getItem(pool_key)!);
+  const stablePoolCache = JSON.parse(memoryStorage.getItem(pool_key)!);
 
-  const stablePoolInfoCache = JSON.parse(localStorage.getItem(info)!);
+  const stablePoolInfoCache = JSON.parse(memoryStorage.getItem(info)!);
 
   const isStablePoolCached =
     stablePoolCache?.update_time &&
@@ -131,14 +132,14 @@ export const getStablePoolFromCache = async (
       : await getStablePool(context, Number(stable_pool_id));
 
   if (!isStablePoolCached && loadingTriggerSig) {
-    localStorage.setItem(
+    memoryStorage.setItem(
       pool_key,
       JSON.stringify({ ...stablePool, update_time: Date.now() })
     );
   }
 
   if (!isStablePoolInfoCached && loadingTriggerSig) {
-    localStorage.setItem(
+    memoryStorage.setItem(
       info,
       JSON.stringify({ ...stablePoolInfo, update_time: Date.now() })
     );
