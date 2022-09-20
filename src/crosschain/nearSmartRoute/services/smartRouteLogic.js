@@ -1738,7 +1738,10 @@ export async function getSmartRouteSwapActions(
   }
   // now set partial amount in for second hops equal to zero:
   // also, set the total price impact value.
-  let overallPriceImpact = await calculateSmartRouteV2PriceImpact(actions);
+  let overallPriceImpact = await calculateSmartRouteV2PriceImpact(
+    context,
+    actions
+  );
   for (var i in actions) {
     let action = actions[i];
     action.overallPriceImpact = overallPriceImpact;
@@ -1751,7 +1754,7 @@ export async function getSmartRouteSwapActions(
   return actions;
 }
 
-async function calculateSmartRouteV2PriceImpact(actions) {
+async function calculateSmartRouteV2PriceImpact(context, actions) {
   // the goal is to take a weighted average of the price impact per route, treating each one at a time.
   // for single hop (parallel swaps), the price impact is calculated as before.
   // for double-hop, the market price, P, is determined using reserves of tokens in each pool in the route.
@@ -2325,6 +2328,7 @@ function getGraphFromPoolList(poolList) {
 // }
 
 export async function stableSmart(
+  context,
   pools,
   inputToken,
   outputToken,
@@ -2332,6 +2336,7 @@ export async function stableSmart(
   slippageTolerance
 ) {
   let smartRouteActions = await getSmartRouteSwapActions(
+    context,
     pools,
     inputToken,
     outputToken,

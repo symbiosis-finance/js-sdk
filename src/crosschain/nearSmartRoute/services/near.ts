@@ -41,6 +41,8 @@ export class NearUtils {
       case this.extraStablePoolConfig.NEAX_POOL_ID:
         return this.extraStablePoolConfig.NEAX_POOL_INDEX;
     }
+
+    return {};
   }
 
   isRatedPool(id: string | number) {
@@ -56,5 +58,7 @@ export class NearUtils {
   getStablePoolDecimal(id: string | number) {
     if (this.isRatedPool(id)) return RATED_POOL_LP_TOKEN_DECIMALS;
     else if (this.isStablePool(id)) return STABLE_LP_TOKEN_DECIMALS;
+
+    return 0;
   }
 }

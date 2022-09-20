@@ -6,7 +6,6 @@ import {
 } from '../utils/numbers';
 import { TokenMetadata } from './ft-contract';
 import { Pool, StablePool } from './pool';
-import _ from 'lodash';
 import { PoolMode } from './swap';
 import { Context } from '../context';
 const FEE_DIVISOR = 10000;
@@ -69,7 +68,7 @@ const tradeFee = (amount: number, trade_fee: number) => {
 
 export const calc_d = (amp: number, c_amounts: number[]) => {
   const token_num = c_amounts.length;
-  const sum_amounts = _.sum(c_amounts);
+  const sum_amounts = c_amounts.reduce((prev, curr) => prev + curr);
   let d_prev = 0;
   let d = sum_amounts;
   for (let i = 0; i < 256; i++) {

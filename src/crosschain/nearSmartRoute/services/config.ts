@@ -135,7 +135,7 @@ export function getExtendConfig(env?: string): ExtendConfig {
   }
 }
 
-export default function getConfig(env: string): Config {
+export function getConfig(env: string): Config {
   const RPC_LIST = getExtendConfig().RPC_LIST;
   const endPoint = 'defaultRpc';
   switch (env) {
