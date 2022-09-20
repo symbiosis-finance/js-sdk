@@ -42,6 +42,8 @@ import {
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
+    Ooki,
+    Ooki__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
@@ -314,6 +316,12 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return BeefyVault__factory.connect(address, signerOrProvider)
+    }
+
+    public ookiIToken(address: string, chainId: ChainId, signer?: Signer): Ooki {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return Ooki__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
