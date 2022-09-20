@@ -1,6 +1,18 @@
-import { Percent, Token, TokenAmount } from '../entities'
 import BigNumber from 'bignumber.js'
+import { Percent, Token, TokenAmount } from '../entities'
+import { ChainId } from '../constants'
 import { objectToBase64 } from './utils'
+import { Symbiosis } from './symbiosis'
+import { loadPools } from './nearSmartRoute/getAllPools'
+import {
+    Context,
+    getConfig,
+    getExtraStablePoolConfig,
+    NearUtils,
+    stableSmart,
+    getExpectedOutputFromActions,
+    EstimateSwapView,
+} from './nearSmartRoute'
 
 // @@
 const WNEAR_TOKEN = new Token({
@@ -22,10 +34,12 @@ export class NearTrade {
     public routerAddress!: string
 
     private readonly tokenOut: Token
+    private readonly symbiosis: Symbiosis
 
-    public constructor(tokenAmountIn: TokenAmount, tokenOut: Token) {
+    public constructor(tokenAmountIn: TokenAmount, tokenOut: Token, symbiosis: Symbiosis) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
+        this.symbiosis = symbiosis
     }
 
     public async init() {
@@ -82,5 +96,53 @@ export class NearTrade {
         this.amountOut = amountOut
         this.route = [from, to]
         this.priceImpact = new Percent('0')
+
+        const { actions, outAmount } = await this.buildRoute(
+            to.chainId,
+            from.address,
+            to.address,
+            this.tokenAmountIn.raw.toString()
+        )
+
+        console.log(actions, outAmount)
+    }
+
+    private async buildRoute(
+        chainId: ChainId,
+        inputToken: string,
+        outputToken: string,
+        amount: string
+    ): Promise<{ actions: EstimateSwapView[]; outAmount: string }> {
+        const near = await this.symbiosis.getNearConnection(chainId)
+        const account = await near.account('symbiosis.testnet')
+
+        const config = getConfig('testnet')
+
+        const pools = await loadPools(account, config.REF_FI_CONTRACT_ID)
+
+        const context: Context = {
+            ftViewFunction: (tokenId, { methodName, args }) => {
+                return account.viewFunction(tokenId, methodName, args)
+            },
+            refFiViewFunction: ({ methodName, args }) => {
+                return account.viewFunction(config.REF_FI_CONTRACT_ID, methodName, args)
+            },
+            config,
+            nearUtils: new NearUtils(config, getExtraStablePoolConfig('testnet')),
+        }
+
+        const stableSmartActionsV2 = await stableSmart(
+            context,
+            pools.filter((p) => !p?.Dex || p.Dex !== 'tri'),
+            inputToken,
+            outputToken,
+            amount
+        )
+
+        const expectedOut = (
+            await getExpectedOutputFromActions(context, stableSmartActionsV2, outputToken, 0.5)
+        ).toString()
+
+        return { actions: stableSmartActionsV2, outAmount: expectedOut }
     }
 }

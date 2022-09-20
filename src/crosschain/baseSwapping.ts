@@ -343,7 +343,7 @@ export abstract class BaseSwapping {
         const tokenOut = this.symbiosis.transitStable(chainId)
 
         if (this.tokenAmountIn.token.isFromNear()) {
-            return new NearTrade(this.tokenAmountIn, tokenOut)
+            return new NearTrade(this.tokenAmountIn, tokenOut, this.symbiosis)
         }
 
         const from = this.symbiosis.metaRouter(chainId).address
@@ -392,7 +392,7 @@ export abstract class BaseSwapping {
         const amountIn = this.transit.amountOut
 
         if (this.tokenOut.isFromNear()) {
-            return new NearTrade(amountIn, this.tokenOut)
+            return new NearTrade(amountIn, this.tokenOut, this.symbiosis)
         }
 
         if (this.use1Inch && canOneInch(chainId)) {
