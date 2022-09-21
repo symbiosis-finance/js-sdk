@@ -6,12 +6,15 @@ import { Symbiosis } from './symbiosis'
 import { loadPools } from './nearSmartRoute/getAllPools'
 import {
     Context,
+    EstimateSwapView,
     getConfig,
+    getExpectedOutputFromActions,
     getExtraStablePoolConfig,
     NearUtils,
+    percentLess,
+    round,
     stableSmart,
-    getExpectedOutputFromActions,
-    EstimateSwapView,
+    toNonDivisibleNumber,
 } from './nearSmartRoute'
 
 // @@
@@ -73,20 +76,21 @@ export class NearTrade {
 
         const amountOut = new TokenAmount(this.tokenOut, estimate)
 
+        const { actions } = await this.buildRoute(
+            to.chainId,
+            from.address,
+            to.address,
+            this.tokenAmountIn.raw.toString()
+        )
+
+        const actionsList = this.buildActionsList(from, to, actions, 0.5)
+
         const swapMsg = {
             receiver_id: 'ref-finance-101.testnet',
             amount: this.tokenAmountIn.raw.toString(),
             msg: JSON.stringify({
                 force: 0,
-                actions: [
-                    {
-                        pool_id: 1159,
-                        token_in: from.address,
-                        token_out: to.address,
-                        amount_in: this.tokenAmountIn.raw.toString(),
-                        min_amount_out: '0',
-                    },
-                ],
+                actions: actionsList,
             }),
         }
 
@@ -96,15 +100,6 @@ export class NearTrade {
         this.amountOut = amountOut
         this.route = [from, to]
         this.priceImpact = new Percent('0')
-
-        const { actions, outAmount } = await this.buildRoute(
-            to.chainId,
-            from.address,
-            to.address,
-            this.tokenAmountIn.raw.toString()
-        )
-
-        console.log(actions, outAmount)
     }
 
     private async buildRoute(
@@ -144,5 +139,56 @@ export class NearTrade {
         ).toString()
 
         return { actions: stableSmartActionsV2, outAmount: expectedOut }
+    }
+
+    private buildActionsList(
+        tokenIn: Token,
+        tokenOut: Token,
+        swapsToDo: EstimateSwapView[],
+        slippageTolerance: number
+    ) {
+        const actionsList = []
+        const allSwapsTokens = swapsToDo.map((s) => [s.inputToken, s.outputToken]) // to get the hop tokens
+
+        for (const i in allSwapsTokens) {
+            const swapTokens = allSwapsTokens[i]
+            if (swapTokens[0] == tokenIn.address && swapTokens[1] == tokenOut.address) {
+                // parallel, direct hop route.
+                actionsList.push({
+                    pool_id: swapsToDo[i].pool.id,
+                    token_in: tokenIn.address,
+                    token_out: tokenOut.address,
+                    amount_in: swapsToDo[i].pool.partialAmountIn,
+                    min_amount_out: round(
+                        tokenOut.decimals,
+                        toNonDivisibleNumber(tokenOut.decimals, percentLess(slippageTolerance, swapsToDo[i].estimate))
+                    ),
+                })
+            } else if (swapTokens[0] == tokenIn.address) {
+                // first hop in double hop route
+                //TODO -- put in a check to make sure this first hop matches with the next (i+1) hop as a second hop.
+                actionsList.push({
+                    pool_id: swapsToDo[i].pool.id,
+                    token_in: swapTokens[0],
+                    token_out: swapTokens[1],
+                    amount_in: swapsToDo[i].pool.partialAmountIn,
+                    min_amount_out: '0',
+                })
+            } else {
+                // second hop in double hop route.
+                //TODO -- put in a check to make sure this second hop matches with the previous (i-1) hop as a first hop.
+                actionsList.push({
+                    pool_id: swapsToDo[i].pool.id,
+                    token_in: swapTokens[0],
+                    token_out: swapTokens[1],
+                    min_amount_out: round(
+                        tokenOut.decimals,
+                        toNonDivisibleNumber(tokenOut.decimals, percentLess(slippageTolerance, swapsToDo[i].estimate))
+                    ),
+                })
+            }
+        }
+
+        return actionsList
     }
 }
