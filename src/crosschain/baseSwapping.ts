@@ -20,6 +20,7 @@ import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
 import { Transit } from './transit'
 import { NearTrade } from './nearTrade'
+import { Interface } from '@ethersproject/abi'
 
 export type NearTransactionRequest = Record<string, unknown>
 
@@ -518,11 +519,10 @@ export abstract class BaseSwapping {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesisNonEvm(chainIdOut)
 
         const internalId = getInternalId({
-            contractAddress: portal.address,
+            contractAddress: AddressZero,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
@@ -541,7 +541,7 @@ export abstract class BaseSwapping {
                 stableBridgingFee: '1',
                 amount: amount.raw.toString(),
                 externalID: externalId,
-                tokenReal: amount.token.address,
+                tokenReal: toUtf8Bytes(amount.token.address),
                 chainID: chainIdIn,
                 to: this.to,
                 swapTokens: this.swapTokens(),
@@ -560,35 +560,44 @@ export abstract class BaseSwapping {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const synthesis = this.symbiosis.synthesis(chainIdIn)
-        const portal = this.symbiosis.portal(chainIdOut)
-
         const internalId = getInternalId({
-            contractAddress: synthesis.address,
+            contractAddress: AddressZero,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
         const externalId = getExternalId({
             internalId,
-            contractAddress: portal.address,
-            revertableAddress: this.revertableAddress,
+            contractAddress: AddressZero,
+            revertableAddress: AddressZero,
             chainId: chainIdOut,
         })
 
         const amount = this.transit.amountOut
 
-        const calldata = portal.interface.encodeFunctionData('metaUnsynthesize', [
+        const nonEvmPortalInterface = new Interface([
+            'function metaUnsynthesize(uint256 _stableBridgingFee, bytes32 _externalID, bytes _to, uint256 _amount, bytes _rToken, bytes _finalReceiveSide, bytes _finalCalldata, uint256 _finalOffset)',
+        ])
+
+        const calldata = nonEvmPortalInterface.encodeFunctionData('metaUnsynthesize', [
             '1', // _stableBridgingFee
             externalId, // _externalID,
-            this.to, // _to
+            toUtf8Bytes(this.to), // _to
             amount.raw.toString(), // _amount
-            amount.token.address, // _rToken
-            this.finalReceiveSide(), // _finalReceiveSide
+            toUtf8Bytes(amount.token.address), // _rToken
+            toUtf8Bytes(this.finalReceiveSide()), // _finalReceiveSide
             this.finalCalldata(), // _finalCalldata
             this.finalOffset(), // _finalOffset
         ])
-        return [portal.address, calldata]
+
+        let receiveSide: string
+        if (this.tokenOut.isFromNear()) {
+            receiveSide = 'portal.symbiosis-finance.testnet'
+        } else {
+            receiveSide = this.symbiosis.portal(chainIdOut).address
+        }
+
+        return [receiveSide, calldata]
     }
 
     protected async getFee(feeToken: Token): Promise<TokenAmount> {
@@ -596,7 +605,7 @@ export abstract class BaseSwapping {
             throw new Error('Set tokens')
         }
 
-        // @@
+        let token: Token
         if (this.tokenAmountIn.token.isFromNear()) {
             const synth = this.symbiosis.findSyntheticStable(this.tokenOut.chainId, this.tokenAmountIn.token.chainId)
 
@@ -604,12 +613,9 @@ export abstract class BaseSwapping {
                 throw new Error('Cant synth stable')
             }
 
-            return new TokenAmount(synth, '1000000') // @@ fake
-        }
-
-        // @@
-        if (this.tokenOut.isFromNear()) {
-            return new TokenAmount(feeToken, '1000000') // @@ fake
+            token = synth
+        } else {
+            token = feeToken
         }
 
         const [receiveSide, calldata] =
@@ -621,7 +627,8 @@ export abstract class BaseSwapping {
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
-        return new TokenAmount(feeToken, fee.toString())
+
+        return new TokenAmount(token, fee.toString())
     }
 
     protected approvedTokens(): string[] {
