@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "3.0.0-near.14",
+    "version": "3.0.0-near.15",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
     "files": [
@@ -43,7 +43,7 @@
         "decimal.js-light": "^2.5.0",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
-        "near-api-js": "^0.45.1",
+        "near-api-js": "^1.0.0",
         "isomorphic-unfetch": "^3.1.0",
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
