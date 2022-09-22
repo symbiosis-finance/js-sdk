@@ -1,7 +1,7 @@
 import { LogDescription } from '@ethersproject/abi'
 import { EventFilter } from '@ethersproject/contracts'
 import { Filter, Log, TransactionReceipt } from '@ethersproject/providers'
-import fetch from 'node-fetch-native'
+import fetch from 'isomorphic-unfetch'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { isNearChainId } from '../utils'
