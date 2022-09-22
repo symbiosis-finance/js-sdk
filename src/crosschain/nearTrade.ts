@@ -111,7 +111,7 @@ export class NearTrade {
         const near = await this.symbiosis.getNearConnection(chainId)
         const account = await near.account('symbiosis.testnet')
 
-        const config = getConfig('testnet')
+        const config = getConfig('pub-testnet')
 
         const pools = await loadPools(account, config.REF_FI_CONTRACT_ID)
 
@@ -123,7 +123,7 @@ export class NearTrade {
                 return account.viewFunction(config.REF_FI_CONTRACT_ID, methodName, args)
             },
             config,
-            nearUtils: new NearUtils(config, getExtraStablePoolConfig('testnet')),
+            nearUtils: new NearUtils(config, getExtraStablePoolConfig('pub-testnet')),
         }
 
         const stableSmartActionsV2 = await stableSmart(
