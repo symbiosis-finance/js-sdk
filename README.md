@@ -3,7 +3,7 @@
 [![Build Status](https://drone.symbiosis.finance/api/badges/symbiosis-finance/sdk/status.svg)](https://drone.symbiosis.finance/symbiosis-finance/sdk)
 
 ## Docs
-You can find js-sdk docs here - https://sdk.symbiosis.finance/
+You can find js-sdk docs here - https://docs.symbiosis.finance/developer-tools/symbiosis-js-sdk
 
 ## Installation
 
