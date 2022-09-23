@@ -255,8 +255,8 @@ export abstract class BaseSwapping {
         const { route, callData } = this.tradeA
 
         const args = {
-            first_gas_limit: '170000000000000',
-            second_gas_limit: '80000000000000',
+            first_gas_limit: '135000000000000',
+            second_gas_limit: '45000000000000',
             first_account: route[0].address,
             first_function_name: 'ft_transfer_call',
             first_msg: callData,
@@ -266,15 +266,32 @@ export abstract class BaseSwapping {
             second_msg: objectToBase64(otherSideSynthCallData),
         }
 
-        // TODO: Swap not only Near token
+        if (this.tokenAmountIn.token.isNative) {
+            return {
+                receiverId: 'metarouter.symbiosis-finance.testnet',
+                actions: [
+                    transactions.functionCall(
+                        'native_meta_route',
+                        { args },
+                        new BN('300000000000000'), // gas,
+                        new BN(this.tokenAmountIn.raw.toString()) // amount,
+                    ),
+                ],
+            }
+        }
+
         return {
-            receiverId: 'metarouter.symbiosis-finance.testnet',
+            receiverId: route[0].address,
             actions: [
                 transactions.functionCall(
-                    'native_meta_route',
-                    { args },
+                    'ft_transfer_call',
+                    {
+                        amount: this.tokenAmountIn.raw.toString(),
+                        receiver_id: 'metarouter.symbiosis-finance.testnet', // @@
+                        msg: JSON.stringify({ MetaRoute: args }),
+                    },
                     new BN('300000000000000'), // gas,
-                    new BN(this.tokenAmountIn.raw.toString()) // amount,
+                    new BN(1) // amount,
                 ),
             ],
         }
@@ -678,8 +695,8 @@ export abstract class BaseSwapping {
                     JSON.stringify({
                         MetaRoute: {
                             first_function_name: 'ft_transfer_call',
-                            first_gas_limit: '150000000000000',
-                            second_gas_limit: '50000000000000',
+                            first_gas_limit: '100000000000000',
+                            second_gas_limit: '45000000000000',
                             first_msg: this.tradeC.callData,
                             approved_tokens: this.tradeC.route.map((token) => token.address),
                             first_account: this.tradeC.route[0].address,

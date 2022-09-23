@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { Percent, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { objectToBase64 } from './utils'
@@ -16,6 +15,8 @@ import {
     stableSmart,
     toNonDivisibleNumber,
 } from './nearSmartRoute'
+import Big from 'big.js'
+import BigNumber from 'bignumber.js'
 
 // @@
 const WNEAR_TOKEN = new Token({
@@ -46,44 +47,27 @@ export class NearTrade {
     }
 
     public async init() {
-        // wnear -> usdc or usdc -> wnear
-        // https://github.com/ref-finance/ref-ui/blob/d6d5ab4eff74d66fdf9e02b9a29f071211527b01/src/services/swap.ts#L217
-        const response = await fetch('https://testnet-indexer.ref-finance.com/get-pool?pool_id=1159')
-
-        const { token0_ref_price } = await response.json()
-
-        const fromNear = this.tokenAmountIn.token.isNative
-
-        let estimate: string
-        let from: Token
-        let to: Token
-        if (fromNear) {
-            estimate = new BigNumber(token0_ref_price)
-                .multipliedBy(this.tokenAmountIn.toFixed())
-                .shiftedBy(this.tokenOut.decimals)
-                .toFixed(0)
-
+        let from: Token = this.tokenAmountIn.token
+        let to: Token = this.tokenOut
+        if (from.isNative) {
             from = WNEAR_TOKEN
-            to = this.tokenOut
-        } else {
-            estimate = new BigNumber(this.tokenAmountIn.toFixed())
-                .dividedBy(token0_ref_price)
-                .shiftedBy(this.tokenOut.decimals)
-                .toFixed(0)
-            from = this.tokenAmountIn.token
+        } else if (to.isNative) {
             to = WNEAR_TOKEN
         }
 
-        const amountOut = new TokenAmount(this.tokenOut, estimate)
-
-        const { actions } = await this.buildRoute(
+        const { actions, outAmount } = await this.buildRoute(
             to.chainId,
             from.address,
             to.address,
             this.tokenAmountIn.raw.toString()
         )
 
+        // @@ TODO: Make shift without BigNumber
+        const estimate = new BigNumber(outAmount).shiftedBy(this.tokenOut.decimals).toFixed(0)
+
+        const amountOut = new TokenAmount(this.tokenOut, estimate)
         const actionsList = this.buildActionsList(from, to, actions, 0.5)
+        console.log(actions, actionsList, outAmount)
 
         const swapMsg = {
             receiver_id: 'ref-finance-101.testnet',
@@ -134,11 +118,10 @@ export class NearTrade {
             amount
         )
 
-        const expectedOut = (
-            await getExpectedOutputFromActions(context, stableSmartActionsV2, outputToken, 0.5)
-        ).toString()
+        const expectedOut = (await getExpectedOutputFromActions(context, stableSmartActionsV2, outputToken, 3)) as Big
+        const outAmount = expectedOut.toString()
 
-        return { actions: stableSmartActionsV2, outAmount: expectedOut }
+        return { actions: stableSmartActionsV2, outAmount }
     }
 
     private buildActionsList(
