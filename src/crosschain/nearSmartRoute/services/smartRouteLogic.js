@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 // SMART ROUTE SWAP LOGIC
 ////////////////////////////////////////////////////////////////////////////
-import Big from 'big.js';
+import { Big } from '../big';
 import { checkIntegerSumOfAllocations } from './parallelSwapLogic';
 import { ftGetTokenMetadata } from './ft-contract';
 import {
@@ -10,11 +10,6 @@ import {
   toNonDivisibleNumber,
 } from '../utils/numbers';
 import { getPoolEstimate } from './swap';
-
-Big.RM = 0;
-Big.DP = 40;
-Big.NE = -40;
-Big.PE = 40;
 
 function bisqrt(value) {
   // For some ridiculous reason, the .sqrt() method for Big decimals is extremely slow (~10-20ms),

@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import { Big } from '../big';
 import {
   scientificNotationToString,
   toNonDivisibleNumber,
@@ -35,8 +35,8 @@ export interface RoutePool {
   token2Id: string;
   token2Supply: string;
   updateTime: number;
-  partialAmountIn?: string | number | Big;
-  gamma_bps?: Big;
+  partialAmountIn?: string | number | typeof Big;
+  gamma_bps?: typeof Big;
   supplies?: ReservesMap;
   tokenIds?: string[];
   x?: string;

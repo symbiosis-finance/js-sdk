@@ -1,9 +1,9 @@
 //@ts-nocheck
-import Big from 'big.js';
+import { Big } from '../big';
 
 export function checkIntegerSumOfAllocations(
-  allocations: Big[] | string[] | BigInt[],
-  totalInput: Big | string | BigInt
+  allocations: typeof Big[] | string[] | BigInt[],
+  totalInput: typeof Big | string | BigInt
 ) {
   var totalInput = new Big(totalInput);
   var allocations: Big[] | string[] | BigInt[] = allocations.map(
