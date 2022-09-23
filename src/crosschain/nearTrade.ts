@@ -11,9 +11,12 @@ import {
     getExtraStablePoolConfig,
     NearUtils,
     percentLess,
+    PoolMode,
     round,
+    scientificNotationToString,
     stableSmart,
     toNonDivisibleNumber,
+    toReadableNumber,
 } from './nearSmartRoute'
 import Big from 'big.js'
 import BigNumber from 'bignumber.js'
@@ -133,42 +136,75 @@ export class NearTrade {
         const actionsList = []
         const allSwapsTokens = swapsToDo.map((s) => [s.inputToken, s.outputToken]) // to get the hop tokens
 
-        for (const i in allSwapsTokens) {
-            const swapTokens = allSwapsTokens[i]
-            if (swapTokens[0] == tokenIn.address && swapTokens[1] == tokenOut.address) {
-                // parallel, direct hop route.
+        const isParallelSwap = swapsToDo.every((estimate) => estimate.status === PoolMode.PARALLEL)
+
+        if (isParallelSwap) {
+            swapsToDo.forEach((s2d) => {
+                if (s2d.pool.partialAmountIn === undefined) {
+                    return
+                }
+
+                const minTokenOutAmount = s2d.estimate ? percentLess(slippageTolerance, s2d.estimate) : '0'
+                const allocation = toReadableNumber(
+                    tokenIn.decimals,
+                    scientificNotationToString(s2d.pool.partialAmountIn)
+                )
+
                 actionsList.push({
-                    pool_id: swapsToDo[i].pool.id,
+                    pool_id: s2d.pool.id,
                     token_in: tokenIn.address,
                     token_out: tokenOut.address,
-                    amount_in: swapsToDo[i].pool.partialAmountIn,
+                    amount_in: round(tokenIn.decimals, toNonDivisibleNumber(tokenIn.decimals, allocation)),
                     min_amount_out: round(
                         tokenOut.decimals,
-                        toNonDivisibleNumber(tokenOut.decimals, percentLess(slippageTolerance, swapsToDo[i].estimate))
+                        toNonDivisibleNumber(tokenOut.decimals, minTokenOutAmount)
                     ),
                 })
-            } else if (swapTokens[0] == tokenIn.address) {
-                // first hop in double hop route
-                //TODO -- put in a check to make sure this first hop matches with the next (i+1) hop as a second hop.
-                actionsList.push({
-                    pool_id: swapsToDo[i].pool.id,
-                    token_in: swapTokens[0],
-                    token_out: swapTokens[1],
-                    amount_in: swapsToDo[i].pool.partialAmountIn,
-                    min_amount_out: '0',
-                })
-            } else {
-                // second hop in double hop route.
-                //TODO -- put in a check to make sure this second hop matches with the previous (i-1) hop as a first hop.
-                actionsList.push({
-                    pool_id: swapsToDo[i].pool.id,
-                    token_in: swapTokens[0],
-                    token_out: swapTokens[1],
-                    min_amount_out: round(
-                        tokenOut.decimals,
-                        toNonDivisibleNumber(tokenOut.decimals, percentLess(slippageTolerance, swapsToDo[i].estimate))
-                    ),
-                })
+            })
+        } else {
+            for (const i in allSwapsTokens) {
+                const swapTokens = allSwapsTokens[i]
+                if (swapTokens[0] == tokenIn.address && swapTokens[1] == tokenOut.address) {
+                    // parallel, direct hop route.
+                    actionsList.push({
+                        pool_id: swapsToDo[i].pool.id,
+                        token_in: tokenIn.address,
+                        token_out: tokenOut.address,
+                        amount_in: swapsToDo[i].pool.partialAmountIn,
+                        min_amount_out: round(
+                            tokenOut.decimals,
+                            toNonDivisibleNumber(
+                                tokenOut.decimals,
+                                percentLess(slippageTolerance, swapsToDo[i].estimate)
+                            )
+                        ),
+                    })
+                } else if (swapTokens[0] == tokenIn.address) {
+                    // first hop in double hop route
+                    //TODO -- put in a check to make sure this first hop matches with the next (i+1) hop as a second hop.
+                    actionsList.push({
+                        pool_id: swapsToDo[i].pool.id,
+                        token_in: swapTokens[0],
+                        token_out: swapTokens[1],
+                        amount_in: swapsToDo[i].pool.partialAmountIn,
+                        min_amount_out: '0',
+                    })
+                } else {
+                    // second hop in double hop route.
+                    //TODO -- put in a check to make sure this second hop matches with the previous (i-1) hop as a first hop.
+                    actionsList.push({
+                        pool_id: swapsToDo[i].pool.id,
+                        token_in: swapTokens[0],
+                        token_out: swapTokens[1],
+                        min_amount_out: round(
+                            tokenOut.decimals,
+                            toNonDivisibleNumber(
+                                tokenOut.decimals,
+                                percentLess(slippageTolerance, swapsToDo[i].estimate)
+                            )
+                        ),
+                    })
+                }
             }
         }
 
