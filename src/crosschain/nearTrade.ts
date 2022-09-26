@@ -100,8 +100,6 @@ export class NearTrade {
 
         const config = getConfig('pub-testnet')
 
-        const pools = await loadPools(account, config.REF_FI_CONTRACT_ID)
-
         const context: Context = {
             ftViewFunction: (tokenId, { methodName, args }) => {
                 return account.viewFunction(tokenId, methodName, args)
@@ -112,6 +110,8 @@ export class NearTrade {
             config,
             nearUtils: new NearUtils(config, getExtraStablePoolConfig('pub-testnet')),
         }
+
+        const pools = await loadPools(context)
 
         const stableSmartActionsV2 = await stableSmart(
             context,

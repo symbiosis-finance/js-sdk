@@ -1,4 +1,4 @@
-import { Account } from 'near-api-js';
+import { Context } from './context';
 
 const DEFAULT_PAGE_LIMIT = 100;
 
@@ -19,20 +19,26 @@ const parsePool = (pool: any, id: number) => ({
 });
 
 const getAllPools = async (
-  refFiContractId: string,
-  account: Account,
+  context: Context,
   page: number = 1,
   perPage: number = DEFAULT_PAGE_LIMIT
 ) => {
   const index = (page - 1) * perPage;
 
-  const poolData = await account.viewFunction(refFiContractId, 'get_pools', {
-    from_index: index,
-    limit: perPage,
+  const poolData = await context.refFiViewFunction({
+    methodName: 'get_pools',
+    args: {
+      from_index: index,
+      limit: perPage,
+    },
   });
 
   return poolData
     .map((rawPool: any, i: number) => parsePool(rawPool, i + index))
+    .filter((pool: any) => !context.nearUtils.isStablePool(pool.id))
+    .filter(function (pool: any) {
+      return pool.tokenIds.length < 3;
+    })
     .map(
       (pool: {
         id: number;
@@ -57,19 +63,16 @@ const getAllPools = async (
     );
 };
 
-export async function loadPools(account: Account, refFiContractId: string) {
-  const totalPools = await account.viewFunction(
-    refFiContractId,
-    'get_number_of_pools'
-  );
+export async function loadPools(context: Context) {
+  const totalPools = await context.refFiViewFunction({
+    methodName: 'get_number_of_pools',
+  });
 
   const pages = Math.ceil(totalPools / DEFAULT_PAGE_LIMIT);
 
   const pools = (
     await Promise.all(
-      Array.from({ length: pages }, (_, i) =>
-        getAllPools(refFiContractId, account, i + 1)
-      )
+      Array.from({ length: pages }, (_, i) => getAllPools(context, i + 1))
     )
   )
     .flat()
