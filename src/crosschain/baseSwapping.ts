@@ -116,8 +116,8 @@ export abstract class BaseSwapping {
         }
         // <<< NOTE create trades with calculated fee
 
-        if (tokenAmountIn.token.isFromNear()) {
-            const transactionRequest = {} // @@
+        if (tokenAmountIn.token.isNear()) {
+            const transactionRequest = {}
 
             const nearTransactionRequest = this.getNearTransactionRequest(fee)
 
@@ -359,7 +359,7 @@ export abstract class BaseSwapping {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
 
-        if (this.tokenAmountIn.token.isFromNear()) {
+        if (this.tokenAmountIn.token.isNear()) {
             return new NearTrade(this.tokenAmountIn, tokenOut, this.symbiosis)
         }
 
@@ -408,7 +408,7 @@ export abstract class BaseSwapping {
         const chainId = this.tokenOut.chainId
         const amountIn = this.transit.amountOut
 
-        if (this.tokenOut.isFromNear()) {
+        if (this.tokenOut.isNear()) {
             return new NearTrade(amountIn, this.tokenOut, this.symbiosis)
         }
 
@@ -608,7 +608,7 @@ export abstract class BaseSwapping {
         ])
 
         let receiveSide: string
-        if (this.tokenOut.isFromNear()) {
+        if (this.tokenOut.isNear()) {
             receiveSide = 'portal.symbiosis-finance.testnet'
         } else {
             receiveSide = this.symbiosis.portal(chainIdOut).address
@@ -623,7 +623,7 @@ export abstract class BaseSwapping {
         }
 
         let token: Token
-        if (this.tokenAmountIn.token.isFromNear()) {
+        if (this.tokenAmountIn.token.isNear()) {
             const synth = this.symbiosis.findSyntheticStable(this.tokenOut.chainId, this.tokenAmountIn.token.chainId)
 
             if (!synth) {
@@ -689,7 +689,6 @@ export abstract class BaseSwapping {
         }
 
         if (this.tradeC instanceof NearTrade) {
-            // @@ Move to NearTrade class?
             return hexlify(
                 toUtf8Bytes(
                     JSON.stringify({

@@ -68,7 +68,7 @@ export class Bridging {
 
         this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
 
-        if (tokenAmountIn.token.isFromNear()) {
+        if (tokenAmountIn.token.isNear()) {
             return {
                 execute: (signer: Signer) => this.execute({}, signer),
                 fee: this.fee,
@@ -93,7 +93,7 @@ export class Bridging {
             throw new Error('Tokens are not set')
         }
 
-        if (this.tokenAmountIn.token.isFromNear() || this.tokenOut.isFromNear()) {
+        if (this.tokenAmountIn.token.isNear() || this.tokenOut.isNear()) {
             return new TokenAmount(this.tokenOut, '1000000') // @@ fake
         }
 

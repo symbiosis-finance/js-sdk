@@ -83,7 +83,7 @@ export class Token {
         return this.evm
     }
 
-    isFromNear(): boolean {
+    isNear(): boolean {
         return isNearChainId(this.chainId)
     }
 }

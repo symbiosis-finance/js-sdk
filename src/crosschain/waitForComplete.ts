@@ -63,7 +63,7 @@ export class WaitForComplete {
         const { externalId, receiveSide } = this.getTransactionParams(receipt)
 
         // @@
-        if (this.tokenOut.isFromNear()) {
+        if (this.tokenOut.isNear()) {
             let tries = 0
             while (tries < 10) {
                 tries++

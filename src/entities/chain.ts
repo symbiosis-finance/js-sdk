@@ -33,7 +33,7 @@ export class Chain {
         return this.evm
     }
 
-    isNearChain(): boolean {
+    isNear(): boolean {
         return !this.evm && !!this.nonEvmParams && 'nodeUrl' in this.nonEvmParams
     }
 }
