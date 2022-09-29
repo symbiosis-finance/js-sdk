@@ -21,7 +21,13 @@ import {
 import Big from 'big.js'
 import BigNumber from 'bignumber.js'
 
-// @@
+interface NearTradeParams {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    symbiosis: Symbiosis
+    slippage: number
+}
+
 const WNEAR_TOKEN = new Token({
     chainId: 30001,
     address: 'wrap.testnet',
@@ -40,13 +46,15 @@ export class NearTrade {
     public priceImpact!: Percent
     public routerAddress!: string
 
+    private slippage: number
     private readonly tokenOut: Token
     private readonly symbiosis: Symbiosis
 
-    public constructor(tokenAmountIn: TokenAmount, tokenOut: Token, symbiosis: Symbiosis) {
+    public constructor({ slippage, symbiosis, tokenAmountIn, tokenOut }: NearTradeParams) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.symbiosis = symbiosis
+        this.slippage = slippage
     }
 
     public async init() {
@@ -69,8 +77,7 @@ export class NearTrade {
         const estimate = new BigNumber(outAmount).shiftedBy(this.tokenOut.decimals).toFixed(0)
 
         const amountOut = new TokenAmount(this.tokenOut, estimate)
-        const actionsList = this.buildActionsList(from, to, actions, 0.5)
-        console.log(actions, actionsList, outAmount)
+        const actionsList = this.buildActionsList(from, to, actions, this.slippage)
 
         const swapMsg = {
             receiver_id: 'ref-finance-101.testnet',
@@ -121,7 +128,12 @@ export class NearTrade {
             amount
         )
 
-        const expectedOut = (await getExpectedOutputFromActions(context, stableSmartActionsV2, outputToken, 3)) as Big
+        const expectedOut = (await getExpectedOutputFromActions(
+            context,
+            stableSmartActionsV2,
+            outputToken,
+            this.slippage
+        )) as Big
         const outAmount = expectedOut.toString()
 
         return { actions: stableSmartActionsV2, outAmount }
