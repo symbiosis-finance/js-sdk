@@ -64,7 +64,7 @@ const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingReques
             request.revertableAddress, // revertableAddress
         ])
         const toBlock = await portal.provider.getBlockNumber()
-        const fromBlock = toBlock - 100000 // FIXME
+        const fromBlock = toBlock - 3000 // FIXME
         const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
 
         const foundSynthesizeRequest = events.find((e) => {

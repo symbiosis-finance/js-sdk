@@ -203,12 +203,12 @@ export class Symbiosis {
         return AdaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public nervePool(tokenIn: Token, tokenOut: Token, signer?: Signer): NervePool {
-        const chainId = tokenIn.chainId
+    public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {
+        const chainId = tokenA.chainId
         const address = this.chainConfig(chainId).nerves.find((data) => {
             return (
-                data.tokens.find((token) => token.toLowerCase() === tokenIn.address.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenOut.address.toLowerCase())
+                data.tokens.find((token) => token.toLowerCase() === tokenA.address.toLowerCase()) &&
+                data.tokens.find((token) => token.toLowerCase() === tokenB.address.toLowerCase())
             )
         })?.address
 
@@ -247,6 +247,20 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return NervePool__factory.connect(address, signerOrProvider)
+    }
+
+    public nervePoolBySynth(synthTokenAddress: string, chainId: ChainId, signer?: Signer): NervePool {
+        const pool = this.chainConfig(chainId).nerves.find((data) => {
+            return data.tokens[1].toLowerCase() === synthTokenAddress.toLowerCase()
+        })
+
+        if (!pool) {
+            throw new Error('Nerve pool not found')
+        }
+
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return NervePool__factory.connect(pool.address, signerOrProvider)
     }
 
     public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
