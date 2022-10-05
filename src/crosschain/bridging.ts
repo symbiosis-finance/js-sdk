@@ -1,4 +1,4 @@
-import { MaxUint256 } from '@ethersproject/constants'
+import { MaxUint256, AddressZero } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { BigNumber, Signer, utils } from 'ethers'
@@ -9,6 +9,7 @@ import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
+import { Interface } from '@ethersproject/abi'
 
 export type WaitForMined = Promise<{
     receipt: TransactionReceipt
@@ -91,10 +92,6 @@ export class Bridging {
     protected async getFee(): Promise<TokenAmount> {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
-        }
-
-        if (this.tokenAmountIn.token.isNear() || this.tokenOut.isNear()) {
-            return new TokenAmount(this.tokenOut, '1000000') // @@ fake
         }
 
         if (this.direction === 'mint') {
@@ -261,12 +258,10 @@ export class Bridging {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const portal = this.symbiosis.portal(chainIdIn)
-
-        const synthesis = this.symbiosis.synthesis(chainIdOut)
+        const synthesis = this.symbiosis.synthesisNonEvm(chainIdOut)
 
         const internalId = getInternalId({
-            contractAddress: portal.address,
+            contractAddress: AddressZero,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
@@ -281,7 +276,7 @@ export class Bridging {
         const calldata = synthesis.interface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            this.tokenAmountIn.token.address, // _token,
+            toUtf8Bytes(this.tokenAmountIn.token.address), // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address
@@ -293,6 +288,7 @@ export class Bridging {
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
+
         return new TokenAmount(this.tokenOut, fee.toString())
     }
 
@@ -304,36 +300,45 @@ export class Bridging {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const synthesis = this.symbiosis.synthesis(chainIdIn)
-        const portal = this.symbiosis.portal(chainIdOut)
-
         const internalId = getInternalId({
-            contractAddress: synthesis.address,
+            contractAddress: AddressZero,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
         const externalId = getExternalId({
             internalId,
-            contractAddress: portal.address,
-            revertableAddress: this.revertableAddress,
+            contractAddress: AddressZero,
+            revertableAddress: AddressZero,
             chainId: chainIdOut,
         })
 
-        const calldata = portal.interface.encodeFunctionData('unsynthesize', [
-            '1', // _stableBridgingFee,
-            externalId, // externalID,
-            this.tokenOut.address, // rtoken,
-            this.tokenAmountIn.raw.toString(), // _amount,
-            this.to, // _chain2address
+        const nonEvmPortalInterface = new Interface([
+            'function unsynthesize(uint256 _stableBridgingFee, bytes32 _externalID, bytes _rtoken, uint256 _amount, bytes _chain2address)',
         ])
 
+        const calldata = nonEvmPortalInterface.encodeFunctionData('unsynthesize', [
+            '1', // _stableBridgingFee,
+            externalId, // externalID,
+            toUtf8Bytes(this.tokenOut.address), // rtoken,
+            this.tokenAmountIn.raw.toString(), // _amount,
+            toUtf8Bytes(this.to), // _chain2address
+        ])
+
+        let receiveSide: string
+        if (this.tokenOut.isNear()) {
+            receiveSide = 'portal.symbiosis-finance.testnet' // @@
+        } else {
+            receiveSide = this.symbiosis.portal(chainIdOut).address
+        }
+
         const fee = await this.symbiosis.getBridgeFee({
-            receiveSide: portal.address,
+            receiveSide,
             calldata,
             chainIdFrom: chainIdIn,
             chainIdTo: chainIdOut,
         })
+
         return new TokenAmount(this.tokenOut, fee.toString())
     }
 

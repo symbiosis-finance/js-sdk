@@ -619,7 +619,7 @@ export abstract class BaseSwapping {
 
         let receiveSide: string
         if (this.tokenOut.isNear()) {
-            receiveSide = 'portal.symbiosis-finance.testnet'
+            receiveSide = 'portal.symbiosis-finance.testnet' // @@
         } else {
             receiveSide = this.symbiosis.portal(chainIdOut).address
         }
