@@ -255,8 +255,8 @@ export abstract class BaseSwapping {
         const { route, callData } = this.tradeA
 
         const args = {
-            first_gas_limit: '135000000000000',
-            second_gas_limit: '45000000000000',
+            first_gas_limit: '115000000000000',
+            second_gas_limit: '65000000000000',
             first_account: route[0].address,
             first_function_name: 'ft_transfer_call',
             first_msg: callData,
