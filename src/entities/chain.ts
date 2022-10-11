@@ -64,6 +64,16 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
+        id: ChainId.ETH_GOERLI,
+        name: 'Goerli',
+        disabled: false,
+        explorer: 'https://goerli.etherscan.io/',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    }),
+    new Chain({
         id: ChainId.ETH_KOVAN,
         name: 'Kovan',
         disabled: false,
