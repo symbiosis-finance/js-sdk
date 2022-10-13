@@ -97,10 +97,7 @@ export class ZappingOoki extends BaseSwapping {
             }
         }
 
-        const ookiCalldata = this.iToken.interface.encodeFunctionData('mint', [
-            this.userAddress,
-            supplyToken.toString(),
-        ])
+        const ookiCalldata = this.iToken.interface.encodeFunctionData('mint', [this.userAddress, amount])
 
         callDatas.push(ookiCalldata)
         receiveSides.push(this.iToken.address)
