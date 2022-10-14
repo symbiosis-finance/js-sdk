@@ -72,7 +72,7 @@ export abstract class BaseSwapping {
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
-        this.slippage = slippage
+        this.slippage = slippage / this.swapsCount()
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
@@ -120,6 +120,17 @@ export abstract class BaseSwapping {
             transactionRequest,
             approveTo: this.approveTo(),
         }
+    }
+
+    protected swapsCount(): number {
+        let count = 1 // by default stable swap is used
+        if (!this.symbiosis.isTransitStable(this.tokenAmountIn.token)) {
+            count += 1
+        }
+        if (!this.symbiosis.isTransitStable(this.tokenOut)) {
+            count += 1
+        }
+        return count
     }
 
     protected approveTo(): string {
