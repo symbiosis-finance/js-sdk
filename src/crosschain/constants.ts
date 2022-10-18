@@ -7,6 +7,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
     ChainId.ETH_KOVAN,
+    ChainId.ETH_GOERLI,
     ChainId.BSC_MAINNET,
     ChainId.BSC_TESTNET,
     ChainId.AVAX_MAINNET,
