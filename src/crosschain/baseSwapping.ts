@@ -28,6 +28,12 @@ export type SwapExactIn = Promise<{
     approveTo: string
 }>
 
+export type DetailedSlippage = {
+    A: number
+    B: number
+    C: number
+}
+
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
 
@@ -36,7 +42,7 @@ export abstract class BaseSwapping {
     protected revertableAddress!: string
     protected tokenAmountIn!: TokenAmount
     protected tokenOut!: Token
-    protected slippage!: number
+    protected slippage!: DetailedSlippage
     protected deadline!: number
     protected ttl!: number
     protected use1Inch!: boolean
@@ -73,7 +79,7 @@ export abstract class BaseSwapping {
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
-        this.slippage = slippage
+        this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.symbiosis.mChainId)
@@ -123,6 +129,28 @@ export abstract class BaseSwapping {
             amountInUsd: this.amountInUsd,
             transactionRequest,
             approveTo: this.approveTo(),
+        }
+    }
+
+    protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
+        let externalSwapsCount = 0
+        if (!this.symbiosis.isTransitStable(this.tokenAmountIn.token)) {
+            externalSwapsCount += 1
+        }
+        if (!this.symbiosis.isTransitStable(this.tokenOut)) {
+            externalSwapsCount += 1
+        }
+        const stableSwapSlippage = 50 // 0.5%
+        if (totalSlippage < 150) {
+            // 1.5%
+            throw new Error('Slippage cannot be less than 1.5%')
+        }
+        const externalSwapSlippage = (totalSlippage - stableSwapSlippage) / externalSwapsCount
+
+        return {
+            A: externalSwapSlippage,
+            B: stableSwapSlippage,
+            C: externalSwapSlippage,
         }
     }
 
@@ -267,7 +295,7 @@ export abstract class BaseSwapping {
                 tokenOut,
                 from,
                 to,
-                this.slippage / 100,
+                this.slippage['A'] / 100,
                 oracle,
                 this.dataProvider
             )
@@ -283,7 +311,7 @@ export abstract class BaseSwapping {
             routerA = this.symbiosis.adaRouter(chainId)
         }
 
-        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
+        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage['A'], this.ttl, routerA, dexFee)
     }
 
     protected buildTransit(fee?: TokenAmount): Transit {
@@ -292,7 +320,7 @@ export abstract class BaseSwapping {
             this.dataProvider,
             this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
             this.tokenOut,
-            this.slippage,
+            this.slippage['B'],
             this.deadline,
             fee
         )
@@ -315,7 +343,7 @@ export abstract class BaseSwapping {
                 this.tokenOut,
                 from,
                 this.to,
-                this.slippage / 100,
+                this.slippage['C'] / 100,
                 oracle,
                 this.dataProvider
             )
@@ -331,7 +359,7 @@ export abstract class BaseSwapping {
             routerC = this.symbiosis.adaRouter(chainId)
         }
 
-        return new UniLikeTrade(amountIn, this.tokenOut, this.to, this.slippage, this.ttl, routerC, dexFee)
+        return new UniLikeTrade(amountIn, this.tokenOut, this.to, this.slippage['C'], this.ttl, routerC, dexFee)
     }
 
     protected getRoute(): Token[] {

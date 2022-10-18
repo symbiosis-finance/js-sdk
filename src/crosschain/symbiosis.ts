@@ -345,8 +345,9 @@ export class Symbiosis {
     }
 
     public findTransitStable(chainId: ChainId): Token | undefined {
+        const chainHasStablePool = this.chainConfig(chainId).nerves.length > 0
         return this.stables().find((token) => {
-            return token.chainId === chainId && !token.isSynthetic
+            return token.chainId === chainId && (!token.isSynthetic || !chainHasStablePool)
         })
     }
     public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
