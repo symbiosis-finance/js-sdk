@@ -7,6 +7,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
     ChainId.ETH_KOVAN,
+    ChainId.ETH_GOERLI,
     ChainId.AVAX_MAINNET,
     ChainId.AVAX_TESTNET,
     ChainId.BOBA_MAINNET,
@@ -47,6 +48,7 @@ export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
 export const WETH_ONLY: ChainTokensList = {
     [ChainId.ETH_MAINNET]: [WETH[ChainId.ETH_MAINNET]],
     [ChainId.ETH_RINKEBY]: [WETH[ChainId.ETH_RINKEBY]],
+    [ChainId.ETH_GOERLI]: [WETH[ChainId.ETH_GOERLI]],
     [ChainId.ETH_KOVAN]: [WETH[ChainId.ETH_KOVAN]],
     [ChainId.BSC_MAINNET]: [WETH[ChainId.BSC_MAINNET]],
     [ChainId.BSC_TESTNET]: [WETH[ChainId.BSC_TESTNET]],
