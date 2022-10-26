@@ -30,6 +30,8 @@ import {
     MulticallRouter__factory,
     NervePool,
     NervePool__factory,
+    OmniPool,
+    OmniPool__factory,
     OneInchOracle,
     OneInchOracle__factory,
     Portal,
@@ -48,7 +50,7 @@ import { getRepresentation } from './getRepresentation'
 import { getPendingRequests, PendingRequest } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
-import { ChainConfig, Config } from './types'
+import { ChainConfig, Config, OmniPoolConfig } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
@@ -66,7 +68,7 @@ export class Symbiosis {
 
     public readonly config: Config
     public readonly clientId: string
-    public readonly mChainId: ChainId
+    public readonly omniPoolConfig: OmniPoolConfig
 
     public constructor(config: ConfigName | Config, clientId: string) {
         if (config === 'mainnet') {
@@ -76,7 +78,7 @@ export class Symbiosis {
         } else {
             this.config = config
         }
-        this.mChainId = this.config.mChainId
+        this.omniPoolConfig = this.config.omniPool
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
@@ -301,6 +303,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return MetaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public omniPool(signer?: Signer): OmniPool {
+        const { address, chainId } = this.omniPoolConfig
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return OmniPool__factory.connect(address, signerOrProvider)
     }
 
     public oneInchOracle(chainId: ChainId, signer?: Signer): OneInchOracle {

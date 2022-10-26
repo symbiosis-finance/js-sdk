@@ -6,7 +6,10 @@ export const config: Config = {
     advisor: {
         url: 'https://api.testnet.symbiosis.finance/calculations',
     },
-    mChainId: 97,
+    omniPool: {
+        chainId: 97,
+        address: '0x0000000000000000000000000000000000000000',
+    },
     chains: [
         {
             id: 4,

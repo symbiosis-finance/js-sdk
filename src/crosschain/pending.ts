@@ -39,7 +39,7 @@ interface GetChainPendingRequestsParams {
 }
 
 const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingRequest): Promise<Token | undefined> => {
-    const synthesis = symbiosis.synthesis(symbiosis.mChainId)
+    const synthesis = symbiosis.synthesis(symbiosis.omniPoolConfig.chainId)
     const filter = synthesis.filters.SynthesizeCompleted()
     const tx = await synthesis.provider.getTransactionReceipt(request.transactionHash)
     const foundSynthesizeCompleted = tx.logs.find((i) => {
@@ -60,7 +60,7 @@ const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingReques
         const topics = portal.interface.encodeFilterTopics(eventFragment, [
             undefined,
             undefined, // from
-            symbiosis.mChainId, // chains IDs
+            symbiosis.omniPoolConfig.chainId, // chains IDs
             request.revertableAddress, // revertableAddress
         ])
         const toBlock = await portal.provider.getBlockNumber()
@@ -73,7 +73,7 @@ const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingReques
                 internalId: id,
                 contractAddress: synthesis.address,
                 revertableAddress: request.revertableAddress,
-                chainId: symbiosis.mChainId,
+                chainId: symbiosis.omniPoolConfig.chainId,
             })
             return foundSynthesizeCompleted.topics?.[1] === externalId
         })
@@ -148,7 +148,7 @@ export async function getChainPendingRequests({
 
         topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            type === 'burn-v2' ? symbiosis.metaRouter(symbiosis.mChainId).address : undefined, // from
+            type === 'burn-v2' ? symbiosis.metaRouter(symbiosis.omniPoolConfig.chainId).address : undefined, // from
             otherChains, // chains IDs
             address, // revertableAddress
         ])

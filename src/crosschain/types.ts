@@ -45,9 +45,14 @@ export type AdvisorConfig = {
     url: string
 }
 
+export type OmniPoolConfig = {
+    chainId: ChainId
+    address: string
+}
+
 export type Config = {
     advisor: AdvisorConfig
-    mChainId: ChainId
+    omniPool: OmniPoolConfig
     chains: ChainConfig[]
     minSwapAmountInUsd: number
     maxSwapAmountInUsd: number
