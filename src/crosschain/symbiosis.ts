@@ -56,6 +56,7 @@ import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
 import { ZappingRenBTC } from './zappingRenBTC'
+import { ZappingOoki } from './zappingOoki'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
@@ -140,6 +141,10 @@ export class Symbiosis {
 
     public newZappingBeefy() {
         return new ZappingBeefy(this)
+    }
+
+    public newZappingOoki() {
+        return new ZappingOoki(this)
     }
 
     public getPendingRequests(address: string): Promise<PendingRequest[]> {
