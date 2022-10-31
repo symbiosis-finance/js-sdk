@@ -48,6 +48,7 @@ export type AdvisorConfig = {
 export type OmniPoolConfig = {
     chainId: ChainId
     address: string
+    oracle: string
 }
 
 export type Config = {

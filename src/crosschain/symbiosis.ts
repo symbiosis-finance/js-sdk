@@ -32,6 +32,8 @@ import {
     NervePool__factory,
     OmniPool,
     OmniPool__factory,
+    OmniPoolOracle,
+    OmniPoolOracle__factory,
     OneInchOracle,
     OneInchOracle__factory,
     Portal,
@@ -310,6 +312,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPool__factory.connect(address, signerOrProvider)
+    }
+
+    public omniPoolOracle(signer?: Signer): OmniPoolOracle {
+        const { oracle, chainId } = this.omniPoolConfig
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
     }
 
     public oneInchOracle(chainId: ChainId, signer?: Signer): OneInchOracle {
