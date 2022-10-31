@@ -21,6 +21,7 @@ export type { RenGatewayRegistryV2 } from './RenGatewayRegistryV2'
 export type { RenMintGatewayV3 } from './RenMintGatewayV3'
 export type { Synthesis } from './Synthesis'
 export type { UniLikeRouter } from './UniLikeRouter'
+export type { Ooki } from './Ooki'
 
 export { Aave__factory } from './factories/Aave__factory'
 export { AdaRouter__factory } from './factories/AdaRouter__factory'
@@ -42,3 +43,4 @@ export { RenGatewayRegistryV2__factory } from './factories/RenGatewayRegistryV2_
 export { RenMintGatewayV3__factory } from './factories/RenMintGatewayV3__factory'
 export { Synthesis__factory } from './factories/Synthesis__factory'
 export { UniLikeRouter__factory } from './factories/UniLikeRouter__factory'
+export { Ooki__factory } from './factories/Ooki__factory'
