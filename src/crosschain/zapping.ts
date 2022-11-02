@@ -12,10 +12,10 @@ import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade } from './uniLikeTrade'
 import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AdaRouter, AvaxRouter, NervePool, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
 import { OneInchTrade } from './oneInchTrade'
-import { NerveLiquidity } from './nerveLiquidity'
 import { DataProvider } from './dataProvider'
+import { OmniLiquidity } from './omniLiquidity'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -33,8 +33,6 @@ export class Zapping {
     private to!: string
     private revertableAddress!: string
     private tokenAmountIn!: TokenAmount
-    private poolAddress!: string
-    private poolChainId!: ChainId
     private slippage!: number
     private deadline!: number
     private ttl!: number
@@ -44,19 +42,21 @@ export class Zapping {
 
     private synthToken!: Token
 
-    private nerveLiquidity!: NerveLiquidity
-
+    private omniLiquidity!: OmniLiquidity
+    private readonly pool!: OmniPool
+    private readonly poolOracle!: OmniPoolOracle
     private readonly symbiosis: Symbiosis
 
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
+
+        this.pool = this.symbiosis.omniPool()
+        this.poolOracle = this.symbiosis.omniPoolOracle()
     }
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
-        poolAddress: string,
-        poolChainId: ChainId,
         from: string,
         to: string,
         revertableAddress: string,
@@ -66,8 +66,6 @@ export class Zapping {
     ): SwapExactIn {
         this.use1Inch = use1Inch
         this.tokenAmountIn = tokenAmountIn
-        this.poolAddress = poolAddress
-        this.poolChainId = poolChainId
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
@@ -90,22 +88,20 @@ export class Zapping {
 
         this.synthToken = await this.getSynthToken()
 
-        const pool = this.symbiosis.nervePoolByAddress(this.poolAddress, this.poolChainId)
-
-        this.nerveLiquidity = this.buildNerveLiquidity(pool)
-        await this.nerveLiquidity.init()
+        this.omniLiquidity = this.buildOmniLiquidity()
+        await this.omniLiquidity.init()
 
         const fee = await this.getFee()
 
-        this.nerveLiquidity = this.buildNerveLiquidity(pool, fee)
-        await this.nerveLiquidity.init()
+        this.omniLiquidity = this.buildOmniLiquidity(fee)
+        await this.omniLiquidity.init()
 
         const transactionRequest = this.getTransactionRequest(fee)
 
         return {
             execute: (signer: Signer) => this.execute(transactionRequest, signer),
             fee,
-            tokenAmountOut: this.nerveLiquidity.amountOut,
+            tokenAmountOut: this.omniLiquidity.amountOut,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.getSynthAmount(fee),
             transactionRequest,
@@ -115,7 +111,7 @@ export class Zapping {
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
         return new WaitForComplete({
             direction: 'mint',
-            chainIdOut: this.nerveLiquidity.amountOut.token.chainId,
+            chainIdOut: this.omniLiquidity.amountOut.token.chainId,
             symbiosis: this.symbiosis,
             revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
@@ -221,10 +217,10 @@ export class Zapping {
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
     }
 
-    private buildNerveLiquidity(pool: NervePool, fee?: TokenAmount): NerveLiquidity {
+    private buildOmniLiquidity(fee?: TokenAmount): OmniLiquidity {
         const tokenAmountIn = this.getSynthAmount(fee)
 
-        return new NerveLiquidity(tokenAmountIn, this.to, this.slippage, this.deadline, pool)
+        return new OmniLiquidity(tokenAmountIn, this.to, this.slippage, this.deadline, this.pool, this.poolOracle)
     }
 
     private otherSideSynthCallData(fee: TokenAmount): [string, string] {
@@ -233,12 +229,10 @@ export class Zapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.poolChainId
+        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
         const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const portal = this.symbiosis.portal(chainIdIn)
-
-        const swapTokens = [this.synthToken.address, this.nerveLiquidity.poolLpToken.address]
 
         return [
             portal.address,
@@ -252,12 +246,12 @@ export class Zapping {
                     oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
                     syntCaller: this.from,
                     chainID: chainIdOut,
-                    swapTokens,
+                    swapTokens: [this.synthToken.address],
                     secondDexRouter: AddressZero,
                     secondSwapCalldata: [],
-                    finalReceiveSide: this.nerveLiquidity.pool.address,
-                    finalCalldata: this.nerveLiquidity.callData,
-                    finalOffset: this.nerveLiquidity.callDataOffset,
+                    finalReceiveSide: this.pool.address,
+                    finalCalldata: this.omniLiquidity.callData,
+                    finalOffset: this.omniLiquidity.callDataOffset,
                     revertableAddress: this.revertableAddress,
                     clientID: this.symbiosis.clientId,
                 },
@@ -290,12 +284,13 @@ export class Zapping {
     }
 
     private async getSynthToken(): Promise<Token> {
+        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
         const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
-        const rep = await this.symbiosis.getRepresentation(transitStableIn, this.poolChainId)
+        const rep = await this.symbiosis.getRepresentation(transitStableIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${this.poolChainId} not found`,
+                `Representation of ${transitStableIn.symbol} in chain ${chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -305,7 +300,7 @@ export class Zapping {
 
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.poolChainId
+        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
@@ -325,8 +320,6 @@ export class Zapping {
             chainId: chainIdOut,
         })
 
-        const swapTokens = [this.synthToken.address, this.nerveLiquidity.poolLpToken.address]
-
         const calldata = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
             {
                 stableBridgingFee: '1',
@@ -335,12 +328,12 @@ export class Zapping {
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
-                swapTokens,
+                swapTokens: [this.synthToken.address],
                 secondDexRouter: AddressZero,
                 secondSwapCalldata: [],
-                finalReceiveSide: this.nerveLiquidity.pool.address,
-                finalCalldata: this.nerveLiquidity.callData,
-                finalOffset: this.nerveLiquidity.callDataOffset,
+                finalReceiveSide: this.pool.address,
+                finalCalldata: this.omniLiquidity.callData,
+                finalOffset: this.omniLiquidity.callDataOffset,
             },
         ])
 

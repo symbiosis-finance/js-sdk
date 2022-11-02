@@ -1,7 +1,7 @@
 import { ONE } from '../constants'
 import { Fraction, Percent, Token, TokenAmount } from '../entities'
 import { basisPointsToPercent } from './utils'
-import { OmniPool } from './contracts'
+import { OmniPool, OmniPoolOracle } from './contracts'
 
 export class OmniLiquidity {
     public amountOut!: TokenAmount
@@ -15,7 +15,7 @@ export class OmniLiquidity {
         private readonly slippage: number,
         private readonly deadline: number,
         private readonly pool: OmniPool,
-        private readonly from: string
+        private readonly poolOracle: OmniPoolOracle
     ) {}
 
     public async init() {
@@ -23,25 +23,14 @@ export class OmniLiquidity {
 
         const index = await this.pool.assetToIndex(this.tokenAmountIn.token.address)
 
-        console.log({ tokenAmountIn: this.tokenAmountIn, index })
-        const depositEstimate = await this.pool.callStatic.deposit(
-            index,
-            this.tokenAmountIn.raw.toString(),
-            '0',
-            this.to,
-            this.deadline,
-            {
-                from: this.from,
-            }
-        )
+        const depositEstimate = await this.poolOracle.quoteDeposit(index, this.tokenAmountIn.raw.toString())
 
-        console.log({ index, depositEstimate: depositEstimate.liquidity.toString() })
-        const erc1155Token = new Token({
+        const lpToken = new Token({
             address: this.pool.address,
             decimals: 18,
             chainId: network.chainId,
         })
-        this.amountOut = new TokenAmount(erc1155Token, depositEstimate.liquidity.toString())
+        this.amountOut = new TokenAmount(lpToken, depositEstimate.lpTokenToMint.toString())
 
         const slippageTolerance = basisPointsToPercent(this.slippage)
         const slippageAdjustedAmountOut = new Fraction(ONE)
