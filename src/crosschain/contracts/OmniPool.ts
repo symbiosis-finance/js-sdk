@@ -536,7 +536,7 @@ export interface OmniPool extends BaseContract {
 
         withdraw(
             _id: BigNumberish,
-            _amountToWithdraw: BigNumberish,
+            _liquidity: BigNumberish,
             _minAmount: BigNumberish,
             _to: string,
             _deadline: BigNumberish,
@@ -708,7 +708,7 @@ export interface OmniPool extends BaseContract {
 
     withdraw(
         _id: BigNumberish,
-        _amountToWithdraw: BigNumberish,
+        _liquidity: BigNumberish,
         _minAmount: BigNumberish,
         _to: string,
         _deadline: BigNumberish,
@@ -851,7 +851,7 @@ export interface OmniPool extends BaseContract {
 
         withdraw(
             _id: BigNumberish,
-            _amountToWithdraw: BigNumberish,
+            _liquidity: BigNumberish,
             _minAmount: BigNumberish,
             _to: string,
             _deadline: BigNumberish,
@@ -1141,7 +1141,7 @@ export interface OmniPool extends BaseContract {
 
         withdraw(
             _id: BigNumberish,
-            _amountToWithdraw: BigNumberish,
+            _liquidity: BigNumberish,
             _minAmount: BigNumberish,
             _to: string,
             _deadline: BigNumberish,
@@ -1309,7 +1309,7 @@ export interface OmniPool extends BaseContract {
 
         withdraw(
             _id: BigNumberish,
-            _amountToWithdraw: BigNumberish,
+            _liquidity: BigNumberish,
             _minAmount: BigNumberish,
             _to: string,
             _deadline: BigNumberish,
