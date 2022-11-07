@@ -9,6 +9,7 @@ export const config: Config = {
     omniPool: {
         chainId: 97,
         address: '0x0000000000000000000000000000000000000000',
+        oracle: '0x0000000000000000000000000000000000000000',
     },
     chains: [
         {

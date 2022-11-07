@@ -874,15 +874,15 @@ export interface OmniPool extends BaseContract {
         AssetRemoved(token?: string | null, asset?: string | null): AssetRemovedEventFilter
 
         'Deposit(address,address,uint256,uint256,address)'(
-            sender?: string | null,
-            token?: null,
+            sender?: null,
+            token?: string | null,
             amount?: null,
             liquidity?: null,
             to?: string | null
         ): DepositEventFilter
         Deposit(
-            sender?: string | null,
-            token?: null,
+            sender?: null,
+            token?: string | null,
             amount?: null,
             liquidity?: null,
             to?: string | null
