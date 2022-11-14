@@ -185,22 +185,42 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.BOBA_MAINNET,
-        name: 'Boba',
+        name: 'Boba Ethereum',
         disabled: false,
         explorer: 'https://blockexplorer.boba.network',
         icons: {
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png',
         },
     }),
     new Chain({
         id: ChainId.BOBA_RINKEBY,
-        name: 'Boba',
+        name: 'Boba Rinkeby',
         disabled: false,
         explorer: 'https://blockexplorer.rinkeby.boba.network',
         icons: {
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.BOBA_AVALANCHE,
+        name: 'Boba Avalanche',
+        disabled: false,
+        explorer: 'https://blockexplorer.avax.boba.network',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-avalanche/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-avalanche/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.BOBA_BNB,
+        name: 'Boba BNB',
+        disabled: false,
+        explorer: 'https://blockexplorer.bnb.boba.network',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
         },
     }),
     new Chain({

@@ -11,6 +11,8 @@ export const CHAINS_PRIORITY = [
     ChainId.AVAX_MAINNET,
     ChainId.AVAX_TESTNET,
     ChainId.BOBA_MAINNET,
+    ChainId.BOBA_AVALANCHE,
+    ChainId.BOBA_BNB,
     ChainId.BOBA_RINKEBY,
     ChainId.AURORA_MAINNET,
     ChainId.AURORA_TESTNET,
@@ -61,6 +63,8 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.OKEX_MAINNET]: [WETH[ChainId.OKEX_MAINNET]],
     [ChainId.OKEX_TESTNET]: [WETH[ChainId.OKEX_TESTNET]],
     [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET]],
+    [ChainId.BOBA_AVALANCHE]: [WETH[ChainId.BOBA_AVALANCHE]],
+    [ChainId.BOBA_BNB]: [WETH[ChainId.BOBA_BNB]],
     [ChainId.BOBA_RINKEBY]: [WETH[ChainId.BOBA_RINKEBY]],
     [ChainId.MILKOMEDA_MAINNET]: [WETH[ChainId.MILKOMEDA_MAINNET]],
     [ChainId.MILKOMEDA_DEVNET]: [WETH[ChainId.MILKOMEDA_DEVNET]],
@@ -240,6 +244,8 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Dai Stablecoin',
         }),
     ],
+    [ChainId.BOBA_AVALANCHE]: [],
+    [ChainId.BOBA_BNB]: [],
     [ChainId.BOBA_MAINNET]: [
         new Token({
             chainId: ChainId.BOBA_MAINNET,
@@ -329,6 +335,11 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MATIC_MAINNET],
     ],
     [ChainId.BOBA_MAINNET]: [WETH[ChainId.BOBA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_MAINNET]],
+    [ChainId.BOBA_AVALANCHE]: [
+        WETH[ChainId.BOBA_AVALANCHE],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_AVALANCHE],
+    ],
+    [ChainId.BOBA_BNB]: [WETH[ChainId.BOBA_BNB], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BOBA_BNB]],
     [ChainId.AURORA_MAINNET]: [
         WETH[ChainId.AURORA_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.AURORA_MAINNET],
@@ -366,6 +377,8 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.OKEX_MAINNET]: AddressZero, // TODO
     [ChainId.OKEX_TESTNET]: '0x9A9b5Ef5CeAbaC69d3B4A71c4da782554A35B638',
     [ChainId.BOBA_MAINNET]: '0xaeD5b25BE1c3163c907a471082640450F928DDFE',
+    [ChainId.BOBA_AVALANCHE]: '0x92C5b5B66988E6B8931a8CD3faa418b42003DF2F',
+    [ChainId.BOBA_BNB]: '0x31cCe73DA4365342bd081F6a748AAdb7c7a49b7E',
     [ChainId.BOBA_RINKEBY]: '0x773ccf8ba321c9f96a100b4b0fa1ecf7046645f5',
     [ChainId.MILKOMEDA_MAINNET]: '0xa46157Cda2D019Ba4cDcd8cE12A04760c15C355b',
     [ChainId.MILKOMEDA_DEVNET]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',

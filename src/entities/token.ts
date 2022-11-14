@@ -274,6 +274,30 @@ export const WETH = {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
         },
     }),
+    [ChainId.BOBA_AVALANCHE]: new Token({
+        chainId: ChainId.BOBA_AVALANCHE,
+        address: '0x26c319B7B2cF823365414d082698C8ac90cbBA63',
+        decimals: 18,
+        symbol: 'WBOBA',
+        isNative: false,
+        name: 'Wrapped BOBA',
+        icons: {
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+        },
+    }),
+    [ChainId.BOBA_BNB]: new Token({
+        chainId: ChainId.BOBA_BNB,
+        address: '0xC58aaD327D6D58D979882601ba8DDa0685B505eA',
+        decimals: 18,
+        symbol: 'WBOBA',
+        isNative: false,
+        name: 'Wrapped BOBA',
+        icons: {
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+        },
+    }),
     [ChainId.BOBA_RINKEBY]: new Token({
         chainId: ChainId.BOBA_RINKEBY,
         address: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
