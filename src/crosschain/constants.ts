@@ -323,6 +323,20 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             address: '0x4988a896b1227218e4A686fdE5EabdcAbd91571f',
             decimals: 6,
         }),
+        new Token({
+            chainId: ChainId.AURORA_MAINNET,
+            symbol: 'wNEAR',
+            name: 'Wrapped NEAR',
+            address: '0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d',
+            decimals: 24,
+        }),
+        new Token({
+            chainId: ChainId.AURORA_MAINNET,
+            symbol: 'AURORA',
+            name: 'AURORA',
+            address: '0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79',
+            decimals: 18,
+        }),
     ],
 }
 
