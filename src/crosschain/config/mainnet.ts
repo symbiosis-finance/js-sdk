@@ -7,9 +7,9 @@ export const config: Config = {
         url: 'https://api.symbiosis.finance/calculations',
     },
     omniPool: {
-        chainId: 56,
-        address: '0x0000000000000000000000000000000000000000',
-        oracle: '0x0000000000000000000000000000000000000000',
+        chainId: 56288,
+        address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
+        oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
     },
     chains: [
         {
@@ -359,7 +359,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
                     symbol: 'USDC',
-                    decimals: 6,
+                    decimals: 18,
                     chainId: 56288,
                     isStable: true,
                     icons: {
