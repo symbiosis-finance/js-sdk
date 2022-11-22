@@ -8,10 +8,10 @@ import { Error, ErrorCode } from './error'
 import { PendingRequest } from './pending'
 import type { Symbiosis } from './symbiosis'
 import { calculateGasMargin, getExternalId, getInternalId, getLogWithTimeout } from './utils'
-import { NerveTrade } from './nerveTrade'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
+import { OmniTrade } from './omniTrade'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
@@ -132,6 +132,7 @@ export class RevertPending {
         })
         return new TokenAmount(feeToken, fee.toString())
     }
+
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
         const chainIdIn = this.symbiosis.omniPoolConfig.chainId
         const chainIdOut = this.request.chainIdFrom
@@ -376,39 +377,25 @@ export class RevertPending {
         const tokenAmountIn = new TokenAmount(tokenIn, fromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
-        const mStable = this.symbiosis.transitStable(this.symbiosis.omniPoolConfig.chainId)
-        const nervePool1 = this.symbiosis.nervePool(tokenIn, mStable)
-        const nerveTrade1 = new NerveTrade(amount, mStable, this.slippage, this.deadline, nervePool1, this.symbiosis)
-        await nerveTrade1.init()
-
         const tokenOut = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdFrom)
-        if (!tokenOut) throw new Error('Stable not found')
+        if (!tokenOut) {
+            throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
+        }
 
-        const nervePool2 = this.symbiosis.nervePool(mStable, tokenOut)
-        const nerveTrade2 = new NerveTrade(
-            nerveTrade1.amountOut,
-            tokenOut,
-            this.slippage,
-            this.deadline,
-            nervePool2,
-            this.symbiosis
-        )
-        await nerveTrade2.init()
+        const to = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
 
-        const trades = [nerveTrade1, nerveTrade2]
+        const omniTrade = new OmniTrade(amount, tokenOut, this.slippage, this.deadline, this.symbiosis, to)
+        await omniTrade.init()
 
         return [
             this.multicallRouter.address,
             this.multicallRouter.interface.encodeFunctionData('multicall', [
-                trades[0].tokenAmountIn.raw.toString(),
-                trades.map((i) => i.callData), // calldata
-                trades.map((i) => i.pool.address), // receiveSides
-                [
-                    ...trades.map((i) => i.tokenAmountIn.token.address), // path
-                    trades[trades.length - 1].amountOut.token.address,
-                ],
-                trades.map(() => 100), // offset
-                this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address,
+                amount.raw.toString(),
+                [omniTrade.callData], // calldata
+                [omniTrade.pool.address], // receiveSides
+                [tokenIn.address, tokenOut.address], // path
+                [100], // offset
+                to,
             ]),
         ]
     }
