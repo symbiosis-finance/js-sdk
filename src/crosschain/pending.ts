@@ -1,4 +1,5 @@
 import { utils } from 'ethers'
+import { parseUnits } from '@ethersproject/units'
 import { Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Portal, Synthesis } from './contracts'
@@ -16,6 +17,7 @@ export enum PendingRequestState {
 export type PendingRequestType = 'burn' | 'synthesize' | 'burn-v2' | 'burn-v2-revert' | 'synthesize-v2'
 
 export interface PendingRequest {
+    originalFromTokenAmount: TokenAmount
     fromTokenAmount: TokenAmount
     transactionHash: string
     state: PendingRequestState
@@ -229,6 +231,7 @@ export async function getChainPendingRequests({
                     to,
                     revertableAddress,
                     fromTokenAmount,
+                    originalFromTokenAmount: fromTokenAmount,
                     state,
                     transactionHash: event.transactionHash,
                     type,
@@ -244,12 +247,16 @@ export async function getChainPendingRequests({
                         pendingRequest.chainIdFrom = sourceChainToken.chainId
                         pendingRequest.fromTokenAmount = new TokenAmount(
                             sourceChainToken,
-                            pendingRequest.fromTokenAmount.raw
+                            parseUnits(
+                                pendingRequest.fromTokenAmount.toExact(sourceChainToken.decimals),
+                                sourceChainToken.decimals
+                            ).toString()
                         )
                     } else {
+                        const transitStable = symbiosis.transitStable(pendingRequest.chainIdTo)
                         pendingRequest.type = 'burn-v2-revert'
                         pendingRequest.fromTokenAmount = new TokenAmount(
-                            symbiosis.transitStable(pendingRequest.chainIdTo),
+                            transitStable,
                             pendingRequest.fromTokenAmount.raw
                         )
                     }
@@ -264,7 +271,8 @@ export async function getChainPendingRequests({
                 }
 
                 return pendingRequest
-            } catch {
+            } catch (e) {
+                console.error(e)
                 // TODO: Capture errors?
                 return null
             }

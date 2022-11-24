@@ -207,6 +207,7 @@ export class RevertPending {
         let calldata: string
         let advisorChainIdFrom: ChainId = chainIdTo
         let advisorChainIdTo: ChainId = chainIdFrom
+        const feeToken = this.request.originalFromTokenAmount.token
 
         if (type === 'synthesize') {
             const portal = this.symbiosis.portal(chainIdFrom)
@@ -267,8 +268,8 @@ export class RevertPending {
             chainIdTo: advisorChainIdTo,
         })
 
-        const feeTokenAmount = new TokenAmount(this.request.fromTokenAmount.token, fee)
-        if (this.request.fromTokenAmount.lessThan(feeTokenAmount)) {
+        const feeTokenAmount = new TokenAmount(feeToken, fee)
+        if (this.request.originalFromTokenAmount.lessThan(feeTokenAmount)) {
             throw new Error(
                 `Amount $${this.request.fromTokenAmount.toSignificant()} less than fee $${feeTokenAmount.toSignificant()}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
@@ -368,13 +369,13 @@ export class RevertPending {
     }
 
     private async buildSwapCalldata(fee?: TokenAmount): Promise<[string, string]> {
-        const { fromTokenAmount, chainIdFrom, chainIdTo } = this.request
+        const { originalFromTokenAmount, chainIdFrom, chainIdTo } = this.request
 
         const tokenIn = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdTo)
         if (!tokenIn) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdTo}`)
         }
-        const tokenAmountIn = new TokenAmount(tokenIn, fromTokenAmount.raw) // sStable -> Stable
+        const tokenAmountIn = new TokenAmount(tokenIn, originalFromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
         const tokenOut = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdFrom)
