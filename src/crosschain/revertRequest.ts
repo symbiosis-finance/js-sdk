@@ -64,6 +64,8 @@ export class RevertRequest {
                 throw new Error(`Tx is success and cannot be reverted.`)
             }
         }
+        const fromTokenAmount = new TokenAmount(token, amount)
+
         return {
             internalId: id,
             externalId,
@@ -75,8 +77,9 @@ export class RevertRequest {
             revertableAddress,
             chainIdFrom: this.chainId,
             chainIdTo,
-            fromTokenAmount: new TokenAmount(token, amount),
+            fromTokenAmount,
             revertChainId: chainIdTo,
+            originalFromTokenAmount: fromTokenAmount,
         }
     }
 
