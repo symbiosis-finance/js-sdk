@@ -65,8 +65,9 @@ const findSourceChainToken = async (symbiosis: Symbiosis, request: PendingReques
             symbiosis.omniPoolConfig.chainId, // chains IDs
             request.revertableAddress, // revertableAddress
         ])
+        const blockOffset = symbiosis.filterBlockOffset(chainId)
         const toBlock = await portal.provider.getBlockNumber()
-        const fromBlock = toBlock - 3000 // FIXME
+        const fromBlock = toBlock - blockOffset
         const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
 
         const foundSynthesizeRequest = events.find((e) => {
@@ -231,7 +232,6 @@ export async function getChainPendingRequests({
                     to,
                     revertableAddress,
                     fromTokenAmount,
-                    originalFromTokenAmount: fromTokenAmount,
                     state,
                     transactionHash: event.transactionHash,
                     type,
@@ -239,7 +239,8 @@ export async function getChainPendingRequests({
                     chainIdFrom: activeChainId,
                     status: 'new',
                     transactionHashReverted: undefined,
-                    revertChainId: chainId,
+                    originalFromTokenAmount: fromTokenAmount, // FIXME depends of type
+                    revertChainId: chainId, // FIXME depends of type
                 }
                 if (type === 'burn-v2') {
                     const sourceChainToken = await findSourceChainToken(symbiosis, pendingRequest)
@@ -273,7 +274,6 @@ export async function getChainPendingRequests({
                 return pendingRequest
             } catch (e) {
                 console.error(e)
-                // TODO: Capture errors?
                 return null
             }
         })

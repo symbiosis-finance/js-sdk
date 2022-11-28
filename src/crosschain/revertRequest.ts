@@ -78,8 +78,8 @@ export class RevertRequest {
             chainIdFrom: this.chainId,
             chainIdTo,
             fromTokenAmount,
-            revertChainId: chainIdTo,
-            originalFromTokenAmount: fromTokenAmount,
+            revertChainId: chainIdTo, // FIXME depends of type
+            originalFromTokenAmount: fromTokenAmount, // FIXME depends of type
         }
     }
 
