@@ -1,7 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { ChainId } from 'src/constants'
 import ERC20 from '../abis/ERC20.json'
-import { Token, TokenAmount, wrappedToken } from '../entities'
+import { Token, TokenAmount, WETH, wrappedToken } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { BeefyVault, MulticallRouter } from './contracts'
 
@@ -27,7 +27,12 @@ export class ZappingBeefy extends BaseSwapping {
 
         this.beefyVault = this.symbiosis.beefyVault(vaultAddress, vaultChainId)
 
-        const tokenAddress = await this.beefyVault.want()
+        let tokenAddress
+        try {
+            tokenAddress = await this.beefyVault.want()
+        } catch (e) {
+            tokenAddress = WETH[vaultChainId].address
+        }
         const tokenContract = new Contract(tokenAddress, ERC20, this.symbiosis.providers.get(vaultChainId))
         const decimals = await tokenContract.decimals()
 
