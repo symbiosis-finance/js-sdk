@@ -41,23 +41,24 @@ export interface OmniPoolInterface extends utils.Interface {
         'owner()': FunctionFragment
         'pause()': FunctionFragment
         'paused()': FunctionFragment
-        'removeAsset(uint256)': FunctionFragment
         'renounceOwnership()': FunctionFragment
         'safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)': FunctionFragment
         'safeTransferFrom(address,address,uint256,uint256,bytes)': FunctionFragment
         'setA(uint256)': FunctionFragment
         'setApprovalForAll(address,bool)': FunctionFragment
-        'setDev(address)': FunctionFragment
+        'setAssetStatus(uint256,bool)': FunctionFragment
         'setFeeRatio(uint256)': FunctionFragment
         'setFeeTo(address)': FunctionFragment
         'setLPFee(uint256)': FunctionFragment
         'setMintFeeThreshold(uint256)': FunctionFragment
+        'setVeSISAddress(address)': FunctionFragment
         'spreadAccumulatedError(uint256,uint256)': FunctionFragment
         'supportsInterface(bytes4)': FunctionFragment
         'swap(uint256,uint256,uint256,uint256,address,uint256)': FunctionFragment
         'transferOwnership(address)': FunctionFragment
         'unpause()': FunctionFragment
         'uri(uint256)': FunctionFragment
+        'veSIS()': FunctionFragment
         'withdraw(uint256,uint256,uint256,address,uint256)': FunctionFragment
     }
 
@@ -85,7 +86,6 @@ export interface OmniPoolInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'owner', values?: undefined): string
     encodeFunctionData(functionFragment: 'pause', values?: undefined): string
     encodeFunctionData(functionFragment: 'paused', values?: undefined): string
-    encodeFunctionData(functionFragment: 'removeAsset', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'safeBatchTransferFrom',
@@ -97,11 +97,12 @@ export interface OmniPoolInterface extends utils.Interface {
     ): string
     encodeFunctionData(functionFragment: 'setA', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'setApprovalForAll', values: [string, boolean]): string
-    encodeFunctionData(functionFragment: 'setDev', values: [string]): string
+    encodeFunctionData(functionFragment: 'setAssetStatus', values: [BigNumberish, boolean]): string
     encodeFunctionData(functionFragment: 'setFeeRatio', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'setFeeTo', values: [string]): string
     encodeFunctionData(functionFragment: 'setLPFee', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'setMintFeeThreshold', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setVeSISAddress', values: [string]): string
     encodeFunctionData(functionFragment: 'spreadAccumulatedError', values: [BigNumberish, BigNumberish]): string
     encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string
     encodeFunctionData(
@@ -111,6 +112,7 @@ export interface OmniPoolInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
     encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
     encodeFunctionData(functionFragment: 'uri', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'veSIS', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'withdraw',
         values: [BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
@@ -137,44 +139,45 @@ export interface OmniPoolInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'removeAsset', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'safeBatchTransferFrom', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'safeTransferFrom', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setA', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setApprovalForAll', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setDev', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setAssetStatus', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setFeeRatio', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setFeeTo', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setLPFee', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setMintFeeThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setVeSISAddress', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'spreadAccumulatedError', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'swap', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'uri', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'veSIS', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result
 
     events: {
         'ApprovalForAll(address,address,bool)': EventFragment
-        'AssetAdded(address,address)': EventFragment
-        'AssetRemoved(address,address)': EventFragment
+        'AssetAdded(address)': EventFragment
+        'AssetStatusChanged(address,bool)': EventFragment
         'Deposit(address,address,uint256,uint256,address)': EventFragment
         'FillPool(address,uint256)': EventFragment
         'Initialized(uint8)': EventFragment
         'NewA(uint256)': EventFragment
-        'NewDev(address)': EventFragment
         'NewFee(uint256)': EventFragment
         'NewFeeTo(address)': EventFragment
         'NewLPFee(uint256)': EventFragment
+        'NewMaxSupply(address,uint256)': EventFragment
         'NewMintFeeThreshold(uint256)': EventFragment
+        'NewVeSIS(address)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
         'Swap(address,address,address,uint256,uint256,address)': EventFragment
         'TransferBatch(address,address,address,uint256[],uint256[])': EventFragment
         'TransferSingle(address,address,address,uint256,uint256)': EventFragment
-        'TransferTipBucket(address,uint256,address)': EventFragment
         'URI(string,uint256)': EventFragment
         'Unpaused(address)': EventFragment
         'Withdraw(address,address,uint256,uint256,address)': EventFragment
@@ -182,22 +185,22 @@ export interface OmniPoolInterface extends utils.Interface {
 
     getEvent(nameOrSignatureOrTopic: 'ApprovalForAll'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'AssetAdded'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'AssetRemoved'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'AssetStatusChanged'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Deposit'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'FillPool'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewA'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'NewDev'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewFee'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewFeeTo'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewLPFee'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewMaxSupply'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewMintFeeThreshold'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewVeSIS'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Swap'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'TransferBatch'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'TransferSingle'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'TransferTipBucket'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'URI'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Withdraw'): EventFragment
@@ -210,13 +213,13 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>
 
-export type AssetAddedEvent = TypedEvent<[string, string], { token: string; asset: string }>
+export type AssetAddedEvent = TypedEvent<[string], { token: string }>
 
 export type AssetAddedEventFilter = TypedEventFilter<AssetAddedEvent>
 
-export type AssetRemovedEvent = TypedEvent<[string, string], { token: string; asset: string }>
+export type AssetStatusChangedEvent = TypedEvent<[string, boolean], { token: string; status: boolean }>
 
-export type AssetRemovedEventFilter = TypedEventFilter<AssetRemovedEvent>
+export type AssetStatusChangedEventFilter = TypedEventFilter<AssetStatusChangedEvent>
 
 export type DepositEvent = TypedEvent<
     [string, string, BigNumber, BigNumber, string],
@@ -243,10 +246,6 @@ export type NewAEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
 export type NewAEventFilter = TypedEventFilter<NewAEvent>
 
-export type NewDevEvent = TypedEvent<[string], { addr: string }>
-
-export type NewDevEventFilter = TypedEventFilter<NewDevEvent>
-
 export type NewFeeEvent = TypedEvent<[BigNumber], { lpDividendRatio: BigNumber }>
 
 export type NewFeeEventFilter = TypedEventFilter<NewFeeEvent>
@@ -259,9 +258,17 @@ export type NewLPFeeEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
 export type NewLPFeeEventFilter = TypedEventFilter<NewLPFeeEvent>
 
+export type NewMaxSupplyEvent = TypedEvent<[string, BigNumber], { token: string; newMaxSupply: BigNumber }>
+
+export type NewMaxSupplyEventFilter = TypedEventFilter<NewMaxSupplyEvent>
+
 export type NewMintFeeThresholdEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
 export type NewMintFeeThresholdEventFilter = TypedEventFilter<NewMintFeeThresholdEvent>
+
+export type NewVeSISEvent = TypedEvent<[string], { newVeSIS: string }>
+
+export type NewVeSISEventFilter = TypedEventFilter<NewVeSISEvent>
 
 export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
@@ -310,13 +317,6 @@ export type TransferSingleEvent = TypedEvent<
 >
 
 export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>
-
-export type TransferTipBucketEvent = TypedEvent<
-    [string, BigNumber, string],
-    { token: string; amount: BigNumber; to: string }
->
-
-export type TransferTipBucketEventFilter = TypedEventFilter<TransferTipBucketEvent>
 
 export type URIEvent = TypedEvent<[string, BigNumber], { value: string; id: BigNumber }>
 
@@ -446,11 +446,6 @@ export interface OmniPool extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<[boolean]>
 
-        removeAsset(
-            _index: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
         safeBatchTransferFrom(
@@ -482,8 +477,9 @@ export interface OmniPool extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
-        setDev(
-            _newDev: string,
+        setAssetStatus(
+            _id: BigNumberish,
+            _active: boolean,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -504,6 +500,11 @@ export interface OmniPool extends BaseContract {
 
         setMintFeeThreshold(
             _newMintFeeThreshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setVeSISAddress(
+            _newVeSIS: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -533,6 +534,8 @@ export interface OmniPool extends BaseContract {
         unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
         uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+
+        veSIS(overrides?: CallOverrides): Promise<[string]>
 
         withdraw(
             _id: BigNumberish,
@@ -624,11 +627,6 @@ export interface OmniPool extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>
 
-    removeAsset(
-        _index: BigNumberish,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
-
     renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     safeBatchTransferFrom(
@@ -657,7 +655,11 @@ export interface OmniPool extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
-    setDev(_newDev: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    setAssetStatus(
+        _id: BigNumberish,
+        _active: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setFeeRatio(
         _newLpDividendRatio: BigNumberish,
@@ -676,6 +678,11 @@ export interface OmniPool extends BaseContract {
 
     setMintFeeThreshold(
         _newMintFeeThreshold: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    setVeSISAddress(
+        _newVeSIS: string,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -705,6 +712,8 @@ export interface OmniPool extends BaseContract {
     unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+    veSIS(overrides?: CallOverrides): Promise<string>
 
     withdraw(
         _id: BigNumberish,
@@ -788,8 +797,6 @@ export interface OmniPool extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<boolean>
 
-        removeAsset(_index: BigNumberish, overrides?: CallOverrides): Promise<void>
-
         renounceOwnership(overrides?: CallOverrides): Promise<void>
 
         safeBatchTransferFrom(
@@ -814,7 +821,7 @@ export interface OmniPool extends BaseContract {
 
         setApprovalForAll(operator: string, approved: boolean, overrides?: CallOverrides): Promise<void>
 
-        setDev(_newDev: string, overrides?: CallOverrides): Promise<void>
+        setAssetStatus(_id: BigNumberish, _active: boolean, overrides?: CallOverrides): Promise<void>
 
         setFeeRatio(_newLpDividendRatio: BigNumberish, overrides?: CallOverrides): Promise<void>
 
@@ -823,6 +830,8 @@ export interface OmniPool extends BaseContract {
         setLPFee(_newLpFee: BigNumberish, overrides?: CallOverrides): Promise<void>
 
         setMintFeeThreshold(_newMintFeeThreshold: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        setVeSISAddress(_newVeSIS: string, overrides?: CallOverrides): Promise<void>
 
         spreadAccumulatedError(_id: BigNumberish, _amount: BigNumberish, overrides?: CallOverrides): Promise<void>
 
@@ -849,6 +858,8 @@ export interface OmniPool extends BaseContract {
 
         uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
 
+        veSIS(overrides?: CallOverrides): Promise<string>
+
         withdraw(
             _id: BigNumberish,
             _liquidity: BigNumberish,
@@ -867,11 +878,14 @@ export interface OmniPool extends BaseContract {
         ): ApprovalForAllEventFilter
         ApprovalForAll(account?: string | null, operator?: string | null, approved?: null): ApprovalForAllEventFilter
 
-        'AssetAdded(address,address)'(token?: string | null, asset?: string | null): AssetAddedEventFilter
-        AssetAdded(token?: string | null, asset?: string | null): AssetAddedEventFilter
+        'AssetAdded(address)'(token?: string | null): AssetAddedEventFilter
+        AssetAdded(token?: string | null): AssetAddedEventFilter
 
-        'AssetRemoved(address,address)'(token?: string | null, asset?: string | null): AssetRemovedEventFilter
-        AssetRemoved(token?: string | null, asset?: string | null): AssetRemovedEventFilter
+        'AssetStatusChanged(address,bool)'(
+            token?: string | null,
+            status?: boolean | null
+        ): AssetStatusChangedEventFilter
+        AssetStatusChanged(token?: string | null, status?: boolean | null): AssetStatusChangedEventFilter
 
         'Deposit(address,address,uint256,uint256,address)'(
             sender?: null,
@@ -897,9 +911,6 @@ export interface OmniPool extends BaseContract {
         'NewA(uint256)'(value?: null): NewAEventFilter
         NewA(value?: null): NewAEventFilter
 
-        'NewDev(address)'(addr?: null): NewDevEventFilter
-        NewDev(addr?: null): NewDevEventFilter
-
         'NewFee(uint256)'(lpDividendRatio?: null): NewFeeEventFilter
         NewFee(lpDividendRatio?: null): NewFeeEventFilter
 
@@ -909,8 +920,17 @@ export interface OmniPool extends BaseContract {
         'NewLPFee(uint256)'(value?: null): NewLPFeeEventFilter
         NewLPFee(value?: null): NewLPFeeEventFilter
 
+        'NewMaxSupply(address,uint256)'(
+            token?: string | null,
+            newMaxSupply?: BigNumberish | null
+        ): NewMaxSupplyEventFilter
+        NewMaxSupply(token?: string | null, newMaxSupply?: BigNumberish | null): NewMaxSupplyEventFilter
+
         'NewMintFeeThreshold(uint256)'(value?: null): NewMintFeeThresholdEventFilter
         NewMintFeeThreshold(value?: null): NewMintFeeThresholdEventFilter
+
+        'NewVeSIS(address)'(newVeSIS?: null): NewVeSISEventFilter
+        NewVeSIS(newVeSIS?: null): NewVeSISEventFilter
 
         'OwnershipTransferred(address,address)'(
             previousOwner?: string | null,
@@ -967,13 +987,6 @@ export interface OmniPool extends BaseContract {
             id?: null,
             value?: null
         ): TransferSingleEventFilter
-
-        'TransferTipBucket(address,uint256,address)'(
-            token?: null,
-            amount?: null,
-            to?: null
-        ): TransferTipBucketEventFilter
-        TransferTipBucket(token?: null, amount?: null, to?: null): TransferTipBucketEventFilter
 
         'URI(string,uint256)'(value?: null, id?: BigNumberish | null): URIEventFilter
         URI(value?: null, id?: BigNumberish | null): URIEventFilter
@@ -1060,11 +1073,6 @@ export interface OmniPool extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<BigNumber>
 
-        removeAsset(
-            _index: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
         safeBatchTransferFrom(
@@ -1093,7 +1101,11 @@ export interface OmniPool extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
-        setDev(_newDev: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+        setAssetStatus(
+            _id: BigNumberish,
+            _active: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
         setFeeRatio(
             _newLpDividendRatio: BigNumberish,
@@ -1109,6 +1121,11 @@ export interface OmniPool extends BaseContract {
 
         setMintFeeThreshold(
             _newMintFeeThreshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setVeSISAddress(
+            _newVeSIS: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -1138,6 +1155,8 @@ export interface OmniPool extends BaseContract {
         unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
         uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        veSIS(overrides?: CallOverrides): Promise<BigNumber>
 
         withdraw(
             _id: BigNumberish,
@@ -1219,11 +1238,6 @@ export interface OmniPool extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-        removeAsset(
-            _index: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
         safeBatchTransferFrom(
@@ -1255,8 +1269,9 @@ export interface OmniPool extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
-        setDev(
-            _newDev: string,
+        setAssetStatus(
+            _id: BigNumberish,
+            _active: boolean,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
@@ -1277,6 +1292,11 @@ export interface OmniPool extends BaseContract {
 
         setMintFeeThreshold(
             _newMintFeeThreshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setVeSISAddress(
+            _newVeSIS: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
@@ -1306,6 +1326,8 @@ export interface OmniPool extends BaseContract {
         unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
         uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        veSIS(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         withdraw(
             _id: BigNumberish,

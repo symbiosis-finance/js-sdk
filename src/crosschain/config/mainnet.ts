@@ -4,7 +4,7 @@ export const config: Config = {
     minSwapAmountInUsd: 10,
     maxSwapAmountInUsd: 5000000,
     advisor: {
-        url: 'https://api.symbiosis.finance/calculations',
+        url: 'https://api-v2.symbiosis.finance/calculations',
     },
     omniPool: {
         chainId: 56288,
@@ -185,7 +185,7 @@ export const config: Config = {
             stables: [
                 {
                     name: 'USD Coin',
-                    address: '0x12bb1A120dcF8Cb7152eDAC9f04d176DD7f41F7e',
+                    address: '0x126969743a6d300bab08F303f104f0f7DBAfbe20',
                     symbol: 'USDC',
                     decimals: 6,
                     chainId: 43288,
@@ -294,9 +294,9 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Synthetic USDC',
-                    symbol: 'sUSDC',
-                    address: '0xAc509814886384563b9b48B7f35264bf62FA2EC9',
+                    name: 'Synthetic USDC.e',
+                    symbol: 'sUSDC.e',
+                    address: '0xa9441f2995763e38d18A725646b00D90938d2FBf',
                     chainId: 56288,
                     chainFromId: 43288,
                     decimals: 6,
