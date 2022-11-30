@@ -27,15 +27,15 @@ const privateKey = '' // TODO paste your private key
 
 const wallet = new ethers.Wallet(privateKey as BytesLike)
 
-// Create Symbiosis instance using TESTNET config
+// Create Symbiosis instance using MAINNET config
 // with clientId = `sdk-example-app`
-const symbiosis = new Symbiosis('testnet', 'sdk-example-app')
-const provider = symbiosis.getProvider(ChainId.ETH_RINKEBY)
+const symbiosis = new Symbiosis('mainnet', 'sdk-example-app')
+const provider = symbiosis.getProvider(ChainId.MATIC_MAINNET)
 const signer = wallet.connect(provider)
 
 const tokenIn = new Token({
-    chainId: ChainId.ETH_RINKEBY,
-    address: '0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b',
+    chainId: ChainId.MATIC_MAINNET,
+    address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
     name: 'USD Coin',
     symbol: 'USDC',
     decimals: 6,
@@ -47,7 +47,7 @@ const tokenAmountIn = new TokenAmount(
 )
 
 const tokenOut = new Token({
-    chainId: ChainId.BSC_TESTNET,
+    chainId: ChainId.BSC_MAINNET,
     isNative: true,
     address: '',
     symbol: 'BNB',

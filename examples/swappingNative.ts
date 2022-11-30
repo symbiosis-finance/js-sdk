@@ -1,5 +1,5 @@
 /**
- * Example swapping of some ETH from Rinkeby
+ * Example swapping of some ETH
  * to BNB on BNB Chain Testnet
  */
 
@@ -9,12 +9,12 @@ import { BytesLike, ethers } from 'ethers'
 const privateKey = '' // TODO paste your private key
 const wallet = new ethers.Wallet(privateKey as BytesLike)
 
-// Create Symbiosis instance using TESTNET config
+// Create Symbiosis instance using MAINNET config
 // with clientId = `sdk-example-app`
-const symbiosis = new Symbiosis('testnet', 'sdk-example-app')
+const symbiosis = new Symbiosis('mainnet', 'sdk-example-app')
 
 const tokenIn = new Token({
-    chainId: ChainId.ETH_RINKEBY,
+    chainId: ChainId.ETH_MAINNET,
     address: '',
     symbol: 'ETH',
     decimals: 18,
@@ -27,7 +27,7 @@ const tokenAmountIn = new TokenAmount(
 )
 
 const tokenOut = new Token({
-    chainId: ChainId.BSC_TESTNET,
+    chainId: ChainId.BSC_MAINNET,
     isNative: true,
     address: '',
     symbol: 'BNB',
