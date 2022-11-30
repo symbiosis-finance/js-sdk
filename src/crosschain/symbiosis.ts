@@ -63,10 +63,9 @@ import { ZappingRenBTC } from './zappingRenBTC'
 import { ZappingOoki } from './zappingOoki'
 
 import { config as mainnet } from './config/mainnet'
-import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
 
-type ConfigName = 'testnet' | 'mainnet'
+type ConfigName = 'mainnet'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -78,8 +77,6 @@ export class Symbiosis {
     public constructor(config: ConfigName | Config, clientId: string) {
         if (config === 'mainnet') {
             this.config = mainnet
-        } else if (config === 'testnet') {
-            this.config = testnet
         } else {
             this.config = config
         }
