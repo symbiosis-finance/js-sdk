@@ -48,25 +48,14 @@ export class Transit {
     public async init(): Promise<Transit> {
         this.feeToken = await this.getFeeToken()
 
-        if (this.isTradesRequired()) {
-            this.trade = await this.buildTrade()
+        this.trade = await this.buildTrade()
 
-            this.receiveSide = this.multicallRouter.address
-            this.callData = this.buildCalldata()
-            this.amountOut = this.getTradeAmountOut()
-            this.route = this.trade.route
-            this.priceImpact = this.trade.priceImpact
-        } else {
-            this.amountOut = this.getBridgeAmountOut() // depends on this.feeToken
-            const transitTokenOut = this.symbiosis.transitStable(this.tokenOut.chainId)
-            if (this.direction === 'mint') {
-                if (!this.tokenOut.equals(transitTokenOut)) {
-                    this.route = [transitTokenOut]
-                }
-            } else {
-                this.route = [this.symbiosis.transitStable(this.amountIn.token.chainId)]
-            }
-        }
+        this.receiveSide = this.multicallRouter.address
+        this.callData = this.buildCalldata()
+        this.amountOut = this.getTradeAmountOut()
+        this.route = this.trade.route
+        this.priceImpact = this.trade.priceImpact
+
         this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
 
         return this
@@ -141,14 +130,6 @@ export class Transit {
         ])
     }
 
-    protected isTradesRequired(): boolean {
-        if (this.isV2()) {
-            return true
-        }
-        const chainId = this.direction === 'mint' ? this.tokenOut.chainId : this.amountIn.token.chainId
-        return this.symbiosis.chainConfig(chainId).nerves.length > 0
-    }
-
     protected getTradeAmountIn(): TokenAmount {
         if (this.direction === 'burn') {
             return this.amountIn
@@ -184,7 +165,7 @@ export class Transit {
     protected async getFeeToken(): Promise<Token> {
         const transitStableOutChainId = this.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
 
-        if (this.direction === 'burn' || !this.isTradesRequired()) {
+        if (this.direction === 'burn') {
             return this.symbiosis.transitStable(transitStableOutChainId) // USDC | BUSD
         }
 

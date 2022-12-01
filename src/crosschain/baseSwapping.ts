@@ -660,6 +660,10 @@ export abstract class BaseSwapping {
     }
 
     protected swapTokens(): string[] {
+        if (this.transit.route.length === 0) {
+            return []
+        }
+
         const tokens = [this.transit.route[0].address, this.transit.route[this.transit.route.length - 1].address]
 
         if (this.tradeC && !this.transit.isV2()) {
