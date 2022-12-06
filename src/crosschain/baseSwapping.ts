@@ -121,7 +121,7 @@ export abstract class BaseSwapping {
 
         return {
             execute: (signer: Signer) => this.execute(transactionRequest, signer),
-            fee,
+            fee: feeV2 || fee,
             tokenAmountOut: this.tokenAmountOut(feeV2),
             tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
             route: this.route,
