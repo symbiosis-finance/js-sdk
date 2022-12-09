@@ -29,12 +29,16 @@ export class ZappingAave extends BaseSwapping {
             tokenAmountIn,
             wrappedToken(tokenOut),
             from,
-            this.multicallRouter.address,
+            to,
             revertableAddress,
             slippage,
             deadline,
             use1Inch
         )
+    }
+
+    protected tradeCTo(): string {
+        return this.multicallRouter.address
     }
 
     protected finalReceiveSide(): string {
@@ -49,14 +53,8 @@ export class ZappingAave extends BaseSwapping {
         return 36
     }
 
-    protected swapTokens(): string[] {
-        const tokens = this.transit.route.map((i) => i.address)
-        if (this.tradeC) {
-            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        } else {
-            tokens.push(this.aToken)
-        }
-        return tokens
+    protected extraSwapTokens(): string[] {
+        return [this.aToken]
     }
 
     private buildMulticall() {

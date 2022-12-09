@@ -1,7 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { ChainId } from 'src/constants'
 import ERC20 from '../abis/ERC20.json'
-import { Token, TokenAmount, wrappedToken } from '../entities'
+import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { BeefyVault, MulticallRouter } from './contracts'
 
@@ -37,16 +37,11 @@ export class ZappingBeefy extends BaseSwapping {
             decimals,
         })
 
-        return this.doExactIn(
-            tokenAmountIn,
-            token,
-            from,
-            this.multicallRouter.address,
-            revertableAddress,
-            slippage,
-            deadline,
-            use1Inch
-        )
+        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, use1Inch)
+    }
+
+    protected tradeCTo(): string {
+        return this.multicallRouter.address
     }
 
     protected finalReceiveSide(): string {
@@ -61,14 +56,8 @@ export class ZappingBeefy extends BaseSwapping {
         return 36
     }
 
-    protected swapTokens(): string[] {
-        const tokens = this.transit.route.map((i) => i.address)
-        if (this.tradeC) {
-            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        } else {
-            tokens.push(this.aToken)
-        }
-        return tokens
+    protected extraSwapTokens(): string[] {
+        return [this.aToken]
     }
 
     private buildMulticall() {

@@ -75,7 +75,7 @@ export class ZappingRenBTC extends BaseSwapping {
             tokenAmountIn,
             renBTC,
             from,
-            this.multicallRouter.address,
+            from,
             revertableAddress,
             slippage,
             deadline,
@@ -90,6 +90,10 @@ export class ZappingRenBTC extends BaseSwapping {
             renBTCAmountOut: tokenAmountOut,
             tokenAmountOut: btcAmountOut,
         }
+    }
+
+    protected tradeCTo(): string {
+        return this.multicallRouter.address
     }
 
     public async waitForREN(transactionHash: string): Promise<string | undefined> {

@@ -100,16 +100,11 @@ export class ZappingCream extends BaseSwapping {
 
         this.creamPoolAddress = markets[index].market
 
-        return this.doExactIn(
-            tokenAmountIn,
-            wrappedTokenOut,
-            from,
-            this.multicallRouter.address,
-            revertableAddress,
-            slippage,
-            deadline,
-            use1Inch
-        )
+        return this.doExactIn(tokenAmountIn, wrappedTokenOut, from, to, revertableAddress, slippage, deadline, use1Inch)
+    }
+
+    protected tradeCTo(): string {
+        return this.multicallRouter.address
     }
 
     protected finalReceiveSide(): string {
@@ -125,15 +120,9 @@ export class ZappingCream extends BaseSwapping {
         return 36
     }
 
-    protected swapTokens(): string[] {
-        const tokens = this.transit.route.map((i) => i.address)
-        if (this.tradeC) {
-            tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        } else {
-            const { supplyAddress } = this.buildMulticall()
-            tokens.push(supplyAddress)
-        }
-        return tokens
+    protected extraSwapTokens(): string[] {
+        const { supplyAddress } = this.buildMulticall()
+        return [supplyAddress]
     }
 
     private buildMulticall() {
