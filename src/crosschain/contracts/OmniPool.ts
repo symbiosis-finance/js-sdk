@@ -888,22 +888,22 @@ export interface OmniPool extends BaseContract {
         AssetStatusChanged(token?: string | null, status?: boolean | null): AssetStatusChangedEventFilter
 
         'Deposit(address,address,uint256,uint256,address)'(
-            sender?: null,
+            sender?: string | null,
             token?: string | null,
             amount?: null,
             liquidity?: null,
             to?: string | null
         ): DepositEventFilter
         Deposit(
-            sender?: null,
+            sender?: string | null,
             token?: string | null,
             amount?: null,
             liquidity?: null,
             to?: string | null
         ): DepositEventFilter
 
-        'FillPool(address,uint256)'(token?: null, amount?: null): FillPoolEventFilter
-        FillPool(token?: null, amount?: null): FillPoolEventFilter
+        'FillPool(address,uint256)'(token?: string | null, amount?: null): FillPoolEventFilter
+        FillPool(token?: string | null, amount?: null): FillPoolEventFilter
 
         'Initialized(uint8)'(version?: null): InitializedEventFilter
         Initialized(version?: null): InitializedEventFilter
@@ -914,8 +914,8 @@ export interface OmniPool extends BaseContract {
         'NewFee(uint256)'(lpDividendRatio?: null): NewFeeEventFilter
         NewFee(lpDividendRatio?: null): NewFeeEventFilter
 
-        'NewFeeTo(address)'(addr?: null): NewFeeToEventFilter
-        NewFeeTo(addr?: null): NewFeeToEventFilter
+        'NewFeeTo(address)'(addr?: string | null): NewFeeToEventFilter
+        NewFeeTo(addr?: string | null): NewFeeToEventFilter
 
         'NewLPFee(uint256)'(value?: null): NewLPFeeEventFilter
         NewLPFee(value?: null): NewLPFeeEventFilter
@@ -929,8 +929,8 @@ export interface OmniPool extends BaseContract {
         'NewMintFeeThreshold(uint256)'(value?: null): NewMintFeeThresholdEventFilter
         NewMintFeeThreshold(value?: null): NewMintFeeThresholdEventFilter
 
-        'NewVeSIS(address)'(newVeSIS?: null): NewVeSISEventFilter
-        NewVeSIS(newVeSIS?: null): NewVeSISEventFilter
+        'NewVeSIS(address)'(newVeSIS?: string | null): NewVeSISEventFilter
+        NewVeSIS(newVeSIS?: string | null): NewVeSISEventFilter
 
         'OwnershipTransferred(address,address)'(
             previousOwner?: string | null,
@@ -996,14 +996,14 @@ export interface OmniPool extends BaseContract {
 
         'Withdraw(address,address,uint256,uint256,address)'(
             sender?: string | null,
-            token?: null,
+            token?: string | null,
             amount?: null,
             liquidity?: null,
             to?: string | null
         ): WithdrawEventFilter
         Withdraw(
             sender?: string | null,
-            token?: null,
+            token?: string | null,
             amount?: null,
             liquidity?: null,
             to?: string | null
