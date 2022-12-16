@@ -229,6 +229,7 @@ export class RevertPending {
                 this.symbiosis.bridge(chainIdFrom).address, // _oppositeBridge
                 chainIdFrom, // _chainId
                 revertableAddress, // _sender
+                this.symbiosis.clientId, // _clientId
             ])
             receiveSide = synthesis.address
         } else if (type === 'burn-v2') {

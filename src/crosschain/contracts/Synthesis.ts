@@ -130,7 +130,7 @@ export interface SynthesisInterface extends utils.Interface {
         'revertBurnAndBurn(uint256,bytes32,address,address,uint256,address)': FunctionFragment
         'revertMetaBurn(uint256,bytes32,address,bytes,address,address,bytes)': FunctionFragment
         'revertSynthesizeRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
-        'revertSynthesizeRequestByBridge(uint256,bytes32,address,address,uint256,address)': FunctionFragment
+        'revertSynthesizeRequestByBridge(uint256,bytes32,address,address,uint256,address,bytes32)': FunctionFragment
         'setFabric(address)': FunctionFragment
         'setMetaRouter(address)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
@@ -183,7 +183,7 @@ export interface SynthesisInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'revertSynthesizeRequestByBridge',
-        values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
+        values: [BigNumberish, BytesLike, string, string, BigNumberish, string, BytesLike]
     ): string
     encodeFunctionData(functionFragment: 'setFabric', values: [string]): string
     encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
@@ -482,6 +482,7 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _sender: string,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -631,6 +632,7 @@ export interface Synthesis extends BaseContract {
         _oppositeBridge: string,
         _chainID: BigNumberish,
         _sender: string,
+        _clientID: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -776,6 +778,7 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _sender: string,
+            _clientID: BytesLike,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -1005,6 +1008,7 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _sender: string,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -1140,6 +1144,7 @@ export interface Synthesis extends BaseContract {
             _oppositeBridge: string,
             _chainID: BigNumberish,
             _sender: string,
+            _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

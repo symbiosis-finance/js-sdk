@@ -923,6 +923,11 @@ const _abi = [
                 name: '_sender',
                 type: 'address',
             },
+            {
+                internalType: 'bytes32',
+                name: '_clientID',
+                type: 'bytes32',
+            },
         ],
         name: 'revertSynthesizeRequestByBridge',
         outputs: [],
