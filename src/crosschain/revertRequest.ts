@@ -1,10 +1,17 @@
+import { parseUnits } from '@ethersproject/units'
 import type { Symbiosis } from './symbiosis'
 import { ChainId } from '../constants'
 import { Portal__factory, Synthesis__factory } from './contracts'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
 import { TokenAmount } from '../entities'
-import { PendingRequest, PendingRequestState, PendingRequestType } from './pending'
+import {
+    findSourceChainToken,
+    isSynthesizeV2,
+    PendingRequest,
+    PendingRequestState,
+    PendingRequestType,
+} from './pending'
 import { getExternalId } from './utils'
 
 export class RevertRequest {
@@ -31,19 +38,56 @@ export class RevertRequest {
         }
 
         const { id, amount, token: tokenAddress, from, to, chainID, revertableAddress } = log.args
-
         const chainIdTo = chainID.toNumber()
-
-        let contractAddress
-        if (type === 'synthesize') {
-            contractAddress = this.symbiosis.synthesis(chainIdTo).address
-        } else {
-            contractAddress = this.symbiosis.portal(chainIdTo).address
-        }
+        let chainIdFrom = this.chainId
 
         const token = this.symbiosis.findStable(tokenAddress, this.chainId)
         if (!token) {
             throw new Error(`Cannot find token ${tokenAddress} at chain ${this.chainId}`)
+        }
+        let fromTokenAmount = new TokenAmount(token, amount)
+        const originalFromTokenAmount = fromTokenAmount
+
+        if (type === 'synthesize') {
+            const isV2 = await isSynthesizeV2(this.symbiosis, this.chainId, receipt.transactionHash)
+            if (isV2) {
+                type = 'synthesize-v2'
+            }
+        }
+
+        if (type === 'burn') {
+            const metaRouterAddress = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
+            if (from === metaRouterAddress) {
+                type = 'burn-v2'
+                const sourceChainToken = await findSourceChainToken(
+                    this.symbiosis,
+                    this.chainId,
+                    chainIdTo,
+                    receipt.transactionHash,
+                    revertableAddress
+                )
+                if (sourceChainToken) {
+                    chainIdFrom = sourceChainToken.chainId
+                    fromTokenAmount = new TokenAmount(
+                        sourceChainToken,
+                        parseUnits(
+                            fromTokenAmount.toExact(sourceChainToken.decimals),
+                            sourceChainToken.decimals
+                        ).toString()
+                    )
+                } else {
+                    const transitStable = this.symbiosis.transitStable(chainIdTo)
+                    type = 'burn-v2-revert'
+                    fromTokenAmount = new TokenAmount(transitStable, fromTokenAmount.raw)
+                }
+            }
+        }
+
+        let contractAddress
+        if (['synthesize', 'synthesize-v2'].includes(type)) {
+            contractAddress = this.symbiosis.synthesis(chainIdTo).address
+        } else {
+            contractAddress = this.symbiosis.portal(chainIdTo).address
         }
 
         const externalId = getExternalId({
@@ -55,7 +99,7 @@ export class RevertRequest {
 
         let state = PendingRequestState.Default
         if (validateState) {
-            if (type === 'synthesize') {
+            if (['synthesize', 'synthesize-v2'].includes(type)) {
                 state = await this.symbiosis.synthesis(chainIdTo).synthesizeStates(externalId)
             } else {
                 state = await this.symbiosis.portal(chainIdTo).unsynthesizeStates(externalId)
@@ -64,7 +108,11 @@ export class RevertRequest {
                 throw new Error(`Tx is success and cannot be reverted.`)
             }
         }
-        const fromTokenAmount = new TokenAmount(token, amount)
+
+        let revertChainId = chainIdTo
+        if (type === 'synthesize-v2') {
+            revertChainId = this.chainId
+        }
 
         return {
             internalId: id,
@@ -75,11 +123,11 @@ export class RevertRequest {
             from,
             to,
             revertableAddress,
-            chainIdFrom: this.chainId,
+            chainIdFrom,
             chainIdTo,
             fromTokenAmount,
-            revertChainId: chainIdTo, // FIXME depends of type
-            originalFromTokenAmount: fromTokenAmount, // FIXME depends of type
+            revertChainId,
+            originalFromTokenAmount,
         }
     }
 
