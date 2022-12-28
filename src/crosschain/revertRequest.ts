@@ -11,13 +11,19 @@ import {
     PendingRequest,
     PendingRequestState,
     PendingRequestType,
+    SynthesizeRequestFinder,
 } from './pending'
 import { getExternalId } from './utils'
+
+type InitProps = {
+    validateState: boolean
+    synthesizeRequestFinder?: SynthesizeRequestFinder
+}
 
 export class RevertRequest {
     constructor(private symbiosis: Symbiosis, private chainId: ChainId, private transactionHash: string) {}
 
-    async init({ validateState = false }: { validateState: boolean }): Promise<PendingRequest | null> {
+    async init({ validateState = false, synthesizeRequestFinder }: InitProps): Promise<PendingRequest | null> {
         const provider = this.symbiosis.getProvider(this.chainId)
         await provider.ready
 
@@ -64,7 +70,8 @@ export class RevertRequest {
                     this.chainId,
                     chainIdTo,
                     receipt.transactionHash,
-                    revertableAddress
+                    revertableAddress,
+                    synthesizeRequestFinder
                 )
                 if (sourceChainToken) {
                     chainIdFrom = sourceChainToken.chainId

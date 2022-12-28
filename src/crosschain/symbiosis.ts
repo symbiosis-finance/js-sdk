@@ -51,7 +51,7 @@ import {
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
-import { getPendingRequests, PendingRequest } from './pending'
+import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
 import { ChainConfig, Config, OmniPoolConfig } from './types'
@@ -150,8 +150,11 @@ export class Symbiosis {
         return new ZappingOoki(this)
     }
 
-    public getPendingRequests(address: string): Promise<PendingRequest[]> {
-        return getPendingRequests(this, address)
+    public getPendingRequests(
+        address: string,
+        synthesizeRequestFinder?: SynthesizeRequestFinder
+    ): Promise<PendingRequest[]> {
+        return getPendingRequests(this, address, synthesizeRequestFinder)
     }
 
     public getProvider(chainId: ChainId): StaticJsonRpcProvider {

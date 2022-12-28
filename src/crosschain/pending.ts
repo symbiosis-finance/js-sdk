@@ -38,14 +38,17 @@ interface GetChainPendingRequestsParams {
     chainsIds: ChainId[]
     address: string
     type: PendingRequestType
+    synthesizeRequestFinder?: SynthesizeRequestFinder
 }
 
+export type SynthesizeRequestFinder = (externalId: string) => Promise<ChainId | undefined>
 export const findSourceChainToken = async (
     symbiosis: Symbiosis,
     chainIdFrom: ChainId,
     chainIdTo: ChainId,
     txHash: string,
-    revertableAddress: string
+    revertableAddress: string,
+    synthesizeRequestFinder?: SynthesizeRequestFinder
 ): Promise<Token | undefined> => {
     const synthesis = symbiosis.synthesis(symbiosis.omniPoolConfig.chainId)
     const filter = synthesis.filters.SynthesizeCompleted()
@@ -54,6 +57,7 @@ export const findSourceChainToken = async (
         return i.topics[0] === filter.topics?.[0]
     })
     if (!foundSynthesizeCompleted) return undefined
+    const externalId = foundSynthesizeCompleted.topics?.[1]
 
     let sourceChainId = undefined
 
@@ -63,38 +67,54 @@ export const findSourceChainToken = async (
         if (chainId === chainIdFrom || chainId === chainIdTo) {
             continue
         }
-        const portal = symbiosis.portal(chainId)
-        const eventFragment = portal.interface.getEvent('SynthesizeRequest')
-        const topics = portal.interface.encodeFilterTopics(eventFragment, [
-            undefined,
-            undefined, // from
-            symbiosis.omniPoolConfig.chainId, // chains IDs
-            revertableAddress, // revertableAddress
-        ])
-        const blockOffset = symbiosis.filterBlockOffset(chainId)
-        const toBlock = await portal.provider.getBlockNumber()
-        const fromBlock = toBlock - blockOffset
-        const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
-
-        const foundSynthesizeRequest = events.find((e) => {
-            const { id } = e.args
-            const externalId = getExternalId({
-                internalId: id,
-                contractAddress: synthesis.address,
-                revertableAddress,
-                chainId: symbiosis.omniPoolConfig.chainId,
-            })
-            return foundSynthesizeCompleted.topics?.[1] === externalId
-        })
-        if (foundSynthesizeRequest) {
+        const found = await findSynthesizeRequestOnChain(symbiosis, chainId, revertableAddress, externalId)
+        if (found) {
             sourceChainId = chainId
             break
         }
     }
+
+    if (!sourceChainId && synthesizeRequestFinder) {
+        sourceChainId = await synthesizeRequestFinder(externalId)
+    }
+
     if (!sourceChainId) {
         return
     }
     return symbiosis.findTransitStable(sourceChainId)
+}
+
+const findSynthesizeRequestOnChain = async (
+    symbiosis: Symbiosis,
+    chainId: ChainId,
+    revertableAddress: string,
+    originExternalId: string
+): Promise<boolean> => {
+    const portal = symbiosis.portal(chainId)
+    const eventFragment = portal.interface.getEvent('SynthesizeRequest')
+    const topics = portal.interface.encodeFilterTopics(eventFragment, [
+        undefined,
+        undefined, // from
+        symbiosis.omniPoolConfig.chainId, // chains IDs
+        revertableAddress, // revertableAddress
+    ])
+    const blockOffset = symbiosis.filterBlockOffset(chainId)
+    const toBlock = await portal.provider.getBlockNumber()
+    const fromBlock = toBlock - blockOffset
+    const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
+
+    const synthesis = symbiosis.synthesis(symbiosis.omniPoolConfig.chainId)
+    const foundSynthesizeRequest = events.find((e) => {
+        const { id } = e.args
+        const externalId = getExternalId({
+            internalId: id,
+            contractAddress: synthesis.address,
+            revertableAddress,
+            chainId: symbiosis.omniPoolConfig.chainId,
+        })
+        return originExternalId === externalId
+    })
+    return !!foundSynthesizeRequest
 }
 
 export const isSynthesizeV2 = async (symbiosis: Symbiosis, chainId: ChainId, txHash: string): Promise<boolean> => {
@@ -115,6 +135,7 @@ export async function getChainPendingRequests({
     chainsIds,
     address,
     type,
+    synthesizeRequestFinder,
 }: GetChainPendingRequestsParams): Promise<PendingRequest[]> {
     const provider = symbiosis.getProvider(activeChainId)
 
@@ -254,7 +275,8 @@ export async function getChainPendingRequests({
                         pendingRequest.chainIdFrom,
                         pendingRequest.chainIdTo,
                         pendingRequest.transactionHash,
-                        pendingRequest.revertableAddress
+                        pendingRequest.revertableAddress,
+                        synthesizeRequestFinder
                     )
                     if (sourceChainToken) {
                         pendingRequest.chainIdFrom = sourceChainToken.chainId
@@ -300,7 +322,11 @@ export async function getChainPendingRequests({
     })
 }
 
-export async function getPendingRequests(symbiosis: Symbiosis, address: string): Promise<PendingRequest[]> {
+export async function getPendingRequests(
+    symbiosis: Symbiosis,
+    address: string,
+    synthesizeRequestFinder?: SynthesizeRequestFinder
+): Promise<PendingRequest[]> {
     const chains = symbiosis.chains()
     const chainsIds = chains.map((chain) => chain.id)
 
@@ -312,6 +338,7 @@ export async function getPendingRequests(symbiosis: Symbiosis, address: string):
             chainsIds,
             activeChainId: chain.id,
             address,
+            synthesizeRequestFinder,
         }
 
         pendingRequestsPromises.push(
