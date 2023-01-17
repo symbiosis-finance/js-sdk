@@ -41,7 +41,6 @@ export class AggregatorTrade {
         const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
 
         const aggregators: Promise<OneInchTrade | OpenOceanTrade>[] = []
-        console.log(clientId, OPEN_OCEAN_CLIENT_ID, clientId !== OPEN_OCEAN_CLIENT_ID)
         if (clientId !== OPEN_OCEAN_CLIENT_ID && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oneInchTrade = new OneInchTrade(tokenAmountIn, tokenOut, from, to, slippage, oracle, dataProvider)
 
