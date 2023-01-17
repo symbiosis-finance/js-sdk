@@ -9,11 +9,10 @@ import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
+import { UniLikeTrade, AggregatorTrade } from './trade'
+import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
-import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 
@@ -36,9 +35,9 @@ export class Zapping {
     private slippage!: number
     private deadline!: number
     private ttl!: number
-    private use1Inch!: boolean
+    private useAggregators!: boolean
 
-    private tradeA: UniLikeTrade | OneInchTrade | undefined
+    private tradeA: UniLikeTrade | AggregatorTrade | undefined
 
     private synthToken!: Token
 
@@ -62,9 +61,9 @@ export class Zapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = true
+        useAggregators = true
     ): SwapExactIn {
-        this.use1Inch = use1Inch
+        this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.from = from
         this.to = to
@@ -185,23 +184,23 @@ export class Zapping {
         return synthAmount
     }
 
-    private buildTradeA(): UniLikeTrade | OneInchTrade {
+    private buildTradeA(): UniLikeTrade | AggregatorTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (this.use1Inch && canOneInch(chainId)) {
-            const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(
-                this.tokenAmountIn,
+        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+            return new AggregatorTrade({
+                tokenAmountIn: this.tokenAmountIn,
                 tokenOut,
                 from,
                 to,
-                this.slippage / 100,
-                oracle,
-                this.dataProvider
-            )
+                slippage: this.slippage / 100,
+                dataProvider: this.dataProvider,
+                symbiosis: this.symbiosis,
+                clientId: this.symbiosis.clientId,
+            })
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)

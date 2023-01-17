@@ -20,7 +20,7 @@ export class ZappingBeefy extends BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = true
+        useAggregators = true
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
@@ -37,7 +37,7 @@ export class ZappingBeefy extends BaseSwapping {
             decimals,
         })
 
-        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, use1Inch)
+        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, useAggregators)
     }
 
     protected tradeCTo(): string {

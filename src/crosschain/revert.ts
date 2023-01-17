@@ -11,7 +11,7 @@ import { calculateGasMargin, getExternalId, getInternalId, getLogWithTimeout } f
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
-import { OmniTrade } from './omniTrade'
+import { OmniTrade } from './trade'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter

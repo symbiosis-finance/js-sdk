@@ -3,6 +3,7 @@
 [![Build Status](https://drone.symbiosis.finance/api/badges/symbiosis-finance/sdk/status.svg)](https://drone.symbiosis.finance/symbiosis-finance/sdk)
 
 ## Docs
+
 You can find js-sdk docs here - https://docs.symbiosis.finance/developer-tools/symbiosis-js-sdk
 
 ## Installation
@@ -62,7 +63,7 @@ const { execute, fee, tokenAmountOut, route, priceImpact } = await swapping.exac
     revertableAddress, // account who can revert stucked transaction
     slippage, // slippage
     deadline, // deadline date in seconds
-    use1Inch // boolean (use 1inch router for swaps. default = true)
+    useAggregators // boolean (use 1inch or OpenOcean router for swaps. default = true)
 )
 
 // Execute transaction
@@ -92,10 +93,9 @@ const receipt = ...
 const log = await swapping.waitForComplete(receipt)
 ```
 
-
 ## Zapping to Symbiosis
 
-Cross-chain zaps automate liquidity adding to the Symbiosis stable pools, DeFi protocols, NFT, etc. 
+Cross-chain zaps automate liquidity adding to the Symbiosis stable pools, DeFi protocols, NFT, etc.
 
 ```ts
 // Create new Swapping instance
@@ -104,27 +104,26 @@ const swapping = symbiosis.newZapping()
 // Calculates fee for bridging between networks and get execute function
 const { execute, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
     tokenAmountIn, // TokenAmount object
-    poolAddress, // Stable pool address 
-    poolChainId, // Stable pool chain id 
+    poolAddress, // Stable pool address
+    poolChainId, // Stable pool chain id
     from, // from account address
     to, // to account address
     revertableAddress, // account who can revert stucked transaction
     slippage, // slippage
     deadline, // deadline date in seconds
-    use1Inch // boolean (use 1inch router for swaps)
+    useAggregators // boolean (use 1inch or OpenOcean router for swaps)
 )
-
 ```
+
 All next steps as in swapping example
 
 ## Zapping to Aave/Cream
 
-Cross-chain zaps automate liquidity adding to the Symbiosis stable pools, DeFi protocols, NFT, etc. 
+Cross-chain zaps automate liquidity adding to the Symbiosis stable pools, DeFi protocols, NFT, etc.
 
 ```ts
 // Create new Swapping instance
-const swapping = symbiosis.newZappingAave()
-`or`
+const swapping = symbiosis.newZappingAave()`or`
 const swapping = symbiosis.newZappingCream()
 
 // Calculates fee for bridging between networks and get execute function
@@ -136,10 +135,10 @@ const { execute, fee, tokenAmountOut, route, priceImpact } = await swapping.exac
     revertableAddress, // account who can revert stucked transaction
     slippage, // slippage
     deadline, // deadline date in seconds
-    use1Inch // boolean (use 1inch router for swaps)
+    useAggregators // boolean (use 1inch or OpenOcean router for swaps)
 )
-
 ```
+
 All next steps as in swapping example
 
 ## Bridging

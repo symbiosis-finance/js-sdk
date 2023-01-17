@@ -6,7 +6,7 @@ import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { CHAINS_PRIORITY } from './constants'
 import { BridgeDirection } from './types'
-import { OmniTrade } from './omniTrade'
+import { OmniTrade } from './trade'
 import { MulticallRouter } from './contracts'
 
 export class Transit {

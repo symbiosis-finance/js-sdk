@@ -1,20 +1,18 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { MaxUint256 } from '@ethersproject/constants'
+import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
-import { Signer, BigNumber } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
-import type { Symbiosis } from './symbiosis'
-import { UniLikeTrade } from './uniLikeTrade'
-import { calculateGasMargin, canOneInch, getExternalId, getInternalId } from './utils'
-import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, Synthesis, UniLikeRouter } from './contracts'
-import { OneInchTrade } from './oneInchTrade'
 import { DataProvider } from './dataProvider'
+import type { Symbiosis } from './symbiosis'
+import { AggregatorTrade, OneInchTrade, UniLikeTrade } from './trade'
 import { Transit } from './transit'
+import { calculateGasMargin, getExternalId, getInternalId } from './utils'
+import { WaitForComplete } from './waitForComplete'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -45,11 +43,11 @@ export abstract class BaseSwapping {
     protected slippage!: DetailedSlippage
     protected deadline!: number
     protected ttl!: number
-    protected use1Inch!: boolean
+    protected useAggregators!: boolean
 
     protected route!: Token[]
 
-    protected tradeA: UniLikeTrade | OneInchTrade | undefined
+    protected tradeA: UniLikeTrade | AggregatorTrade | undefined
     protected transit!: Transit
     protected tradeC: UniLikeTrade | OneInchTrade | undefined
 
@@ -71,9 +69,9 @@ export abstract class BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch: boolean
+        useAggregators: boolean
     ): SwapExactIn {
-        this.use1Inch = use1Inch
+        this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
@@ -282,23 +280,23 @@ export abstract class BaseSwapping {
         return this.transit.amountOut
     }
 
-    protected buildTradeA(): UniLikeTrade | OneInchTrade {
+    protected buildTradeA(): UniLikeTrade | AggregatorTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.symbiosis.transitStable(chainId)
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (this.use1Inch && canOneInch(chainId)) {
-            const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(
-                this.tokenAmountIn,
+        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+            return new AggregatorTrade({
+                tokenAmountIn: this.tokenAmountIn,
                 tokenOut,
                 from,
                 to,
-                this.slippage['A'] / 100,
-                oracle,
-                this.dataProvider
-            )
+                slippage: this.slippage['A'] / 100,
+                symbiosis: this.symbiosis,
+                dataProvider: this.dataProvider,
+                clientId: this.symbiosis.clientId,
+            })
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
@@ -344,7 +342,7 @@ export abstract class BaseSwapping {
             amountIn = new TokenAmount(tokenOut, amountRaw)
         }
 
-        if (this.use1Inch && canOneInch(chainId)) {
+        if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
             return new OneInchTrade(
