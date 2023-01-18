@@ -45,7 +45,7 @@ export class ZappingRenBTC extends BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        useAggregators = true
+        use1Inch = true
     ): ZappingRenBTCExactIn {
         this.renChainId = renChainId
         this.multicallRouter = this.symbiosis.multicallRouter(renChainId)
@@ -79,7 +79,7 @@ export class ZappingRenBTC extends BaseSwapping {
             revertableAddress,
             slippage,
             deadline,
-            useAggregators
+            use1Inch
         )
 
         const btcAmountOut = await this.estimateBTCOutput(tokenAmountOut)
@@ -189,7 +189,6 @@ export class ZappingRenBTC extends BaseSwapping {
             ethereum = new Ethereum({
                 network,
                 provider,
-                defaultTestnet: 'goerli',
             })
         } else if (this.renChainId === ChainId.BSC_MAINNET) {
             network = 'mainnet'

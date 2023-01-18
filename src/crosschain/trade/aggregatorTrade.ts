@@ -87,11 +87,6 @@ export class AggregatorTrade {
             throw new Error('No aggregators available for this trade')
         }
 
-        console.info('bestTrade', {
-            best: bestTrade instanceof OneInchTrade ? '1inch' : 'OpenOcean',
-            amountOut: bestTrade.amountOut.toExact(),
-        })
-
         this.trade = bestTrade
     }
 
