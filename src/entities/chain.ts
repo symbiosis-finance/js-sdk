@@ -283,6 +283,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4660.png',
         },
     }),
+    new Chain({
+        id: ChainId.SHARDEUM_TESTNET_2,
+        name: 'Shardeum Liberty 2.X',
+        disabled: false,
+        explorer: 'https://explorer-liberty20.shardeum.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
