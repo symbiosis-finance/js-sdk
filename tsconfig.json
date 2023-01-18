@@ -2,7 +2,7 @@
     "include": ["./src/**/*", "./test/**/*"],
     "exclude": ["node_modules", "dist"],
     "compilerOptions": {
-        "target": "es2019",
+        "target": "es2020",
         "module": "esnext",
         "importHelpers": true,
         "declaration": true,

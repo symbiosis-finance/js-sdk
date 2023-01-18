@@ -77,7 +77,7 @@ export class ZappingCream extends BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = true
+        useAggregators = true
     ): SwapExactIn {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
@@ -100,7 +100,16 @@ export class ZappingCream extends BaseSwapping {
 
         this.creamPoolAddress = markets[index].market
 
-        return this.doExactIn(tokenAmountIn, wrappedTokenOut, from, to, revertableAddress, slippage, deadline, use1Inch)
+        return this.doExactIn(
+            tokenAmountIn,
+            wrappedTokenOut,
+            from,
+            to,
+            revertableAddress,
+            slippage,
+            deadline,
+            useAggregators
+        )
     }
 
     protected tradeCTo(): string {

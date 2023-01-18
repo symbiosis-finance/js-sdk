@@ -1,8 +1,8 @@
-import { Fraction, Percent, Token, TokenAmount } from '../entities'
-import { OmniPool, OmniPoolOracle } from './contracts'
-import { basisPointsToPercent, calculatePriceImpact } from './utils'
-import { ONE } from '../constants'
-import { Symbiosis } from './symbiosis'
+import { Fraction, Percent, Token, TokenAmount } from '../../entities'
+import { OmniPool, OmniPoolOracle } from '../contracts'
+import { basisPointsToPercent, calculatePriceImpact } from '../utils'
+import { ONE } from '../../constants'
+import { Symbiosis } from '../symbiosis'
 
 export class OmniTrade {
     public route!: Token[]

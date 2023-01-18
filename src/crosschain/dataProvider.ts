@@ -2,8 +2,7 @@ import { ChainId } from '../constants'
 import { Token } from '../entities'
 import { OneInchOracle } from './contracts'
 import { Symbiosis } from './symbiosis'
-import { UniLikeTrade } from './uniLikeTrade'
-import { OneInchTrade } from './oneInchTrade'
+import { UniLikeTrade, OneInchTrade, getRateToEth } from './trade'
 
 export class DataProvider {
     private cache = new Map<string, any>()
@@ -32,7 +31,7 @@ export class DataProvider {
 
     async getOneInchRateToEth(tokens: Token[], oracle: OneInchOracle) {
         return this.fromCache(['getOneInchRateToEth', ...tokens.map((i) => i.address)], () => {
-            return OneInchTrade.getRateToEth(tokens, oracle)
+            return getRateToEth(tokens, oracle)
         })
     }
 
