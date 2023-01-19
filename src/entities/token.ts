@@ -383,4 +383,16 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
         },
     }),
+    [ChainId.SHARDEUM_TESTNET_2]: new Token({
+        chainId: ChainId.SHARDEUM_TESTNET_2,
+        address: '0xb6204c4b6b2545cF23F5EC0Bf8AEB8cB56E13C15',
+        decimals: 18,
+        symbol: 'WSHM',
+        isNative: false,
+        name: 'Wrapped SHM',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
+        },
+    }),
 }
