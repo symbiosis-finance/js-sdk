@@ -9,7 +9,7 @@ import { BIPS_BASE } from './constants'
 import { AdaRouter, AvaxRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, OneInchTrade, UniLikeTrade } from './trade'
+import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
 import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -24,6 +24,8 @@ export type SwapExactIn = Promise<{
     amountInUsd: TokenAmount
     transactionRequest: TransactionRequest
     approveTo: string
+    inTradeType?: SymbiosisTradeType
+    outTradeType?: SymbiosisTradeType
 }>
 
 export type DetailedSlippage = {
@@ -127,6 +129,8 @@ export abstract class BaseSwapping {
             amountInUsd: this.amountInUsd,
             transactionRequest,
             approveTo: this.approveTo(),
+            inTradeType: this.tradeA?.tradeType,
+            outTradeType: this.tradeC?.tradeType,
         }
     }
 

@@ -10,8 +10,11 @@ import { PairState } from '../types'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../utils'
 import { ChainId } from '../../constants'
 import { DataProvider } from '../dataProvider'
+import { SymbiosisTrade } from './symbiosisTrade'
 
-export class UniLikeTrade {
+export class UniLikeTrade implements SymbiosisTrade {
+    tradeType = 'dex' as const
+
     public tokenAmountIn: TokenAmount
 
     public trade!: Trade

@@ -5,6 +5,7 @@ import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { canOneInch } from '../utils'
 import { getTradePriceImpact } from './getTradePriceImpact'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 export interface Protocol {
     id: string
@@ -16,7 +17,9 @@ export interface Protocol {
 const API_URL = 'https://api.1inch.io'
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
-export class OneInchTrade {
+export class OneInchTrade implements SymbiosisTrade {
+    tradeType = '1inch' as const
+
     public tokenAmountIn: TokenAmount
     public route!: Token[]
     public amountOut!: TokenAmount

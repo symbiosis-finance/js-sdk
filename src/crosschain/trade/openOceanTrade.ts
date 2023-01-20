@@ -4,6 +4,7 @@ import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { getTradePriceImpact } from './getTradePriceImpact'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 interface OpenOceanTradeParams {
     tokenAmountIn: TokenAmount
@@ -32,7 +33,9 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
 const OPEN_OCEAN_ADDRESS = '0x6352a56caadc4f1e25cd6c75970fa768a3304e64' as const
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
-export class OpenOceanTrade {
+export class OpenOceanTrade implements SymbiosisTrade {
+    public tradeType = 'open-ocean' as const
+
     public tokenAmountIn: TokenAmount
     public route!: Token[]
     public amountOut!: TokenAmount

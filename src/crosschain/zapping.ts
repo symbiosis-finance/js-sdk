@@ -9,7 +9,7 @@ import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { UniLikeTrade, AggregatorTrade } from './trade'
+import { UniLikeTrade, AggregatorTrade, SymbiosisTradeType } from './trade'
 import { calculateGasMargin, getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
@@ -23,6 +23,7 @@ export type SwapExactIn = Promise<{
     priceImpact: Percent
     amountInUsd: TokenAmount
     transactionRequest: TransactionRequest
+    inTradeType?: SymbiosisTradeType
 }>
 
 export class Zapping {
@@ -104,6 +105,7 @@ export class Zapping {
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.getSynthAmount(fee),
             transactionRequest,
+            inTradeType: this.tradeA?.tradeType,
         }
     }
 

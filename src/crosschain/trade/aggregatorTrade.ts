@@ -5,6 +5,7 @@ import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
+import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 
 interface AggregatorTradeParams {
     symbiosis: Symbiosis
@@ -26,7 +27,7 @@ class TradeNotInitializedError extends Error {
 const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('open-ocean')
 
 // Get the best trade from all aggregators
-export class AggregatorTrade {
+export class AggregatorTrade implements SymbiosisTrade {
     protected trade: OneInchTrade | OpenOceanTrade | undefined
 
     static isAvailable(chainId: ChainId): boolean {
@@ -88,9 +89,11 @@ export class AggregatorTrade {
         }
 
         this.trade = bestTrade
+
+        return this
     }
 
-    private assertTradeInitialized(): asserts this is { trade: OneInchTrade } {
+    private assertTradeInitialized(): asserts this is { trade: OneInchTrade | OpenOceanTrade } {
         if (!this.trade) {
             throw new TradeNotInitializedError()
         }
@@ -127,5 +130,10 @@ export class AggregatorTrade {
     get route(): Token[] {
         this.assertTradeInitialized()
         return this.trade.route
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        this.assertTradeInitialized()
+        return this.trade.tradeType
     }
 }
