@@ -5,6 +5,9 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
+import { config as mainnet } from './config/mainnet'
+import { config as testnet } from './config/testnet'
+import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
     Aave,
     Aave__factory,
@@ -31,11 +34,13 @@ import {
     NervePool,
     NervePool__factory,
     OmniPool,
-    OmniPool__factory,
     OmniPoolOracle,
     OmniPoolOracle__factory,
+    OmniPool__factory,
     OneInchOracle,
     OneInchOracle__factory,
+    Ooki,
+    Ooki__factory,
     Portal,
     Portal__factory,
     RenGatewayRegistryV2,
@@ -46,25 +51,16 @@ import {
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
-    Ooki,
-    Ooki__factory,
 } from './contracts'
+import { WTon__factory } from './contracts/factories/WTon__factory'
+import { WTon } from './contracts/WTon'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
 import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
 import { ChainConfig, Config, OmniPoolConfig } from './types'
-import { ONE_INCH_ORACLE_MAP } from './constants'
-import { Zapping } from './zapping'
-import { ZappingAave } from './zappingAave'
-import { ZappingCream } from './zappingCream'
-import { ZappingRenBTC } from './zappingRenBTC'
-import { ZappingOoki } from './zappingOoki'
-
-import { config as mainnet } from './config/mainnet'
-import { config as testnet } from './config/testnet'
-import { ZappingBeefy } from './zappingBeefy'
+import { Zapping, ZappingAave, ZappingBeefy, ZappingCream, ZappingOoki, ZappingRenBTC, ZappingTon } from './zapping'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -153,6 +149,10 @@ export class Symbiosis {
         return new ZappingOoki(this)
     }
 
+    public newZappingTon() {
+        return new ZappingTon(this)
+    }
+
     public getPendingRequests(
         address: string,
         synthesizeRequestFinder?: SynthesizeRequestFinder
@@ -215,6 +215,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return AdaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public wTon(chainId: ChainId, signer?: Signer): WTon {
+        const address = '0x76A797A59Ba2C17726896976B7B3747BfD1d220f'
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return WTon__factory.connect(address, signerOrProvider)
     }
 
     public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {

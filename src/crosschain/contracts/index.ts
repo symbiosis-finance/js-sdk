@@ -24,6 +24,7 @@ export type { RenGatewayRegistryV2 } from './RenGatewayRegistryV2'
 export type { RenMintGatewayV3 } from './RenMintGatewayV3'
 export type { Synthesis } from './Synthesis'
 export type { UniLikeRouter } from './UniLikeRouter'
+export type { WTon } from './WTon'
 
 export { Aave__factory } from './factories/Aave__factory'
 export { AdaRouter__factory } from './factories/AdaRouter__factory'
@@ -48,3 +49,4 @@ export { RenGatewayRegistryV2__factory } from './factories/RenGatewayRegistryV2_
 export { RenMintGatewayV3__factory } from './factories/RenMintGatewayV3__factory'
 export { Synthesis__factory } from './factories/Synthesis__factory'
 export { UniLikeRouter__factory } from './factories/UniLikeRouter__factory'
+export { WTon__factory } from './factories/WTon__factory'

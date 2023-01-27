@@ -2,10 +2,10 @@ import RenJS from '@renproject/ren'
 import { Signer } from 'ethers'
 import { Bitcoin } from '@renproject/chains-bitcoin'
 import { Ethereum, BinanceSmartChain, Polygon } from '@renproject/chains-ethereum'
-import { ChainId } from '../constants'
-import { Token, TokenAmount } from '../entities'
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
-import { MulticallRouter, RenMintGatewayV3 } from './contracts'
+import { ChainId } from '../../constants'
+import { Token, TokenAmount } from '../../entities'
+import { SwapExactIn, BaseSwapping } from '../baseSwapping'
+import { MulticallRouter, RenMintGatewayV3 } from '../contracts'
 
 export type ZappingRenBTCExactIn = Promise<
     Omit<Awaited<SwapExactIn>, 'execute'> & {
@@ -189,6 +189,7 @@ export class ZappingRenBTC extends BaseSwapping {
             ethereum = new Ethereum({
                 network,
                 provider,
+                defaultTestnet: 'goerli',
             })
         } else if (this.renChainId === ChainId.BSC_MAINNET) {
             network = 'mainnet'

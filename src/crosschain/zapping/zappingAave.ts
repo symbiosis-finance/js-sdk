@@ -1,20 +1,16 @@
-import { Contract } from '@ethersproject/contracts'
-import { ChainId } from 'src/constants'
-import ERC20 from '../abis/ERC20.json'
-import { Token, TokenAmount } from '../entities'
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
-import { BeefyVault, MulticallRouter } from './contracts'
+import { SwapExactIn, BaseSwapping } from '../baseSwapping'
+import { Token, TokenAmount, wrappedToken } from '../../entities'
+import { Aave, MulticallRouter } from '../contracts'
 
-export class ZappingBeefy extends BaseSwapping {
+export class ZappingAave extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
-    protected beefyVault!: BeefyVault
+    protected aavePool!: Aave
     protected aToken!: string
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
-        vaultAddress: string,
-        vaultChainId: ChainId,
+        tokenOut: Token,
         from: string,
         to: string,
         revertableAddress: string,
@@ -22,22 +18,23 @@ export class ZappingBeefy extends BaseSwapping {
         deadline: number,
         useAggregators = true
     ): SwapExactIn {
-        this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
+        this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to
 
-        this.beefyVault = this.symbiosis.beefyVault(vaultAddress, vaultChainId)
+        this.aavePool = this.symbiosis.aavePool(tokenOut.chainId)
+        const data = await this.aavePool.getReserveData(tokenOut.address)
+        this.aToken = data.aTokenAddress
 
-        const tokenAddress = await this.beefyVault.want()
-        const tokenContract = new Contract(tokenAddress, ERC20, this.symbiosis.providers.get(vaultChainId))
-        const decimals = await tokenContract.decimals()
-
-        const token = new Token({
-            address: tokenAddress,
-            chainId: vaultChainId,
-            decimals,
-        })
-
-        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, useAggregators)
+        return this.doExactIn(
+            tokenAmountIn,
+            wrappedToken(tokenOut),
+            from,
+            to,
+            revertableAddress,
+            slippage,
+            deadline,
+            useAggregators
+        )
     }
 
     protected tradeCTo(): string {
@@ -86,12 +83,17 @@ export class ZappingBeefy extends BaseSwapping {
             }
         }
 
-        const beefyCalldata = this.beefyVault.interface.encodeFunctionData('deposit', ['0']) // amount will be patched
+        const supplyCalldata = this.aavePool.interface.encodeFunctionData('supply', [
+            supplyToken.address,
+            '0', // amount will be patched
+            this.userAddress,
+            '0',
+        ])
 
-        callDatas.push(beefyCalldata)
-        receiveSides.push(this.beefyVault.address)
-        path.push(supplyToken.address, this.beefyVault.address)
-        offsets.push(36)
+        callDatas.push(supplyCalldata)
+        receiveSides.push(this.aavePool.address)
+        path.push(supplyToken.address)
+        offsets.push(68)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
             amount,

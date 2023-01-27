@@ -1,9 +1,9 @@
 import { Contract } from '@ethersproject/contracts'
 import { ChainId } from 'src/constants'
-import ERC20 from '../abis/ERC20.json'
-import { Token, TokenAmount } from '../entities'
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
-import { MulticallRouter, Ooki } from './contracts'
+import ERC20 from '../../abis/ERC20.json'
+import { Token, TokenAmount } from '../../entities'
+import { SwapExactIn, BaseSwapping } from '../baseSwapping'
+import { MulticallRouter, Ooki } from '../contracts'
 
 export class ZappingOoki extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
