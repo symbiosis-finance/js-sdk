@@ -9,7 +9,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ETH_KOVAN,
     ChainId.ETH_GOERLI,
     ChainId.BSC_MAINNET,
-    ChainId.BSC_TESTNET,
+    // ChainId.BSC_TESTNET, // NOTE it is a manager chain
     ChainId.AVAX_MAINNET,
     ChainId.AVAX_TESTNET,
     ChainId.BOBA_MAINNET,
