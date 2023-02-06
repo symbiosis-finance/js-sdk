@@ -41,9 +41,10 @@
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
         "decimal.js-light": "^2.5.0",
+        "isomorphic-unfetch": "^3.1.0",
+        "tonweb": "^0.0.59",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
-        "isomorphic-unfetch": "^3.1.0",
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
         "toformat": "^2.0.0"
