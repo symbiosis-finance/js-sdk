@@ -1,5 +1,6 @@
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, Signer } from 'ethers'
+import TonWeb from 'tonweb'
 import { ChainId } from '../../constants'
 import { Token, TokenAmount } from '../../entities'
 import { BaseSwapping, SwapExactIn } from '../baseSwapping'
@@ -124,13 +125,13 @@ export class ZappingTon extends BaseSwapping {
             throw new Error('TradeC is not initialized')
         }
 
-        // @@ Convert adderss to hex
+        const address = new TonWeb.utils.Address(this.to)
 
         const burnCalldata = this.wTon.interface.encodeFunctionData('burn', [
             this.tradeC.amountOut.raw.toString(),
             {
-                workchain: 0,
-                address_hash: '0x1e0fb0686f99f058d8e02ff0355f835988c3069ba1510f76a5c028defcf81706', // testnet
+                workchain: address.wc,
+                address_hash: `0x${address.hashPart}`,
             },
         ])
 
