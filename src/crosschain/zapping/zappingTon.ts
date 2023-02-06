@@ -125,7 +125,7 @@ export class ZappingTon extends BaseSwapping {
             throw new Error('TradeC is not initialized')
         }
 
-        const address = new TonWeb.utils.Address(this.to)
+        const address = new TonWeb.utils.Address(this.userAddress)
 
         const burnCalldata = this.wTon.interface.encodeFunctionData('burn', [
             this.tradeC.amountOut.raw.toString(),
