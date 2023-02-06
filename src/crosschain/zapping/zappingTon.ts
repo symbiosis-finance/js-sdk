@@ -131,7 +131,7 @@ export class ZappingTon extends BaseSwapping {
             this.tradeC.amountOut.raw.toString(),
             {
                 workchain: address.wc,
-                address_hash: `0x${address.hashPart}`,
+                address_hash: `0x${TonWeb.utils.bytesToHex(address.hashPart)}`,
             },
         ])
 
