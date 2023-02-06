@@ -39,6 +39,7 @@ export type ChainConfig = {
     portal: string
     fabric: string
     waitForBlocksCount: number
+    wTon: string
 }
 
 export type AdvisorConfig = {

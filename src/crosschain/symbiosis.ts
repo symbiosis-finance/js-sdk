@@ -51,9 +51,9 @@ import {
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
+    WTon,
+    WTon__factory,
 } from './contracts'
-import { WTon__factory } from './contracts/factories/WTon__factory'
-import { WTon } from './contracts/WTon'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
 import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
@@ -218,7 +218,7 @@ export class Symbiosis {
     }
 
     public wTon(chainId: ChainId, signer?: Signer): WTon {
-        const address = '0x76A797A59Ba2C17726896976B7B3747BfD1d220f'
+        const address = this.chainConfig(chainId).wTon
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return WTon__factory.connect(address, signerOrProvider)

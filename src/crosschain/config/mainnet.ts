@@ -44,6 +44,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            wTon: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
         },
         {
             id: 56,
@@ -77,6 +78,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x589de0f0ccf905477646599bb3e5c622c84cc0ba',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
+            wTon: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
         },
         {
             id: 43114,
@@ -110,6 +112,7 @@ export const config: Config = {
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
             creamComptroller: '0x486Af39519B4Dc9a7fCcd318217352830E8AD9b4',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            wTon: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 137,
@@ -143,6 +146,7 @@ export const config: Config = {
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
             creamComptroller: '0x20CA53E2395FA571798623F1cFBD11Fe2C114c24',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
+            wTon: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 40,
@@ -176,6 +180,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            wTon: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 288,
@@ -209,6 +214,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            wTon: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 43288,
@@ -242,6 +248,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            wTon: '0x0000000000000000000000000000000000000000',
         },
         {
             id: 56288,
@@ -366,6 +373,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            wTon: '0x0000000000000000000000000000000000000000',
         },
     ],
 }

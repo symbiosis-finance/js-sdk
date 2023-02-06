@@ -1,15 +1,22 @@
-import { Signer } from 'ethers'
+import { parseUnits } from '@ethersproject/units'
+import { BigNumber, Signer } from 'ethers'
 import { ChainId } from '../../constants'
 import { Token, TokenAmount } from '../../entities'
 import { BaseSwapping, SwapExactIn } from '../baseSwapping'
 import { MulticallRouter, WTon } from '../contracts'
+import { Error as SymbiosisError, ErrorCode } from '../error'
 
 export type ZappingTonExactIn = Promise<
     Omit<Awaited<SwapExactIn>, 'execute'> & {
         execute: ReturnType<ZappingTon['buildExecute']>
         tonAmountOut: TokenAmount
+        bridgeFee: TokenAmount
     }
 >
+
+const TON_TOKEN_DECIMALS = 9
+const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)
+const STATIC_BRIDGE_FEE = parseUnits('5', TON_TOKEN_DECIMALS)
 
 export class ZappingTon extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -33,13 +40,12 @@ export class ZappingTon extends BaseSwapping {
         this.userAddress = to
         this.revertableAddress = revertableAddress
 
-        // @@ Real address
         this.wTon = this.symbiosis.wTon(tonChainId)
 
         const wTonToken = new Token({
             address: this.wTon.address,
             chainId: tonChainId,
-            decimals: 9,
+            decimals: TON_TOKEN_DECIMALS,
             name: 'Wrapped Toncoin',
             symbol: 'wTon',
             icons: {
@@ -59,63 +65,98 @@ export class ZappingTon extends BaseSwapping {
             useAggregators
         )
 
-        const tonAmountOut = tokenAmountOut // @@
+        const bridgeFee = this.estimateBridgeFee(tokenAmountOut)
+
+        const tonAmountOut = new TokenAmount(
+            new Token({
+                address: '',
+                chainId: ChainId.TON_MAINNET,
+                decimals: TON_TOKEN_DECIMALS,
+                name: 'Toncoin',
+                symbol: 'TON',
+                isNative: true,
+                icons: {
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                },
+            }),
+            tokenAmountOut.subtract(bridgeFee).raw.toString()
+        )
+
+        if (BigNumber.from(tonAmountOut.raw.toString()).lt(MIN_WTON_AMOUNT.toString())) {
+            throw new SymbiosisError(
+                `Amount $${tonAmountOut.toSignificant()} less than fee $${tonAmountOut.toSignificant}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
 
         return {
             ...result,
             execute: this.buildExecute(execute),
             tonAmountOut: tokenAmountOut,
             tokenAmountOut: tonAmountOut,
+            bridgeFee,
         }
     }
 
-    // protected tradeCTo(): string {
-    //     return this.multicallRouter.address
-    // }
+    protected tradeCTo(): string {
+        return this.multicallRouter.address
+    }
 
-    // protected finalReceiveSide(): string {
-    //     return this.multicallRouter.address
-    // }
+    protected finalReceiveSide(): string {
+        return this.multicallRouter.address
+    }
 
-    // protected finalCalldata(): string | [] {
-    //     return this.buildMulticall()
-    // }
+    protected finalCalldata(): string | [] {
+        return this.buildMulticall()
+    }
 
-    // protected finalOffset(): number {
-    //     return 36
-    // }
+    protected finalOffset(): number {
+        return 36
+    }
 
-    // private buildMulticall() {
-    //     if (!this.tradeC) {
-    //         throw new Error('TradeC is not set')
-    //     }
+    private buildMulticall() {
+        if (!this.tradeC) {
+            throw new Error('TradeC is not set')
+        }
 
-    //     if (!this.tradeC.callDataOffset) {
-    //         throw new Error('TradeC is not initialized')
-    //     }
+        if (!this.tradeC.callDataOffset) {
+            throw new Error('TradeC is not initialized')
+        }
 
-    //     const burnCalldata = this.wTon.interface.encodeFunctionData('burn', [
-    //         this.tradeC.amountOut.raw.toString(),
-    //         {
-    //             workchain: 0,
-    //             address_hash: '0x1e0fb0686f99f058d8e02ff0355f835988c3069ba1510f76a5c028defcf81706', // testnet
-    //         },
-    //     ])
+        // @@ Convert adderss to hex
 
-    //     const callDatas = [this.tradeC.callData, burnCalldata]
-    //     const receiveSides = [this.tradeC.routerAddress, this.wTon.address]
-    //     const path = [this.tradeC.tokenAmountIn.token.address, this.tradeC.amountOut.token.address]
-    //     const offsets = [this.tradeC.callDataOffset, 36]
+        const burnCalldata = this.wTon.interface.encodeFunctionData('burn', [
+            this.tradeC.amountOut.raw.toString(),
+            {
+                workchain: 0,
+                address_hash: '0x1e0fb0686f99f058d8e02ff0355f835988c3069ba1510f76a5c028defcf81706', // testnet
+            },
+        ])
 
-    //     return this.multicallRouter.interface.encodeFunctionData('multicall', [
-    //         this.tradeC.tokenAmountIn.raw.toString(),
-    //         callDatas,
-    //         receiveSides,
-    //         path,
-    //         offsets,
-    //         this.from,
-    //     ])
-    // }
+        const callDatas = [this.tradeC.callData, burnCalldata]
+        const receiveSides = [this.tradeC.routerAddress, this.wTon.address]
+        const path = [this.tradeC.tokenAmountIn.token.address, this.tradeC.amountOut.token.address]
+        const offsets = [this.tradeC.callDataOffset, 36]
+
+        return this.multicallRouter.interface.encodeFunctionData('multicall', [
+            this.tradeC.tokenAmountIn.raw.toString(),
+            callDatas,
+            receiveSides,
+            path,
+            offsets,
+            this.from,
+        ])
+    }
+
+    private estimateBridgeFee(tokenAmountOut: TokenAmount): TokenAmount {
+        const MULTIPLIER = BigNumber.from('100')
+        const PERCENT = BigNumber.from('25') // 0.25%
+
+        const tonPercentFee = BigNumber.from(tokenAmountOut.raw.toString()).mul(PERCENT).div(MULTIPLIER.mul('100'))
+
+        return new TokenAmount(tokenAmountOut.token, STATIC_BRIDGE_FEE.add(tonPercentFee).toString())
+    }
 
     private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
         return async (signer: Signer) => {
