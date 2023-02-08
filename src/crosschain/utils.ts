@@ -1,6 +1,6 @@
-import { Filter, Log } from '@ethersproject/providers'
+import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import { BigNumber, utils } from 'ethers'
+import { BigNumber, utils, Signer } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Fraction, Percent, TokenAmount, Trade } from '../entities'
@@ -183,4 +183,38 @@ export async function getLogWithTimeout({
 
         provider.once(activeFilter, listener)
     })
+}
+
+const TELOS_MPC_ADDRESS = '0xDcB7d65b15436CE9B608864ACcff75871C6556FC'
+
+// Sets the necessary parameters for send transaction
+export async function prepareTransactionRequest(
+    transactionRequest: TransactionRequest,
+    signer: Signer
+): Promise<TransactionRequest> {
+    const { provider } = signer
+    if (!provider) {
+        throw new Error('Signer has no provider')
+    }
+
+    const preparedTransactionRequest = { ...transactionRequest }
+
+    let { from } = transactionRequest
+    if (transactionRequest.chainId === ChainId.TELOS_MAINNET) {
+        // Set address with balance (symbiosis mpc) for TELOS to avoid "insufficient funds for gas" error
+        from = TELOS_MPC_ADDRESS
+    }
+
+    const gasLimit = await provider.estimateGas({ ...transactionRequest, from })
+
+    preparedTransactionRequest.gasLimit = calculateGasMargin(gasLimit)
+
+    const { chainId: requestChainId } = preparedTransactionRequest
+    if (requestChainId === ChainId.MATIC_MAINNET || requestChainId === ChainId.MATIC_MUMBAI) {
+        // Double gas price for MATIC
+        const gasPrice = await signer.getGasPrice()
+        preparedTransactionRequest.gasPrice = gasPrice.mul(2)
+    }
+
+    return preparedTransactionRequest
 }

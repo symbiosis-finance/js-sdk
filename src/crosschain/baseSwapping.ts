@@ -11,7 +11,7 @@ import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
-import { calculateGasMargin, getExternalId, getInternalId } from './utils'
+import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 
 export type SwapExactIn = Promise<{
@@ -161,13 +161,9 @@ export abstract class BaseSwapping {
     }
 
     protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
-        const transactionRequestWithGasLimit = { ...transactionRequest }
+        const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
 
-        const gasLimit = await signer.estimateGas(transactionRequest)
-
-        transactionRequestWithGasLimit.gasLimit = calculateGasMargin(gasLimit)
-
-        const response = await signer.sendTransaction(transactionRequestWithGasLimit)
+        const response = await signer.sendTransaction(preparedTransactionRequest)
 
         return {
             response,
