@@ -7,7 +7,7 @@ import { TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
 import { PendingRequest } from './pending'
 import type { Symbiosis } from './symbiosis'
-import { calculateGasMargin, getExternalId, getInternalId, getLogWithTimeout } from './utils'
+import { getExternalId, getInternalId, getLogWithTimeout, prepareTransactionRequest } from './utils'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
@@ -467,13 +467,9 @@ export class RevertPending {
     }
 
     private async execute(transactionRequest: TransactionRequest, signer: Signer) {
-        const transactionRequestWithGasLimit = { ...transactionRequest }
+        const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
 
-        const gasLimit = await signer.estimateGas(transactionRequest)
-
-        transactionRequestWithGasLimit.gasLimit = calculateGasMargin(gasLimit)
-
-        const transaction = await signer.sendTransaction(transactionRequestWithGasLimit)
+        const transaction = await signer.sendTransaction(preparedTransactionRequest)
 
         return {
             waitForMined: (confirmations = 1) => this.waitForMined(confirmations, transaction),

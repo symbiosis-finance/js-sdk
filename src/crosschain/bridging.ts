@@ -4,7 +4,7 @@ import { BigNumber, Signer } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
-import { calculateGasMargin, getExternalId, getInternalId } from './utils'
+import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 
 export type WaitForMined = Promise<{
@@ -83,13 +83,9 @@ export class Bridging {
     }
 
     protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
-        const transactionRequestWithGasLimit = { ...transactionRequest }
+        const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
 
-        const gasLimit = await signer.estimateGas(transactionRequestWithGasLimit)
-
-        transactionRequestWithGasLimit.gasLimit = calculateGasMargin(gasLimit)
-
-        const response = await signer.sendTransaction(transactionRequestWithGasLimit)
+        const response = await signer.sendTransaction(preparedTransactionRequest)
 
         return {
             response,
