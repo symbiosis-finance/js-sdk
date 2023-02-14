@@ -293,6 +293,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
         },
     }),
+    new Chain({
+        id: ChainId.KAVA_MAINNET,
+        name: 'KAVA EVM',
+        disabled: false,
+        explorer: 'https://explorer.kava.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
