@@ -395,4 +395,16 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
         },
     }),
+    [ChainId.KAVA_MAINNET]: new Token({
+        chainId: ChainId.KAVA_MAINNET,
+        address: '0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b',
+        decimals: 18,
+        symbol: 'WKAVA',
+        isNative: false,
+        name: 'Wrapped KAVA',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
+        },
+    }),
 }

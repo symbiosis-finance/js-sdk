@@ -13,6 +13,7 @@ import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from 
 import { Transit } from './transit'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
+import { Error, ErrorCode } from './error'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -333,10 +334,15 @@ export abstract class BaseSwapping {
         let amountIn = this.transit.amountOut
 
         if (this.transit.isV2()) {
-            // TODO subtract fee
             const tokenOut = this.symbiosis.transitStable(chainId)
             let amountRaw = amountIn.raw
             if (feeV2) {
+                if (amountIn.lessThan(feeV2)) {
+                    throw new Error(
+                        `Amount $${amountIn.toSignificant()} less than fee $${feeV2.toSignificant()}`,
+                        ErrorCode.AMOUNT_LESS_THAN_FEE
+                    )
+                }
                 amountRaw = JSBI.subtract(amountRaw, feeV2.raw)
             }
             amountIn = new TokenAmount(tokenOut, amountRaw)
