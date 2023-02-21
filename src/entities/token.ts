@@ -282,8 +282,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped BOBA',
         icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
     [ChainId.BOBA_BNB]: new Token({
@@ -294,8 +294,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped BOBA',
         icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
     [ChainId.BOBA_RINKEBY]: new Token({
