@@ -36,6 +36,8 @@ import {
     OmniPoolOracle__factory,
     OneInchOracle,
     OneInchOracle__factory,
+    Ooki,
+    Ooki__factory,
     Portal,
     Portal__factory,
     RenGatewayRegistryV2,
@@ -44,10 +46,10 @@ import {
     RenMintGatewayV3__factory,
     Synthesis,
     Synthesis__factory,
+    ThorRouter,
+    ThorRouter__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
-    Ooki,
-    Ooki__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
@@ -65,6 +67,7 @@ import { ZappingOoki } from './zappingOoki'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
+import { ZappingThor } from './zappingThor'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -143,6 +146,10 @@ export class Symbiosis {
 
     public newZappingRenBTC() {
         return new ZappingRenBTC(this)
+    }
+
+    public newZappingThor() {
+        return new ZappingThor(this)
     }
 
     public newZappingBeefy() {
@@ -346,6 +353,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return RenGatewayRegistryV2__factory.connect(address, signerOrProvider)
+    }
+
+    public thorRouter(signer?: Signer): ThorRouter {
+        const address = '0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146'
+        const signerOrProvider = signer || this.getProvider(ChainId.ETH_MAINNET)
+
+        return ThorRouter__factory.connect(address, signerOrProvider)
     }
 
     public renMintGatewayByAddress(address: string, chainId: ChainId, signer?: Signer): RenMintGatewayV3 {
