@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "2.9.16",
+    "version": "2.9.17",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
     "files": [
