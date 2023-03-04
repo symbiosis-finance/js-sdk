@@ -11,6 +11,10 @@ export async function getRepresentation(
     const fabricChainId = token.isSynthetic ? token.chainId : chainId
     const fabric = symbiosis.fabric(fabricChainId)
 
+    if (fabric.address === AddressZero) {
+        return undefined
+    }
+
     try {
         let representation: string
         if (token.isSynthetic) {
