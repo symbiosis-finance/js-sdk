@@ -20,11 +20,13 @@ export async function getRepresentation(
         }
 
         if (representation === AddressZero) {
+            console.error(`Error while getting representation of ${token.address} in chain ${chainId}: Address is zero`)
             return undefined
         }
 
         return symbiosis.findStable(representation, chainId)
-    } catch {
+    } catch (e) {
+        console.error(`Error while getting representation of ${token.address} in chain ${chainId}`, e)
         return undefined
     }
 }
