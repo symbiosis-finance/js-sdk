@@ -24,7 +24,6 @@ export async function getRepresentation(
         }
 
         if (representation === AddressZero) {
-            console.error(`Error while getting representation of ${token.address} in chain ${chainId}: Address is zero`)
             return undefined
         }
 
