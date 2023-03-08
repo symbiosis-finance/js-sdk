@@ -93,6 +93,8 @@ export abstract class BaseSwapping {
         this.transit = this.buildTransit()
         await this.transit.init()
 
+        await this.doPostTransitAction()
+
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
         if (!this.symbiosis.isTransitStable(tokenOut)) {
@@ -112,6 +114,7 @@ export abstract class BaseSwapping {
         this.transit = await this.buildTransit(fee)
         await this.transit.init()
 
+        await this.doPostTransitAction()
         if (!this.symbiosis.isTransitStable(tokenOut)) {
             this.tradeC = this.buildTradeC(feeV2)
             await this.tradeC.init()
@@ -134,6 +137,9 @@ export abstract class BaseSwapping {
             outTradeType: this.tradeC?.tradeType,
         }
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    protected async doPostTransitAction() {}
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
         let externalSwapsCount = 0

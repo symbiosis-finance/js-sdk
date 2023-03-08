@@ -43,14 +43,23 @@ const USDC = new Token({
     },
 })
 
+function toThorAmount(tokenAmount: TokenAmount): string {
+    return (parseInt(tokenAmount.toSignificant(8)) * 1e8).toString()
+}
+
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
+    protected bitcoinAddress!: string
 
-    protected thorAmountIn!: string
     protected thorTokenIn = `ETH.USDC-${USDC.address.toUpperCase()}`
     protected thorTokenOut = 'BTC.BTC'
     protected thorVault!: string
     protected thorQuote!: ThorQuote
+
+    protected async doPostTransitAction() {
+        const amount = toThorAmount(this.transit.amountOut)
+        this.thorQuote = await this.getThorQuote(amount)
+    }
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
@@ -62,14 +71,11 @@ export class ZappingThor extends BaseSwapping {
         use1Inch = true
     ): ZappingThorExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(USDC.chainId)
+        this.bitcoinAddress = to
 
         this.thorVault = await this.getThorVault()
 
-        // FIXME order, depends on tokenAmountOut
-        this.thorAmountIn = (parseInt(tokenAmountIn.toFixed(8)) * 1e8).toString()
-        this.thorQuote = await this.getThorQuote(this.thorAmountIn, to)
-
-        const { tokenAmountOut, execute, ...result } = await this.doExactIn(
+        const { execute, ...result } = await this.doExactIn(
             tokenAmountIn,
             USDC,
             from,
@@ -107,15 +113,15 @@ export class ZappingThor extends BaseSwapping {
         return found.address
     }
 
-    protected async getThorQuote(amount: string, to: string): Promise<ThorQuote> {
+    protected async getThorQuote(amount: string): Promise<ThorQuote> {
         const apiUrl = 'https://thornode.ninerealms.com'
         const url = new URL('/thorchain/quote/swap', apiUrl)
 
         url.searchParams.set('from_asset', this.thorTokenIn)
         url.searchParams.set('to_asset', this.thorTokenOut)
         url.searchParams.set('amount', amount)
-        url.searchParams.set('destination', to)
-        url.searchParams.set('tolerance_bps', '300')
+        url.searchParams.set('destination', this.bitcoinAddress)
+        url.searchParams.set('tolerance_bps', '500') // 5%
 
         const response = await fetch(url.toString())
 
@@ -166,7 +172,7 @@ export class ZappingThor extends BaseSwapping {
             .interface.encodeFunctionData('depositWithExpiry', [
                 this.thorVault,
                 USDC.address,
-                this.thorAmountIn,
+                toThorAmount(this.transit.amountOut),
                 this.thorQuote.memo,
                 this.thorQuote.expiry,
             ])
@@ -177,7 +183,7 @@ export class ZappingThor extends BaseSwapping {
         const offsets = [100]
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
-            this.thorAmountIn,
+            this.transit.amountOut.raw.toString(),
             callDatas,
             receiveSides,
             path,
