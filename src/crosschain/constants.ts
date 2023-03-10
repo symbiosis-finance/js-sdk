@@ -342,7 +342,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             decimals: 18,
         }),
     ],
-    [ChainId.KAVA_MAINNET]: [],
+    [ChainId.KAVA_MAINNET]: [
+        new Token({
+            chainId: ChainId.KAVA_MAINNET,
+            address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
