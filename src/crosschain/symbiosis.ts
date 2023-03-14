@@ -48,6 +48,8 @@ import {
     UniLikeRouter__factory,
     Ooki,
     Ooki__factory,
+    KavaRouter__factory,
+    KavaRouter,
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
@@ -215,6 +217,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return AdaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public kavaRouter(chainId: ChainId, signer?: Signer): KavaRouter {
+        const address = this.chainConfig(chainId).router
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return KavaRouter__factory.connect(address, signerOrProvider)
     }
 
     public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {

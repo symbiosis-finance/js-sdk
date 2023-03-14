@@ -6,7 +6,7 @@ import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
-import { AdaRouter, AvaxRouter, Synthesis, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
@@ -302,12 +302,16 @@ export abstract class BaseSwapping {
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerA: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
+        let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
+
         if (chainId === ChainId.AVAX_MAINNET) {
             routerA = this.symbiosis.avaxRouter(chainId)
         }
         if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
             routerA = this.symbiosis.adaRouter(chainId)
+        }
+        if ([ChainId.KAVA_MAINNET].includes(chainId)) {
+            routerA = this.symbiosis.kavaRouter(chainId)
         }
 
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage['A'], this.ttl, routerA, dexFee)
@@ -364,12 +368,16 @@ export abstract class BaseSwapping {
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerC: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
+        let routerC: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
+
         if (chainId === ChainId.AVAX_MAINNET) {
             routerC = this.symbiosis.avaxRouter(chainId)
         }
         if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
             routerC = this.symbiosis.adaRouter(chainId)
+        }
+        if ([ChainId.KAVA_MAINNET].includes(chainId)) {
+            routerC = this.symbiosis.kavaRouter(chainId)
         }
 
         return new UniLikeTrade(amountIn, this.tokenOut, this.tradeCTo(), this.slippage['C'], this.ttl, routerC, dexFee)

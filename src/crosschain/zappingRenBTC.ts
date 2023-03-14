@@ -183,14 +183,7 @@ export class ZappingRenBTC extends BaseSwapping {
         let network: 'mainnet' | 'testnet'
         let ethereum: Ethereum | BinanceSmartChain | Polygon
 
-        if (this.renChainId === ChainId.ETH_KOVAN) {
-            network = 'testnet'
-
-            ethereum = new Ethereum({
-                network,
-                provider,
-            })
-        } else if (this.renChainId === ChainId.BSC_MAINNET) {
+        if (this.renChainId === ChainId.BSC_MAINNET) {
             network = 'mainnet'
 
             ethereum = new BinanceSmartChain({

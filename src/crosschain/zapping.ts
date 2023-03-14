@@ -12,7 +12,7 @@ import type { Symbiosis } from './symbiosis'
 import { UniLikeTrade, AggregatorTrade, SymbiosisTradeType } from './trade'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AdaRouter, AvaxRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
+import { AdaRouter, AvaxRouter, KavaRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 
@@ -207,12 +207,16 @@ export class Zapping {
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        let routerA: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
+        let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
+
         if (chainId === ChainId.AVAX_MAINNET) {
             routerA = this.symbiosis.avaxRouter(chainId)
         }
         if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
             routerA = this.symbiosis.adaRouter(chainId)
+        }
+        if ([ChainId.KAVA_MAINNET].includes(chainId)) {
+            routerA = this.symbiosis.kavaRouter(chainId)
         }
 
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
