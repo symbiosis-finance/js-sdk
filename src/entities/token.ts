@@ -1,8 +1,9 @@
 import JSBI from 'jsbi'
-
-import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import invariant from 'tiny-invariant'
+import TronWeb from 'tronweb'
+import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
+import { isTronChainId } from '../crosschain/tron'
+import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import { Chain, getChainById } from './chain'
 
 /**
@@ -32,12 +33,18 @@ export class Token {
         this.symbol = params.symbol
         this.name = params.name
         this.chainId = params.chainId
-        this.address = validateAndParseAddress(params.address)
         this.isNative = !!params.isNative
         this.icons = params.icons
         this.chainFromId = params.chainFromId
         this.isStable = params.isStable
         this.userToken = params.userToken
+
+        if (isTronChainId(params.chainId)) {
+            this.address = TronWeb.address.fromHex(params.address)
+            return
+        }
+
+        this.address = validateAndParseAddress(params.address)
     }
 
     /**
@@ -90,6 +97,16 @@ export const WETH = {
     }),
     [ChainId.BTC_TESTNET]: new Token({
         chainId: ChainId.BTC_TESTNET,
+        address: '',
+        decimals: 8,
+    }),
+    [ChainId.TRON_MAINNET]: new Token({
+        chainId: ChainId.TRON_MAINNET,
+        address: '',
+        decimals: 8,
+    }),
+    [ChainId.TRON_TESTNET]: new Token({
+        chainId: ChainId.TRON_TESTNET,
         address: '',
         decimals: 8,
     }),

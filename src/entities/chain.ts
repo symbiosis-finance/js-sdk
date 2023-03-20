@@ -303,6 +303,28 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
         },
     }),
+    new Chain({
+        id: ChainId.TRON_MAINNET,
+        name: 'Tron',
+        disabled: false,
+        explorer: 'https://tronscan.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.TRON_TESTNET,
+        name: 'Tron Testnet',
+        disabled: false,
+        explorer: 'https://tronscan.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+        },
+        evm: false,
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

@@ -1,7 +1,8 @@
+import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
 import { Token } from '../entities'
 import { Symbiosis } from './symbiosis'
-import { AddressZero } from '@ethersproject/constants'
+import { isTronToken, tronAddressToEvm } from './tron'
 
 export async function getRepresentation(
     symbiosis: Symbiosis,
@@ -15,12 +16,19 @@ export async function getRepresentation(
         return undefined
     }
 
+    let tokenAddress
+    if (isTronToken(token)) {
+        tokenAddress = tronAddressToEvm(token.address)
+    } else {
+        tokenAddress = token.address
+    }
+
     try {
         let representation: string
         if (token.isSynthetic) {
-            representation = await fabric.getRealRepresentation(token.address)
+            representation = await fabric.getRealRepresentation(tokenAddress)
         } else {
-            representation = await fabric.getSyntRepresentation(token.address, token.chainId)
+            representation = await fabric.getSyntRepresentation(tokenAddress, token.chainId)
         }
 
         if (representation === AddressZero) {

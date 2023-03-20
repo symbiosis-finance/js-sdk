@@ -1,11 +1,15 @@
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { MaxUint256 } from '@ethersproject/constants'
+import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { BigNumber, Signer } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
+import { isTronToken, prepareTronTransaction, TronTransactionData } from './tron'
+import { TRON_PORTAL_ABI } from './tronAbis'
 import { BridgeDirection } from './types'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
+
+export type RequestNetworkType = 'evm' | 'tron'
 
 export type WaitForMined = Promise<{
     receipt: TransactionReceipt
@@ -17,18 +21,37 @@ export type Execute = Promise<{
     waitForMined: () => WaitForMined
 }>
 
-export type ExactIn = Promise<{
-    execute: (signer: Signer) => Execute
-    fee: TokenAmount
-    tokenAmountOut: TokenAmount
-    transactionRequest: TransactionRequest
-}>
+export type BridgeExactIn = Promise<
+    {
+        fee: TokenAmount
+        tokenAmountOut: TokenAmount
+    } & (
+        | {
+              execute: (signer: Signer) => Execute
+              type: 'evm'
+              transactionRequest: TransactionRequest
+          }
+        | {
+              type: 'tron'
+              transactionRequest: TronTransactionData
+          }
+    )
+>
+
+export interface ExactInParams {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    from: string
+    to: string
+    revertableAddress: string
+}
 
 export class Bridging {
     public tokenAmountIn: TokenAmount | undefined
     public tokenOut: Token | undefined
     public tokenAmountOut: TokenAmount | undefined
     public direction!: BridgeDirection
+    public from!: string
     public to!: string
     public revertableAddress!: string
 
@@ -40,7 +63,7 @@ export class Bridging {
         this.symbiosis = symbiosis
     }
 
-    public async exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, to: string, revertableAddress: string): ExactIn {
+    public async exactIn({ from, revertableAddress, to, tokenAmountIn, tokenOut }: ExactInParams): BridgeExactIn {
         if (this.tokenAmountIn?.token !== tokenAmountIn.token || this.tokenOut !== tokenOut) {
             this.fee = undefined
         }
@@ -49,6 +72,7 @@ export class Bridging {
 
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
+        this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
         this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
@@ -64,17 +88,38 @@ export class Bridging {
 
         this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
 
-        const transactionRequest = this.getTransactionRequest(fee)
+        if (isTronToken(this.tokenAmountIn.token)) {
+            const transactionRequest = this.getTronTransactionRequest(fee)
+
+            return {
+                fee,
+                tokenAmountOut: this.tokenAmountOut,
+                transactionRequest,
+                type: 'tron',
+            }
+        }
+
+        const transactionRequest = this.getEvmTransactionRequest(fee)
 
         return {
             execute: (signer: Signer) => this.execute(transactionRequest, signer),
             fee,
             tokenAmountOut: this.tokenAmountOut,
             transactionRequest,
+            type: 'evm',
         }
     }
 
     protected async getFee(): Promise<TokenAmount> {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
+            // @@
+            return new TokenAmount(this.tokenOut, '10000')
+        }
+
         if (this.direction === 'mint') {
             return await this.getMintFee()
         }
@@ -102,7 +147,37 @@ export class Bridging {
         }
     }
 
-    protected getTransactionRequest(fee: TokenAmount): TransactionRequest {
+    protected getTronTransactionRequest(fee: TokenAmount): TronTransactionData {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        const { chainId } = this.tokenAmountIn.token
+
+        const portalAddress = this.symbiosis.chainConfig(chainId).portal
+
+        // TODO: Other methods
+        return prepareTronTransaction({
+            abi: TRON_PORTAL_ABI,
+            ownerAddress: this.from,
+            contractAddress: portalAddress,
+            functionName: 'synthesize',
+            params: [
+                fee.raw.toString(),
+                this.tokenAmountIn.token.address,
+                this.tokenAmountIn.raw.toString(),
+                this.to,
+                this.symbiosis.synthesis(this.tokenOut.chainId).address,
+                this.symbiosis.bridge(this.tokenOut.chainId).address,
+                this.revertableAddress,
+                this.tokenOut.chainId.toString(),
+                this.symbiosis.clientId,
+            ],
+            tronWeb: this.symbiosis.tronWeb(chainId),
+        })
+    }
+
+    protected getEvmTransactionRequest(fee: TokenAmount): TransactionRequest {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
         }

@@ -229,5 +229,38 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
+        {
+            id: 2494104990,
+            rpc: 'https://api.shasta.trongrid.io',
+            filterBlockOffset: 3000,
+            waitForBlocksCount: 30,
+            stables: [
+                {
+                    name: 'USDT Tron',
+                    symbol: 'USDT Tron',
+                    address: 'TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs',
+                    chainId: 2494104990,
+                    decimals: 6,
+                    isStable: true,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+            ],
+            nerves: [],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 25,
+            metaRouter: 'TELoAyns5eHWuiL61tU5BC7YJEsqqebubz',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000', // @@
+            bridge: 'TQFBn3nLJXCBHmk4zckBm2z6WLyABnT5gA',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: 'TXmSomqKHEHF2pmgtGvRz7oeLiMvaC9xoc',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000', // @@
+            aavePool: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+        },
     ],
 }

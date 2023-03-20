@@ -63,10 +63,11 @@ import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
 import { ZappingRenBTC } from './zappingRenBTC'
 import { ZappingOoki } from './zappingOoki'
-
+import TronWeb from 'tronweb'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
+import { isTronChainId } from './tron'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -480,6 +481,19 @@ export class Symbiosis {
             throw new Error(`Cannot find transit stable token for chain ${chainId}`)
         }
         return stable
+    }
+
+    public tronWeb(chainId: ChainId): TronWeb {
+        if (!isTronChainId(chainId)) {
+            throw new Error(`Chain ${chainId} is not Tron chain`)
+        }
+
+        const config = this.chainConfig(chainId)
+        if (!config) {
+            throw new Error(`Could not find Tron config for chain ${chainId}`)
+        }
+
+        return new TronWeb({ fullHost: config.rpc, eventNode: config.rpc, solidityNode: config.rpc })
     }
 
     public isTransitStable(token: Token): boolean {

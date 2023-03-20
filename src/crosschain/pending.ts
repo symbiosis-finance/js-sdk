@@ -333,6 +333,11 @@ export async function getPendingRequests(
     const pendingRequestsPromises: Promise<PendingRequest[]>[] = []
 
     chains.forEach((chain) => {
+        if (!chain.evm) {
+            // @@
+            return
+        }
+
         const params: Omit<GetChainPendingRequestsParams, 'type'> = {
             symbiosis,
             chainsIds,
