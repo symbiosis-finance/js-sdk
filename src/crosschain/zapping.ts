@@ -41,6 +41,7 @@ export class Zapping {
     private tradeA: UniLikeTrade | AggregatorTrade | undefined
 
     private synthToken!: Token
+    private transitStableIn!: Token
 
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
@@ -72,6 +73,7 @@ export class Zapping {
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
+        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
 
         let amountInUsd: TokenAmount
 
@@ -188,7 +190,7 @@ export class Zapping {
 
     private buildTradeA(): UniLikeTrade | AggregatorTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.symbiosis.transitStable(chainId)
+        const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
@@ -286,12 +288,11 @@ export class Zapping {
 
     private async getSynthToken(): Promise<Token> {
         const chainIdOut = this.symbiosis.omniPoolConfig.chainId
-        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
-        const rep = await this.symbiosis.getRepresentation(transitStableIn, chainIdOut)
+        const rep = await this.symbiosis.getRepresentation(this.transitStableIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${chainIdOut} not found`,
+                `Representation of ${this.transitStableIn.symbol} in chain ${chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }

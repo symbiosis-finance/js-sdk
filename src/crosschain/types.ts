@@ -1,4 +1,5 @@
 import { ChainId, TokenConstructor } from '../constants'
+import { BigNumber } from '@ethersproject/bignumber'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -57,4 +58,14 @@ export type Config = {
     chains: ChainConfig[]
     minSwapAmountInUsd: number
     maxSwapAmountInUsd: number
+}
+
+export type PoolAsset = {
+    cash: BigNumber
+    liability: BigNumber
+    maxSupply: BigNumber
+    totalSupply: BigNumber
+    decimals: number
+    token: string
+    active: boolean
 }

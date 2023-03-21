@@ -3,7 +3,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { ContractTransaction, Signer } from 'ethers'
 import JSBI from 'jsbi'
-import { TokenAmount } from '../entities'
+import { Token, TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
 import { PendingRequest } from './pending'
 import type { Symbiosis } from './symbiosis'
@@ -18,6 +18,7 @@ export class RevertPending {
 
     private deadline!: number
     private slippage!: number
+    private transitStable!: Token
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
         this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.omniPoolConfig.chainId)
@@ -26,6 +27,7 @@ export class RevertPending {
     async revert(slippage: number, deadline: number) {
         this.slippage = slippage
         this.deadline = deadline
+        this.transitStable = await this.symbiosis.bestTransitStable(this.request.chainIdFrom)
 
         const fee = await this.getFee()
 
@@ -121,7 +123,7 @@ export class RevertPending {
     }
 
     protected async getFeeV2(): Promise<TokenAmount> {
-        const feeToken = this.symbiosis.transitStable(this.request.chainIdFrom)
+        const feeToken = this.transitStable
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
         const fee = await this.symbiosis.getBridgeFee({
@@ -159,7 +161,7 @@ export class RevertPending {
             externalId, // _externalID,
             revertableAddress, // _to
             fromTokenAmount.raw.toString(), // _amount
-            this.symbiosis.transitStable(chainIdOut).address, // _rToken
+            this.transitStable.address, // _rToken
             AddressZero, // _finalReceiveSide
             [], // _finalCalldata
             0, // _finalOffset

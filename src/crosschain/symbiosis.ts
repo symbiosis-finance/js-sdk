@@ -1,5 +1,5 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer, utils } from 'ethers'
+import { BigNumber, Signer, utils } from 'ethers'
 import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
@@ -24,6 +24,8 @@ import {
     CreamComptroller__factory,
     Fabric,
     Fabric__factory,
+    KavaRouter,
+    KavaRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -36,6 +38,8 @@ import {
     OmniPoolOracle__factory,
     OneInchOracle,
     OneInchOracle__factory,
+    Ooki,
+    Ooki__factory,
     Portal,
     Portal__factory,
     RenGatewayRegistryV2,
@@ -46,17 +50,13 @@ import {
     Synthesis__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
-    Ooki,
-    Ooki__factory,
-    KavaRouter__factory,
-    KavaRouter,
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { getRepresentation } from './getRepresentation'
 import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
-import { ChainConfig, Config, OmniPoolConfig } from './types'
+import { ChainConfig, Config, OmniPoolConfig, PoolAsset } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
@@ -387,12 +387,6 @@ export class Symbiosis {
             }, [])
     }
 
-    public findTransitStable(chainId: ChainId): Token | undefined {
-        const chainHasStablePool = this.chainConfig(chainId).nerves.length > 0
-        return this.stables().find((token) => {
-            return token.chainId === chainId && (!token.isSynthetic || !chainHasStablePool)
-        })
-    }
     public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
         return this.stables().find((token) => {
             return token.chainId === chainId && token.chainFromId === chainFromId && token.isSynthetic
@@ -474,15 +468,67 @@ export class Symbiosis {
         return config
     }
 
-    public transitStable(chainId: ChainId): Token {
-        const stable = this.findTransitStable(chainId)
-        if (stable === undefined) {
+    public transitStables(chainId: ChainId): Token[] {
+        const stables = this.findTransitStables(chainId)
+        if (stables.length === 0) {
             throw new Error(`Cannot find transit stable token for chain ${chainId}`)
         }
-        return stable
+        return stables
+    }
+
+    public async bestTransitStable(chainId: ChainId): Promise<Token> {
+        const stables = this.transitStables(chainId)
+        if (stables.length === 1) {
+            return stables[0]
+        }
+
+        const pool = this.omniPool()
+        const promises = stables.map(async (i): Promise<[Token, PoolAsset] | undefined> => {
+            const sToken = await getRepresentation(this, i, ChainId.BOBA_BNB)
+            if (!sToken) return
+            const index = await pool.assetToIndex(sToken.address)
+            const asset = await pool.indexToAsset(index)
+            return [i, asset]
+        })
+
+        const pairs = (await Promise.all(promises)).filter((i) => i !== undefined) as [Token, PoolAsset][]
+
+        function assetScore(asset: PoolAsset): BigNumber {
+            const cash = asset.cash
+            const liability = asset.liability
+
+            if (liability.eq(0)) {
+                return BigNumber.from(0)
+            }
+
+            return cash.mul(cash).div(liability)
+        }
+
+        const sortedPairs = pairs.sort((pairA, pairB) => {
+            const a = assetScore(pairA[1])
+            const b = assetScore(pairB[1])
+
+            if (a.gt(b)) {
+                return -1
+            }
+            if (a.lt(b)) {
+                return 1
+            }
+            return 0
+        })
+
+        return sortedPairs[0][0]
     }
 
     public isTransitStable(token: Token): boolean {
-        return token.address === this.transitStable(token.chainId).address
+        return this.transitStables(token.chainId)
+            .map((i) => i.address.toLowerCase())
+            .includes(token.address.toLowerCase())
+    }
+
+    public findTransitStables(chainId: ChainId): Token[] {
+        return this.stables().filter((token) => {
+            return token.chainId === chainId && !token.isSynthetic
+        })
     }
 }

@@ -59,6 +59,9 @@ export abstract class BaseSwapping {
     protected readonly symbiosis: Symbiosis
     protected synthesisV2!: Synthesis
 
+    protected transitStableIn!: Token
+    protected transitStableOut!: Token
+
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
@@ -84,6 +87,9 @@ export abstract class BaseSwapping {
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
+
+        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
+        this.transitStableOut = await this.symbiosis.bestTransitStable(this.tokenOut.chainId)
 
         if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
@@ -283,7 +289,7 @@ export abstract class BaseSwapping {
 
     protected buildTradeA(): UniLikeTrade | AggregatorTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.symbiosis.transitStable(chainId)
+        const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
@@ -323,6 +329,8 @@ export abstract class BaseSwapping {
             this.dataProvider,
             this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
             this.tokenOut,
+            this.transitStableIn,
+            this.transitStableOut,
             this.slippage['B'],
             this.deadline,
             fee
@@ -334,11 +342,9 @@ export abstract class BaseSwapping {
     }
 
     protected buildTradeC(feeV2?: TokenAmount) {
-        const chainId = this.tokenOut.chainId
         let amountIn = this.transit.amountOut
 
         if (this.transit.isV2()) {
-            const tokenOut = this.symbiosis.transitStable(chainId)
             let amountRaw = amountIn.raw
             if (feeV2) {
                 if (amountIn.lessThan(feeV2)) {
@@ -349,9 +355,10 @@ export abstract class BaseSwapping {
                 }
                 amountRaw = JSBI.subtract(amountRaw, feeV2.raw)
             }
-            amountIn = new TokenAmount(tokenOut, amountRaw)
+            amountIn = new TokenAmount(this.transitStableOut, amountRaw)
         }
 
+        const chainId = this.tokenOut.chainId
         if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
@@ -573,7 +580,7 @@ export abstract class BaseSwapping {
             externalId, // _externalID,
             this.to, // _to
             this.transit.amountOut.raw.toString(), // _amount
-            this.symbiosis.transitStable(this.tokenOut.chainId).address, // _rToken
+            this.transitStableOut.address, // _rToken
             this.finalReceiveSide(), // _finalReceiveSide
             this.finalCalldata(), // _finalCalldata
             this.finalOffset(), // _finalOffset
@@ -596,7 +603,7 @@ export abstract class BaseSwapping {
     }
 
     protected async getFeeV2(): Promise<TokenAmount> {
-        const feeToken = this.symbiosis.transitStable(this.tokenOut.chainId)
+        const feeToken = this.transitStableOut
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
         const fee = await this.symbiosis.getBridgeFee({

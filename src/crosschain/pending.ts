@@ -81,7 +81,7 @@ export const findSourceChainToken = async (
     if (!sourceChainId) {
         return
     }
-    return symbiosis.findTransitStable(sourceChainId)
+    return await symbiosis.bestTransitStable(sourceChainId)
 }
 
 const findSynthesizeRequestOnChain = async (
@@ -288,7 +288,7 @@ export async function getChainPendingRequests({
                             ).toString()
                         )
                     } else {
-                        const transitStable = symbiosis.transitStable(pendingRequest.chainIdTo)
+                        const transitStable = await symbiosis.bestTransitStable(pendingRequest.chainIdTo)
                         pendingRequest.type = 'burn-v2-revert'
                         pendingRequest.fromTokenAmount = new TokenAmount(
                             transitStable,

@@ -83,7 +83,7 @@ export class RevertRequest {
                         ).toString()
                     )
                 } else {
-                    const transitStable = this.symbiosis.transitStable(chainIdTo)
+                    const transitStable = await this.symbiosis.bestTransitStable(chainIdTo)
                     type = 'burn-v2-revert'
                     fromTokenAmount = new TokenAmount(transitStable, fromTokenAmount.raw)
                 }
