@@ -46,6 +46,9 @@ declare module 'tronweb' {
 
         ready: boolean
         toHex(m: string): string
+        fullNode: {
+            request(url: string, params: Record<string, unknown>, method: string): Promise<any>
+        }
         feeLimit: number
         trx: {
             sign(transaction: Transaction, privateKey?: string): Promise<SignedTransaction>
