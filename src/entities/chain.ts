@@ -303,6 +303,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
         },
     }),
+    new Chain({
+        id: ChainId.SCROLL_TESTNET,
+        name: 'Scroll Testnet',
+        disabled: false,
+        explorer: 'https://blockscout.scroll.io/',
+        icons: {
+            small: 'https://scrollzkp.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F06ea9d44-c6e2-4473-aad0-3cec73ab2675%2Fscroll---logo-logo-mark-full-color-rgb-266px72ppi.png?id=b5c59732-e37a-443a-a08d-cf9554787fc7&table=block&spaceId=cc12e519-e01d-4277-9573-3fe8e5bdf9ce&width=2000&userId=&cache=v2',
+            large: 'https://scrollzkp.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F06ea9d44-c6e2-4473-aad0-3cec73ab2675%2Fscroll---logo-logo-mark-full-color-rgb-266px72ppi.png?id=b5c59732-e37a-443a-a08d-cf9554787fc7&table=block&spaceId=cc12e519-e01d-4277-9573-3fe8e5bdf9ce&width=2000&userId=&cache=v2',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

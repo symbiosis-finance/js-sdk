@@ -30,6 +30,7 @@ export const CHAINS_PRIORITY = [
     ChainId.HECO_TESTNET,
     ChainId.SHARDEUM_TESTNET_2,
     ChainId.KAVA_MAINNET,
+    ChainId.SCROLL_TESTNET,
 ]
 
 // a list of tokens by chain
@@ -78,6 +79,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.TELOS_TESTNET]: [WETH[ChainId.TELOS_TESTNET]],
     [ChainId.SHARDEUM_TESTNET_2]: [WETH[ChainId.SHARDEUM_TESTNET_2]],
     [ChainId.KAVA_MAINNET]: [WETH[ChainId.KAVA_MAINNET]],
+    [ChainId.SCROLL_TESTNET]: [WETH[ChainId.SCROLL_TESTNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -351,6 +353,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'USD Coin',
         }),
     ],
+    [ChainId.SCROLL_TESTNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -418,4 +421,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.TELOS_TESTNET]: '0x9a01bf917477dd9f5d715d188618fc8b7350cd22',
     [ChainId.SHARDEUM_TESTNET_2]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
     [ChainId.KAVA_MAINNET]: '0x30A62aA52Fa099C4B227869EB6aeaDEda054d121',
+    [ChainId.SCROLL_TESTNET]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
 }
