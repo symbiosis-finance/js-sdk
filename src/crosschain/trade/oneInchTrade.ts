@@ -14,7 +14,7 @@ export interface Protocol {
     img_color: string
 }
 
-const API_URL = 'https://api.1inch.io'
+const API_URL = 'https://api-symbiosis.1inch.io'
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
 export class OneInchTrade implements SymbiosisTrade {
