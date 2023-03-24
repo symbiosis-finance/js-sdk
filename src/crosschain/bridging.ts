@@ -3,7 +3,7 @@ import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from
 import { BigNumber, Signer } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
-import { isTronToken, prepareTronTransaction, TronTransactionData } from './tron'
+import { isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { BridgeDirection } from './types'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
@@ -113,11 +113,6 @@ export class Bridging {
     protected async getFee(): Promise<TokenAmount> {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
-        }
-
-        if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
-            // @@
-            return new TokenAmount(this.tokenOut, '10000')
         }
 
         if (this.direction === 'mint') {
@@ -249,12 +244,12 @@ export class Bridging {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const portal = this.symbiosis.portal(chainIdIn)
+        const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdIn).portal)
 
         const synthesis = this.symbiosis.synthesis(chainIdOut)
 
         const internalId = getInternalId({
-            contractAddress: portal.address,
+            contractAddress: portalAddress,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
@@ -262,14 +257,14 @@ export class Bridging {
         const externalId = getExternalId({
             internalId,
             contractAddress: synthesis.address,
-            revertableAddress: this.revertableAddress,
+            revertableAddress: tronAddressToEvm(this.revertableAddress),
             chainId: chainIdOut,
         })
 
         const calldata = synthesis.interface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            this.tokenAmountIn.token.address, // _token,
+            tronAddressToEvm(this.tokenAmountIn.token.address), // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address
@@ -281,6 +276,7 @@ export class Bridging {
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
+
         return new TokenAmount(this.tokenOut, fee.toString())
     }
 
