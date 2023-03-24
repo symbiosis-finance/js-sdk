@@ -67,17 +67,17 @@ export class Zapping {
     ): SwapExactIn {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
+        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
-        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
 
         let amountInUsd: TokenAmount
 
-        if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
+        if (!this.transitStableIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 

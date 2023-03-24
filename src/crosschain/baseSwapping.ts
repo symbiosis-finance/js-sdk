@@ -80,6 +80,8 @@ export abstract class BaseSwapping {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
+        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
+        this.transitStableOut = await this.symbiosis.bestTransitStable(this.tokenOut.chainId)
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
@@ -88,10 +90,7 @@ export abstract class BaseSwapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
 
-        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
-        this.transitStableOut = await this.symbiosis.bestTransitStable(this.tokenOut.chainId)
-
-        if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
+        if (!this.transitStableIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
         }
@@ -101,7 +100,7 @@ export abstract class BaseSwapping {
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
-        if (!this.symbiosis.isTransitStable(tokenOut)) {
+        if (!this.transitStableOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
         }
@@ -118,7 +117,7 @@ export abstract class BaseSwapping {
         this.transit = await this.buildTransit(fee)
         await this.transit.init()
 
-        if (!this.symbiosis.isTransitStable(tokenOut)) {
+        if (!this.transitStableOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC(feeV2)
             await this.tradeC.init()
         }
@@ -143,10 +142,10 @@ export abstract class BaseSwapping {
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
         let externalSwapsCount = 0
-        if (!this.symbiosis.isTransitStable(this.tokenAmountIn.token)) {
+        if (!this.transitStableIn.equals(this.tokenAmountIn.token)) {
             externalSwapsCount += 1
         }
-        if (!this.symbiosis.isTransitStable(this.tokenOut)) {
+        if (!this.transitStableOut.equals(this.tokenOut)) {
             externalSwapsCount += 1
         }
         const stableSwapSlippage = 50 // 0.5%

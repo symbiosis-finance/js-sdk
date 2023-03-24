@@ -520,12 +520,6 @@ export class Symbiosis {
         return sortedPairs[0][0]
     }
 
-    public isTransitStable(token: Token): boolean {
-        return this.transitStables(token.chainId)
-            .map((i) => i.address.toLowerCase())
-            .includes(token.address.toLowerCase())
-    }
-
     public findTransitStables(chainId: ChainId): Token[] {
         return this.stables().filter((token) => {
             return token.chainId === chainId && !token.isSynthetic
