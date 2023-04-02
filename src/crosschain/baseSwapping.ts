@@ -148,6 +148,15 @@ export abstract class BaseSwapping {
         if (!this.transitStableOut.equals(this.tokenOut)) {
             externalSwapsCount += 1
         }
+
+        if (externalSwapsCount === 0) {
+            return {
+                A: 0,
+                B: totalSlippage,
+                C: 0,
+            }
+        }
+
         const stableSwapSlippage = 50 // 0.5%
         if (totalSlippage < 150) {
             // 1.5%
