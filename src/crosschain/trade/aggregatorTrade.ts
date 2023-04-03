@@ -107,6 +107,11 @@ export class AggregatorTrade implements SymbiosisTrade {
         return this.trade.callData
     }
 
+    get callDataOffset(): number {
+        this.assertTradeInitialized()
+        return this.trade.callDataOffset || 0
+    }
+
     get tokenAmountIn(): TokenAmount {
         this.assertTradeInitialized()
         return this.trade.tokenAmountIn

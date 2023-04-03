@@ -40,6 +40,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
     public route!: Token[]
     public amountOut!: TokenAmount
     public callData!: string
+    public callDataOffset: number
     public priceImpact!: Percent
     public routerAddress!: string
     public oracle: OneInchOracle
@@ -60,6 +61,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
         this.slippage = slippage
         this.oracle = oracle
         this.dataProvider = dataProvider
+        this.callDataOffset = 4 + 8 * 32
     }
 
     public async init() {
