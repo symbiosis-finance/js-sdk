@@ -28,6 +28,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.AVAX_MAINNET]: 'avax',
     [ChainId.AURORA_MAINNET]: 'aurora',
     [ChainId.HECO_MAINNET]: 'heco',
+    [ChainId.KAVA_MAINNET]: 'kava',
 }
 
 const OPEN_OCEAN_ADDRESS = '0x6352a56caadc4f1e25cd6c75970fa768a3304e64' as const
