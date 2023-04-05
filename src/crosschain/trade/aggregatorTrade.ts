@@ -39,10 +39,9 @@ export class AggregatorTrade implements SymbiosisTrade {
     public async init() {
         const { dataProvider, from, slippage, symbiosis, to, tokenAmountIn, tokenOut, clientId } = this.params
 
-        const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
-
         const aggregators: Promise<OneInchTrade | OpenOceanTrade>[] = []
         if (clientId !== OPEN_OCEAN_CLIENT_ID && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
+            const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade(tokenAmountIn, tokenOut, from, to, slippage, oracle, dataProvider)
 
             aggregators.push(oneInchTrade.init())
@@ -55,7 +54,6 @@ export class AggregatorTrade implements SymbiosisTrade {
                 tokenAmountIn,
                 tokenOut,
                 dataProvider,
-                oracle,
             })
 
             aggregators.push(openOceanTrade.init())
