@@ -31,6 +31,7 @@ export const CHAINS_PRIORITY = [
     ChainId.SHARDEUM_TESTNET_2,
     ChainId.KAVA_MAINNET,
     ChainId.SCROLL_TESTNET,
+    ChainId.ZKSYNC_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -80,6 +81,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.SHARDEUM_TESTNET_2]: [WETH[ChainId.SHARDEUM_TESTNET_2]],
     [ChainId.KAVA_MAINNET]: [WETH[ChainId.KAVA_MAINNET]],
     [ChainId.SCROLL_TESTNET]: [WETH[ChainId.SCROLL_TESTNET]],
+    [ChainId.ZKSYNC_MAINNET]: [WETH[ChainId.ZKSYNC_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -354,6 +356,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
         }),
     ],
     [ChainId.SCROLL_TESTNET]: [],
+    [ChainId.ZKSYNC_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -422,4 +425,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.SHARDEUM_TESTNET_2]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
     [ChainId.KAVA_MAINNET]: '0x30A62aA52Fa099C4B227869EB6aeaDEda054d121',
     [ChainId.SCROLL_TESTNET]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
+    [ChainId.ZKSYNC_MAINNET]: '0x52192C3De01535a9Ad2743A5Fe4f774868103C20',
 }
