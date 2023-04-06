@@ -356,7 +356,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
         }),
     ],
     [ChainId.SCROLL_TESTNET]: [],
-    [ChainId.ZKSYNC_MAINNET]: [],
+    [ChainId.ZKSYNC_MAINNET]: [
+        new Token({
+            chainId: ChainId.ZKSYNC_MAINNET,
+            address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -380,6 +388,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.AURORA_MAINNET],
     ],
     [ChainId.KAVA_MAINNET]: [WETH[ChainId.KAVA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.KAVA_MAINNET]],
+    [ChainId.ZKSYNC_MAINNET]: [
+        WETH[ChainId.ZKSYNC_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ZKSYNC_MAINNET],
+    ],
 }
 
 /**
