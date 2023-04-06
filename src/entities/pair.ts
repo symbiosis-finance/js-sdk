@@ -35,6 +35,10 @@ export class Pair {
         let types: string[] = ['address', 'address']
         let params: (string | boolean)[] = [tokens[0].address, tokens[1].address]
 
+        if (chainId === ChainId.ZKSYNC_MAINNET) {
+            return '0xDFAaB828f5F515E104BaaBa4d8D554DA9096f0e4'
+        }
+
         if (chainId === ChainId.KAVA_MAINNET) {
             types = [...types, 'bool']
             params = [...params, false]
