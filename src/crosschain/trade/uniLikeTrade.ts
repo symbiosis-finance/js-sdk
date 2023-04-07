@@ -4,7 +4,7 @@ import flatMap from 'lodash.flatmap'
 import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
 import { Router } from '../../router'
 import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../constants'
-import { AdaRouter, AvaxRouter, KavaRouter, Pair__factory, UniLikeRouter } from '../contracts'
+import { AdaRouter, AvaxRouter, KavaRouter, MuteRouter__factory, Pair__factory, UniLikeRouter } from '../contracts'
 import { getMulticall } from '../multicall'
 import { PairState } from '../types'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../utils'
@@ -108,6 +108,19 @@ export class UniLikeTrade implements SymbiosisTrade {
         }
         if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(trade.inputAmount.token.chainId)) {
             method = methodName.replace('ETH', 'ADA')
+        }
+
+        if (trade.inputAmount.token.chainId === ChainId.ZKSYNC_MAINNET) {
+            // Mute.io custom router
+            const muteRouterInterface = MuteRouter__factory.createInterface()
+
+            // TODO: Check if pair is stable
+            const muteArgs: any = [...args, [false]]
+
+            return {
+                data: muteRouterInterface.encodeFunctionData(method as any, muteArgs),
+                offset,
+            }
         }
 
         return {
