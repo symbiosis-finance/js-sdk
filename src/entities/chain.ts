@@ -315,7 +315,7 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.ZKSYNC_MAINNET,
-        name: 'ZkSync',
+        name: 'ZkSync Era',
         disabled: false,
         explorer: 'https://explorer.zksync.io',
         icons: {
