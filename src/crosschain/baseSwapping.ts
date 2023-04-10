@@ -9,7 +9,7 @@ import { BIPS_BASE } from './constants'
 import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
+import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -52,7 +52,7 @@ export abstract class BaseSwapping {
 
     protected tradeA: UniLikeTrade | AggregatorTrade | undefined
     protected transit!: Transit
-    protected tradeC: UniLikeTrade | AggregatorTrade | undefined
+    protected tradeC: UniLikeTrade | OneInchTrade | undefined
 
     protected dataProvider: DataProvider
 
@@ -367,18 +367,18 @@ export abstract class BaseSwapping {
         }
 
         const chainId = this.tokenOut.chainId
-        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+        if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
-            return new AggregatorTrade({
-                tokenAmountIn: amountIn,
-                tokenOut: this.tokenOut,
+            const oracle = this.symbiosis.oneInchOracle(chainId)
+            return new OneInchTrade(
+                amountIn,
+                this.tokenOut,
                 from,
-                to: this.tradeCTo(),
-                slippage: this.slippage['C'] / 100,
-                symbiosis: this.symbiosis,
-                dataProvider: this.dataProvider,
-                clientId: this.symbiosis.clientId,
-            })
+                this.tradeCTo(),
+                this.slippage['C'] / 100,
+                oracle,
+                this.dataProvider
+            )
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
