@@ -114,10 +114,10 @@ export class UniLikeTrade implements SymbiosisTrade {
             // Mute.io custom router
             const muteRouterInterface = MuteRouter__factory.createInterface()
 
-            // TODO: Check if pair is stable
-            const muteArgs: any = [...args, [false, false]]
+            const path = (Array.isArray(args[1]) ? args[1] : args[2]) as string[]
 
-            console.log('ZKSYNC swap', method, muteArgs)
+            // check if pair is stable using 'stable' view method
+            const muteArgs: any = [...args, path.map(() => false)]
 
             return {
                 data: muteRouterInterface.encodeFunctionData(method as any, muteArgs),

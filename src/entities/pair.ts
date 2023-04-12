@@ -16,6 +16,7 @@ import {
     MINIMUM_LIQUIDITY,
     ONE,
     ZERO,
+    MUTE_POOLS,
 } from '../constants'
 import { parseBigintIsh, sqrt } from '../utils'
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
@@ -36,7 +37,10 @@ export class Pair {
         let params: (string | boolean)[] = [tokens[0].address, tokens[1].address]
 
         if (chainId === ChainId.ZKSYNC_MAINNET) {
-            return '0xDFAaB828f5F515E104BaaBa4d8D554DA9096f0e4'
+            const pool = MUTE_POOLS.find(
+                (pool) => pool.tokenA === tokens[0].address && pool.tokenB === tokens[1].address
+            )
+            return pool?.address ?? '0x0000000000000000000000000000000000000000'
         }
 
         if (chainId === ChainId.KAVA_MAINNET) {
