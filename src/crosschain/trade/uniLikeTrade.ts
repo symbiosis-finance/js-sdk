@@ -11,6 +11,7 @@ import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../u
 import { ChainId } from '../../constants'
 import { DataProvider } from '../dataProvider'
 import { SymbiosisTrade } from './symbiosisTrade'
+import { Multicall2 } from '../contracts/Multicall'
 
 export class UniLikeTrade implements SymbiosisTrade {
     tradeType = 'dex' as const
@@ -152,13 +153,45 @@ export class UniLikeTrade implements SymbiosisTrade {
     private static async allPairs(provider: Provider, tokens: [Token, Token][]): Promise<[PairState, Pair | null][]> {
         const wrappedTokens = tokens.map(([tokenA, tokenB]) => [wrappedToken(tokenA), wrappedToken(tokenB)])
 
-        const pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
-            if (!tokenA || !tokenB) throw new Error()
-            if (tokenA.chainId !== tokenB.chainId) throw new Error()
-            if (tokenA.equals(tokenB)) throw new Error()
+        const multicall = await getMulticall(provider)
 
-            return Pair.getAddress(tokenA, tokenB)
+        const isMuteIo = wrappedTokens.some(([tokenA, tokenB]) => {
+            return tokenA.chainId === ChainId.ZKSYNC_MAINNET || tokenB.chainId === ChainId.ZKSYNC_MAINNET
         })
+
+        let pairAddresses: string[] = []
+        if (isMuteIo) {
+            const muteRouterInterface = MuteRouter__factory.createInterface()
+
+            const calls: Multicall2.CallStruct[] = wrappedTokens.map(([tokenA, tokenB]) => ({
+                target: '0x8B791913eB07C32779a16750e3868aA8495F5964',
+                callData: muteRouterInterface.encodeFunctionData('pairFor', [
+                    tokenA.address,
+                    tokenB.address,
+                    false, // not stable
+                ]),
+            }))
+
+            const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
+
+            pairAddresses = aggregateResult.map(([success, returnData]) => {
+                if (!success || returnData === '0x') {
+                    // Pair does not exist
+                    return '0x0000000000000000000000000000000000000000000000000000000000000000'
+                }
+
+                const result = muteRouterInterface.decodeFunctionResult('pairFor', returnData)
+                return result.pair
+            })
+        } else {
+            pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
+                if (!tokenA || !tokenB) throw new Error()
+                if (tokenA.chainId !== tokenB.chainId) throw new Error()
+                if (tokenA.equals(tokenB)) throw new Error()
+
+                return Pair.getAddress(tokenA, tokenB)
+            })
+        }
 
         const pairInterface = Pair__factory.createInterface()
         const getReservesData = pairInterface.encodeFunctionData('getReserves')
@@ -168,7 +201,6 @@ export class UniLikeTrade implements SymbiosisTrade {
             callData: getReservesData,
         }))
 
-        const multicall = await getMulticall(provider)
         const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
 
         const reserves = aggregateResult.map(([success, returnData]) => {
