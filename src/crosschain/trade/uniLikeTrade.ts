@@ -11,6 +11,7 @@ import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../u
 import { ChainId } from '../../constants'
 import { DataProvider } from '../dataProvider'
 import { SymbiosisTrade } from './symbiosisTrade'
+import { Multicall2 } from '../contracts/Multicall'
 
 export class UniLikeTrade implements SymbiosisTrade {
     tradeType = 'dex' as const
@@ -152,29 +153,35 @@ export class UniLikeTrade implements SymbiosisTrade {
     private static async allPairs(provider: Provider, tokens: [Token, Token][]): Promise<[PairState, Pair | null][]> {
         const wrappedTokens = tokens.map(([tokenA, tokenB]) => [wrappedToken(tokenA), wrappedToken(tokenB)])
 
+        const multicall = await getMulticall(provider)
+
         const isMuteIo = wrappedTokens.some(([tokenA, tokenB]) => {
             return tokenA.chainId === ChainId.ZKSYNC_MAINNET || tokenB.chainId === ChainId.ZKSYNC_MAINNET
         })
 
-        const multicall = await getMulticall(provider)
-
         let pairAddresses: string[] = []
         if (isMuteIo) {
             const muteRouterInterface = MuteRouter__factory.createInterface()
-            const calls = wrappedTokens.map(([tokenA, tokenB]) => ({
-                target: '0x0',
-                callData: muteRouterInterface.encodeFunctionData('pairFor', [tokenA.address, tokenB.address, false]),
+
+            const calls: Multicall2.CallStruct[] = wrappedTokens.map(([tokenA, tokenB]) => ({
+                target: '0x8B791913eB07C32779a16750e3868aA8495F5964',
+                callData: muteRouterInterface.encodeFunctionData('pairFor', [
+                    tokenA.address,
+                    tokenB.address,
+                    false, // not stable
+                ]),
             }))
 
             const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
-            aggregateResult.forEach(([success, returnData]) => {
-                if (!success) {
-                    return
+
+            pairAddresses = aggregateResult.map(([success, returnData]) => {
+                if (!success || returnData === '0x') {
+                    // Pair does not exist
+                    return '0x0000000000000000000000000000000000000000000000000000000000000000'
                 }
 
-                const pairAddress = muteRouterInterface.decodeFunctionResult('pairFor', returnData)
-                console.log(pairAddress)
-                // pairAddresses.push(pairAddress)
+                const result = muteRouterInterface.decodeFunctionResult('pairFor', returnData)
+                return result.pair
             })
         } else {
             pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
