@@ -152,13 +152,39 @@ export class UniLikeTrade implements SymbiosisTrade {
     private static async allPairs(provider: Provider, tokens: [Token, Token][]): Promise<[PairState, Pair | null][]> {
         const wrappedTokens = tokens.map(([tokenA, tokenB]) => [wrappedToken(tokenA), wrappedToken(tokenB)])
 
-        const pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
-            if (!tokenA || !tokenB) throw new Error()
-            if (tokenA.chainId !== tokenB.chainId) throw new Error()
-            if (tokenA.equals(tokenB)) throw new Error()
-
-            return Pair.getAddress(tokenA, tokenB)
+        const isMuteIo = wrappedTokens.some(([tokenA, tokenB]) => {
+            return tokenA.chainId === ChainId.ZKSYNC_MAINNET || tokenB.chainId === ChainId.ZKSYNC_MAINNET
         })
+
+        const multicall = await getMulticall(provider)
+
+        let pairAddresses: string[] = []
+        if (isMuteIo) {
+            const muteRouterInterface = MuteRouter__factory.createInterface()
+            const calls = wrappedTokens.map(([tokenA, tokenB]) => ({
+                target: '0x0',
+                callData: muteRouterInterface.encodeFunctionData('pairFor', [tokenA.address, tokenB.address, false]),
+            }))
+
+            const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
+            aggregateResult.forEach(([success, returnData]) => {
+                if (!success) {
+                    return
+                }
+
+                const pairAddress = muteRouterInterface.decodeFunctionResult('pairFor', returnData)
+                console.log(pairAddress)
+                // pairAddresses.push(pairAddress)
+            })
+        } else {
+            pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
+                if (!tokenA || !tokenB) throw new Error()
+                if (tokenA.chainId !== tokenB.chainId) throw new Error()
+                if (tokenA.equals(tokenB)) throw new Error()
+
+                return Pair.getAddress(tokenA, tokenB)
+            })
+        }
 
         const pairInterface = Pair__factory.createInterface()
         const getReservesData = pairInterface.encodeFunctionData('getReserves')
@@ -168,7 +194,6 @@ export class UniLikeTrade implements SymbiosisTrade {
             callData: getReservesData,
         }))
 
-        const multicall = await getMulticall(provider)
         const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
 
         const reserves = aggregateResult.map(([success, returnData]) => {
