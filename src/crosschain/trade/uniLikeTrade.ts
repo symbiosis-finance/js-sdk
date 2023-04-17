@@ -1,17 +1,14 @@
 import { Provider } from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import flatMap from 'lodash.flatmap'
+import { ChainId } from '../../constants'
 import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
 import { Router } from '../../router'
-import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../constants'
-import { AdaRouter, AvaxRouter, KavaRouter, MuteRouter__factory, Pair__factory, UniLikeRouter } from '../contracts'
-import { getMulticall } from '../multicall'
-import { PairState } from '../types'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../utils'
-import { ChainId } from '../../constants'
+import { BIPS_BASE } from '../constants'
+import { AdaRouter, AvaxRouter, KavaRouter, Pair__factory, UniLikeRouter } from '../contracts'
 import { DataProvider } from '../dataProvider'
+import { getMulticall } from '../multicall'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../utils'
 import { SymbiosisTrade } from './symbiosisTrade'
-import { Multicall2 } from '../contracts/Multicall'
 
 export class UniLikeTrade implements SymbiosisTrade {
     tradeType = 'dex' as const
@@ -61,10 +58,11 @@ export class UniLikeTrade implements SymbiosisTrade {
             this.pairs = await UniLikeTrade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
         }
 
-        const trade = Trade.bestTradeExactIn(this.pairs, this.tokenAmountIn, this.tokenOut, {
+        const [trade] = Trade.bestTradeExactIn(this.pairs, this.tokenAmountIn, this.tokenOut, {
             maxHops: 3,
             maxNumResults: 1,
-        })[0]
+        })
+
         if (!trade) {
             throw new Error('Cannot create trade')
         }
@@ -106,24 +104,8 @@ export class UniLikeTrade implements SymbiosisTrade {
         // TODO replace if condition to method mapping
         if (trade.inputAmount.token.chainId === ChainId.AVAX_MAINNET) {
             method = methodName.replace('ETH', 'AVAX')
-        }
-        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(trade.inputAmount.token.chainId)) {
+        } else if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(trade.inputAmount.token.chainId)) {
             method = methodName.replace('ETH', 'ADA')
-        }
-
-        if (trade.inputAmount.token.chainId === ChainId.ZKSYNC_MAINNET) {
-            // Mute.io custom router
-            const muteRouterInterface = MuteRouter__factory.createInterface()
-
-            const path = (Array.isArray(args[1]) ? args[1] : args[2]) as string[]
-
-            // check if pair is stable using 'stable' view method
-            const muteArgs: any = [...args, path.map(() => false)]
-
-            return {
-                data: muteRouterInterface.encodeFunctionData(method as any, muteArgs),
-                offset,
-            }
         }
 
         return {
@@ -133,65 +115,22 @@ export class UniLikeTrade implements SymbiosisTrade {
     }
 
     static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
-        const allPairCombinations = UniLikeTrade.allPairCombinations(tokenIn, tokenOut)
-        const allPairs = await UniLikeTrade.allPairs(provider, allPairCombinations)
-
-        return Object.values(
-            allPairs
-                // filter out invalid pairs
-                .filter((result): result is [PairState.EXISTS, Pair] =>
-                    Boolean(result[0] === PairState.EXISTS && result[1])
-                )
-                // filter out duplicated pairs
-                .reduce<{ [pairAddress: string]: Pair }>((memo, [, curr]) => {
-                    memo[curr.liquidityToken.address] = memo[curr.liquidityToken.address] ?? curr
-                    return memo
-                }, {})
-        )
+        const allPairCombinations = getAllPairCombinations(tokenIn, tokenOut)
+        return await UniLikeTrade.allPairs(provider, allPairCombinations)
     }
 
-    private static async allPairs(provider: Provider, tokens: [Token, Token][]): Promise<[PairState, Pair | null][]> {
+    private static async allPairs(provider: Provider, tokens: [Token, Token][]): Promise<Pair[]> {
         const wrappedTokens = tokens.map(([tokenA, tokenB]) => [wrappedToken(tokenA), wrappedToken(tokenB)])
 
         const multicall = await getMulticall(provider)
 
-        const isMuteIo = wrappedTokens.some(([tokenA, tokenB]) => {
-            return tokenA.chainId === ChainId.ZKSYNC_MAINNET || tokenB.chainId === ChainId.ZKSYNC_MAINNET
+        const pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
+            if (!tokenA || !tokenB) throw new Error()
+            if (tokenA.chainId !== tokenB.chainId) throw new Error()
+            if (tokenA.equals(tokenB)) throw new Error()
+
+            return Pair.getAddress(tokenA, tokenB)
         })
-
-        let pairAddresses: string[] = []
-        if (isMuteIo) {
-            const muteRouterInterface = MuteRouter__factory.createInterface()
-
-            const calls: Multicall2.CallStruct[] = wrappedTokens.map(([tokenA, tokenB]) => ({
-                target: '0x8B791913eB07C32779a16750e3868aA8495F5964',
-                callData: muteRouterInterface.encodeFunctionData('pairFor', [
-                    tokenA.address,
-                    tokenB.address,
-                    false, // not stable
-                ]),
-            }))
-
-            const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
-
-            pairAddresses = aggregateResult.map(([success, returnData]) => {
-                if (!success || returnData === '0x') {
-                    // Pair does not exist
-                    return '0x0000000000000000000000000000000000000000000000000000000000000000'
-                }
-
-                const result = muteRouterInterface.decodeFunctionResult('pairFor', returnData)
-                return result.pair
-            })
-        } else {
-            pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
-                if (!tokenA || !tokenB) throw new Error()
-                if (tokenA.chainId !== tokenB.chainId) throw new Error()
-                if (tokenA.equals(tokenB)) throw new Error()
-
-                return Pair.getAddress(tokenA, tokenB)
-            })
-        }
 
         const pairInterface = Pair__factory.createInterface()
         const getReservesData = pairInterface.encodeFunctionData('getReserves')
@@ -203,75 +142,31 @@ export class UniLikeTrade implements SymbiosisTrade {
 
         const aggregateResult = await multicall.callStatic.tryAggregate(false, calls)
 
-        const reserves = aggregateResult.map(([success, returnData]) => {
-            if (!success || returnData === '0x') return
-            return pairInterface.decodeFunctionResult('getReserves', returnData)
-        })
+        const validPairs: Map<string, Pair> = new Map()
+        aggregateResult.forEach(([success, returnData], i) => {
+            if (!success || returnData === '0x') {
+                return
+            }
 
-        return reserves.map((reserve, i) => {
             const tokenA = wrappedTokens[i][0]
             const tokenB = wrappedTokens[i][1]
 
-            // if (loading) return [PairState.LOADING, null]
-            if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null]
-            if (!reserve) return [PairState.NOT_EXISTS, null]
+            if (!tokenA || !tokenB || tokenA.equals(tokenB)) {
+                return
+            }
+
+            const reserve = pairInterface.decodeFunctionResult('getReserves', returnData)
             const { reserve0, reserve1 } = reserve
             const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
-            return [
-                PairState.EXISTS,
-                new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString())),
-            ]
+
+            const pair = new Pair(
+                new TokenAmount(token0, reserve0.toString()),
+                new TokenAmount(token1, reserve1.toString())
+            )
+
+            validPairs.set(pair.liquidityToken.address, pair)
         })
-    }
 
-    private static allPairCombinations(tokenIn: Token, tokenOut: Token): [Token, Token][] {
-        const chainId = tokenIn.chainId
-
-        // Base tokens for building intermediary trading routes
-        const bases = BASES_TO_CHECK_TRADES_AGAINST[chainId]
-        if (!bases) {
-            throw new Error('Bases not found')
-        }
-
-        // All pairs from base tokens
-        const basePairs: [Token, Token][] = flatMap(bases, (base: Token): [Token, Token][] =>
-            bases.map((otherBase) => [base, otherBase])
-        ).filter(([t0, t1]) => t0.address !== t1.address)
-
-        const [tokenA, tokenB] = [wrappedToken(tokenIn), wrappedToken(tokenOut)]
-        if (!tokenA || !tokenB) {
-            return []
-        }
-
-        return (
-            [
-                // the direct pair
-                [tokenA, tokenB],
-                // token A against all bases
-                ...bases.map((base): [Token, Token] => [tokenA, base]),
-                // token B against all bases
-                ...bases.map((base): [Token, Token] => [tokenB, base]),
-                // each base against all bases
-                ...basePairs,
-            ]
-                .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
-                .filter(([t0, t1]) => t0.address !== t1.address)
-                // This filter will remove all the pairs that are not supported by the CUSTOM_BASES settings
-                // This option is currently not used on Pancake swap
-                .filter(([t0, t1]) => {
-                    if (!chainId) return true
-                    const customBases = CUSTOM_BASES[chainId]
-                    if (!customBases) return true
-
-                    const customBasesA: Token[] | undefined = customBases[t0.address]
-                    const customBasesB: Token[] | undefined = customBases[t1.address]
-
-                    if (!customBasesA && !customBasesB) return true
-                    if (customBasesA && !customBasesA.find((base) => t1.equals(base))) return false
-                    if (customBasesB && !customBasesB.find((base) => t0.equals(base))) return false
-
-                    return true
-                })
-        )
+        return Array.from(validPairs.values())
     }
 }

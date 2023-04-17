@@ -9,11 +9,12 @@ import { BIPS_BASE } from './constants'
 import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
+import { AggregatorTrade, MuteTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
+import { SymbiosisTrade } from './trade/symbiosisTrade'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -50,9 +51,9 @@ export abstract class BaseSwapping {
 
     protected route!: Token[]
 
-    protected tradeA: UniLikeTrade | AggregatorTrade | undefined
+    protected tradeA: SymbiosisTrade | undefined
     protected transit!: Transit
-    protected tradeC: UniLikeTrade | OneInchTrade | undefined
+    protected tradeC: SymbiosisTrade | undefined
 
     protected dataProvider: DataProvider
 
@@ -295,11 +296,24 @@ export abstract class BaseSwapping {
         return this.transit.amountOut
     }
 
-    protected buildTradeA(): UniLikeTrade | AggregatorTrade {
+    protected buildTradeA(): SymbiosisTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
+
+        const dexFee = this.symbiosis.dexFee(chainId)
+        if (chainId === ChainId.ZKSYNC_MAINNET) {
+            return new MuteTrade({
+                tokenAmountIn: this.tokenAmountIn,
+                tokenOut,
+                to,
+                slippage: this.slippage['A'],
+                deadline: this.ttl,
+                router: this.symbiosis.muteRouter(chainId),
+                dexFee: this.symbiosis.dexFee(chainId),
+            })
+        }
 
         if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
@@ -313,8 +327,6 @@ export abstract class BaseSwapping {
                 clientId: this.symbiosis.clientId,
             })
         }
-
-        const dexFee = this.symbiosis.dexFee(chainId)
 
         let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
 
@@ -367,6 +379,19 @@ export abstract class BaseSwapping {
         }
 
         const chainId = this.tokenOut.chainId
+        const dexFee = this.symbiosis.dexFee(chainId)
+        if (chainId === ChainId.ZKSYNC_MAINNET) {
+            return new MuteTrade({
+                tokenAmountIn: amountIn,
+                tokenOut: this.tokenOut,
+                to: this.tradeCTo(),
+                slippage: this.slippage['C'],
+                deadline: this.ttl,
+                router: this.symbiosis.muteRouter(chainId),
+                dexFee,
+            })
+        }
+
         if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
@@ -380,8 +405,6 @@ export abstract class BaseSwapping {
                 this.dataProvider
             )
         }
-
-        const dexFee = this.symbiosis.dexFee(chainId)
 
         let routerC: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
 

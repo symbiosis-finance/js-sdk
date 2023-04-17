@@ -3,10 +3,11 @@ import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils, Signer } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Fraction, Percent, TokenAmount, Trade } from '../entities'
-import { BIPS_BASE, ONE_INCH_CHAINS } from './constants'
+import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../entities'
+import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
+import flatMap from 'lodash.flatmap'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -217,4 +218,55 @@ export async function prepareTransactionRequest(
     }
 
     return preparedTransactionRequest
+}
+
+export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token, Token][] {
+    const chainId = tokenIn.chainId
+
+    // Base tokens for building intermediary trading routes
+    const bases = BASES_TO_CHECK_TRADES_AGAINST[chainId]
+    if (!bases) {
+        throw new Error('Bases not found')
+    }
+
+    // All pairs from base tokens
+    const basePairs: [Token, Token][] = flatMap(bases, (base: Token): [Token, Token][] =>
+        bases.map((otherBase) => [base, otherBase])
+    ).filter(([t0, t1]) => t0.address !== t1.address)
+
+    const [tokenA, tokenB] = [wrappedToken(tokenIn), wrappedToken(tokenOut)]
+    if (!tokenA || !tokenB) {
+        return []
+    }
+
+    return (
+        [
+            // the direct pair
+            [tokenA, tokenB],
+            // token A against all bases
+            ...bases.map((base): [Token, Token] => [tokenA, base]),
+            // token B against all bases
+            ...bases.map((base): [Token, Token] => [tokenB, base]),
+            // each base against all bases
+            ...basePairs,
+        ]
+            .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
+            .filter(([t0, t1]) => t0.address !== t1.address)
+            // This filter will remove all the pairs that are not supported by the CUSTOM_BASES settings
+            // This option is currently not used on Pancake swap
+            .filter(([t0, t1]) => {
+                if (!chainId) return true
+                const customBases = CUSTOM_BASES[chainId]
+                if (!customBases) return true
+
+                const customBasesA: Token[] | undefined = customBases[t0.address]
+                const customBasesB: Token[] | undefined = customBases[t1.address]
+
+                if (!customBasesA && !customBasesB) return true
+                if (customBasesA && !customBasesA.find((base) => t1.equals(base))) return false
+                if (customBasesB && !customBasesB.find((base) => t0.equals(base))) return false
+
+                return true
+            })
+    )
 }

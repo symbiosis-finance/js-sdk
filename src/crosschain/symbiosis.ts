@@ -30,6 +30,8 @@ import {
     MetaRouter__factory,
     MulticallRouter,
     MulticallRouter__factory,
+    MuteRouter,
+    MuteRouter__factory,
     NervePool,
     NervePool__factory,
     OmniPool,
@@ -224,6 +226,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return KavaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public muteRouter(chainId: ChainId, signer?: Signer): MuteRouter {
+        const address = this.chainConfig(chainId).router
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return MuteRouter__factory.connect(address, signerOrProvider)
     }
 
     public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {
