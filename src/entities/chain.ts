@@ -323,6 +323,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
         },
     }),
+    new Chain({
+        id: ChainId.ARBITRUM_MAINNET,
+        name: 'Arbitrum',
+        disabled: false,
+        explorer: 'https://arbiscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
