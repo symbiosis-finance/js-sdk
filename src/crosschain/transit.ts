@@ -28,6 +28,8 @@ export class Transit {
         protected dataProvider: DataProvider,
         protected amountIn: TokenAmount,
         protected tokenOut: Token,
+        protected transitStableIn: Token,
+        protected transitStableOut: Token,
         protected slippage: number,
         protected deadline: number,
         protected fee?: TokenAmount
@@ -146,8 +148,7 @@ export class Transit {
             return this.trade.amountOut
         }
 
-        const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId)
-        const amountOut = new TokenAmount(transitStableOut, this.trade.amountOut.raw)
+        const amountOut = new TokenAmount(this.transitStableOut, this.trade.amountOut.raw)
 
         if (!this.fee) {
             return amountOut
@@ -166,15 +167,14 @@ export class Transit {
         const transitStableOutChainId = this.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
 
         if (this.direction === 'burn') {
-            return this.symbiosis.transitStable(transitStableOutChainId) // USDC | BUSD
+            return this.transitStableOut // USDC | BUSD
         }
 
         // mint or v2
-        const transitStableIn = this.symbiosis.transitStable(this.amountIn.token.chainId) // USDC
-        const rep = await this.dataProvider.getRepresentation(transitStableIn, transitStableOutChainId) // sUSDC
+        const rep = await this.dataProvider.getRepresentation(this.transitStableIn, transitStableOutChainId) // sUSDC
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.chainId}:${transitStableIn.symbol} in chain ${transitStableOutChainId} not found`,
+                `Representation of ${this.transitStableIn.chainId}:${this.transitStableIn.symbol} in chain ${transitStableOutChainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -183,15 +183,14 @@ export class Transit {
 
     protected async getTradeTokenOut(): Promise<Token> {
         if (this.direction === 'mint') {
-            return this.symbiosis.transitStable(this.tokenOut.chainId)
+            return this.transitStableOut
         }
 
         const transitStableInChainId = this.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.amountIn.token.chainId
-        const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
-        const rep = await this.dataProvider.getRepresentation(transitStableOut, transitStableInChainId) // sUSDC
+        const rep = await this.dataProvider.getRepresentation(this.transitStableOut, transitStableInChainId) // sUSDC
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableOut.symbol} in chain ${transitStableInChainId} not found`,
+                `Representation of ${this.transitStableOut.symbol} in chain ${transitStableInChainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }

@@ -304,6 +304,36 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
+        id: ChainId.SCROLL_TESTNET,
+        name: 'Scroll Testnet',
+        disabled: false,
+        explorer: 'https://blockscout.scroll.io/',
+        icons: {
+            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ZKSYNC_MAINNET,
+        name: 'ZkSync Era',
+        disabled: false,
+        explorer: 'https://explorer.zksync.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ARBITRUM_MAINNET,
+        name: 'Arbitrum',
+        disabled: false,
+        explorer: 'https://arbiscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+        },
+    }),
+    new Chain({
         id: ChainId.TRON_MAINNET,
         name: 'Tron',
         disabled: false,

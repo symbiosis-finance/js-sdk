@@ -11,4 +11,5 @@ export interface SymbiosisTrade {
     route: Token[]
     priceImpact: Percent
     routerAddress: string
+    callDataOffset?: number
 }

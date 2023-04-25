@@ -424,4 +424,40 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
         },
     }),
+    [ChainId.SCROLL_TESTNET]: new Token({
+        chainId: ChainId.SCROLL_TESTNET,
+        address: '0xa1EA0B2354F5A344110af2b6AD68e75545009a03',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.ZKSYNC_MAINNET]: new Token({
+        chainId: ChainId.ZKSYNC_MAINNET,
+        address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.ARBITRUM_MAINNET]: new Token({
+        chainId: ChainId.ARBITRUM_MAINNET,
+        address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
 }

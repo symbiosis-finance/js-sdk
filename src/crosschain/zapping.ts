@@ -41,6 +41,7 @@ export class Zapping {
     private tradeA: UniLikeTrade | AggregatorTrade | undefined
 
     private synthToken!: Token
+    private transitStableIn!: Token
 
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
@@ -66,6 +67,7 @@ export class Zapping {
     ): SwapExactIn {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
+        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
@@ -75,7 +77,7 @@ export class Zapping {
 
         let amountInUsd: TokenAmount
 
-        if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
+        if (!this.transitStableIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 
@@ -188,7 +190,7 @@ export class Zapping {
 
     private buildTradeA(): UniLikeTrade | AggregatorTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.symbiosis.transitStable(chainId)
+        const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
@@ -286,12 +288,11 @@ export class Zapping {
 
     private async getSynthToken(): Promise<Token> {
         const chainIdOut = this.symbiosis.omniPoolConfig.chainId
-        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
-        const rep = await this.symbiosis.getRepresentation(transitStableIn, chainIdOut)
+        const rep = await this.symbiosis.getRepresentation(this.transitStableIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${chainIdOut} not found`,
+                `Representation of ${this.transitStableIn.symbol} in chain ${chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
