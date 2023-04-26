@@ -9,7 +9,7 @@ import { BIPS_BASE } from './constants'
 import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, MuteTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
+import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -301,19 +301,7 @@ export abstract class BaseSwapping {
         const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
-
         const dexFee = this.symbiosis.dexFee(chainId)
-        if (chainId === ChainId.ZKSYNC_MAINNET) {
-            return new MuteTrade({
-                tokenAmountIn: this.tokenAmountIn,
-                tokenOut,
-                to,
-                slippage: this.slippage['A'],
-                deadline: this.ttl,
-                router: this.symbiosis.muteRouter(chainId),
-                dexFee: this.symbiosis.dexFee(chainId),
-            })
-        }
 
         if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
@@ -380,17 +368,6 @@ export abstract class BaseSwapping {
 
         const chainId = this.tokenOut.chainId
         const dexFee = this.symbiosis.dexFee(chainId)
-        if (chainId === ChainId.ZKSYNC_MAINNET) {
-            return new MuteTrade({
-                tokenAmountIn: amountIn,
-                tokenOut: this.tokenOut,
-                to: this.tradeCTo(),
-                slippage: this.slippage['C'],
-                deadline: this.ttl,
-                router: this.symbiosis.muteRouter(chainId),
-                dexFee,
-            })
-        }
 
         if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address

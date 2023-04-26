@@ -70,7 +70,7 @@ export class OneInchTrade implements SymbiosisTrade {
 
         const protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
 
-        const url = new URL(`v4.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
+        const url = new URL(`v5.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
 
         url.searchParams.set('fromTokenAddress', fromTokenAddress)
         url.searchParams.set('toTokenAddress', toTokenAddress)
@@ -117,7 +117,7 @@ export class OneInchTrade implements SymbiosisTrade {
     }
 
     static async getProtocols(chainId: ChainId): Promise<Protocol[]> {
-        const url = `${API_URL}/v4.0/${chainId}/liquidity-sources`
+        const url = `${API_URL}/v5.0/${chainId}/liquidity-sources`
         const response = await fetch(url)
         const json = await response.json()
         if (response.status === 400) {
