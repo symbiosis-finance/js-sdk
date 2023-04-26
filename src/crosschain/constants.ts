@@ -46,7 +46,6 @@ export const ONE_INCH_CHAINS: ChainId[] = [
     ChainId.AVAX_MAINNET,
     ChainId.MATIC_MAINNET,
     ChainId.ARBITRUM_MAINNET,
-    ChainId.ZKSYNC_MAINNET,
 ]
 
 export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
@@ -55,7 +54,6 @@ export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
     [ChainId.AVAX_MAINNET]: '0xBd0c7AaF0bF082712EbE919a9dD94b2d978f79A9',
     [ChainId.MATIC_MAINNET]: '0x7F069df72b7A39bCE9806e3AfaF579E54D8CF2b9',
     [ChainId.ARBITRUM_MAINNET]: '0x735247fb0a604c0adc6cab38ace16d0dba31295f',
-    [ChainId.ZKSYNC_MAINNET]: '0x8bB456E6F39CB67D79A805e01976D8284EeCde77',
 }
 
 export const WETH_ONLY: ChainTokensList = {
