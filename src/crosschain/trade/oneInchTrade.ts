@@ -70,7 +70,7 @@ export class OneInchTrade implements SymbiosisTrade {
 
         const protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
 
-        const url = new URL(`v4.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
+        const url = new URL(`v5.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
 
         url.searchParams.set('fromTokenAddress', fromTokenAddress)
         url.searchParams.set('toTokenAddress', toTokenAddress)
@@ -117,7 +117,7 @@ export class OneInchTrade implements SymbiosisTrade {
     }
 
     static async getProtocols(chainId: ChainId): Promise<Protocol[]> {
-        const url = `${API_URL}/v4.0/${chainId}/liquidity-sources`
+        const url = `${API_URL}/v5.0/${chainId}/liquidity-sources`
         const response = await fetch(url)
         const json = await response.json()
         if (response.status === 400) {
@@ -137,6 +137,7 @@ export class OneInchTrade implements SymbiosisTrade {
 
     private getOffset(callData: string) {
         const methods = [
+            // V4
             {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256,bytes),bytes)
                 sigHash: '7c025200',
@@ -151,6 +152,33 @@ export class OneInchTrade implements SymbiosisTrade {
                 // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,uint256,address)
                 sigHash: 'baba5855',
                 offset: 292,
+            },
+            {
+                // uniswapV3SwapTo(address,uint256,uint256,uint256[])
+                sigHash: 'bc80f1a8',
+                offset: 68,
+            },
+
+            // V5
+            {
+                // clipperSwapTo(address,address,address,address,uint256,uint256,uint256,bytes32,bytes32)
+                sigHash: '093d4fa5',
+                offset: 164, // +
+            },
+            {
+                // swap(address,(address,address,address,address,uint256,uint256,uint256),bytes,bytes)
+                sigHash: '12aa3caf',
+                offset: 196, // +/-
+            },
+            {
+                // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,address)
+                sigHash: '5a099843',
+                offset: 196,
+            },
+            {
+                // unoswapTo(address,IERC20,uint256,uint256,uint256[])
+                sigHash: '4c8723cd',
+                offset: 100,
             },
             {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])
