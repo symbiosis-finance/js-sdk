@@ -33,6 +33,7 @@ export const CHAINS_PRIORITY = [
     ChainId.SCROLL_TESTNET,
     ChainId.ZKSYNC_MAINNET,
     ChainId.ARBITRUM_MAINNET,
+    ChainId.OPTIMISM_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -47,6 +48,7 @@ export const ONE_INCH_CHAINS: ChainId[] = [
     ChainId.MATIC_MAINNET,
     ChainId.ARBITRUM_MAINNET,
     ChainId.ZKSYNC_MAINNET,
+    ChainId.OPTIMISM_MAINNET,
 ]
 
 export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
@@ -56,6 +58,7 @@ export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
     [ChainId.MATIC_MAINNET]: '0x7F069df72b7A39bCE9806e3AfaF579E54D8CF2b9',
     [ChainId.ARBITRUM_MAINNET]: '0x735247fb0a604c0adc6cab38ace16d0dba31295f',
     [ChainId.ZKSYNC_MAINNET]: '0x1ec0a5F6dc07E93491426d5aAAc3E2BC505Ef41C',
+    [ChainId.OPTIMISM_MAINNET]: '0x11DEE30E710B8d4a8630392781Cc3c0046365d4c',
 }
 
 export const WETH_ONLY: ChainTokensList = {
@@ -88,6 +91,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.SCROLL_TESTNET]: [WETH[ChainId.SCROLL_TESTNET]],
     [ChainId.ZKSYNC_MAINNET]: [WETH[ChainId.ZKSYNC_MAINNET]],
     [ChainId.ARBITRUM_MAINNET]: [WETH[ChainId.ARBITRUM_MAINNET]],
+    [ChainId.OPTIMISM_MAINNET]: [WETH[ChainId.OPTIMISM_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -380,6 +384,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'USD Coin',
         }),
     ],
+    [ChainId.OPTIMISM_MAINNET]: [
+        new Token({
+            chainId: ChainId.OPTIMISM_MAINNET,
+            address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -410,6 +423,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.ARBITRUM_MAINNET]: [
         WETH[ChainId.ARBITRUM_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ARBITRUM_MAINNET],
+    ],
+    [ChainId.OPTIMISM_MAINNET]: [
+        WETH[ChainId.OPTIMISM_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.OPTIMISM_MAINNET],
     ],
 }
 
@@ -458,4 +475,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.SCROLL_TESTNET]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
     [ChainId.ZKSYNC_MAINNET]: '0x52192C3De01535a9Ad2743A5Fe4f774868103C20',
     [ChainId.ARBITRUM_MAINNET]: '0x80c7dd17b01855a6d2347444a0fcc36136a314de',
+    [ChainId.OPTIMISM_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }

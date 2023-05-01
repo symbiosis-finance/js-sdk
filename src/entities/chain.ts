@@ -333,6 +333,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
         },
     }),
+    new Chain({
+        id: ChainId.OPTIMISM_MAINNET,
+        name: 'Optimism',
+        disabled: false,
+        explorer: 'https://optimistic.etherscan.io/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
