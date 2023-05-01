@@ -35,6 +35,39 @@ declare module 'tronweb' {
         signature: string[]
     }
 
+    export interface TransactionInfo {
+        id: string
+        fee: number
+        blockNumber: number
+        blockTimeStamp: number
+        contractResult: string[]
+        contract_address: string
+        receipt: Receipt
+        log: Log[]
+        internal_transactions: InternalTransaction[]
+    }
+
+    export interface InternalTransaction {
+        hash: string
+        caller_address: string
+        transferTo_address: string
+        callValueInfo: unknown[]
+        note: string
+    }
+
+    export interface Log {
+        address: string
+        topics: string[]
+        data: string
+    }
+
+    export interface Receipt {
+        energy_fee: number
+        energy_usage_total: number
+        net_usage: number
+        result: string
+    }
+
     export default class TronWeb {
         constructor(config: any)
         contract(): any
@@ -55,6 +88,7 @@ declare module 'tronweb' {
             sign(message: string, privateKey?: string): Promise<string>
             multiSign(...args: any[]): Promise<any>
             signMessageV2(message: string, privateKey?: string): Promise<string>
+            getTransactionInfo(transactionId: string): Promise<TransactionInfo>
         }
         transactionBuilder: {
             triggerSmartContract(

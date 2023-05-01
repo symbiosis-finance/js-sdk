@@ -1,14 +1,21 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
-import { BigNumber, Signer } from 'ethers'
+import { BigNumber, Signer, utils } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
-import { isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
+import {
+    getTransactionInfoById,
+    isTronToken,
+    prepareTronTransaction,
+    tronAddressToEvm,
+    TronTransactionData,
+} from './tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { BridgeDirection } from './types'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { Portal__factory, Synthesis__factory } from './contracts'
+import { TransactionInfo } from 'tronweb'
 
 export type RequestNetworkType = 'evm' | 'tron'
 
@@ -328,6 +335,35 @@ export class Bridging {
         return new TokenAmount(this.tokenOut, fee.toString())
     }
 
+    // TODO: move to utils
+    async tronWaitForMined(txId: string): Promise<TransactionInfo> {
+        if (!this.tokenAmountIn || !this.tokenOut) {
+            throw new Error('Tokens are not set')
+        }
+
+        let info: TransactionInfo | undefined
+
+        const tronWeb = this.symbiosis.tronWeb(this.tokenAmountIn?.token.chainId)
+
+        const TRIES = 5
+        for (let i = 0; i < TRIES; i++) {
+            const response = await getTransactionInfoById(tronWeb, txId)
+            console.log('response', response)
+            if (response) {
+                info = response
+                break
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+        }
+
+        if (!info) {
+            throw new Error('Transaction not found')
+        }
+
+        return info
+    }
+
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
         if (!this.tokenAmountIn || !this.tokenOut) {
             throw new Error('Tokens are not set')
@@ -337,7 +373,7 @@ export class Bridging {
             direction: this.direction,
             chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,
-            revertableAddress: this.revertableAddress,
+            revertableAddress: tronAddressToEvm(this.revertableAddress),
             chainIdIn: this.tokenAmountIn.token.chainId,
         }).waitForComplete(receipt)
     }

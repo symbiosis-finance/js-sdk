@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { BigNumber, Signer, utils } from 'ethers'
-import fetch from 'isomorphic-unfetch'
+import { BigNumber, Signer, utils, EventFilter, Contract } from 'ethers'
+// import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
@@ -69,7 +69,9 @@ import TronWeb from 'tronweb'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
-import { isTronChainId } from './tron'
+import { getTransactionInfoById, isTronChainId, tronAddressToEvm } from './tron'
+import { TRON_PORTAL_ABI } from './tronAbis'
+import { DEFAULT_EXCEED_DELAY, getExternalId, getLogWithTimeout } from './utils'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -547,5 +549,157 @@ export class Symbiosis {
         return this.stables().filter((token) => {
             return token.chainId === chainId && !token.isSynthetic
         })
+    }
+
+    public async waitForComplete(chainId: ChainId, txId: string) {
+        let externalId: string
+        let externalChainId: ChainId
+        let direction: 'burn' | 'mint'
+        if (isTronChainId(chainId)) {
+            direction = 'mint'
+
+            const tronWeb = this.tronWeb(chainId)
+            const result = await getTransactionInfoById(tronWeb, txId)
+
+            if (!result) {
+                throw new Error(`Transaction ${txId} not found`)
+            }
+
+            let { portal: portalAddress } = this.chainConfig(chainId)
+
+            portalAddress = TronWeb.address.toHex(portalAddress)
+
+            if (result.contract_address !== portalAddress) {
+                throw new Error(`Transaction ${txId} is not a portal transaction`)
+            }
+
+            const portalInterface = new utils.Interface(TRON_PORTAL_ABI)
+            const topic = portalInterface.getEventTopic('SynthesizeRequest').replace('0x', '')
+
+            const synthesizeRequest = result.log.find((log) => log.topics[0] === topic)
+
+            if (!synthesizeRequest) {
+                throw new Error(`Cannot find SynthesizeRequest event in transaction ${txId}`)
+            }
+
+            const evmCompatible = {
+                data: `0x${synthesizeRequest.data}`,
+                topics: synthesizeRequest.topics.map((topic) => `0x${topic}`),
+            }
+
+            const event = portalInterface.parseLog(evmCompatible)
+
+            const { id, chainID, revertableAddress } = event.args
+
+            externalChainId = chainID.toNumber()
+
+            const synthesisAddress = this.chainConfig(externalChainId).synthesis
+
+            externalId = getExternalId({
+                internalId: id,
+                contractAddress: tronAddressToEvm(synthesisAddress),
+                revertableAddress: tronAddressToEvm(revertableAddress),
+                chainId: externalChainId,
+            })
+        } else {
+            const provider = this.getProvider(chainId)
+
+            const receipt = await provider.getTransactionReceipt(txId)
+
+            if (!receipt) {
+                throw new Error(`Transaction ${txId} not found`)
+            }
+
+            const portal = this.portal(chainId)
+            const synthesis = this.synthesis(chainId)
+
+            const synthesizeRequestTopic = portal.interface.getEventTopic('SynthesizeRequest')
+            const burnRequestTopic = synthesis.interface.getEventTopic('BurnRequest')
+
+            const log = receipt.logs.find((log) => {
+                return log.topics.includes(synthesizeRequestTopic) || log.topics.includes(burnRequestTopic)
+            })
+
+            if (!log) {
+                throw new Error(`Cannot find SynthesizeRequest or BurnRequest event in transaction ${txId}`)
+            }
+
+            if (log.address !== portal.address && log.address !== synthesis.address) {
+                throw new Error(`Transaction ${txId} is not a from synthesis or portal contract`)
+            }
+
+            const contract = log.address === portal.address ? portal : synthesis
+            const { id, chainID, revertableAddress } = contract.interface.parseLog(log).args
+
+            externalChainId = chainID.toNumber()
+
+            const contractAddress = this.chainConfig(externalChainId).portal // @@
+
+            externalId = getExternalId({
+                internalId: id,
+                contractAddress: tronAddressToEvm(contractAddress),
+                revertableAddress: tronAddressToEvm(revertableAddress),
+                chainId: externalChainId,
+            })
+
+            externalChainId = chainID.toNumber()
+            direction = 'mint'
+        }
+
+        if (isTronChainId(externalChainId)) {
+            const { portal } = this.chainConfig(externalChainId)
+
+            const contract = new Contract(tronAddressToEvm(portal), TRON_PORTAL_ABI)
+            const filter = contract.filters.BurnCompleted(externalId)
+
+            const tronWeb = this.tronWeb(externalChainId)
+
+            let startBlockNumber: number | 'earliest' = 'earliest'
+            const start = Date.now()
+            while (Date.now() - start < DEFAULT_EXCEED_DELAY) {
+                // eth_newFilter is not working for some reason on Tron, so we have to poll
+                const [{ result: getLogsResult }, { result: blockNumber }] = await tronWeb.fullNode.request(
+                    'jsonrpc',
+                    [
+                        {
+                            id: 1,
+                            method: 'eth_getLogs',
+                            params: [{ ...filter, fromBlock: startBlockNumber, toBlock: 'latest' }],
+                            jsonrpc: '2.0',
+                        },
+                        {
+                            id: 2,
+                            method: 'eth_blockNumber',
+                            params: [],
+                            jsonrpc: '2.0',
+                        },
+                    ] as unknown as Record<string, unknown>,
+                    'post'
+                )
+
+                if (getLogsResult.length) {
+                    return getLogsResult[0].transactionHash
+                }
+
+                startBlockNumber = blockNumber
+
+                await new Promise((resolve) => setTimeout(resolve, 1000))
+            }
+
+            throw new Error(`Burn transaction not found for ${txId}`)
+        }
+
+        let filter: EventFilter
+        if (direction === 'mint') {
+            const synthesis = this.synthesis(externalChainId)
+            filter = synthesis.filters.SynthesizeCompleted(externalId)
+        } else {
+            const portal = this.portal(externalChainId)
+            filter = portal.filters.BurnCompleted(externalId)
+        }
+
+        const log = await getLogWithTimeout({ symbiosis: this, chainId: externalChainId, filter })
+
+        return log.transactionHash
     }
 }

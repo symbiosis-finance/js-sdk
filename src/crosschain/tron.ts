@@ -1,7 +1,7 @@
 import { AbiCoder } from '@ethersproject/abi'
 import type { Abi, AbiParametersToPrimitiveTypes, ExtractAbiFunction, ExtractAbiFunctionNames } from 'abitype'
 import BigNumber from 'bignumber.js'
-import TronWeb from 'tronweb'
+import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, Token } from '../entities'
 
@@ -129,4 +129,14 @@ export function isTronChain(chain: Chain): boolean {
 
 export function isTronToken(token: Token): boolean {
     return isTronChainId(token.chainId)
+}
+
+export async function getTransactionInfoById(tronWeb: TronWeb, txId: string): Promise<TransactionInfo | null> {
+    const result = await tronWeb.fullNode.request('wallet/gettransactioninfobyid', { value: txId }, 'post')
+
+    if (result && Object.keys(result).length > 0) {
+        return result
+    }
+
+    return null
 }
