@@ -6,6 +6,7 @@ import { Symbiosis } from '../symbiosis'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { SwapOptions } from '../baseSwapping'
 
 interface AggregatorTradeParams {
     symbiosis: Symbiosis
@@ -16,6 +17,7 @@ interface AggregatorTradeParams {
     to: string
     slippage: number
     clientId: string
+    options?: SwapOptions
 }
 
 class TradeNotInitializedError extends Error {
@@ -42,7 +44,16 @@ export class AggregatorTrade implements SymbiosisTrade {
         const aggregators: Promise<OneInchTrade | OpenOceanTrade>[] = []
         if (clientId !== OPEN_OCEAN_CLIENT_ID && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
-            const oneInchTrade = new OneInchTrade(tokenAmountIn, tokenOut, from, to, slippage, oracle, dataProvider)
+            const oneInchTrade = new OneInchTrade(
+                tokenAmountIn,
+                tokenOut,
+                from,
+                to,
+                slippage,
+                oracle,
+                dataProvider,
+                this.params.options?.oneInchProtocols
+            )
 
             aggregators.push(oneInchTrade.init())
         }

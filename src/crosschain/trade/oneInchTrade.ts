@@ -7,7 +7,9 @@ import { canOneInch } from '../utils'
 import { getTradePriceImpact } from './getTradePriceImpact'
 import { SymbiosisTrade } from './symbiosisTrade'
 
-export interface Protocol {
+export type OneInchProtocols = string[]
+
+interface Protocol {
     id: string
     title: string
     img: string
@@ -34,6 +36,7 @@ export class OneInchTrade implements SymbiosisTrade {
     private readonly to: string
     private readonly slippage: number
     private readonly dataProvider: DataProvider
+    private readonly protocols: OneInchProtocols
 
     static isAvailable(chainId: ChainId): boolean {
         return canOneInch(chainId)
@@ -46,7 +49,8 @@ export class OneInchTrade implements SymbiosisTrade {
         to: string,
         slippage: number,
         oracle: OneInchOracle,
-        dataProvider: DataProvider
+        dataProvider: DataProvider,
+        protocols?: OneInchProtocols
     ) {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -55,6 +59,7 @@ export class OneInchTrade implements SymbiosisTrade {
         this.slippage = slippage
         this.oracle = oracle
         this.dataProvider = dataProvider
+        this.protocols = protocols || []
     }
 
     public async init() {
@@ -68,7 +73,10 @@ export class OneInchTrade implements SymbiosisTrade {
             toTokenAddress = NATIVE_TOKEN_ADDRESS
         }
 
-        const protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+        let protocols = this.protocols
+        if (protocols.length === 0) {
+            protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+        }
 
         const url = new URL(`v5.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
 
@@ -81,7 +89,7 @@ export class OneInchTrade implements SymbiosisTrade {
         url.searchParams.set('disableEstimate', 'true')
         url.searchParams.set('allowPartialFill', 'false')
         url.searchParams.set('usePatching', 'true')
-        url.searchParams.set('protocols', protocols.map((protocol) => protocol.id).join(','))
+        url.searchParams.set('protocols', protocols.join(','))
 
         const response = await fetch(url.toString())
 
@@ -116,21 +124,21 @@ export class OneInchTrade implements SymbiosisTrade {
         return this
     }
 
-    static async getProtocols(chainId: ChainId): Promise<Protocol[]> {
+    static async getProtocols(chainId: ChainId): Promise<OneInchProtocols> {
         const url = `${API_URL}/v5.0/${chainId}/liquidity-sources`
         const response = await fetch(url)
         const json = await response.json()
         if (response.status === 400) {
             throw new Error(`Cannot get 1inch protocols: ${json['description']}`)
         }
-        return json['protocols'].reduce((acc: Protocol[], protocol: Protocol) => {
+        return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
             if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
                 return acc
             }
             if (protocol.id.includes('PMM')) {
                 return acc
             }
-            acc.push(protocol)
+            acc.push(protocol.id)
             return acc
         }, [])
     }

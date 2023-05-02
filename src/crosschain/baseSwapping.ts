@@ -15,6 +15,7 @@ import { getExternalId, getInternalId, prepareTransactionRequest } from './utils
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
+import { OneInchProtocols } from './trade/oneInchTrade'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -34,6 +35,10 @@ export type DetailedSlippage = {
     A: number
     B: number
     C: number
+}
+
+export type SwapOptions = {
+    oneInchProtocols?: OneInchProtocols
 }
 
 export abstract class BaseSwapping {
@@ -63,6 +68,8 @@ export abstract class BaseSwapping {
     protected transitStableIn!: Token
     protected transitStableOut!: Token
 
+    protected options!: SwapOptions
+
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
@@ -76,8 +83,10 @@ export abstract class BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        useAggregators: boolean
+        useAggregators: boolean,
+        options?: SwapOptions
     ): SwapExactIn {
+        this.options = options || {}
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -313,6 +322,7 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
+                options: this.options,
             })
         }
 
@@ -379,7 +389,8 @@ export abstract class BaseSwapping {
                 this.tradeCTo(),
                 this.slippage['C'] / 100,
                 oracle,
-                this.dataProvider
+                this.dataProvider,
+                this.options.oneInchProtocols
             )
         }
 
