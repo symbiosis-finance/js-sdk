@@ -15,20 +15,33 @@ import { getExternalId, getInternalId, prepareTransactionRequest } from './utils
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
+import { TronTransactionData, isTronToken, prepareTronTransaction } from './tron'
+import { TRON_METAROUTER_ABI } from './tronAbis'
 
-export type SwapExactIn = Promise<{
-    execute: (signer: Signer) => Execute
+interface SwapInfo {
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutWithZeroFee: TokenAmount
     route: Token[]
     priceImpact: Percent
     amountInUsd: TokenAmount
-    transactionRequest: TransactionRequest
     approveTo: string
     inTradeType?: SymbiosisTradeType
     outTradeType?: SymbiosisTradeType
-}>
+}
+
+export type EthSwapExactIn = SwapInfo & {
+    type: 'evm'
+    execute: (signer: Signer) => Execute
+    transactionRequest: TransactionRequest
+}
+
+export type TronSwapExactIn = SwapInfo & {
+    type: 'tron'
+    transactionRequest: TronTransactionData
+}
+
+export type SwapExactIn = TronSwapExactIn | EthSwapExactIn
 
 export type DetailedSlippage = {
     A: number
@@ -77,7 +90,7 @@ export abstract class BaseSwapping {
         slippage: number,
         deadline: number,
         useAggregators: boolean
-    ): SwapExactIn {
+    ): Promise<SwapExactIn> {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -115,7 +128,7 @@ export abstract class BaseSwapping {
         const tokenAmountOutWithZeroFee = this.tokenAmountOut()
 
         // >>> NOTE create trades with calculated fee
-        this.transit = await this.buildTransit(fee)
+        this.transit = this.buildTransit(fee)
         await this.transit.init()
 
         if (!this.transitStableOut.equals(tokenOut)) {
@@ -124,20 +137,35 @@ export abstract class BaseSwapping {
         }
         // <<< NOTE create trades with calculated fee
 
-        const transactionRequest = this.getTransactionRequest(fee, feeV2)
-
-        return {
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
+        const swapInfo: SwapInfo = {
             fee: feeV2 || fee,
             tokenAmountOut: this.tokenAmountOut(feeV2),
             tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
             route: this.route,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.amountInUsd,
-            transactionRequest,
             approveTo: this.approveTo(),
             inTradeType: this.tradeA?.tradeType,
             outTradeType: this.tradeC?.tradeType,
+        }
+
+        if (isTronToken(this.tokenAmountIn.token)) {
+            const transactionRequest = this.getTronTransactionRequest(fee, feeV2)
+
+            return {
+                ...swapInfo,
+                type: 'tron',
+                transactionRequest,
+            }
+        }
+
+        const transactionRequest = this.getEvmTransactionRequest(fee, feeV2)
+
+        return {
+            ...swapInfo,
+            type: 'evm',
+            execute: (signer: Signer) => this.execute(transactionRequest, signer),
+            transactionRequest,
         }
     }
 
@@ -231,7 +259,7 @@ export abstract class BaseSwapping {
         }).waitForComplete(receipt)
     }
 
-    protected getTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TransactionRequest {
+    protected getEvmTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TransactionRequest {
         const chainId = this.tokenAmountIn.token.chainId
         const metaRouter = this.symbiosis.metaRouter(chainId)
 
@@ -263,6 +291,44 @@ export abstract class BaseSwapping {
             data,
             value,
         }
+    }
+
+    protected getTronTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TronTransactionData {
+        const { chainId } = this.tokenAmountIn.token
+        const { metaRouter } = this.symbiosis.chainConfig(chainId)
+
+        const [relayRecipient, otherSideCalldata] = this.otherSideData(fee, feeV2)
+
+        const amount = this.tradeA ? this.tradeA.tokenAmountIn : this.tokenAmountIn
+        const value =
+            this.tradeA && this.tokenAmountIn.token.isNative
+                ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
+                : undefined
+
+        return prepareTronTransaction({
+            abi: TRON_METAROUTER_ABI,
+            ownerAddress: this.from,
+            contractAddress: metaRouter,
+            functionName: 'metaRoute',
+            params: [
+                {
+                    amount: amount.raw.toString(),
+                    nativeIn: amount.token.isNative,
+                    approvedTokens: this.approvedTokens(),
+                    firstDexRouter: this.firstDexRouter(),
+                    firstSwapCalldata: this.firstSwapCalldata() as string,
+                    secondDexRouter: this.secondDexRouter(),
+                    secondSwapCalldata:
+                        this.transit.direction === 'burn'
+                            ? (this.secondSwapCalldata() as string)
+                            : ([] as unknown as string),
+                    relayRecipient,
+                    otherSideCalldata,
+                },
+            ],
+            tronWeb: this.symbiosis.tronWeb(chainId),
+            value: value?.toString(),
+        })
     }
 
     protected calculatePriceImpact(): Percent {

@@ -12,7 +12,7 @@ export class Swapping extends BaseSwapping {
         slippage: number,
         deadline: number,
         useAggregators = true
-    ): SwapExactIn {
+    ): Promise<SwapExactIn> {
         return this.doExactIn(tokenAmountIn, tokenOut, from, to, revertableAddress, slippage, deadline, useAggregators)
     }
 }

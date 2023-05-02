@@ -4,7 +4,7 @@ import { Bitcoin } from '@renproject/chains-bitcoin'
 import { Ethereum, BinanceSmartChain, Polygon } from '@renproject/chains-ethereum'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
+import { SwapExactIn, BaseSwapping, EthSwapExactIn } from './baseSwapping'
 import { MulticallRouter, RenMintGatewayV3 } from './contracts'
 
 export type ZappingRenBTCExactIn = Promise<
@@ -71,7 +71,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        const { tokenAmountOut, execute, ...result } = await this.doExactIn(
+        const exactIn = await this.doExactIn(
             tokenAmountIn,
             renBTC,
             from,
@@ -81,6 +81,13 @@ export class ZappingRenBTC extends BaseSwapping {
             deadline,
             use1Inch
         )
+
+        if (exactIn.type === 'tron') {
+            // @@ TODO: implement
+            throw new Error('Unsupported chain')
+        }
+
+        const { tokenAmountOut, execute, ...result } = exactIn
 
         const btcAmountOut = await this.estimateBTCOutput(tokenAmountOut)
 
@@ -235,7 +242,7 @@ export class ZappingRenBTC extends BaseSwapping {
         )
     }
 
-    private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
+    private buildExecute(execute: EthSwapExactIn['execute']) {
         return async (signer: Signer) => {
             const { response, waitForMined } = await execute(signer)
 

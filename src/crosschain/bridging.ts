@@ -1,6 +1,6 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
 import {
@@ -35,8 +35,8 @@ export type BridgeExactIn = Promise<
         tokenAmountOut: TokenAmount
     } & (
         | {
-              execute: (signer: Signer) => Execute
               type: 'evm'
+              execute: (signer: Signer) => Execute
               transactionRequest: TransactionRequest
           }
         | {
@@ -46,7 +46,7 @@ export type BridgeExactIn = Promise<
     )
 >
 
-export interface ExactInParams {
+export interface BridgeExactInParams {
     tokenAmountIn: TokenAmount
     tokenOut: Token
     from: string
@@ -71,7 +71,7 @@ export class Bridging {
         this.symbiosis = symbiosis
     }
 
-    public async exactIn({ from, revertableAddress, to, tokenAmountIn, tokenOut }: ExactInParams): BridgeExactIn {
+    public async exactIn({ from, revertableAddress, to, tokenAmountIn, tokenOut }: BridgeExactInParams): BridgeExactIn {
         if (this.tokenAmountIn?.token !== tokenAmountIn.token || this.tokenOut !== tokenOut) {
             this.fee = undefined
         }

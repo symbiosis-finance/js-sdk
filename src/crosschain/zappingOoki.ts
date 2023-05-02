@@ -21,7 +21,7 @@ export class ZappingOoki extends BaseSwapping {
         slippage: number,
         deadline: number,
         useAggregators = true
-    ): SwapExactIn {
+    ): Promise<SwapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(chainId)
         this.userAddress = to
 

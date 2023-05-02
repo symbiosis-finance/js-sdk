@@ -658,7 +658,7 @@ export class Symbiosis {
             const start = Date.now()
             while (Date.now() - start < DEFAULT_EXCEED_DELAY) {
                 // eth_newFilter is not working for some reason on Tron, so we have to poll
-                const [{ result: getLogsResult }, { result: blockNumber }] = await tronWeb.fullNode.request(
+                const [{ result: getLogsResult }, { result: blockNumber }] = (await tronWeb.fullNode.request(
                     'jsonrpc',
                     [
                         {
@@ -675,7 +675,7 @@ export class Symbiosis {
                         },
                     ] as unknown as Record<string, unknown>,
                     'post'
-                )
+                )) as [{ result: { transactionHash: string }[] }, { result: number }]
 
                 if (getLogsResult.length) {
                     return getLogsResult[0].transactionHash

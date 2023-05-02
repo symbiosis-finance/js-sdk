@@ -16,7 +16,7 @@ import { AdaRouter, AvaxRouter, KavaRouter, OmniPool, OmniPoolOracle, UniLikeRou
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 
-export type SwapExactIn = Promise<{
+export type ZapExactIn = Promise<{
     execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
@@ -64,7 +64,7 @@ export class Zapping {
         slippage: number,
         deadline: number,
         useAggregators = true
-    ): SwapExactIn {
+    ): ZapExactIn {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
