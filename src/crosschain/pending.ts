@@ -198,122 +198,102 @@ export async function getChainPendingRequests({
 
     const pendingRequests: (PendingRequest | null)[] = await Promise.all(
         events.map(async (event) => {
-            try {
-                const {
-                    id,
-                    amount: amountFrom,
-                    token: tokenAddressFrom,
-                    from,
-                    to,
-                    chainID,
-                    revertableAddress,
-                } = event.args
+            const { id, amount: amountFrom, token: tokenAddressFrom, from, to, chainID, revertableAddress } = event.args
 
-                const chainId = chainID.toNumber() as ChainId
+            const chainId = chainID.toNumber() as ChainId
 
-                const fromToken = symbiosis.findStable(tokenAddressFrom, activeChainId)
-                if (!fromToken) {
-                    return null
-                }
-
-                const fromTokenAmount = new TokenAmount(fromToken, amountFrom.toHexString())
-
-                let contractAddress: string
-                let getState: (externalId: string) => Promise<number>
-
-                if (['synthesize', 'synthesize-v2'].includes(type)) {
-                    const synthesis = symbiosis.synthesis(chainId)
-                    contractAddress = synthesis.address
-                    getState = synthesis.synthesizeStates
-                } else {
-                    const portal = symbiosis.portal(chainId)
-                    contractAddress = portal.address
-                    getState = portal.unsynthesizeStates
-                }
-
-                const externalId = getExternalId({
-                    internalId: id,
-                    contractAddress,
-                    revertableAddress,
-                    chainId,
-                })
-
-                const { state: otherState } = await selectedContract.requests(externalId)
-
-                // The transaction was not sent from the sender network
-                if (otherState !== PendingRequestState.Sent) {
-                    return null
-                }
-
-                const state = await getState(externalId)
-
-                // The transaction still new/reverted in the receiver network
-                if (state === PendingRequestState.Sent) {
-                    return null
-                }
-
-                const pendingRequest = {
-                    internalId: id,
-                    externalId,
-                    from,
-                    to,
-                    revertableAddress,
-                    fromTokenAmount,
-                    state,
-                    transactionHash: event.transactionHash,
-                    type,
-                    chainIdTo: chainId,
-                    chainIdFrom: activeChainId,
-                    status: 'new',
-                    transactionHashReverted: undefined,
-                    originalFromTokenAmount: fromTokenAmount,
-                    revertChainId: chainId,
-                }
-                if (type === 'burn-v2') {
-                    const sourceChainToken = await findSourceChainToken(
-                        symbiosis,
-                        pendingRequest.chainIdFrom,
-                        pendingRequest.chainIdTo,
-                        pendingRequest.transactionHash,
-                        pendingRequest.revertableAddress,
-                        synthesizeRequestFinder
-                    )
-                    if (sourceChainToken) {
-                        pendingRequest.chainIdFrom = sourceChainToken.chainId
-                        pendingRequest.fromTokenAmount = new TokenAmount(
-                            sourceChainToken,
-                            parseUnits(
-                                pendingRequest.fromTokenAmount.toExact(sourceChainToken.decimals),
-                                sourceChainToken.decimals
-                            ).toString()
-                        )
-                    } else {
-                        const transitStable = await symbiosis.bestTransitStable(pendingRequest.chainIdTo)
-                        pendingRequest.type = 'burn-v2-revert'
-                        pendingRequest.fromTokenAmount = new TokenAmount(
-                            transitStable,
-                            pendingRequest.fromTokenAmount.raw
-                        )
-                    }
-                }
-                if (type === 'synthesize-v2') {
-                    const isV2 = await isSynthesizeV2(
-                        symbiosis,
-                        pendingRequest.chainIdFrom,
-                        pendingRequest.transactionHash
-                    )
-                    if (isV2) {
-                        pendingRequest.revertChainId = activeChainId
-                    } else {
-                        pendingRequest.type = 'synthesize'
-                    }
-                }
-
-                return pendingRequest
-            } catch (e) {
-                console.error(e)
+            const fromToken = symbiosis.findStable(tokenAddressFrom, activeChainId)
+            if (!fromToken) {
                 return null
             }
+
+            const fromTokenAmount = new TokenAmount(fromToken, amountFrom.toHexString())
+
+            let contractAddress: string
+            let getState: (externalId: string) => Promise<number>
+
+            if (['synthesize', 'synthesize-v2'].includes(type)) {
+                const synthesis = symbiosis.synthesis(chainId)
+                contractAddress = synthesis.address
+                getState = synthesis.synthesizeStates
+            } else {
+                const portal = symbiosis.portal(chainId)
+                contractAddress = portal.address
+                getState = portal.unsynthesizeStates
+            }
+
+            const externalId = getExternalId({
+                internalId: id,
+                contractAddress,
+                revertableAddress,
+                chainId,
+            })
+
+            const { state: otherState } = await selectedContract.requests(externalId)
+
+            // The transaction was not sent from the sender network
+            if (otherState !== PendingRequestState.Sent) {
+                return null
+            }
+
+            const state = await getState(externalId)
+
+            // The transaction still new/reverted in the receiver network
+            if (state === PendingRequestState.Sent) {
+                return null
+            }
+
+            const pendingRequest = {
+                internalId: id,
+                externalId,
+                from,
+                to,
+                revertableAddress,
+                fromTokenAmount,
+                state,
+                transactionHash: event.transactionHash,
+                type,
+                chainIdTo: chainId,
+                chainIdFrom: activeChainId,
+                status: 'new',
+                transactionHashReverted: undefined,
+                originalFromTokenAmount: fromTokenAmount,
+                revertChainId: chainId,
+            }
+            if (type === 'burn-v2') {
+                const sourceChainToken = await findSourceChainToken(
+                    symbiosis,
+                    pendingRequest.chainIdFrom,
+                    pendingRequest.chainIdTo,
+                    pendingRequest.transactionHash,
+                    pendingRequest.revertableAddress,
+                    synthesizeRequestFinder
+                )
+                if (sourceChainToken) {
+                    pendingRequest.chainIdFrom = sourceChainToken.chainId
+                    pendingRequest.fromTokenAmount = new TokenAmount(
+                        sourceChainToken,
+                        parseUnits(
+                            pendingRequest.fromTokenAmount.toExact(sourceChainToken.decimals),
+                            sourceChainToken.decimals
+                        ).toString()
+                    )
+                } else {
+                    const transitStable = await symbiosis.bestTransitStable(pendingRequest.chainIdTo)
+                    pendingRequest.type = 'burn-v2-revert'
+                    pendingRequest.fromTokenAmount = new TokenAmount(transitStable, pendingRequest.fromTokenAmount.raw)
+                }
+            }
+            if (type === 'synthesize-v2') {
+                const isV2 = await isSynthesizeV2(symbiosis, pendingRequest.chainIdFrom, pendingRequest.transactionHash)
+                if (isV2) {
+                    pendingRequest.revertChainId = activeChainId
+                } else {
+                    pendingRequest.type = 'synthesize'
+                }
+            }
+
+            return pendingRequest
         })
     )
     // Remove failed requests
@@ -342,28 +322,24 @@ export async function getPendingRequests(
         }
 
         pendingRequestsPromises.push(
-            getChainPendingRequests({ ...params, type: 'synthesize-v2' }).catch(() => {
-                return []
-            }),
-            getChainPendingRequests({ ...params, type: 'burn-v2' }).catch(() => {
-                return []
-            }),
-            getChainPendingRequests({ ...params, type: 'synthesize' }).catch(() => {
-                return []
-            }),
-            getChainPendingRequests({ ...params, type: 'burn' }).catch(() => {
-                return []
-            })
+            getChainPendingRequests({ ...params, type: 'synthesize-v2' }),
+            getChainPendingRequests({ ...params, type: 'burn-v2' }),
+            getChainPendingRequests({ ...params, type: 'synthesize' }),
+            getChainPendingRequests({ ...params, type: 'burn' })
         )
     })
 
-    const pendingRequests = await Promise.all(pendingRequestsPromises)
-
-    return pendingRequests.flat().reduce((acc, r) => {
-        const ids = acc.map((i) => i.internalId)
-        if (ids.includes(r.internalId)) {
-            return acc
-        }
-        return [...acc, r]
-    }, [] as PendingRequest[])
+    try {
+        const pendingRequests = await Promise.all(pendingRequestsPromises)
+        return pendingRequests.flat().reduce((acc, r) => {
+            const ids = acc.map((i) => i.internalId)
+            if (ids.includes(r.internalId)) {
+                return acc
+            }
+            return [...acc, r]
+        }, [] as PendingRequest[])
+    } catch (e) {
+        console.error(e)
+        return []
+    }
 }

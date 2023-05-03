@@ -15,6 +15,7 @@ interface OpenOceanTradeParams {
 }
 
 interface OpenOceanQuote {
+    to: string
     inAmount: string
     outAmount: string
     data: string
@@ -28,13 +29,12 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.AURORA_MAINNET]: 'aurora',
     [ChainId.HECO_MAINNET]: 'heco',
     [ChainId.KAVA_MAINNET]: 'kava',
-    [ChainId.ZKSYNC_MAINNET]: 'zksync',
     [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
     [ChainId.OPTIMISM_MAINNET]: 'optimism',
+    [ChainId.ZKSYNC_MAINNET]: 'zksync',
 }
 
-const OPEN_OCEAN_ADDRESS = '0x6352a56caadc4f1e25cd6c75970fa768a3304e64' as const
-const NATIVE_TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000' as const
+const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 const BASE_URL = 'https://open-api.openocean.finance/v3'
 
 interface GetPriceImpactParams {
@@ -100,6 +100,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
         url.searchParams.set('gasPrice', '5')
         url.searchParams.set('slippage', this.slippage.toString())
         url.searchParams.set('account', this.to)
+        url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
 
         const response = await fetch(url.toString())
 
@@ -109,9 +110,9 @@ export class OpenOceanTrade implements SymbiosisTrade {
             throw new Error(`Cannot build OpenOcean trade: ${json}`)
         }
 
-        const { data, outAmount } = json.data as OpenOceanQuote
+        const { data, outAmount, to } = json.data as OpenOceanQuote
 
-        this.routerAddress = OPEN_OCEAN_ADDRESS
+        this.routerAddress = to
         this.callData = data
         this.amountOut = new TokenAmount(this.tokenOut, outAmount)
         this.route = [this.tokenAmountIn.token, this.tokenOut]

@@ -184,8 +184,8 @@ export class OneInchTrade implements SymbiosisTrade {
                 offset: 196,
             },
             {
-                // unoswapTo(address,IERC20,uint256,uint256,uint256[])
-                sigHash: '4c8723cd',
+                // unoswapTo(address,address,uint256,uint256,uint256[])
+                sigHash: 'f78dc253',
                 offset: 100,
             },
             {
@@ -201,6 +201,10 @@ export class OneInchTrade implements SymbiosisTrade {
             return i.sigHash === sigHash
         })
 
-        return method?.offset
+        if (!method) {
+            throw new Error(`Cannot get offset for 1inch calldata. sigHash: ${sigHash}`)
+        }
+
+        return method.offset
     }
 }
