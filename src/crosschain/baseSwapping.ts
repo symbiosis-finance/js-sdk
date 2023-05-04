@@ -357,7 +357,9 @@ export abstract class BaseSwapping {
             if (feeV2) {
                 if (amountIn.lessThan(feeV2)) {
                     throw new Error(
-                        `Amount $${amountIn.toSignificant()} less than fee $${feeV2.toSignificant()}`,
+                        `Amount ${amountIn.toSignificant()} ${
+                            amountIn.token.symbol
+                        } less than fee ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
                         ErrorCode.AMOUNT_LESS_THAN_FEE
                     )
                 }

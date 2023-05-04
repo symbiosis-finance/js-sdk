@@ -6,6 +6,7 @@ import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
+import { Error, ErrorCode } from './error'
 
 export type WaitForMined = Promise<{
     receipt: TransactionReceipt
@@ -59,7 +60,12 @@ export class Bridging {
 
         const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
         if (tokenAmountOut.lessThan(this.fee)) {
-            throw new Error('Amount out less than fee')
+            throw new Error(
+                `Amount ${tokenAmountOut.toSignificant()} ${
+                    tokenAmountOut.token.symbol
+                } less than fee ${this.fee.toSignificant()} ${this.fee.token.symbol}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
         }
 
         this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
