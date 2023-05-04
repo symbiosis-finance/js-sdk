@@ -193,10 +193,6 @@ export class OneInchTrade implements SymbiosisTrade {
             return i.sigHash === sigHash
         })
 
-        if (!method) {
-            throw new Error(`Cannot get offset for 1inch calldata. sigHash: ${sigHash}`)
-        }
-
-        return method.offset
+        return method?.offset
     }
 }
