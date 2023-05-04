@@ -73,9 +73,10 @@ export class OneInchTrade implements SymbiosisTrade {
             toTokenAddress = NATIVE_TOKEN_ADDRESS
         }
 
-        let protocols = this.protocols
+        const protocolsOrigin = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+        let protocols = this.protocols.filter((x) => protocolsOrigin.includes(x))
         if (protocols.length === 0) {
-            protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+            protocols = protocolsOrigin
         }
 
         const url = new URL(`v5.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
