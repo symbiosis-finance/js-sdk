@@ -348,7 +348,7 @@ export const chains: Chain[] = [
         id: ChainId.TRON_TESTNET,
         name: 'Tron Testnet',
         disabled: false,
-        explorer: 'https://tronscan.org',
+        explorer: 'https://shasta.tronscan.org',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',

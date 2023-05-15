@@ -3,19 +3,12 @@ import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from
 import { BigNumber, Signer } from 'ethers'
 import { Token, TokenAmount } from '../entities'
 import type { Symbiosis } from './symbiosis'
-import {
-    getTransactionInfoById,
-    isTronToken,
-    prepareTronTransaction,
-    tronAddressToEvm,
-    TronTransactionData,
-} from './tron'
+import { isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { BridgeDirection } from './types'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { Portal__factory, Synthesis__factory } from './contracts'
-import { TransactionInfo } from 'tronweb'
 
 export type RequestNetworkType = 'evm' | 'tron'
 
@@ -333,35 +326,6 @@ export class Bridging {
         })
 
         return new TokenAmount(this.tokenOut, fee.toString())
-    }
-
-    // TODO: move to utils
-    async tronWaitForMined(txId: string): Promise<TransactionInfo> {
-        if (!this.tokenAmountIn || !this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
-        let info: TransactionInfo | undefined
-
-        const tronWeb = this.symbiosis.tronWeb(this.tokenAmountIn?.token.chainId)
-
-        const TRIES = 5
-        for (let i = 0; i < TRIES; i++) {
-            const response = await getTransactionInfoById(tronWeb, txId)
-            console.log('response', response)
-            if (response) {
-                info = response
-                break
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-        }
-
-        if (!info) {
-            throw new Error('Transaction not found')
-        }
-
-        return info
     }
 
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {

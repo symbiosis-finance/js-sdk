@@ -65,7 +65,7 @@ import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
 import { ZappingRenBTC } from './zappingRenBTC'
 import { ZappingOoki } from './zappingOoki'
-import TronWeb from 'tronweb'
+import TronWeb, { TransactionInfo } from 'tronweb'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
@@ -565,14 +565,6 @@ export class Symbiosis {
                 throw new Error(`Transaction ${txId} not found`)
             }
 
-            let { portal: portalAddress } = this.chainConfig(chainId)
-
-            portalAddress = TronWeb.address.toHex(portalAddress)
-
-            if (result.contract_address !== portalAddress) {
-                throw new Error(`Transaction ${txId} is not a portal transaction`)
-            }
-
             const portalInterface = new utils.Interface(TRON_PORTAL_ABI)
             const topic = portalInterface.getEventTopic('SynthesizeRequest').replace('0x', '')
 
@@ -646,7 +638,11 @@ export class Symbiosis {
             direction = 'mint'
         }
 
+        console.log('externalId', externalId, 'externalChainId', externalChainId, 'direction', direction)
+
         if (isTronChainId(externalChainId)) {
+            console.log('tron')
+
             const { portal } = this.chainConfig(externalChainId)
 
             const contract = new Contract(tronAddressToEvm(portal), TRON_PORTAL_ABI)
@@ -701,5 +697,29 @@ export class Symbiosis {
         const log = await getLogWithTimeout({ symbiosis: this, chainId: externalChainId, filter })
 
         return log.transactionHash
+    }
+
+    async tronWaitForMined(chainId: ChainId, txId: string): Promise<TransactionInfo> {
+        let info: TransactionInfo | undefined
+
+        const tronWeb = this.tronWeb(chainId)
+
+        const TRIES = 10
+        for (let i = 0; i < TRIES; i++) {
+            const response = await getTransactionInfoById(tronWeb, txId)
+            console.log('response', response)
+            if (response) {
+                info = response
+                break
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+        }
+
+        if (!info) {
+            throw new Error('Transaction not found')
+        }
+
+        return info
     }
 }

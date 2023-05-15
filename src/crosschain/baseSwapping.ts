@@ -6,7 +6,15 @@ import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
-import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
+import {
+    AdaRouter,
+    AvaxRouter,
+    KavaRouter,
+    Portal__factory,
+    Synthesis,
+    Synthesis__factory,
+    UniLikeRouter,
+} from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, MuteTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
@@ -15,7 +23,7 @@ import { getExternalId, getInternalId, prepareTransactionRequest } from './utils
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
-import { TronTransactionData, isTronToken, prepareTronTransaction } from './tron'
+import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 
 interface SwapInfo {
@@ -275,10 +283,10 @@ export abstract class BaseSwapping {
             {
                 amount: amount.raw.toString(),
                 nativeIn: amount.token.isNative,
-                approvedTokens: this.approvedTokens(),
-                firstDexRouter: this.firstDexRouter(),
+                approvedTokens: this.approvedTokens().map(tronAddressToEvm),
+                firstDexRouter: tronAddressToEvm(this.firstDexRouter()),
                 firstSwapCalldata: this.firstSwapCalldata(),
-                secondDexRouter: this.secondDexRouter(),
+                secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
                 secondSwapCalldata: this.transit.direction === 'burn' ? this.secondSwapCalldata() : [],
                 relayRecipient,
                 otherSideCalldata,
@@ -305,29 +313,28 @@ export abstract class BaseSwapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
+        const tronWeb = this.symbiosis.tronWeb(chainId)
+
         return prepareTronTransaction({
+            tronWeb,
             abi: TRON_METAROUTER_ABI,
-            ownerAddress: this.from,
             contractAddress: metaRouter,
             functionName: 'metaRoute',
             params: [
-                {
-                    amount: amount.raw.toString(),
-                    nativeIn: amount.token.isNative,
-                    approvedTokens: this.approvedTokens(),
-                    firstDexRouter: this.firstDexRouter(),
-                    firstSwapCalldata: this.firstSwapCalldata() as string,
-                    secondDexRouter: this.secondDexRouter(),
-                    secondSwapCalldata:
-                        this.transit.direction === 'burn'
-                            ? (this.secondSwapCalldata() as string)
-                            : ([] as unknown as string),
-                    relayRecipient,
+                [
+                    this.firstSwapCalldata(),
+                    this.transit.direction === 'burn' ? this.secondSwapCalldata() : [],
+                    this.approvedTokens().map(tronAddressToEvm),
+                    tronAddressToEvm(this.firstDexRouter()),
+                    this.secondDexRouter(),
+                    amount.raw.toString(),
+                    amount.token.isNative,
+                    tronAddressToEvm(relayRecipient),
                     otherSideCalldata,
-                },
+                ],
             ],
-            tronWeb: this.symbiosis.tronWeb(chainId),
-            value: value?.toString(),
+            ownerAddress: this.from,
+            value: value?.toString() ?? 0,
         })
     }
 
@@ -519,15 +526,15 @@ export abstract class BaseSwapping {
                 {
                     stableBridgingFee: fee.raw.toString(),
                     amount: amount.raw.toString(),
-                    syntCaller: this.from,
-                    finalReceiveSide: this.finalReceiveSide(),
-                    sToken: amount.token.address,
+                    syntCaller: tronAddressToEvm(this.from),
+                    finalReceiveSide: tronAddressToEvm(this.finalReceiveSide()),
+                    sToken: tronAddressToEvm(amount.token.address),
                     finalCallData: this.finalCalldata(),
                     finalOffset: this.finalOffset(),
-                    chain2address: this.to,
-                    receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
-                    oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
-                    revertableAddress: this.revertableAddress,
+                    chain2address: tronAddressToEvm(this.to),
+                    receiveSide: tronAddressToEvm(this.symbiosis.portal(this.tokenOut.chainId).address),
+                    oppositeBridge: tronAddressToEvm(this.symbiosis.bridge(this.tokenOut.chainId).address),
+                    revertableAddress: tronAddressToEvm(this.revertableAddress),
                     chainID: this.tokenOut.chainId,
                     clientID: this.symbiosis.clientId,
                 },
@@ -552,19 +559,21 @@ export abstract class BaseSwapping {
                 {
                     stableBridgingFee: fee.raw.toString(),
                     amount: tokenAmount.raw.toString(),
-                    rtoken: tokenAmount.token.address,
+                    rtoken: tronAddressToEvm(tokenAmount.token.address),
                     chain2address: this.to,
-                    receiveSide: this.symbiosis.synthesis(chainIdOut).address,
-                    oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
-                    syntCaller: this.from,
+                    receiveSide: tronAddressToEvm(this.symbiosis.synthesis(chainIdOut).address),
+                    oppositeBridge: tronAddressToEvm(this.symbiosis.bridge(chainIdOut).address),
+                    syntCaller: tronAddressToEvm(this.from),
                     chainID: chainIdOut,
-                    swapTokens: this.swapTokens(),
-                    secondDexRouter: this.secondDexRouter(),
+                    swapTokens: this.swapTokens().map(tronAddressToEvm),
+                    secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
                     secondSwapCalldata: this.secondSwapCalldata(),
-                    finalReceiveSide: this.transit.isV2() ? this.finalReceiveSideV2() : this.finalReceiveSide(),
+                    finalReceiveSide: tronAddressToEvm(
+                        this.transit.isV2() ? this.finalReceiveSideV2() : this.finalReceiveSide()
+                    ),
                     finalCalldata: this.transit.isV2() ? this.finalCalldataV2(feeV2) : this.finalCalldata(),
                     finalOffset: this.transit.isV2() ? this.finalOffsetV2() : this.finalOffset(),
-                    revertableAddress: this.revertableAddress,
+                    revertableAddress: tronAddressToEvm(this.revertableAddress),
                     clientID: this.symbiosis.clientId,
                 },
             ]),
@@ -579,110 +588,121 @@ export abstract class BaseSwapping {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.transit.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
 
-        const portal = this.symbiosis.portal(chainIdIn)
-        const synthesis = this.symbiosis.synthesis(chainIdOut)
+        const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdIn).portal)
+        const synthesisAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdOut).synthesis)
 
         const internalId = getInternalId({
-            contractAddress: portal.address,
+            contractAddress: portalAddress,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
         const externalId = getExternalId({
             internalId,
-            contractAddress: synthesis.address,
-            revertableAddress: this.revertableAddress,
+            contractAddress: synthesisAddress,
+            revertableAddress: tronAddressToEvm(this.revertableAddress),
             chainId: chainIdOut,
         })
 
         const amount = this.transit.getBridgeAmountIn()
 
-        const callData = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
+        const synthesisInterface = Synthesis__factory.createInterface()
+
+        const callData = synthesisInterface.encodeFunctionData('metaMintSyntheticToken', [
             {
                 stableBridgingFee: '0',
                 amount: amount.raw.toString(),
                 externalID: externalId,
-                tokenReal: amount.token.address,
+                tokenReal: tronAddressToEvm(amount.token.address),
                 chainID: chainIdIn,
-                to: this.to,
-                swapTokens: this.swapTokens(),
-                secondDexRouter: this.secondDexRouter(),
+                to: tronAddressToEvm(this.to),
+                swapTokens: this.swapTokens().map(tronAddressToEvm),
+                secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
                 secondSwapCalldata: this.secondSwapCalldata(),
-                finalReceiveSide: this.transit.isV2() ? this.finalReceiveSideV2() : this.finalReceiveSide(),
+                finalReceiveSide: tronAddressToEvm(
+                    this.transit.isV2() ? this.finalReceiveSideV2() : this.finalReceiveSide()
+                ),
                 finalCalldata: this.transit.isV2() ? this.finalCalldataV2() : this.finalCalldata(),
                 finalOffset: this.transit.isV2() ? this.finalOffsetV2() : this.finalOffset(),
             },
         ])
 
-        return [synthesis.address, callData]
+        return [synthesisAddress, callData]
     }
 
     protected async feeBurnCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const synthesis = this.symbiosis.synthesis(chainIdIn)
-        const portal = this.symbiosis.portal(chainIdOut)
+        const synthesisAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdIn).synthesis)
+        const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdOut).portal)
 
         const internalId = getInternalId({
-            contractAddress: synthesis.address,
+            contractAddress: synthesisAddress,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
         const externalId = getExternalId({
             internalId,
-            contractAddress: portal.address,
-            revertableAddress: this.revertableAddress,
+            contractAddress: portalAddress,
+            revertableAddress: tronAddressToEvm(this.revertableAddress),
             chainId: chainIdOut,
         })
 
         const amount = this.transit.amountOut
 
-        const calldata = portal.interface.encodeFunctionData('metaUnsynthesize', [
+        const portalInterface = Portal__factory.createInterface()
+
+        // TODO: Use contracts from tron if needed
+        const calldata = portalInterface.encodeFunctionData('metaUnsynthesize', [
             '1', // _stableBridgingFee
             externalId, // _externalID,
-            this.to, // _to
+            tronAddressToEvm(this.to), // _to
             amount.raw.toString(), // _amount
-            amount.token.address, // _rToken
-            this.finalReceiveSide(), // _finalReceiveSide
+            tronAddressToEvm(amount.token.address), // _rToken
+            tronAddressToEvm(this.finalReceiveSide()), // _finalReceiveSide
             this.finalCalldata(), // _finalCalldata
             this.finalOffset(), // _finalOffset
         ])
-        return [portal.address, calldata]
+
+        return [portalAddress, calldata]
     }
 
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
         const chainIdIn = this.symbiosis.omniPoolConfig.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const synthesis = this.symbiosis.synthesis(chainIdIn)
-        const portal = this.symbiosis.portal(chainIdOut)
+        const synthesisAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdIn).synthesis)
+        const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdOut).portal)
 
         const internalId = getInternalId({
-            contractAddress: synthesis.address,
+            contractAddress: synthesisAddress,
             requestCount: MaxUint256,
             chainId: chainIdIn,
         })
 
         const externalId = getExternalId({
             internalId,
-            contractAddress: portal.address,
-            revertableAddress: this.revertableAddress,
+            contractAddress: portalAddress,
+            revertableAddress: tronAddressToEvm(this.revertableAddress),
             chainId: chainIdOut,
         })
 
-        const calldata = portal.interface.encodeFunctionData('metaUnsynthesize', [
+        const portalInterface = Portal__factory.createInterface()
+
+        const calldata = portalInterface.encodeFunctionData('metaUnsynthesize', [
             '0', // _stableBridgingFee
             externalId, // _externalID,
-            this.to, // _to
+            tronAddressToEvm(this.to), // _to
             this.transit.amountOut.raw.toString(), // _amount
-            this.transitStableOut.address, // _rToken
-            this.finalReceiveSide(), // _finalReceiveSide
+            tronAddressToEvm(this.transitStableOut.address), // _rToken
+            tronAddressToEvm(this.finalReceiveSide()), // _finalReceiveSide
             this.finalCalldata(), // _finalCalldata
             this.finalOffset(), // _finalOffset
         ])
-        return [portal.address, calldata]
+
+        return [portalAddress, calldata]
     }
 
     protected async getFee(feeToken: Token): Promise<TokenAmount> {
@@ -696,6 +716,7 @@ export abstract class BaseSwapping {
             chainIdFrom,
             chainIdTo,
         })
+
         return new TokenAmount(feeToken, fee.toString())
     }
 
@@ -760,15 +781,15 @@ export abstract class BaseSwapping {
             {
                 stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
                 amount: this.transit.amountOut.raw.toString(), // uint256 amount;
-                syntCaller: this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address, // address syntCaller;
-                finalReceiveSide: this.finalReceiveSide(), // address finalReceiveSide;
-                sToken: this.transit.amountOut.token.address, // address sToken;
+                syntCaller: tronAddressToEvm(this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address), // address syntCaller;
+                finalReceiveSide: tronAddressToEvm(this.finalReceiveSide()), // address finalReceiveSide;
+                sToken: tronAddressToEvm(this.transit.amountOut.token.address), // address sToken;
                 finalCallData: this.finalCalldata(), // bytes finalCallData;
                 finalOffset: this.finalOffset(), // uint256 finalOffset;
-                chain2address: this.to, // address chain2address;
-                receiveSide: this.symbiosis.portal(this.tokenOut.chainId).address,
-                oppositeBridge: this.symbiosis.bridge(this.tokenOut.chainId).address,
-                revertableAddress: this.revertableAddress,
+                chain2address: tronAddressToEvm(this.to), // address chain2address;
+                receiveSide: tronAddressToEvm(this.symbiosis.portal(this.tokenOut.chainId).address),
+                oppositeBridge: tronAddressToEvm(this.symbiosis.bridge(this.tokenOut.chainId).address),
+                revertableAddress: tronAddressToEvm(this.revertableAddress),
                 chainID: this.tokenOut.chainId,
                 clientID: this.symbiosis.clientId,
             },

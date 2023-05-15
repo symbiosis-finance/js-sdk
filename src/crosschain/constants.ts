@@ -33,6 +33,8 @@ export const CHAINS_PRIORITY = [
     ChainId.SCROLL_TESTNET,
     ChainId.ZKSYNC_MAINNET,
     ChainId.ARBITRUM_MAINNET,
+    ChainId.TRON_MAINNET,
+    ChainId.TRON_TESTNET,
 ]
 
 // a list of tokens by chain

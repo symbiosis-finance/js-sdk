@@ -97,6 +97,7 @@ declare module 'tronweb' {
                 options: {
                     call_value?: number | string
                     feeLimit?: number
+                    rawParameter?: string
                 },
                 parameter: any[],
                 address?: string

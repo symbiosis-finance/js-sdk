@@ -1,20 +1,9 @@
-import { AbiCoder } from '@ethersproject/abi'
-import type { Abi, AbiParametersToPrimitiveTypes, ExtractAbiFunction, ExtractAbiFunctionNames } from 'abitype'
+import { JsonFragment } from '@ethersproject/abi'
 import BigNumber from 'bignumber.js'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, Token } from '../entities'
-
-declare module 'abitype' {
-    export interface Config {
-        BigIntType: string
-        AddressType: string
-        BytesType: {
-            inputs: `0x${string}` | Uint8Array | string
-            outputs: `0x${string}`
-        }
-    }
-}
+import { encodeParamsV2ByABI, getFunctionSelector } from './tronWeb'
 
 export interface TronTransactionData {
     call_value: number | string
@@ -22,61 +11,20 @@ export interface TronTransactionData {
     fee_limit: number
     function_selector: string
     owner_address: string
-    parameter: string
-    raw_parameter: {
-        type: string
-        value: unknown
-    }[]
+    raw_parameter: string
 }
 
-type ExtractPayableFunctionNames<TAbi extends Abi> = ExtractAbiFunctionNames<TAbi, 'payable' | 'nonpayable'>
-
-// Based on TronWeb internal encoding from tronWeb.transactionBuilder.triggerSmartContract
-function encodeParams<TAbi extends Abi, TFunctionName extends ExtractPayableFunctionNames<TAbi>>(
-    functionAbi: ExtractAbiFunction<TAbi, TFunctionName>,
-    params: AbiParametersToPrimitiveTypes<ExtractAbiFunction<TAbi, TFunctionName>['inputs'], 'inputs'>
-): string {
-    if (!params.length) {
-        return ''
-    }
-
-    const types = []
-    const values = []
-
-    const abiCoder = new AbiCoder()
-
-    for (let i = 0; i < params.length; i++) {
-        const type = functionAbi.inputs[i].type
-        let value = params[i] as string | string[]
-
-        if (!type || !type.length) {
-            throw new Error('Invalid parameter type provided: ' + type)
-        }
-
-        if (type === 'address' && typeof value === 'string') {
-            value = tronAddressToEvm(value)
-        } else if (Array.isArray(value) && type.match(/^([^\x5b]*)(\x5b|$)/)?.[0] === 'address[') {
-            value = value.map((address) => tronAddressToEvm(address))
-        }
-
-        types.push(type)
-        values.push(value)
-    }
-
-    return abiCoder.encode(types, values).replace(/^(0x)/, '')
-}
-
-interface Params<TAbi extends Abi, TFunctionName extends ExtractPayableFunctionNames<TAbi>> {
+interface Params {
     tronWeb: TronWeb
-    abi: TAbi
+    abi: ReadonlyArray<JsonFragment>
     contractAddress: string
-    functionName: TFunctionName
-    params: AbiParametersToPrimitiveTypes<ExtractAbiFunction<TAbi, TFunctionName>['inputs'], 'inputs'>
+    functionName: string
+    params: any[]
     ownerAddress: string
     value?: string | number | BigNumber
 }
 
-export function prepareTronTransaction<TAbi extends Abi, TFunctionName extends ExtractPayableFunctionNames<TAbi>>({
+export function prepareTronTransaction({
     tronWeb,
     abi,
     contractAddress,
@@ -84,23 +32,16 @@ export function prepareTronTransaction<TAbi extends Abi, TFunctionName extends E
     params,
     value,
     ownerAddress,
-}: Params<TAbi, TFunctionName>): TronTransactionData {
-    const functionFragment = abi.find(
-        (item) => item.type === 'function' && item.name === functionName
-    ) as ExtractAbiFunction<TAbi, TFunctionName>
+}: Params): TronTransactionData {
+    const functionFragment = abi.find((item) => item.type === 'function' && item.name === functionName)
 
     if (!functionFragment) {
         throw new Error('Method not found in ABI')
     }
 
-    const functionSelector = `${functionFragment.name}(${functionFragment.inputs.map((input) => input.type).join(',')})`
+    const functionSelector = getFunctionSelector(functionFragment)
 
-    const raw_parameter = functionFragment.inputs.map((input, index) => ({
-        type: input.type,
-        value: params[index],
-    }))
-
-    const parameter = encodeParams(functionFragment, params)
+    const rawParameter = encodeParamsV2ByABI(functionFragment, params)
 
     return {
         call_value: value?.toString() ?? 0,
@@ -108,8 +49,7 @@ export function prepareTronTransaction<TAbi extends Abi, TFunctionName extends E
         fee_limit: tronWeb.feeLimit,
         function_selector: functionSelector,
         owner_address: TronWeb.address.toHex(ownerAddress),
-        parameter,
-        raw_parameter,
+        raw_parameter: rawParameter,
     }
 }
 
