@@ -343,6 +343,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
         },
     }),
+    new Chain({
+        id: ChainId.ZETACHAIN_ATHENS_2,
+        name: 'ZetaChain Athens 2',
+        disabled: false,
+        explorer: 'https://explorer.zetachain.com/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

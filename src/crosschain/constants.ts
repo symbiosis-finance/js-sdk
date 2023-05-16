@@ -34,6 +34,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ZKSYNC_MAINNET,
     ChainId.ARBITRUM_MAINNET,
     ChainId.OPTIMISM_MAINNET,
+    ChainId.ZETACHAIN_ATHENS_2,
 ]
 
 // a list of tokens by chain
@@ -92,6 +93,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.ZKSYNC_MAINNET]: [WETH[ChainId.ZKSYNC_MAINNET]],
     [ChainId.ARBITRUM_MAINNET]: [WETH[ChainId.ARBITRUM_MAINNET]],
     [ChainId.OPTIMISM_MAINNET]: [WETH[ChainId.OPTIMISM_MAINNET]],
+    [ChainId.ZETACHAIN_ATHENS_2]: [WETH[ChainId.ZETACHAIN_ATHENS_2]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -393,6 +395,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'USD Coin',
         }),
     ],
+    [ChainId.ZETACHAIN_ATHENS_2]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -476,4 +479,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ZKSYNC_MAINNET]: '0x52192C3De01535a9Ad2743A5Fe4f774868103C20',
     [ChainId.ARBITRUM_MAINNET]: '0x80c7dd17b01855a6d2347444a0fcc36136a314de',
     [ChainId.OPTIMISM_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
 }
