@@ -48,6 +48,8 @@ import {
     RenGatewayRegistryV2__factory,
     RenMintGatewayV3,
     RenMintGatewayV3__factory,
+    SyncSwapLaunchPool,
+    SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
     UniLikeRouter,
@@ -382,6 +384,12 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return Ooki__factory.connect(address, signerOrProvider)
+    }
+
+    public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
     }
 
     public stables(): Token[] {
