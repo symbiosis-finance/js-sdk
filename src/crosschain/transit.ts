@@ -88,7 +88,9 @@ export class Transit {
         }
         if (amountOut.lessThan(this.fee)) {
             throw new Error(
-                `Amount $${amountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                `Amount ${amountOut.toSignificant()} ${
+                    amountOut.token.symbol
+                } less than fee ${this.fee.toSignificant()} ${this.fee.token.symbol}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
@@ -156,7 +158,9 @@ export class Transit {
 
         if (amountOut.lessThan(this.fee)) {
             throw new Error(
-                `Amount $${amountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                `Amount ${amountOut.toSignificant()} ${
+                    amountOut.token.symbol
+                } less than fee ${this.fee.toSignificant()} ${this.fee.token.symbol}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }

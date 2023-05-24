@@ -17,12 +17,13 @@ import {
 } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, MuteTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
+import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
+import { OneInchProtocols } from './trade/oneInchTrade'
 import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 
@@ -57,6 +58,10 @@ export type DetailedSlippage = {
     C: number
 }
 
+export type SwapOptions = {
+    oneInchProtocols?: OneInchProtocols
+}
+
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
 
@@ -84,6 +89,8 @@ export abstract class BaseSwapping {
     protected transitStableIn!: Token
     protected transitStableOut!: Token
 
+    protected options!: SwapOptions
+
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
@@ -97,8 +104,10 @@ export abstract class BaseSwapping {
         revertableAddress: string,
         slippage: number,
         deadline: number,
-        useAggregators: boolean
+        useAggregators: boolean,
+        options?: SwapOptions
     ): Promise<SwapExactIn> {
+        this.options = options || {}
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -374,19 +383,7 @@ export abstract class BaseSwapping {
         const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
-
         const dexFee = this.symbiosis.dexFee(chainId)
-        if (chainId === ChainId.ZKSYNC_MAINNET) {
-            return new MuteTrade({
-                tokenAmountIn: this.tokenAmountIn,
-                tokenOut,
-                to,
-                slippage: this.slippage['A'],
-                deadline: this.ttl,
-                router: this.symbiosis.muteRouter(chainId),
-                dexFee: this.symbiosis.dexFee(chainId),
-            })
-        }
 
         if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
@@ -398,6 +395,7 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
+                options: this.options,
             })
         }
 
@@ -442,7 +440,9 @@ export abstract class BaseSwapping {
             if (feeV2) {
                 if (amountIn.lessThan(feeV2)) {
                     throw new Error(
-                        `Amount $${amountIn.toSignificant()} less than fee $${feeV2.toSignificant()}`,
+                        `Amount ${amountIn.toSignificant()} ${
+                            amountIn.token.symbol
+                        } less than fee ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
                         ErrorCode.AMOUNT_LESS_THAN_FEE
                     )
                 }
@@ -453,17 +453,6 @@ export abstract class BaseSwapping {
 
         const chainId = this.tokenOut.chainId
         const dexFee = this.symbiosis.dexFee(chainId)
-        if (chainId === ChainId.ZKSYNC_MAINNET) {
-            return new MuteTrade({
-                tokenAmountIn: amountIn,
-                tokenOut: this.tokenOut,
-                to: this.tradeCTo(),
-                slippage: this.slippage['C'],
-                deadline: this.ttl,
-                router: this.symbiosis.muteRouter(chainId),
-                dexFee,
-            })
-        }
 
         if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
@@ -475,7 +464,8 @@ export abstract class BaseSwapping {
                 this.tradeCTo(),
                 this.slippage['C'] / 100,
                 oracle,
-                this.dataProvider
+                this.dataProvider,
+                this.options.oneInchProtocols
             )
         }
 

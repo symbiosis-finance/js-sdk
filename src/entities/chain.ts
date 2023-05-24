@@ -325,12 +325,42 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.ARBITRUM_MAINNET,
-        name: 'Arbitrum',
+        name: 'Arbitrum One',
         disabled: false,
         explorer: 'https://arbiscan.io',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ARBITRUM_NOVA,
+        name: 'Arbitrum Nova',
+        disabled: false,
+        explorer: 'https://nova.arbiscan.io/',
+        icons: {
+            small: 'https://l2beat.com/icons/nova.png',
+            large: 'https://l2beat.com/icons/nova.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.OPTIMISM_MAINNET,
+        name: 'Optimism',
+        disabled: false,
+        explorer: 'https://optimistic.etherscan.io/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ZETACHAIN_ATHENS_2,
+        name: 'ZetaChain Athens 2',
+        disabled: false,
+        explorer: 'https://explorer.zetachain.com/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
         },
     }),
     new Chain({

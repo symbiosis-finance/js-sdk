@@ -67,13 +67,20 @@ export class Zapping {
     ): ZapExactIn {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
-        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
+
+        const transitStables = this.symbiosis.transitStables(this.tokenAmountIn.token.chainId)
+        if (transitStables.find((stable) => stable.equals(this.tokenAmountIn.token))) {
+            // Do not swap if token is already a transit stable
+            this.transitStableIn = this.tokenAmountIn.token
+        } else {
+            this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
+        }
 
         let amountInUsd: TokenAmount
 

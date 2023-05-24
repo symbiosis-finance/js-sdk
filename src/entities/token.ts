@@ -460,4 +460,40 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.ARBITRUM_NOVA]: new Token({
+        chainId: ChainId.ARBITRUM_NOVA,
+        address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.OPTIMISM_MAINNET]: new Token({
+        chainId: ChainId.OPTIMISM_MAINNET,
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.ZETACHAIN_ATHENS_2]: new Token({
+        chainId: ChainId.ZETACHAIN_ATHENS_2,
+        address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+        decimals: 18,
+        symbol: 'WZETA',
+        isNative: false,
+        name: 'Wrapped ZETA',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+        },
+    }),
 }

@@ -63,7 +63,7 @@ export class RevertRequest {
 
         if (type === 'burn') {
             const metaRouterAddress = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
-            if (from === metaRouterAddress) {
+            if (from.toLowerCase() === metaRouterAddress.toLowerCase()) {
                 type = 'burn-v2'
                 const sourceChainToken = await findSourceChainToken(
                     this.symbiosis,
@@ -144,7 +144,7 @@ export class RevertRequest {
 
         const log = receipt.logs.find((log) => {
             const topic = contract.getEventTopic(event)
-            return log.topics[0] === topic
+            return log.topics[0].toLowerCase() === topic.toLowerCase()
         })
         if (!log) return null
 
@@ -156,7 +156,7 @@ export class RevertRequest {
         const burnRequest = contract.events['BurnRequest(bytes32,address,uint256,address,address,uint256,address)']
         const log = receipt.logs.find((log) => {
             const topic = contract.getEventTopic(burnRequest)
-            return log.topics[0] === topic
+            return log.topics[0].toLowerCase() === topic.toLowerCase()
         })
 
         if (!log) return null

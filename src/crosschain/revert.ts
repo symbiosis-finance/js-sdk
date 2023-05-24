@@ -274,7 +274,9 @@ export class RevertPending {
         const feeTokenAmount = new TokenAmount(feeToken, fee)
         if (this.request.originalFromTokenAmount.lessThan(feeTokenAmount)) {
             throw new Error(
-                `Amount $${this.request.fromTokenAmount.toSignificant()} less than fee $${feeTokenAmount.toSignificant()}`,
+                `Amount ${this.request.fromTokenAmount.toSignificant()} ${
+                    this.request.fromTokenAmount.token.symbol
+                } less than fee ${feeTokenAmount.toSignificant()} ${feeTokenAmount.token.symbol}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
