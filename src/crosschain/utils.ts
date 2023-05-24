@@ -152,7 +152,7 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        const period = 1000 * 60
+        const period = 1000 * 60 // 60 seconds
         let pastTime = 0
 
         const interval = setInterval(() => {
