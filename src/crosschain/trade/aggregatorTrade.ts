@@ -67,13 +67,17 @@ export class AggregatorTrade implements SymbiosisTrade {
                 dataProvider,
             })
 
-            const limitPromise = new Promise((_resolve, reject) => {
-                setTimeout(() => {
-                    reject('Timeout OO')
-                }, 5 * 1000)
-            }) as Promise<OpenOceanTrade>
+            const promises: Promise<OpenOceanTrade>[] = [openOceanTrade.init()]
+            if (clientId !== OPEN_OCEAN_CLIENT_ID) {
+                const limitPromise = new Promise((_resolve, reject) => {
+                    setTimeout(() => {
+                        reject('Timeout OO')
+                    }, 5 * 1000)
+                }) as Promise<OpenOceanTrade>
+                promises.push(limitPromise)
+            }
 
-            aggregators.push(Promise.race([openOceanTrade.init(), limitPromise]))
+            aggregators.push(Promise.race(promises))
         }
 
         if (aggregators.length === 0) {
