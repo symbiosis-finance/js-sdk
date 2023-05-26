@@ -158,7 +158,10 @@ export class Bridging {
 
         const portalAddress = this.symbiosis.chainConfig(chainId).portal
 
-        // TODO: Other methods
+        if (this.direction === 'burn') {
+            throw new Error('Burn is not supported on Tron')
+        }
+
         return prepareTronTransaction({
             abi: TRON_PORTAL_ABI,
             ownerAddress: this.from,
