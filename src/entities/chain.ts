@@ -363,6 +363,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
         },
     }),
+    new Chain({
+        id: ChainId.POLYGON_ZK,
+        name: 'Polygon zkEVM',
+        disabled: false,
+        explorer: 'https://zkevm.polygonscan.com/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

@@ -6,7 +6,7 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
 import { TokenAmount } from '../entities'
 import {
-    findSourceChainToken,
+    findSourceChainData,
     isSynthesizeV2,
     PendingRequest,
     PendingRequestState,
@@ -43,9 +43,10 @@ export class RevertRequest {
             throw new Error('Tx does not contain mint/burn event and cannot be reverted')
         }
 
-        const { id, amount, token: tokenAddress, from, to, chainID, revertableAddress } = log.args
+        const { id, amount, token: tokenAddress, from: fromOrigin, to, chainID, revertableAddress } = log.args
         const chainIdTo = chainID.toNumber()
         let chainIdFrom = this.chainId
+        let from = fromOrigin
 
         const token = this.symbiosis.findStable(tokenAddress, this.chainId)
         if (!token) {
@@ -65,7 +66,7 @@ export class RevertRequest {
             const metaRouterAddress = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
             if (from.toLowerCase() === metaRouterAddress.toLowerCase()) {
                 type = 'burn-v2'
-                const sourceChainToken = await findSourceChainToken(
+                const data = await findSourceChainData(
                     this.symbiosis,
                     this.chainId,
                     chainIdTo,
@@ -73,7 +74,10 @@ export class RevertRequest {
                     revertableAddress,
                     synthesizeRequestFinder
                 )
-                if (sourceChainToken) {
+                if (data) {
+                    const { sourceChainId, fromAddress } = data
+                    from = fromAddress
+                    const sourceChainToken = await this.symbiosis.bestTransitStable(sourceChainId)
                     chainIdFrom = sourceChainToken.chainId
                     fromTokenAmount = new TokenAmount(
                         sourceChainToken,

@@ -170,30 +170,29 @@ export class RevertPending {
     }
 
     private buildMetaBurnCalldata(feeV2?: TokenAmount) {
-        const chainId = this.request.chainIdFrom
-        const { to } = this.request
+        const { to, from, chainIdFrom } = this.request
         const synthesis = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
-        const sToken = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainId)?.address
+        const sToken = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdFrom)?.address
         if (!sToken) {
-            throw new Error(`Cannot find synthetic token between mChain and ${chainId}`)
+            throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
         const metarouter = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId)
 
         const calldata = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
             {
-                stableBridgingFee: feeV2 ? feeV2.raw.toString() : '0', // uint256 stableBridgingFee;
-                amount: '0', // uint256 amount;
-                syntCaller: metarouter.address, // address syntCaller;
-                finalReceiveSide: AddressZero, // address finalReceiveSide;
+                stableBridgingFee: feeV2 ? feeV2.raw.toString() : '0',
+                amount: '0',
+                syntCaller: metarouter.address,
+                finalReceiveSide: AddressZero,
                 sToken,
-                finalCallData: [], // bytes finalCallData;
-                finalOffset: 0, // uint256 finalOffset;
-                chain2address: to, // address chain2address;
-                receiveSide: this.symbiosis.portal(chainId).address,
-                oppositeBridge: this.symbiosis.bridge(chainId).address,
+                finalCallData: [],
+                finalOffset: 0,
+                chain2address: from, // NOTE: funds will be returned there if got stuck
+                receiveSide: this.symbiosis.portal(chainIdFrom).address,
+                oppositeBridge: this.symbiosis.bridge(chainIdFrom).address,
                 revertableAddress: to,
-                chainID: chainId,
+                chainID: chainIdFrom,
                 clientID: this.symbiosis.clientId,
             },
         ])

@@ -36,6 +36,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ARBITRUM_NOVA,
     ChainId.OPTIMISM_MAINNET,
     ChainId.ZETACHAIN_ATHENS_2,
+    ChainId.POLYGON_ZK,
 ]
 
 // a list of tokens by chain
@@ -96,6 +97,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.ARBITRUM_NOVA]: [WETH[ChainId.ARBITRUM_NOVA]],
     [ChainId.OPTIMISM_MAINNET]: [WETH[ChainId.OPTIMISM_MAINNET]],
     [ChainId.ZETACHAIN_ATHENS_2]: [WETH[ChainId.ZETACHAIN_ATHENS_2]],
+    [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -407,6 +409,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
         }),
     ],
     [ChainId.ZETACHAIN_ATHENS_2]: [],
+    [ChainId.POLYGON_ZK]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -446,6 +449,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.OPTIMISM_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.OPTIMISM_MAINNET],
     ],
+    [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.POLYGON_ZK]],
 }
 
 /**
@@ -496,4 +500,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ARBITRUM_NOVA]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.OPTIMISM_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
+    [ChainId.POLYGON_ZK]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }

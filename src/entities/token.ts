@@ -479,4 +479,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
         },
     }),
+    [ChainId.POLYGON_ZK]: new Token({
+        chainId: ChainId.POLYGON_ZK,
+        address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
 }
