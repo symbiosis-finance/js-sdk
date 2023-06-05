@@ -9,21 +9,23 @@ npm i
 ## Run examples
 
 ```bash
-npx ts-node swappingNative.ts
-```
-or
-
-```bash
-npx ts-node swappingErc20.ts
-```
-or
-
-```bash
-npx ts-node zappingNativeToBtc.ts
+npx tsx swappingNative.ts
 ```
 
 or
 
 ```bash
-npx ts-node zappingErc20ToBtc.ts
+npx tsx swappingErc20.ts
+```
+
+or
+
+```bash
+npx tsx zappingNativeToBtc.ts
+```
+
+or
+
+```bash
+npx tsx zappingErc20ToBtc.ts
 ```

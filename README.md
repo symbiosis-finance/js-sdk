@@ -97,7 +97,7 @@ if (swappingResponse.type === 'evm') {
 }
 
 // Wait for transaction to be completed on recipient chain
-const recipientTxHash = await symbiosis.waitForComplete(txHash)
+const recipientTxHash = await symbiosis.waitForComplete(tokenOut.chainId, txHash)
 ```
 
 ## Zapping to Symbiosis
@@ -168,7 +168,7 @@ const bridgingResponse = await bridging.exactIn(
 const txHash = ...
 
 // Wait for transaction to be completed on recipient chain
-const recipientTxHash = await symbiosis.waitForComplete(txHash)
+const recipientTxHash = await symbiosis.waitForComplete(tokenOut.chainId, txHash)
 ```
 
 ## Get stuck (pending) transactions and revert them
