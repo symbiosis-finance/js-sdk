@@ -53,8 +53,8 @@ A combination of uniswap and bridging allowing you to swap any supported tokens 
 ```ts
 const swapping = symbiosis.newSwapping()
 
-// transactionRequest contains everything you need to send a transaction by yourself
-const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
+// Response contains everything you need to send a transaction by yourself
+const swappingResponse = await swapping.exactIn(
     tokenAmountIn, // TokenAmount object
     tokenOut, // Token object
     from, // from account address
@@ -66,16 +66,16 @@ const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await sw
 )
 
 let txHash
-if (transactionRequest.type === 'evm') {
+if (swappingResponse.type === 'evm') {
     // Send transaction using your EVM client library (ethers.js, viem, web3.js, etc.)
     // We use ethers.js in this example
-    const transactionResponse = await signer.sendTransaction(transactionRequest)
+    const transactionResponse = await signer.sendTransaction(swappingResponse.transactionRequest)
     txHash = transactionResponse.hash
-} else if (transactionRequest.type === 'tron') {
+} else if (swappingResponse.type === 'tron') {
     // Send the transaction using the Tron client library (tronweb, etc.)
     // We use tronweb in this example
     const { call_value, contract_address, fee_limit, function_selector, owner_address, raw_parameter } =
-        transactionRequest
+        swappingResponse.transactionRequest
 
     const triggerResult = await tronWeb.transactionBuilder.triggerSmartContract(
         contract_address,
@@ -109,7 +109,7 @@ Cross-chain zaps automate liquidity adding to the Symbiosis stable pools, DeFi p
 const swapping = symbiosis.newZapping()
 
 // Calculates fee for bridging between networks and get execute function
-const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
+const { transactionRequest, fee, tokenAmountOut, route, priceImpact, type } = await swapping.exactIn(
     tokenAmountIn, // TokenAmount object
     poolAddress, // Stable pool address
     poolChainId, // Stable pool chain id
@@ -134,7 +134,7 @@ const swapping = symbiosis.newZappingAave()`or`
 const swapping = symbiosis.newZappingCream()
 
 // Calculates fee for bridging between networks and get execute function
-const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
+const { transactionRequest, fee, tokenAmountOut, route, priceImpact, type } = await swapping.exactIn(
     tokenAmountIn, // TokenAmount object
     tokenOut, // Token object
     from, // from account address
@@ -156,15 +156,15 @@ Bridging allows you to swap stable tokens between chains.
 // Create new Bridging instance
 const bridging = symbiosis.newBridging()
 
-// Calculates fee for bridging and get execute function
-const { transactionRequest, fee, tokenAmountOut } = await bridging.exactIn(
+// Calculates fee and prepares calldata for bridging
+const bridgingResponse = await bridging.exactIn(
     tokenAmountIn, // TokenAmount object
     tokenOut, // Token object
     to, // to account address
     revertableAddress // account who can revert stucked transaction
 )
 
-// Send transaction on sender chain using your client library
+// Send transaction on sender chain using your client library (check swapping example)
 const txHash = ...
 
 // Wait for transaction to be completed on recipient chain
