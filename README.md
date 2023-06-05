@@ -12,26 +12,6 @@ You can find js-sdk docs here - https://docs.symbiosis.finance/developer-tools/s
 npm i symbiosis-js-sdk
 ```
 
-## Install dependencies
-
-```bash
-npm i
-```
-
-## Run tests
-
-```bash
-npm run test
-```
-
-## Upgrade version
-
-For upgrade versions should be use [npm versions](https://docs.npmjs.com/cli/v8/commands/npm-version) command. Version will upgrade automatically.
-
-```bash
-npm version major|minor|patch
-```
-
 # How To Use
 
 The current implementation use [ethers](https://docs.ethers.io/v5/) to interact with the Ethereum like blockchains.
@@ -174,4 +154,26 @@ const { transactionRequest } = await revertPending.revert()
 
 // Wait for transaction to be completed on recipient chain
 const log = await revertPending.waitForComplete()
+```
+
+## Development
+
+### Install dependencies
+
+```bash
+npm i
+```
+
+### Run tests
+
+```bash
+npm run test
+```
+
+### Upgrade version
+
+For upgrade versions should be use [npm versions](https://docs.npmjs.com/cli/v8/commands/npm-version) command. Version will upgrade automatically.
+
+```bash
+npm version major|minor|patch
 ```
