@@ -65,40 +65,14 @@ const swappingResponse = await swapping.exactIn(
     useAggregators // boolean (use 1inch or OpenOcean router for swaps. default = true)
 )
 
-let txHash
-if (swappingResponse.type === 'evm') {
-    // Send transaction using your EVM client library (ethers.js, viem, web3.js, etc.)
-    // We use ethers.js in this example
-    const transactionResponse = await signer.sendTransaction(swappingResponse.transactionRequest)
-    txHash = transactionResponse.hash
-} else if (swappingResponse.type === 'tron') {
-    // Send the transaction using the Tron client library (tronweb, etc.)
-    // We use tronweb in this example
-    const { call_value, contract_address, fee_limit, function_selector, owner_address, raw_parameter } =
-        swappingResponse.transactionRequest
-
-    const triggerResult = await tronWeb.transactionBuilder.triggerSmartContract(
-        contract_address,
-        function_selector,
-        {
-            rawParameter: raw_parameter,
-            callValue: call_value,
-            feeLimit: fee_limit,
-        },
-        [],
-        owner_address
-    )
-
-    const signedTx = await tronWeb.trx.sign(triggerResult.transaction, privateKey)
-
-    const sendResult = await tronWeb.trx.sendRawTransaction(signedTx)
-
-    txHash = sendResult.txid
-}
+// Send transaction using EVM or Tron client library.
+const txHash = ...
 
 // Wait for transaction to be completed on recipient chain
 const recipientTxHash = await symbiosis.waitForComplete(tokenOut.chainId, txHash)
 ```
+
+Full examples with `ethers.js` and `TronWeb` you can find in [examples](./examples/) folder.
 
 ## Zapping to Symbiosis
 
