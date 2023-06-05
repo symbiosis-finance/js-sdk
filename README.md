@@ -54,9 +54,18 @@ A combination of uniswap and bridging allowing you to swap any supported tokens 
 const swapping = symbiosis.newSwapping()
 
 // transactionRequest contains everything you need to send a transaction by yourself
-const { transactionRequest } = await swapping.exactIn(...)
+const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
+    tokenAmountIn, // TokenAmount object
+    tokenOut, // Token object
+    from, // from account address
+    to, // to account address
+    revertableAddress, // account who can revert stucked transaction
+    slippage, // slippage
+    deadline, // deadline date in seconds
+    useAggregators // boolean (use 1inch or OpenOcean router for swaps. default = true)
+)
 
-let txHash;
+let txHash
 if (transactionRequest.type === 'evm') {
     // Send transaction using your EVM client library (ethers.js, viem, web3.js, etc.)
     // We use ethers.js in this example
@@ -65,14 +74,8 @@ if (transactionRequest.type === 'evm') {
 } else if (transactionRequest.type === 'tron') {
     // Send the transaction using the Tron client library (tronweb, etc.)
     // We use tronweb in this example
-    const {
-        call_value,
-        contract_address,
-        fee_limit,
-        function_selector,
-        owner_address,
-        raw_parameter,
-    } = transactionRequest
+    const { call_value, contract_address, fee_limit, function_selector, owner_address, raw_parameter } =
+        transactionRequest
 
     const triggerResult = await tronWeb.transactionBuilder.triggerSmartContract(
         contract_address,

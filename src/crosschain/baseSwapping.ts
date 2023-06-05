@@ -222,6 +222,8 @@ export abstract class BaseSwapping {
     }
 
     protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
+        console.warn('Execute method is deprecated. Use transactionRequest object instead. Check readme for details.')
+
         const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
 
         const response = await signer.sendTransaction(preparedTransactionRequest)
