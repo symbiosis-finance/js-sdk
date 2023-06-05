@@ -131,7 +131,7 @@ Sometimes relayers are unable to process your request for bridging. This could h
 
 These requests can be found and cancelled.
 
-### Find stuck transactions:
+### Find stuck transactions
 
 ```ts
 import { getPendingRequests } from 'symbiosis-js-sdk'
@@ -142,7 +142,7 @@ const pendingRequests = await symbiosis.getPendingRequests(
 )
 ```
 
-### Revert stucked transaction:
+### Revert stucked transaction
 
 ```ts
 const revertPending = symbiosis.newRevertPending(request)
