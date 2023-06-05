@@ -32,6 +32,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
     [ChainId.OPTIMISM_MAINNET]: 'optimism',
     [ChainId.ZKSYNC_MAINNET]: 'zksync',
+    [ChainId.POLYGON_ZK]: 'polygon_zkevm',
 }
 
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const

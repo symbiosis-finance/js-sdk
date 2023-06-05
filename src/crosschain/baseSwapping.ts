@@ -454,6 +454,22 @@ export abstract class BaseSwapping {
         const chainId = this.tokenOut.chainId
         const dexFee = this.symbiosis.dexFee(chainId)
 
+        // POLYGON_ZK only
+        if (chainId === ChainId.POLYGON_ZK && this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+            const from = this.symbiosis.metaRouter(chainId).address
+            return new AggregatorTrade({
+                tokenAmountIn: amountIn,
+                tokenOut: this.tokenOut,
+                from,
+                to: this.tradeCTo(),
+                slippage: this.slippage['C'] / 100,
+                symbiosis: this.symbiosis,
+                dataProvider: this.dataProvider,
+                clientId: this.symbiosis.clientId,
+                options: this.options,
+            })
+        }
+
         if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)

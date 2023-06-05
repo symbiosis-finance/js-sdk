@@ -364,6 +364,16 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
+        id: ChainId.POLYGON_ZK,
+        name: 'Polygon zkEVM',
+        disabled: false,
+        explorer: 'https://zkevm.polygonscan.com/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+        },
+    }),
+    new Chain({
         id: ChainId.TRON_MAINNET,
         name: 'Tron',
         disabled: false,
