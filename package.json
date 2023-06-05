@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "2.9.57",
+    "version": "3.0.0-tron.0",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
     "files": [
