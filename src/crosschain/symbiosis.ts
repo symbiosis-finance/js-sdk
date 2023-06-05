@@ -32,8 +32,6 @@ import {
     MulticallRouter__factory,
     MuteRouter,
     MuteRouter__factory,
-    NervePool,
-    NervePool__factory,
     OmniPool,
     OmniPool__factory,
     OmniPoolOracle,
@@ -233,66 +231,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return MuteRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {
-        const chainId = tokenA.chainId
-        const address = this.chainConfig(chainId).nerves.find((data) => {
-            return (
-                data.tokens.find((token) => token.toLowerCase() === tokenA.address.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenB.address.toLowerCase())
-            )
-        })?.address
-
-        if (!address) {
-            throw new Error('Nerve pool not found')
-        }
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(address, signerOrProvider)
-    }
-
-    public getNerveTokenIndexes(chainId: ChainId, tokenA: string, tokenB: string) {
-        const pool = this.chainConfig(chainId).nerves.find((data) => {
-            return (
-                data.tokens.find((token) => token.toLowerCase() === tokenA.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenB.toLowerCase())
-            )
-        })
-
-        if (!pool) {
-            throw new Error('Nerve pool not found')
-        }
-
-        const tokens = pool.tokens.map((i) => i.toLowerCase())
-        const indexA = tokens.indexOf(tokenA.toLowerCase())
-        const indexB = tokens.indexOf(tokenB.toLowerCase())
-
-        if (indexA === -1 || indexB === -1) {
-            throw new Error('Cannot find token')
-        }
-
-        return [indexA, indexB]
-    }
-
-    public nervePoolByAddress(address: string, chainId: ChainId, signer?: Signer): NervePool {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(address, signerOrProvider)
-    }
-
-    public nervePoolBySynth(synthTokenAddress: string, chainId: ChainId, signer?: Signer): NervePool {
-        const pool = this.chainConfig(chainId).nerves.find((data) => {
-            return data.tokens[1].toLowerCase() === synthTokenAddress.toLowerCase()
-        })
-
-        if (!pool) {
-            throw new Error('Nerve pool not found')
-        }
-
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(pool.address, signerOrProvider)
     }
 
     public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
