@@ -114,7 +114,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         }
     }
 
-    static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token) {
+    static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token): Promise<Pair[]> {
         const allPairCombinations = getAllPairCombinations(tokenIn, tokenOut)
         return await UniLikeTrade.allPairs(provider, allPairCombinations)
     }

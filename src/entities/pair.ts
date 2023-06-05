@@ -3,7 +3,7 @@ import { TokenAmount } from './fractions/tokenAmount'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import { keccak256, pack } from '@ethersproject/solidity'
-import { getCreate2Address } from '@ethersproject/address'
+import { getCreate2Address as getEvmCreate2Address } from '@ethersproject/address'
 
 import {
     _1000,
@@ -19,6 +19,7 @@ import {
     MUTE_POOLS,
 } from '../constants'
 import { parseBigintIsh, sqrt } from '../utils'
+import { getTronCreate2Address, isTronToken } from '../crosschain/tron'
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 
@@ -49,6 +50,8 @@ export class Pair {
         }
 
         if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
+            const getCreate2Address = isTronToken(tokenA) ? getTronCreate2Address : getEvmCreate2Address
+
             PAIR_ADDRESS_CACHE = {
                 ...PAIR_ADDRESS_CACHE,
                 [tokens[0].address]: {

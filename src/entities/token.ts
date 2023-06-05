@@ -1,8 +1,7 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
-import TronWeb from 'tronweb'
 import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { isTronChainId } from '../crosschain/tron'
+import { isTronChainId, tronAddressToEvm } from '../crosschain/tron'
 import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import { Chain, getChainById } from './chain'
 
@@ -40,7 +39,7 @@ export class Token {
         this.userToken = params.userToken
 
         if (isTronChainId(params.chainId)) {
-            this.address = TronWeb.address.fromHex(params.address)
+            this.address = tronAddressToEvm(params.address)
             return
         }
 
@@ -102,11 +101,6 @@ export const WETH = {
     }),
     [ChainId.TRON_MAINNET]: new Token({
         chainId: ChainId.TRON_MAINNET,
-        address: '',
-        decimals: 8,
-    }),
-    [ChainId.TRON_TESTNET]: new Token({
-        chainId: ChainId.TRON_TESTNET,
         address: '',
         decimals: 8,
     }),
@@ -494,6 +488,18 @@ export const WETH = {
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+        },
+    }),
+    [ChainId.TRON_TESTNET]: new Token({
+        chainId: ChainId.TRON_TESTNET,
+        address: '0xf060b2655346cf3f825c3300177dff8a2acd89aa',
+        decimals: 18,
+        symbol: 'WTRX',
+        isNative: false,
+        name: 'Wrapped TRX',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
         },
     }),
 }

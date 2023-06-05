@@ -1,9 +1,12 @@
 import { JsonFragment } from '@ethersproject/abi'
+import { getAddress } from '@ethersproject/address'
+import { BytesLike, concat, hexDataSlice } from '@ethersproject/bytes'
+import { keccak256 as kekKeccak256 } from '@ethersproject/keccak256'
 import BigNumber from 'bignumber.js'
+import { utils } from 'ethers'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, Token } from '../entities'
-import { encodeParamsV2ByABI, getFunctionSelector } from './tronWeb'
 
 export interface TronTransactionData {
     call_value: number | string
@@ -24,6 +27,17 @@ interface Params {
     value?: string | number | BigNumber
 }
 
+export function getFunctionSelector(abi: any): string {
+    abi.stateMutability = abi.stateMutability ? abi.stateMutability.toLowerCase() : 'nonpayable'
+    abi.type = abi.type ? abi.type.toLowerCase() : ''
+    if (abi.type === 'fallback' || abi.type === 'receive') return '0x'
+    const iface = new utils.Interface([abi])
+    if (abi.type === 'event') {
+        return iface.getEvent(abi.name).format(utils.FormatTypes.sighash)
+    }
+    return iface.getFunction(abi.name).format(utils.FormatTypes.sighash)
+}
+
 export function prepareTronTransaction({
     tronWeb,
     abi,
@@ -41,7 +55,7 @@ export function prepareTronTransaction({
 
     const functionSelector = getFunctionSelector(functionFragment)
 
-    const rawParameter = encodeParamsV2ByABI(functionFragment, params)
+    const rawParameter = tronWeb.utils.abi.encodeParamsV2ByABI(functionFragment, params)
 
     return {
         call_value: value?.toString() ?? 0,
@@ -79,4 +93,9 @@ export async function getTransactionInfoById(tronWeb: TronWeb, txId: string): Pr
     }
 
     return null
+}
+
+// Tron uses 0x41 as the prefix for contract addresses created by CREATE2, unlike EVM 0xff.
+export function getTronCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
+    return getAddress(hexDataSlice(kekKeccak256(concat(['0x41', getAddress(from), salt, initCodeHash])), 12))
 }

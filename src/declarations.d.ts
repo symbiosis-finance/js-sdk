@@ -103,6 +103,11 @@ declare module 'tronweb' {
                 address?: string
             ): Promise<TriggerSmartContractResult>
         }
+        utils: {
+            abi: {
+                encodeParamsV2ByABI(abi: any, parameter: any[]): string
+            }
+        }
         defaultAddress?: {
             base58: string
             hex: string

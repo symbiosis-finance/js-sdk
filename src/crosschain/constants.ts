@@ -409,6 +409,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
         }),
     ],
     [ChainId.ZETACHAIN_ATHENS_2]: [],
+    [ChainId.TRON_TESTNET]: [
+        new Token({
+            chainId: ChainId.TRON_TESTNET,
+            address: '0x42a1e39aefa49290f2b3f9ed688d7cecf86cd6e0',
+            decimals: 6,
+            symbol: 'USDT',
+            name: 'Tether USD',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -448,6 +457,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.OPTIMISM_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.OPTIMISM_MAINNET],
     ],
+    [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TRON_TESTNET]],
 }
 
 /**
@@ -498,4 +508,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ARBITRUM_NOVA]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.OPTIMISM_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
+    [ChainId.TRON_TESTNET]: '0x00e08cb2cd7480ddf6c54430207dff81ce359887',
 }

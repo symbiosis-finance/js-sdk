@@ -113,9 +113,9 @@ export abstract class BaseSwapping {
         this.tokenOut = tokenOut
         this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
         this.transitStableOut = await this.symbiosis.bestTransitStable(this.tokenOut.chainId)
-        this.from = from
-        this.to = to
-        this.revertableAddress = revertableAddress
+        this.from = tronAddressToEvm(from)
+        this.to = tronAddressToEvm(to)
+        this.revertableAddress = tronAddressToEvm(revertableAddress)
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)

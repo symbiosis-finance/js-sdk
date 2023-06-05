@@ -89,12 +89,14 @@ export class Symbiosis {
         } else {
             this.config = config
         }
+
         this.omniPoolConfig = this.config.omniPool
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
-            this.config.chains.map((i) => {
-                return [i.id, new StaticJsonRpcProvider(i.rpc, i.id)]
+            this.config.chains.map((chain) => {
+                const rpc = isTronChainId(chain.id) ? `${chain.rpc}/jsonrpc` : chain.rpc
+                return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
     }
