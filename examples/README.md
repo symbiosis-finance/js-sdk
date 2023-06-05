@@ -1,31 +1,51 @@
-# Swap and Zap examples
+# Swap and Zap Examples
 
-## Install dependencies
+This repository contains example scripts demonstrating the swapping and zapping functionality using the `symbiosis-js-sdk`.
+
+## Getting Started
+
+Follow the steps below to run these examples:
+
+### 1. Install Dependencies
+
+First, install all necessary dependencies using npm:
 
 ```bash
 npm i
 ```
 
-## Run examples
+### 2. Run Examples
+
+To run an example, use the `npx tsx` command followed by the script name. Here are the available scripts:
+
+#### Swapping Native Tokens:
 
 ```bash
 npx tsx swappingNative.ts
 ```
 
-or
+#### Swapping ERC20 Tokens:
 
 ```bash
 npx tsx swappingErc20.ts
 ```
 
-or
+### Swapping TRC-20 (Tron) Tokens
+
+```bash
+npx tsx swappingTrc20.ts
+```
+
+#### Zapping Native Tokens to BTC:
 
 ```bash
 npx tsx zappingNativeToBtc.ts
 ```
 
-or
+#### Zapping ERC20 Tokens to BTC:
 
 ```bash
 npx tsx zappingErc20ToBtc.ts
 ```
+
+> Choose the script that aligns with your use case and run it. Remember to configure the script appropriately to fit your environment, ensuring all necessary variables are correctly set.
