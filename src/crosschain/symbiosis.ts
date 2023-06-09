@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber, Signer, utils } from 'ethers'
-import fetch from 'isomorphic-unfetch'
+// import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
@@ -337,8 +337,9 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public omniPool(signer?: Signer): OmniPool {
-        const { address, chainId } = this.omniPoolConfig
+    // TODO: Pass address
+    public omniPool(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPool {
+        const { address, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPool__factory.connect(address, signerOrProvider)
@@ -493,22 +494,35 @@ export class Symbiosis {
         return stables
     }
 
-    public async bestTransitStable(chainId: ChainId): Promise<Token> {
+    public async bestTransitStable(
+        chainId: ChainId,
+        omniPoolConfig: OmniPoolConfig = this.omniPoolConfig
+    ): Promise<Token> {
         const stables = this.transitStables(chainId)
         if (stables.length === 1) {
             return stables[0]
         }
 
-        const pool = this.omniPool()
+        const pool = this.omniPool(undefined, omniPoolConfig)
+
         const promises = stables.map(async (i): Promise<[Token, PoolAsset] | undefined> => {
-            const sToken = await getRepresentation(this, i, ChainId.BOBA_BNB)
-            if (!sToken) return
-            const index = await pool.assetToIndex(sToken.address)
-            const asset = await pool.indexToAsset(index)
+            const sToken = await getRepresentation(this, i, omniPoolConfig.chainId)
+            console.log(sToken, 'sToken')
+            if (!sToken) {
+                return
+            }
+
+            const assetIndex = await pool.assetToIndex(sToken.address)
+            const asset = await pool.indexToAsset(assetIndex)
+
+            if (asset.token.toLowerCase() !== sToken.address.toLowerCase()) {
+                return
+            }
+
             return [i, asset]
         })
 
-        const pairs = (await Promise.all(promises)).filter((i) => i !== undefined) as [Token, PoolAsset][]
+        const pairs = (await Promise.all(promises)).filter((i): i is [Token, PoolAsset] => i !== undefined)
 
         function assetScore(asset: PoolAsset): BigNumber {
             const cash = asset.cash
@@ -525,13 +539,11 @@ export class Symbiosis {
             const a = assetScore(pairA[1])
             const b = assetScore(pairB[1])
 
-            if (a.gt(b)) {
-                return -1
+            if (a.eq(b)) {
+                return 0
             }
-            if (a.lt(b)) {
-                return 1
-            }
-            return 0
+
+            return a.gt(b) ? -1 : 1
         })
 
         return sortedPairs[0][0]

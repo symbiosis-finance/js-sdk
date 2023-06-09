@@ -16,6 +16,7 @@ import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
+import { OmniPoolConfig } from './types'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -37,8 +38,9 @@ export type DetailedSlippage = {
     C: number
 }
 
-export type SwapOptions = {
+export interface SwapOptions {
     oneInchProtocols?: OneInchProtocols
+    omniPoolConfig: OmniPoolConfig
 }
 
 export abstract class BaseSwapping {
@@ -65,8 +67,8 @@ export abstract class BaseSwapping {
     protected readonly symbiosis: Symbiosis
     protected synthesisV2!: Synthesis
 
-    protected transitStableIn!: Token
-    protected transitStableOut!: Token
+    protected transitTokenIn!: Token
+    protected transitTokenOut!: Token
 
     protected options!: SwapOptions
 
@@ -86,23 +88,38 @@ export abstract class BaseSwapping {
         slippage: number,
         deadline: number,
         useAggregators: boolean,
-        options?: SwapOptions
+        options?: Partial<SwapOptions>
     ): SwapExactIn {
-        this.options = options || {}
+        this.options = {
+            // TODO: Backward compatibility. Remove in future.
+            omniPoolConfig: this.symbiosis.omniPoolConfig,
+            ...options,
+        }
+
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
-        this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
-        this.transitStableOut = await this.symbiosis.bestTransitStable(this.tokenOut.chainId)
+
+        console.log(this.options.omniPoolConfig)
+        this.transitTokenIn = await this.symbiosis.bestTransitStable(
+            this.tokenAmountIn.token.chainId,
+            this.options.omniPoolConfig
+        )
+        this.transitTokenOut = await this.symbiosis.bestTransitStable(
+            this.tokenOut.chainId,
+            this.options.omniPoolConfig
+        )
+
+        console.log('transitTokenIn', this.transitTokenIn, 'transitTokenOut', this.transitTokenOut)
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
-        this.synthesisV2 = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
+        this.synthesisV2 = this.symbiosis.synthesis(this.options.omniPoolConfig.chainId)
 
-        if (!this.transitStableIn.equals(tokenAmountIn.token)) {
+        if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
         }
@@ -112,7 +129,7 @@ export abstract class BaseSwapping {
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
-        if (!this.transitStableOut.equals(tokenOut)) {
+        if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
         }
@@ -130,7 +147,7 @@ export abstract class BaseSwapping {
         this.transit = await this.buildTransit(fee)
         await this.transit.init()
 
-        if (!this.transitStableOut.equals(tokenOut)) {
+        if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC(feeV2)
             await this.tradeC.init()
         }
@@ -155,10 +172,10 @@ export abstract class BaseSwapping {
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
         let externalSwapsCount = 0
-        if (!this.transitStableIn.equals(this.tokenAmountIn.token)) {
+        if (!this.transitTokenIn.equals(this.tokenAmountIn.token)) {
             externalSwapsCount += 1
         }
-        if (!this.transitStableOut.equals(this.tokenOut)) {
+        if (!this.transitTokenOut.equals(this.tokenOut)) {
             externalSwapsCount += 1
         }
 
@@ -218,18 +235,18 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 revertableAddress: this.revertableAddress,
                 chainIdIn: this.tokenAmountIn.token.chainId,
-                chainIdOut: this.symbiosis.omniPoolConfig.chainId,
+                chainIdOut: this.options.omniPoolConfig.chainId,
             })
             const log = await wfc1.waitForComplete(receipt)
 
-            const provider = this.symbiosis.getProvider(this.symbiosis.omniPoolConfig.chainId)
+            const provider = this.symbiosis.getProvider(this.options.omniPoolConfig.chainId)
             const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
 
             const wfc2 = new WaitForComplete({
                 direction: 'burn',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.revertableAddress,
-                chainIdIn: this.symbiosis.omniPoolConfig.chainId,
+                chainIdIn: this.options.omniPoolConfig.chainId,
                 chainIdOut: this.tokenOut.chainId,
             })
             return wfc2.waitForComplete(receipt2)
@@ -310,7 +327,7 @@ export abstract class BaseSwapping {
 
     protected buildTradeA(): SymbiosisTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.transitStableIn
+        const tokenOut = this.transitTokenIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
         const dexFee = this.symbiosis.dexFee(chainId)
@@ -350,10 +367,11 @@ export abstract class BaseSwapping {
             this.dataProvider,
             this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
             this.tokenOut,
-            this.transitStableIn,
-            this.transitStableOut,
+            this.transitTokenIn,
+            this.transitTokenOut,
             this.slippage['B'],
             this.deadline,
+            this.options.omniPoolConfig,
             fee
         )
     }
@@ -378,7 +396,7 @@ export abstract class BaseSwapping {
                 }
                 amountRaw = JSBI.subtract(amountRaw, feeV2.raw)
             }
-            amountIn = new TokenAmount(this.transitStableOut, amountRaw)
+            amountIn = new TokenAmount(this.transitTokenOut, amountRaw)
         }
 
         const chainId = this.tokenOut.chainId
@@ -484,7 +502,7 @@ export abstract class BaseSwapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.transit.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? this.options.omniPoolConfig.chainId : this.tokenOut.chainId
         const tokenAmount = this.transit.getBridgeAmountIn()
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -520,7 +538,7 @@ export abstract class BaseSwapping {
 
     protected async feeMintCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.transit.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? this.options.omniPoolConfig.chainId : this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
@@ -596,7 +614,7 @@ export abstract class BaseSwapping {
     }
 
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
-        const chainIdIn = this.symbiosis.omniPoolConfig.chainId
+        const chainIdIn = this.options.omniPoolConfig.chainId
         const chainIdOut = this.tokenOut.chainId
 
         const synthesis = this.symbiosis.synthesis(chainIdIn)
@@ -620,7 +638,7 @@ export abstract class BaseSwapping {
             externalId, // _externalID,
             this.to, // _to
             this.transit.amountOut.raw.toString(), // _amount
-            this.transitStableOut.address, // _rToken
+            this.transitTokenOut.address, // _rToken
             this.finalReceiveSide(), // _finalReceiveSide
             this.finalCalldata(), // _finalCalldata
             this.finalOffset(), // _finalOffset
@@ -630,7 +648,7 @@ export abstract class BaseSwapping {
 
     protected async getFee(feeToken: Token): Promise<TokenAmount> {
         const chainIdFrom = this.tokenAmountIn.token.chainId
-        const chainIdTo = this.transit.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
+        const chainIdTo = this.transit.isV2() ? this.options.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata] =
             this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData() // mint or v2
         const fee = await this.symbiosis.getBridgeFee({
@@ -643,13 +661,13 @@ export abstract class BaseSwapping {
     }
 
     protected async getFeeV2(): Promise<TokenAmount> {
-        const feeToken = this.transitStableOut
+        const feeToken = this.transitTokenOut
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
-            chainIdFrom: this.symbiosis.omniPoolConfig.chainId,
+            chainIdFrom: this.options.omniPoolConfig.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
         return new TokenAmount(feeToken, fee.toString())
@@ -703,7 +721,7 @@ export abstract class BaseSwapping {
             {
                 stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
                 amount: this.transit.amountOut.raw.toString(), // uint256 amount;
-                syntCaller: this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address, // address syntCaller;
+                syntCaller: this.symbiosis.metaRouter(this.options.omniPoolConfig.chainId).address, // address syntCaller;
                 finalReceiveSide: this.finalReceiveSide(), // address finalReceiveSide;
                 sToken: this.transit.amountOut.token.address, // address sToken;
                 finalCallData: this.finalCalldata(), // bytes finalCallData;

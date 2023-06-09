@@ -55,6 +55,7 @@ export type OmniPoolConfig = {
 export type Config = {
     advisor: AdvisorConfig
     omniPool: OmniPoolConfig
+    omniPools: OmniPoolConfig[]
     chains: ChainConfig[]
     minSwapAmountInUsd: number
     maxSwapAmountInUsd: number

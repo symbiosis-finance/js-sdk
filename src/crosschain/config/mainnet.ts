@@ -11,6 +11,18 @@ export const config: Config = {
         address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
         oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
     },
+    omniPools: [
+        {
+            chainId: 56288,
+            address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
+            oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
+        },
+        {
+            chainId: 56288,
+            address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
+            oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
+        },
+    ],
     chains: [
         {
             id: 1,
@@ -40,6 +52,18 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
+                },
+                {
+                    name: 'Wrapped Ether',
+                    symbol: 'WETH',
+                    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+                    chainId: 1,
+                    decimals: 18,
+                    isStable: true,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/2396.png',
                     },
                 },
             ],
@@ -326,6 +350,19 @@ export const config: Config = {
                     isStable: true,
                     decimals: 18,
                     chainId: 56288,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'Synthetic ETH',
+                    symbol: 'sETH',
+                    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+                    chainId: 56288,
+                    chainFromId: 1,
+                    decimals: 18,
+                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
