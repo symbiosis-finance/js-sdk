@@ -100,7 +100,6 @@ export abstract class BaseSwapping {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
 
-        console.log(this.options.omniPoolConfig)
         this.transitTokenIn = await this.symbiosis.bestTransitStable(
             this.tokenAmountIn.token.chainId,
             this.options.omniPoolConfig
@@ -110,7 +109,6 @@ export abstract class BaseSwapping {
             this.options.omniPoolConfig
         )
 
-        console.log('transitTokenIn', this.transitTokenIn, 'transitTokenOut', this.transitTokenOut)
         this.from = from
         this.to = to
         this.revertableAddress = revertableAddress

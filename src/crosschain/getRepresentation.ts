@@ -25,8 +25,6 @@ export async function getRepresentation(
             representation = await fabric.getSyntRepresentation(wrapped.address, wrapped.chainId)
         }
 
-        console.log('token', representation)
-
         if (representation === AddressZero) {
             return undefined
         }
