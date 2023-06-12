@@ -345,8 +345,8 @@ export class Symbiosis {
         return OmniPool__factory.connect(address, signerOrProvider)
     }
 
-    public omniPoolOracle(signer?: Signer): OmniPoolOracle {
-        const { oracle, chainId } = this.omniPoolConfig
+    public omniPoolOracle(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPoolOracle {
+        const { oracle, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
@@ -507,7 +507,6 @@ export class Symbiosis {
 
         const promises = stables.map(async (i): Promise<[Token, PoolAsset] | undefined> => {
             const sToken = await getRepresentation(this, i, omniPoolConfig.chainId)
-            console.log(sToken, 'sToken')
             if (!sToken) {
                 return
             }
@@ -523,6 +522,10 @@ export class Symbiosis {
         })
 
         const pairs = (await Promise.all(promises)).filter((i): i is [Token, PoolAsset] => i !== undefined)
+
+        if (!pairs.length) {
+            throw new Error(`Cannot find transit token for chain ${chainId}`)
+        }
 
         function assetScore(asset: PoolAsset): BigNumber {
             const cash = asset.cash

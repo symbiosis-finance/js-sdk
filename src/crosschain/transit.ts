@@ -55,7 +55,8 @@ export class Transit {
         this.route = this.trade.route
         this.priceImpact = this.trade.priceImpact
 
-        this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
+        // @@
+        // this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
 
         return this
     }
@@ -204,7 +205,15 @@ export class Transit {
 
         const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 
-        const trade = new OmniTrade(tokenAmountIn, tokenOut, this.slippage, this.deadline, this.symbiosis, to)
+        const trade = new OmniTrade(
+            tokenAmountIn,
+            tokenOut,
+            this.slippage,
+            this.deadline,
+            this.symbiosis,
+            to,
+            this.omniPoolConfig
+        )
         await trade.init()
 
         return trade
