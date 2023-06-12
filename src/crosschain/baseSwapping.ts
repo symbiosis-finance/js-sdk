@@ -330,6 +330,7 @@ export abstract class BaseSwapping {
         const tronWeb = this.symbiosis.tronWeb(chainId)
 
         return prepareTronTransaction({
+            chainId,
             tronWeb,
             abi: TRON_METAROUTER_ABI,
             contractAddress: metaRouter,

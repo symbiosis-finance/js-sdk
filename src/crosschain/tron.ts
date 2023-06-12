@@ -9,6 +9,7 @@ import { ChainId } from '../constants'
 import { Chain, Token } from '../entities'
 
 export interface TronTransactionData {
+    chain_id: number
     call_value: number | string
     contract_address: string
     fee_limit: number
@@ -18,6 +19,7 @@ export interface TronTransactionData {
 }
 
 interface Params {
+    chainId: ChainId
     tronWeb: TronWeb
     abi: ReadonlyArray<JsonFragment>
     contractAddress: string
@@ -39,6 +41,7 @@ export function getFunctionSelector(abi: any): string {
 }
 
 export function prepareTronTransaction({
+    chainId,
     tronWeb,
     abi,
     contractAddress,
@@ -58,11 +61,12 @@ export function prepareTronTransaction({
     const rawParameter = tronWeb.utils.abi.encodeParamsV2ByABI(functionFragment, params)
 
     return {
+        chain_id: chainId,
         call_value: value?.toString() ?? 0,
-        contract_address: TronWeb.address.toHex(contractAddress),
+        contract_address: TronWeb.address.fromHex(contractAddress),
         fee_limit: tronWeb.feeLimit,
         function_selector: functionSelector,
-        owner_address: TronWeb.address.toHex(ownerAddress),
+        owner_address: TronWeb.address.fromHex(ownerAddress),
         raw_parameter: rawParameter,
     }
 }

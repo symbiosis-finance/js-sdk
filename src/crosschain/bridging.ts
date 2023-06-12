@@ -155,6 +155,7 @@ export class Bridging {
         }
 
         return prepareTronTransaction({
+            chainId,
             abi: TRON_PORTAL_ABI,
             ownerAddress: this.from,
             contractAddress: portalAddress,
