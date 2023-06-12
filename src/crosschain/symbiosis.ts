@@ -52,6 +52,8 @@ import {
     RenGatewayRegistryV2__factory,
     RenMintGatewayV3,
     RenMintGatewayV3__factory,
+    SyncSwapLaunchPool,
+    SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
     UniLikeRouter,
@@ -63,7 +65,7 @@ import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './p
 import { RevertPending } from './revert'
 import { statelessWaitForComplete } from './statelessWaitForComplete'
 import { Swapping } from './swapping'
-import { getTransactionInfoById, isTronChainId } from './tron'
+import { getTransactionInfoById, isTronChainId, tronAddressToEvm } from './tron'
 import { ChainConfig, Config, OmniPoolConfig, PoolAsset } from './types'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
@@ -388,6 +390,12 @@ export class Symbiosis {
         return Ooki__factory.connect(address, signerOrProvider)
     }
 
+    public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
+    }
+
     public stables(): Token[] {
         return this.config.chains
             .map((chainConfig) => {
@@ -407,6 +415,10 @@ export class Symbiosis {
     }
 
     public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
+        if (isTronChainId(chainId)) {
+            address = tronAddressToEvm(address)
+        }
+
         return this.stables().find((token) => {
             const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
 

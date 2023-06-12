@@ -57,8 +57,6 @@ export class Bridging {
     public to!: string
     public revertableAddress!: string
 
-    protected fee: TokenAmount | undefined
-
     private readonly symbiosis: Symbiosis
 
     public constructor(symbiosis: Symbiosis) {
@@ -66,10 +64,6 @@ export class Bridging {
     }
 
     public async exactIn({ from, revertableAddress, to, tokenAmountIn, tokenOut }: BridgeExactInParams): BridgeExactIn {
-        if (this.tokenAmountIn?.token !== tokenAmountIn.token || this.tokenOut !== tokenOut) {
-            this.fee = undefined
-        }
-
         this.symbiosis.validateSwapAmounts(tokenAmountIn)
 
         this.tokenAmountIn = tokenAmountIn
@@ -79,21 +73,19 @@ export class Bridging {
         this.revertableAddress = revertableAddress
         this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
 
-        const fee = this.fee || (await this.getFee())
-
-        this.fee = fee
+        const fee = await this.getFee()
 
         const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
-        if (tokenAmountOut.lessThan(this.fee)) {
+        if (tokenAmountOut.lessThan(fee)) {
             throw new Error(
                 `Amount ${tokenAmountOut.toSignificant()} ${
                     tokenAmountOut.token.symbol
-                } less than fee ${this.fee.toSignificant()} ${this.fee.token.symbol}`,
+                } less than fee ${fee.toSignificant()} ${fee.token.symbol}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
 
-        this.tokenAmountOut = tokenAmountOut.subtract(this.fee)
+        this.tokenAmountOut = tokenAmountOut.subtract(fee)
 
         if (isTronToken(this.tokenAmountIn.token)) {
             const transactionRequest = this.getTronTransactionRequest(fee)

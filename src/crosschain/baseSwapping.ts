@@ -91,6 +91,8 @@ export abstract class BaseSwapping {
 
     protected options!: SwapOptions
 
+    protected feeV2: TokenAmount | undefined
+
     public constructor(symbiosis: Symbiosis) {
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
@@ -139,8 +141,9 @@ export abstract class BaseSwapping {
         this.route = this.getRoute()
 
         const fee = await this.getFee(this.transit.feeToken)
-
         const feeV2 = this.transit.isV2() ? await this.getFeeV2() : undefined
+
+        this.feeV2 = feeV2
 
         const tokenAmountOutWithZeroFee = this.tokenAmountOut()
 
