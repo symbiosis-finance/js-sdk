@@ -71,6 +71,7 @@ import { ZappingOoki } from './zappingOoki'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
+import { getMulticall } from './multicall'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -505,23 +506,64 @@ export class Symbiosis {
 
         const pool = this.omniPool(undefined, omniPoolConfig)
 
-        const promises = stables.map(async (i): Promise<[Token, PoolAsset] | undefined> => {
-            const sToken = await getRepresentation(this, i, omniPoolConfig.chainId)
-            if (!sToken) {
+        const representations = await Promise.all(
+            stables.map((stableToken) => getRepresentation(this, stableToken, omniPoolConfig.chainId))
+        )
+
+        const representationToToken = new Map<Token, Token>()
+
+        const filteredRepresentations: Token[] = []
+        for (let i = 0; i < representations.length; i++) {
+            const representation = representations[i]
+            if (!representation) {
+                continue
+            }
+
+            representationToToken.set(representation, stables[i])
+            filteredRepresentations.push(representation)
+        }
+
+        const provider = this.getProvider(omniPoolConfig.chainId)
+        const multicall = await getMulticall(provider)
+
+        const assetIndexesResults = await multicall.callStatic.tryAggregate(
+            false,
+            filteredRepresentations.map((token) => ({
+                target: pool.address,
+                callData: pool.interface.encodeFunctionData('assetToIndex', [token.address]),
+            }))
+        )
+
+        const assetResults = await multicall.callStatic.tryAggregate(
+            false,
+            assetIndexesResults.map(([success, returnData]) => ({
+                target: pool.address,
+                callData: pool.interface.encodeFunctionData('indexToAsset', [
+                    success ? pool.interface.decodeFunctionResult('assetToIndex', returnData)[0] : 0,
+                ]),
+            }))
+        )
+
+        const pairs: [Token, PoolAsset][] = []
+        assetResults.forEach(([success, returnData], index) => {
+            if (!success) {
                 return
             }
 
-            const assetIndex = await pool.assetToIndex(sToken.address)
-            const asset = await pool.indexToAsset(assetIndex)
-
-            if (asset.token.toLowerCase() !== sToken.address.toLowerCase()) {
+            const representation = filteredRepresentations[index]
+            const asset = pool.interface.decodeFunctionResult('indexToAsset', returnData) as unknown as PoolAsset
+            if (asset.token.toLowerCase() !== representation.address.toLowerCase()) {
                 return
             }
 
-            return [i, asset]
+            const token = representationToToken.get(representation)
+
+            if (!token) {
+                return
+            }
+
+            pairs.push([token, asset])
         })
-
-        const pairs = (await Promise.all(promises)).filter((i): i is [Token, PoolAsset] => i !== undefined)
 
         if (!pairs.length) {
             throw new Error(`Cannot find transit token for chain ${chainId}`)

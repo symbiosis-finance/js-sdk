@@ -173,7 +173,7 @@ export class Transit {
         }
 
         // mint or v2
-        const rep = await this.dataProvider.getRepresentation(this.transitTokenIn, transitStableOutChainId) // sUSDC
+        const rep = await this.dataProvider.getRepresentation(this.transitTokenIn, transitStableOutChainId) // sToken
         if (!rep) {
             throw new Error(
                 `Representation of ${this.transitTokenIn.chainId}:${this.transitTokenIn.symbol} in chain ${transitStableOutChainId} not found`,

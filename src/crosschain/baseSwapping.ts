@@ -142,7 +142,7 @@ export abstract class BaseSwapping {
         const tokenAmountOutWithZeroFee = this.tokenAmountOut()
 
         // >>> NOTE create trades with calculated fee
-        this.transit = await this.buildTransit(fee)
+        this.transit = this.buildTransit(fee)
         await this.transit.init()
 
         if (!this.transitTokenOut.equals(tokenOut)) {
