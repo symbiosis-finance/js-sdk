@@ -1,4 +1,4 @@
-// import fetch from 'isomorphic-unfetch'
+import fetch from 'isomorphic-unfetch'
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { DataProvider } from '../dataProvider'
