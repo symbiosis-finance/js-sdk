@@ -72,6 +72,7 @@ import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
 import { getMulticall } from './multicall'
+import { BestPoolSwapping } from './bestPoolSwapping'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -130,6 +131,10 @@ export class Symbiosis {
 
     public newSwapping() {
         return new Swapping(this)
+    }
+
+    public bestPoolSwapping() {
+        return new BestPoolSwapping(this)
     }
 
     public newRevertPending(request: PendingRequest) {

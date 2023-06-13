@@ -389,7 +389,15 @@ export class RevertPending {
 
         const to = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
 
-        const omniTrade = new OmniTrade(amount, tokenOut, this.slippage, this.deadline, this.symbiosis, to)
+        const omniTrade = new OmniTrade(
+            amount,
+            tokenOut,
+            this.slippage,
+            this.deadline,
+            this.symbiosis,
+            to,
+            this.symbiosis.omniPoolConfig // pass default config
+        )
         await omniTrade.init()
 
         return [

@@ -79,7 +79,7 @@ export abstract class BaseSwapping {
         this.dataProvider = new DataProvider(symbiosis)
     }
 
-    protected async doExactIn(
+    async doExactIn(
         tokenAmountIn: TokenAmount,
         tokenOut: Token,
         from: string,
