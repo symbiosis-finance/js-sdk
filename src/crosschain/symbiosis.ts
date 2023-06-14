@@ -141,8 +141,8 @@ export class Symbiosis {
         return new RevertPending(this, request)
     }
 
-    public newZapping() {
-        return new Zapping(this)
+    public newZapping(omniPoolConfig?: OmniPoolConfig) {
+        return new Zapping(this, omniPoolConfig)
     }
 
     public newZappingAave() {
