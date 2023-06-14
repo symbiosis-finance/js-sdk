@@ -16,20 +16,12 @@ export class BestPoolSwapping {
     async exactIn(...args: ExactInArgs) {
         const [tokenAmountIn, tokenOut, from, to, revertableAddress, slippage, deadline, useAggregators, options] = args
 
-        const omniPools: OmniPoolConfig[] = [
-            // Stable pool
-            {
-                chainId: 56288,
-                address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
-                oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
-            },
-            // ETH pool
-            {
-                chainId: 56288,
-                address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
-                oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
-            },
-        ]
+        let omniPools: OmniPoolConfig[]
+        if (this.symbiosis.config.omniPools.length) {
+            omniPools = this.symbiosis.config.omniPools
+        } else {
+            omniPools = [this.symbiosis.omniPoolConfig]
+        }
 
         const results = await Promise.allSettled(
             omniPools.map(async (poolConfig) => {
