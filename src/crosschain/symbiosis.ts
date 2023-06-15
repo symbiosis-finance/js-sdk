@@ -101,22 +101,19 @@ export class Symbiosis {
         )
     }
 
-    public validateSwapAmounts(amount: TokenAmount) {
-        const parsedAmount = parseFloat(amount.toExact(2))
-        const minAmount = this.config.minSwapAmountInUsd
-        const maxAmount = this.config.maxSwapAmountInUsd
-        if (parsedAmount < minAmount) {
+    public async validateSwapAmounts(amount: TokenAmount): Promise<void> {
+        const { token } = amount
+        const contract = token.isSynthetic ? this.synthesis(token.chainId) : this.portal(token.chainId)
+
+        const threshold = await contract.tokenThreshold(token.address)
+
+        if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
+            const formattedThreshold = utils.formatUnits(threshold, token.decimals)
+
             throw new Error(
-                `The amount is too low: $${parsedAmount}. Min amount: $${minAmount}`,
+                `The amount is too low: ${amount.toFixed(2)}. Min amount: ${formattedThreshold}`,
                 ErrorCode.AMOUNT_TOO_LOW
             )
-        } else if (parsedAmount > maxAmount) {
-            throw new Error(
-                `The amount is too high: $${parsedAmount}. Max amount: $${maxAmount}`,
-                ErrorCode.AMOUNT_TOO_HIGH
-            )
-        } else {
-            // All it`s OK
         }
     }
 
@@ -571,7 +568,7 @@ export class Symbiosis {
         })
 
         if (!pairs.length) {
-            throw new Error(`Cannot find transit token for chain ${chainId}`)
+            throw new Error(`Cannot find transit token for chain ${chainId}`, ErrorCode.NO_TRANSIT_TOKEN)
         }
 
         function assetScore(asset: PoolAsset): BigNumber {

@@ -40,8 +40,7 @@ export class Bridging {
     }
 
     public async exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, to: string, revertableAddress: string): ExactIn {
-        // @@
-        // this.symbiosis.validateSwapAmounts(tokenAmountIn)
+        await this.symbiosis.validateSwapAmounts(tokenAmountIn)
 
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut

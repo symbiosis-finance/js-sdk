@@ -86,20 +86,18 @@ export class Zapping {
             )
         }
 
-        // @@
-        // let amountInUsd: TokenAmount
+        let transitAmountIn: TokenAmount
 
         if (!this.transitStableIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 
-            // amountInUsd = this.tradeA.amountOut
+            transitAmountIn = this.tradeA.amountOut
         } else {
-            // amountInUsd = tokenAmountIn
+            transitAmountIn = tokenAmountIn
         }
 
-        // @@
-        // this.symbiosis.validateSwapAmounts(amountInUsd)
+        await this.symbiosis.validateSwapAmounts(transitAmountIn)
 
         this.synthToken = await this.getSynthToken()
 

@@ -3,6 +3,7 @@ import type { Swapping } from './swapping'
 import type { OmniPoolConfig } from './types'
 import type { SwapOptions } from './baseSwapping'
 import { TokenAmount } from 'src/entities'
+import { ErrorCode } from './error'
 
 type ExactInArgs = Parameters<typeof Swapping.prototype.doExactIn>
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
@@ -53,7 +54,10 @@ export class BestPoolSwapping {
 
         for (const item of results) {
             if (item.status !== 'fulfilled') {
-                actionError = item.reason
+                if (!actionError || item.reason.code !== ErrorCode.NO_TRANSIT_TOKEN) {
+                    actionError = item.reason
+                }
+
                 continue
             }
 
