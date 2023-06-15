@@ -340,7 +340,6 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    // TODO: Pass address
     public omniPool(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPool {
         const { address, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
