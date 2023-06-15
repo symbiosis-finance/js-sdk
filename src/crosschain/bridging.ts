@@ -68,9 +68,9 @@ export class Bridging {
 
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
-        this.from = from
-        this.to = to
-        this.revertableAddress = revertableAddress
+        this.from = tronAddressToEvm(from)
+        this.to = tronAddressToEvm(to)
+        this.revertableAddress = tronAddressToEvm(revertableAddress)
         this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
 
         const fee = await this.getFee()
@@ -186,8 +186,8 @@ export class Bridging {
         if (this.direction === 'burn') {
             const synthesis = this.symbiosis.synthesis(chainId)
 
-            const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(this.tokenOut.chainId).portal)
-            const bridgeAddress = tronAddressToEvm(this.symbiosis.chainConfig(this.tokenOut.chainId).bridge)
+            const portalAddress = this.symbiosis.chainConfig(this.tokenOut.chainId).portal
+            const bridgeAddress = this.symbiosis.chainConfig(this.tokenOut.chainId).bridge
 
             return {
                 chainId,
@@ -196,10 +196,10 @@ export class Bridging {
                     fee.raw.toString(),
                     this.tokenAmountIn.token.address,
                     this.tokenAmountIn.raw.toString(),
-                    tronAddressToEvm(this.to),
+                    this.to,
                     portalAddress,
                     bridgeAddress,
-                    tronAddressToEvm(this.revertableAddress),
+                    this.revertableAddress,
                     this.tokenOut.chainId,
                     this.symbiosis.clientId,
                 ]),
@@ -250,8 +250,8 @@ export class Bridging {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
-        const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdIn).portal)
-        const synthesisAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdOut).synthesis)
+        const portalAddress = this.symbiosis.chainConfig(chainIdIn).portal
+        const synthesisAddress = this.symbiosis.chainConfig(chainIdOut).synthesis
 
         const synthesisInterface = Synthesis__factory.createInterface()
 
@@ -264,14 +264,14 @@ export class Bridging {
         const externalId = getExternalId({
             internalId,
             contractAddress: synthesisAddress,
-            revertableAddress: tronAddressToEvm(this.revertableAddress),
+            revertableAddress: this.revertableAddress,
             chainId: chainIdOut,
         })
 
         const calldata = synthesisInterface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            tronAddressToEvm(this.tokenAmountIn.token.address), // _token,
+            this.tokenAmountIn.token.address, // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address
@@ -296,7 +296,7 @@ export class Bridging {
         const chainIdOut = this.tokenOut.chainId
 
         const synthesis = this.symbiosis.synthesis(chainIdIn)
-        const portalAddress = tronAddressToEvm(this.symbiosis.chainConfig(chainIdOut).portal)
+        const portalAddress = this.symbiosis.chainConfig(chainIdOut).portal
 
         const internalId = getInternalId({
             contractAddress: synthesis.address,
@@ -307,7 +307,7 @@ export class Bridging {
         const externalId = getExternalId({
             internalId,
             contractAddress: portalAddress,
-            revertableAddress: tronAddressToEvm(this.revertableAddress),
+            revertableAddress: this.revertableAddress,
             chainId: chainIdOut,
         })
 
@@ -315,9 +315,9 @@ export class Bridging {
         const calldata = portalInterface.encodeFunctionData('unsynthesize', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            tronAddressToEvm(this.tokenOut.address), // rtoken,
+            this.tokenOut.address, // rtoken,
             this.tokenAmountIn.raw.toString(), // _amount,
-            tronAddressToEvm(this.to), // _chain2address
+            this.to, // _chain2address
         ])
 
         const fee = await this.symbiosis.getBridgeFee({
@@ -339,7 +339,7 @@ export class Bridging {
             direction: this.direction,
             chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,
-            revertableAddress: tronAddressToEvm(this.revertableAddress),
+            revertableAddress: this.revertableAddress,
             chainIdIn: this.tokenAmountIn.token.chainId,
         }).waitForComplete(receipt)
     }
