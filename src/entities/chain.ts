@@ -373,6 +373,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
         },
     }),
+    new Chain({
+        id: ChainId.LINEA_TESTNET,
+        name: 'Linea',
+        disabled: false,
+        explorer: 'https://explorer.goerli.linea.build/',
+        icons: {
+            small: 'https://app.infura.io/images/logos/linea.svg',
+            large: 'https://app.infura.io/images/logos/linea.svg',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
