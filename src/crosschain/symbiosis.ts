@@ -3,7 +3,7 @@ import { BigNumber, Signer, utils } from 'ethers'
 import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { Bridging } from './bridging'
 import {
     Aave,
@@ -105,7 +105,9 @@ export class Symbiosis {
         const { token } = amount
         const contract = token.isSynthetic ? this.synthesis(token.chainId) : this.portal(token.chainId)
 
-        const threshold = await contract.tokenThreshold(token.address)
+        const wrapped = wrappedToken(amount.token)
+
+        const threshold = await contract.tokenThreshold(wrapped.address)
 
         if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
             const formattedThreshold = utils.formatUnits(threshold, token.decimals)
