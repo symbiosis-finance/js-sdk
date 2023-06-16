@@ -39,6 +39,7 @@ export const CHAINS_PRIORITY = [
     ChainId.POLYGON_ZK,
     ChainId.TRON_MAINNET,
     ChainId.TRON_TESTNET,
+    ChainId.LINEA_TESTNET,
 ]
 
 // a list of tokens by chain
@@ -100,6 +101,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.OPTIMISM_MAINNET]: [WETH[ChainId.OPTIMISM_MAINNET]],
     [ChainId.ZETACHAIN_ATHENS_2]: [WETH[ChainId.ZETACHAIN_ATHENS_2]],
     [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK]],
+    [ChainId.LINEA_TESTNET]: [WETH[ChainId.LINEA_TESTNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -421,6 +423,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Tether USD',
         }),
     ],
+    [ChainId.LINEA_TESTNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -514,4 +517,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
     [ChainId.POLYGON_ZK]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.TRON_TESTNET]: '0x00e08cb2cd7480ddf6c54430207dff81ce359887',
+    [ChainId.LINEA_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }
