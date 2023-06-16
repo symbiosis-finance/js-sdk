@@ -379,8 +379,8 @@ export const chains: Chain[] = [
         disabled: false,
         explorer: 'https://explorer.goerli.linea.build/',
         icons: {
-            small: 'https://app.infura.io/images/logos/linea.svg',
-            large: 'https://app.infura.io/images/logos/linea.svg',
+            small: 'https://l2beat.com/icons/linea.png',
+            large: 'https://l2beat.com/icons/linea.png',
         },
     }),
 ]
