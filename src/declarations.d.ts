@@ -95,7 +95,7 @@ declare module 'tronweb' {
                 contractAddress: string,
                 functionSelector: string,
                 options: {
-                    call_value?: number | string
+                    callValue?: number | string
                     feeLimit?: number
                     rawParameter?: string
                 },

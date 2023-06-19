@@ -417,7 +417,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.TRON_TESTNET]: [
         new Token({
             chainId: ChainId.TRON_TESTNET,
-            address: '0x42a1e39aefa49290f2b3f9ed688d7cecf86cd6e0',
+            address: 'TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs',
             decimals: 6,
             symbol: 'USDT',
             name: 'Tether USD',

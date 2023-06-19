@@ -17,5 +17,12 @@ export * from './dataProvider'
 export { SymbiosisTradeType, getTradePriceImpact } from './trade'
 export * from './zappingSyncSwapLaunchPool'
 // export * from './contracts'
-export { prepareTronTransaction, isTronToken, isTronChainId, isTronChain, type TronTransactionData } from './tron'
+export {
+    prepareTronTransaction,
+    isTronToken,
+    isTronChainId,
+    isTronChain,
+    tronAddressToEvm,
+    type TronTransactionData,
+} from './tron'
 export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
