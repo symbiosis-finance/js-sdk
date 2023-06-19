@@ -27,7 +27,8 @@ export class RevertPending {
     async revert(slippage: number, deadline: number) {
         this.slippage = slippage
         this.deadline = deadline
-        this.transitStable = await this.symbiosis.bestTransitStable(this.request.chainIdFrom)
+
+        this.transitStable = this.request.fromTokenAmount.token // @@
 
         const fee = await this.getFee()
 
@@ -375,14 +376,17 @@ export class RevertPending {
     private async buildSwapCalldata(fee?: TokenAmount): Promise<[string, string]> {
         const { originalFromTokenAmount, chainIdFrom, chainIdTo } = this.request
 
-        const tokenIn = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdTo)
+        const tokenIn = this.request.originalFromTokenAmount.token
         if (!tokenIn) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdTo}`)
         }
         const tokenAmountIn = new TokenAmount(tokenIn, originalFromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
-        const tokenOut = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdFrom)
+        const tokenOut = await this.symbiosis.getRepresentation(
+            this.transitStable,
+            this.symbiosis.omniPoolConfig.chainId
+        )
         if (!tokenOut) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
