@@ -373,6 +373,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
         },
     }),
+    new Chain({
+        id: ChainId.LINEA_TESTNET,
+        name: 'Linea',
+        disabled: false,
+        explorer: 'https://explorer.goerli.linea.build/',
+        icons: {
+            small: 'https://l2beat.com/icons/linea.png',
+            large: 'https://l2beat.com/icons/linea.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
