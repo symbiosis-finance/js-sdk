@@ -7,7 +7,7 @@ import type { Symbiosis } from './symbiosis'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { utils } from 'ethers'
 
-type BridgeRequestType = 'SynthesizeRequest' | 'BurnRequest'
+type BridgeRequestType = 'SynthesizeRequest' | 'BurnRequest' | 'RevertBurnRequest'
 
 interface BridgeTxInfo {
     externalId: string
@@ -30,17 +30,22 @@ async function getTronBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: s
     }
 
     const portalInterface = new utils.Interface(TRON_PORTAL_ABI)
-    const topic = portalInterface.getEventTopic('SynthesizeRequest').replace('0x', '')
+    const synthesizeRequestTopic = portalInterface.getEventTopic('SynthesizeRequest').replace('0x', '')
 
-    const synthesizeRequest = result.log.find((log) => log.topics[0] === topic)
+    let request = result.log.find((log) => log.topics[0] === synthesizeRequestTopic)
 
-    if (!synthesizeRequest) {
+    if (!request) {
+        const revertBurnRequestTopic = portalInterface.getEventTopic('RevertBurnRequest').replace('0x', '')
+
+        request = result.log.find((log) => log.topics[0] === revertBurnRequestTopic)
+    }
+    if (!request) {
         return null
     }
 
     const event = portalInterface.parseLog({
-        data: `0x${synthesizeRequest.data}`,
-        topics: synthesizeRequest.topics.map((topic) => `0x${topic}`),
+        data: `0x${request.data}`,
+        topics: request.topics.map((topic) => `0x${topic}`),
     })
 
     const { id, chainID, revertableAddress } = event.args

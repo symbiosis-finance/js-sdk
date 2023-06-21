@@ -1,7 +1,7 @@
 import { Filter, TransactionRequest } from '@ethersproject/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { ContractTransaction, Signer } from 'ethers'
+import { BigNumberish, BytesLike, ContractTransaction, Signer } from 'ethers'
 import JSBI from 'jsbi'
 import { Token, TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
@@ -12,6 +12,23 @@ import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
 import { OmniTrade } from './trade'
+import { isTronChainId, prepareTronTransaction, TronTransactionData } from './tron'
+import { TRON_PORTAL_ABI } from './tronAbis'
+
+type RevertBase = {
+    type: 'tron' | 'evm'
+    fee: TokenAmount
+}
+export type EvmRevertResponse = RevertBase & {
+    execute: (signer: Signer) => any
+    transactionRequest: TransactionRequest
+}
+
+export type TronRevertResponse = RevertBase & {
+    transactionRequest: TronTransactionData
+}
+
+export type RevertResponse = TronRevertResponse | EvmRevertResponse
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
@@ -24,7 +41,7 @@ export class RevertPending {
         this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.omniPoolConfig.chainId)
     }
 
-    async revert(slippage: number, deadline: number) {
+    async revert(slippage: number, deadline: number): Promise<RevertResponse> {
         this.slippage = slippage
         this.deadline = deadline
         this.transitStable = await this.symbiosis.bestTransitStable(this.request.chainIdFrom)
@@ -35,7 +52,17 @@ export class RevertPending {
 
         const transactionRequest = await this.getTransactionRequest(fee, feeV2)
 
+        console.log({ transactionRequest })
+        if ('call_value' in transactionRequest) {
+            return {
+                type: 'tron',
+                fee,
+                transactionRequest,
+            }
+        }
+
         return {
+            type: 'evm',
             fee,
             transactionRequest,
             execute: (signer: Signer) => this.execute(transactionRequest, signer),
@@ -229,7 +256,7 @@ export class RevertPending {
                 this.symbiosis.portal(chainIdFrom).address, // _receiveSide
                 this.symbiosis.bridge(chainIdFrom).address, // _oppositeBridge
                 chainIdFrom, // _chainId
-                revertableAddress, // _sender
+                this.symbiosis.chainConfig(chainIdFrom).revertableAddress, // _sender
                 this.symbiosis.clientId, // _clientId
             ])
             receiveSide = synthesis.address
@@ -283,7 +310,10 @@ export class RevertPending {
         return feeTokenAmount
     }
 
-    private async getTransactionRequest(fee: TokenAmount, feeV2?: TokenAmount): Promise<TransactionRequest> {
+    private async getTransactionRequest(
+        fee: TokenAmount,
+        feeV2?: TokenAmount
+    ): Promise<TransactionRequest | TronTransactionData> {
         if (this.request.type === 'synthesize') {
             return this.getRevertSynthesizeTransactionRequest(fee)
         }
@@ -303,29 +333,43 @@ export class RevertPending {
         return await this.getRevertBurnTransactionRequestV2Revert(fee)
     }
 
-    private getRevertSynthesizeTransactionRequestV2(fee: TokenAmount): TransactionRequest {
+    private getRevertSynthesizeTransactionRequestV2(fee: TokenAmount): TransactionRequest | TronTransactionData {
         const { internalId, chainIdFrom } = this.request
         const portal = this.symbiosis.portal(chainIdFrom)
 
+        const params = {
+            stableBridgingFee: fee.raw.toString(),
+            internalID: internalId,
+            receiveSide: portal.address,
+            managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
+            sourceChainBridge: this.symbiosis.bridge(chainIdFrom).address,
+            managerChainId: this.symbiosis.omniPoolConfig.chainId,
+            sourceChainId: chainIdFrom,
+            router: AddressZero, // multicall router
+            swapCalldata: [], // swapCalldata,
+            sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId).address,
+            burnToken: AddressZero, //burnToken,
+            burnCalldata: [], // burnCalldata,
+            clientID: this.symbiosis.clientId,
+        }
+        if (isTronChainId(chainIdFrom)) {
+            const tronData = prepareTronTransaction({
+                chainId: chainIdFrom,
+                tronWeb: this.symbiosis.tronWeb(chainIdFrom),
+                abi: TRON_PORTAL_ABI,
+                contractAddress: portal.address,
+                functionName: 'metaRevertRequest',
+                params: [Object.values(params)],
+                ownerAddress: this.symbiosis.chainConfig(chainIdFrom).revertableAddress, // this.request.revertableAddress, // correct??
+                value: 0,
+            })
+            console.log({ tronData })
+            return tronData
+        }
+
         return {
             to: portal.address,
-            data: portal.interface.encodeFunctionData('metaRevertRequest', [
-                {
-                    stableBridgingFee: fee.raw.toString(),
-                    internalID: internalId,
-                    receiveSide: portal.address,
-                    managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
-                    managerChainId: this.symbiosis.omniPoolConfig.chainId,
-                    sourceChainBridge: this.symbiosis.bridge(chainIdFrom).address,
-                    sourceChainId: chainIdFrom,
-                    sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId).address,
-                    router: AddressZero, // multicall router
-                    swapCalldata: [], // swapCalldata,
-                    burnToken: AddressZero, //burnToken,
-                    burnCalldata: [], // burnCalldata,
-                    clientID: this.symbiosis.clientId,
-                },
-            ]),
+            data: portal.interface.encodeFunctionData('metaRevertRequest', [params]),
             chainId: chainIdFrom,
         }
     }
@@ -351,23 +395,38 @@ export class RevertPending {
         }
     }
 
-    private getRevertBurnTransactionRequest(fee: TokenAmount): TransactionRequest {
+    private getRevertBurnTransactionRequest(fee: TokenAmount): TransactionRequest | TronTransactionData {
         const { internalId, chainIdTo, chainIdFrom } = this.request
 
         const otherBridge = this.symbiosis.bridge(chainIdFrom)
         const portal = this.symbiosis.portal(chainIdTo)
         const otherSynthesis = this.symbiosis.synthesis(chainIdFrom)
 
+        const params = [
+            fee.raw.toString(),
+            internalId,
+            otherSynthesis.address,
+            otherBridge.address,
+            chainIdFrom,
+            this.symbiosis.clientId,
+        ] as [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
+
+        if (isTronChainId(chainIdTo)) {
+            return prepareTronTransaction({
+                chainId: chainIdTo,
+                tronWeb: this.symbiosis.tronWeb(chainIdTo),
+                abi: TRON_PORTAL_ABI,
+                contractAddress: portal.address,
+                functionName: 'revertBurnRequest',
+                params,
+                ownerAddress: this.request.revertableAddress, // correct??
+                value: 0,
+            })
+        }
+
         return {
             to: portal.address,
-            data: portal.interface.encodeFunctionData('revertBurnRequest', [
-                fee.raw.toString(),
-                internalId,
-                otherSynthesis.address,
-                otherBridge.address,
-                chainIdFrom,
-                this.symbiosis.clientId,
-            ]),
+            data: portal.interface.encodeFunctionData('revertBurnRequest', params),
             chainId: chainIdTo,
         }
     }
@@ -408,7 +467,7 @@ export class RevertPending {
     private async getRevertBurnTransactionRequestV2(
         fee: TokenAmount,
         feeV2?: TokenAmount
-    ): Promise<TransactionRequest> {
+    ): Promise<TransactionRequest | TronTransactionData> {
         const { internalId, chainIdTo } = this.request
 
         const mChainBridge = this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId)
@@ -418,53 +477,80 @@ export class RevertPending {
         const [router, swapCalldata] = await this.buildSwapCalldata(fee)
         const [burnToken, burnCalldata] = this.buildMetaBurnCalldata(feeV2)
 
+        const params = {
+            stableBridgingFee: fee.raw.toString(),
+            internalID: internalId,
+            receiveSide: mChainSynthesis.address,
+            managerChainBridge: mChainBridge.address,
+            managerChainId: this.symbiosis.omniPoolConfig.chainId,
+            sourceChainBridge: AddressZero,
+            sourceChainId: this.request.chainIdFrom,
+            sourceChainSynthesis: mChainSynthesis.address,
+            router, // multicall router
+            swapCalldata,
+            burnToken,
+            burnCalldata,
+            clientID: this.symbiosis.clientId,
+        }
+
+        if (isTronChainId(chainIdTo)) {
+            return prepareTronTransaction({
+                chainId: chainIdTo,
+                tronWeb: this.symbiosis.tronWeb(chainIdTo),
+                abi: TRON_PORTAL_ABI,
+                contractAddress: portal.address,
+                functionName: 'metaRevertRequest',
+                params: [Object.values(params)],
+                ownerAddress: this.request.revertableAddress, // correct??
+                value: 0,
+            })
+        }
+
         return {
             to: portal.address,
-            data: portal.interface.encodeFunctionData('metaRevertRequest', [
-                {
-                    stableBridgingFee: fee.raw.toString(),
-                    internalID: internalId,
-                    receiveSide: mChainSynthesis.address,
-                    managerChainBridge: mChainBridge.address,
-                    managerChainId: this.symbiosis.omniPoolConfig.chainId,
-                    sourceChainBridge: AddressZero,
-                    sourceChainId: this.request.chainIdFrom,
-                    sourceChainSynthesis: mChainSynthesis.address,
-                    router, // multicall router
-                    swapCalldata,
-                    burnToken,
-                    burnCalldata,
-                    clientID: this.symbiosis.clientId,
-                },
-            ]),
+            data: portal.interface.encodeFunctionData('metaRevertRequest', [params]),
             chainId: chainIdTo,
         }
     }
 
-    private async getRevertBurnTransactionRequestV2Revert(fee: TokenAmount): Promise<TransactionRequest> {
+    private async getRevertBurnTransactionRequestV2Revert(
+        fee: TokenAmount
+    ): Promise<TransactionRequest | TronTransactionData> {
         const { internalId, chainIdTo } = this.request
 
         const portal = this.symbiosis.portal(chainIdTo)
 
+        const params = {
+            stableBridgingFee: fee.raw.toString(),
+            internalID: internalId,
+            receiveSide: portal.address,
+            managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
+            managerChainId: this.symbiosis.omniPoolConfig.chainId,
+            sourceChainBridge: AddressZero,
+            sourceChainId: chainIdTo,
+            sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId).address,
+            router: AddressZero, // multicall router
+            swapCalldata: [],
+            burnToken: AddressZero,
+            burnCalldata: '0x00', // any not empty calldata
+            clientID: this.symbiosis.clientId,
+        }
+
+        if (isTronChainId(chainIdTo)) {
+            return prepareTronTransaction({
+                chainId: chainIdTo,
+                tronWeb: this.symbiosis.tronWeb(chainIdTo),
+                abi: TRON_PORTAL_ABI,
+                contractAddress: portal.address,
+                functionName: 'metaRevertRequest',
+                params: [params],
+                ownerAddress: this.request.revertableAddress, // correct??
+                value: 0,
+            })
+        }
         return {
             to: portal.address,
-            data: portal.interface.encodeFunctionData('metaRevertRequest', [
-                {
-                    stableBridgingFee: fee.raw.toString(),
-                    internalID: internalId,
-                    receiveSide: portal.address,
-                    managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
-                    managerChainId: this.symbiosis.omniPoolConfig.chainId,
-                    sourceChainBridge: AddressZero,
-                    sourceChainId: chainIdTo,
-                    sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId).address,
-                    router: AddressZero, // multicall router
-                    swapCalldata: [],
-                    burnToken: AddressZero,
-                    burnCalldata: '0x00', // any not empty calldata
-                    clientID: this.symbiosis.clientId,
-                },
-            ]),
+            data: portal.interface.encodeFunctionData('metaRevertRequest', [params]),
             chainId: chainIdTo,
         }
     }

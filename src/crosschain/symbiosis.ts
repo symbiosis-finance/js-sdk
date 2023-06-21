@@ -164,10 +164,10 @@ export class Symbiosis {
     }
 
     public getPendingRequests(
-        address: string,
+        addresses: string[],
         synthesizeRequestFinder?: SynthesizeRequestFinder
     ): Promise<PendingRequest[]> {
-        return getPendingRequests(this, address, synthesizeRequestFinder)
+        return getPendingRequests(this, addresses, synthesizeRequestFinder)
     }
 
     public getProvider(chainId: ChainId): StaticJsonRpcProvider {
@@ -576,7 +576,6 @@ export class Symbiosis {
         const TRIES = 10
         for (let i = 0; i < TRIES; i++) {
             const response = await getTransactionInfoById(tronWeb, txId)
-            console.log('response', response)
             if (response) {
                 info = response
                 break

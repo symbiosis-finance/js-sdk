@@ -15,14 +15,17 @@ import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, KavaRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
+import { isTronChainId, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
+import { TRON_METAROUTER_ABI } from './tronAbis'
 
 export type ZapExactIn = Promise<{
-    execute: (signer: Signer) => Execute
+    type: 'tron' | 'evm'
+    execute?: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     priceImpact: Percent
     amountInUsd: TokenAmount
-    transactionRequest: TransactionRequest
+    transactionRequest: TronTransactionData | TransactionRequest
     inTradeType?: SymbiosisTradeType
 }>
 
@@ -33,6 +36,7 @@ export class Zapping {
     private to!: string
     private revertableAddress!: string
     private tokenAmountIn!: TokenAmount
+    private readonly chainIdOut: ChainId
     private slippage!: number
     private deadline!: number
     private ttl!: number
@@ -54,22 +58,24 @@ export class Zapping {
 
         this.pool = this.symbiosis.omniPool()
         this.poolOracle = this.symbiosis.omniPoolOracle()
+        this.chainIdOut = this.symbiosis.omniPoolConfig.chainId
     }
 
     public async exactIn(
         tokenAmountIn: TokenAmount,
         from: string,
         to: string,
-        revertableAddress: string,
         slippage: number,
         deadline: number,
         useAggregators = true
     ): ZapExactIn {
         this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
-        this.from = from
-        this.to = to
-        this.revertableAddress = revertableAddress
+        this.from = tronAddressToEvm(from)
+        this.to = tronAddressToEvm(to)
+        const { revertableAddress } = this.symbiosis.chainConfig(this.chainIdOut)
+        console.log({ revertableAddress })
+        this.revertableAddress = tronAddressToEvm(revertableAddress)
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
@@ -107,14 +113,25 @@ export class Zapping {
 
         const transactionRequest = this.getTransactionRequest(fee)
 
-        return {
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
+        const base = {
             fee,
             tokenAmountOut: this.omniLiquidity.amountOut,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.getSynthAmount(fee),
             transactionRequest,
             inTradeType: this.tradeA?.tradeType,
+        }
+        if ('call_value' in transactionRequest) {
+            return {
+                ...base,
+                type: 'tron',
+            }
+        }
+
+        return {
+            ...base,
+            type: 'evm',
+            execute: (signer: Signer) => this.execute(transactionRequest, signer),
         }
     }
 
@@ -128,7 +145,7 @@ export class Zapping {
         }).waitForComplete(receipt)
     }
 
-    private getTransactionRequest(fee: TokenAmount): TransactionRequest {
+    private getTransactionRequest(fee: TokenAmount): TransactionRequest | TronTransactionData {
         const chainId = this.tokenAmountIn.token.chainId
         const metaRouter = this.symbiosis.metaRouter(chainId)
 
@@ -150,19 +167,32 @@ export class Zapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
-        const data = metaRouter.interface.encodeFunctionData('metaRoute', [
-            {
-                firstSwapCalldata: this.tradeA?.callData || [],
-                secondSwapCalldata: [],
-                approvedTokens,
-                firstDexRouter: this.tradeA?.routerAddress || AddressZero,
-                secondDexRouter: AddressZero,
-                amount: this.tokenAmountIn.raw.toString(),
-                nativeIn: this.tokenAmountIn.token.isNative,
-                relayRecipient,
-                otherSideCalldata,
-            },
-        ])
+        const params = {
+            firstSwapCalldata: this.tradeA?.callData || [],
+            secondSwapCalldata: [],
+            approvedTokens,
+            firstDexRouter: this.tradeA?.routerAddress || AddressZero,
+            secondDexRouter: AddressZero,
+            amount: this.tokenAmountIn.raw.toString(),
+            nativeIn: this.tokenAmountIn.token.isNative,
+            relayRecipient,
+            otherSideCalldata,
+        }
+
+        if (isTronChainId(chainId)) {
+            return prepareTronTransaction({
+                chainId: chainId,
+                tronWeb: this.symbiosis.tronWeb(chainId),
+                abi: TRON_METAROUTER_ABI,
+                contractAddress: metaRouter.address,
+                functionName: 'metaRoute',
+                params: [Object.values(params)],
+                ownerAddress: this.from,
+                value: 0,
+            })
+        }
+
+        const data = metaRouter.interface.encodeFunctionData('metaRoute', [params])
 
         return {
             chainId,
@@ -243,7 +273,6 @@ export class Zapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
         const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -256,10 +285,10 @@ export class Zapping {
                     amount: tokenAmount.raw.toString(),
                     rtoken: tokenAmount.token.address,
                     chain2address: this.to,
-                    receiveSide: this.symbiosis.synthesis(chainIdOut).address,
-                    oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
+                    receiveSide: this.symbiosis.synthesis(this.chainIdOut).address,
+                    oppositeBridge: this.symbiosis.bridge(this.chainIdOut).address,
                     syntCaller: this.from,
-                    chainID: chainIdOut,
+                    chainID: this.chainIdOut,
                     swapTokens: [this.synthToken.address],
                     secondDexRouter: AddressZero,
                     secondSwapCalldata: [],
@@ -294,12 +323,11 @@ export class Zapping {
     }
 
     private async getSynthToken(): Promise<Token> {
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
-        const rep = await this.symbiosis.getRepresentation(this.transitStableIn, chainIdOut)
+        const rep = await this.symbiosis.getRepresentation(this.transitStableIn, this.chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${this.transitStableIn.symbol} in chain ${chainIdOut} not found`,
+                `Representation of ${this.transitStableIn.symbol} in chain ${this.chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -309,10 +337,9 @@ export class Zapping {
 
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
-        const synthesis = this.symbiosis.synthesis(chainIdOut)
+        const synthesis = this.symbiosis.synthesis(this.chainIdOut)
 
         const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
@@ -326,7 +353,7 @@ export class Zapping {
             internalId,
             contractAddress: synthesis.address,
             revertableAddress: this.revertableAddress,
-            chainId: chainIdOut,
+            chainId: this.chainIdOut,
         })
 
         const calldata = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
@@ -350,7 +377,7 @@ export class Zapping {
             receiveSide: synthesis.address,
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
-            chainIdTo: chainIdOut,
+            chainIdTo: this.chainIdOut,
         })
 
         return new TokenAmount(this.synthToken, fee.toString())

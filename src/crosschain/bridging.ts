@@ -45,7 +45,6 @@ export interface BridgeExactInParams {
     tokenOut: Token
     from: string
     to: string
-    revertableAddress: string
 }
 
 export class Bridging {
@@ -63,13 +62,15 @@ export class Bridging {
         this.symbiosis = symbiosis
     }
 
-    public async exactIn({ from, revertableAddress, to, tokenAmountIn, tokenOut }: BridgeExactInParams): BridgeExactIn {
+    public async exactIn({ from, to, tokenAmountIn, tokenOut }: BridgeExactInParams): BridgeExactIn {
         this.symbiosis.validateSwapAmounts(tokenAmountIn)
 
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
+        const { revertableAddress } = this.symbiosis.chainConfig(tokenOut.chainId)
+        console.log({ revertableAddress })
         this.revertableAddress = tronAddressToEvm(revertableAddress)
         this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
 

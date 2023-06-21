@@ -40,6 +40,7 @@ export type ChainConfig = {
     portal: string
     fabric: string
     waitForBlocksCount: number
+    revertableAddress: string
 }
 
 export type AdvisorConfig = {

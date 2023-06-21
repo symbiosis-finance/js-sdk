@@ -42,7 +42,6 @@ export class ZappingRenBTC extends BaseSwapping {
         renChainId: ChainId,
         from: string,
         to: string,
-        revertableAddress: string,
         slippage: number,
         deadline: number,
         use1Inch = true
@@ -71,16 +70,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        const exactIn = await this.doExactIn(
-            tokenAmountIn,
-            renBTC,
-            from,
-            from,
-            revertableAddress,
-            slippage,
-            deadline,
-            use1Inch
-        )
+        const exactIn = await this.doExactIn(tokenAmountIn, renBTC, from, from, slippage, deadline, use1Inch)
 
         if (exactIn.type === 'tron') {
             // @@ TODO: implement

@@ -36,7 +36,7 @@ interface GetChainPendingRequestsParams {
     symbiosis: Symbiosis
     activeChainId: ChainId
     chainsIds: ChainId[]
-    address: string
+    addresses: string[]
     type: PendingRequestType
     synthesizeRequestFinder?: SynthesizeRequestFinder
 }
@@ -148,7 +148,7 @@ export async function getChainPendingRequests({
     symbiosis,
     activeChainId,
     chainsIds,
-    address,
+    addresses,
     type,
     synthesizeRequestFinder,
 }: GetChainPendingRequestsParams): Promise<PendingRequest[]> {
@@ -183,7 +183,7 @@ export async function getChainPendingRequests({
             undefined,
             undefined, // from
             otherChains, // chains IDs
-            address, // revertableAddress
+            addresses, // revertableAddresses
         ])
     } else {
         // burn, burn-v2, burn-v2-revert
@@ -195,19 +195,24 @@ export async function getChainPendingRequests({
             undefined,
             type === 'burn-v2' ? symbiosis.metaRouter(symbiosis.omniPoolConfig.chainId).address : undefined, // from
             otherChains, // chains IDs
-            address, // revertableAddress
+            addresses, // revertableAddresses
         ])
     }
 
-    const eventsByWindow = await Promise.all(
-        windows.map(({ fromBlock, toBlock }) => {
-            return selectedContract.queryFilter<BurnRequestEvent | SynthesizeRequestEvent>(
-                { address, topics },
-                fromBlock,
-                toBlock
-            )
-        })
-    )
+    let eventsByWindow: any[] = []
+
+    for (let i = 0; i < addresses.length; i++) {
+        const events = await Promise.all(
+            windows.map(({ fromBlock, toBlock }) => {
+                return selectedContract.queryFilter<BurnRequestEvent | SynthesizeRequestEvent>(
+                    { address: addresses[i], topics }, // FIXME
+                    fromBlock,
+                    toBlock
+                )
+            })
+        )
+        eventsByWindow = [...eventsByWindow, ...events]
+    }
 
     const events: SynthesizeRequestEvent[] | BurnRequestEvent[] = eventsByWindow.flat()
 
@@ -258,6 +263,7 @@ export async function getChainPendingRequests({
                 return null
             }
 
+            console.log({ event })
             const pendingRequest = {
                 internalId: id,
                 externalId,
@@ -322,25 +328,20 @@ export async function getChainPendingRequests({
 
 export async function getPendingRequests(
     symbiosis: Symbiosis,
-    address: string,
+    addresses: string[],
     synthesizeRequestFinder?: SynthesizeRequestFinder
 ): Promise<PendingRequest[]> {
-    const chains = symbiosis.chains()
+    const chains = symbiosis.chains().filter((i) => [5, 97, 2494104990].includes(i.id))
     const chainsIds = chains.map((chain) => chain.id)
 
     const pendingRequestsPromises: Promise<PendingRequest[]>[] = []
 
     chains.forEach((chain) => {
-        if (!chain.evm) {
-            // @@
-            return
-        }
-
         const params: Omit<GetChainPendingRequestsParams, 'type'> = {
             symbiosis,
             chainsIds,
             activeChainId: chain.id,
-            address,
+            addresses,
             synthesizeRequestFinder,
         }
 
