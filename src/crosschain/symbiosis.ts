@@ -409,12 +409,6 @@ export class Symbiosis {
             }, [])
     }
 
-    public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
-        return this.stables().find((token) => {
-            return token.chainId === chainId && token.chainFromId === chainFromId && token.isSynthetic
-        })
-    }
-
     public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
         return this.stables().find((token) => {
             const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId

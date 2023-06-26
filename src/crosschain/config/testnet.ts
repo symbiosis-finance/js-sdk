@@ -16,6 +16,7 @@ export const config: Config = {
             chainId: 97,
             address: '0x569D2a232F5f2a462673fAf184ED9640e8A9F4D8',
             oracle: '0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9',
+            tokens: [], // @@
         },
     ],
     chains: [
