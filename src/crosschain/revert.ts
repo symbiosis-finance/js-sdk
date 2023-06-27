@@ -23,8 +23,6 @@ export class RevertPending {
     private omniPoolConfig: OmniPoolConfigWithTokens
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
-        console.log(this.symbiosis.config.omniPools)
-
         const omniPoolConfig = this.symbiosis.config.omniPools.find((pool) => {
             return pool.tokens.some(
                 (token) => token.address.toLowerCase() === this.request.fromTokenAmount.token.address.toLowerCase()
@@ -189,7 +187,7 @@ export class RevertPending {
         const { to, from, chainIdFrom } = this.request
         const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
         const sToken = this.findSyntheticStable(chainIdFrom)?.address
-        console.log('sToken', sToken)
+
         if (!sToken) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
@@ -454,8 +452,6 @@ export class RevertPending {
 
         const [router, swapCalldata] = await this.buildSwapCalldata(fee)
         const [burnToken, burnCalldata] = this.buildMetaBurnCalldata(feeV2)
-
-        console.log('Da ti sho?')
 
         return {
             to: portal.address,
