@@ -17,6 +17,7 @@ import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { OmniPoolConfig } from './types'
+import { WrapTrade } from './trade/wrapTrade'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -117,6 +118,7 @@ export abstract class BaseSwapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.options.omniPoolConfig.chainId)
 
+        // ETH - wETH
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
@@ -324,8 +326,15 @@ export abstract class BaseSwapping {
     }
 
     protected buildTradeA(): SymbiosisTrade {
-        const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitTokenIn
+
+        const wrapped = wrappedToken(this.tokenAmountIn.token)
+        if (this.tokenAmountIn.token.isNative && wrapped.equals(tokenOut)) {
+            return new WrapTrade(this.tokenAmountIn, tokenOut)
+        }
+
+        const chainId = this.tokenAmountIn.token.chainId
+
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
         const dexFee = this.symbiosis.dexFee(chainId)
