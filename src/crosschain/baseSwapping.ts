@@ -300,6 +300,14 @@ export abstract class BaseSwapping {
         if (this.transit.isV2()) {
             let amount = this.transit.amountOut.raw
             if (feeV2) {
+                if (JSBI.lessThan(amount, feeV2.raw)) {
+                    throw new Error(
+                        `Amount ${this.transit.amountOut.toSignificant()} ${
+                            feeV2.token.symbol
+                        } less than fee ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
+                        ErrorCode.AMOUNT_LESS_THAN_FEE
+                    )
+                }
                 amount = JSBI.subtract(amount, feeV2.raw)
             }
             return new TokenAmount(this.tokenOut, amount)
