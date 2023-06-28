@@ -544,7 +544,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
-                    chainId: 324,
+                    chainId: 10,
                     decimals: 18,
                     isStable: true,
                     icons: {
@@ -684,7 +684,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
-                    chainId: 324,
+                    chainId: 56,
                     decimals: 18,
                     isStable: true,
                     icons: {
@@ -1361,7 +1361,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
-                    chainId: 324,
+                    chainId: 10,
                     decimals: 18,
                     isStable: true,
                     icons: {
