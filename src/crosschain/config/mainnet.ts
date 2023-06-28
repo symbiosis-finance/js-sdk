@@ -12,7 +12,6 @@ export const config: Config = {
         oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
     },
     omniPools: [
-        // Stable
         {
             chainId: 56288,
             address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
@@ -370,7 +369,6 @@ export const config: Config = {
                 },
             ],
         },
-        // ETH
         {
             chainId: 56288,
             address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
@@ -392,7 +390,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
-                    chainId: 324,
+                    chainId: 56,
                     decimals: 18,
                     isStable: true,
                     icons: {
@@ -495,8 +493,8 @@ export const config: Config = {
                     symbol: 'sETH',
                     address: '0x424190072b7db5352bb91cc70dabd82f547ae003',
                     chainId: 56288,
-                    chainFromId: 137,
-                    decimals: 56,
+                    chainFromId: 56,
+                    decimals: 18,
                     isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -509,23 +507,11 @@ export const config: Config = {
                     address: '0x983e6839e84004e78fbfe76431d879cf9cf2f084',
                     chainId: 56288,
                     chainFromId: 10,
-                    decimals: 56,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                    },
-                },
-                {
-                    name: 'Wrapped Ether',
-                    symbol: 'WETH',
-                    address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
-                    chainId: 324,
                     decimals: 18,
                     isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                     },
                 },
                 {
@@ -543,8 +529,8 @@ export const config: Config = {
                 {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
-                    address: '0x4200000000000000000000000000000000000006',
-                    chainId: 10,
+                    address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
+                    chainId: 324,
                     decimals: 18,
                     isStable: true,
                     icons: {
@@ -569,6 +555,18 @@ export const config: Config = {
                     symbol: 'WETH',
                     address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
                     chainId: 1101,
+                    decimals: 18,
+                    isStable: true,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Wrapped Ether',
+                    symbol: 'WETH',
+                    address: '0x4200000000000000000000000000000000000006',
+                    chainId: 10,
                     decimals: 18,
                     isStable: true,
                     icons: {
@@ -1213,8 +1211,8 @@ export const config: Config = {
                     symbol: 'sETH',
                     address: '0x424190072b7db5352bb91cc70dabd82f547ae003',
                     chainId: 56288,
-                    chainFromId: 137,
-                    decimals: 56,
+                    chainFromId: 56,
+                    decimals: 18,
                     isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1227,7 +1225,7 @@ export const config: Config = {
                     address: '0x983e6839e84004e78fbfe76431d879cf9cf2f084',
                     chainId: 56288,
                     chainFromId: 10,
-                    decimals: 56,
+                    decimals: 18,
                     isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
