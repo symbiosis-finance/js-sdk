@@ -3,7 +3,7 @@ import { Weth__factory } from '../contracts'
 import { SymbiosisTrade } from './symbiosisTrade'
 
 export class WrapTrade implements SymbiosisTrade {
-    tradeType = 'dex' as const
+    tradeType = 'wrap' as const
 
     public priceImpact: Percent = new Percent('0')
 
