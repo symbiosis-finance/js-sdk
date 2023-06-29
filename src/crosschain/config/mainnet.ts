@@ -439,19 +439,6 @@ export const config: Config = {
                 {
                     name: 'Synthetic WETH',
                     symbol: 'sWETH',
-                    address: '0x52b50a6f8564b4895c7edc9ad3b232bba0108ba6',
-                    chainId: 56288,
-                    chainFromId: 1101,
-                    decimals: 18,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                    },
-                },
-                {
-                    name: 'Synthetic WETH',
-                    symbol: 'sWETH',
                     address: '0x4994b8bb0b58708cc6a66079d22db35c95650b4b',
                     chainId: 56288,
                     chainFromId: 42161,
@@ -531,30 +518,6 @@ export const config: Config = {
                     symbol: 'WETH',
                     address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
                     chainId: 324,
-                    decimals: 18,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
-                    },
-                },
-                {
-                    name: 'Wrapped Ether',
-                    symbol: 'WETH',
-                    address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
-                    chainId: 42170,
-                    decimals: 18,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
-                    },
-                },
-                {
-                    name: 'Wrapped Ether',
-                    symbol: 'WETH',
-                    address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
-                    chainId: 1101,
                     decimals: 18,
                     isStable: true,
                     icons: {
@@ -1144,19 +1107,6 @@ export const config: Config = {
                 {
                     name: 'Synthetic WETH',
                     symbol: 'sWETH',
-                    address: '0x52b50a6f8564b4895c7edc9ad3b232bba0108ba6',
-                    chainId: 56288,
-                    chainFromId: 1101,
-                    decimals: 18,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                    },
-                },
-                {
-                    name: 'Synthetic WETH',
-                    symbol: 'sWETH',
                     address: '0x4994b8bb0b58708cc6a66079d22db35c95650b4b',
                     chainId: 56288,
                     chainFromId: 42161,
@@ -1387,18 +1337,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
-                {
-                    name: 'Wrapped Ether',
-                    symbol: 'WETH',
-                    address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
-                    chainId: 42170,
-                    decimals: 18,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
-                    },
-                },
             ],
             nerves: [],
             router: '0xEe01c0CD76354C383B8c7B4e65EA88D00B06f36f',
@@ -1430,18 +1368,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    },
-                },
-                {
-                    name: 'Wrapped Ether',
-                    symbol: 'WETH',
-                    address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
-                    chainId: 1101,
-                    decimals: 18,
-                    isStable: true,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
             ],
