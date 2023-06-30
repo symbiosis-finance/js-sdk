@@ -503,4 +503,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.MANTLE_TESTNET]: new Token({
+        chainId: ChainId.MANTLE_TESTNET,
+        address: '0x8734110e5e1dcF439c7F549db740E546fea82d66',
+        decimals: 18,
+        symbol: 'WBIT',
+        isNative: false,
+        name: 'Wrapped BIT',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+        },
+    }),
 }
