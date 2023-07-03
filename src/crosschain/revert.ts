@@ -12,6 +12,7 @@ import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
 import { OmniTrade } from './trade'
+import { OmniPoolConfigWithTokens } from './types'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
@@ -19,15 +20,28 @@ export class RevertPending {
     private deadline!: number
     private slippage!: number
     private transitStable!: Token
+    private omniPoolConfig: OmniPoolConfigWithTokens
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
-        this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.omniPoolConfig.chainId)
+        const omniPoolConfig = this.symbiosis.config.omniPools.find((pool) => {
+            return pool.tokens.some(
+                (token) => token.address.toLowerCase() === this.request.fromTokenAmount.token.address.toLowerCase()
+            )
+        })
+
+        if (!omniPoolConfig) {
+            throw new Error('No omni pool found for token', ErrorCode.NO_TRANSIT_POOL)
+        }
+
+        this.omniPoolConfig = omniPoolConfig
+        this.multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
     }
 
     async revert(slippage: number, deadline: number) {
         this.slippage = slippage
         this.deadline = deadline
-        this.transitStable = await this.symbiosis.bestTransitStable(this.request.chainIdFrom)
+
+        this.transitStable = await this.symbiosis.bestTransitStable(this.request.chainIdFrom, this.omniPoolConfig)
 
         const fee = await this.getFee()
 
@@ -51,10 +65,10 @@ export class RevertPending {
             revertableAddress,
             contractAddress: this.symbiosis.portal(chainIdTo).address,
         })
-        const mChainSynthesis = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
+        const mChainSynthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
         const revertBurnLog = await getLogWithTimeout({
-            chainId: this.symbiosis.omniPoolConfig.chainId,
+            chainId: this.omniPoolConfig.chainId,
             filter: mChainSynthesis.filters.RevertBurnCompleted(externalId),
             symbiosis: this.symbiosis,
         })
@@ -65,7 +79,7 @@ export class RevertPending {
             direction: 'burn',
             symbiosis: this.symbiosis,
             revertableAddress: revertableAddress,
-            chainIdIn: this.symbiosis.omniPoolConfig.chainId,
+            chainIdIn: this.omniPoolConfig.chainId,
             chainIdOut: chainIdFrom,
         })
         const log = await wfc.waitForComplete(receipt)
@@ -129,14 +143,14 @@ export class RevertPending {
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
-            chainIdFrom: this.symbiosis.omniPoolConfig.chainId,
+            chainIdFrom: this.omniPoolConfig.chainId,
             chainIdTo: this.request.chainIdFrom,
         })
         return new TokenAmount(feeToken, fee.toString())
     }
 
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
-        const chainIdIn = this.symbiosis.omniPoolConfig.chainId
+        const chainIdIn = this.omniPoolConfig.chainId
         const chainIdOut = this.request.chainIdFrom
         const { revertableAddress, fromTokenAmount } = this.request
 
@@ -171,13 +185,14 @@ export class RevertPending {
 
     private buildMetaBurnCalldata(feeV2?: TokenAmount) {
         const { to, from, chainIdFrom } = this.request
-        const synthesis = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
-        const sToken = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdFrom)?.address
+        const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
+        const sToken = this.findSyntheticStable(chainIdFrom)?.address
+
         if (!sToken) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
-        const metarouter = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId)
+        const metarouter = this.symbiosis.metaRouter(this.omniPoolConfig.chainId)
 
         const calldata = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
             {
@@ -234,8 +249,8 @@ export class RevertPending {
             ])
             receiveSide = synthesis.address
         } else if (type === 'burn-v2') {
-            advisorChainIdTo = this.symbiosis.omniPoolConfig.chainId
-            const synthesis = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
+            advisorChainIdTo = this.omniPoolConfig.chainId
+            const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
             const [router, swapCalldata] = await this.buildSwapCalldata()
             const [burnToken, burnCalldata] = this.buildMetaBurnCalldata()
 
@@ -314,11 +329,11 @@ export class RevertPending {
                     stableBridgingFee: fee.raw.toString(),
                     internalID: internalId,
                     receiveSide: portal.address,
-                    managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
-                    managerChainId: this.symbiosis.omniPoolConfig.chainId,
+                    managerChainBridge: this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
+                    managerChainId: this.omniPoolConfig.chainId,
                     sourceChainBridge: this.symbiosis.bridge(chainIdFrom).address,
                     sourceChainId: chainIdFrom,
-                    sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId).address,
+                    sourceChainSynthesis: this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
                     router: AddressZero, // multicall router
                     swapCalldata: [], // swapCalldata,
                     burnToken: AddressZero, //burnToken,
@@ -372,24 +387,44 @@ export class RevertPending {
         }
     }
 
+    private findSyntheticStable(chainFromId: ChainId): Token | undefined {
+        const rawToken = this.omniPoolConfig.tokens.find(
+            (token) => token.chainId === this.omniPoolConfig.chainId && token.chainFromId === chainFromId
+        )
+
+        if (!rawToken) {
+            return undefined
+        }
+
+        return new Token(rawToken)
+    }
+
     private async buildSwapCalldata(fee?: TokenAmount): Promise<[string, string]> {
         const { originalFromTokenAmount, chainIdFrom, chainIdTo } = this.request
 
-        const tokenIn = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdTo)
+        const tokenIn = this.findSyntheticStable(chainIdTo)
         if (!tokenIn) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdTo}`)
         }
         const tokenAmountIn = new TokenAmount(tokenIn, originalFromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
-        const tokenOut = this.symbiosis.findSyntheticStable(this.symbiosis.omniPoolConfig.chainId, chainIdFrom)
+        const tokenOut = this.findSyntheticStable(chainIdFrom)
         if (!tokenOut) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
-        const to = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
+        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 
-        const omniTrade = new OmniTrade(amount, tokenOut, this.slippage, this.deadline, this.symbiosis, to)
+        const omniTrade = new OmniTrade(
+            amount,
+            tokenOut,
+            this.slippage,
+            this.deadline,
+            this.symbiosis,
+            to,
+            this.omniPoolConfig
+        )
         await omniTrade.init()
 
         return [
@@ -411,9 +446,9 @@ export class RevertPending {
     ): Promise<TransactionRequest> {
         const { internalId, chainIdTo } = this.request
 
-        const mChainBridge = this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId)
+        const mChainBridge = this.symbiosis.bridge(this.omniPoolConfig.chainId)
         const portal = this.symbiosis.portal(chainIdTo)
-        const mChainSynthesis = this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId)
+        const mChainSynthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
         const [router, swapCalldata] = await this.buildSwapCalldata(fee)
         const [burnToken, burnCalldata] = this.buildMetaBurnCalldata(feeV2)
@@ -426,7 +461,7 @@ export class RevertPending {
                     internalID: internalId,
                     receiveSide: mChainSynthesis.address,
                     managerChainBridge: mChainBridge.address,
-                    managerChainId: this.symbiosis.omniPoolConfig.chainId,
+                    managerChainId: this.omniPoolConfig.chainId,
                     sourceChainBridge: AddressZero,
                     sourceChainId: this.request.chainIdFrom,
                     sourceChainSynthesis: mChainSynthesis.address,
@@ -453,11 +488,11 @@ export class RevertPending {
                     stableBridgingFee: fee.raw.toString(),
                     internalID: internalId,
                     receiveSide: portal.address,
-                    managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
-                    managerChainId: this.symbiosis.omniPoolConfig.chainId,
+                    managerChainBridge: this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
+                    managerChainId: this.omniPoolConfig.chainId,
                     sourceChainBridge: AddressZero,
                     sourceChainId: chainIdTo,
-                    sourceChainSynthesis: this.symbiosis.synthesis(this.symbiosis.omniPoolConfig.chainId).address,
+                    sourceChainSynthesis: this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
                     router: AddressZero, // multicall router
                     swapCalldata: [],
                     burnToken: AddressZero,

@@ -3,7 +3,7 @@ import { BigNumber, Signer, utils } from 'ethers'
 import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { Bridging } from './bridging'
 import {
     Aave,
@@ -71,6 +71,8 @@ import { ZappingOoki } from './zappingOoki'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
+import { getMulticall } from './multicall'
+import { BestPoolSwapping } from './bestPoolSwapping'
 
 type ConfigName = 'testnet' | 'mainnet'
 
@@ -99,22 +101,21 @@ export class Symbiosis {
         )
     }
 
-    public validateSwapAmounts(amount: TokenAmount) {
-        const parsedAmount = parseFloat(amount.toExact(2))
-        const minAmount = this.config.minSwapAmountInUsd
-        const maxAmount = this.config.maxSwapAmountInUsd
-        if (parsedAmount < minAmount) {
+    public async validateSwapAmounts(amount: TokenAmount): Promise<void> {
+        const { token } = amount
+        const contract = token.isSynthetic ? this.synthesis(token.chainId) : this.portal(token.chainId)
+
+        const wrapped = wrappedToken(amount.token)
+
+        const threshold = await contract.tokenThreshold(wrapped.address)
+
+        if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
+            const formattedThreshold = utils.formatUnits(threshold, token.decimals)
+
             throw new Error(
-                `The amount is too low: $${parsedAmount}. Min amount: $${minAmount}`,
+                `The amount is too low: ${amount.toFixed(2)}. Min amount: ${formattedThreshold}`,
                 ErrorCode.AMOUNT_TOO_LOW
             )
-        } else if (parsedAmount > maxAmount) {
-            throw new Error(
-                `The amount is too high: $${parsedAmount}. Max amount: $${maxAmount}`,
-                ErrorCode.AMOUNT_TOO_HIGH
-            )
-        } else {
-            // All it`s OK
         }
     }
 
@@ -131,12 +132,16 @@ export class Symbiosis {
         return new Swapping(this)
     }
 
+    public bestPoolSwapping() {
+        return new BestPoolSwapping(this)
+    }
+
     public newRevertPending(request: PendingRequest) {
         return new RevertPending(this, request)
     }
 
-    public newZapping() {
-        return new Zapping(this)
+    public newZapping(omniPoolConfig?: OmniPoolConfig) {
+        return new Zapping(this, omniPoolConfig)
     }
 
     public newZappingAave() {
@@ -337,15 +342,15 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public omniPool(signer?: Signer): OmniPool {
-        const { address, chainId } = this.omniPoolConfig
+    public omniPool(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPool {
+        const { address, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPool__factory.connect(address, signerOrProvider)
     }
 
-    public omniPoolOracle(signer?: Signer): OmniPoolOracle {
-        const { oracle, chainId } = this.omniPoolConfig
+    public omniPoolOracle(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPoolOracle {
+        const { oracle, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
@@ -402,12 +407,6 @@ export class Symbiosis {
             .reduce((acc, tokens) => {
                 return [...acc, ...tokens]
             }, [])
-    }
-
-    public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
-        return this.stables().find((token) => {
-            return token.chainId === chainId && token.chainFromId === chainFromId && token.isSynthetic
-        })
     }
 
     public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
@@ -493,22 +492,79 @@ export class Symbiosis {
         return stables
     }
 
-    public async bestTransitStable(chainId: ChainId): Promise<Token> {
+    public async bestTransitStable(
+        chainId: ChainId,
+        omniPoolConfig: OmniPoolConfig = this.omniPoolConfig
+    ): Promise<Token> {
         const stables = this.transitStables(chainId)
         if (stables.length === 1) {
             return stables[0]
         }
 
-        const pool = this.omniPool()
-        const promises = stables.map(async (i): Promise<[Token, PoolAsset] | undefined> => {
-            const sToken = await getRepresentation(this, i, ChainId.BOBA_BNB)
-            if (!sToken) return
-            const index = await pool.assetToIndex(sToken.address)
-            const asset = await pool.indexToAsset(index)
-            return [i, asset]
+        const pool = this.omniPool(undefined, omniPoolConfig)
+
+        const representations = await Promise.all(
+            stables.map((stableToken) => getRepresentation(this, stableToken, omniPoolConfig.chainId))
+        )
+
+        const representationToToken = new Map<Token, Token>()
+
+        const filteredRepresentations: Token[] = []
+        for (let i = 0; i < representations.length; i++) {
+            const representation = representations[i]
+            if (!representation) {
+                continue
+            }
+
+            representationToToken.set(representation, stables[i])
+            filteredRepresentations.push(representation)
+        }
+
+        const provider = this.getProvider(omniPoolConfig.chainId)
+        const multicall = await getMulticall(provider)
+
+        const assetIndexesResults = await multicall.callStatic.tryAggregate(
+            false,
+            filteredRepresentations.map((token) => ({
+                target: pool.address,
+                callData: pool.interface.encodeFunctionData('assetToIndex', [token.address]),
+            }))
+        )
+
+        const assetResults = await multicall.callStatic.tryAggregate(
+            false,
+            assetIndexesResults.map(([success, returnData]) => ({
+                target: pool.address,
+                callData: pool.interface.encodeFunctionData('indexToAsset', [
+                    success ? pool.interface.decodeFunctionResult('assetToIndex', returnData)[0] : 0,
+                ]),
+            }))
+        )
+
+        const pairs: [Token, PoolAsset][] = []
+        assetResults.forEach(([success, returnData], index) => {
+            if (!success) {
+                return
+            }
+
+            const representation = filteredRepresentations[index]
+            const asset = pool.interface.decodeFunctionResult('indexToAsset', returnData) as unknown as PoolAsset
+            if (asset.token.toLowerCase() !== representation.address.toLowerCase()) {
+                return
+            }
+
+            const token = representationToToken.get(representation)
+
+            if (!token) {
+                return
+            }
+
+            pairs.push([token, asset])
         })
 
-        const pairs = (await Promise.all(promises)).filter((i) => i !== undefined) as [Token, PoolAsset][]
+        if (!pairs.length) {
+            throw new Error(`Cannot find transit token for chain ${chainId}`, ErrorCode.NO_TRANSIT_TOKEN)
+        }
 
         function assetScore(asset: PoolAsset): BigNumber {
             const cash = asset.cash
@@ -525,13 +581,11 @@ export class Symbiosis {
             const a = assetScore(pairA[1])
             const b = assetScore(pairB[1])
 
-            if (a.gt(b)) {
-                return -1
+            if (a.eq(b)) {
+                return 0
             }
-            if (a.lt(b)) {
-                return 1
-            }
-            return 0
+
+            return a.gt(b) ? -1 : 1
         })
 
         return sortedPairs[0][0]

@@ -52,9 +52,14 @@ export type OmniPoolConfig = {
     oracle: string
 }
 
+export interface OmniPoolConfigWithTokens extends OmniPoolConfig {
+    tokens: TokenConstructor[]
+}
+
 export type Config = {
     advisor: AdvisorConfig
     omniPool: OmniPoolConfig
+    omniPools: OmniPoolConfigWithTokens[]
     chains: ChainConfig[]
     minSwapAmountInUsd: number
     maxSwapAmountInUsd: number

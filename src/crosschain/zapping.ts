@@ -15,6 +15,7 @@ import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, KavaRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
+import { OmniPoolConfig } from './types'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -48,12 +49,12 @@ export class Zapping {
     private readonly poolOracle!: OmniPoolOracle
     private readonly symbiosis: Symbiosis
 
-    public constructor(symbiosis: Symbiosis) {
+    public constructor(symbiosis: Symbiosis, private omniPoolConfig: OmniPoolConfig = symbiosis.omniPoolConfig) {
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
 
-        this.pool = this.symbiosis.omniPool()
-        this.poolOracle = this.symbiosis.omniPoolOracle()
+        this.pool = this.symbiosis.omniPool(undefined, omniPoolConfig)
+        this.poolOracle = this.symbiosis.omniPoolOracle(undefined, omniPoolConfig)
     }
 
     public async exactIn(
@@ -79,21 +80,24 @@ export class Zapping {
             // Do not swap if token is already a transit stable
             this.transitStableIn = this.tokenAmountIn.token
         } else {
-            this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
+            this.transitStableIn = await this.symbiosis.bestTransitStable(
+                this.tokenAmountIn.token.chainId,
+                this.omniPoolConfig
+            )
         }
 
-        let amountInUsd: TokenAmount
+        let transitAmountIn: TokenAmount
 
         if (!this.transitStableIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 
-            amountInUsd = this.tradeA.amountOut
+            transitAmountIn = this.tradeA.amountOut
         } else {
-            amountInUsd = tokenAmountIn
+            transitAmountIn = tokenAmountIn
         }
 
-        this.symbiosis.validateSwapAmounts(amountInUsd)
+        await this.symbiosis.validateSwapAmounts(transitAmountIn)
 
         this.synthToken = await this.getSynthToken()
 
@@ -243,7 +247,7 @@ export class Zapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
         const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -294,7 +298,7 @@ export class Zapping {
     }
 
     private async getSynthToken(): Promise<Token> {
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
         const rep = await this.symbiosis.getRepresentation(this.transitStableIn, chainIdOut)
 
         if (!rep) {
@@ -309,7 +313,7 @@ export class Zapping {
 
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
