@@ -64,6 +64,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
     private readonly slippage: number
 
     static isAvailable(chainId: ChainId): boolean {
+        return false
         return Object.keys(OPEN_OCEAN_NETWORKS).includes(chainId.toString())
     }
 
