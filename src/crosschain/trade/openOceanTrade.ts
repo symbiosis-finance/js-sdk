@@ -22,16 +22,16 @@ interface OpenOceanQuote {
 }
 
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
-    [ChainId.ETH_MAINNET]: 'eth',
-    [ChainId.BSC_MAINNET]: 'bsc',
-    [ChainId.MATIC_MAINNET]: 'polygon',
-    [ChainId.AVAX_MAINNET]: 'avax',
+    // [ChainId.ETH_MAINNET]: 'eth',
+    // [ChainId.BSC_MAINNET]: 'bsc',
+    // [ChainId.MATIC_MAINNET]: 'polygon',
+    // [ChainId.AVAX_MAINNET]: 'avax',
     [ChainId.AURORA_MAINNET]: 'aurora',
     [ChainId.HECO_MAINNET]: 'heco',
     [ChainId.KAVA_MAINNET]: 'kava',
-    [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
-    [ChainId.OPTIMISM_MAINNET]: 'optimism',
-    [ChainId.ZKSYNC_MAINNET]: 'zksync',
+    // [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
+    // [ChainId.OPTIMISM_MAINNET]: 'optimism',
+    // [ChainId.ZKSYNC_MAINNET]: 'zksync',
     [ChainId.POLYGON_ZK]: 'polygon_zkevm',
 }
 
@@ -64,7 +64,6 @@ export class OpenOceanTrade implements SymbiosisTrade {
     private readonly slippage: number
 
     static isAvailable(chainId: ChainId): boolean {
-        return false
         return Object.keys(OPEN_OCEAN_NETWORKS).includes(chainId.toString())
     }
 
