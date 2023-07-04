@@ -27,6 +27,7 @@ export type { RenMintGatewayV3 } from './RenMintGatewayV3'
 export type { SyncSwapLaunchPool } from './SyncSwapLaunchPool'
 export type { Synthesis } from './Synthesis'
 export type { UniLikeRouter } from './UniLikeRouter'
+export type { Unwrapper } from './Unwrapper'
 export type { Weth } from './Weth'
 
 export { Aave__factory } from './factories/Aave__factory'
@@ -55,4 +56,5 @@ export { RenMintGatewayV3__factory } from './factories/RenMintGatewayV3__factory
 export { SyncSwapLaunchPool__factory } from './factories/SyncSwapLaunchPool__factory'
 export { Synthesis__factory } from './factories/Synthesis__factory'
 export { UniLikeRouter__factory } from './factories/UniLikeRouter__factory'
+export { Unwrapper__factory } from './factories/Unwrapper__factory'
 export { Weth__factory } from './factories/Weth__factory'

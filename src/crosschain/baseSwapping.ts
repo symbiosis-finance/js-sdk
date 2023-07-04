@@ -335,9 +335,8 @@ export abstract class BaseSwapping {
     protected buildTradeA(): SymbiosisTrade {
         const tokenOut = this.transitTokenIn
 
-        const wrapped = wrappedToken(this.tokenAmountIn.token)
-        if (this.tokenAmountIn.token.isNative && wrapped.equals(tokenOut)) {
-            return new WrapTrade(this.tokenAmountIn, tokenOut)
+        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
+            return new WrapTrade(this.tokenAmountIn, tokenOut, this.to)
         }
 
         const chainId = this.tokenAmountIn.token.chainId
@@ -415,6 +414,10 @@ export abstract class BaseSwapping {
 
         const chainId = this.tokenOut.chainId
         const dexFee = this.symbiosis.dexFee(chainId)
+
+        if (WrapTrade.isSupported(amountIn, this.tokenOut)) {
+            return new WrapTrade(amountIn, this.tokenOut, this.to)
+        }
 
         // POLYGON_ZK only
         if (chainId === ChainId.POLYGON_ZK && this.useAggregators && AggregatorTrade.isAvailable(chainId)) {

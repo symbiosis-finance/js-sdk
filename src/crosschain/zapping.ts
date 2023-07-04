@@ -16,6 +16,7 @@ import { AdaRouter, AvaxRouter, KavaRouter, OmniPool, OmniPoolOracle, UniLikeRou
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 import { OmniPoolConfig } from './types'
+import { WrapTrade } from './trade/wrapTrade'
 
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
@@ -39,7 +40,7 @@ export class Zapping {
     private ttl!: number
     private useAggregators!: boolean
 
-    private tradeA: UniLikeTrade | AggregatorTrade | undefined
+    private tradeA: UniLikeTrade | AggregatorTrade | WrapTrade | undefined
 
     private synthToken!: Token
     private transitStableIn!: Token
@@ -199,11 +200,15 @@ export class Zapping {
         return synthAmount
     }
 
-    private buildTradeA(): UniLikeTrade | AggregatorTrade {
+    private buildTradeA(): UniLikeTrade | AggregatorTrade | WrapTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitStableIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
+
+        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
+            return new WrapTrade(this.tokenAmountIn, tokenOut, this.to)
+        }
 
         if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
