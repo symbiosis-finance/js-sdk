@@ -383,6 +383,16 @@ export const chains: Chain[] = [
             large: 'https://l2beat.com/icons/linea.png',
         },
     }),
+    new Chain({
+        id: ChainId.MANTLE_TESTNET,
+        name: 'Mantle',
+        disabled: false,
+        explorer: 'https://explorer.testnet.mantle.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
