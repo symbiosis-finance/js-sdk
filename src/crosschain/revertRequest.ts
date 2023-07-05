@@ -55,6 +55,17 @@ export class RevertRequest {
         let fromTokenAmount = new TokenAmount(token, amount)
         const originalFromTokenAmount = fromTokenAmount
 
+        const omniPoolConfig = this.symbiosis.config.omniPools.find((config) => {
+            return (
+                config.chainId === token.chainId &&
+                !!config.tokens.find((token) => token.address.toLowerCase() === tokenAddress.toLowerCase())
+            )
+        })
+
+        if (!omniPoolConfig) {
+            throw new Error(`Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`)
+        }
+
         if (type === 'synthesize') {
             const isV2 = await isSynthesizeV2(this.symbiosis, this.chainId, receipt.transactionHash)
             if (isV2) {
@@ -77,7 +88,7 @@ export class RevertRequest {
                 if (data) {
                     const { sourceChainId, fromAddress } = data
                     from = fromAddress
-                    const sourceChainToken = await this.symbiosis.bestTransitStable(sourceChainId)
+                    const sourceChainToken = await this.symbiosis.bestTransitStable(sourceChainId, omniPoolConfig)
                     chainIdFrom = sourceChainToken.chainId
                     fromTokenAmount = new TokenAmount(
                         sourceChainToken,
@@ -87,7 +98,7 @@ export class RevertRequest {
                         ).toString()
                     )
                 } else {
-                    const transitStable = await this.symbiosis.bestTransitStable(chainIdTo)
+                    const transitStable = await this.symbiosis.bestTransitStable(chainIdTo, omniPoolConfig)
                     type = 'burn-v2-revert'
                     fromTokenAmount = new TokenAmount(transitStable, fromTokenAmount.raw)
                 }
