@@ -15,19 +15,12 @@ export enum PairState {
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
-export type NerveConfig = {
-    address: string
-    tokens: string[]
-    decimals: number[]
-}
-
 export type ChainConfig = {
     id: ChainId
     rpc: string
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]
-    nerves: NerveConfig[]
     metaRouter: string
     metaRouterGateway: string
     multicallRouter: string
