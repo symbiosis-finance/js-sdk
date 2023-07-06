@@ -18,7 +18,6 @@ export class Token {
     public readonly icons?: Icons
     public readonly chainFromId?: ChainId
     public readonly isNative: boolean
-    public readonly isStable?: boolean
     public readonly userToken?: boolean
 
     /**
@@ -36,7 +35,6 @@ export class Token {
         this.isNative = !!params.isNative
         this.icons = params.icons
         this.chainFromId = params.chainFromId
-        this.isStable = params.isStable
         this.userToken = params.userToken
     }
 

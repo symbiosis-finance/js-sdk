@@ -15,7 +15,6 @@ export type TokenConstructor = {
     decimals: number
     chainId: ChainId
     isNative?: boolean
-    isStable?: boolean
     chainFromId?: ChainId
     icons?: Icons
     userToken?: boolean
