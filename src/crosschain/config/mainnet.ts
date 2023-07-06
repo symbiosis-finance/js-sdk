@@ -464,7 +464,7 @@ export const config: Config = {
                 {
                     name: 'Synthetic USDC',
                     symbol: 'sUSDC',
-                    address: '0xA8d058ed41B216175400E8B2CC8cD55853596462',
+                    address: '0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f',
                     chainId: 56288,
                     chainFromId: 42161,
                     decimals: 6,
@@ -570,7 +570,7 @@ export const config: Config = {
                 {
                     name: 'USDC',
                     symbol: 'USDC',
-                    address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+                    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
                     chainId: 42161,
                     decimals: 6,
                     isStable: true,
