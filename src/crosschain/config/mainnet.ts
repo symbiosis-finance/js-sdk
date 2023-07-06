@@ -23,7 +23,6 @@ export const config: Config = {
                     symbol: 'USDC',
                     decimals: 6,
                     chainId: 1,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -35,7 +34,6 @@ export const config: Config = {
                     symbol: 'BUSD',
                     decimals: 18,
                     chainId: 56,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
@@ -47,7 +45,6 @@ export const config: Config = {
                     symbol: 'USDC',
                     decimals: 18,
                     chainId: 56,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -59,7 +56,6 @@ export const config: Config = {
                     symbol: 'USDC.e',
                     decimals: 6,
                     chainId: 43114,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -69,7 +65,6 @@ export const config: Config = {
                     name: 'USD Coin',
                     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                     symbol: 'USDC',
-                    isStable: true,
                     decimals: 6,
                     chainId: 137,
                     icons: {
@@ -83,7 +78,6 @@ export const config: Config = {
                     address: '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b',
                     chainId: 40,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -95,7 +89,6 @@ export const config: Config = {
                     address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
                     chainId: 2222,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -107,7 +100,6 @@ export const config: Config = {
                     symbol: 'USDC',
                     decimals: 6,
                     chainId: 288,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -117,7 +109,6 @@ export const config: Config = {
                     name: 'USD Coin',
                     address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
                     symbol: 'USDC',
-                    isStable: true,
                     decimals: 18,
                     chainId: 56288,
                     icons: {
@@ -132,7 +123,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -145,7 +135,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
@@ -158,7 +147,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -171,7 +159,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 43114,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -184,7 +171,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 137,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -197,7 +183,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 288,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -210,7 +195,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 43288,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -223,7 +207,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 40,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -236,7 +219,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 2222,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -249,7 +231,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 324,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -262,7 +243,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42161,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -275,7 +255,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 10,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -288,7 +267,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42170,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -301,7 +279,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1101,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -313,7 +290,6 @@ export const config: Config = {
                     address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
                     chainId: 324,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -325,7 +301,6 @@ export const config: Config = {
                     address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
                     chainId: 42161,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -337,7 +312,6 @@ export const config: Config = {
                     address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
                     chainId: 10,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -349,7 +323,6 @@ export const config: Config = {
                     address: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
                     chainId: 42170,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -361,7 +334,6 @@ export const config: Config = {
                     address: '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035',
                     chainId: 1101,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -380,7 +352,6 @@ export const config: Config = {
                     address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
                     chainId: 1,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -392,7 +363,6 @@ export const config: Config = {
                     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
                     chainId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -404,7 +374,6 @@ export const config: Config = {
                     address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
                     chainId: 137,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -417,7 +386,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -430,7 +398,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 324,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -443,7 +410,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42161,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -456,7 +422,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42170,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -469,7 +434,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 137,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -482,7 +446,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -495,7 +458,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 10,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -508,7 +470,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1101,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -521,7 +482,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42170,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -533,7 +493,6 @@ export const config: Config = {
                     address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
                     chainId: 42161,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -545,7 +504,6 @@ export const config: Config = {
                     address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
                     chainId: 324,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -557,7 +515,6 @@ export const config: Config = {
                     address: '0x4200000000000000000000000000000000000006',
                     chainId: 10,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -569,7 +526,6 @@ export const config: Config = {
                     address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
                     chainId: 1101,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -581,7 +537,6 @@ export const config: Config = {
                     address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
                     chainId: 42170,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -603,7 +558,6 @@ export const config: Config = {
                     symbol: 'USDC',
                     decimals: 6,
                     chainId: 1,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -615,7 +569,6 @@ export const config: Config = {
                     address: '0xd38BB40815d2B0c2d2c866e0c72c5728ffC76dd9',
                     chainId: 1,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
@@ -627,7 +580,6 @@ export const config: Config = {
                     address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
                     chainId: 1,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -659,7 +611,6 @@ export const config: Config = {
                     symbol: 'BUSD',
                     decimals: 18,
                     chainId: 56,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
@@ -671,7 +622,6 @@ export const config: Config = {
                     symbol: 'USDC',
                     decimals: 18,
                     chainId: 56,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -683,7 +633,6 @@ export const config: Config = {
                     symbol: 'SIS',
                     decimals: 18,
                     chainId: 56,
-                    isStable: true,
                     chainFromId: 1,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
@@ -696,7 +645,6 @@ export const config: Config = {
                     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
                     chainId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -728,7 +676,6 @@ export const config: Config = {
                     symbol: 'USDC.e',
                     decimals: 6,
                     chainId: 43114,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -758,7 +705,6 @@ export const config: Config = {
                     name: 'USD Coin',
                     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                     symbol: 'USDC',
-                    isStable: true,
                     decimals: 6,
                     chainId: 137,
                     icons: {
@@ -772,7 +718,6 @@ export const config: Config = {
                     address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
                     chainId: 137,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -804,7 +749,6 @@ export const config: Config = {
                     address: '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b',
                     chainId: 40,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -836,7 +780,6 @@ export const config: Config = {
                     address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
                     chainId: 2222,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -868,7 +811,6 @@ export const config: Config = {
                     symbol: 'USDC',
                     decimals: 6,
                     chainId: 288,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -900,7 +842,6 @@ export const config: Config = {
                     symbol: 'USDC.e',
                     decimals: 6,
                     chainId: 43288,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -930,7 +871,6 @@ export const config: Config = {
                     name: 'USD Coin',
                     address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
                     symbol: 'USDC',
-                    isStable: true,
                     decimals: 18,
                     chainId: 56288,
                     icons: {
@@ -945,7 +885,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -958,7 +897,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
@@ -971,7 +909,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -984,7 +921,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 43114,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -997,7 +933,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 137,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1010,7 +945,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 288,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1023,7 +957,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 43288,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1036,7 +969,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 40,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1049,7 +981,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 2222,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1062,7 +993,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 324,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1075,7 +1005,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42161,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1088,7 +1017,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 10,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1101,7 +1029,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42170,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1114,7 +1041,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1101,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1127,7 +1053,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -1140,7 +1065,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 324,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1153,7 +1077,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42161,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1166,7 +1089,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42170,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1179,7 +1101,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 137,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1192,7 +1113,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 56,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1205,7 +1125,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 10,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1218,7 +1137,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 1101,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1231,7 +1149,6 @@ export const config: Config = {
                     chainId: 56288,
                     chainFromId: 42170,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1263,7 +1180,6 @@ export const config: Config = {
                     address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
                     chainId: 324,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1275,7 +1191,6 @@ export const config: Config = {
                     address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
                     chainId: 324,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -1307,7 +1222,6 @@ export const config: Config = {
                     address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
                     chainId: 42161,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1319,7 +1233,6 @@ export const config: Config = {
                     address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
                     chainId: 42161,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -1351,7 +1264,6 @@ export const config: Config = {
                     address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
                     chainId: 10,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1363,7 +1275,6 @@ export const config: Config = {
                     address: '0x4200000000000000000000000000000000000006',
                     chainId: 10,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
@@ -1395,7 +1306,6 @@ export const config: Config = {
                     address: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
                     chainId: 42170,
                     decimals: 6,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1407,7 +1317,6 @@ export const config: Config = {
                     address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
                     chainId: 42170,
                     decimals: 18,
-                    isStable: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
