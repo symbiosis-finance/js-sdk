@@ -76,8 +76,7 @@ export class ZappingCream extends BaseSwapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        useAggregators = true
+        deadline: number
     ): SwapExactIn {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
@@ -100,16 +99,16 @@ export class ZappingCream extends BaseSwapping {
 
         this.creamPoolAddress = markets[index].market
 
-        return this.doExactIn(
+        return this.doExactIn({
             tokenAmountIn,
-            wrappedTokenOut,
+            tokenOut: wrappedTokenOut,
             from,
             to,
             revertableAddress,
             slippage,
             deadline,
-            useAggregators
-        )
+            omniPoolConfig: this.symbiosis.defaultOmniPool,
+        })
     }
 
     protected tradeCTo(): string {

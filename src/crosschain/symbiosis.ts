@@ -30,8 +30,6 @@ import {
     MetaRouter__factory,
     MulticallRouter,
     MulticallRouter__factory,
-    MuteRouter,
-    MuteRouter__factory,
     OmniPool,
     OmniPool__factory,
     OmniPoolOracle,
@@ -58,7 +56,7 @@ import { getRepresentation } from './getRepresentation'
 import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
-import { ChainConfig, Config, OmniPoolConfig, PoolAsset } from './types'
+import { ChainConfig, Config, OmniPoolConfig } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
@@ -69,17 +67,18 @@ import { ZappingOoki } from './zappingOoki'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
-import { getMulticall } from './multicall'
 import { BestPoolSwapping } from './bestPoolSwapping'
 
-type ConfigName = 'testnet' | 'mainnet'
+export type ConfigName = 'testnet' | 'mainnet'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
     public readonly config: Config
     public readonly clientId: string
-    public readonly omniPoolConfig: OmniPoolConfig
+    public defaultOmniPool: OmniPoolConfig
+
+    // private tokenPairs: TokenPair[]
 
     public constructor(config: ConfigName | Config, clientId: string) {
         if (config === 'mainnet') {
@@ -89,7 +88,9 @@ export class Symbiosis {
         } else {
             this.config = config
         }
-        this.omniPoolConfig = this.config.omniPool
+        // FIXME mustn't be default pool
+        this.defaultOmniPool = this.config.omniPools[0]
+
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
@@ -138,7 +139,7 @@ export class Symbiosis {
         return new RevertPending(this, request)
     }
 
-    public newZapping(omniPoolConfig?: OmniPoolConfig) {
+    public newZapping(omniPoolConfig: OmniPoolConfig) {
         return new Zapping(this, omniPoolConfig)
     }
 
@@ -233,13 +234,6 @@ export class Symbiosis {
         return KavaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public muteRouter(chainId: ChainId, signer?: Signer): MuteRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return MuteRouter__factory.connect(address, signerOrProvider)
-    }
-
     public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
         const signerOrProvider = signer || this.getProvider(chainId)
 
@@ -280,14 +274,14 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public omniPool(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPool {
+    public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
         const { address, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPool__factory.connect(address, signerOrProvider)
     }
 
-    public omniPoolOracle(signer?: Signer, config: OmniPoolConfig = this.omniPoolConfig): OmniPoolOracle {
+    public omniPoolOracle(config: OmniPoolConfig, signer?: Signer): OmniPoolOracle {
         const { oracle, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
@@ -333,28 +327,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
-    }
-
-    public stables(): Token[] {
-        return this.config.chains
-            .map((chainConfig) => {
-                return chainConfig.stables.map((params) => {
-                    return new Token(params)
-                })
-            })
-            .reduce((acc, tokens) => {
-                return [...acc, ...tokens]
-            }, [])
-    }
-
-    public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
-        return this.stables().find((token) => {
-            const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
-
-            if (chainFromId === undefined) return condition
-
-            return condition && token.chainFromId === chainFromId
-        })
     }
 
     public async getRepresentation(token: Token, chainId: ChainId): Promise<Token | undefined> {
@@ -422,116 +394,44 @@ export class Symbiosis {
         return config
     }
 
-    public transitStables(chainId: ChainId): Token[] {
+    // === stables ===
+
+    public stables(): Token[] {
+        return this.config.chains
+            .map((chainConfig) => {
+                return chainConfig.stables.map((params) => {
+                    return new Token(params)
+                })
+            })
+            .reduce((acc, tokens) => {
+                return [...acc, ...tokens]
+            }, [])
+    }
+
+    public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
+        return this.stables().find((token) => {
+            const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
+
+            if (chainFromId === undefined) return condition
+
+            return condition && token.chainFromId === chainFromId
+        })
+    }
+
+    protected findTransitStables(chainId: ChainId): Token[] {
+        return this.stables().filter((token) => {
+            return token.chainId === chainId && !token.isSynthetic
+        })
+    }
+
+    public transitStable(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
         const stables = this.findTransitStables(chainId)
         if (stables.length === 0) {
             throw new Error(`Cannot find transit stable token for chain ${chainId}`)
         }
-        return stables
-    }
 
-    public async bestTransitStable(
-        chainId: ChainId,
-        omniPoolConfig: OmniPoolConfig = this.omniPoolConfig
-    ): Promise<Token> {
-        const stables = this.transitStables(chainId)
-        if (stables.length === 1) {
-            return stables[0]
-        }
+        console.log({ omniPoolConfig }) // FIXME
 
-        const pool = this.omniPool(undefined, omniPoolConfig)
-
-        const representations = await Promise.all(
-            stables.map((stableToken) => getRepresentation(this, stableToken, omniPoolConfig.chainId))
-        )
-
-        const representationToToken = new Map<Token, Token>()
-
-        const filteredRepresentations: Token[] = []
-        for (let i = 0; i < representations.length; i++) {
-            const representation = representations[i]
-            if (!representation) {
-                continue
-            }
-
-            representationToToken.set(representation, stables[i])
-            filteredRepresentations.push(representation)
-        }
-
-        const provider = this.getProvider(omniPoolConfig.chainId)
-        const multicall = await getMulticall(provider)
-
-        const assetIndexesResults = await multicall.callStatic.tryAggregate(
-            false,
-            filteredRepresentations.map((token) => ({
-                target: pool.address,
-                callData: pool.interface.encodeFunctionData('assetToIndex', [token.address]),
-            }))
-        )
-
-        const assetResults = await multicall.callStatic.tryAggregate(
-            false,
-            assetIndexesResults.map(([success, returnData]) => ({
-                target: pool.address,
-                callData: pool.interface.encodeFunctionData('indexToAsset', [
-                    success ? pool.interface.decodeFunctionResult('assetToIndex', returnData)[0] : 0,
-                ]),
-            }))
-        )
-
-        const pairs: [Token, PoolAsset][] = []
-        assetResults.forEach(([success, returnData], index) => {
-            if (!success) {
-                return
-            }
-
-            const representation = filteredRepresentations[index]
-            const asset = pool.interface.decodeFunctionResult('indexToAsset', returnData) as unknown as PoolAsset
-            if (asset.token.toLowerCase() !== representation.address.toLowerCase()) {
-                return
-            }
-
-            const token = representationToToken.get(representation)
-
-            if (!token) {
-                return
-            }
-
-            pairs.push([token, asset])
-        })
-
-        if (!pairs.length) {
-            throw new Error(`Cannot find transit token for chain ${chainId}`, ErrorCode.NO_TRANSIT_TOKEN)
-        }
-
-        function assetScore(asset: PoolAsset): BigNumber {
-            const cash = asset.cash
-            const liability = asset.liability
-
-            if (liability.eq(0)) {
-                return BigNumber.from(0)
-            }
-
-            return cash.mul(cash).div(liability)
-        }
-
-        const sortedPairs = pairs.sort((pairA, pairB) => {
-            const a = assetScore(pairA[1])
-            const b = assetScore(pairB[1])
-
-            if (a.eq(b)) {
-                return 0
-            }
-
-            return a.gt(b) ? -1 : 1
-        })
-
-        return sortedPairs[0][0]
-    }
-
-    public findTransitStables(chainId: ChainId): Token[] {
-        return this.stables().filter((token) => {
-            return token.chainId === chainId && !token.isSynthetic
-        })
+        return stables[0]
     }
 }

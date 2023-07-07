@@ -25,7 +25,8 @@
         "prettier:fix": "prettier --write --ignore-unknown src",
         "prepublishOnly": "dts build",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "build-config-cache": "ts-node --esm --swc ./test.ts"
     },
     "lint-staged": {
         "*.{ts,json}": [
@@ -38,15 +39,17 @@
         "@renproject/chains-bitcoin": "^3.4.2",
         "@renproject/chains-ethereum": "^3.4.3",
         "@renproject/ren": "~3.3.0",
+        "@swc/core": "^1.3.68",
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
         "decimal.js-light": "^2.5.0",
+        "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
-        "isomorphic-unfetch": "^3.1.0",
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
-        "toformat": "^2.0.0"
+        "toformat": "^2.0.0",
+        "tsx": "^3.12.7"
     },
     "peerDependencies": {
         "@ethersproject/address": "^5.2.0",
@@ -78,6 +81,7 @@
         "husky": "^7.0.4",
         "lint-staged": "^12.3.2",
         "prettier": "2.5.1",
+        "ts-node": "^10.9.1",
         "typechain": "^7.0.0",
         "typescript": "^4.5.5"
     },

@@ -15,8 +15,7 @@ export class ZappingAave extends BaseSwapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        useAggregators = true
+        deadline: number
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to
@@ -25,16 +24,16 @@ export class ZappingAave extends BaseSwapping {
         const data = await this.aavePool.getReserveData(tokenOut.address)
         this.aToken = data.aTokenAddress
 
-        return this.doExactIn(
+        return this.doExactIn({
             tokenAmountIn,
-            wrappedToken(tokenOut),
+            tokenOut: wrappedToken(tokenOut),
             from,
             to,
             revertableAddress,
             slippage,
             deadline,
-            useAggregators
-        )
+            omniPoolConfig: this.symbiosis.defaultOmniPool,
+        })
     }
 
     protected tradeCTo(): string {

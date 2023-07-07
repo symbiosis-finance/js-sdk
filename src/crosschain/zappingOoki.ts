@@ -19,8 +19,7 @@ export class ZappingOoki extends BaseSwapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        useAggregators = true
+        deadline: number
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(chainId)
         this.userAddress = to
@@ -37,7 +36,16 @@ export class ZappingOoki extends BaseSwapping {
             decimals,
         })
 
-        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, useAggregators)
+        return this.doExactIn({
+            tokenAmountIn,
+            tokenOut: token,
+            from,
+            to,
+            revertableAddress,
+            slippage,
+            deadline,
+            omniPoolConfig: this.symbiosis.defaultOmniPool,
+        })
     }
 
     protected tradeCTo(): string {

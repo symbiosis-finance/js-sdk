@@ -38,7 +38,6 @@ export class Zapping {
     private slippage!: number
     private deadline!: number
     private ttl!: number
-    private useAggregators!: boolean
 
     private tradeA: UniLikeTrade | AggregatorTrade | WrapTrade | undefined
 
@@ -48,14 +47,12 @@ export class Zapping {
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
     private readonly poolOracle!: OmniPoolOracle
-    private readonly symbiosis: Symbiosis
 
-    public constructor(symbiosis: Symbiosis, private omniPoolConfig: OmniPoolConfig = symbiosis.omniPoolConfig) {
-        this.symbiosis = symbiosis
+    public constructor(private readonly symbiosis: Symbiosis, private readonly omniPoolConfig: OmniPoolConfig) {
         this.dataProvider = new DataProvider(symbiosis)
 
-        this.pool = this.symbiosis.omniPool(undefined, omniPoolConfig)
-        this.poolOracle = this.symbiosis.omniPoolOracle(undefined, omniPoolConfig)
+        this.pool = this.symbiosis.omniPool(omniPoolConfig)
+        this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
     public async exactIn(
@@ -64,10 +61,8 @@ export class Zapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        useAggregators = true
+        deadline: number
     ): SwapExactIn {
-        this.useAggregators = useAggregators
         this.tokenAmountIn = tokenAmountIn
         this.from = from
         this.to = to
@@ -76,16 +71,7 @@ export class Zapping {
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
-        const transitStables = this.symbiosis.transitStables(this.tokenAmountIn.token.chainId)
-        if (transitStables.find((stable) => stable.equals(this.tokenAmountIn.token))) {
-            // Do not swap if token is already a transit stable
-            this.transitStableIn = this.tokenAmountIn.token
-        } else {
-            this.transitStableIn = await this.symbiosis.bestTransitStable(
-                this.tokenAmountIn.token.chainId,
-                this.omniPoolConfig
-            )
-        }
+        this.transitStableIn = this.symbiosis.transitStable(tokenAmountIn.token.chainId, this.omniPoolConfig)
 
         let transitAmountIn: TokenAmount
 
@@ -210,7 +196,7 @@ export class Zapping {
             return new WrapTrade(this.tokenAmountIn, tokenOut, this.to)
         }
 
-        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+        if (AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
                 tokenAmountIn: this.tokenAmountIn,
                 tokenOut,

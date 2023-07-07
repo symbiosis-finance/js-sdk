@@ -23,8 +23,8 @@ export class OmniTrade {
         private readonly to: string,
         omniPoolConfig: OmniPoolConfig
     ) {
-        this.pool = this.symbiosis.omniPool(undefined, omniPoolConfig)
-        this.poolOracle = this.symbiosis.omniPoolOracle(undefined, omniPoolConfig)
+        this.pool = this.symbiosis.omniPool(omniPoolConfig)
+        this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
     public async init() {

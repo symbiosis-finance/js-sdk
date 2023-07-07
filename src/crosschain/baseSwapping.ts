@@ -19,6 +19,18 @@ import { OneInchProtocols } from './trade/oneInchTrade'
 import { OmniPoolConfig } from './types'
 import { WrapTrade } from './trade/wrapTrade'
 
+export type SwapExactInParams = {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
+    oneInchProtocols?: OneInchProtocols
+    omniPoolConfig: OmniPoolConfig
+}
+
 export type SwapExactIn = Promise<{
     execute: (signer: Signer) => Execute
     fee: TokenAmount
@@ -39,11 +51,6 @@ export type DetailedSlippage = {
     C: number
 }
 
-export interface SwapOptions {
-    oneInchProtocols?: OneInchProtocols
-    omniPoolConfig: OmniPoolConfig
-}
-
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
 
@@ -55,7 +62,6 @@ export abstract class BaseSwapping {
     protected slippage!: DetailedSlippage
     protected deadline!: number
     protected ttl!: number
-    protected useAggregators!: boolean
 
     protected route!: Token[]
 
@@ -71,7 +77,8 @@ export abstract class BaseSwapping {
     protected transitTokenIn!: Token
     protected transitTokenOut!: Token
 
-    protected options!: SwapOptions
+    protected omniPoolConfig!: OmniPoolConfig
+    protected oneInchProtocols?: OneInchProtocols
 
     protected feeV2: TokenAmount | undefined
 
@@ -80,35 +87,24 @@ export abstract class BaseSwapping {
         this.dataProvider = new DataProvider(symbiosis)
     }
 
-    async doExactIn(
-        tokenAmountIn: TokenAmount,
-        tokenOut: Token,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number,
-        useAggregators: boolean,
-        options?: Partial<SwapOptions>
-    ): SwapExactIn {
-        this.options = {
-            // TODO: Backward compatibility. Remove in future.
-            omniPoolConfig: this.symbiosis.omniPoolConfig,
-            ...options,
-        }
-
-        this.useAggregators = useAggregators
+    async doExactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+        omniPoolConfig,
+        oneInchProtocols,
+    }: SwapExactInParams): SwapExactIn {
+        this.omniPoolConfig = omniPoolConfig
+        this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
 
-        this.transitTokenIn = await this.symbiosis.bestTransitStable(
-            this.tokenAmountIn.token.chainId,
-            this.options.omniPoolConfig
-        )
-        this.transitTokenOut = await this.symbiosis.bestTransitStable(
-            this.tokenOut.chainId,
-            this.options.omniPoolConfig
-        )
+        this.transitTokenIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId, omniPoolConfig)
+        this.transitTokenOut = this.symbiosis.transitStable(this.tokenOut.chainId, omniPoolConfig)
 
         this.from = from
         this.to = to
@@ -116,7 +112,7 @@ export abstract class BaseSwapping {
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
-        this.synthesisV2 = this.symbiosis.synthesis(this.options.omniPoolConfig.chainId)
+        this.synthesisV2 = this.symbiosis.synthesis(omniPoolConfig.chainId)
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
@@ -234,18 +230,18 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 revertableAddress: this.revertableAddress,
                 chainIdIn: this.tokenAmountIn.token.chainId,
-                chainIdOut: this.options.omniPoolConfig.chainId,
+                chainIdOut: this.omniPoolConfig.chainId,
             })
             const log = await wfc1.waitForComplete(receipt)
 
-            const provider = this.symbiosis.getProvider(this.options.omniPoolConfig.chainId)
+            const provider = this.symbiosis.getProvider(this.omniPoolConfig.chainId)
             const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
 
             const wfc2 = new WaitForComplete({
                 direction: 'burn',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.revertableAddress,
-                chainIdIn: this.options.omniPoolConfig.chainId,
+                chainIdIn: this.omniPoolConfig.chainId,
                 chainIdOut: this.tokenOut.chainId,
             })
             return wfc2.waitForComplete(receipt2)
@@ -345,7 +341,7 @@ export abstract class BaseSwapping {
         const to = from
         const dexFee = this.symbiosis.dexFee(chainId)
 
-        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+        if (AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
                 tokenAmountIn: this.tokenAmountIn,
                 tokenOut,
@@ -355,7 +351,7 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
-                options: this.options,
+                oneInchProtocols: this.oneInchProtocols,
             })
         }
 
@@ -384,7 +380,7 @@ export abstract class BaseSwapping {
             this.transitTokenOut,
             this.slippage['B'],
             this.deadline,
-            this.options.omniPoolConfig,
+            this.omniPoolConfig,
             fee
         )
     }
@@ -420,7 +416,7 @@ export abstract class BaseSwapping {
         }
 
         // POLYGON_ZK only
-        if (chainId === ChainId.POLYGON_ZK && this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+        if (chainId === ChainId.POLYGON_ZK && AggregatorTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             return new AggregatorTrade({
                 tokenAmountIn: amountIn,
@@ -431,11 +427,11 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
-                options: this.options,
+                oneInchProtocols: this.oneInchProtocols,
             })
         }
 
-        if (this.useAggregators && OneInchTrade.isAvailable(chainId)) {
+        if (OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
             return new OneInchTrade(
@@ -446,7 +442,7 @@ export abstract class BaseSwapping {
                 this.slippage['C'] / 100,
                 oracle,
                 this.dataProvider,
-                this.options.oneInchProtocols
+                this.oneInchProtocols
             )
         }
 
@@ -519,7 +515,7 @@ export abstract class BaseSwapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.transit.isV2() ? this.options.omniPoolConfig.chainId : this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const tokenAmount = this.transit.getBridgeAmountIn()
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -555,7 +551,7 @@ export abstract class BaseSwapping {
 
     protected async feeMintCallData(): Promise<[string, string]> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.transit.isV2() ? this.options.omniPoolConfig.chainId : this.tokenOut.chainId
+        const chainIdOut = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
@@ -631,7 +627,7 @@ export abstract class BaseSwapping {
     }
 
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
-        const chainIdIn = this.options.omniPoolConfig.chainId
+        const chainIdIn = this.omniPoolConfig.chainId
         const chainIdOut = this.tokenOut.chainId
 
         const synthesis = this.symbiosis.synthesis(chainIdIn)
@@ -665,7 +661,7 @@ export abstract class BaseSwapping {
 
     protected async getFee(feeToken: Token): Promise<TokenAmount> {
         const chainIdFrom = this.tokenAmountIn.token.chainId
-        const chainIdTo = this.transit.isV2() ? this.options.omniPoolConfig.chainId : this.tokenOut.chainId
+        const chainIdTo = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata] =
             this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData() // mint or v2
         const fee = await this.symbiosis.getBridgeFee({
@@ -684,7 +680,7 @@ export abstract class BaseSwapping {
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
-            chainIdFrom: this.options.omniPoolConfig.chainId,
+            chainIdFrom: this.omniPoolConfig.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
         return new TokenAmount(feeToken, fee.toString())
@@ -738,7 +734,7 @@ export abstract class BaseSwapping {
             {
                 stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
                 amount: this.transit.amountOut.raw.toString(), // uint256 amount;
-                syntCaller: this.symbiosis.metaRouter(this.options.omniPoolConfig.chainId).address, // address syntCaller;
+                syntCaller: this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address, // address syntCaller;
                 finalReceiveSide: this.finalReceiveSide(), // address finalReceiveSide;
                 sToken: this.transit.amountOut.token.address, // address sToken;
                 finalCallData: this.finalCalldata(), // bytes finalCallData;

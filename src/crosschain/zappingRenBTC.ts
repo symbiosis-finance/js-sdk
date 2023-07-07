@@ -44,8 +44,7 @@ export class ZappingRenBTC extends BaseSwapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        use1Inch = true
+        deadline: number
     ): ZappingRenBTCExactIn {
         this.renChainId = renChainId
         this.multicallRouter = this.symbiosis.multicallRouter(renChainId)
@@ -71,16 +70,16 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        const { tokenAmountOut, execute, ...result } = await this.doExactIn(
+        const { tokenAmountOut, execute, ...result } = await this.doExactIn({
             tokenAmountIn,
-            renBTC,
+            tokenOut: renBTC,
             from,
-            from,
+            to: from,
             revertableAddress,
             slippage,
             deadline,
-            use1Inch
-        )
+            omniPoolConfig: this.symbiosis.defaultOmniPool,
+        })
 
         const btcAmountOut = await this.estimateBTCOutput(tokenAmountOut)
 

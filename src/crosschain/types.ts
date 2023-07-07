@@ -1,16 +1,8 @@
 import { ChainId, TokenConstructor } from '../constants'
-import { BigNumber } from '@ethersproject/bignumber'
 
 export enum Field {
     INPUT = 'INPUT',
     OUTPUT = 'OUTPUT',
-}
-
-export enum PairState {
-    LOADING,
-    NOT_EXISTS,
-    EXISTS,
-    INVALID,
 }
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
@@ -45,25 +37,8 @@ export type OmniPoolConfig = {
     oracle: string
 }
 
-export interface OmniPoolConfigWithTokens extends OmniPoolConfig {
-    tokens: TokenConstructor[]
-}
-
 export type Config = {
     advisor: AdvisorConfig
-    omniPool: OmniPoolConfig
-    omniPools: OmniPoolConfigWithTokens[]
+    omniPools: OmniPoolConfig[]
     chains: ChainConfig[]
-    minSwapAmountInUsd: number
-    maxSwapAmountInUsd: number
-}
-
-export type PoolAsset = {
-    cash: BigNumber
-    liability: BigNumber
-    maxSupply: BigNumber
-    totalSupply: BigNumber
-    decimals: number
-    token: string
-    active: boolean
 }

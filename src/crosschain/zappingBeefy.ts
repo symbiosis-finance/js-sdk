@@ -19,8 +19,7 @@ export class ZappingBeefy extends BaseSwapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        useAggregators = true
+        deadline: number
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
@@ -31,13 +30,22 @@ export class ZappingBeefy extends BaseSwapping {
         const tokenContract = new Contract(tokenAddress, ERC20, this.symbiosis.providers.get(vaultChainId))
         const decimals = await tokenContract.decimals()
 
-        const token = new Token({
+        const tokenOut = new Token({
             address: tokenAddress,
             chainId: vaultChainId,
             decimals,
         })
 
-        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, useAggregators)
+        return this.doExactIn({
+            tokenAmountIn,
+            tokenOut,
+            from,
+            to,
+            revertableAddress,
+            slippage,
+            deadline,
+            omniPoolConfig: this.symbiosis.defaultOmniPool,
+        })
     }
 
     protected tradeCTo(): string {

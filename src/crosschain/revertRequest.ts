@@ -14,6 +14,7 @@ import {
     SynthesizeRequestFinder,
 } from './pending'
 import { getExternalId } from './utils'
+import { OmniPoolConfig } from './types'
 
 type InitProps = {
     validateState: boolean
@@ -55,12 +56,14 @@ export class RevertRequest {
         let fromTokenAmount = new TokenAmount(token, amount)
         const originalFromTokenAmount = fromTokenAmount
 
-        const omniPoolConfig = this.symbiosis.config.omniPools.find((config) => {
-            return (
-                config.chainId === token.chainId &&
-                !!config.tokens.find((token) => token.address.toLowerCase() === tokenAddress.toLowerCase())
-            )
-        })
+        // FIXME
+        const omniPoolConfig: OmniPoolConfig | undefined = this.symbiosis.defaultOmniPool
+        // this.symbiosis.config.omniPools.find((config) => {
+        //     return (
+        //         config.chainId === token.chainId &&
+        //         !!config.tokens.find((token) => token.address.toLowerCase() === tokenAddress.toLowerCase())
+        //     )
+        // })
 
         if (!omniPoolConfig) {
             throw new Error(`Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`)
@@ -74,7 +77,7 @@ export class RevertRequest {
         }
 
         if (type === 'burn') {
-            const metaRouterAddress = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
+            const metaRouterAddress = this.symbiosis.metaRouter(omniPoolConfig.chainId).address
             if (from.toLowerCase() === metaRouterAddress.toLowerCase()) {
                 type = 'burn-v2'
                 const data = await findSourceChainData(
@@ -88,7 +91,7 @@ export class RevertRequest {
                 if (data) {
                     const { sourceChainId, fromAddress } = data
                     from = fromAddress
-                    const sourceChainToken = await this.symbiosis.bestTransitStable(sourceChainId, omniPoolConfig)
+                    const sourceChainToken = await this.symbiosis.transitStable(sourceChainId, omniPoolConfig)
                     chainIdFrom = sourceChainToken.chainId
                     fromTokenAmount = new TokenAmount(
                         sourceChainToken,
@@ -98,7 +101,7 @@ export class RevertRequest {
                         ).toString()
                     )
                 } else {
-                    const transitStable = await this.symbiosis.bestTransitStable(chainIdTo, omniPoolConfig)
+                    const transitStable = await this.symbiosis.transitStable(chainIdTo, omniPoolConfig)
                     type = 'burn-v2-revert'
                     fromTokenAmount = new TokenAmount(transitStable, fromTokenAmount.raw)
                 }

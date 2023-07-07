@@ -54,7 +54,7 @@ export const findSourceChainData = async (
     revertableAddress: string,
     synthesizeRequestFinder?: SynthesizeRequestFinder
 ): Promise<SourceChainData | undefined> => {
-    const synthesis = symbiosis.synthesis(symbiosis.omniPoolConfig.chainId)
+    const synthesis = symbiosis.synthesis(symbiosis.defaultOmniPool.chainId)
     const filter = synthesis.filters.SynthesizeCompleted()
     const tx = await synthesis.provider.getTransactionReceipt(txHash)
     const foundSynthesizeCompleted = tx.logs.find((i) => {
@@ -111,7 +111,7 @@ const findSynthesizeRequestOnChain = async (
     const topics = portal.interface.encodeFilterTopics(eventFragment, [
         undefined,
         undefined, // from
-        symbiosis.omniPoolConfig.chainId, // chains IDs
+        symbiosis.defaultOmniPool.chainId, // chains IDs
         revertableAddress, // revertableAddress
     ])
     const blockOffset = symbiosis.filterBlockOffset(chainId)
@@ -119,14 +119,14 @@ const findSynthesizeRequestOnChain = async (
     const fromBlock = toBlock - blockOffset
     const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
 
-    const synthesis = symbiosis.synthesis(symbiosis.omniPoolConfig.chainId)
+    const synthesis = symbiosis.synthesis(symbiosis.defaultOmniPool.chainId)
     return events.find((e) => {
         const { id } = e.args
         const externalId = getExternalId({
             internalId: id,
             contractAddress: synthesis.address,
             revertableAddress,
-            chainId: symbiosis.omniPoolConfig.chainId,
+            chainId: symbiosis.defaultOmniPool.chainId,
         })
         return originExternalId === externalId
     })
@@ -193,7 +193,7 @@ export async function getChainPendingRequests({
 
         topics = selectedContract.interface.encodeFilterTopics(eventFragment, [
             undefined,
-            type === 'burn-v2' ? symbiosis.metaRouter(symbiosis.omniPoolConfig.chainId).address : undefined, // from
+            type === 'burn-v2' ? symbiosis.metaRouter(symbiosis.defaultOmniPool.chainId).address : undefined, // from
             otherChains, // chains IDs
             address, // revertableAddress
         ])
@@ -286,7 +286,7 @@ export async function getChainPendingRequests({
                 )
                 if (data) {
                     const { sourceChainId, fromAddress } = data
-                    const sourceChainToken = await symbiosis.bestTransitStable(sourceChainId)
+                    const sourceChainToken = await symbiosis.transitStable(sourceChainId, symbiosis.defaultOmniPool)
                     pendingRequest.from = fromAddress
                     pendingRequest.chainIdFrom = sourceChainToken.chainId
                     pendingRequest.fromTokenAmount = new TokenAmount(
@@ -297,7 +297,10 @@ export async function getChainPendingRequests({
                         ).toString()
                     )
                 } else {
-                    const transitStable = await symbiosis.bestTransitStable(pendingRequest.chainIdTo)
+                    const transitStable = await symbiosis.transitStable(
+                        pendingRequest.chainIdTo,
+                        symbiosis.defaultOmniPool
+                    )
                     pendingRequest.type = 'burn-v2-revert'
                     pendingRequest.fromTokenAmount = new TokenAmount(transitStable, pendingRequest.fromTokenAmount.raw)
                 }

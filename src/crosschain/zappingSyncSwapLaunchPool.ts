@@ -35,24 +35,23 @@ export class ZappingSyncSwapLaunchPool extends BaseSwapping {
         to: string,
         revertableAddress: string,
         slippage: number,
-        deadline: number,
-        useAggregators = true
+        deadline: number
     ): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(this.chainId)
         this.userAddress = to
 
         this.pool = SyncSwapLaunchPool__factory.connect(this.address, this.symbiosis.getProvider(this.chainId))
 
-        return this.doExactIn(
+        return this.doExactIn({
             tokenAmountIn,
-            wrappedToken(this.tokenOut),
+            tokenOut: wrappedToken(this.tokenOut),
             from,
             to,
             revertableAddress,
             slippage,
             deadline,
-            useAggregators
-        )
+            omniPoolConfig: this.symbiosis.defaultOmniPool,
+        })
     }
 
     protected tradeCTo(): string {

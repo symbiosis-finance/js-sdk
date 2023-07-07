@@ -12,7 +12,7 @@ import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
 import { OmniTrade } from './trade'
-import { OmniPoolConfigWithTokens } from './types'
+import { OmniPoolConfig } from './types'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
@@ -20,14 +20,15 @@ export class RevertPending {
     private deadline!: number
     private slippage!: number
     private transitStable!: Token
-    private omniPoolConfig: OmniPoolConfigWithTokens
+    private omniPoolConfig: OmniPoolConfig
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
-        const omniPoolConfig = this.symbiosis.config.omniPools.find((pool) => {
-            return pool.tokens.some(
-                (token) => token.address.toLowerCase() === this.request.fromTokenAmount.token.address.toLowerCase()
-            )
-        })
+        const omniPoolConfig = undefined
+        // this.symbiosis.config.omniPools.find((pool) => {
+        // return pool.tokens.some(
+        //     (token) => token.address.toLowerCase() === this.request.fromTokenAmount.token.address.toLowerCase()
+        // )
+        // })
 
         if (!omniPoolConfig) {
             throw new Error('No omni pool found for token', ErrorCode.NO_TRANSIT_POOL)
@@ -41,7 +42,7 @@ export class RevertPending {
         this.slippage = slippage
         this.deadline = deadline
 
-        this.transitStable = await this.symbiosis.bestTransitStable(this.request.chainIdFrom, this.omniPoolConfig)
+        this.transitStable = await this.symbiosis.transitStable(this.request.chainIdFrom, this.omniPoolConfig)
 
         const fee = await this.getFee()
 
@@ -388,9 +389,12 @@ export class RevertPending {
     }
 
     private findSyntheticStable(chainFromId: ChainId): Token | undefined {
-        const rawToken = this.omniPoolConfig.tokens.find(
-            (token) => token.chainId === this.omniPoolConfig.chainId && token.chainFromId === chainFromId
-        )
+        const rawToken = undefined
+        // this.omniPoolConfig.tokens.find(
+        //     (token) => token.chainId === this.omniPoolConfig.chainId && token.chainFromId === chainFromId
+        // )
+
+        console.log({ chainFromId })
 
         if (!rawToken) {
             return undefined

@@ -1,11 +1,10 @@
 import type { Symbiosis } from './symbiosis'
 import type { Swapping } from './swapping'
 import type { OmniPoolConfig } from './types'
-import type { SwapOptions } from './baseSwapping'
+import type { SwapExactInParams } from './baseSwapping'
 import { TokenAmount } from 'src/entities'
 import { ErrorCode } from './error'
 
-type ExactInArgs = Parameters<typeof Swapping.prototype.doExactIn>
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
 // Swapping wrapper what select best omni pool for swapping
@@ -14,25 +13,23 @@ export class BestPoolSwapping {
 
     public swapping?: Swapping
 
-    async exactIn(...args: ExactInArgs) {
-        const [tokenAmountIn, tokenOut, from, to, revertableAddress, slippage, deadline, useAggregators, options] = args
-
-        let omniPools: OmniPoolConfig[]
-        if (this.symbiosis.config.omniPools.length) {
-            omniPools = this.symbiosis.config.omniPools
-        } else {
-            omniPools = [this.symbiosis.omniPoolConfig]
-        }
+    async exactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+        oneInchProtocols,
+    }: SwapExactInParams) {
+        const omniPools: OmniPoolConfig[] = this.symbiosis.config.omniPools
 
         const results = await Promise.allSettled(
-            omniPools.map(async (poolConfig) => {
+            omniPools.map(async (omniPoolConfig) => {
                 const action = this.symbiosis.newSwapping()
 
-                const optionsWithPool: SwapOptions = {
-                    ...options,
-                    omniPoolConfig: poolConfig,
-                }
-                const actionResult = await action.exactIn(
+                const actionResult = await action.exactIn({
                     tokenAmountIn,
                     tokenOut,
                     from,
@@ -40,9 +37,9 @@ export class BestPoolSwapping {
                     revertableAddress,
                     slippage,
                     deadline,
-                    useAggregators,
-                    optionsWithPool
-                )
+                    oneInchProtocols,
+                    omniPoolConfig,
+                })
 
                 return { action, actionResult }
             })
