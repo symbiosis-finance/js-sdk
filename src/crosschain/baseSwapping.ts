@@ -174,11 +174,17 @@ export abstract class BaseSwapping {
         if (!this.transitTokenIn.equals(this.tokenAmountIn.token)) {
             externalSwapsCount += 1
         }
+
         if (!this.transitTokenOut.equals(this.tokenOut)) {
             externalSwapsCount += 1
         }
 
-        if (externalSwapsCount === 0) {
+        const MINIMUM_OMNIPOOL_SLIPPAGE = 20 // 0.2%
+        if (!externalSwapsCount && totalSlippage < MINIMUM_OMNIPOOL_SLIPPAGE) {
+            throw new Error('Slippage cannot be less than 0.2%')
+        }
+
+        if (!externalSwapsCount) {
             return {
                 A: 0,
                 B: totalSlippage,
@@ -186,16 +192,16 @@ export abstract class BaseSwapping {
             }
         }
 
-        const stableSwapSlippage = 50 // 0.5%
+        const OMNIPOOL_SWAP_SLIPPAGE = 50 // 0.5%
         if (totalSlippage < 150) {
             // 1.5%
             throw new Error('Slippage cannot be less than 1.5%')
         }
-        const externalSwapSlippage = (totalSlippage - stableSwapSlippage) / externalSwapsCount
+        const externalSwapSlippage = (totalSlippage - OMNIPOOL_SWAP_SLIPPAGE) / externalSwapsCount
 
         return {
             A: externalSwapSlippage,
-            B: stableSwapSlippage,
+            B: OMNIPOOL_SWAP_SLIPPAGE,
             C: externalSwapSlippage,
         }
     }
