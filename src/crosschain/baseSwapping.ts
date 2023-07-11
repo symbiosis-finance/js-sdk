@@ -170,8 +170,8 @@ export abstract class BaseSwapping {
     }
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
-        const MINIMUM_OMNIPOOL_SLIPPAGE = 20 // 0.2%
-        if (totalSlippage < MINIMUM_OMNIPOOL_SLIPPAGE) {
+        const MINIMUM_SLIPPAGE = 20 // 0.2%
+        if (totalSlippage < MINIMUM_SLIPPAGE) {
             throw new Error('Slippage cannot be less than 0.2%')
         }
 
