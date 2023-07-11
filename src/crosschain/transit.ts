@@ -1,6 +1,5 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Symbiosis } from './symbiosis'
-import { DataProvider } from './dataProvider'
 import { Percent, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
@@ -25,7 +24,6 @@ export class Transit {
 
     public constructor(
         protected symbiosis: Symbiosis,
-        protected dataProvider: DataProvider,
         protected amountIn: TokenAmount,
         protected tokenOut: Token,
         protected transitTokenIn: Token,
@@ -45,7 +43,7 @@ export class Transit {
     }
 
     public async init(): Promise<Transit> {
-        this.feeToken = await this.getFeeToken()
+        this.feeToken = this.getFeeToken()
 
         this.trade = await this.buildTrade()
 
@@ -55,7 +53,7 @@ export class Transit {
         this.route = this.trade.route
         this.priceImpact = this.trade.priceImpact
 
-        await this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
+        this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
 
         return this
     }
@@ -164,7 +162,7 @@ export class Transit {
         return amountOut.subtract(this.fee)
     }
 
-    protected async getFeeToken(): Promise<Token> {
+    protected getFeeToken(): Token {
         const transitStableOutChainId = this.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
 
         if (this.direction === 'burn') {
@@ -172,7 +170,7 @@ export class Transit {
         }
 
         // mint or v2
-        const rep = await this.dataProvider.getRepresentation(this.transitTokenIn, transitStableOutChainId) // sToken
+        const rep = this.symbiosis.getRepresentation(this.transitTokenIn, transitStableOutChainId) // sToken
         if (!rep) {
             throw new Error(
                 `Representation of ${this.transitTokenIn.chainId}:${this.transitTokenIn.symbol} in chain ${transitStableOutChainId} not found`,
@@ -182,13 +180,13 @@ export class Transit {
         return rep
     }
 
-    protected async getTradeTokenOut(): Promise<Token> {
+    protected getTradeTokenOut(): Token {
         if (this.direction === 'mint') {
             return this.transitTokenOut
         }
 
         const transitStableInChainId = this.isV2() ? this.omniPoolConfig.chainId : this.amountIn.token.chainId
-        const rep = await this.dataProvider.getRepresentation(this.transitTokenOut, transitStableInChainId) // sUSDC
+        const rep = this.symbiosis.getRepresentation(this.transitTokenOut, transitStableInChainId) // sUSDC
         if (!rep) {
             throw new Error(
                 `Representation of ${this.transitTokenOut.symbol} in chain ${transitStableInChainId} not found`,
@@ -200,7 +198,7 @@ export class Transit {
 
     protected async buildTrade(): Promise<OmniTrade> {
         const tokenAmountIn = this.getTradeAmountIn()
-        const tokenOut = await this.getTradeTokenOut()
+        const tokenOut = this.getTradeTokenOut()
 
         const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 

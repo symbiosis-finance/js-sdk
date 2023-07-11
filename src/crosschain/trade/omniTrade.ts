@@ -21,7 +21,7 @@ export class OmniTrade {
         private readonly deadline: number,
         private readonly symbiosis: Symbiosis,
         private readonly to: string,
-        omniPoolConfig: OmniPoolConfig
+        private readonly omniPoolConfig: OmniPoolConfig
     ) {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
@@ -30,8 +30,8 @@ export class OmniTrade {
     public async init() {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        const indexIn = await this.pool.assetToIndex(this.tokenAmountIn.token.address)
-        const indexOut = await this.pool.assetToIndex(this.tokenOut.address)
+        const indexIn = this.symbiosis.getOmniPoolIndex(this.tokenAmountIn.token, this.omniPoolConfig)
+        const indexOut = this.symbiosis.getOmniPoolIndex(this.tokenOut, this.omniPoolConfig)
 
         const quoteFrom = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
 

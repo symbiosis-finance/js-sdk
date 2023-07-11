@@ -1,5 +1,4 @@
 import RenJS from '@renproject/ren'
-import { Signer } from 'ethers'
 import { Bitcoin } from '@renproject/chains-bitcoin'
 import { Ethereum, BinanceSmartChain, Polygon } from '@renproject/chains-ethereum'
 import { ChainId } from '../constants'
@@ -9,7 +8,6 @@ import { MulticallRouter, RenMintGatewayV3 } from './contracts'
 
 export type ZappingRenBTCExactIn = Promise<
     Omit<Awaited<SwapExactIn>, 'execute'> & {
-        execute: ReturnType<ZappingRenBTC['buildExecute']>
         renBTCAmountOut: TokenAmount
     }
 >
@@ -70,7 +68,7 @@ export class ZappingRenBTC extends BaseSwapping {
 
         this.renMintGatewayV3 = this.symbiosis.renMintGatewayByAddress(mintGatewayAddress, renChainId)
 
-        const { tokenAmountOut, execute, ...result } = await this.doExactIn({
+        const { tokenAmountOut, ...result } = await this.doExactIn({
             tokenAmountIn,
             tokenOut: renBTC,
             from,
@@ -85,7 +83,6 @@ export class ZappingRenBTC extends BaseSwapping {
 
         return {
             ...result,
-            execute: this.buildExecute(execute),
             renBTCAmountOut: tokenAmountOut,
             tokenAmountOut: btcAmountOut,
         }
@@ -232,27 +229,5 @@ export class ZappingRenBTC extends BaseSwapping {
             }),
             estimateOutput
         )
-    }
-
-    private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
-        return async (signer: Signer) => {
-            const { response, waitForMined } = await execute(signer)
-
-            return {
-                response,
-                waitForMined: async () => {
-                    const { receipt } = await waitForMined()
-
-                    return {
-                        receipt,
-                        waitForComplete: async () => {
-                            const log = await this.waitForComplete(receipt)
-
-                            return { log, waitForREN: () => this.waitForREN(log.transactionHash) }
-                        },
-                    }
-                },
-            }
-        }
     }
 }

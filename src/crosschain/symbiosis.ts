@@ -52,7 +52,6 @@ import {
     UniLikeRouter__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
-import { getRepresentation } from './getRepresentation'
 import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
@@ -68,6 +67,7 @@ import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { ZappingBeefy } from './zappingBeefy'
 import { BestPoolSwapping } from './bestPoolSwapping'
+import { ConfigCache } from './config/cache/cache'
 
 export type ConfigName = 'testnet' | 'mainnet'
 
@@ -78,16 +78,19 @@ export class Symbiosis {
     public readonly clientId: string
     public defaultOmniPool: OmniPoolConfig
 
-    // private tokenPairs: TokenPair[]
+    private readonly configCache: ConfigCache
 
-    public constructor(config: ConfigName | Config, clientId: string) {
+    public constructor(config: ConfigName, clientId: string) {
         if (config === 'mainnet') {
             this.config = mainnet
         } else if (config === 'testnet') {
             this.config = testnet
         } else {
-            this.config = config
+            throw new Error('Unknown config name')
         }
+
+        this.configCache = new ConfigCache(config)
+
         // FIXME mustn't be default pool
         this.defaultOmniPool = this.config.omniPools[0]
 
@@ -100,14 +103,10 @@ export class Symbiosis {
         )
     }
 
-    public async validateSwapAmounts(amount: TokenAmount): Promise<void> {
+    public validateSwapAmounts(amount: TokenAmount): void {
         const { token } = amount
-        const contract = token.isSynthetic ? this.synthesis(token.chainId) : this.portal(token.chainId)
-
-        const wrapped = wrappedToken(amount.token)
-
-        const threshold = await contract.tokenThreshold(wrapped.address)
-
+        const wrapped = wrappedToken(token)
+        const threshold = this.configCache.getTokenThreshold(wrapped, token.isSynthetic ? 'Synthesis' : 'Portal')
         if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
             const formattedThreshold = utils.formatUnits(threshold, token.decimals)
 
@@ -329,8 +328,12 @@ export class Symbiosis {
         return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
     }
 
-    public async getRepresentation(token: Token, chainId: ChainId): Promise<Token | undefined> {
-        return getRepresentation(this, token, chainId)
+    public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
+        return this.configCache.getRepresentation(token, chainId)
+    }
+
+    public getOmniPoolIndex(token: Token, omniPoolConfig: OmniPoolConfig): number {
+        return this.configCache.getOmniPoolIndex(token, omniPoolConfig)
     }
 
     public async getBridgeFee({

@@ -1,17 +1,16 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
-import { BigNumber, Signer } from 'ethers'
+import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
+import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
-import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
+import { getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
@@ -32,7 +31,6 @@ export type SwapExactInParams = {
 }
 
 export type SwapExactIn = Promise<{
-    execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutWithZeroFee: TokenAmount
@@ -151,7 +149,6 @@ export abstract class BaseSwapping {
         const transactionRequest = this.getTransactionRequest(fee, feeV2)
 
         return {
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
             fee: feeV2 || fee,
             tokenAmountOut: this.tokenAmountOut(feeV2),
             tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
@@ -198,26 +195,6 @@ export abstract class BaseSwapping {
 
     protected approveTo(): string {
         return this.symbiosis.chainConfig(this.tokenAmountIn.token.chainId).metaRouterGateway
-    }
-
-    protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
-        const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
-
-        const response = await signer.sendTransaction(preparedTransactionRequest)
-
-        return {
-            response,
-            waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
-        }
-    }
-
-    protected async waitForMined(confirmations: number, response: TransactionResponse): WaitForMined {
-        const receipt = await response.wait(confirmations)
-
-        return {
-            receipt,
-            waitForComplete: () => this.waitForComplete(receipt),
-        }
     }
 
     public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
@@ -373,7 +350,6 @@ export abstract class BaseSwapping {
     protected buildTransit(fee?: TokenAmount): Transit {
         return new Transit(
             this.symbiosis,
-            this.dataProvider,
             this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
             this.tokenOut,
             this.transitTokenIn,
@@ -549,7 +525,7 @@ export abstract class BaseSwapping {
         return this.transit.direction === 'burn' ? this.metaBurnSyntheticToken(fee) : this.metaSynthesize(fee, feeV2) // mint or v2
     }
 
-    protected async feeMintCallData(): Promise<[string, string]> {
+    protected feeMintCallData(): [string, string] {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
 
@@ -591,7 +567,7 @@ export abstract class BaseSwapping {
         return [synthesis.address, callData]
     }
 
-    protected async feeBurnCallData(): Promise<[string, string]> {
+    protected feeBurnCallData(): [string, string] {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.tokenOut.chainId
 
@@ -626,7 +602,7 @@ export abstract class BaseSwapping {
         return [portal.address, calldata]
     }
 
-    protected async feeBurnCallDataV2(): Promise<[string, string]> {
+    protected feeBurnCallDataV2(): [string, string] {
         const chainIdIn = this.omniPoolConfig.chainId
         const chainIdOut = this.tokenOut.chainId
 
@@ -663,7 +639,7 @@ export abstract class BaseSwapping {
         const chainIdFrom = this.tokenAmountIn.token.chainId
         const chainIdTo = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata] =
-            this.transit.direction === 'burn' ? await this.feeBurnCallData() : await this.feeMintCallData() // mint or v2
+            this.transit.direction === 'burn' ? this.feeBurnCallData() : this.feeMintCallData() // mint or v2
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
@@ -675,7 +651,7 @@ export abstract class BaseSwapping {
 
     protected async getFeeV2(): Promise<TokenAmount> {
         const feeToken = this.transitTokenOut
-        const [receiveSide, calldata] = await this.feeBurnCallDataV2()
+        const [receiveSide, calldata] = this.feeBurnCallDataV2()
 
         const fee = await this.symbiosis.getBridgeFee({
             receiveSide,
