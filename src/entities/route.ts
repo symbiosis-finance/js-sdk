@@ -4,7 +4,7 @@ import { ChainId } from '../constants'
 
 import { WETH, Token } from './token'
 import { Pair } from './pair'
-import { Price } from './fractions/price'
+import { Price } from './fractions'
 
 export class Route {
     public readonly pairs: Pair[]
