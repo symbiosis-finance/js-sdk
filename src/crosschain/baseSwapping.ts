@@ -33,7 +33,7 @@ export type SwapExactIn = Promise<{
     outTradeType?: SymbiosisTradeType
 }>
 
-export type DetailedSlippage = {
+export interface DetailedSlippage {
     A: number
     B: number
     C: number
@@ -170,40 +170,23 @@ export abstract class BaseSwapping {
     }
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
-        let externalSwapsCount = 0
-        if (!this.transitTokenIn.equals(this.tokenAmountIn.token)) {
-            externalSwapsCount += 1
-        }
-
-        if (!this.transitTokenOut.equals(this.tokenOut)) {
-            externalSwapsCount += 1
-        }
-
         const MINIMUM_OMNIPOOL_SLIPPAGE = 20 // 0.2%
-        if (!externalSwapsCount && totalSlippage < MINIMUM_OMNIPOOL_SLIPPAGE) {
+        if (totalSlippage < MINIMUM_OMNIPOOL_SLIPPAGE) {
             throw new Error('Slippage cannot be less than 0.2%')
         }
 
-        if (!externalSwapsCount) {
-            return {
-                A: 0,
-                B: totalSlippage,
-                C: 0,
-            }
+        let swapsCount = 1
+        if (!this.transitTokenIn.equals(this.tokenAmountIn.token)) {
+            swapsCount += 1
         }
 
-        const OMNIPOOL_SWAP_SLIPPAGE = 50 // 0.5%
-        if (totalSlippage < 150) {
-            // 1.5%
-            throw new Error('Slippage cannot be less than 1.5%')
+        if (!this.transitTokenOut.equals(this.tokenOut)) {
+            swapsCount += 1
         }
-        const externalSwapSlippage = (totalSlippage - OMNIPOOL_SWAP_SLIPPAGE) / externalSwapsCount
 
-        return {
-            A: externalSwapSlippage,
-            B: OMNIPOOL_SWAP_SLIPPAGE,
-            C: externalSwapSlippage,
-        }
+        const slippage = Math.floor(totalSlippage / swapsCount)
+
+        return { A: slippage, B: slippage, C: slippage }
     }
 
     protected approveTo(): string {
