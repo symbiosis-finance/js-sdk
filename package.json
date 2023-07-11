@@ -20,7 +20,7 @@
         "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src",
-        "prepublishOnly": "tsup",
+        "prepublishOnly": "tsc --noEmit && tsup",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'"
     },
     "dependencies": {
