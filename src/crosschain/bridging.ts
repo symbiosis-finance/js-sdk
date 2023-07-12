@@ -18,12 +18,19 @@ export type Execute = Promise<{
     waitForMined: () => WaitForMined
 }>
 
-export type ExactIn = Promise<{
+export type BridgeExactIn = Promise<{
     execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     transactionRequest: TransactionRequest
 }>
+
+export type BridgeExactInParams = {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    to: string
+    revertableAddress: string
+}
 
 export class Bridging {
     public tokenAmountIn: TokenAmount | undefined
@@ -39,7 +46,7 @@ export class Bridging {
         this.symbiosis = symbiosis
     }
 
-    public async exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, to: string, revertableAddress: string): ExactIn {
+    public async exactIn({ tokenAmountIn, tokenOut, to, revertableAddress }: BridgeExactInParams): BridgeExactIn {
         await this.symbiosis.validateSwapAmounts(tokenAmountIn)
 
         this.tokenAmountIn = tokenAmountIn

@@ -29,7 +29,7 @@ export async function getRepresentation(
             return undefined
         }
 
-        return symbiosis.findStable(representation, chainId)
+        return symbiosis.findToken(representation, chainId)
     } catch (e) {
         console.error(`Error while getting representation of ${token.address} in chain ${chainId}`, e)
         return undefined

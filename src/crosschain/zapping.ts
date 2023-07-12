@@ -19,7 +19,6 @@ import { OmniPoolConfig } from './types'
 import { WrapTrade } from './trade/wrapTrade'
 
 export type SwapExactIn = Promise<{
-    execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     priceImpact: Percent
@@ -27,6 +26,15 @@ export type SwapExactIn = Promise<{
     transactionRequest: TransactionRequest
     inTradeType?: SymbiosisTradeType
 }>
+
+type ZappingExactInParams = {
+    tokenAmountIn: TokenAmount
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
+}
 
 export class Zapping {
     protected dataProvider: DataProvider
@@ -42,7 +50,7 @@ export class Zapping {
     private tradeA: UniLikeTrade | AggregatorTrade | WrapTrade | undefined
 
     private synthToken!: Token
-    private transitStableIn!: Token
+    private transitTokenIn!: Token
 
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
@@ -55,14 +63,14 @@ export class Zapping {
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number
-    ): SwapExactIn {
+    public async exactIn({
+        tokenAmountIn,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+    }: ZappingExactInParams): SwapExactIn {
         this.tokenAmountIn = tokenAmountIn
         this.from = from
         this.to = to
@@ -71,11 +79,11 @@ export class Zapping {
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
-        this.transitStableIn = this.symbiosis.transitStable(tokenAmountIn.token.chainId, this.omniPoolConfig)
+        this.transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
 
         let transitAmountIn: TokenAmount
 
-        if (!this.transitStableIn.equals(tokenAmountIn.token)) {
+        if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 
@@ -99,7 +107,6 @@ export class Zapping {
         const transactionRequest = this.getTransactionRequest(fee)
 
         return {
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
             fee,
             tokenAmountOut: this.omniLiquidity.amountOut,
             priceImpact: this.calculatePriceImpact(),
@@ -188,7 +195,7 @@ export class Zapping {
 
     private buildTradeA(): UniLikeTrade | AggregatorTrade | WrapTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.transitStableIn
+        const tokenOut = this.transitTokenIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
@@ -290,11 +297,11 @@ export class Zapping {
 
     private async getSynthToken(): Promise<Token> {
         const chainIdOut = this.omniPoolConfig.chainId
-        const rep = await this.symbiosis.getRepresentation(this.transitStableIn, chainIdOut)
+        const rep = await this.symbiosis.getRepresentation(this.transitTokenIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${this.transitStableIn.symbol} in chain ${chainIdOut} not found`,
+                `Representation of ${this.transitTokenIn.symbol} in chain ${chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }

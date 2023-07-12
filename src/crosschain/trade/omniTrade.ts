@@ -30,8 +30,8 @@ export class OmniTrade {
     public async init() {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        const indexIn = this.symbiosis.getOmniPoolIndex(this.tokenAmountIn.token, this.omniPoolConfig)
-        const indexOut = this.symbiosis.getOmniPoolIndex(this.tokenOut, this.omniPoolConfig)
+        const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenAmountIn.token)
+        const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenOut)
 
         const quoteFrom = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
 

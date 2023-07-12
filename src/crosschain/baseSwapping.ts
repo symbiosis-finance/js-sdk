@@ -27,7 +27,6 @@ export type SwapExactInParams = {
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
-    omniPoolConfig: OmniPoolConfig
 }
 
 export type SwapExactIn = Promise<{
@@ -75,12 +74,13 @@ export abstract class BaseSwapping {
     protected transitTokenIn!: Token
     protected transitTokenOut!: Token
 
-    protected omniPoolConfig!: OmniPoolConfig
+    protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
 
     protected feeV2: TokenAmount | undefined
 
-    public constructor(symbiosis: Symbiosis) {
+    public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
+        this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
     }
@@ -93,16 +93,14 @@ export abstract class BaseSwapping {
         revertableAddress,
         slippage,
         deadline,
-        omniPoolConfig,
         oneInchProtocols,
     }: SwapExactInParams): SwapExactIn {
-        this.omniPoolConfig = omniPoolConfig
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
 
-        this.transitTokenIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId, omniPoolConfig)
-        this.transitTokenOut = this.symbiosis.transitStable(this.tokenOut.chainId, omniPoolConfig)
+        this.transitTokenIn = this.symbiosis.transitToken(this.tokenAmountIn.token.chainId, this.omniPoolConfig)
+        this.transitTokenOut = this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
 
         this.from = from
         this.to = to
@@ -110,7 +108,7 @@ export abstract class BaseSwapping {
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
-        this.synthesisV2 = this.symbiosis.synthesis(omniPoolConfig.chainId)
+        this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()

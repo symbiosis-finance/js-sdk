@@ -6,66 +6,13 @@
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
             "id": 0,
             "tokens": [
-                {
-                    "index": 0,
-                    "address": "0x32Ac07C5D3D6002B853836a48EE8538C9CF29ad4",
-                    "decimals": 6
-                },
-                {
-                    "index": 1,
-                    "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
-                    "decimals": 6
-                },
-                {
-                    "index": 2,
-                    "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
-                    "decimals": 6
-                },
-                {
-                    "index": 3,
-                    "address": "0xD7Ab9Ff37EDEa9a6422FE8F5Fb6b20202A9fF4ec",
-                    "decimals": 6
-                },
-                {
-                    "index": 4,
-                    "address": "0x8341Bc741cd653dC0BEb39D2C57562419B0A2C6E",
-                    "decimals": 6
-                },
-                {
-                    "index": 5,
-                    "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
-                    "decimals": 18
-                },
-                {
-                    "index": 6,
-                    "address": "0xe586751BAED5b49Ba521e8169051b11A85b79007",
-                    "decimals": 6
-                },
-                {
-                    "index": 7,
-                    "address": "0x519663f7B0a8d4eb9cbA0A8dEBB70e26159539AF",
-                    "decimals": 6
-                },
-                {
-                    "index": 8,
-                    "address": "0xA31EB10427E47517A4E30DCC17054A2F2692aAe1",
-                    "decimals": 6
-                },
-                {
-                    "index": 9,
-                    "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
-                    "decimals": 6
-                },
-                {
-                    "index": 10,
-                    "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
-                    "decimals": 6
-                },
-                {
-                    "index": 11,
-                    "address": "0x980B3841Be2f753884BEBCD493C246D0E25CF475",
-                    "decimals": 6
-                }
+                { "index": 0, "tokenId": 2 },
+                { "index": 1, "tokenId": 4 },
+                { "index": 2, "tokenId": 3 },
+                { "index": 4, "tokenId": 5 },
+                { "index": 5, "tokenId": 1 },
+                { "index": 8, "tokenId": 14 },
+                { "index": 9, "tokenId": 6 }
             ]
         }
     ],
@@ -109,9 +56,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 5,
-            "id": 2,
-            "omniPoolId": 0,
-            "omniPoolIndex": 0
+            "id": 2
         },
         {
             "decimals": 6,
@@ -125,9 +70,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 43113,
-            "id": 3,
-            "omniPoolId": 0,
-            "omniPoolIndex": 2
+            "id": 3
         },
         {
             "decimals": 6,
@@ -141,9 +84,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 80001,
-            "id": 4,
-            "omniPoolId": 0,
-            "omniPoolIndex": 1
+            "id": 4
         },
         {
             "decimals": 6,
@@ -157,9 +98,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 8081,
-            "id": 5,
-            "omniPoolId": 0,
-            "omniPoolIndex": 4
+            "id": 5
         },
         {
             "decimals": 6,
@@ -173,9 +112,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 59140,
-            "id": 6,
-            "omniPoolId": 0,
-            "omniPoolIndex": 9
+            "id": 6
         },
         {
             "decimals": 6,
@@ -246,9 +183,7 @@
             },
             "chainFromId": 5,
             "id": 11,
-            "pair": 0,
-            "omniPoolId": 0,
-            "omniPoolIndex": 0
+            "pair": 0
         },
         {
             "decimals": 6,
@@ -263,9 +198,7 @@
             },
             "chainFromId": 43113,
             "id": 12,
-            "pair": 7,
-            "omniPoolId": 0,
-            "omniPoolIndex": 2
+            "pair": 7
         },
         {
             "decimals": 6,
@@ -280,9 +213,7 @@
             },
             "chainFromId": 80001,
             "id": 13,
-            "pair": 8,
-            "omniPoolId": 0,
-            "omniPoolIndex": 1
+            "pair": 8
         },
         {
             "decimals": 6,
@@ -297,9 +228,7 @@
             },
             "chainFromId": 7001,
             "id": 14,
-            "pair": 9,
-            "omniPoolId": 0,
-            "omniPoolIndex": 8
+            "pair": 9
         },
         {
             "decimals": 6,
@@ -314,107 +243,25 @@
             },
             "chainFromId": 59140,
             "id": 15,
-            "pair": 10,
-            "omniPoolId": 0,
-            "omniPoolIndex": 9
+            "pair": 10
         }
     ],
     "thresholds": [
-        {
-            "tokenId": 0,
-            "chainId": 5,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 1,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 2,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 3,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 4,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 5,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 6,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 11,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 12,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 13,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 14,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 15,
-            "chainId": 97,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 7,
-            "chainId": 43113,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 8,
-            "chainId": 80001,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 9,
-            "chainId": 7001,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 10,
-            "chainId": 59140,
-            "type": "Portal",
-            "value": "0"
-        }
+        { "tokenId": 0, "type": "Portal", "value": "0" },
+        { "tokenId": 1, "type": "Synthesis", "value": "0" },
+        { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 3, "type": "Synthesis", "value": "0" },
+        { "tokenId": 4, "type": "Synthesis", "value": "0" },
+        { "tokenId": 5, "type": "Synthesis", "value": "0" },
+        { "tokenId": 6, "type": "Synthesis", "value": "0" },
+        { "tokenId": 11, "type": "Synthesis", "value": "0" },
+        { "tokenId": 12, "type": "Synthesis", "value": "0" },
+        { "tokenId": 13, "type": "Synthesis", "value": "0" },
+        { "tokenId": 14, "type": "Synthesis", "value": "0" },
+        { "tokenId": 15, "type": "Synthesis", "value": "0" },
+        { "tokenId": 7, "type": "Portal", "value": "0" },
+        { "tokenId": 8, "type": "Portal", "value": "0" },
+        { "tokenId": 9, "type": "Portal", "value": "0" },
+        { "tokenId": 10, "type": "Portal", "value": "0" }
     ]
 }

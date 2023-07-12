@@ -6,24 +6,66 @@
             "oracle": "0x7775b274f0C3fA919B756b22A4d9674e55927ab8",
             "id": 0,
             "tokens": [
-                { "index": 0, "address": "0x7d6EC42b5d9566931560411a8652Cea00b90d982", "decimals": 6 },
-                { "index": 1, "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58", "decimals": 18 },
-                { "index": 2, "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18", "decimals": 6 },
-                { "index": 3, "address": "0x59AA2e5F628659918A4890A2a732E6C8bD334E7A", "decimals": 6 },
-                { "index": 4, "address": "0x9F98f9F312D23d078061962837042b8918e6aff2", "decimals": 18 },
-                { "index": 5, "address": "0x1a3d48492Cd334AD140587091AC382E5695a4934", "decimals": 6 },
-                { "index": 6, "address": "0xAc509814886384563b9b48B7f35264bf62FA2EC9", "decimals": 6 },
-                { "index": 7, "address": "0xa9441f2995763e38d18A725646b00D90938d2FBf", "decimals": 6 },
-                { "index": 8, "address": "0x7Af28c655F1EF73E1Fb15204f025A25D686A3Ca7", "decimals": 6 },
-                { "index": 9, "address": "0x437640130BAE97dAD55161a6F1AEC58d0F30fE8F", "decimals": 6 },
-                { "index": 10, "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB", "decimals": 18 },
-                { "index": 11, "address": "0xC6CC7E50A0F20268DB1BAb041ff18b2c7E97a9d3", "decimals": 6 },
-                { "index": 12, "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462", "decimals": 6 },
-                { "index": 13, "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C", "decimals": 6 },
-                { "index": 14, "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677", "decimals": 6 },
-                { "index": 15, "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012", "decimals": 6 },
-                { "index": 16, "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f", "decimals": 6 },
-                { "index": 17, "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0", "decimals": 6 }
+                {
+                    "index": 0,
+                    "tokenId": 25
+                },
+                {
+                    "index": 1,
+                    "tokenId": 27
+                },
+                {
+                    "index": 2,
+                    "tokenId": 30
+                },
+                {
+                    "index": 3,
+                    "tokenId": 31
+                },
+                {
+                    "index": 4,
+                    "tokenId": 13
+                },
+                {
+                    "index": 5,
+                    "tokenId": 35
+                },
+                {
+                    "index": 7,
+                    "tokenId": 36
+                },
+                {
+                    "index": 8,
+                    "tokenId": 33
+                },
+                {
+                    "index": 9,
+                    "tokenId": 34
+                },
+                {
+                    "index": 10,
+                    "tokenId": 28
+                },
+                {
+                    "index": 11,
+                    "tokenId": 37
+                },
+                {
+                    "index": 13,
+                    "tokenId": 41
+                },
+                {
+                    "index": 14,
+                    "tokenId": 43
+                },
+                {
+                    "index": 15,
+                    "tokenId": 45
+                },
+                {
+                    "index": 16,
+                    "tokenId": 39
+                }
             ]
         },
         {
@@ -32,16 +74,38 @@
             "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
             "id": 1,
             "tokens": [
-                { "index": 0, "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", "decimals": 18 },
-                { "index": 1, "address": "0xE3dB9aD5A3c6387beCe39fAfc26Dbb2b594fb7ff", "decimals": 18 },
-                { "index": 2, "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6", "decimals": 18 },
-                { "index": 3, "address": "0x4994b8bb0b58708Cc6A66079d22db35c95650B4b", "decimals": 18 },
-                { "index": 4, "address": "0x20418D1Bcd353f81fB11F10689ca6f3a1B353794", "decimals": 18 },
-                { "index": 5, "address": "0x93A973297E492d4E7a2b4aBaB3bFB4f140D1E3Bb", "decimals": 18 },
-                { "index": 6, "address": "0x424190072b7Db5352bB91cC70DabD82F547AE003", "decimals": 18 },
-                { "index": 7, "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084", "decimals": 18 },
-                { "index": 8, "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C", "decimals": 18 },
-                { "index": 9, "address": "0x1CE4E75E2Bd6bbbACDE1E10D6813228138337E86", "decimals": 18 }
+                {
+                    "index": 1,
+                    "tokenId": 38
+                },
+                {
+                    "index": 2,
+                    "tokenId": 46
+                },
+                {
+                    "index": 3,
+                    "tokenId": 40
+                },
+                {
+                    "index": 5,
+                    "tokenId": 32
+                },
+                {
+                    "index": 6,
+                    "tokenId": 29
+                },
+                {
+                    "index": 7,
+                    "tokenId": 42
+                },
+                {
+                    "index": 8,
+                    "tokenId": 44
+                },
+                {
+                    "index": 9,
+                    "tokenId": 26
+                }
             ]
         }
     ],
@@ -274,7 +338,7 @@
             "symbol": "USDC",
             "name": "USDC",
             "chainId": 42161,
-            "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+            "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -409,9 +473,7 @@
             },
             "chainFromId": 1,
             "id": 25,
-            "pair": 0,
-            "omniPoolId": 0,
-            "omniPoolIndex": 0
+            "pair": 0
         },
         {
             "decimals": 18,
@@ -426,9 +488,7 @@
             },
             "chainFromId": 1,
             "id": 26,
-            "pair": 2,
-            "omniPoolId": 1,
-            "omniPoolIndex": 9
+            "pair": 2
         },
         {
             "decimals": 18,
@@ -443,9 +503,7 @@
             },
             "chainFromId": 56,
             "id": 27,
-            "pair": 3,
-            "omniPoolId": 0,
-            "omniPoolIndex": 1
+            "pair": 3
         },
         {
             "decimals": 18,
@@ -460,9 +518,7 @@
             },
             "chainFromId": 56,
             "id": 28,
-            "pair": 4,
-            "omniPoolId": 0,
-            "omniPoolIndex": 10
+            "pair": 4
         },
         {
             "decimals": 18,
@@ -477,9 +533,7 @@
             },
             "chainFromId": 56,
             "id": 29,
-            "pair": 5,
-            "omniPoolId": 1,
-            "omniPoolIndex": 6
+            "pair": 5
         },
         {
             "decimals": 6,
@@ -494,9 +548,7 @@
             },
             "chainFromId": 43114,
             "id": 30,
-            "pair": 6,
-            "omniPoolId": 0,
-            "omniPoolIndex": 2
+            "pair": 6
         },
         {
             "decimals": 6,
@@ -511,9 +563,7 @@
             },
             "chainFromId": 137,
             "id": 31,
-            "pair": 7,
-            "omniPoolId": 0,
-            "omniPoolIndex": 3
+            "pair": 7
         },
         {
             "decimals": 18,
@@ -528,9 +578,7 @@
             },
             "chainFromId": 137,
             "id": 32,
-            "pair": 8,
-            "omniPoolId": 1,
-            "omniPoolIndex": 5
+            "pair": 8
         },
         {
             "decimals": 6,
@@ -545,9 +593,7 @@
             },
             "chainFromId": 40,
             "id": 33,
-            "pair": 9,
-            "omniPoolId": 0,
-            "omniPoolIndex": 8
+            "pair": 9
         },
         {
             "decimals": 6,
@@ -562,9 +608,7 @@
             },
             "chainFromId": 2222,
             "id": 34,
-            "pair": 10,
-            "omniPoolId": 0,
-            "omniPoolIndex": 9
+            "pair": 10
         },
         {
             "decimals": 6,
@@ -579,9 +623,7 @@
             },
             "chainFromId": 288,
             "id": 35,
-            "pair": 11,
-            "omniPoolId": 0,
-            "omniPoolIndex": 5
+            "pair": 11
         },
         {
             "decimals": 6,
@@ -596,9 +638,7 @@
             },
             "chainFromId": 43288,
             "id": 36,
-            "pair": 12,
-            "omniPoolId": 0,
-            "omniPoolIndex": 7
+            "pair": 12
         },
         {
             "decimals": 6,
@@ -613,9 +653,7 @@
             },
             "chainFromId": 324,
             "id": 37,
-            "pair": 14,
-            "omniPoolId": 0,
-            "omniPoolIndex": 11
+            "pair": 14
         },
         {
             "decimals": 18,
@@ -630,16 +668,14 @@
             },
             "chainFromId": 324,
             "id": 38,
-            "pair": 15,
-            "omniPoolId": 1,
-            "omniPoolIndex": 1
+            "pair": 15
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "USDC",
             "chainId": 56288,
-            "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462",
+            "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -647,9 +683,7 @@
             },
             "chainFromId": 42161,
             "id": 39,
-            "pair": 16,
-            "omniPoolId": 0,
-            "omniPoolIndex": 12
+            "pair": 16
         },
         {
             "decimals": 18,
@@ -664,9 +698,7 @@
             },
             "chainFromId": 42161,
             "id": 40,
-            "pair": 17,
-            "omniPoolId": 1,
-            "omniPoolIndex": 3
+            "pair": 17
         },
         {
             "decimals": 6,
@@ -681,9 +713,7 @@
             },
             "chainFromId": 10,
             "id": 41,
-            "pair": 18,
-            "omniPoolId": 0,
-            "omniPoolIndex": 13
+            "pair": 18
         },
         {
             "decimals": 18,
@@ -698,9 +728,7 @@
             },
             "chainFromId": 10,
             "id": 42,
-            "pair": 19,
-            "omniPoolId": 1,
-            "omniPoolIndex": 7
+            "pair": 19
         },
         {
             "decimals": 6,
@@ -715,9 +743,7 @@
             },
             "chainFromId": 42170,
             "id": 43,
-            "pair": 20,
-            "omniPoolId": 0,
-            "omniPoolIndex": 14
+            "pair": 20
         },
         {
             "decimals": 18,
@@ -732,9 +758,7 @@
             },
             "chainFromId": 42170,
             "id": 44,
-            "pair": 21,
-            "omniPoolId": 1,
-            "omniPoolIndex": 8
+            "pair": 21
         },
         {
             "decimals": 6,
@@ -749,9 +773,7 @@
             },
             "chainFromId": 1101,
             "id": 45,
-            "pair": 22,
-            "omniPoolId": 0,
-            "omniPoolIndex": 15
+            "pair": 22
         },
         {
             "decimals": 18,
@@ -766,62 +788,264 @@
             },
             "chainFromId": 1101,
             "id": 46,
-            "pair": 23,
-            "omniPoolId": 1,
-            "omniPoolIndex": 2
+            "pair": 23
         }
     ],
     "thresholds": [
-        { "tokenId": 0, "chainId": 1, "type": "Portal", "value": "8000000" },
-        { "tokenId": 1, "chainId": 1, "type": "Portal", "value": "0" },
-        { "tokenId": 2, "chainId": 1, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "chainId": 56, "type": "Portal", "value": "8000000000000000000" },
-        { "tokenId": 4, "chainId": 56, "type": "Portal", "value": "0" },
-        { "tokenId": 5, "chainId": 56, "type": "Portal", "value": "0" },
-        { "tokenId": 24, "chainId": 56, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "chainId": 56, "type": "Synthesis", "value": "0" },
-        { "tokenId": 4, "chainId": 56, "type": "Synthesis", "value": "0" },
-        { "tokenId": 5, "chainId": 56, "type": "Synthesis", "value": "0" },
-        { "tokenId": 24, "chainId": 56, "type": "Synthesis", "value": "0" },
-        { "tokenId": 6, "chainId": 43114, "type": "Portal", "value": "8000000" },
-        { "tokenId": 7, "chainId": 137, "type": "Portal", "value": "8000000" },
-        { "tokenId": 8, "chainId": 137, "type": "Portal", "value": "0" },
-        { "tokenId": 9, "chainId": 40, "type": "Portal", "value": "8000000" },
-        { "tokenId": 10, "chainId": 2222, "type": "Portal", "value": "0" },
-        { "tokenId": 11, "chainId": 288, "type": "Portal", "value": "8000000" },
-        { "tokenId": 12, "chainId": 43288, "type": "Portal", "value": "8000000" },
-        { "tokenId": 13, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 25, "chainId": 56288, "type": "Synthesis", "value": "10000000" },
-        { "tokenId": 26, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 27, "chainId": 56288, "type": "Synthesis", "value": "8000000000000000000" },
-        { "tokenId": 28, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 29, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 30, "chainId": 56288, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 31, "chainId": 56288, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 32, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 33, "chainId": 56288, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 34, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 35, "chainId": 56288, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 36, "chainId": 56288, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 37, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 38, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 39, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 40, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 41, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 42, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 43, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 44, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 45, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 46, "chainId": 56288, "type": "Synthesis", "value": "0" },
-        { "tokenId": 14, "chainId": 324, "type": "Portal", "value": "10000000" },
-        { "tokenId": 15, "chainId": 324, "type": "Portal", "value": "0" },
-        { "tokenId": 16, "chainId": 42161, "type": "Portal", "value": "0" },
-        { "tokenId": 17, "chainId": 42161, "type": "Portal", "value": "0" },
-        { "tokenId": 18, "chainId": 10, "type": "Portal", "value": "0" },
-        { "tokenId": 19, "chainId": 10, "type": "Portal", "value": "0" },
-        { "tokenId": 20, "chainId": 42170, "type": "Portal", "value": "0" },
-        { "tokenId": 21, "chainId": 42170, "type": "Portal", "value": "0" },
-        { "tokenId": 22, "chainId": 1101, "type": "Portal", "value": "0" },
-        { "tokenId": 23, "chainId": 1101, "type": "Portal", "value": "0" }
+        {
+            "tokenId": 0,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 1,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 2,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 3,
+            "type": "Portal",
+            "value": "8000000000000000000"
+        },
+        {
+            "tokenId": 4,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 5,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 24,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 3,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 4,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 5,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 24,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 6,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 7,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 8,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 9,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 10,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 11,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 12,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 13,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 25,
+            "type": "Synthesis",
+            "value": "10000000"
+        },
+        {
+            "tokenId": 26,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 27,
+            "type": "Synthesis",
+            "value": "8000000000000000000"
+        },
+        {
+            "tokenId": 28,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 29,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 30,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 31,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 32,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 33,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 34,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 35,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 36,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 37,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 38,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 39,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 40,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 41,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 42,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 43,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 44,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 45,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 46,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 14,
+            "type": "Portal",
+            "value": "10000000"
+        },
+        {
+            "tokenId": 15,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 16,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 17,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 18,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 19,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 20,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 21,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 22,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 23,
+            "type": "Portal",
+            "value": "0"
+        }
     ]
 }

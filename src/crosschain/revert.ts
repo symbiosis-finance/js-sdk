@@ -5,7 +5,6 @@ import { ContractTransaction, Signer } from 'ethers'
 import JSBI from 'jsbi'
 import { Token, TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
-import { PendingRequest } from './pending'
 import type { Symbiosis } from './symbiosis'
 import { getExternalId, getInternalId, getLogWithTimeout, prepareTransactionRequest } from './utils'
 import { MulticallRouter } from './contracts'
@@ -13,23 +12,18 @@ import { ChainId } from '../constants'
 import { WaitForComplete } from './waitForComplete'
 import { OmniTrade } from './trade'
 import { OmniPoolConfig } from './types'
+import { PendingRequest } from './revertRequest'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
 
     private deadline!: number
     private slippage!: number
-    private transitStable!: Token
+    private transitToken!: Token
     private omniPoolConfig: OmniPoolConfig
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
-        const omniPoolConfig = undefined
-        // this.symbiosis.config.omniPools.find((pool) => {
-        // return pool.tokens.some(
-        //     (token) => token.address.toLowerCase() === this.request.fromTokenAmount.token.address.toLowerCase()
-        // )
-        // })
-
+        const omniPoolConfig = symbiosis.getOmniPoolByToken(this.request.fromTokenAmount.token)
         if (!omniPoolConfig) {
             throw new Error('No omni pool found for token', ErrorCode.NO_TRANSIT_POOL)
         }
@@ -42,7 +36,7 @@ export class RevertPending {
         this.slippage = slippage
         this.deadline = deadline
 
-        this.transitStable = await this.symbiosis.transitStable(this.request.chainIdFrom, this.omniPoolConfig)
+        this.transitToken = await this.symbiosis.transitToken(this.request.chainIdFrom, this.omniPoolConfig)
 
         const fee = await this.getFee()
 
@@ -138,7 +132,7 @@ export class RevertPending {
     }
 
     protected async getFeeV2(): Promise<TokenAmount> {
-        const feeToken = this.transitStable
+        const feeToken = this.transitToken
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
         const fee = await this.symbiosis.getBridgeFee({
@@ -176,7 +170,7 @@ export class RevertPending {
             externalId, // _externalID,
             revertableAddress, // _to
             fromTokenAmount.raw.toString(), // _amount
-            this.transitStable.address, // _rToken
+            this.transitToken.address, // _rToken
             AddressZero, // _finalReceiveSide
             [], // _finalCalldata
             0, // _finalOffset
@@ -389,18 +383,9 @@ export class RevertPending {
     }
 
     private findSyntheticStable(chainFromId: ChainId): Token | undefined {
-        const rawToken = undefined
-        // this.omniPoolConfig.tokens.find(
-        //     (token) => token.chainId === this.omniPoolConfig.chainId && token.chainFromId === chainFromId
-        // )
-
-        console.log({ chainFromId })
-
-        if (!rawToken) {
-            return undefined
-        }
-
-        return new Token(rawToken)
+        return this.symbiosis.getOmniPoolTokens(this.omniPoolConfig).find((token) => {
+            return token.chainId === this.omniPoolConfig.chainId && token.chainFromId === chainFromId
+        })
     }
 
     private async buildSwapCalldata(fee?: TokenAmount): Promise<[string, string]> {

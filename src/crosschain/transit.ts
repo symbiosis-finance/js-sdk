@@ -163,17 +163,17 @@ export class Transit {
     }
 
     protected getFeeToken(): Token {
-        const transitStableOutChainId = this.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
+        const transitTokenOutChainId = this.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
 
         if (this.direction === 'burn') {
             return this.transitTokenOut // USDC | BUSD
         }
 
         // mint or v2
-        const rep = this.symbiosis.getRepresentation(this.transitTokenIn, transitStableOutChainId) // sToken
+        const rep = this.symbiosis.getRepresentation(this.transitTokenIn, transitTokenOutChainId) // sToken
         if (!rep) {
             throw new Error(
-                `Representation of ${this.transitTokenIn.chainId}:${this.transitTokenIn.symbol} in chain ${transitStableOutChainId} not found`,
+                `Representation of ${this.transitTokenIn.chainId}:${this.transitTokenIn.symbol} in chain ${transitTokenOutChainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -185,11 +185,11 @@ export class Transit {
             return this.transitTokenOut
         }
 
-        const transitStableInChainId = this.isV2() ? this.omniPoolConfig.chainId : this.amountIn.token.chainId
-        const rep = this.symbiosis.getRepresentation(this.transitTokenOut, transitStableInChainId) // sUSDC
+        const transitTokenInChainId = this.isV2() ? this.omniPoolConfig.chainId : this.amountIn.token.chainId
+        const rep = this.symbiosis.getRepresentation(this.transitTokenOut, transitTokenInChainId) // sUSDC
         if (!rep) {
             throw new Error(
-                `Representation of ${this.transitTokenOut.symbol} in chain ${transitStableInChainId} not found`,
+                `Representation of ${this.transitTokenOut.symbol} in chain ${transitTokenInChainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }

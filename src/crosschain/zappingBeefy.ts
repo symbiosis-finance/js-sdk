@@ -5,22 +5,33 @@ import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { BeefyVault, MulticallRouter } from './contracts'
 
+type ZappingBeefyExactIn = {
+    tokenAmountIn: TokenAmount
+    vaultAddress: string
+    vaultChainId: ChainId
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
+}
+
 export class ZappingBeefy extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
     protected beefyVault!: BeefyVault
     protected aToken!: string
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        vaultAddress: string,
-        vaultChainId: ChainId,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number
-    ): SwapExactIn {
+    public async exactIn({
+        tokenAmountIn,
+        vaultAddress,
+        vaultChainId,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+    }: ZappingBeefyExactIn): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
 
@@ -44,7 +55,6 @@ export class ZappingBeefy extends BaseSwapping {
             revertableAddress,
             slippage,
             deadline,
-            omniPoolConfig: this.symbiosis.defaultOmniPool,
         })
     }
 

@@ -30,15 +30,13 @@ export type Id = number
 export type TokenInfo = TokenConstructor & {
     id: Id
     pair?: Id
-    omniPoolId?: Id
-    omniPoolIndex?: number
 }
 
 export type OmniPoolToken = {
     index: number
-    address: string
-    decimals: number
+    tokenId: Id
 }
+
 export type OmniPoolInfo = OmniPoolConfig & {
     id: Id
     tokens: OmniPoolToken[]
@@ -77,15 +75,13 @@ export class Builder {
     }
 
     public async build() {
-        const omniPools = await this.buildOmniPools()
         const tokens = await this.buildTokensList()
+        const omniPools = await this.buildOmniPools(tokens)
         const thresholds = await this.buildThresholds(tokens)
-
-        const joinedTokens = this.joinOmniPoolsWithTokens(omniPools, tokens)
 
         const jsonData = JSON.stringify({
             omniPools,
-            tokens: joinedTokens,
+            tokens,
             thresholds,
         } as ConfigCacheData)
         fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err: any) {
@@ -148,12 +144,12 @@ export class Builder {
         return thresholds
     }
 
-    private async buildOmniPools(): Promise<OmniPoolInfo[]> {
+    private async buildOmniPools(tokens: TokenInfo[]): Promise<OmniPoolInfo[]> {
         const info: OmniPoolInfo[] = []
 
         for (let i = 0; i < this.config.omniPools.length; i++) {
             const currentOctoPool = this.config.omniPools[i]
-            console.log({ currentOctoPool })
+            console.log({ octoPool: i })
             const omniPool = this.omniPool(currentOctoPool)
             const multicall = await getMulticall(omniPool.provider)
             const last = (await omniPool.lastIndex()).toNumber()
@@ -174,10 +170,19 @@ export class Builder {
                         console.log(`!active. skip index ${index}`)
                         return
                     }
+
+                    const token = tokens.find(
+                        (t) =>
+                            t.address.toLowerCase() === asset.token.toLowerCase() &&
+                            t.chainId === currentOctoPool.chainId
+                    )
+                    if (!token) {
+                        console.log(`token ${asset.token} doesn't exist. skip index ${index}`)
+                        return
+                    }
                     return {
                         index: index,
-                        address: asset.token,
-                        decimals: asset.decimals,
+                        tokenId: token.id,
                     }
                 })
                 .filter((i) => !!i) as OmniPoolToken[]
@@ -243,39 +248,6 @@ export class Builder {
 
                 tokens.push(token)
             })
-        }
-
-        return tokens
-    }
-
-    private joinOmniPoolsWithTokens(omniPools: OmniPoolInfo[], tokens: TokenInfo[]) {
-        for (let i = 0; i < tokens.length; i++) {
-            const token = tokens[i]
-            if (!token.chainFromId) {
-                continue
-            }
-
-            let omniPoolId = undefined
-            let omniPoolIndex = undefined
-            for (let j = 0; j < omniPools.length; j++) {
-                const pool = omniPools[j]
-                if (pool.chainId !== token.chainId) {
-                    continue
-                }
-                const found = pool.tokens.find((t) => t.address.toLowerCase() === token.address.toLowerCase())
-                if (!found) {
-                    continue
-                }
-                omniPoolId = pool.id
-                omniPoolIndex = found.index
-            }
-
-            if (omniPoolId === undefined || omniPoolIndex === undefined) {
-                continue
-            }
-
-            token.omniPoolId = omniPoolId
-            token.omniPoolIndex = omniPoolIndex
         }
 
         return tokens

@@ -24,7 +24,7 @@ export class BestPoolSwapping {
 
         const results = await Promise.allSettled(
             omniPools.map(async (omniPoolConfig) => {
-                const action = this.symbiosis.newSwapping()
+                const action = this.symbiosis.newSwapping(omniPoolConfig)
 
                 const actionResult = await action.exactIn({
                     tokenAmountIn,
@@ -35,7 +35,6 @@ export class BestPoolSwapping {
                     slippage,
                     deadline,
                     oneInchProtocols,
-                    omniPoolConfig,
                 })
 
                 return { action, actionResult }
@@ -52,6 +51,7 @@ export class BestPoolSwapping {
                     actionError = item.reason
                 }
 
+                console.error('error: ', item)
                 continue
             }
 

@@ -17,7 +17,9 @@ export type ChainConfig = {
     metaRouterGateway: string
     multicallRouter: string
     aavePool: string
+    aavePoolDataProvider: string
     creamComptroller: string
+    creamCompoundLens: string
     renGatewayRegistry: string
     router: string
     bridge: string
@@ -25,6 +27,7 @@ export type ChainConfig = {
     portal: string
     fabric: string
     waitForBlocksCount: number
+    blocksPerYear: number
 }
 
 export type AdvisorConfig = {
