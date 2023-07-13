@@ -43,7 +43,7 @@ export class ConfigCache {
         if (!tokenInfo) {
             return
         }
-        if (!tokenInfo.pair) {
+        if (tokenInfo.pair === undefined) {
             return
         }
 
