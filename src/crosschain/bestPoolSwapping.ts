@@ -3,6 +3,9 @@ import type { Swapping } from './swapping'
 import type { OmniPoolConfig } from './types'
 import type { SwapExactInParams } from './baseSwapping'
 import { ErrorCode } from './error'
+import { TokenAmount } from '../entities'
+
+type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
 // Swapping wrapper what select best omni pool for swapping
 export class BestPoolSwapping {
@@ -71,5 +74,23 @@ export class BestPoolSwapping {
 
         this.swapping = swapping
         return actionResult
+    }
+
+    // Need to backward compatibility to Swapping
+    public get amountInUsd(): TokenAmount | undefined {
+        if (!this.swapping) {
+            return undefined
+        }
+
+        return this.swapping.amountInUsd
+    }
+
+    // Need to backward compatibility to Swapping
+    async waitForComplete(...args: WaitForCompleteArgs) {
+        if (!this.swapping) {
+            throw new Error('Swapping is not started')
+        }
+
+        return this.swapping.waitForComplete(...args)
     }
 }

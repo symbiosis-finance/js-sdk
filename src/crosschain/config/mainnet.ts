@@ -35,7 +35,7 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Symbiosis Finance',
+                    name: 'Symbiosis',
                     symbol: 'SIS',
                     address: '0xd38BB40815d2B0c2d2c866e0c72c5728ffC76dd9',
                     chainId: 1,
@@ -69,7 +69,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0xd400e22dcA840CC7E342DF1d9945684bBd587659',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
             blocksPerYear: 0,
         },
@@ -80,7 +80,7 @@ export const config: Config = {
             waitForBlocksCount: 20,
             stables: [
                 {
-                    name: 'Binance USD',
+                    name: 'BUSD Token',
                     address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
                     symbol: 'BUSD',
                     decimals: 18,
@@ -102,8 +102,8 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Wrapped Ether',
-                    symbol: 'WETH',
+                    name: 'Ethereum Token',
+                    symbol: 'ETH',
                     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
                     chainId: 56,
                     decimals: 18,
@@ -125,7 +125,7 @@ export const config: Config = {
             aavePool: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x589de0f0ccf905477646599bb3e5c622c84cc0ba',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x06fd4e17Dd35d0dE9FE17eeAE4e94fBA57fEF154',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
             blocksPerYear: 0,
         },
@@ -157,9 +157,9 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654',
             creamComptroller: '0x486Af39519B4Dc9a7fCcd318217352830E8AD9b4',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x5b4058A9000e86fe136Ac896352C4DFD539E32a1',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
             blocksPerYear: 0,
         },
@@ -170,7 +170,7 @@ export const config: Config = {
             waitForBlocksCount: 60,
             stables: [
                 {
-                    name: 'USD Coin',
+                    name: 'USD Coin (PoS)',
                     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                     symbol: 'USDC',
                     decimals: 6,
@@ -182,7 +182,7 @@ export const config: Config = {
                 },
                 {
                     name: 'Wrapped Ether',
-                    symbol: 'ETH',
+                    symbol: 'WETH',
                     address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
                     chainId: 137,
                     decimals: 18,
@@ -202,9 +202,9 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xc5B61b9abC3C6229065cAD0e961aF585C5E0135c',
             aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654',
             creamComptroller: '0x20CA53E2395FA571798623F1cFBD11Fe2C114c24',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0xa7B0C2e904d597b89b4bf91927A3B90459f8bb9E',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
             blocksPerYear: 0,
         },
@@ -215,7 +215,7 @@ export const config: Config = {
             waitForBlocksCount: 120,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b',
                     chainId: 40,
@@ -249,7 +249,7 @@ export const config: Config = {
             waitForBlocksCount: 30,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
                     chainId: 2222,
@@ -346,7 +346,7 @@ export const config: Config = {
         },
         {
             id: 56288,
-            rpc: 'https://bnb.boba.network',
+            rpc: 'https://rpc.symbiosis.finance/56288',
             filterBlockOffset: 3000,
             waitForBlocksCount: 0,
             stables: [
@@ -385,7 +385,7 @@ export const config: Config = {
             waitForBlocksCount: 12,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
                     chainId: 324,
@@ -430,9 +430,20 @@ export const config: Config = {
             waitForBlocksCount: 240,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+                    chainId: 42161,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'USD Coin (Arb1)',
+                    symbol: 'USDC.e',
+                    address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
                     chainId: 42161,
                     decimals: 6,
                     icons: {
@@ -475,7 +486,7 @@ export const config: Config = {
             waitForBlocksCount: 50,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
                     chainId: 10,
@@ -520,7 +531,7 @@ export const config: Config = {
             waitForBlocksCount: 60,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
                     chainId: 42170,
@@ -565,7 +576,7 @@ export const config: Config = {
             waitForBlocksCount: 0,
             stables: [
                 {
-                    name: 'USDC',
+                    name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035',
                     chainId: 1101,

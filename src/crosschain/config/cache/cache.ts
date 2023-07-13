@@ -4,7 +4,7 @@ import testnet from './testnet.json'
 import { Error } from '../../error'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
-import { Token } from '../../../entities'
+import { Token, wrappedToken } from '../../../entities'
 import { BigNumber } from 'ethers'
 import { OmniPoolConfig } from '../../types'
 
@@ -37,27 +37,31 @@ export class ConfigCache {
         return this.cache.tokens.find((i) => i.id === id)
     }
 
-    public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
-        const tokenInfo = this.findToken(token)
+    public getTokenPair(token: Token): Token | undefined {
+        const wrapped = wrappedToken(token)
+        const tokenInfo = this.findToken(wrapped)
         if (!tokenInfo) {
             return
         }
         if (!tokenInfo.pair) {
             return
-            // throw new Error(`There is no pair for token ${tokenInfo.id}`)
         }
 
         const rep = this.getToken(tokenInfo.pair)
         if (!rep) {
-            throw new Error(
-                `Can't get rep for token ${token.symbol}(${token.address}) on chain ${chainId}. TokenId=${tokenInfo.pair}`
-            )
-        }
-        if (rep.chainId !== chainId) {
-            return
+            throw new Error(`Can't get rep for token ${token.symbol}(${token.address})`)
         }
 
         return new Token(rep)
+    }
+
+    public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
+        const rep = this.getTokenPair(token)
+        if (!rep || rep.chainId !== chainId) {
+            return
+        }
+
+        return rep
     }
 
     public getTokenThreshold(token: Token): BigNumber {
@@ -90,6 +94,14 @@ export class ConfigCache {
     }
 
     public getOmniPoolByToken(token: Token): OmniPoolInfo | undefined {
+        if (!token.isSynthetic) {
+            const synth = this.getTokenPair(token)
+            if (!synth) {
+                throw new Error(`No synth found for token ${token.address}`)
+            }
+            token = synth
+        }
+
         const tokenInfo = this.findToken(token)
         if (!tokenInfo) {
             throw new Error(`getOmniPoolByToken: cannot find token ${token.address}`)

@@ -390,7 +390,7 @@ export class Symbiosis {
                 return
             }
 
-            return this.configCache.getOmniPoolByToken(synth)?.id === omniPool.id
+            return this.getOmniPoolByToken(synth)?.id === omniPool.id
         })
 
         if (!transitToken) {

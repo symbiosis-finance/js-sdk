@@ -177,7 +177,6 @@ export class RevertRequest {
         if (!token) {
             throw new Error(`Cannot find token ${tokenAddress} at chain ${this.chainId}`)
         }
-        // TODO check if token is synth
         const omniPoolConfig = this.symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {
             throw new Error(`Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`)
