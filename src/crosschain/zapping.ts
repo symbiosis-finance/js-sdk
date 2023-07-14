@@ -4,7 +4,7 @@ import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Percent, Token, TokenAmount } from '../entities'
+import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { Error, ErrorCode } from './error'
@@ -79,7 +79,17 @@ export class Zapping {
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
-        this.transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
+        const targetPool = this.symbiosis.getOmniPoolByConfig(this.omniPoolConfig)
+        if (!targetPool) {
+            throw new Error(`Unknown omni pool ${this.omniPoolConfig.address}`)
+        }
+        const wrapped = wrappedToken(tokenAmountIn.token)
+        const tokenPool = this.symbiosis.getOmniPoolByToken(wrapped)
+        if (tokenPool?.id === targetPool.id) {
+            this.transitTokenIn = wrapped
+        } else {
+            this.transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
+        }
 
         let transitAmountIn: TokenAmount
 

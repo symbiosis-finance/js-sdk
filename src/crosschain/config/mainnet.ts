@@ -146,6 +146,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
+                {
+                    name: 'USD Coin',
+                    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+                    symbol: 'USDC',
+                    decimals: 6,
+                    chainId: 43114,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
             ],
             router: '0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106',
             dexFee: 30,

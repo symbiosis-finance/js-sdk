@@ -380,23 +380,25 @@ export class Symbiosis {
             throw new Error(`Cannot find omniPool ${omniPool}`)
         }
 
+        // if token is from manager chain (token's chainIs equals to pool chainId)
         if (chainId === omniPoolConfig.chainId) {
             return tokens[0]
         }
 
+        // find the FIRST suitable token from the tokens list
+        // e.g. the first token has priority
         const transitToken = tokens.find((token) => {
-            const synth = this.configCache.getRepresentation(token, omniPool.chainId)
-            if (!synth) {
-                return
-            }
-
-            return this.getOmniPoolByToken(synth)?.id === omniPool.id
+            return this.getOmniPoolByToken(token)?.id === omniPool.id
         })
 
         if (!transitToken) {
             throw new Error(`Cannot find transitToken for chain ${chainId}`)
         }
         return transitToken
+    }
+
+    public getOmniPoolByConfig(config: OmniPoolConfig): OmniPoolInfo | undefined {
+        return this.configCache.getOmniPoolByConfig(config)
     }
 
     public getOmniPoolByToken(token: Token): OmniPoolInfo | undefined {
