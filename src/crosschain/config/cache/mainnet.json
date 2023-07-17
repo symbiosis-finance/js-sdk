@@ -6,74 +6,23 @@
             "oracle": "0x7775b274f0C3fA919B756b22A4d9674e55927ab8",
             "id": 0,
             "tokens": [
-                {
-                    "index": 0,
-                    "tokenId": 28
-                },
-                {
-                    "index": 1,
-                    "tokenId": 30
-                },
-                {
-                    "index": 2,
-                    "tokenId": 33
-                },
-                {
-                    "index": 3,
-                    "tokenId": 35
-                },
-                {
-                    "index": 4,
-                    "tokenId": 14
-                },
-                {
-                    "index": 5,
-                    "tokenId": 39
-                },
-                {
-                    "index": 7,
-                    "tokenId": 40
-                },
-                {
-                    "index": 8,
-                    "tokenId": 37
-                },
-                {
-                    "index": 9,
-                    "tokenId": 38
-                },
-                {
-                    "index": 10,
-                    "tokenId": 31
-                },
-                {
-                    "index": 11,
-                    "tokenId": 41
-                },
-                {
-                    "index": 12,
-                    "tokenId": 44
-                },
-                {
-                    "index": 13,
-                    "tokenId": 46
-                },
-                {
-                    "index": 14,
-                    "tokenId": 48
-                },
-                {
-                    "index": 15,
-                    "tokenId": 50
-                },
-                {
-                    "index": 16,
-                    "tokenId": 43
-                },
-                {
-                    "index": 17,
-                    "tokenId": 34
-                }
+                { "index": 0, "tokenId": 28 },
+                { "index": 1, "tokenId": 30 },
+                { "index": 2, "tokenId": 33 },
+                { "index": 3, "tokenId": 35 },
+                { "index": 4, "tokenId": 14 },
+                { "index": 5, "tokenId": 39 },
+                { "index": 7, "tokenId": 40 },
+                { "index": 8, "tokenId": 37 },
+                { "index": 9, "tokenId": 38 },
+                { "index": 10, "tokenId": 31 },
+                { "index": 11, "tokenId": 41 },
+                { "index": 12, "tokenId": 44 },
+                { "index": 13, "tokenId": 46 },
+                { "index": 14, "tokenId": 48 },
+                { "index": 15, "tokenId": 50 },
+                { "index": 16, "tokenId": 43 },
+                { "index": 17, "tokenId": 34 }
             ]
         },
         {
@@ -82,42 +31,15 @@
             "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
             "id": 1,
             "tokens": [
-                {
-                    "index": 1,
-                    "tokenId": 42
-                },
-                {
-                    "index": 2,
-                    "tokenId": 51
-                },
-                {
-                    "index": 3,
-                    "tokenId": 45
-                },
-                {
-                    "index": 5,
-                    "tokenId": 36
-                },
-                {
-                    "index": 6,
-                    "tokenId": 32
-                },
-                {
-                    "index": 7,
-                    "tokenId": 47
-                },
-                {
-                    "index": 8,
-                    "tokenId": 49
-                },
-                {
-                    "index": 9,
-                    "tokenId": 29
-                },
-                {
-                    "index": 10,
-                    "tokenId": 52
-                }
+                { "index": 1, "tokenId": 42 },
+                { "index": 2, "tokenId": 51 },
+                { "index": 3, "tokenId": 45 },
+                { "index": 5, "tokenId": 36 },
+                { "index": 6, "tokenId": 32 },
+                { "index": 7, "tokenId": 47 },
+                { "index": 8, "tokenId": 49 },
+                { "index": 9, "tokenId": 29 },
+                { "index": 10, "tokenId": 52 }
             ]
         }
     ],
@@ -891,290 +813,62 @@
         }
     ],
     "thresholds": [
-        {
-            "tokenId": 0,
-            "type": "Portal",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 1,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 2,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 3,
-            "type": "Portal",
-            "value": "8000000000000000000"
-        },
-        {
-            "tokenId": 4,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 5,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 27,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 3,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 4,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 5,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 27,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 6,
-            "type": "Portal",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 7,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 8,
-            "type": "Portal",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 9,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 10,
-            "type": "Portal",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 11,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 12,
-            "type": "Portal",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 13,
-            "type": "Portal",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 14,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 28,
-            "type": "Synthesis",
-            "value": "10000000"
-        },
-        {
-            "tokenId": 29,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 30,
-            "type": "Synthesis",
-            "value": "8000000000000000000"
-        },
-        {
-            "tokenId": 31,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 32,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 33,
-            "type": "Synthesis",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 34,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 35,
-            "type": "Synthesis",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 36,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 37,
-            "type": "Synthesis",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 38,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 39,
-            "type": "Synthesis",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 40,
-            "type": "Synthesis",
-            "value": "8000000"
-        },
-        {
-            "tokenId": 41,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 42,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 43,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 44,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 45,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 46,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 47,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 48,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 49,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 50,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 51,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 52,
-            "type": "Synthesis",
-            "value": "0"
-        },
-        {
-            "tokenId": 15,
-            "type": "Portal",
-            "value": "10000000"
-        },
-        {
-            "tokenId": 16,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 17,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 18,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 19,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 20,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 21,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 22,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 23,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 24,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 25,
-            "type": "Portal",
-            "value": "0"
-        },
-        {
-            "tokenId": 26,
-            "type": "Portal",
-            "value": "0"
-        }
+        { "tokenId": 0, "type": "Portal", "value": "8000000" },
+        { "tokenId": 1, "type": "Portal", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Portal", "value": "8000000000000000000" },
+        { "tokenId": 4, "type": "Portal", "value": "0" },
+        { "tokenId": 5, "type": "Portal", "value": "0" },
+        { "tokenId": 27, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Synthesis", "value": "0" },
+        { "tokenId": 4, "type": "Synthesis", "value": "0" },
+        { "tokenId": 5, "type": "Synthesis", "value": "0" },
+        { "tokenId": 27, "type": "Synthesis", "value": "0" },
+        { "tokenId": 6, "type": "Portal", "value": "8000000" },
+        { "tokenId": 7, "type": "Portal", "value": "0" },
+        { "tokenId": 8, "type": "Portal", "value": "8000000" },
+        { "tokenId": 9, "type": "Portal", "value": "0" },
+        { "tokenId": 10, "type": "Portal", "value": "8000000" },
+        { "tokenId": 11, "type": "Portal", "value": "0" },
+        { "tokenId": 12, "type": "Portal", "value": "8000000" },
+        { "tokenId": 13, "type": "Portal", "value": "8000000" },
+        { "tokenId": 14, "type": "Synthesis", "value": "0" },
+        { "tokenId": 28, "type": "Synthesis", "value": "10000000" },
+        { "tokenId": 29, "type": "Synthesis", "value": "0" },
+        { "tokenId": 30, "type": "Synthesis", "value": "8000000000000000000" },
+        { "tokenId": 31, "type": "Synthesis", "value": "0" },
+        { "tokenId": 32, "type": "Synthesis", "value": "0" },
+        { "tokenId": 33, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 34, "type": "Synthesis", "value": "0" },
+        { "tokenId": 35, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 36, "type": "Synthesis", "value": "0" },
+        { "tokenId": 37, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 38, "type": "Synthesis", "value": "0" },
+        { "tokenId": 39, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 40, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 41, "type": "Synthesis", "value": "0" },
+        { "tokenId": 42, "type": "Synthesis", "value": "0" },
+        { "tokenId": 43, "type": "Synthesis", "value": "0" },
+        { "tokenId": 44, "type": "Synthesis", "value": "0" },
+        { "tokenId": 45, "type": "Synthesis", "value": "0" },
+        { "tokenId": 46, "type": "Synthesis", "value": "0" },
+        { "tokenId": 47, "type": "Synthesis", "value": "0" },
+        { "tokenId": 48, "type": "Synthesis", "value": "0" },
+        { "tokenId": 49, "type": "Synthesis", "value": "0" },
+        { "tokenId": 50, "type": "Synthesis", "value": "0" },
+        { "tokenId": 51, "type": "Synthesis", "value": "0" },
+        { "tokenId": 52, "type": "Synthesis", "value": "0" },
+        { "tokenId": 15, "type": "Portal", "value": "10000000" },
+        { "tokenId": 16, "type": "Portal", "value": "0" },
+        { "tokenId": 17, "type": "Portal", "value": "0" },
+        { "tokenId": 18, "type": "Portal", "value": "0" },
+        { "tokenId": 19, "type": "Portal", "value": "0" },
+        { "tokenId": 20, "type": "Portal", "value": "0" },
+        { "tokenId": 21, "type": "Portal", "value": "0" },
+        { "tokenId": 22, "type": "Portal", "value": "0" },
+        { "tokenId": 23, "type": "Portal", "value": "0" },
+        { "tokenId": 24, "type": "Portal", "value": "0" },
+        { "tokenId": 25, "type": "Portal", "value": "0" },
+        { "tokenId": 26, "type": "Portal", "value": "0" }
     ]
 }
