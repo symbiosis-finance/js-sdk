@@ -1,7 +1,7 @@
 {
     "name": "symbiosis-js-sdk",
     "version": "2.10.7",
-    "main": "dist/index.js",
+    "main": "dist/index.cjs.js",
     "typings": "dist/index.d.ts",
     "files": [
         "dist"
@@ -14,25 +14,15 @@
     "bugs": {
         "url": "https://github.com/symbiosis-finance/js-sdk/issues"
     },
-    "module": "dist/symbiosis-js-sdk.esm.js",
+    "module": "dist/index.esm.js",
     "scripts": {
-        "build": "dts build",
-        "start": "dts watch",
-        "test": "dts test",
-        "lint": "dts lint src",
-        "lint:fix": "dts lint src --fix",
+        "build": "tsup",
+        "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src",
-        "prepublishOnly": "dts build",
+        "prepublishOnly": "tsc --noEmit && tsup",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
         "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts"
-    },
-    "lint-staged": {
-        "*.{ts,json}": [
-            "prettier src --write",
-            "eslint src --ext .ts,.json"
-        ],
-        "*.js": "eslint --cache --fix"
     },
     "dependencies": {
         "big.js": "^5.2.2",
@@ -72,9 +62,9 @@
         "eslint": "^8.5.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",
-        "lint-staged": "^12.3.2",
         "prettier": "2.5.1",
         "ts-node": "^10.9.1",
+        "tsup": "^7.1.0",
         "typechain": "^7.0.0",
         "typescript": "^4.5.5"
     },
