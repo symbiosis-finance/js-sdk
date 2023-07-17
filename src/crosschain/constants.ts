@@ -38,6 +38,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ZETACHAIN_ATHENS_2,
     ChainId.POLYGON_ZK,
     ChainId.LINEA_TESTNET,
+    ChainId.LINEA_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -100,6 +101,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.ZETACHAIN_ATHENS_2]: [WETH[ChainId.ZETACHAIN_ATHENS_2]],
     [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK]],
     [ChainId.LINEA_TESTNET]: [WETH[ChainId.LINEA_TESTNET]],
+    [ChainId.LINEA_MAINNET]: [WETH[ChainId.LINEA_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -413,6 +415,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.ZETACHAIN_ATHENS_2]: [],
     [ChainId.POLYGON_ZK]: [],
     [ChainId.LINEA_TESTNET]: [],
+    [ChainId.LINEA_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -505,4 +508,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
     [ChainId.POLYGON_ZK]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.LINEA_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.LINEA_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }

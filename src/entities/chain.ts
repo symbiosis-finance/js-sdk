@@ -383,6 +383,16 @@ export const chains: Chain[] = [
             large: 'https://l2beat.com/icons/linea.png',
         },
     }),
+    new Chain({
+        id: ChainId.LINEA_MAINNET,
+        name: 'Linea',
+        disabled: false,
+        explorer: 'https://explorer.linea.build/',
+        icons: {
+            small: 'https://l2beat.com/icons/linea.png',
+            large: 'https://l2beat.com/icons/linea.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
