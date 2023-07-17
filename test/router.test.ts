@@ -14,13 +14,13 @@ describe('Router', () => {
         chainId: ChainId.BSC_MAINNET,
         address: '0x0000000000000000000000000000000000000001',
         decimals: 18,
-        symbol: 't0'
+        symbol: 't0',
     })
     const token1 = new Token({
         chainId: ChainId.BSC_MAINNET,
         address: '0x0000000000000000000000000000000000000002',
         decimals: 18,
-        symbol: 't1'
+        symbol: 't1',
     })
 
     const pair_0_1 = new Pair(new TokenAmount(token0, JSBI.BigInt(1000)), new TokenAmount(token1, JSBI.BigInt(1000)))
@@ -33,7 +33,7 @@ describe('Router', () => {
                     {
                         ttl: 50,
                         recipient: '0x0000000000000000000000000000000000000004',
-                        allowedSlippage: new Percent('1', '100')
+                        allowedSlippage: new Percent('1', '100'),
                     }
                 )
                 expect(result.methodName).toEqual('swapExactTokensForTokens')
@@ -41,10 +41,10 @@ describe('Router', () => {
                     '0x64',
                     '0x59',
                     [token0.address, token1.address],
-                    '0x0000000000000000000000000000000000000004'
+                    '0x0000000000000000000000000000000000000004',
                 ])
                 expect(result.value).toEqual('0x0')
-                checkDeadline(result.args[result.args.length - 1])
+                checkDeadline(result.args[result.args.length - 1] as string)
             })
         })
         describe('exact out', () => {
@@ -54,7 +54,7 @@ describe('Router', () => {
                     {
                         ttl: 50,
                         recipient: '0x0000000000000000000000000000000000000004',
-                        allowedSlippage: new Percent('1', '100')
+                        allowedSlippage: new Percent('1', '100'),
                     }
                 )
                 expect(result.methodName).toEqual('swapTokensForExactTokens')
@@ -62,10 +62,10 @@ describe('Router', () => {
                     '0x64',
                     '0x71',
                     [token0.address, token1.address],
-                    '0x0000000000000000000000000000000000000004'
+                    '0x0000000000000000000000000000000000000004',
                 ])
                 expect(result.value).toEqual('0x0')
-                checkDeadline(result.args[result.args.length - 1])
+                checkDeadline(result.args[result.args.length - 1] as string)
             })
         })
         describe('supporting fee on transfer', () => {
@@ -77,7 +77,7 @@ describe('Router', () => {
                             ttl: 50,
                             recipient: '0x0000000000000000000000000000000000000004',
                             allowedSlippage: new Percent('1', '100'),
-                            feeOnTransfer: true
+                            feeOnTransfer: true,
                         }
                     )
                     expect(result.methodName).toEqual('swapExactTokensForTokensSupportingFeeOnTransferTokens')
@@ -85,10 +85,10 @@ describe('Router', () => {
                         '0x64',
                         '0x59',
                         [token0.address, token1.address],
-                        '0x0000000000000000000000000000000000000004'
+                        '0x0000000000000000000000000000000000000004',
                     ])
                     expect(result.value).toEqual('0x0')
-                    checkDeadline(result.args[result.args.length - 1])
+                    checkDeadline(result.args[result.args.length - 1] as string)
                 })
             })
             describe('exact out', () => {
@@ -103,7 +103,7 @@ describe('Router', () => {
                                 ttl: 50,
                                 recipient: '0x0000000000000000000000000000000000000004',
                                 allowedSlippage: new Percent('1', '100'),
-                                feeOnTransfer: true
+                                feeOnTransfer: true,
                             }
                         )
                     ).toThrow('EXACT_OUT_FOT')

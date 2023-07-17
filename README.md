@@ -18,12 +18,6 @@ npm i symbiosis-js-sdk
 npm i
 ```
 
-## Run tests
-
-```bash
-npm run test
-```
-
 ## Upgrade version
 
 For upgrade versions should be use [npm versions](https://docs.npmjs.com/cli/v8/commands/npm-version) command. Version will upgrade automatically.
