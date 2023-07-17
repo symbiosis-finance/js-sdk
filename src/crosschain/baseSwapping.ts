@@ -167,15 +167,25 @@ export abstract class BaseSwapping {
         }
 
         let swapsCount = 1
+        let extraSwapsCount = 0
         if (!this.transitTokenIn.equals(this.tokenAmountIn.token)) {
-            swapsCount += 1
+            extraSwapsCount += 1
         }
 
         if (!this.transitTokenOut.equals(this.tokenOut)) {
-            swapsCount += 1
+            extraSwapsCount += 1
         }
+        swapsCount += extraSwapsCount
 
         const slippage = Math.floor(totalSlippage / swapsCount)
+
+        const MAX_STABLE_SLIPPAGE = 50 // 0.5%
+        if (slippage > MAX_STABLE_SLIPPAGE) {
+            const diff = slippage - MAX_STABLE_SLIPPAGE
+            const addition = diff / extraSwapsCount
+
+            return { A: slippage + addition, B: MAX_STABLE_SLIPPAGE, C: slippage + addition }
+        }
 
         return { A: slippage, B: slippage, C: slippage }
     }
