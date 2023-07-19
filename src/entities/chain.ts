@@ -67,7 +67,7 @@ export const chains: Chain[] = [
         id: ChainId.ETH_GOERLI,
         name: 'Goerli',
         disabled: false,
-        explorer: 'https://goerli.etherscan.io/',
+        explorer: 'https://goerli.etherscan.io',
         icons: {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
@@ -305,9 +305,9 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.SCROLL_TESTNET,
-        name: 'Scroll Testnet',
+        name: 'Scroll',
         disabled: false,
-        explorer: 'https://blockscout.scroll.io/',
+        explorer: 'https://blockscout.scroll.io',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
@@ -337,7 +337,7 @@ export const chains: Chain[] = [
         id: ChainId.ARBITRUM_NOVA,
         name: 'Arbitrum Nova',
         disabled: false,
-        explorer: 'https://nova.arbiscan.io/',
+        explorer: 'https://nova.arbiscan.io',
         icons: {
             small: 'https://l2beat.com/icons/nova.png',
             large: 'https://l2beat.com/icons/nova.png',
@@ -347,7 +347,7 @@ export const chains: Chain[] = [
         id: ChainId.OPTIMISM_MAINNET,
         name: 'Optimism',
         disabled: false,
-        explorer: 'https://optimistic.etherscan.io/',
+        explorer: 'https://optimistic.etherscan.io',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
@@ -355,9 +355,9 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.ZETACHAIN_ATHENS_2,
-        name: 'ZetaChain Athens 2',
+        name: 'ZetaChain',
         disabled: false,
-        explorer: 'https://explorer.zetachain.com/',
+        explorer: 'https://explorer.zetachain.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
@@ -367,7 +367,7 @@ export const chains: Chain[] = [
         id: ChainId.POLYGON_ZK,
         name: 'Polygon zkEVM',
         disabled: false,
-        explorer: 'https://zkevm.polygonscan.com/',
+        explorer: 'https://zkevm.polygonscan.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
@@ -377,7 +377,7 @@ export const chains: Chain[] = [
         id: ChainId.LINEA_TESTNET,
         name: 'Linea',
         disabled: false,
-        explorer: 'https://explorer.goerli.linea.build/',
+        explorer: 'https://explorer.goerli.linea.build',
         icons: {
             small: 'https://l2beat.com/icons/linea.png',
             large: 'https://l2beat.com/icons/linea.png',
@@ -387,7 +387,7 @@ export const chains: Chain[] = [
         id: ChainId.LINEA_MAINNET,
         name: 'Linea',
         disabled: false,
-        explorer: 'https://explorer.linea.build/',
+        explorer: 'https://explorer.linea.build',
         icons: {
             small: 'https://l2beat.com/icons/linea.png',
             large: 'https://l2beat.com/icons/linea.png',
@@ -397,7 +397,7 @@ export const chains: Chain[] = [
         id: ChainId.MANTLE_MAINNET,
         name: 'Mantle',
         disabled: false,
-        explorer: 'https://explorer.mantle.xyz/',
+        explorer: 'https://explorer.mantle.xyz',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',

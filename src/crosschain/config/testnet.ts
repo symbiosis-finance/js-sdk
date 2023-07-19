@@ -15,7 +15,7 @@ export const config: Config = {
         {
             id: 5,
             rpc: 'https://rpc.ankr.com/eth_goerli',
-            filterBlockOffset: 3000,
+            filterBlockOffset: 2000,
             waitForBlocksCount: 5,
             stables: [
                 {
@@ -49,7 +49,7 @@ export const config: Config = {
         {
             id: 97,
             rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
-            filterBlockOffset: 3000,
+            filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
                 {
@@ -83,7 +83,7 @@ export const config: Config = {
         {
             id: 43113,
             rpc: 'https://rpc.ankr.com/avalanche_fuji',
-            filterBlockOffset: 3000,
+            filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
                 {
@@ -117,7 +117,7 @@ export const config: Config = {
         {
             id: 80001,
             rpc: 'https://rpc.ankr.com/polygon_mumbai',
-            filterBlockOffset: 3000,
+            filterBlockOffset: 2000,
             waitForBlocksCount: 60,
             stables: [
                 {
@@ -149,8 +149,42 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
+            id: 534353,
+            rpc: 'https://alpha-rpc.scroll.io/l2',
+            filterBlockOffset: 2000,
+            waitForBlocksCount: 20,
+            stables: [
+                {
+                    name: 'Circle USD',
+                    symbol: 'USDC',
+                    address: '0x67aE69Fd63b4fc8809ADc224A9b82Be976039509',
+                    chainId: 534353,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+            ],
+            router: '0xDe886ff69fE234c8db2e2694788e73aa6be8d0c7',
+            dexFee: 30,
+            metaRouter: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
+            metaRouterGateway: '0x8Daf3F19dD8a27554BaE525075E90Df4E56a4c46',
+            bridge: '0x6fa0a77Bb9FC5AC9e9D9C26c101067486291d2B5',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x7739E567B9626ca241bdC5528343F92F7e59Af37',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x9D15297f42fEf485f2d061a012cfE699Cc49132B',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 2336000,
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+        },
+        {
             id: 7001,
-            rpc: 'https://api.athens2.zetachain.com/evm',
+            rpc: 'https://rpc.ankr.com/zetachain_evm_testnet',
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
