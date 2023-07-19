@@ -18,7 +18,6 @@ export class Token {
     public readonly icons?: Icons
     public readonly chainFromId?: ChainId
     public readonly isNative: boolean
-    public readonly isStable?: boolean
     public readonly userToken?: boolean
 
     /**
@@ -36,7 +35,6 @@ export class Token {
         this.isNative = !!params.isNative
         this.icons = params.icons
         this.chainFromId = params.chainFromId
-        this.isStable = params.isStable
         this.userToken = params.userToken
     }
 
@@ -501,6 +499,30 @@ export const WETH = {
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.LINEA_MAINNET]: new Token({
+        chainId: ChainId.LINEA_MAINNET,
+        address: '0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.MANTLE_MAINNET]: new Token({
+        chainId: ChainId.MANTLE_MAINNET,
+        address: '0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8',
+        decimals: 18,
+        symbol: 'WMNT',
+        isNative: false,
+        name: 'Wrapped MNT',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
         },
     }),
     [ChainId.MANTLE_TESTNET]: new Token({

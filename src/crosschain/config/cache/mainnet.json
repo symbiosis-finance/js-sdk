@@ -1,0 +1,906 @@
+{
+    "omniPools": [
+        {
+            "chainId": 56288,
+            "address": "0x6148FD6C649866596C3d8a971fC313E5eCE84882",
+            "oracle": "0x7775b274f0C3fA919B756b22A4d9674e55927ab8",
+            "id": 0,
+            "tokens": [
+                { "index": 0, "tokenId": 29 },
+                { "index": 1, "tokenId": 31 },
+                { "index": 2, "tokenId": 34 },
+                { "index": 3, "tokenId": 36 },
+                { "index": 4, "tokenId": 14 },
+                { "index": 5, "tokenId": 40 },
+                { "index": 7, "tokenId": 41 },
+                { "index": 8, "tokenId": 38 },
+                { "index": 9, "tokenId": 39 },
+                { "index": 10, "tokenId": 32 },
+                { "index": 11, "tokenId": 42 },
+                { "index": 12, "tokenId": 45 },
+                { "index": 13, "tokenId": 47 },
+                { "index": 14, "tokenId": 49 },
+                { "index": 15, "tokenId": 51 },
+                { "index": 16, "tokenId": 44 },
+                { "index": 17, "tokenId": 35 },
+                { "index": 18, "tokenId": 54 }
+            ]
+        },
+        {
+            "chainId": 56288,
+            "address": "0xBcc2637DFa64999F75abB53a7265b5B4932e40eB",
+            "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
+            "id": 1,
+            "tokens": [
+                { "index": 1, "tokenId": 43 },
+                { "index": 2, "tokenId": 52 },
+                { "index": 3, "tokenId": 46 },
+                { "index": 5, "tokenId": 37 },
+                { "index": 6, "tokenId": 33 },
+                { "index": 7, "tokenId": 48 },
+                { "index": 8, "tokenId": 50 },
+                { "index": 9, "tokenId": 30 },
+                { "index": 10, "tokenId": 53 }
+            ]
+        }
+    ],
+    "tokens": [
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 1,
+            "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 0,
+            "pair": 29
+        },
+        {
+            "decimals": 18,
+            "symbol": "SIS",
+            "name": "Symbiosis",
+            "chainId": 1,
+            "address": "0xd38BB40815d2B0c2d2c866e0c72c5728ffC76dd9",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "id": 1,
+            "pair": 28
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 1,
+            "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 2,
+            "pair": 30
+        },
+        {
+            "decimals": 18,
+            "symbol": "BUSD",
+            "name": "BUSD Token",
+            "chainId": 56,
+            "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
+            },
+            "id": 3,
+            "pair": 31
+        },
+        {
+            "decimals": 18,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 56,
+            "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 4,
+            "pair": 32
+        },
+        {
+            "decimals": 18,
+            "symbol": "ETH",
+            "name": "Ethereum Token",
+            "chainId": 56,
+            "address": "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 5,
+            "pair": 33
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC.e",
+            "name": "USD Coin",
+            "chainId": 43114,
+            "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 6,
+            "pair": 34
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 43114,
+            "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 7,
+            "pair": 35
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin (PoS)",
+            "chainId": 137,
+            "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 8,
+            "pair": 36
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 137,
+            "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 9,
+            "pair": 37
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 40,
+            "address": "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 10,
+            "pair": 38
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 2222,
+            "address": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 11,
+            "pair": 39
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 288,
+            "address": "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 12,
+            "pair": 40
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC.e",
+            "name": "USD Coin",
+            "chainId": 43288,
+            "address": "0x126969743a6d300bab08F303f104f0f7DBAfbe20",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 13,
+            "pair": 41
+        },
+        {
+            "decimals": 18,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x9F98f9F312D23d078061962837042b8918e6aff2",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 14
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 324,
+            "address": "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 15,
+            "pair": 42
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 324,
+            "address": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 16,
+            "pair": 43
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 42161,
+            "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 17,
+            "pair": 44
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC.e",
+            "name": "USD Coin (Arb1)",
+            "chainId": 42161,
+            "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 18,
+            "pair": 45
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 42161,
+            "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 19,
+            "pair": 46
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 10,
+            "address": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 20,
+            "pair": 47
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 10,
+            "address": "0x4200000000000000000000000000000000000006",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 21,
+            "pair": 48
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 42170,
+            "address": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 22,
+            "pair": 49
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 42170,
+            "address": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 23,
+            "pair": 50
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 1101,
+            "address": "0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 24,
+            "pair": 51
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 1101,
+            "address": "0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 25,
+            "pair": 52
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 59144,
+            "address": "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 26,
+            "pair": 53
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 5000,
+            "address": "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 27,
+            "pair": 54
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Symbiosis",
+            "chainId": 56,
+            "address": "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 1,
+            "id": 28,
+            "pair": 1
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x7d6EC42b5d9566931560411a8652Cea00b90d982",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 1,
+            "id": 29,
+            "pair": 0
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0x1CE4E75E2Bd6bbbACDE1E10D6813228138337E86",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 1,
+            "id": 30,
+            "pair": 2
+        },
+        {
+            "decimals": 18,
+            "symbol": "sBUSD",
+            "name": "BUSD Token",
+            "chainId": 56288,
+            "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
+            },
+            "chainFromId": 56,
+            "id": 31,
+            "pair": 3
+        },
+        {
+            "decimals": 18,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 56,
+            "id": 32,
+            "pair": 4
+        },
+        {
+            "decimals": 18,
+            "symbol": "sETH",
+            "name": "Ethereum Token",
+            "chainId": 56288,
+            "address": "0x424190072b7Db5352bB91cC70DabD82F547AE003",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 56,
+            "id": 33,
+            "pair": 5
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC.e",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 43114,
+            "id": 34,
+            "pair": 6
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 43114,
+            "id": 35,
+            "pair": 7
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin (PoS)",
+            "chainId": 56288,
+            "address": "0x59AA2e5F628659918A4890A2a732E6C8bD334E7A",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 137,
+            "id": 36,
+            "pair": 8
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0x93A973297E492d4E7a2b4aBaB3bFB4f140D1E3Bb",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 137,
+            "id": 37,
+            "pair": 9
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x7Af28c655F1EF73E1Fb15204f025A25D686A3Ca7",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 40,
+            "id": 38,
+            "pair": 10
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x437640130BAE97dAD55161a6F1AEC58d0F30fE8F",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 2222,
+            "id": 39,
+            "pair": 11
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x1a3d48492Cd334AD140587091AC382E5695a4934",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 288,
+            "id": 40,
+            "pair": 12
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC.e",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0xa9441f2995763e38d18A725646b00D90938d2FBf",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 43288,
+            "id": 41,
+            "pair": 13
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0xC6CC7E50A0F20268DB1BAb041ff18b2c7E97a9d3",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 324,
+            "id": 42,
+            "pair": 15
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0xE3dB9aD5A3c6387beCe39fAfc26Dbb2b594fb7ff",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 324,
+            "id": 43,
+            "pair": 16
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 42161,
+            "id": 44,
+            "pair": 17
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC.e",
+            "name": "USD Coin (Arb1)",
+            "chainId": 56288,
+            "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 42161,
+            "id": 45,
+            "pair": 18
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0x4994b8bb0b58708Cc6A66079d22db35c95650B4b",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 42161,
+            "id": 46,
+            "pair": 19
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 10,
+            "id": 47,
+            "pair": 20
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 10,
+            "id": 48,
+            "pair": 21
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 42170,
+            "id": 49,
+            "pair": 22
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 42170,
+            "id": 50,
+            "pair": 23
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 1101,
+            "id": 51,
+            "pair": 24
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 1101,
+            "id": 52,
+            "pair": 25
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether",
+            "chainId": 56288,
+            "address": "0x6ca6FCbD2fe65F0CB7671f5F0638867fdC991462",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 59144,
+            "id": 53,
+            "pair": 26
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 5000,
+            "id": 54,
+            "pair": 27
+        }
+    ],
+    "thresholds": [
+        { "tokenId": 0, "type": "Portal", "value": "8000000" },
+        { "tokenId": 1, "type": "Portal", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Portal", "value": "8000000000000000000" },
+        { "tokenId": 4, "type": "Portal", "value": "0" },
+        { "tokenId": 5, "type": "Portal", "value": "0" },
+        { "tokenId": 28, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Synthesis", "value": "0" },
+        { "tokenId": 4, "type": "Synthesis", "value": "0" },
+        { "tokenId": 5, "type": "Synthesis", "value": "0" },
+        { "tokenId": 28, "type": "Synthesis", "value": "0" },
+        { "tokenId": 6, "type": "Portal", "value": "8000000" },
+        { "tokenId": 7, "type": "Portal", "value": "0" },
+        { "tokenId": 8, "type": "Portal", "value": "8000000" },
+        { "tokenId": 9, "type": "Portal", "value": "0" },
+        { "tokenId": 10, "type": "Portal", "value": "8000000" },
+        { "tokenId": 11, "type": "Portal", "value": "0" },
+        { "tokenId": 12, "type": "Portal", "value": "8000000" },
+        { "tokenId": 13, "type": "Portal", "value": "8000000" },
+        { "tokenId": 14, "type": "Synthesis", "value": "0" },
+        { "tokenId": 29, "type": "Synthesis", "value": "10000000" },
+        { "tokenId": 30, "type": "Synthesis", "value": "0" },
+        { "tokenId": 31, "type": "Synthesis", "value": "8000000000000000000" },
+        { "tokenId": 32, "type": "Synthesis", "value": "0" },
+        { "tokenId": 33, "type": "Synthesis", "value": "0" },
+        { "tokenId": 34, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 35, "type": "Synthesis", "value": "0" },
+        { "tokenId": 36, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 37, "type": "Synthesis", "value": "0" },
+        { "tokenId": 38, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 39, "type": "Synthesis", "value": "0" },
+        { "tokenId": 40, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 41, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 42, "type": "Synthesis", "value": "0" },
+        { "tokenId": 43, "type": "Synthesis", "value": "0" },
+        { "tokenId": 44, "type": "Synthesis", "value": "0" },
+        { "tokenId": 45, "type": "Synthesis", "value": "0" },
+        { "tokenId": 46, "type": "Synthesis", "value": "0" },
+        { "tokenId": 47, "type": "Synthesis", "value": "0" },
+        { "tokenId": 48, "type": "Synthesis", "value": "0" },
+        { "tokenId": 49, "type": "Synthesis", "value": "0" },
+        { "tokenId": 50, "type": "Synthesis", "value": "0" },
+        { "tokenId": 51, "type": "Synthesis", "value": "0" },
+        { "tokenId": 52, "type": "Synthesis", "value": "0" },
+        { "tokenId": 53, "type": "Synthesis", "value": "0" },
+        { "tokenId": 54, "type": "Synthesis", "value": "0" },
+        { "tokenId": 15, "type": "Portal", "value": "10000000" },
+        { "tokenId": 16, "type": "Portal", "value": "0" },
+        { "tokenId": 17, "type": "Portal", "value": "0" },
+        { "tokenId": 18, "type": "Portal", "value": "0" },
+        { "tokenId": 19, "type": "Portal", "value": "0" },
+        { "tokenId": 20, "type": "Portal", "value": "0" },
+        { "tokenId": 21, "type": "Portal", "value": "0" },
+        { "tokenId": 22, "type": "Portal", "value": "0" },
+        { "tokenId": 23, "type": "Portal", "value": "0" },
+        { "tokenId": 24, "type": "Portal", "value": "0" },
+        { "tokenId": 25, "type": "Portal", "value": "0" },
+        { "tokenId": 26, "type": "Portal", "value": "0" },
+        { "tokenId": 27, "type": "Portal", "value": "0" }
+    ]
+}

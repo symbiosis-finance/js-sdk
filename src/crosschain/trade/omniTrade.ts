@@ -3,6 +3,7 @@ import { OmniPool, OmniPoolOracle } from '../contracts'
 import { basisPointsToPercent, calculatePriceImpact } from '../utils'
 import { ONE } from '../../constants'
 import { Symbiosis } from '../symbiosis'
+import { OmniPoolConfig } from '../types'
 
 export class OmniTrade {
     public route!: Token[]
@@ -19,17 +20,18 @@ export class OmniTrade {
         private readonly slippage: number,
         private readonly deadline: number,
         private readonly symbiosis: Symbiosis,
-        private readonly to: string
+        private readonly to: string,
+        private readonly omniPoolConfig: OmniPoolConfig
     ) {
-        this.pool = this.symbiosis.omniPool()
-        this.poolOracle = this.symbiosis.omniPoolOracle()
+        this.pool = this.symbiosis.omniPool(omniPoolConfig)
+        this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
     public async init() {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        const indexIn = await this.pool.assetToIndex(this.tokenAmountIn.token.address)
-        const indexOut = await this.pool.assetToIndex(this.tokenOut.address)
+        const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenAmountIn.token)
+        const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenOut)
 
         const quoteFrom = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
 

@@ -1,0 +1,223 @@
+{
+    "omniPools": [
+        {
+            "chainId": 97,
+            "address": "0x569D2a232F5f2a462673fAf184ED9640e8A9F4D8",
+            "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
+            "id": 0,
+            "tokens": [
+                { "index": 0, "tokenId": 7 },
+                { "index": 1, "tokenId": 9 },
+                { "index": 2, "tokenId": 8 },
+                { "index": 5, "tokenId": 1 },
+                { "index": 8, "tokenId": 10 },
+                { "index": 9, "tokenId": 11 },
+                { "index": 10, "tokenId": 12 }
+            ]
+        }
+    ],
+    "tokens": [
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 5,
+            "address": "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 0,
+            "pair": 7
+        },
+        {
+            "decimals": 18,
+            "symbol": "BUSD",
+            "name": "Binance USD",
+            "chainId": 97,
+            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
+            },
+            "id": 1
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "USDT",
+            "chainId": 43113,
+            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "id": 2,
+            "pair": 8
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "USDT",
+            "chainId": 80001,
+            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "id": 3,
+            "pair": 9
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "Tether",
+            "chainId": 7001,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "id": 4,
+            "pair": 10
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "Tether",
+            "chainId": 59140,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "id": 5,
+            "pair": 11
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "Tether",
+            "chainId": 5001,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "id": 6,
+            "pair": 12
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 97,
+            "address": "0x32Ac07C5D3D6002B853836a48EE8538C9CF29ad4",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 5,
+            "id": 7,
+            "pair": 0
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "USDT",
+            "chainId": 97,
+            "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 43113,
+            "id": 8,
+            "pair": 2
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "USDT",
+            "chainId": 97,
+            "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 80001,
+            "id": 9,
+            "pair": 3
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "Tether",
+            "chainId": 97,
+            "address": "0xA31EB10427E47517A4E30DCC17054A2F2692aAe1",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 7001,
+            "id": 10,
+            "pair": 4
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "Tether",
+            "chainId": 97,
+            "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 59140,
+            "id": 11,
+            "pair": 5
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "Tether",
+            "chainId": 97,
+            "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 5001,
+            "id": 12,
+            "pair": 6
+        }
+    ],
+    "thresholds": [
+        { "tokenId": 0, "type": "Portal", "value": "0" },
+        { "tokenId": 1, "type": "Synthesis", "value": "0" },
+        { "tokenId": 7, "type": "Synthesis", "value": "0" },
+        { "tokenId": 8, "type": "Synthesis", "value": "0" },
+        { "tokenId": 9, "type": "Synthesis", "value": "0" },
+        { "tokenId": 10, "type": "Synthesis", "value": "0" },
+        { "tokenId": 11, "type": "Synthesis", "value": "0" },
+        { "tokenId": 12, "type": "Synthesis", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Portal", "value": "0" },
+        { "tokenId": 4, "type": "Portal", "value": "0" },
+        { "tokenId": 5, "type": "Portal", "value": "0" },
+        { "tokenId": 6, "type": "Portal", "value": "0" }
+    ]
+}

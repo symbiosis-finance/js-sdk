@@ -4,6 +4,8 @@ export enum ErrorCode {
     'AMOUNT_TOO_LOW',
     'AMOUNT_TOO_HIGH',
     'AMOUNT_LESS_THAN_FEE',
+    'NO_TRANSIT_TOKEN',
+    'NO_TRANSIT_POOL',
 }
 
 export class Error {

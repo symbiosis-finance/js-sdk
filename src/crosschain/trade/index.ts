@@ -1,8 +1,6 @@
 export { AggregatorTrade } from './aggregatorTrade'
 export { getRateToEth, getTradePriceImpact } from './getTradePriceImpact'
-export { NerveTrade } from './nerveTrade'
 export { OmniTrade } from './omniTrade'
 export { OneInchTrade } from './oneInchTrade'
 export type { SymbiosisTradeType } from './symbiosisTrade'
 export { UniLikeTrade } from './uniLikeTrade'
-export { MuteTrade } from './muteTrade'

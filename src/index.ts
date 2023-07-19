@@ -10,7 +10,7 @@ export {
     INIT_CODE_HASH,
     MINIMUM_LIQUIDITY,
     ZERO,
-    MUTE_POOLS,
+    Icons,
 } from './constants'
 
 export * from './errors'

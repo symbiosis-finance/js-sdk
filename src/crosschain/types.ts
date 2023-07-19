@@ -1,25 +1,11 @@
 import { ChainId, TokenConstructor } from '../constants'
-import { BigNumber } from '@ethersproject/bignumber'
 
 export enum Field {
     INPUT = 'INPUT',
     OUTPUT = 'OUTPUT',
 }
 
-export enum PairState {
-    LOADING,
-    NOT_EXISTS,
-    EXISTS,
-    INVALID,
-}
-
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
-
-export type NerveConfig = {
-    address: string
-    tokens: string[]
-    decimals: number[]
-}
 
 export type ChainConfig = {
     id: ChainId
@@ -27,12 +13,13 @@ export type ChainConfig = {
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]
-    nerves: NerveConfig[]
     metaRouter: string
     metaRouterGateway: string
     multicallRouter: string
     aavePool: string
+    aavePoolDataProvider: string
     creamComptroller: string
+    creamCompoundLens: string
     renGatewayRegistry: string
     router: string
     bridge: string
@@ -40,6 +27,7 @@ export type ChainConfig = {
     portal: string
     fabric: string
     waitForBlocksCount: number
+    blocksPerYear: number
 }
 
 export type AdvisorConfig = {
@@ -54,18 +42,6 @@ export type OmniPoolConfig = {
 
 export type Config = {
     advisor: AdvisorConfig
-    omniPool: OmniPoolConfig
+    omniPools: OmniPoolConfig[]
     chains: ChainConfig[]
-    minSwapAmountInUsd: number
-    maxSwapAmountInUsd: number
-}
-
-export type PoolAsset = {
-    cash: BigNumber
-    liability: BigNumber
-    maxSupply: BigNumber
-    totalSupply: BigNumber
-    decimals: number
-    token: string
-    active: boolean
 }
