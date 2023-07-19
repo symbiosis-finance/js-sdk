@@ -1,7 +1,7 @@
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { BigNumber, Signer } from 'ethers'
-import { Token, TokenAmount } from '../entities'
+import { Token, TokenAmount, wrappedToken } from '../entities'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
@@ -18,12 +18,19 @@ export type Execute = Promise<{
     waitForMined: () => WaitForMined
 }>
 
-export type ExactIn = Promise<{
+export type BridgeExactIn = Promise<{
     execute: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     transactionRequest: TransactionRequest
 }>
+
+export type BridgeExactInParams = {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    to: string
+    revertableAddress: string
+}
 
 export class Bridging {
     public tokenAmountIn: TokenAmount | undefined
@@ -39,8 +46,8 @@ export class Bridging {
         this.symbiosis = symbiosis
     }
 
-    public async exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, to: string, revertableAddress: string): ExactIn {
-        this.symbiosis.validateSwapAmounts(tokenAmountIn)
+    public async exactIn({ tokenAmountIn, tokenOut, to, revertableAddress }: BridgeExactInParams): BridgeExactIn {
+        await this.symbiosis.validateSwapAmounts(tokenAmountIn)
 
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -189,10 +196,12 @@ export class Bridging {
             chainId: chainIdOut,
         })
 
+        const token = wrappedToken(this.tokenAmountIn.token)
+
         const calldata = synthesis.interface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            this.tokenAmountIn.token.address, // _token,
+            token.address, // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address

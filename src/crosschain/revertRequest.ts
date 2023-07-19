@@ -5,19 +5,144 @@ import { Portal__factory, Synthesis__factory } from './contracts'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
 import { TokenAmount } from '../entities'
-import {
-    findSourceChainData,
-    isSynthesizeV2,
-    PendingRequest,
-    PendingRequestState,
-    PendingRequestType,
-    SynthesizeRequestFinder,
-} from './pending'
 import { getExternalId } from './utils'
 
 type InitProps = {
     validateState: boolean
     synthesizeRequestFinder?: SynthesizeRequestFinder
+}
+
+import { SynthesizeRequestEvent } from './contracts/Portal'
+import { utils } from 'ethers'
+import { OmniPoolConfig } from './types'
+
+export enum PendingRequestState {
+    Default = 0,
+    Sent,
+    Reverted,
+}
+
+export type PendingRequestType = 'burn' | 'synthesize' | 'burn-v2' | 'burn-v2-revert' | 'synthesize-v2'
+
+export interface PendingRequest {
+    originalFromTokenAmount: TokenAmount
+    fromTokenAmount: TokenAmount
+    transactionHash: string
+    state: PendingRequestState
+    internalId: string
+    externalId: string
+    type: PendingRequestType
+    from: string
+    to: string
+    revertableAddress: string
+    chainIdFrom: ChainId
+    chainIdTo: ChainId
+    revertChainId: ChainId
+}
+
+export interface SourceChainData {
+    fromAddress: string
+    sourceChainId: ChainId
+}
+export type SynthesizeRequestFinder = (externalId: string) => Promise<SourceChainData | undefined>
+
+export const findSourceChainData = async (
+    symbiosis: Symbiosis,
+    chainIdFrom: ChainId,
+    chainIdTo: ChainId,
+    txHash: string,
+    revertableAddress: string,
+    omniPoolConfig: OmniPoolConfig,
+    synthesizeRequestFinder?: SynthesizeRequestFinder
+): Promise<SourceChainData | undefined> => {
+    const synthesis = symbiosis.synthesis(omniPoolConfig.chainId)
+    const filter = synthesis.filters.SynthesizeCompleted()
+    const tx = await synthesis.provider.getTransactionReceipt(txHash)
+    const foundSynthesizeCompleted = tx.logs.find((i) => {
+        return i.topics[0] === filter.topics?.[0]
+    })
+    if (!foundSynthesizeCompleted) return undefined
+    const externalId = foundSynthesizeCompleted.topics?.[1]
+
+    let sourceChainId = undefined
+    let fromAddress = undefined
+    const chains = symbiosis.chains()
+    for (let i = 0; i < chains.length; i++) {
+        const chainId = chains[i].id
+        if (chainId === chainIdFrom || chainId === chainIdTo) {
+            continue
+        }
+        const foundSynthesizeRequest = await findSynthesizeRequestOnChain(
+            symbiosis,
+            chainId,
+            revertableAddress,
+            externalId,
+            omniPoolConfig
+        )
+        if (foundSynthesizeRequest !== undefined) {
+            sourceChainId = chainId
+            fromAddress = foundSynthesizeRequest.args.from
+            break
+        }
+    }
+
+    if (!fromAddress && synthesizeRequestFinder) {
+        const data = await synthesizeRequestFinder(externalId)
+        sourceChainId = data?.sourceChainId
+        fromAddress = data?.fromAddress
+    }
+
+    if (!fromAddress || !sourceChainId) {
+        return
+    }
+
+    return {
+        sourceChainId,
+        fromAddress,
+    }
+}
+
+const findSynthesizeRequestOnChain = async (
+    symbiosis: Symbiosis,
+    chainId: ChainId,
+    revertableAddress: string,
+    originExternalId: string,
+    omniPoolConfig: OmniPoolConfig
+): Promise<SynthesizeRequestEvent | undefined> => {
+    const portal = symbiosis.portal(chainId)
+    const eventFragment = portal.interface.getEvent('SynthesizeRequest')
+    const topics = portal.interface.encodeFilterTopics(eventFragment, [
+        undefined,
+        undefined, // from
+        omniPoolConfig.chainId, // chains IDs
+        revertableAddress, // revertableAddress
+    ])
+    const blockOffset = symbiosis.filterBlockOffset(chainId)
+    const toBlock = await portal.provider.getBlockNumber()
+    const fromBlock = toBlock - blockOffset
+    const events = await portal.queryFilter<SynthesizeRequestEvent>({ topics }, fromBlock, toBlock)
+
+    const synthesis = symbiosis.synthesis(omniPoolConfig.chainId)
+    return events.find((e) => {
+        const { id } = e.args
+        const externalId = getExternalId({
+            internalId: id,
+            contractAddress: synthesis.address,
+            revertableAddress,
+            chainId: omniPoolConfig.chainId,
+        })
+        return originExternalId === externalId
+    })
+}
+
+export const isSynthesizeV2 = async (symbiosis: Symbiosis, chainId: ChainId, txHash: string): Promise<boolean> => {
+    const id = utils.id(
+        'metaBurnSyntheticToken((uint256,uint256,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))'
+    )
+    const hash = id.slice(2, 10)
+    const tx = await symbiosis.getProvider(chainId).getTransaction(txHash)
+
+    return tx.data.includes(hash)
 }
 
 export class RevertRequest {
@@ -48,10 +173,15 @@ export class RevertRequest {
         let chainIdFrom = this.chainId
         let from = fromOrigin
 
-        const token = this.symbiosis.findStable(tokenAddress, this.chainId)
+        const token = this.symbiosis.findToken(tokenAddress, this.chainId)
         if (!token) {
             throw new Error(`Cannot find token ${tokenAddress} at chain ${this.chainId}`)
         }
+        const omniPoolConfig = this.symbiosis.getOmniPoolByToken(token)
+        if (!omniPoolConfig) {
+            throw new Error(`Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`)
+        }
+
         let fromTokenAmount = new TokenAmount(token, amount)
         const originalFromTokenAmount = fromTokenAmount
 
@@ -63,7 +193,7 @@ export class RevertRequest {
         }
 
         if (type === 'burn') {
-            const metaRouterAddress = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
+            const metaRouterAddress = this.symbiosis.metaRouter(omniPoolConfig.chainId).address
             if (from.toLowerCase() === metaRouterAddress.toLowerCase()) {
                 type = 'burn-v2'
                 const data = await findSourceChainData(
@@ -72,12 +202,13 @@ export class RevertRequest {
                     chainIdTo,
                     receipt.transactionHash,
                     revertableAddress,
+                    omniPoolConfig,
                     synthesizeRequestFinder
                 )
                 if (data) {
                     const { sourceChainId, fromAddress } = data
                     from = fromAddress
-                    const sourceChainToken = await this.symbiosis.bestTransitStable(sourceChainId)
+                    const sourceChainToken = await this.symbiosis.transitToken(sourceChainId, omniPoolConfig)
                     chainIdFrom = sourceChainToken.chainId
                     fromTokenAmount = new TokenAmount(
                         sourceChainToken,
@@ -87,9 +218,9 @@ export class RevertRequest {
                         ).toString()
                     )
                 } else {
-                    const transitStable = await this.symbiosis.bestTransitStable(chainIdTo)
+                    const transitToken = await this.symbiosis.transitToken(chainIdTo, omniPoolConfig)
                     type = 'burn-v2-revert'
-                    fromTokenAmount = new TokenAmount(transitStable, fromTokenAmount.raw)
+                    fromTokenAmount = new TokenAmount(transitToken, fromTokenAmount.raw)
                 }
             }
         }

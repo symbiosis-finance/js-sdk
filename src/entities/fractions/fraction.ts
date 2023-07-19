@@ -1,12 +1,35 @@
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import _Decimal from 'decimal.js-light'
-import _Big, { RoundingMode } from 'big.js'
+import _Big from 'big.js'
 import toFormat from 'toformat'
 
 import { BigintIsh, Rounding } from '../../constants'
 import { ONE } from '../../constants'
 import { parseBigintIsh } from '../../utils'
+
+// Reexport from 'big.js'
+const enum RoundingMode {
+    /**
+     * Rounds towards zero.
+     * I.e. truncate, no rounding.
+     */
+    RoundDown = 0,
+    /**
+     * Rounds towards nearest neighbour.
+     * If equidistant, rounds away from zero.
+     */
+    RoundHalfUp = 1,
+    /**
+     * Rounds towards nearest neighbour.
+     * If equidistant, rounds towards even neighbour.
+     */
+    RoundHalfEven = 2,
+    /**
+     * Rounds away from zero.
+     */
+    RoundUp = 3,
+}
 
 const Decimal = toFormat(_Decimal)
 const Big = toFormat(_Big)
