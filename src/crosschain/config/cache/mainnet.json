@@ -6,23 +6,78 @@
             "oracle": "0x7775b274f0C3fA919B756b22A4d9674e55927ab8",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 28 },
-                { "index": 1, "tokenId": 30 },
-                { "index": 2, "tokenId": 33 },
-                { "index": 3, "tokenId": 35 },
-                { "index": 4, "tokenId": 14 },
-                { "index": 5, "tokenId": 39 },
-                { "index": 7, "tokenId": 40 },
-                { "index": 8, "tokenId": 37 },
-                { "index": 9, "tokenId": 38 },
-                { "index": 10, "tokenId": 31 },
-                { "index": 11, "tokenId": 41 },
-                { "index": 12, "tokenId": 44 },
-                { "index": 13, "tokenId": 46 },
-                { "index": 14, "tokenId": 48 },
-                { "index": 15, "tokenId": 50 },
-                { "index": 16, "tokenId": 43 },
-                { "index": 17, "tokenId": 34 }
+                {
+                    "index": 0,
+                    "tokenId": 29
+                },
+                {
+                    "index": 1,
+                    "tokenId": 31
+                },
+                {
+                    "index": 2,
+                    "tokenId": 34
+                },
+                {
+                    "index": 3,
+                    "tokenId": 36
+                },
+                {
+                    "index": 4,
+                    "tokenId": 14
+                },
+                {
+                    "index": 5,
+                    "tokenId": 40
+                },
+                {
+                    "index": 7,
+                    "tokenId": 41
+                },
+                {
+                    "index": 8,
+                    "tokenId": 38
+                },
+                {
+                    "index": 9,
+                    "tokenId": 39
+                },
+                {
+                    "index": 10,
+                    "tokenId": 32
+                },
+                {
+                    "index": 11,
+                    "tokenId": 42
+                },
+                {
+                    "index": 12,
+                    "tokenId": 45
+                },
+                {
+                    "index": 13,
+                    "tokenId": 47
+                },
+                {
+                    "index": 14,
+                    "tokenId": 49
+                },
+                {
+                    "index": 15,
+                    "tokenId": 51
+                },
+                {
+                    "index": 16,
+                    "tokenId": 44
+                },
+                {
+                    "index": 17,
+                    "tokenId": 35
+                },
+                {
+                    "index": 18,
+                    "tokenId": 54
+                }
             ]
         },
         {
@@ -31,15 +86,42 @@
             "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 42 },
-                { "index": 2, "tokenId": 51 },
-                { "index": 3, "tokenId": 45 },
-                { "index": 5, "tokenId": 36 },
-                { "index": 6, "tokenId": 32 },
-                { "index": 7, "tokenId": 47 },
-                { "index": 8, "tokenId": 49 },
-                { "index": 9, "tokenId": 29 },
-                { "index": 10, "tokenId": 52 }
+                {
+                    "index": 1,
+                    "tokenId": 43
+                },
+                {
+                    "index": 2,
+                    "tokenId": 52
+                },
+                {
+                    "index": 3,
+                    "tokenId": 46
+                },
+                {
+                    "index": 5,
+                    "tokenId": 37
+                },
+                {
+                    "index": 6,
+                    "tokenId": 33
+                },
+                {
+                    "index": 7,
+                    "tokenId": 48
+                },
+                {
+                    "index": 8,
+                    "tokenId": 50
+                },
+                {
+                    "index": 9,
+                    "tokenId": 30
+                },
+                {
+                    "index": 10,
+                    "tokenId": 53
+                }
             ]
         }
     ],
@@ -56,7 +138,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 0,
-            "pair": 28
+            "pair": 29
         },
         {
             "decimals": 18,
@@ -70,7 +152,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
             },
             "id": 1,
-            "pair": 27
+            "pair": 28
         },
         {
             "decimals": 18,
@@ -84,7 +166,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 2,
-            "pair": 29
+            "pair": 30
         },
         {
             "decimals": 18,
@@ -98,7 +180,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
             "id": 3,
-            "pair": 30
+            "pair": 31
         },
         {
             "decimals": 18,
@@ -112,7 +194,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 4,
-            "pair": 31
+            "pair": 32
         },
         {
             "decimals": 18,
@@ -126,7 +208,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 5,
-            "pair": 32
+            "pair": 33
         },
         {
             "decimals": 6,
@@ -140,7 +222,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 6,
-            "pair": 33
+            "pair": 34
         },
         {
             "decimals": 6,
@@ -154,7 +236,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 7,
-            "pair": 34
+            "pair": 35
         },
         {
             "decimals": 6,
@@ -168,7 +250,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 8,
-            "pair": 35
+            "pair": 36
         },
         {
             "decimals": 18,
@@ -182,7 +264,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 9,
-            "pair": 36
+            "pair": 37
         },
         {
             "decimals": 6,
@@ -196,7 +278,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 10,
-            "pair": 37
+            "pair": 38
         },
         {
             "decimals": 6,
@@ -210,7 +292,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 11,
-            "pair": 38
+            "pair": 39
         },
         {
             "decimals": 6,
@@ -224,7 +306,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 12,
-            "pair": 39
+            "pair": 40
         },
         {
             "decimals": 6,
@@ -238,7 +320,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 13,
-            "pair": 40
+            "pair": 41
         },
         {
             "decimals": 18,
@@ -265,7 +347,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 15,
-            "pair": 41
+            "pair": 42
         },
         {
             "decimals": 18,
@@ -279,7 +361,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 16,
-            "pair": 42
+            "pair": 43
         },
         {
             "decimals": 6,
@@ -293,7 +375,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 17,
-            "pair": 43
+            "pair": 44
         },
         {
             "decimals": 6,
@@ -307,7 +389,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 18,
-            "pair": 44
+            "pair": 45
         },
         {
             "decimals": 18,
@@ -321,7 +403,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 19,
-            "pair": 45
+            "pair": 46
         },
         {
             "decimals": 6,
@@ -335,7 +417,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 20,
-            "pair": 46
+            "pair": 47
         },
         {
             "decimals": 18,
@@ -349,7 +431,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 21,
-            "pair": 47
+            "pair": 48
         },
         {
             "decimals": 6,
@@ -363,7 +445,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 22,
-            "pair": 48
+            "pair": 49
         },
         {
             "decimals": 18,
@@ -377,7 +459,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 23,
-            "pair": 49
+            "pair": 50
         },
         {
             "decimals": 6,
@@ -391,7 +473,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 24,
-            "pair": 50
+            "pair": 51
         },
         {
             "decimals": 18,
@@ -405,7 +487,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 25,
-            "pair": 51
+            "pair": 52
         },
         {
             "decimals": 18,
@@ -419,7 +501,21 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 26,
-            "pair": 52
+            "pair": 53
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 5000,
+            "address": "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 27,
+            "pair": 54
         },
         {
             "decimals": 18,
@@ -433,7 +529,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
             },
             "chainFromId": 1,
-            "id": 27,
+            "id": 28,
             "pair": 1
         },
         {
@@ -448,7 +544,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 1,
-            "id": 28,
+            "id": 29,
             "pair": 0
         },
         {
@@ -463,7 +559,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 1,
-            "id": 29,
+            "id": 30,
             "pair": 2
         },
         {
@@ -478,7 +574,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
             "chainFromId": 56,
-            "id": 30,
+            "id": 31,
             "pair": 3
         },
         {
@@ -493,7 +589,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 56,
-            "id": 31,
+            "id": 32,
             "pair": 4
         },
         {
@@ -508,7 +604,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 56,
-            "id": 32,
+            "id": 33,
             "pair": 5
         },
         {
@@ -523,7 +619,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 43114,
-            "id": 33,
+            "id": 34,
             "pair": 6
         },
         {
@@ -538,7 +634,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 43114,
-            "id": 34,
+            "id": 35,
             "pair": 7
         },
         {
@@ -553,7 +649,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 137,
-            "id": 35,
+            "id": 36,
             "pair": 8
         },
         {
@@ -568,7 +664,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 137,
-            "id": 36,
+            "id": 37,
             "pair": 9
         },
         {
@@ -583,7 +679,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 40,
-            "id": 37,
+            "id": 38,
             "pair": 10
         },
         {
@@ -598,7 +694,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 2222,
-            "id": 38,
+            "id": 39,
             "pair": 11
         },
         {
@@ -613,7 +709,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 288,
-            "id": 39,
+            "id": 40,
             "pair": 12
         },
         {
@@ -628,7 +724,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 43288,
-            "id": 40,
+            "id": 41,
             "pair": 13
         },
         {
@@ -643,7 +739,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 324,
-            "id": 41,
+            "id": 42,
             "pair": 15
         },
         {
@@ -658,7 +754,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 324,
-            "id": 42,
+            "id": 43,
             "pair": 16
         },
         {
@@ -673,7 +769,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 42161,
-            "id": 43,
+            "id": 44,
             "pair": 17
         },
         {
@@ -688,7 +784,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 42161,
-            "id": 44,
+            "id": 45,
             "pair": 18
         },
         {
@@ -703,7 +799,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 42161,
-            "id": 45,
+            "id": 46,
             "pair": 19
         },
         {
@@ -718,7 +814,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 10,
-            "id": 46,
+            "id": 47,
             "pair": 20
         },
         {
@@ -733,7 +829,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 10,
-            "id": 47,
+            "id": 48,
             "pair": 21
         },
         {
@@ -748,7 +844,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 42170,
-            "id": 48,
+            "id": 49,
             "pair": 22
         },
         {
@@ -763,7 +859,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 42170,
-            "id": 49,
+            "id": 50,
             "pair": 23
         },
         {
@@ -778,7 +874,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 1101,
-            "id": 50,
+            "id": 51,
             "pair": 24
         },
         {
@@ -793,7 +889,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 1101,
-            "id": 51,
+            "id": 52,
             "pair": 25
         },
         {
@@ -808,67 +904,320 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 59144,
-            "id": 52,
+            "id": 53,
             "pair": 26
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 5000,
+            "id": 54,
+            "pair": 27
         }
     ],
     "thresholds": [
-        { "tokenId": 0, "type": "Portal", "value": "8000000" },
-        { "tokenId": 1, "type": "Portal", "value": "0" },
-        { "tokenId": 2, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "type": "Portal", "value": "8000000000000000000" },
-        { "tokenId": 4, "type": "Portal", "value": "0" },
-        { "tokenId": 5, "type": "Portal", "value": "0" },
-        { "tokenId": 27, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "type": "Synthesis", "value": "0" },
-        { "tokenId": 4, "type": "Synthesis", "value": "0" },
-        { "tokenId": 5, "type": "Synthesis", "value": "0" },
-        { "tokenId": 27, "type": "Synthesis", "value": "0" },
-        { "tokenId": 6, "type": "Portal", "value": "8000000" },
-        { "tokenId": 7, "type": "Portal", "value": "0" },
-        { "tokenId": 8, "type": "Portal", "value": "8000000" },
-        { "tokenId": 9, "type": "Portal", "value": "0" },
-        { "tokenId": 10, "type": "Portal", "value": "8000000" },
-        { "tokenId": 11, "type": "Portal", "value": "0" },
-        { "tokenId": 12, "type": "Portal", "value": "8000000" },
-        { "tokenId": 13, "type": "Portal", "value": "8000000" },
-        { "tokenId": 14, "type": "Synthesis", "value": "0" },
-        { "tokenId": 28, "type": "Synthesis", "value": "10000000" },
-        { "tokenId": 29, "type": "Synthesis", "value": "0" },
-        { "tokenId": 30, "type": "Synthesis", "value": "8000000000000000000" },
-        { "tokenId": 31, "type": "Synthesis", "value": "0" },
-        { "tokenId": 32, "type": "Synthesis", "value": "0" },
-        { "tokenId": 33, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 34, "type": "Synthesis", "value": "0" },
-        { "tokenId": 35, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 36, "type": "Synthesis", "value": "0" },
-        { "tokenId": 37, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 38, "type": "Synthesis", "value": "0" },
-        { "tokenId": 39, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 40, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 41, "type": "Synthesis", "value": "0" },
-        { "tokenId": 42, "type": "Synthesis", "value": "0" },
-        { "tokenId": 43, "type": "Synthesis", "value": "0" },
-        { "tokenId": 44, "type": "Synthesis", "value": "0" },
-        { "tokenId": 45, "type": "Synthesis", "value": "0" },
-        { "tokenId": 46, "type": "Synthesis", "value": "0" },
-        { "tokenId": 47, "type": "Synthesis", "value": "0" },
-        { "tokenId": 48, "type": "Synthesis", "value": "0" },
-        { "tokenId": 49, "type": "Synthesis", "value": "0" },
-        { "tokenId": 50, "type": "Synthesis", "value": "0" },
-        { "tokenId": 51, "type": "Synthesis", "value": "0" },
-        { "tokenId": 52, "type": "Synthesis", "value": "0" },
-        { "tokenId": 15, "type": "Portal", "value": "10000000" },
-        { "tokenId": 16, "type": "Portal", "value": "0" },
-        { "tokenId": 17, "type": "Portal", "value": "0" },
-        { "tokenId": 18, "type": "Portal", "value": "0" },
-        { "tokenId": 19, "type": "Portal", "value": "0" },
-        { "tokenId": 20, "type": "Portal", "value": "0" },
-        { "tokenId": 21, "type": "Portal", "value": "0" },
-        { "tokenId": 22, "type": "Portal", "value": "0" },
-        { "tokenId": 23, "type": "Portal", "value": "0" },
-        { "tokenId": 24, "type": "Portal", "value": "0" },
-        { "tokenId": 25, "type": "Portal", "value": "0" },
-        { "tokenId": 26, "type": "Portal", "value": "0" }
+        {
+            "tokenId": 0,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 1,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 2,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 3,
+            "type": "Portal",
+            "value": "8000000000000000000"
+        },
+        {
+            "tokenId": 4,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 5,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 28,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 3,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 4,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 5,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 28,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 6,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 7,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 8,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 9,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 10,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 11,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 12,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 13,
+            "type": "Portal",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 14,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 29,
+            "type": "Synthesis",
+            "value": "10000000"
+        },
+        {
+            "tokenId": 30,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 31,
+            "type": "Synthesis",
+            "value": "8000000000000000000"
+        },
+        {
+            "tokenId": 32,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 33,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 34,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 35,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 36,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 37,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 38,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 39,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 40,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 41,
+            "type": "Synthesis",
+            "value": "8000000"
+        },
+        {
+            "tokenId": 42,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 43,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 44,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 45,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 46,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 47,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 48,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 49,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 50,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 51,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 52,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 53,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 54,
+            "type": "Synthesis",
+            "value": "0"
+        },
+        {
+            "tokenId": 15,
+            "type": "Portal",
+            "value": "10000000"
+        },
+        {
+            "tokenId": 16,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 17,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 18,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 19,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 20,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 21,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 22,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 23,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 24,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 25,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 26,
+            "type": "Portal",
+            "value": "0"
+        },
+        {
+            "tokenId": 27,
+            "type": "Portal",
+            "value": "0"
+        }
     ]
 }

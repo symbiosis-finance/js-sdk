@@ -513,4 +513,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.MANTLE_MAINNET]: new Token({
+        chainId: ChainId.MANTLE_MAINNET,
+        address: '0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8',
+        decimals: 18,
+        symbol: 'WMNT',
+        isNative: false,
+        name: 'Wrapped MNT',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+        },
+    }),
 }
