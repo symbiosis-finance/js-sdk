@@ -270,6 +270,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
+                {
+                    name: 'Tether USDt',
+                    symbol: 'USDT',
+                    address: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
+                    chainId: 2222,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
             ],
             router: '0xA7544C409d772944017BB95B99484B6E0d7B6388',
             dexFee: 30,
