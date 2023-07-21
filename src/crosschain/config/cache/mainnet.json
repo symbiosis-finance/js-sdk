@@ -14,7 +14,7 @@
                 { "index": 5, "tokenId": 42 },
                 { "index": 7, "tokenId": 43 },
                 { "index": 8, "tokenId": 39 },
-                { "index": 9, "tokenId": 40 },
+                { "index": 9, "tokenId": 41 },
                 { "index": 10, "tokenId": 33 },
                 { "index": 11, "tokenId": 44 },
                 { "index": 12, "tokenId": 47 },
@@ -24,7 +24,7 @@
                 { "index": 16, "tokenId": 46 },
                 { "index": 17, "tokenId": 36 },
                 { "index": 18, "tokenId": 56 },
-                { "index": 19, "tokenId": 41 }
+                { "index": 19, "tokenId": 40 }
             ]
         },
         {
@@ -202,20 +202,6 @@
         },
         {
             "decimals": 6,
-            "symbol": "USDC",
-            "name": "USD Coin",
-            "chainId": 2222,
-            "address": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "id": 11,
-            "pair": 40
-        },
-        {
-            "decimals": 6,
             "symbol": "USDT",
             "name": "Tether USDt",
             "chainId": 2222,
@@ -224,6 +210,20 @@
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "id": 11,
+            "pair": 40
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 2222,
+            "address": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 12,
             "pair": 41
@@ -618,21 +618,6 @@
         },
         {
             "decimals": 6,
-            "symbol": "sUSDC",
-            "name": "USD Coin",
-            "chainId": 56288,
-            "address": "0x437640130BAE97dAD55161a6F1AEC58d0F30fE8F",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "chainFromId": 2222,
-            "id": 40,
-            "pair": 11
-        },
-        {
-            "decimals": 6,
             "symbol": "sUSDT",
             "name": "Tether USDt",
             "chainId": 56288,
@@ -641,6 +626,21 @@
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 2222,
+            "id": 40,
+            "pair": 11
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USD Coin",
+            "chainId": 56288,
+            "address": "0x437640130BAE97dAD55161a6F1AEC58d0F30fE8F",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 2222,
             "id": 41,

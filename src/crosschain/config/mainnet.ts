@@ -260,17 +260,6 @@ export const config: Config = {
             waitForBlocksCount: 30,
             stables: [
                 {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
-                    address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
-                    chainId: 2222,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    },
-                },
-                {
                     name: 'Tether USDt',
                     symbol: 'USDT',
                     address: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
@@ -279,6 +268,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
+                    chainId: 2222,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
             ],
