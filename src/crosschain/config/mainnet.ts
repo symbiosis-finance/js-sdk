@@ -452,17 +452,6 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'USD Coin (Arb1)',
-                    symbol: 'USDC.e',
-                    address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
-                    chainId: 42161,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    },
-                },
-                {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
