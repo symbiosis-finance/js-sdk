@@ -179,7 +179,7 @@ export abstract class BaseSwapping {
 
         const slippage = Math.floor(totalSlippage / swapsCount)
 
-        const MAX_STABLE_SLIPPAGE = 50 // 0.5%
+        const MAX_STABLE_SLIPPAGE = 75 // 0.75%
         if (slippage > MAX_STABLE_SLIPPAGE) {
             const diff = slippage - MAX_STABLE_SLIPPAGE
             const addition = diff / extraSwapsCount
