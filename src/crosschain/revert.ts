@@ -19,7 +19,8 @@ export class RevertPending {
 
     private deadline!: number
     private slippage!: number
-    private transitToken!: Token
+    private transitTokenFrom!: Token
+    private transitTokenTo!: Token
     private omniPoolConfig: OmniPoolConfig
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
@@ -36,7 +37,8 @@ export class RevertPending {
         this.slippage = slippage
         this.deadline = deadline
 
-        this.transitToken = await this.symbiosis.transitToken(this.request.chainIdFrom, this.omniPoolConfig)
+        this.transitTokenFrom = await this.symbiosis.transitToken(this.request.chainIdFrom, this.omniPoolConfig)
+        this.transitTokenTo = await this.symbiosis.transitToken(this.request.chainIdTo, this.omniPoolConfig)
 
         const fee = await this.getFee()
 
@@ -132,7 +134,7 @@ export class RevertPending {
     }
 
     protected async getFeeV2(): Promise<TokenAmount> {
-        const feeToken = this.transitToken
+        const feeToken = this.transitTokenFrom
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
         const fee = await this.symbiosis.getBridgeFee({
@@ -170,7 +172,7 @@ export class RevertPending {
             externalId, // _externalID,
             revertableAddress, // _to
             fromTokenAmount.raw.toString(), // _amount
-            this.transitToken.address, // _rToken
+            this.transitTokenFrom.address, // _rToken
             AddressZero, // _finalReceiveSide
             [], // _finalCalldata
             0, // _finalOffset
@@ -181,9 +183,8 @@ export class RevertPending {
     private buildMetaBurnCalldata(feeV2?: TokenAmount) {
         const { to, from, chainIdFrom } = this.request
         const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
-        const sToken = this.findSyntheticStable(chainIdFrom)?.address
-
-        if (!sToken) {
+        const synth = this.getSyntheticToken(this.transitTokenFrom)
+        if (!synth) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
@@ -195,7 +196,7 @@ export class RevertPending {
                 amount: '0',
                 syntCaller: metarouter.address,
                 finalReceiveSide: AddressZero,
-                sToken,
+                sToken: synth.address,
                 finalCallData: [],
                 finalOffset: 0,
                 chain2address: from, // NOTE: funds will be returned there if got stuck
@@ -206,7 +207,7 @@ export class RevertPending {
                 clientID: this.symbiosis.clientId,
             },
         ])
-        return [sToken, calldata]
+        return [synth.address, calldata]
     }
 
     private async getFee(): Promise<TokenAmount> {
@@ -382,23 +383,21 @@ export class RevertPending {
         }
     }
 
-    private findSyntheticStable(chainFromId: ChainId): Token | undefined {
-        return this.symbiosis.getOmniPoolTokens(this.omniPoolConfig).find((token) => {
-            return token.chainId === this.omniPoolConfig.chainId && token.chainFromId === chainFromId
-        })
+    private getSyntheticToken(realToken: Token): Token | undefined {
+        return this.symbiosis.getRepresentation(realToken, this.omniPoolConfig.chainId)
     }
 
     private async buildSwapCalldata(fee?: TokenAmount): Promise<[string, string]> {
         const { originalFromTokenAmount, chainIdFrom, chainIdTo } = this.request
 
-        const tokenIn = this.findSyntheticStable(chainIdTo)
+        const tokenIn = this.getSyntheticToken(this.transitTokenTo)
         if (!tokenIn) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdTo}`)
         }
         const tokenAmountIn = new TokenAmount(tokenIn, originalFromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
-        const tokenOut = this.findSyntheticStable(chainIdFrom)
+        const tokenOut = this.getSyntheticToken(this.transitTokenFrom)
         if (!tokenOut) {
             throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
