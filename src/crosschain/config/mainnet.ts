@@ -357,7 +357,7 @@ export const config: Config = {
         },
         {
             id: 56288,
-            rpc: 'https://rpc.symbiosis.finance/56288',
+            rpc: 'https://symbiosis.bnb.boba.network',
             filterBlockOffset: 3000,
             waitForBlocksCount: 0,
             stables: [
