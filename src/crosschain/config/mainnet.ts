@@ -676,6 +676,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
+                {
+                    name: 'Wrapped Ether',
+                    symbol: 'WETH',
+                    address: '0xdEAddEaDdeadDEadDEADDEAddEADDEAddead1111',
+                    chainId: 5000,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
             ],
             router: '0xDd0840118bF9CCCc6d67b2944ddDfbdb995955FD',
             dexFee: 30,
