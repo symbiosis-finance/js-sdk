@@ -10,6 +10,11 @@ export const config: Config = {
             address: '0x569D2a232F5f2a462673fAf184ED9640e8A9F4D8',
             oracle: '0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9',
         },
+        {
+            chainId: 97,
+            address: '0xc44AF80948B8a20bb781277559457ce0F2893b8b',
+            oracle: '0x69cE6CA199c5Ca995C954c15F925D68ee0810153',
+        },
     ],
     chains: [
         {
@@ -27,6 +32,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'Wrapped ETH',
+                    address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
+                    symbol: 'WETH',
+                    decimals: 18,
+                    chainId: 5,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
             ],
@@ -163,6 +179,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'Wrapped ETH',
+                    address: '0xa1EA0B2354F5A344110af2b6AD68e75545009a03',
+                    symbol: 'WETH',
+                    decimals: 18,
+                    chainId: 534353,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
             ],

@@ -6,14 +6,24 @@
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 8 },
-                { "index": 1, "tokenId": 10 },
-                { "index": 2, "tokenId": 9 },
-                { "index": 5, "tokenId": 1 },
-                { "index": 6, "tokenId": 11 },
-                { "index": 8, "tokenId": 12 },
-                { "index": 9, "tokenId": 13 },
-                { "index": 10, "tokenId": 14 }
+                { "index": 0, "tokenId": 10 },
+                { "index": 1, "tokenId": 13 },
+                { "index": 2, "tokenId": 12 },
+                { "index": 5, "tokenId": 2 },
+                { "index": 6, "tokenId": 14 },
+                { "index": 8, "tokenId": 16 },
+                { "index": 9, "tokenId": 17 },
+                { "index": 10, "tokenId": 18 }
+            ]
+        },
+        {
+            "chainId": 97,
+            "address": "0xc44AF80948B8a20bb781277559457ce0F2893b8b",
+            "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
+            "id": 1,
+            "tokens": [
+                { "index": 0, "tokenId": 15 },
+                { "index": 1, "tokenId": 11 }
             ]
         }
     ],
@@ -30,7 +40,21 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 0,
-            "pair": 8
+            "pair": 10
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped ETH",
+            "chainId": 5,
+            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 1,
+            "pair": 11
         },
         {
             "decimals": 18,
@@ -43,7 +67,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
-            "id": 1
+            "id": 2
         },
         {
             "decimals": 6,
@@ -56,8 +80,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 2,
-            "pair": 9
+            "id": 3,
+            "pair": 12
         },
         {
             "decimals": 6,
@@ -70,8 +94,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 3,
-            "pair": 10
+            "id": 4,
+            "pair": 13
         },
         {
             "decimals": 6,
@@ -84,8 +108,22 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 4,
-            "pair": 11
+            "id": 5,
+            "pair": 14
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped ETH",
+            "chainId": 534353,
+            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 6,
+            "pair": 15
         },
         {
             "decimals": 6,
@@ -98,8 +136,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 5,
-            "pair": 12
+            "id": 7,
+            "pair": 16
         },
         {
             "decimals": 6,
@@ -112,8 +150,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 6,
-            "pair": 13
+            "id": 8,
+            "pair": 17
         },
         {
             "decimals": 6,
@@ -126,8 +164,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 7,
-            "pair": 14
+            "id": 9,
+            "pair": 18
         },
         {
             "decimals": 6,
@@ -141,8 +179,23 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 5,
-            "id": 8,
+            "id": 10,
             "pair": 0
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped ETH",
+            "chainId": 97,
+            "address": "0x70470021F81e30497F86962e889BC732CA70aeE1",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 5,
+            "id": 11,
+            "pair": 1
         },
         {
             "decimals": 6,
@@ -156,8 +209,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 43113,
-            "id": 9,
-            "pair": 2
+            "id": 12,
+            "pair": 3
         },
         {
             "decimals": 6,
@@ -171,8 +224,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 80001,
-            "id": 10,
-            "pair": 3
+            "id": 13,
+            "pair": 4
         },
         {
             "decimals": 6,
@@ -186,8 +239,23 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 534353,
-            "id": 11,
-            "pair": 4
+            "id": 14,
+            "pair": 5
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped ETH",
+            "chainId": 97,
+            "address": "0xabbEf7E6d201e03368DBA03BD7D87B350915f6EE",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 534353,
+            "id": 15,
+            "pair": 6
         },
         {
             "decimals": 6,
@@ -201,8 +269,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 7001,
-            "id": 12,
-            "pair": 5
+            "id": 16,
+            "pair": 7
         },
         {
             "decimals": 6,
@@ -216,8 +284,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 59140,
-            "id": 13,
-            "pair": 6
+            "id": 17,
+            "pair": 8
         },
         {
             "decimals": 6,
@@ -231,25 +299,29 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 5001,
-            "id": 14,
-            "pair": 7
+            "id": 18,
+            "pair": 9
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Portal", "value": "0" },
-        { "tokenId": 1, "type": "Synthesis", "value": "0" },
-        { "tokenId": 8, "type": "Synthesis", "value": "0" },
-        { "tokenId": 9, "type": "Synthesis", "value": "0" },
+        { "tokenId": 1, "type": "Portal", "value": "0" },
+        { "tokenId": 2, "type": "Synthesis", "value": "0" },
         { "tokenId": 10, "type": "Synthesis", "value": "0" },
         { "tokenId": 11, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
-        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 15, "type": "Synthesis", "value": "0" },
+        { "tokenId": 16, "type": "Synthesis", "value": "0" },
+        { "tokenId": 17, "type": "Synthesis", "value": "0" },
+        { "tokenId": 18, "type": "Synthesis", "value": "0" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Portal", "value": "0" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 6, "type": "Portal", "value": "0" },
-        { "tokenId": 7, "type": "Portal", "value": "0" }
+        { "tokenId": 7, "type": "Portal", "value": "0" },
+        { "tokenId": 8, "type": "Portal", "value": "0" },
+        { "tokenId": 9, "type": "Portal", "value": "0" }
     ]
 }
