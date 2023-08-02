@@ -377,7 +377,7 @@ export const chains: Chain[] = [
         id: ChainId.LINEA_TESTNET,
         name: 'Linea',
         disabled: false,
-        explorer: 'https://explorer.goerli.linea.build',
+        explorer: 'https://goerli.lineascan.build',
         icons: {
             small: 'https://l2beat.com/icons/linea.png',
             large: 'https://l2beat.com/icons/linea.png',
@@ -387,7 +387,7 @@ export const chains: Chain[] = [
         id: ChainId.LINEA_MAINNET,
         name: 'Linea',
         disabled: false,
-        explorer: 'https://explorer.linea.build',
+        explorer: 'https://lineascan.build',
         icons: {
             small: 'https://l2beat.com/icons/linea.png',
             large: 'https://l2beat.com/icons/linea.png',
@@ -408,6 +408,16 @@ export const chains: Chain[] = [
         name: 'Mantle',
         disabled: false,
         explorer: 'https://explorer.testnet.mantle.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.BASE_MAINNET,
+        name: 'Base',
+        disabled: false,
+        explorer: 'https://basescan.org/',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',

@@ -9,6 +9,7 @@ const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.LINEA_MAINNET]: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
     [ChainId.SCROLL_TESTNET]: '0x2135c0ab678F25E9cbB4BbBd55B68DE1E36D1E81',
     [ChainId.ETH_GOERLI]: '0xc9Fd2AF244FEfb31A62A5A33B9D6261Cec2cb7aA',
+    [ChainId.BASE_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
 }
 
 export class WrapTrade implements SymbiosisTrade {
