@@ -417,10 +417,10 @@ export const chains: Chain[] = [
         id: ChainId.BASE_MAINNET,
         name: 'Base',
         disabled: false,
-        explorer: 'https://basescan.org/',
+        explorer: 'https://basescan.org',
         icons: {
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
         },
     }),
 ]
