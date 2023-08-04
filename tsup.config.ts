@@ -6,6 +6,7 @@ export default defineConfig({
     clean: true,
     dts: true,
     format: ['cjs', 'esm'],
+    external: [new RegExp('^@ethersproject/.*$')],
     outExtension({ format }) {
         return {
             js: `.${format}.js`,
