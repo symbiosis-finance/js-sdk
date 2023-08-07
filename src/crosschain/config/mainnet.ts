@@ -721,6 +721,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
+                {
+                    name: 'USD Base Coin',
+                    symbol: 'USDbC',
+                    address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+                    chainId: 8453,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
