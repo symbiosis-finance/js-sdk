@@ -56,13 +56,14 @@ import { ZappingCream } from './zappingCream'
 
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
+import { config as dev } from './config/dev'
 import { ZappingBeefy } from './zappingBeefy'
 import { BestPoolSwapping } from './bestPoolSwapping'
 import { ConfigCache } from './config/cache/cache'
 import { OmniPoolInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
 
-export type ConfigName = 'testnet' | 'mainnet'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
@@ -77,6 +78,8 @@ export class Symbiosis {
             this.config = mainnet
         } else if (config === 'testnet') {
             this.config = testnet
+        } else if (config === 'dev') {
+            this.config = dev
         } else {
             throw new Error('Unknown config name')
         }

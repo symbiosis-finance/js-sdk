@@ -18,6 +18,7 @@ import { Error } from '../../error'
 import { Token } from '../../../entities'
 import { config as mainnet } from '../mainnet'
 import { config as testnet } from '../testnet'
+import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
 import { BigNumberish } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -63,6 +64,8 @@ export class Builder {
             this.config = mainnet
         } else if (configName === 'testnet') {
             this.config = testnet
+        } else if (configName === 'dev') {
+            this.config = dev
         } else {
             throw new Error('Unknown config name')
         }
@@ -218,12 +221,12 @@ export class Builder {
 
             const multicall = await getMulticall(fabric.provider)
 
-            const realTokens = realTokensWithId.map((token) => ({
+            const synthTokens = realTokensWithId.map((token) => ({
                 target: fabric.address,
                 callData: fabric.interface.encodeFunctionData('getSyntRepresentation', [token.address, token.chainId]),
             }))
 
-            const representationsResults = await multicall.callStatic.tryAggregate(false, realTokens)
+            const representationsResults = await multicall.callStatic.tryAggregate(false, synthTokens)
             representationsResults.forEach(([success, returnData], index) => {
                 if (!success) {
                     throw new Error(`Cannot get representations from fabric on chain ${chainWithFabric.id}`)
@@ -249,6 +252,7 @@ export class Builder {
                 tokens.push(token)
             })
         }
+        console.log({ tokens })
 
         return tokens
     }
