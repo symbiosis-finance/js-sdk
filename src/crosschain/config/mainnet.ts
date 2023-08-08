@@ -441,9 +441,9 @@ export const config: Config = {
             waitForBlocksCount: 240,
             stables: [
                 {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
-                    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+                    name: 'USD Coin (Arb1)',
+                    symbol: 'USDC.e',
+                    address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
                     chainId: 42161,
                     decimals: 6,
                     icons: {
@@ -452,9 +452,9 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'USD Coin (Arb1)',
-                    symbol: 'USDC.e',
-                    address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
                     chainId: 42161,
                     decimals: 6,
                     icons: {
