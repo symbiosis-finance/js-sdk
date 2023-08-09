@@ -627,7 +627,7 @@ export const config: Config = {
         },
         {
             id: 59144,
-            rpc: 'https://rpc.symbiosis.finance/59144',
+            rpc: 'https://rpc.linea.build',
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -642,8 +642,19 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x176211869cA2b568f2A7D4EE941E073a821EE1ff',
+                    chainId: 59144,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
             ],
-            router: '0x0000000000000000000000000000000000000000',
+            router: '0xc66149996d0263C0B42D3bC05e50Db88658106cE',
             dexFee: 30,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
@@ -733,7 +744,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x0000000000000000000000000000000000000000',
+            router: '0x327Df1E6de05895d2ab08513aaDD9313Fe505d86',
             dexFee: 0,
             metaRouter: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365',
             metaRouterGateway: '0xa0079829B9F1Edc5DD0DE3eC104f281745C4bD81',
