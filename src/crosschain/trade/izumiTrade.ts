@@ -11,6 +11,12 @@ import { AbiCoder } from 'ethers/lib/utils'
 interface IzumiAddresses {
     quoter: string
     swap: string
+    baseTokens: Token[]
+}
+
+interface IzumiRoute {
+    tokens: Token[]
+    path: string
 }
 
 const POSSIBLE_FEES = [100, 400, 500, 2000, 3000, 10000]
@@ -19,14 +25,76 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
     [ChainId.MANTLE_MAINNET]: {
         quoter: '0x032b241De86a8660f1Ae0691a4760B426EA246d7',
         swap: '0x25C030116Feb2E7BbA054b9de0915E5F51b03e31',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.MANTLE_MAINNET,
+                address: '0x201eba5cc46d216ce6dc03f6a759e8e766e956ae',
+                decimals: 6,
+                symbol: 'USDT',
+                name: 'USDT',
+            }),
+            new Token({
+                chainId: ChainId.MANTLE_MAINNET,
+                address: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead1111',
+                decimals: 18,
+                symbol: 'WETH',
+                name: 'Wrapped Ether',
+            }),
+            new Token({
+                chainId: ChainId.MANTLE_MAINNET,
+                address: '0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8',
+                decimals: 18,
+                symbol: 'WMNT',
+                name: 'WMNT',
+            }),
+            new Token({
+                chainId: ChainId.MANTLE_MAINNET,
+                address: '0x0a3bb08b3a15a19b4de82f8acfc862606fb69a2d',
+                decimals: 18,
+                symbol: 'iUSD',
+                name: 'iZUMi Bond USD',
+            }),
+        ],
     },
     [ChainId.LINEA_MAINNET]: {
         quoter: '0xe6805638db944eA605e774e72c6F0D15Fb6a1347',
         swap: '0x032b241De86a8660f1Ae0691a4760B426EA246d7',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.LINEA_MAINNET,
+                name: 'Wrapped Ether',
+                symbol: 'WETH',
+                address: '0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f',
+                decimals: 18,
+            }),
+            new Token({
+                chainId: ChainId.LINEA_MAINNET,
+                name: 'iZUMi Bond USD',
+                symbol: 'iUSD',
+                address: '0x0a3bb08b3a15a19b4de82f8acfc862606fb69a2d',
+                decimals: 18,
+            }),
+        ],
     },
     [ChainId.BASE_MAINNET]: {
         quoter: '0x2db0AFD0045F3518c77eC6591a542e326Befd3D7',
         swap: '0x02F55D53DcE23B4AA962CC68b0f685f26143Bdb2',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.BASE_MAINNET,
+                name: 'Wrapped Ether',
+                symbol: 'WETH',
+                address: '0x4200000000000000000000000000000000000006',
+                decimals: 18,
+            }),
+            new Token({
+                chainId: ChainId.BASE_MAINNET,
+                symbol: 'iUSD',
+                name: 'iZUMi Bond USD',
+                address: '0x0a3bb08b3a15a19b4de82f8acfc862606fb69a2d',
+                decimals: 18,
+            }),
+        ],
     },
 }
 
@@ -63,22 +131,43 @@ export class IzumiTrade implements SymbiosisTrade {
 
         const { quoter, swap } = addresses
 
-        const provider = this.symbiosis.getProvider(this.tokenAmountIn.token.chainId)
+        const allRoutes: IzumiRoute[] = []
 
-        const paths = POSSIBLE_FEES.map((fee) => getTokenChainPath([this.tokenAmountIn.token, this.tokenOut], [fee]))
+        const tokenIn = this.tokenAmountIn.token
+        const tokenOut = this.tokenOut
+
+        POSSIBLE_FEES.forEach((fee) => {
+            const path = getTokenChainPath([tokenIn, tokenOut], [fee])
+            allRoutes.push({ tokens: [tokenIn, tokenOut], path })
+        })
+
+        for (const baseToken of addresses.baseTokens) {
+            if (baseToken.equals(this.tokenAmountIn.token) || baseToken.equals(this.tokenOut)) {
+                continue
+            }
+
+            POSSIBLE_FEES.forEach((firstFee) => {
+                POSSIBLE_FEES.forEach((secondFee) => {
+                    const path = getTokenChainPath([tokenIn, baseToken, tokenOut], [firstFee, secondFee])
+                    allRoutes.push({ tokens: [tokenIn, baseToken, tokenOut], path })
+                })
+            })
+        }
+
+        const provider = this.symbiosis.getProvider(this.tokenAmountIn.token.chainId)
 
         const multicall = await getMulticall(provider)
 
         const quoterInterface = IzumiQuoter__factory.createInterface()
 
-        const calls = paths.map((path) => ({
+        const calls = allRoutes.map(({ path }) => ({
             target: quoter,
             callData: quoterInterface.encodeFunctionData('swapAmount', [this.tokenAmountIn.raw.toString(), path]),
         }))
 
         const results = await multicall.callStatic.tryAggregate(false, calls)
 
-        let bestPath: string | undefined
+        let bestRoute: IzumiRoute | undefined
         let bestOutput: BigNumber | undefined
         for (let i = 0; i < results.length; i++) {
             const [success, returnData] = results[i]
@@ -88,24 +177,23 @@ export class IzumiTrade implements SymbiosisTrade {
 
             const { acquire } = quoterInterface.decodeFunctionResult('swapAmount', returnData)
             if (!bestOutput || BigNumber.from(acquire).gt(bestOutput)) {
-                bestPath = paths[i]
+                bestRoute = allRoutes[i]
                 bestOutput = acquire
             }
         }
 
-        if (!bestPath || !bestOutput) {
+        if (!bestRoute || !bestOutput) {
             throw new Error('No path found')
         }
+
+        const { path, tokens } = bestRoute
 
         this.amountOut = new TokenAmount(this.tokenOut, bestOutput.toString())
 
         const slippageTolerance = basisPointsToPercent(this.slippage)
         const minAcquired = new Fraction(ONE).add(slippageTolerance).invert().multiply(this.amountOut.raw).quotient
 
-        const tokenChain = [this.tokenAmountIn.token, this.tokenOut]
-
-        const outputToken = tokenChain[tokenChain.length - 1]
-        const path = bestPath
+        const outputToken = tokens[tokens.length - 1]
 
         const finalRecipientAddress = this.to
         const innerRecipientAddress = outputToken.isNative
@@ -144,12 +232,11 @@ export class IzumiTrade implements SymbiosisTrade {
 
         // Exclude the 0x from calculating the offset
         this.callDataOffset = (position - 2) / 2
-        console.log(this.callDataOffset)
 
         this.routerAddress = swap
         this.callData = callData
 
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
+        this.route = tokens
 
         return this
     }
