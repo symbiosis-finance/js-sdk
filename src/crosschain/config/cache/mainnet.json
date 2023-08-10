@@ -7,14 +7,14 @@
             "id": 0,
             "tokens": [
                 { "index": 0, "tokenId": 32 },
-                { "index": 1, "tokenId": 34 },
+                { "index": 1, "tokenId": 35 },
                 { "index": 2, "tokenId": 37 },
                 { "index": 3, "tokenId": 39 },
                 { "index": 4, "tokenId": 14 },
                 { "index": 5, "tokenId": 43 },
                 { "index": 7, "tokenId": 44 },
                 { "index": 8, "tokenId": 41 },
-                { "index": 10, "tokenId": 35 },
+                { "index": 10, "tokenId": 34 },
                 { "index": 11, "tokenId": 45 },
                 { "index": 12, "tokenId": 47 },
                 { "index": 13, "tokenId": 50 },
@@ -92,20 +92,6 @@
         },
         {
             "decimals": 18,
-            "symbol": "BUSD",
-            "name": "BUSD Token",
-            "chainId": 56,
-            "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
-            },
-            "id": 3,
-            "pair": 34
-        },
-        {
-            "decimals": 18,
             "symbol": "USDC",
             "name": "USD Coin",
             "chainId": 56,
@@ -114,6 +100,20 @@
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "id": 3,
+            "pair": 34
+        },
+        {
+            "decimals": 18,
+            "symbol": "BUSD",
+            "name": "BUSD Token",
+            "chainId": 56,
+            "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
             "id": 4,
             "pair": 35
@@ -528,21 +528,6 @@
         },
         {
             "decimals": 18,
-            "symbol": "sBUSD",
-            "name": "BUSD Token",
-            "chainId": 56288,
-            "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
-            },
-            "chainFromId": 56,
-            "id": 34,
-            "pair": 3
-        },
-        {
-            "decimals": 18,
             "symbol": "sUSDC",
             "name": "USD Coin",
             "chainId": 56288,
@@ -551,6 +536,21 @@
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 56,
+            "id": 34,
+            "pair": 3
+        },
+        {
+            "decimals": 18,
+            "symbol": "sBUSD",
+            "name": "BUSD Token",
+            "chainId": 56288,
+            "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
             "chainFromId": 56,
             "id": 35,
@@ -936,8 +936,8 @@
         { "tokenId": 0, "type": "Portal", "value": "8000000" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "type": "Portal", "value": "8000000000000000000" },
-        { "tokenId": 4, "type": "Portal", "value": "10000000000000000000" },
+        { "tokenId": 3, "type": "Portal", "value": "10000000000000000000" },
+        { "tokenId": 4, "type": "Portal", "value": "8000000000000000000" },
         { "tokenId": 5, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 31, "type": "Portal", "value": "0" },
         { "tokenId": 3, "type": "Synthesis", "value": "0" },
@@ -955,8 +955,8 @@
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
         { "tokenId": 32, "type": "Synthesis", "value": "10000000" },
         { "tokenId": 33, "type": "Synthesis", "value": "0" },
-        { "tokenId": 34, "type": "Synthesis", "value": "8000000000000000000" },
-        { "tokenId": 35, "type": "Synthesis", "value": "0" },
+        { "tokenId": 34, "type": "Synthesis", "value": "0" },
+        { "tokenId": 35, "type": "Synthesis", "value": "8000000000000000000" },
         { "tokenId": 36, "type": "Synthesis", "value": "0" },
         { "tokenId": 37, "type": "Synthesis", "value": "8000000" },
         { "tokenId": 38, "type": "Synthesis", "value": "0" },
