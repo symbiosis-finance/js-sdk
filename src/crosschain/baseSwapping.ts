@@ -17,6 +17,7 @@ import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { OmniPoolConfig } from './types'
 import { WrapTrade } from './trade/wrapTrade'
+import { IzumiTrade } from './trade/izumiTrade'
 
 export type SwapExactInParams = {
     tokenAmountIn: TokenAmount
@@ -310,10 +311,8 @@ export abstract class BaseSwapping {
         }
 
         const chainId = this.tokenAmountIn.token.chainId
-
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
-        const dexFee = this.symbiosis.dexFee(chainId)
 
         if (AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
@@ -329,6 +328,17 @@ export abstract class BaseSwapping {
             })
         }
 
+        if (IzumiTrade.isSupported(chainId)) {
+            return new IzumiTrade({
+                symbiosis: this.symbiosis,
+                tokenAmountIn: this.tokenAmountIn,
+                tokenOut,
+                slippage: this.slippage['A'],
+                ttl: this.ttl,
+                to,
+            })
+        }
+
         let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
 
         if (chainId === ChainId.AVAX_MAINNET) {
@@ -341,6 +351,7 @@ export abstract class BaseSwapping {
             routerA = this.symbiosis.kavaRouter(chainId)
         }
 
+        const dexFee = this.symbiosis.dexFee(chainId)
         return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage['A'], this.ttl, routerA, dexFee)
     }
 
@@ -386,6 +397,17 @@ export abstract class BaseSwapping {
 
         if (WrapTrade.isSupported(amountIn, this.tokenOut)) {
             return new WrapTrade(amountIn, this.tokenOut, this.to)
+        }
+
+        if (IzumiTrade.isSupported(chainId)) {
+            return new IzumiTrade({
+                symbiosis: this.symbiosis,
+                tokenAmountIn: amountIn,
+                tokenOut: this.tokenOut,
+                slippage: this.slippage['C'],
+                ttl: this.ttl,
+                to: this.to,
+            })
         }
 
         // POLYGON_ZK only
