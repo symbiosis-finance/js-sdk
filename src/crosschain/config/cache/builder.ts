@@ -252,7 +252,6 @@ export class Builder {
                 tokens.push(token)
             })
         }
-        console.log({ tokens })
 
         return tokens
     }
