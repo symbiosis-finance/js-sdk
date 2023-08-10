@@ -80,17 +80,6 @@ export const config: Config = {
             waitForBlocksCount: 20,
             stables: [
                 {
-                    name: 'BUSD Token',
-                    address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-                    symbol: 'BUSD',
-                    decimals: 18,
-                    chainId: 56,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
-                    },
-                },
-                {
                     name: 'USD Coin',
                     address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
                     symbol: 'USDC',
@@ -99,6 +88,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'BUSD Token',
+                    address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+                    symbol: 'BUSD',
+                    decimals: 18,
+                    chainId: 56,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
                     },
                 },
                 {
