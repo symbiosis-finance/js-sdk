@@ -329,7 +329,14 @@ export abstract class BaseSwapping {
         }
 
         if (IzumiTrade.isSupported(chainId)) {
-            return new IzumiTrade(this.symbiosis, this.tokenAmountIn, tokenOut, this.slippage['A'], this.ttl, to)
+            return new IzumiTrade({
+                symbiosis: this.symbiosis,
+                tokenAmountIn: this.tokenAmountIn,
+                tokenOut,
+                slippage: this.slippage['A'],
+                ttl: this.ttl,
+                to,
+            })
         }
 
         let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
@@ -393,7 +400,14 @@ export abstract class BaseSwapping {
         }
 
         if (IzumiTrade.isSupported(chainId)) {
-            return new IzumiTrade(this.symbiosis, amountIn, this.tokenOut, this.slippage['C'], this.ttl, this.to)
+            return new IzumiTrade({
+                symbiosis: this.symbiosis,
+                tokenAmountIn: amountIn,
+                tokenOut: this.tokenOut,
+                slippage: this.slippage['C'],
+                ttl: this.ttl,
+                to: this.to,
+            })
         }
 
         // POLYGON_ZK only

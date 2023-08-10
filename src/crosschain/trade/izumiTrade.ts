@@ -19,6 +19,15 @@ interface IzumiRoute {
     path: string
 }
 
+interface IzumiTradeParams {
+    symbiosis: Symbiosis
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    slippage: number
+    ttl: number
+    to: string
+}
+
 const POSSIBLE_FEES = [100, 400, 500, 2000, 3000, 10000]
 
 const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
@@ -102,6 +111,12 @@ export class IzumiTrade implements SymbiosisTrade {
     tradeType = 'dex' as const
 
     public priceImpact: Percent = new Percent('0')
+    private readonly symbiosis: Symbiosis
+    public readonly tokenAmountIn: TokenAmount
+    private readonly tokenOut: Token
+    private readonly slippage: number
+    private readonly ttl: number
+    private readonly to: string
 
     public route!: Token[]
     public amountOut!: TokenAmount
@@ -113,14 +128,16 @@ export class IzumiTrade implements SymbiosisTrade {
         return !!IZUMI_ADDRESSES[chainId]
     }
 
-    public constructor(
-        private readonly symbiosis: Symbiosis,
-        public readonly tokenAmountIn: TokenAmount,
-        private readonly tokenOut: Token,
-        private readonly slippage: number,
-        private readonly deadline: number,
-        private readonly to: string
-    ) {}
+    public constructor(params: IzumiTradeParams) {
+        const { symbiosis, tokenAmountIn, tokenOut, slippage, ttl, to } = params
+
+        this.symbiosis = symbiosis
+        this.tokenAmountIn = tokenAmountIn
+        this.tokenOut = tokenOut
+        this.slippage = slippage
+        this.ttl = ttl
+        this.to = to
+    }
 
     public async init() {
         const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
@@ -210,7 +227,7 @@ export class IzumiTrade implements SymbiosisTrade {
                 recipient: innerRecipientAddress,
                 amount: this.tokenAmountIn.raw.toString(),
                 minAcquired: minAcquired.toString(),
-                deadline: Math.floor(Date.now() / 1000) + this.deadline,
+                deadline: Math.floor(Date.now() / 1000) + this.ttl,
             },
         ])
 
