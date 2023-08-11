@@ -108,7 +108,7 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
 }
 
 export class IzumiTrade implements SymbiosisTrade {
-    tradeType = 'dex' as const
+    tradeType = 'izumi' as const
 
     public priceImpact: Percent = new Percent('0')
     private readonly symbiosis: Symbiosis

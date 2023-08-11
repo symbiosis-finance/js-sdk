@@ -1,6 +1,6 @@
 import { Percent, Token, TokenAmount } from 'src/entities'
 
-export type SymbiosisTradeType = 'dex' | '1inch' | 'open-ocean' | 'wrap'
+export type SymbiosisTradeType = 'dex' | '1inch' | 'open-ocean' | 'wrap' | 'izumi'
 
 export interface SymbiosisTrade {
     init(): Promise<this>
