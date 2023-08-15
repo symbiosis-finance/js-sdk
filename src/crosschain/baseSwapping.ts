@@ -410,22 +410,6 @@ export abstract class BaseSwapping {
             })
         }
 
-        // POLYGON_ZK only
-        if (chainId === ChainId.POLYGON_ZK && AggregatorTrade.isAvailable(chainId)) {
-            const from = this.symbiosis.metaRouter(chainId).address
-            return new AggregatorTrade({
-                tokenAmountIn: amountIn,
-                tokenOut: this.tokenOut,
-                from,
-                to: this.tradeCTo(),
-                slippage: this.slippage['C'] / 100,
-                symbiosis: this.symbiosis,
-                dataProvider: this.dataProvider,
-                clientId: this.symbiosis.clientId,
-                oneInchProtocols: this.oneInchProtocols,
-            })
-        }
-
         if (OneInchTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             const oracle = this.symbiosis.oneInchOracle(chainId)
