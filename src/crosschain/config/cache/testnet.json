@@ -6,14 +6,14 @@
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 10 },
-                { "index": 1, "tokenId": 13 },
-                { "index": 2, "tokenId": 12 },
+                { "index": 0, "tokenId": 11 },
+                { "index": 1, "tokenId": 14 },
+                { "index": 2, "tokenId": 13 },
                 { "index": 5, "tokenId": 2 },
-                { "index": 6, "tokenId": 14 },
-                { "index": 8, "tokenId": 16 },
-                { "index": 9, "tokenId": 17 },
-                { "index": 10, "tokenId": 18 }
+                { "index": 6, "tokenId": 15 },
+                { "index": 8, "tokenId": 18 },
+                { "index": 9, "tokenId": 19 },
+                { "index": 10, "tokenId": 20 }
             ]
         },
         {
@@ -22,8 +22,9 @@
             "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
             "id": 1,
             "tokens": [
-                { "index": 0, "tokenId": 15 },
-                { "index": 1, "tokenId": 11 }
+                { "index": 0, "tokenId": 16 },
+                { "index": 1, "tokenId": 12 },
+                { "index": 2, "tokenId": 17 }
             ]
         }
     ],
@@ -40,7 +41,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 0,
-            "pair": 10
+            "pair": 11
         },
         {
             "decimals": 18,
@@ -54,7 +55,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 1,
-            "pair": 11
+            "pair": 12
         },
         {
             "decimals": 18,
@@ -81,7 +82,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "id": 3,
-            "pair": 12
+            "pair": 13
         },
         {
             "decimals": 6,
@@ -95,7 +96,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "id": 4,
-            "pair": 13
+            "pair": 14
         },
         {
             "decimals": 6,
@@ -109,7 +110,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "id": 5,
-            "pair": 14
+            "pair": 15
         },
         {
             "decimals": 18,
@@ -123,7 +124,21 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "id": 6,
-            "pair": 15
+            "pair": 16
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped ETH",
+            "chainId": 534351,
+            "address": "0x5300000000000000000000000000000000000004",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "id": 7,
+            "pair": 17
         },
         {
             "decimals": 6,
@@ -136,8 +151,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 7,
-            "pair": 16
+            "id": 8,
+            "pair": 18
         },
         {
             "decimals": 6,
@@ -150,8 +165,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 8,
-            "pair": 17
+            "id": 9,
+            "pair": 19
         },
         {
             "decimals": 6,
@@ -164,8 +179,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 9,
-            "pair": 18
+            "id": 10,
+            "pair": 20
         },
         {
             "decimals": 6,
@@ -179,7 +194,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 5,
-            "id": 10,
+            "id": 11,
             "pair": 0
         },
         {
@@ -194,7 +209,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 5,
-            "id": 11,
+            "id": 12,
             "pair": 1
         },
         {
@@ -209,7 +224,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 43113,
-            "id": 12,
+            "id": 13,
             "pair": 3
         },
         {
@@ -224,7 +239,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 80001,
-            "id": 13,
+            "id": 14,
             "pair": 4
         },
         {
@@ -239,7 +254,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 534353,
-            "id": 14,
+            "id": 15,
             "pair": 5
         },
         {
@@ -254,8 +269,23 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 534353,
-            "id": 15,
+            "id": 16,
             "pair": 6
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped ETH",
+            "chainId": 97,
+            "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 534351,
+            "id": 17,
+            "pair": 7
         },
         {
             "decimals": 6,
@@ -269,8 +299,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 7001,
-            "id": 16,
-            "pair": 7
+            "id": 18,
+            "pair": 8
         },
         {
             "decimals": 6,
@@ -284,8 +314,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 59140,
-            "id": 17,
-            "pair": 8
+            "id": 19,
+            "pair": 9
         },
         {
             "decimals": 6,
@@ -299,15 +329,14 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 5001,
-            "id": 18,
-            "pair": 9
+            "id": 20,
+            "pair": 10
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Portal", "value": "0" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Synthesis", "value": "0" },
-        { "tokenId": 10, "type": "Synthesis", "value": "0" },
         { "tokenId": 11, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
@@ -316,12 +345,15 @@
         { "tokenId": 16, "type": "Synthesis", "value": "0" },
         { "tokenId": 17, "type": "Synthesis", "value": "0" },
         { "tokenId": 18, "type": "Synthesis", "value": "0" },
+        { "tokenId": 19, "type": "Synthesis", "value": "0" },
+        { "tokenId": 20, "type": "Synthesis", "value": "0" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Portal", "value": "0" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 6, "type": "Portal", "value": "0" },
         { "tokenId": 7, "type": "Portal", "value": "0" },
         { "tokenId": 8, "type": "Portal", "value": "0" },
-        { "tokenId": 9, "type": "Portal", "value": "0" }
+        { "tokenId": 9, "type": "Portal", "value": "0" },
+        { "tokenId": 10, "type": "Portal", "value": "0" }
     ]
 }

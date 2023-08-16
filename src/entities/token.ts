@@ -417,6 +417,18 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.SCROLL_SEPOLIA]: new Token({
+        chainId: ChainId.SCROLL_SEPOLIA,
+        address: '0x5300000000000000000000000000000000000004',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
     [ChainId.ZKSYNC_MAINNET]: new Token({
         chainId: ChainId.ZKSYNC_MAINNET,
         address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',

@@ -305,9 +305,19 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.SCROLL_TESTNET,
-        name: 'Scroll',
+        name: 'Scroll Alpha',
         disabled: false,
         explorer: 'https://blockscout.scroll.io',
+        icons: {
+            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SCROLL_SEPOLIA,
+        name: 'Scroll Sepolia',
+        disabled: false,
+        explorer: 'https://sepolia-blockscout.scroll.io/',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
