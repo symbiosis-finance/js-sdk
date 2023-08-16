@@ -73,7 +73,7 @@ export class Symbiosis {
 
     private readonly configCache: ConfigCache
 
-    public constructor(config: ConfigName, clientId: string) {
+    public constructor(config: ConfigName, clientId: string, override?: Config) {
         if (config === 'mainnet') {
             this.config = mainnet
         } else if (config === 'testnet') {
@@ -82,6 +82,10 @@ export class Symbiosis {
             this.config = dev
         } else {
             throw new Error('Unknown config name')
+        }
+
+        if (override) {
+            this.config = { ...this.config, ...override }
         }
 
         this.configCache = new ConfigCache(config)
