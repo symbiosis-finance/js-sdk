@@ -48,7 +48,7 @@ import {
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
 import { Swapping } from './swapping'
-import { ChainConfig, Config, OmniPoolConfig } from './types'
+import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
@@ -73,7 +73,7 @@ export class Symbiosis {
 
     private readonly configCache: ConfigCache
 
-    public constructor(config: ConfigName, clientId: string, override?: Config) {
+    public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
             this.config = mainnet
         } else if (config === 'testnet') {
@@ -84,8 +84,14 @@ export class Symbiosis {
             throw new Error('Unknown config name')
         }
 
-        if (override) {
-            this.config = { ...this.config, ...override }
+        if (overrideConfig) {
+            this.config.chains = this.config.chains.map((chainConfig) => {
+                const found = overrideConfig.chains.find((i) => i.id === chainConfig.id)
+                if (found) {
+                    chainConfig.rpc = found.rpc
+                }
+                return chainConfig
+            })
         }
 
         this.configCache = new ConfigCache(config)

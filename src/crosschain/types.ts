@@ -45,3 +45,11 @@ export type Config = {
     omniPools: OmniPoolConfig[]
     chains: ChainConfig[]
 }
+
+export type OverrideChainConfig = {
+    id: ChainId
+    rpc: string
+}
+export type OverrideConfig = {
+    chains: OverrideChainConfig[]
+}
