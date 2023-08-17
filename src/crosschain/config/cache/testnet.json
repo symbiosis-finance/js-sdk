@@ -175,7 +175,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDC",
-            "name": "USD Coin",
+            "name": "sUSDC from Goerli",
             "chainId": 97,
             "address": "0x32Ac07C5D3D6002B853836a48EE8538C9CF29ad4",
             "isNative": false,
@@ -190,7 +190,7 @@
         {
             "decimals": 18,
             "symbol": "sWETH",
-            "name": "Wrapped ETH",
+            "name": "sWETH from Goerli",
             "chainId": 97,
             "address": "0x70470021F81e30497F86962e889BC732CA70aeE1",
             "isNative": false,
@@ -205,7 +205,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDT",
-            "name": "USDT",
+            "name": "sUSDT from Fuji",
             "chainId": 97,
             "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
             "isNative": false,
@@ -220,7 +220,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDT",
-            "name": "USDT",
+            "name": "sUSDT from Mumbai",
             "chainId": 97,
             "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
             "isNative": false,
@@ -235,7 +235,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDC",
-            "name": "Circle USD",
+            "name": "sUSDC from Scroll Testnet",
             "chainId": 97,
             "address": "0xe586751BAED5b49Ba521e8169051b11A85b79007",
             "isNative": false,
@@ -250,7 +250,7 @@
         {
             "decimals": 18,
             "symbol": "sWETH",
-            "name": "Wrapped ETH",
+            "name": "sWETH from Scroll",
             "chainId": 97,
             "address": "0xabbEf7E6d201e03368DBA03BD7D87B350915f6EE",
             "isNative": false,
@@ -265,7 +265,7 @@
         {
             "decimals": 18,
             "symbol": "sWETH",
-            "name": "Wrapped ETH",
+            "name": "sWETH from Scroll Sepolia",
             "chainId": 97,
             "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
             "isNative": false,
@@ -280,7 +280,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDT",
-            "name": "Tether",
+            "name": "sUSDT from ZetaChain Athens 2",
             "chainId": 97,
             "address": "0xA31EB10427E47517A4E30DCC17054A2F2692aAe1",
             "isNative": false,
@@ -295,7 +295,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDT",
-            "name": "Tether",
+            "name": "sUSDT from Linea Testnet",
             "chainId": 97,
             "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
             "isNative": false,
@@ -310,7 +310,7 @@
         {
             "decimals": 6,
             "symbol": "sUSDT",
-            "name": "Tether",
+            "name": "sUSDT from Mantle Testnet",
             "chainId": 97,
             "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
             "isNative": false,

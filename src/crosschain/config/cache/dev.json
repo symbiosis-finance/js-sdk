@@ -41,7 +41,7 @@
         {
             "decimals": 18,
             "symbol": "sWETH",
-            "name": "Wrapped ETH",
+            "name": "Wrapped Ether from Goerli",
             "chainId": 97,
             "address": "0xb1c5691B3Cb5e1B673Ef9Aa2599740a1cC76F928",
             "isNative": false,
@@ -56,7 +56,7 @@
         {
             "decimals": 18,
             "symbol": "sWETH",
-            "name": "Wrapped ETH",
+            "name": "Wrapped Ether from Scroll Testnet",
             "chainId": 97,
             "address": "0x3624b5e063405e7724cBbC24f504eA3da3e08b81",
             "isNative": false,

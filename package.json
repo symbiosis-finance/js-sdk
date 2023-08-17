@@ -19,10 +19,11 @@
         "build": "tsup",
         "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
-        "prettier:fix": "prettier --write --ignore-unknown src",
+        "prettier:fix": "prettier --write --ignore-unknown src test",
         "prepublishOnly": "tsc --noEmit && tsup",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
-        "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts"
+        "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts",
+        "test": "vitest"
     },
     "dependencies": {
         "big.js": "^5.2.2",
@@ -39,7 +40,6 @@
         "ethers": "^5.2.0"
     },
     "devDependencies": {
-        "ethers": "^5.2.0",
         "@typechain/ethers-v5": "^9.0.0",
         "@types/big.js": "^4.0.5",
         "@types/jest": "^27.0.3",
@@ -51,11 +51,13 @@
         "eslint": "^8.5.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",
+        "ethers": "^5.2.0",
         "prettier": "2.5.1",
         "ts-node": "^10.9.1",
         "tsup": "^7.1.0",
         "typechain": "^7.0.0",
-        "typescript": "^4.5.5"
+        "typescript": "^4.5.5",
+        "vitest": "^0.34.2"
     },
     "engines": {
         "node": ">=10"

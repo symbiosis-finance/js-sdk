@@ -1,6 +1,7 @@
 import invariant from 'tiny-invariant'
 import { ChainId, Pair, Percent, Route, Router, Token, TokenAmount, Trade } from '../src'
 import JSBI from 'jsbi'
+import { describe, expect, test } from 'vitest'
 
 function checkDeadline(deadline: string[] | string): void {
     expect(typeof deadline).toBe('string')
@@ -27,7 +28,7 @@ describe('Router', () => {
 
     describe('#swapCallParameters', () => {
         describe('exact in', () => {
-            it('token0 to token1', () => {
+            test('token0 to token1', () => {
                 const result = Router.swapCallParameters(
                     Trade.exactIn(new Route([pair_0_1], token0, token1), new TokenAmount(token0, JSBI.BigInt(100))),
                     {
@@ -48,7 +49,7 @@ describe('Router', () => {
             })
         })
         describe('exact out', () => {
-            it('token0 to token1', () => {
+            test('token0 to token1', () => {
                 const result = Router.swapCallParameters(
                     Trade.exactOut(new Route([pair_0_1], token0, token1), new TokenAmount(token1, JSBI.BigInt(100))),
                     {
@@ -70,7 +71,7 @@ describe('Router', () => {
         })
         describe('supporting fee on transfer', () => {
             describe('exact in', () => {
-                it('token0 to token1', () => {
+                test('token0 to token1', () => {
                     const result = Router.swapCallParameters(
                         Trade.exactIn(new Route([pair_0_1], token0, token1), new TokenAmount(token0, JSBI.BigInt(100))),
                         {
@@ -92,7 +93,7 @@ describe('Router', () => {
                 })
             })
             describe('exact out', () => {
-                it('token0 to token1', () => {
+                test('token0 to token1', () => {
                     expect(() =>
                         Router.swapCallParameters(
                             Trade.exactOut(

@@ -22,6 +22,8 @@ import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
 import { BigNumberish } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from '@ethersproject/contracts'
+import ERC20 from '../../../abis/ERC20.json'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -240,22 +242,26 @@ export class Builder {
                 return synthAddress
             })
 
-            synths.forEach((synthAddress, index) => {
-                if (!synthAddress) {
-                    return
+            for (let j = 0; j < synths.length; j++) {
+                const address = synths[j]
+                if (!address) {
+                    continue
                 }
+                const erc20 = new Contract(address, ERC20, fabric.provider)
+
                 const token: TokenInfo = {
-                    ...realTokensWithId[index],
+                    ...realTokensWithId[j],
                     id: idCounter++,
-                    symbol: `s${realTokensWithId[index].symbol}`,
-                    address: synthAddress,
+                    symbol: await erc20.symbol(),
+                    name: await erc20.name(),
+                    address: address,
                     chainId: chainWithFabric.id,
-                    chainFromId: realTokensWithId[index].chainId,
-                    originalId: realTokensWithId[index].id,
+                    chainFromId: realTokensWithId[j].chainId,
+                    originalId: realTokensWithId[j].id,
                 }
 
                 tokens.push(token)
-            })
+            }
         }
 
         return tokens
