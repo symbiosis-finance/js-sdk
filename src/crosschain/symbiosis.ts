@@ -419,16 +419,6 @@ export class Symbiosis {
     }
 
     public getOmniPoolTokens(omniPoolConfig: OmniPoolConfig): Token[] {
-        const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
-        if (!pool) {
-            throw new Error('Cannot find omniPool')
-        }
-        return pool.tokens.map((i) => {
-            const token = this.configCache.getToken(i.tokenId)
-            if (!token) {
-                throw new Error(`Cannot find token by id ${i.tokenId}`)
-            }
-            return new Token(token)
-        })
+        return this.configCache.getOmniPoolTokens(omniPoolConfig)
     }
 }

@@ -23,8 +23,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 0,
-            "pair": 2
+            "id": 0
         },
         {
             "decimals": 18,
@@ -37,8 +36,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 1,
-            "pair": 3
+            "id": 1
         },
         {
             "decimals": 18,
@@ -53,7 +51,7 @@
             },
             "chainFromId": 5,
             "id": 2,
-            "pair": 0
+            "originalId": 0
         },
         {
             "decimals": 18,
@@ -68,7 +66,7 @@
             },
             "chainFromId": 534353,
             "id": 3,
-            "pair": 1
+            "originalId": 1
         }
     ],
     "thresholds": [

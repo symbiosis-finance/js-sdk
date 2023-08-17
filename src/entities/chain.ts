@@ -317,7 +317,7 @@ export const chains: Chain[] = [
         id: ChainId.SCROLL_SEPOLIA,
         name: 'Scroll Sepolia',
         disabled: false,
-        explorer: 'https://sepolia-blockscout.scroll.io/',
+        explorer: 'https://sepolia-blockscout.scroll.io',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',

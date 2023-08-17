@@ -30,7 +30,7 @@ export type Id = number
 
 export type TokenInfo = TokenConstructor & {
     id: Id
-    pair?: Id
+    originalId?: Id
 }
 
 export type OmniPoolToken = {
@@ -221,13 +221,13 @@ export class Builder {
 
             const multicall = await getMulticall(fabric.provider)
 
-            const synthTokens = realTokensWithId.map((token) => ({
+            const synthCalls = realTokensWithId.map((token) => ({
                 target: fabric.address,
                 callData: fabric.interface.encodeFunctionData('getSyntRepresentation', [token.address, token.chainId]),
             }))
 
-            const representationsResults = await multicall.callStatic.tryAggregate(false, synthTokens)
-            representationsResults.forEach(([success, returnData], index) => {
+            const synthResults = await multicall.callStatic.tryAggregate(false, synthCalls)
+            const synths = synthResults.map(([success, returnData]) => {
                 if (!success) {
                     throw new Error(`Cannot get representations from fabric on chain ${chainWithFabric.id}`)
                 }
@@ -237,7 +237,13 @@ export class Builder {
                 if (synthAddress === AddressZero) {
                     return
                 }
+                return synthAddress
+            })
 
+            synths.forEach((synthAddress, index) => {
+                if (!synthAddress) {
+                    return
+                }
                 const token: TokenInfo = {
                     ...realTokensWithId[index],
                     id: idCounter++,
@@ -245,9 +251,8 @@ export class Builder {
                     address: synthAddress,
                     chainId: chainWithFabric.id,
                     chainFromId: realTokensWithId[index].chainId,
-                    pair: realTokensWithId[index].id,
+                    originalId: realTokensWithId[index].id,
                 }
-                realTokensWithId[index].pair = token.id
 
                 tokens.push(token)
             })

@@ -30,48 +30,16 @@ export class ConfigCache {
         })
     }
 
-    public findToken(token: Token): TokenInfo | undefined {
-        return this.cache.tokens.find((i) => {
-            return i.address.toLowerCase() === token.address.toLowerCase() && i.chainId === token.chainId
-        })
-    }
-
-    public getToken(id: Id): TokenInfo | undefined {
-        return this.cache.tokens.find((i) => i.id === id)
-    }
-
-    public getTokenPair(token: Token): Token | undefined {
-        const wrapped = wrappedToken(token)
-        const tokenInfo = this.findToken(wrapped)
-        if (!tokenInfo) {
-            return
-        }
-        if (tokenInfo.pair === undefined) {
-            return
-        }
-
-        const rep = this.getToken(tokenInfo.pair)
-        if (!rep) {
-            throw new Error(`Can't get rep for token ${token.symbol}(${token.address})`)
-        }
-
-        return new Token(rep)
-    }
-
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
-        const rep = this.getTokenPair(token)
-        if (!rep || rep.chainId !== chainId) {
-            return
+        if (token.isSynthetic) {
+            return this.getOriginalToken(token)
         }
 
-        return rep
+        return this.getSynthTokens(token).find((i) => i.chainId === chainId)
     }
 
     public getTokenThreshold(token: Token): BigNumber {
-        const tokenInfo = this.findToken(token)
-        if (!tokenInfo) {
-            throw new Error(`Cannot find token ${token.address}`)
-        }
+        const tokenInfo = this.getTokenInfoByToken(token)
         const type = token.isSynthetic ? 'Synthesis' : 'Portal'
 
         const threshold = this.cache.thresholds.find((i) => {
@@ -96,23 +64,24 @@ export class ConfigCache {
         return this.cache.omniPools.find((i) => i.id === id)
     }
 
+    // FIXME
+    // It works correctly if the `token` in ONLY ONE pool
+    // If there are more than one pool then FIRST pool will be selected
     public getOmniPoolByToken(token: Token): OmniPoolInfo | undefined {
-        if (!token.isSynthetic) {
-            const synth = this.getTokenPair(token)
-            if (!synth) {
-                throw new Error(`No synth found for token ${token.address}`)
-            }
-            token = synth
+        let synths: Token[]
+        if (token.isSynthetic) {
+            synths = [token]
+        } else {
+            synths = this.getSynthTokens(token)
         }
 
-        const tokenInfo = this.findToken(token)
-        if (!tokenInfo) {
-            throw new Error(`getOmniPoolByToken: cannot find token ${token.address}`)
-        }
+        const ids = synths.map((i) => {
+            return this.getTokenInfoByToken(i).id
+        })
 
         return this.cache.omniPools.find((pool) => {
             return pool.tokens.find((i) => {
-                return i.tokenId === tokenInfo.id
+                return ids.includes(i.tokenId)
             })
         })
     }
@@ -123,19 +92,78 @@ export class ConfigCache {
             throw new Error(`getOmniPoolIndex: cannot find omniPoolByConfig ${omniPoolConfig}`)
         }
 
-        const tokenInfo = this.findToken(token)
-        if (!tokenInfo) {
-            throw new Error(`getOmniPoolIndex: cannot find token ${token.address}`)
-        }
+        const tokenInfo = this.getTokenInfoByToken(token)
 
-        const position = omniPool.tokens.find((pool) => {
+        const found = omniPool.tokens.find((pool) => {
             return pool.tokenId === tokenInfo.id
         })
 
-        if (position === undefined) {
+        if (found === undefined) {
             throw new Error(`There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`)
         }
 
-        return position.index
+        return found.index
+    }
+
+    public getOmniPoolTokens(omniPoolConfig: OmniPoolConfig): Token[] {
+        const pool = this.getOmniPoolByConfig(omniPoolConfig)
+        if (!pool) {
+            throw new Error('Cannot find omniPool')
+        }
+        return pool.tokens.map((i) => {
+            const tokenInfo = this.getTokenInfoById(i.tokenId)
+            return new Token(tokenInfo)
+        })
+    }
+
+    // PRIVATE
+
+    private getTokenInfoById(id: Id): TokenInfo {
+        const tokenInfo = this.cache.tokens.find((i) => i.id === id)
+
+        if (!tokenInfo) {
+            throw new Error(`Can't get tokenInfo for id ${id}`)
+        }
+
+        return tokenInfo
+    }
+
+    private getTokenInfoByToken(token: Token): TokenInfo {
+        const found = this.cache.tokens.find((i) => {
+            return i.address.toLowerCase() === token.address.toLowerCase() && i.chainId === token.chainId
+        })
+
+        if (!found) {
+            throw new Error(`Can't get tokenInfo by token ${token.address} ${token.chainId}`)
+        }
+
+        return found
+    }
+
+    private getOriginalToken(token: Token): Token | undefined {
+        if (!token.isSynthetic) {
+            return
+        }
+        const tokenInfo = this.getTokenInfoByToken(token)
+        if (tokenInfo.originalId === undefined) {
+            return
+        }
+        const original = this.getTokenInfoById(tokenInfo.originalId)
+        return new Token(original)
+    }
+
+    private getSynthTokens(token: Token): Token[] {
+        if (token.isSynthetic) {
+            return []
+        }
+        const wrapped = wrappedToken(token)
+        const tokenInfo = this.getTokenInfoByToken(wrapped)
+        return this.cache.tokens
+            .filter((i) => {
+                return i.originalId === tokenInfo.id
+            })
+            .map((i) => {
+                return new Token(i)
+            })
     }
 }

@@ -96,6 +96,8 @@ export abstract class BaseSwapping {
         deadline,
         oneInchProtocols,
     }: SwapExactInParams): SwapExactIn {
+        await this.symbiosis.validateSwapAmounts(tokenAmountIn)
+
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -407,6 +409,22 @@ export abstract class BaseSwapping {
                 slippage: this.slippage['C'],
                 ttl: this.ttl,
                 to: this.to,
+            })
+        }
+
+        // POLYGON_ZK only
+        if (chainId === ChainId.POLYGON_ZK && AggregatorTrade.isAvailable(chainId)) {
+            const from = this.symbiosis.metaRouter(chainId).address
+            return new AggregatorTrade({
+                tokenAmountIn: amountIn,
+                tokenOut: this.tokenOut,
+                from,
+                to: this.tradeCTo(),
+                slippage: this.slippage['C'] / 100,
+                symbiosis: this.symbiosis,
+                dataProvider: this.dataProvider,
+                clientId: this.symbiosis.clientId,
+                oneInchProtocols: this.oneInchProtocols,
             })
         }
 
