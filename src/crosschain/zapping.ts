@@ -102,7 +102,7 @@ export class Zapping {
             transitAmountIn = tokenAmountIn
         }
 
-        await this.symbiosis.validateSwapAmounts(transitAmountIn)
+        this.symbiosis.validateSwapAmounts(transitAmountIn)
 
         this.synthToken = await this.getSynthToken()
 

@@ -405,7 +405,10 @@ export class Symbiosis {
         })
 
         if (!transitToken) {
-            throw new Error(`Cannot find transitToken for chain ${chainId}. Pool: ${omniPool.id}`)
+            throw new Error(
+                `Cannot find transitToken for chain ${chainId}. Pool: ${omniPool.id}`,
+                ErrorCode.NO_TRANSIT_TOKEN
+            )
         }
         return transitToken
     }

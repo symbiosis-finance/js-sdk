@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest'
-import { Symbiosis } from './symbiosis'
-import { Token } from '../entities'
-import { ChainId } from '../constants'
-import { config as mainnet } from './config/mainnet'
+import { Symbiosis } from '../../src/crosschain/symbiosis'
+import { Token } from '../../src/entities'
+import { ChainId } from '../../src/constants'
+import { config as mainnet } from '../../src/crosschain/config/mainnet'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 

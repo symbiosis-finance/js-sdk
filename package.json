@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "2.10.28-tests",
+    "version": "2.10.28",
     "main": "dist/index.cjs.js",
     "typings": "dist/index.d.ts",
     "files": [
@@ -23,7 +23,7 @@
         "prepublishOnly": "tsc --noEmit && tsup",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
         "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts",
-        "test": "vitest"
+        "test": "vitest test/crosschain"
     },
     "dependencies": {
         "big.js": "^5.2.2",

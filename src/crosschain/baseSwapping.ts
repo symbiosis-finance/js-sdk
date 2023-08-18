@@ -96,8 +96,6 @@ export abstract class BaseSwapping {
         deadline,
         oneInchProtocols,
     }: SwapExactInParams): SwapExactIn {
-        await this.symbiosis.validateSwapAmounts(tokenAmountIn)
-
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
