@@ -32,7 +32,11 @@ export class ConfigCache {
 
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
         if (token.isSynthetic) {
-            return this.getOriginalToken(token)
+            const original = this.getOriginalToken(token)
+            if (original?.chainId !== chainId) {
+                return
+            }
+            return original
         }
 
         return this.getSynthTokens(token).find((i) => i.chainId === chainId)
