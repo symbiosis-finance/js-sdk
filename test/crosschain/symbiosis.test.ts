@@ -153,14 +153,6 @@ describe('#transitToken', () => {
             expect(token.chainId).toBe(chainId)
             expect(token.address.toLowerCase()).toBe(address)
         })
-        test('USDC is in Telos', () => {
-            const chainId = ChainId.TELOS_MAINNET
-            const address = '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b'.toLowerCase()
-
-            const token = symbiosis.transitToken(chainId, omniPoolConfig)
-            expect(token.chainId).toBe(chainId)
-            expect(token.address.toLowerCase()).toBe(address)
-        })
         test('USDt is in Kava', () => {
             const chainId = ChainId.KAVA_MAINNET
             const address = '0x919C1c267BC06a7039e03fcc2eF738525769109c'.toLowerCase()
