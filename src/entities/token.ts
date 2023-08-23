@@ -19,6 +19,7 @@ export class Token {
     public readonly chainFromId?: ChainId
     public readonly isNative: boolean
     public readonly userToken?: boolean
+    public readonly deprecated: boolean
 
     /**
      * Constructs an instance of the base class `Token`.
@@ -36,6 +37,7 @@ export class Token {
         this.icons = params.icons
         this.chainFromId = params.chainFromId
         this.userToken = params.userToken
+        this.deprecated = !!params.deprecated
     }
 
     /**
