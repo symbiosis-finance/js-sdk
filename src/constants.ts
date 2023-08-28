@@ -18,6 +18,7 @@ export type TokenConstructor = {
     chainFromId?: ChainId
     icons?: Icons
     userToken?: boolean
+    deprecated?: boolean
 }
 
 export type ChainConstructor = {

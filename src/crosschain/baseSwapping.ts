@@ -147,8 +147,13 @@ export abstract class BaseSwapping {
 
         const transactionRequest = this.getTransactionRequest(fee, feeV2)
 
+        let crossChainFee = fee
+        if (feeV2) {
+            crossChainFee = new TokenAmount(feeV2.token, JSBI.add(feeV2.raw, fee.raw))
+        }
+
         return {
-            fee: feeV2 || fee,
+            fee: crossChainFee,
             tokenAmountOut: this.tokenAmountOut(feeV2),
             tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
             route: this.route,

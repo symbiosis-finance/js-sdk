@@ -6,26 +6,24 @@
             "oracle": "0x7775b274f0C3fA919B756b22A4d9674e55927ab8",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 37 },
-                { "index": 1, "tokenId": 39 },
-                { "index": 2, "tokenId": 42 },
-                { "index": 3, "tokenId": 44 },
-                { "index": 4, "tokenId": 15 },
-                { "index": 5, "tokenId": 49 },
-                { "index": 8, "tokenId": 46 },
-                { "index": 9, "tokenId": 48 },
-                { "index": 10, "tokenId": 40 },
-                { "index": 11, "tokenId": 50 },
-                { "index": 12, "tokenId": 53 },
-                { "index": 13, "tokenId": 55 },
-                { "index": 14, "tokenId": 57 },
-                { "index": 15, "tokenId": 59 },
-                { "index": 16, "tokenId": 52 },
-                { "index": 17, "tokenId": 43 },
-                { "index": 18, "tokenId": 63 },
-                { "index": 19, "tokenId": 47 },
-                { "index": 20, "tokenId": 66 },
-                { "index": 21, "tokenId": 62 }
+                { "index": 0, "tokenId": 35 },
+                { "index": 1, "tokenId": 37 },
+                { "index": 2, "tokenId": 40 },
+                { "index": 3, "tokenId": 42 },
+                { "index": 4, "tokenId": 13 },
+                { "index": 5, "tokenId": 45 },
+                { "index": 10, "tokenId": 38 },
+                { "index": 11, "tokenId": 46 },
+                { "index": 12, "tokenId": 49 },
+                { "index": 13, "tokenId": 51 },
+                { "index": 14, "tokenId": 53 },
+                { "index": 15, "tokenId": 55 },
+                { "index": 16, "tokenId": 48 },
+                { "index": 17, "tokenId": 41 },
+                { "index": 18, "tokenId": 59 },
+                { "index": 19, "tokenId": 44 },
+                { "index": 20, "tokenId": 62 },
+                { "index": 21, "tokenId": 58 }
             ]
         },
         {
@@ -34,17 +32,17 @@
             "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 51 },
-                { "index": 2, "tokenId": 60 },
-                { "index": 3, "tokenId": 54 },
-                { "index": 5, "tokenId": 45 },
-                { "index": 6, "tokenId": 41 },
-                { "index": 7, "tokenId": 56 },
-                { "index": 8, "tokenId": 58 },
-                { "index": 9, "tokenId": 38 },
-                { "index": 10, "tokenId": 61 },
-                { "index": 11, "tokenId": 64 },
-                { "index": 12, "tokenId": 65 }
+                { "index": 1, "tokenId": 47 },
+                { "index": 2, "tokenId": 56 },
+                { "index": 3, "tokenId": 50 },
+                { "index": 5, "tokenId": 43 },
+                { "index": 6, "tokenId": 39 },
+                { "index": 7, "tokenId": 52 },
+                { "index": 8, "tokenId": 54 },
+                { "index": 9, "tokenId": 36 },
+                { "index": 10, "tokenId": 57 },
+                { "index": 11, "tokenId": 60 },
+                { "index": 12, "tokenId": 61 }
             ]
         }
     ],
@@ -60,6 +58,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
+            "deprecated": false,
             "id": 0
         },
         {
@@ -73,6 +72,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
             },
+            "deprecated": false,
             "id": 1
         },
         {
@@ -86,6 +86,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
+            "deprecated": false,
             "id": 2
         },
         {
@@ -99,6 +100,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
+            "deprecated": false,
             "id": 3
         },
         {
@@ -112,6 +114,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
+            "deprecated": false,
             "id": 4
         },
         {
@@ -125,6 +128,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
+            "deprecated": false,
             "id": 5
         },
         {
@@ -138,6 +142,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
+            "deprecated": false,
             "id": 6
         },
         {
@@ -151,6 +156,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
+            "deprecated": false,
             "id": 7
         },
         {
@@ -164,6 +170,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
+            "deprecated": false,
             "id": 8
         },
         {
@@ -177,6 +184,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
+            "deprecated": false,
             "id": 9
         },
         {
@@ -190,20 +198,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
+            "deprecated": false,
             "id": 10
-        },
-        {
-            "decimals": 6,
-            "symbol": "USDC",
-            "name": "USD Coin",
-            "chainId": 40,
-            "address": "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "id": 11
         },
         {
             "decimals": 6,
@@ -216,20 +212,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
-            "id": 12
-        },
-        {
-            "decimals": 6,
-            "symbol": "USDC",
-            "name": "USD Coin",
-            "chainId": 2222,
-            "address": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "id": 13
+            "deprecated": false,
+            "id": 11
         },
         {
             "decimals": 6,
@@ -242,7 +226,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 14
+            "deprecated": false,
+            "id": 12
         },
         {
             "decimals": 18,
@@ -255,7 +240,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 15
+            "deprecated": false,
+            "id": 13
         },
         {
             "decimals": 6,
@@ -268,7 +254,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 16
+            "deprecated": false,
+            "id": 14
         },
         {
             "decimals": 18,
@@ -281,7 +268,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 17
+            "deprecated": false,
+            "id": 15
         },
         {
             "decimals": 6,
@@ -294,7 +282,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 18
+            "deprecated": false,
+            "id": 16
         },
         {
             "decimals": 6,
@@ -307,7 +296,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 19
+            "deprecated": true,
+            "id": 17
         },
         {
             "decimals": 18,
@@ -320,7 +310,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 20
+            "deprecated": false,
+            "id": 18
         },
         {
             "decimals": 6,
@@ -333,7 +324,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 21
+            "deprecated": false,
+            "id": 19
         },
         {
             "decimals": 18,
@@ -346,7 +338,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 22
+            "deprecated": false,
+            "id": 20
         },
         {
             "decimals": 6,
@@ -359,7 +352,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 23
+            "deprecated": false,
+            "id": 21
         },
         {
             "decimals": 18,
@@ -372,7 +366,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 24
+            "deprecated": false,
+            "id": 22
         },
         {
             "decimals": 6,
@@ -385,7 +380,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 25
+            "deprecated": false,
+            "id": 23
         },
         {
             "decimals": 18,
@@ -398,7 +394,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 26
+            "deprecated": false,
+            "id": 24
         },
         {
             "decimals": 18,
@@ -411,7 +408,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 27
+            "deprecated": false,
+            "id": 25
         },
         {
             "decimals": 6,
@@ -424,7 +422,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 28
+            "deprecated": false,
+            "id": 26
         },
         {
             "decimals": 6,
@@ -437,7 +436,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 29
+            "deprecated": false,
+            "id": 27
         },
         {
             "decimals": 18,
@@ -450,7 +450,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 30
+            "deprecated": false,
+            "id": 28
         },
         {
             "decimals": 18,
@@ -463,7 +464,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "id": 31
+            "deprecated": false,
+            "id": 29
         },
         {
             "decimals": 6,
@@ -476,7 +478,8 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
-            "id": 32
+            "deprecated": false,
+            "id": 30
         },
         {
             "decimals": 18,
@@ -490,7 +493,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
             },
             "chainFromId": 1,
-            "id": 33,
+            "deprecated": false,
+            "id": 31,
             "originalId": 1
         },
         {
@@ -505,7 +509,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 1,
-            "id": 34,
+            "deprecated": false,
+            "id": 32,
             "originalId": 0
         },
         {
@@ -520,7 +525,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 1,
-            "id": 35,
+            "deprecated": false,
+            "id": 33,
             "originalId": 2
         },
         {
@@ -535,7 +541,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 1,
-            "id": 36,
+            "deprecated": false,
+            "id": 34,
             "originalId": 3
         },
         {
@@ -550,7 +557,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 1,
-            "id": 37,
+            "deprecated": false,
+            "id": 35,
             "originalId": 0
         },
         {
@@ -565,7 +573,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 1,
-            "id": 38,
+            "deprecated": false,
+            "id": 36,
             "originalId": 2
         },
         {
@@ -580,7 +589,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
             "chainFromId": 56,
-            "id": 39,
+            "deprecated": false,
+            "id": 37,
             "originalId": 4
         },
         {
@@ -595,7 +605,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 56,
-            "id": 40,
+            "deprecated": false,
+            "id": 38,
             "originalId": 5
         },
         {
@@ -610,7 +621,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 56,
-            "id": 41,
+            "deprecated": false,
+            "id": 39,
             "originalId": 6
         },
         {
@@ -625,7 +637,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 43114,
-            "id": 42,
+            "deprecated": false,
+            "id": 40,
             "originalId": 7
         },
         {
@@ -640,7 +653,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 43114,
-            "id": 43,
+            "deprecated": false,
+            "id": 41,
             "originalId": 8
         },
         {
@@ -655,7 +669,8 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 137,
-            "id": 44,
+            "deprecated": false,
+            "id": 42,
             "originalId": 9
         },
         {
@@ -670,23 +685,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 137,
-            "id": 45,
+            "deprecated": false,
+            "id": 43,
             "originalId": 10
-        },
-        {
-            "decimals": 6,
-            "symbol": "sUSDC",
-            "name": "Synthetic USD Coin from Telos",
-            "chainId": 56288,
-            "address": "0x7Af28c655F1EF73E1Fb15204f025A25D686A3Ca7",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "chainFromId": 40,
-            "id": 46,
-            "originalId": 11
         },
         {
             "decimals": 6,
@@ -700,23 +701,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "chainFromId": 2222,
-            "id": 47,
-            "originalId": 12
-        },
-        {
-            "decimals": 6,
-            "symbol": "sUSDC",
-            "name": "Synthetic USD Coin from Kava",
-            "chainId": 56288,
-            "address": "0x437640130BAE97dAD55161a6F1AEC58d0F30fE8F",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "chainFromId": 2222,
-            "id": 48,
-            "originalId": 13
+            "deprecated": false,
+            "id": 44,
+            "originalId": 11
         },
         {
             "decimals": 6,
@@ -730,8 +717,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 288,
-            "id": 49,
-            "originalId": 14
+            "deprecated": false,
+            "id": 45,
+            "originalId": 12
         },
         {
             "decimals": 6,
@@ -745,8 +733,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 324,
-            "id": 50,
-            "originalId": 16
+            "deprecated": false,
+            "id": 46,
+            "originalId": 14
         },
         {
             "decimals": 18,
@@ -760,8 +749,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 324,
-            "id": 51,
-            "originalId": 17
+            "deprecated": false,
+            "id": 47,
+            "originalId": 15
         },
         {
             "decimals": 6,
@@ -775,8 +765,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 42161,
-            "id": 52,
-            "originalId": 18
+            "deprecated": false,
+            "id": 48,
+            "originalId": 16
         },
         {
             "decimals": 6,
@@ -790,8 +781,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 42161,
-            "id": 53,
-            "originalId": 19
+            "deprecated": true,
+            "id": 49,
+            "originalId": 17
         },
         {
             "decimals": 18,
@@ -805,8 +797,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 42161,
-            "id": 54,
-            "originalId": 20
+            "deprecated": false,
+            "id": 50,
+            "originalId": 18
         },
         {
             "decimals": 6,
@@ -820,8 +813,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 10,
-            "id": 55,
-            "originalId": 21
+            "deprecated": false,
+            "id": 51,
+            "originalId": 19
         },
         {
             "decimals": 18,
@@ -835,8 +829,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 10,
-            "id": 56,
-            "originalId": 22
+            "deprecated": false,
+            "id": 52,
+            "originalId": 20
         },
         {
             "decimals": 6,
@@ -850,8 +845,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 42170,
-            "id": 57,
-            "originalId": 23
+            "deprecated": false,
+            "id": 53,
+            "originalId": 21
         },
         {
             "decimals": 18,
@@ -865,8 +861,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 42170,
-            "id": 58,
-            "originalId": 24
+            "deprecated": false,
+            "id": 54,
+            "originalId": 22
         },
         {
             "decimals": 6,
@@ -880,8 +877,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 1101,
-            "id": 59,
-            "originalId": 25
+            "deprecated": false,
+            "id": 55,
+            "originalId": 23
         },
         {
             "decimals": 18,
@@ -895,8 +893,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 1101,
-            "id": 60,
-            "originalId": 26
+            "deprecated": false,
+            "id": 56,
+            "originalId": 24
         },
         {
             "decimals": 18,
@@ -910,8 +909,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 59144,
-            "id": 61,
-            "originalId": 27
+            "deprecated": false,
+            "id": 57,
+            "originalId": 25
         },
         {
             "decimals": 6,
@@ -925,8 +925,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 59144,
-            "id": 62,
-            "originalId": 28
+            "deprecated": false,
+            "id": 58,
+            "originalId": 26
         },
         {
             "decimals": 6,
@@ -940,8 +941,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 5000,
-            "id": 63,
-            "originalId": 29
+            "deprecated": false,
+            "id": 59,
+            "originalId": 27
         },
         {
             "decimals": 18,
@@ -955,8 +957,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 5000,
-            "id": 64,
-            "originalId": 30
+            "deprecated": false,
+            "id": 60,
+            "originalId": 28
         },
         {
             "decimals": 18,
@@ -970,8 +973,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 8453,
-            "id": 65,
-            "originalId": 31
+            "deprecated": false,
+            "id": 61,
+            "originalId": 29
         },
         {
             "decimals": 6,
@@ -985,8 +989,9 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "chainFromId": 8453,
-            "id": 66,
-            "originalId": 32
+            "deprecated": false,
+            "id": 62,
+            "originalId": 30
         }
     ],
     "thresholds": [
@@ -997,40 +1002,39 @@
         { "tokenId": 4, "type": "Portal", "value": "8000000000000000000" },
         { "tokenId": 5, "type": "Portal", "value": "10000000000000000000" },
         { "tokenId": 6, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 33, "type": "Portal", "value": "0" },
+        { "tokenId": 31, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Synthesis", "value": "0" },
         { "tokenId": 5, "type": "Synthesis", "value": "0" },
         { "tokenId": 6, "type": "Synthesis", "value": "0" },
-        { "tokenId": 33, "type": "Synthesis", "value": "0" },
+        { "tokenId": 31, "type": "Synthesis", "value": "0" },
         { "tokenId": 7, "type": "Portal", "value": "8000000" },
         { "tokenId": 8, "type": "Portal", "value": "10000000" },
         { "tokenId": 9, "type": "Portal", "value": "8000000" },
         { "tokenId": 10, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 11, "type": "Portal", "value": "8000000" },
+        { "tokenId": 32, "type": "Portal", "value": "0" },
+        { "tokenId": 33, "type": "Portal", "value": "0" },
         { "tokenId": 34, "type": "Portal", "value": "0" },
-        { "tokenId": 35, "type": "Portal", "value": "0" },
-        { "tokenId": 36, "type": "Portal", "value": "0" },
-        { "tokenId": 11, "type": "Synthesis", "value": "0" },
+        { "tokenId": 32, "type": "Synthesis", "value": "0" },
+        { "tokenId": 33, "type": "Synthesis", "value": "0" },
         { "tokenId": 34, "type": "Synthesis", "value": "0" },
-        { "tokenId": 35, "type": "Synthesis", "value": "0" },
+        { "tokenId": 11, "type": "Portal", "value": "10000000" },
+        { "tokenId": 12, "type": "Portal", "value": "8000000" },
+        { "tokenId": 13, "type": "Synthesis", "value": "0" },
+        { "tokenId": 35, "type": "Synthesis", "value": "10000000" },
         { "tokenId": 36, "type": "Synthesis", "value": "0" },
-        { "tokenId": 12, "type": "Portal", "value": "10000000" },
-        { "tokenId": 13, "type": "Portal", "value": "0" },
-        { "tokenId": 14, "type": "Portal", "value": "8000000" },
-        { "tokenId": 15, "type": "Synthesis", "value": "0" },
-        { "tokenId": 37, "type": "Synthesis", "value": "10000000" },
+        { "tokenId": 37, "type": "Synthesis", "value": "8000000000000000000" },
         { "tokenId": 38, "type": "Synthesis", "value": "0" },
-        { "tokenId": 39, "type": "Synthesis", "value": "8000000000000000000" },
-        { "tokenId": 40, "type": "Synthesis", "value": "0" },
+        { "tokenId": 39, "type": "Synthesis", "value": "0" },
+        { "tokenId": 40, "type": "Synthesis", "value": "8000000" },
         { "tokenId": 41, "type": "Synthesis", "value": "0" },
         { "tokenId": 42, "type": "Synthesis", "value": "8000000" },
         { "tokenId": 43, "type": "Synthesis", "value": "0" },
-        { "tokenId": 44, "type": "Synthesis", "value": "8000000" },
-        { "tokenId": 45, "type": "Synthesis", "value": "0" },
-        { "tokenId": 46, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 44, "type": "Synthesis", "value": "0" },
+        { "tokenId": 45, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 46, "type": "Synthesis", "value": "0" },
         { "tokenId": 47, "type": "Synthesis", "value": "0" },
         { "tokenId": 48, "type": "Synthesis", "value": "0" },
-        { "tokenId": 49, "type": "Synthesis", "value": "8000000" },
+        { "tokenId": 49, "type": "Synthesis", "value": "0" },
         { "tokenId": 50, "type": "Synthesis", "value": "0" },
         { "tokenId": 51, "type": "Synthesis", "value": "0" },
         { "tokenId": 52, "type": "Synthesis", "value": "0" },
@@ -1044,26 +1048,22 @@
         { "tokenId": 60, "type": "Synthesis", "value": "0" },
         { "tokenId": 61, "type": "Synthesis", "value": "0" },
         { "tokenId": 62, "type": "Synthesis", "value": "0" },
-        { "tokenId": 63, "type": "Synthesis", "value": "0" },
-        { "tokenId": 64, "type": "Synthesis", "value": "0" },
-        { "tokenId": 65, "type": "Synthesis", "value": "0" },
-        { "tokenId": 66, "type": "Synthesis", "value": "0" },
+        { "tokenId": 14, "type": "Portal", "value": "10000000" },
+        { "tokenId": 15, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 16, "type": "Portal", "value": "10000000" },
-        { "tokenId": 17, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 18, "type": "Portal", "value": "10000000" },
+        { "tokenId": 17, "type": "Portal", "value": "10000000" },
+        { "tokenId": 18, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 19, "type": "Portal", "value": "10000000" },
         { "tokenId": 20, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 21, "type": "Portal", "value": "10000000" },
         { "tokenId": 22, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 23, "type": "Portal", "value": "10000000" },
         { "tokenId": 24, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 25, "type": "Portal", "value": "10000000" },
-        { "tokenId": 26, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 27, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 28, "type": "Portal", "value": "10000000" },
-        { "tokenId": 29, "type": "Portal", "value": "10000000" },
-        { "tokenId": 30, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 31, "type": "Portal", "value": "0" },
-        { "tokenId": 32, "type": "Portal", "value": "10000000" }
+        { "tokenId": 25, "type": "Portal", "value": "5000000000000000" },
+        { "tokenId": 26, "type": "Portal", "value": "10000000" },
+        { "tokenId": 27, "type": "Portal", "value": "10000000" },
+        { "tokenId": 28, "type": "Portal", "value": "5000000000000000" },
+        { "tokenId": 29, "type": "Portal", "value": "0" },
+        { "tokenId": 30, "type": "Portal", "value": "10000000" }
     ]
 }

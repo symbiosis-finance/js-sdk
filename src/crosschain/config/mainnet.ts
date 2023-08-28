@@ -235,19 +235,7 @@ export const config: Config = {
             rpc: 'https://mainnet.telos.net/evm',
             filterBlockOffset: 3000,
             waitForBlocksCount: 120,
-            stables: [
-                {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
-                    address: '0x818ec0a7fe18ff94269904fced6ae3dae6d6dc0b',
-                    chainId: 40,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    },
-                },
-            ],
+            stables: [],
             router: '0xb9667Cf9A495A123b0C43B924f6c2244f42817BE',
             dexFee: 25,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
@@ -279,17 +267,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-                    },
-                },
-                {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
-                    address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
-                    chainId: 2222,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
             ],
@@ -440,6 +417,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'USD Coin (Arb1)',
                     symbol: 'USDC.e',
                     address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
