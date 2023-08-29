@@ -15,6 +15,7 @@ type InitProps = {
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
+import { Error, ErrorCode } from './error'
 
 export enum PendingRequestState {
     Default = 0,
@@ -179,7 +180,10 @@ export class RevertRequest {
         }
         const omniPoolConfig = this.symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {
-            throw new Error(`Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`)
+            throw new Error(
+                `Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`,
+                ErrorCode.NO_TRANSIT_POOL
+            )
         }
 
         let fromTokenAmount = new TokenAmount(token, amount)

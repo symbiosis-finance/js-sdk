@@ -2,7 +2,7 @@ import type { ConfigName } from '../../symbiosis'
 import mainnet from './mainnet.json'
 import testnet from './testnet.json'
 import dev from './dev.json'
-import { Error } from '../../error'
+import { Error, ErrorCode } from '../../error'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
 import { Token, wrappedToken } from '../../../entities'
@@ -103,7 +103,10 @@ export class ConfigCache {
         })
 
         if (found === undefined) {
-            throw new Error(`There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`)
+            throw new Error(
+                `There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`,
+                ErrorCode.NO_TRANSIT_TOKEN
+            )
         }
 
         return found.index
