@@ -149,7 +149,13 @@ export abstract class BaseSwapping {
 
         let crossChainFee = fee
         if (feeV2) {
-            crossChainFee = new TokenAmount(feeV2.token, JSBI.add(feeV2.raw, fee.raw))
+            const pow = BigNumber.from(10).pow(fee.token.decimals)
+            const powV2 = BigNumber.from(10).pow(feeV2.token.decimals)
+
+            const feeBase = BigNumber.from(fee.raw.toString()).mul(powV2)
+            const feeV2Base = BigNumber.from(feeV2.raw.toString()).mul(pow)
+
+            crossChainFee = new TokenAmount(feeV2.token, feeBase.add(feeV2Base).div(pow).toString())
         }
 
         return {

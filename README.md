@@ -64,6 +64,13 @@ const receipt = ...
 
 // Wait for transaction to be completed on destination chain
 const log = await swapping.waitForComplete(receipt)
+
+// check if transit token was received instead target token
+const transitTokenSent = await swapping.findTransitTokenSent(
+    log.transactionHash
+)
+
+// if `transitTokenSent` is not null please show this information to the user
 ```
 
 ## Zapping to Symbiosis
