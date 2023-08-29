@@ -6,6 +6,7 @@ import { ErrorCode } from './error'
 import { TokenAmount } from '../entities'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
+type FindTransitTokenSentArgs = Parameters<typeof Swapping.prototype.findTransitTokenSent>
 
 // Swapping wrapper what select best omni pool for swapping
 export class BestPoolSwapping {
@@ -92,5 +93,14 @@ export class BestPoolSwapping {
         }
 
         return this.swapping.waitForComplete(...args)
+    }
+
+    // Need to backward compatibility to Swapping
+    async findTransitTokenSent(...args: FindTransitTokenSentArgs) {
+        if (!this.swapping) {
+            throw new Error('Swapping is not started')
+        }
+
+        return this.swapping.findTransitTokenSent(...args)
     }
 }
