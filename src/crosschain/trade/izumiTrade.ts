@@ -1,14 +1,17 @@
+import BNJS from 'bignumber.js'
 import { BigNumber } from 'ethers'
+import { AbiCoder } from 'ethers/lib/utils'
 import { ChainId, ONE } from '../../constants'
 import { Fraction, Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { BIPS_BASE } from '../constants'
+import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
 import { getMulticall } from '../multicall'
 import { Symbiosis } from '../symbiosis'
-import type { SymbiosisTrade } from './symbiosisTrade'
-import { IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
 import { basisPointsToPercent } from '../utils'
-import { AbiCoder } from 'ethers/lib/utils'
+import type { SymbiosisTrade } from './symbiosisTrade'
 
 interface IzumiAddresses {
+    factory: string
     quoter: string
     swap: string
     baseTokens: Token[]
@@ -16,6 +19,7 @@ interface IzumiAddresses {
 
 interface IzumiRoute {
     tokens: Token[]
+    fees: number[]
     path: string
 }
 
@@ -32,6 +36,7 @@ const POSSIBLE_FEES = [100, 400, 500, 2000, 3000, 10000]
 
 const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
     [ChainId.MANTLE_MAINNET]: {
+        factory: '0x45e5F26451CDB01B0fA1f8582E0aAD9A6F27C218',
         quoter: '0x032b241De86a8660f1Ae0691a4760B426EA246d7',
         swap: '0x25C030116Feb2E7BbA054b9de0915E5F51b03e31',
         baseTokens: [
@@ -66,6 +71,7 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
         ],
     },
     [ChainId.LINEA_MAINNET]: {
+        factory: '0x45e5F26451CDB01B0fA1f8582E0aAD9A6F27C218',
         quoter: '0xe6805638db944eA605e774e72c6F0D15Fb6a1347',
         swap: '0x032b241De86a8660f1Ae0691a4760B426EA246d7',
         baseTokens: [
@@ -135,7 +141,7 @@ export class IzumiTrade implements SymbiosisTrade {
 
         POSSIBLE_FEES.forEach((fee) => {
             const path = getTokenChainPath([tokenIn, tokenOut], [fee])
-            allRoutes.push({ tokens: [tokenIn, tokenOut], path })
+            allRoutes.push({ tokens: [tokenIn, tokenOut], path, fees: [fee] })
         })
 
         for (const baseToken of addresses.baseTokens) {
@@ -145,8 +151,10 @@ export class IzumiTrade implements SymbiosisTrade {
 
             POSSIBLE_FEES.forEach((firstFee) => {
                 POSSIBLE_FEES.forEach((secondFee) => {
-                    const path = getTokenChainPath([tokenIn, baseToken, tokenOut], [firstFee, secondFee])
-                    allRoutes.push({ tokens: [tokenIn, baseToken, tokenOut], path })
+                    const fees = [firstFee, secondFee]
+
+                    const path = getTokenChainPath([tokenIn, baseToken, tokenOut], fees)
+                    allRoutes.push({ tokens: [tokenIn, baseToken, tokenOut], path, fees })
                 })
             })
         }
@@ -185,6 +193,17 @@ export class IzumiTrade implements SymbiosisTrade {
 
         const { path, tokens } = bestRoute
 
+        const pointsBefore = await this.getCurrentPoolPoints(bestRoute)
+        const initDecimalPriceEndByStart = getPriceDecimalEndByStart(bestRoute, pointsBefore)
+
+        const spotPriceBNJS = new BNJS(this.tokenAmountIn.raw.toString())
+            .dividedBy(10 ** this.tokenAmountIn.token.decimals)
+            .dividedBy(initDecimalPriceEndByStart)
+
+        const bestOutputBNJS = new BNJS(bestOutput.toString()).dividedBy(10 ** this.tokenOut.decimals)
+        const impactBNJS = spotPriceBNJS.minus(bestOutputBNJS).div(bestOutputBNJS).negated()
+
+        this.priceImpact = new Percent(impactBNJS.times(BIPS_BASE.toString()).toFixed(0).toString(), BIPS_BASE)
         this.amountOut = new TokenAmount(this.tokenOut, bestOutput.toString())
 
         const slippageTolerance = basisPointsToPercent(this.slippage)
@@ -237,6 +256,53 @@ export class IzumiTrade implements SymbiosisTrade {
 
         return this
     }
+
+    async getCurrentPoolPoints({ fees, tokens }: IzumiRoute) {
+        const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
+
+        if (!addresses) {
+            throw new Error('Unsupported chain')
+        }
+
+        const provider = this.symbiosis.getProvider(this.tokenAmountIn.token.chainId)
+
+        const multicall = await getMulticall(provider)
+
+        const factoryInterface = IzumiFactory__factory.createInterface()
+
+        const getPoolAddressesCalls: { target: string; callData: string }[] = []
+        for (let i = 0; i < fees.length; i++) {
+            getPoolAddressesCalls.push({
+                target: addresses.factory,
+                callData: factoryInterface.encodeFunctionData('pool', [
+                    wrappedToken(tokens[i]).address,
+                    wrappedToken(tokens[i + 1]).address,
+                    fees[i],
+                ]),
+            })
+        }
+
+        const getPoolAddressesResults = await multicall.callStatic.tryAggregate(false, getPoolAddressesCalls)
+        const poolsAddresses: string[] = getPoolAddressesResults.map(
+            ([, returnData]) => factoryInterface.decodeFunctionResult('pool', returnData)[0]
+        )
+
+        const poolInterface = IzumiPool__factory.createInterface()
+
+        const statesResults = await multicall.callStatic.tryAggregate(
+            false,
+            poolsAddresses.map((poolAddress) => ({
+                target: poolAddress,
+                callData: poolInterface.encodeFunctionData('state'),
+            }))
+        )
+
+        const points = statesResults.map(
+            ([, returnData]) => poolInterface.decodeFunctionResult('state', returnData).currentPoint
+        )
+
+        return points
+    }
 }
 
 /**
@@ -271,4 +337,55 @@ export const getTokenChainPath = (tokenChain: Token[], feeChain: number[]): stri
         hexString = appendHex(hexString, wrappedToken(tokenChain[i + 1]).address)
     }
     return hexString
+}
+
+export const getTokenXYFromToken = (tokenA: Token, tokenB: Token): { tokenX: Token; tokenY: Token } => {
+    const addressA = wrappedToken(tokenA).address
+    const addressB = wrappedToken(tokenB).address
+
+    if (addressA.toLowerCase() < addressB.toLowerCase()) {
+        return { tokenX: tokenA, tokenY: tokenB }
+    }
+
+    return { tokenX: tokenB, tokenY: tokenA }
+}
+
+export const priceUndecimal2PriceDecimal = (tokenA: Token, tokenB: Token, priceUndecimalAByB: BNJS): number => {
+    // priceUndecimalAByB * amountA = amountB
+    // priceUndecimalAByB * amountADecimal * 10^decimalA = amountBDecimal * 10^decimalB
+    // priceUndecimalAByB * 10^decimalA / 10^decimalB * amountA = amountB
+    return Number(priceUndecimalAByB.times(10 ** tokenA.decimals).div(10 ** tokenB.decimals))
+}
+
+export const point2PriceDecimal = (tokenA: Token, tokenB: Token, point: number): number => {
+    let priceDecimal = 0
+    let needReverse = false
+    const { tokenX, tokenY } = getTokenXYFromToken(tokenA, tokenB)
+
+    const addressA = wrappedToken(tokenA).address
+    const addressB = wrappedToken(tokenB).address
+
+    if (point > 0) {
+        priceDecimal = priceUndecimal2PriceDecimal(tokenX, tokenY, new BNJS(1.0001 ** point))
+        needReverse = addressA.toLowerCase() > addressB.toLowerCase()
+    } else {
+        priceDecimal = priceUndecimal2PriceDecimal(tokenY, tokenX, new BNJS(1.0001 ** -point))
+        needReverse = addressA.toLowerCase() < addressB.toLowerCase()
+    }
+    if (needReverse) {
+        priceDecimal = 1 / priceDecimal
+    }
+    return priceDecimal
+}
+
+export function getPriceDecimalEndByStart(route: IzumiRoute, points: number[]): number {
+    const { tokens, fees } = route
+
+    let decimalPriceEndByStart = 1
+    for (let i = 0; i < fees.length; i++) {
+        const decimalPriceBackByFront = point2PriceDecimal(tokens[i + 1], tokens[i], points[i])
+        decimalPriceEndByStart *= decimalPriceBackByFront
+    }
+
+    return decimalPriceEndByStart
 }
