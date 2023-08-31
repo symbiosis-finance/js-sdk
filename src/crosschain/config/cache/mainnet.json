@@ -1023,22 +1023,6 @@
             "deprecated": false,
             "id": 64,
             "originalId": 31
-        },
-        {
-            "decimals": 6,
-            "symbol": "sUSDC",
-            "name": "Synthetic syUSDC From Telos",
-            "chainId": 56288,
-            "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "chainFromId": 40,
-            "deprecated": false,
-            "id": 65,
-            "originalId": 33
         }
     ],
     "thresholds": [
@@ -1098,7 +1082,6 @@
         { "tokenId": 62, "type": "Synthesis", "value": "0" },
         { "tokenId": 63, "type": "Synthesis", "value": "0" },
         { "tokenId": 64, "type": "Synthesis", "value": "0" },
-        { "tokenId": 65, "type": "Synthesis", "value": "0" },
         { "tokenId": 15, "type": "Portal", "value": "10000000" },
         { "tokenId": 16, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 17, "type": "Portal", "value": "10000000" },

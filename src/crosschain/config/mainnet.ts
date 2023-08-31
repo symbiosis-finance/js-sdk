@@ -232,7 +232,7 @@ export const config: Config = {
         },
         {
             id: 40,
-            rpc: 'https://rpc1.eu.telos.net/evm',
+            rpc: 'https://mainnet.telos.net/evm',
             filterBlockOffset: 3000,
             waitForBlocksCount: 120,
             stables: [
@@ -560,7 +560,7 @@ export const config: Config = {
         },
         {
             id: 1101,
-            rpc: 'https://zkevm-rpc.com/',
+            rpc: 'https://rpc.ankr.com/polygon_zkevm',
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -695,7 +695,7 @@ export const config: Config = {
         },
         {
             id: 8453,
-            rpc: 'https://mainnet.base.org',
+            rpc: 'https://base.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [

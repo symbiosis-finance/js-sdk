@@ -203,7 +203,6 @@ export class Builder {
     }
 
     private async buildTokensList() {
-        const chainsWithFabric = this.config.chains.filter((chain) => chain.fabric !== AddressZero)
         const stables = this.stables()
 
         const realTokensWithId: TokenInfo[] = []
@@ -213,8 +212,9 @@ export class Builder {
         for (idCounter; idCounter < stables.length; idCounter++) {
             realTokensWithId.push({ ...stables[idCounter], id: idCounter })
         }
-        const tokens: TokenInfo[] = realTokensWithId
+        const tokens: TokenInfo[] = [...realTokensWithId]
 
+        const chainsWithFabric = this.config.chains.filter((chain) => chain.fabric !== AddressZero)
         for (let i = 0; i < chainsWithFabric.length; i++) {
             const chainWithFabric = chainsWithFabric[i]
             console.log(`Get fabric in chain ${chainWithFabric.id}`)
