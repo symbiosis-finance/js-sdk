@@ -137,7 +137,11 @@ export class ConfigCache {
 
     private getTokenInfoByToken(token: Token): TokenInfo {
         const found = this.cache.tokens.find((i) => {
-            return i.address.toLowerCase() === token.address.toLowerCase() && i.chainId === token.chainId
+            return (
+                i.address.toLowerCase() === token.address.toLowerCase() &&
+                i.chainId === token.chainId &&
+                i.chainFromId === token.chainFromId
+            )
         })
 
         if (!found) {

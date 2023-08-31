@@ -235,7 +235,19 @@ export const config: Config = {
             rpc: 'https://mainnet.telos.net/evm',
             filterBlockOffset: 3000,
             waitForBlocksCount: 120,
-            stables: [],
+            stables: [
+                {
+                    name: 'syUSDC',
+                    address: '0xe6E5f3d264117E030C21920356641DbD5B3d660c',
+                    symbol: 'USDC',
+                    decimals: 6,
+                    chainId: 40,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+            ],
             router: '0xb9667Cf9A495A123b0C43B924f6c2244f42817BE',
             dexFee: 25,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
@@ -548,7 +560,7 @@ export const config: Config = {
         },
         {
             id: 1101,
-            rpc: 'https://zkevm-rpc.com/',
+            rpc: 'https://rpc.ankr.com/polygon_zkevm',
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -683,7 +695,7 @@ export const config: Config = {
         },
         {
             id: 8453,
-            rpc: 'https://mainnet.base.org',
+            rpc: 'https://base.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
