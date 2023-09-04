@@ -9,12 +9,6 @@ export class DataProvider {
 
     constructor(private readonly symbiosis: Symbiosis) {}
 
-    async getRepresentation(token: Token, chainId: ChainId) {
-        return this.fromCache(['getRepresentation', token.address, token.chainId, chainId], () =>
-            this.symbiosis.getRepresentation(token, chainId)
-        )
-    }
-
     async getPairs(tokenIn: Token, tokenOut: Token) {
         return this.fromCache(['getPairs', tokenIn.address, tokenIn.address], () => {
             const provider = this.symbiosis.getProvider(tokenIn.chainId)

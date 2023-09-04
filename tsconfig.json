@@ -4,7 +4,8 @@
     "compilerOptions": {
         "target": "es2020",
         "module": "esnext",
-        "importHelpers": true,
+        "importHelpers": false,
+        "skipLibCheck": true,
         "declaration": true,
         "sourceMap": true,
         "strict": true,

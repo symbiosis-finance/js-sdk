@@ -1,29 +1,7 @@
-import { Token, TokenAmount } from '../entities'
-
-import { BaseSwapping, SwapExactIn, SwapOptions } from './baseSwapping'
+import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
 
 export class Swapping extends BaseSwapping {
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        tokenOut: Token,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number,
-        useAggregators = true,
-        options?: SwapOptions
-    ): Promise<SwapExactIn> {
-        return this.doExactIn(
-            tokenAmountIn,
-            tokenOut,
-            from,
-            to,
-            revertableAddress,
-            slippage,
-            deadline,
-            useAggregators,
-            options
-        )
+    public async exactIn(params: SwapExactInParams): Promise<SwapExactIn> {
+        return this.doExactIn(params)
     }
 }

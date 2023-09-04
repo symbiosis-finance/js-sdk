@@ -15,10 +15,10 @@ export type TokenConstructor = {
     decimals: number
     chainId: ChainId
     isNative?: boolean
-    isStable?: boolean
     chainFromId?: ChainId
     icons?: Icons
     userToken?: boolean
+    deprecated?: boolean
 }
 
 export type ChainConstructor = {
@@ -61,6 +61,7 @@ export enum ChainId {
     SHARDEUM_TESTNET_2 = 8081,
     KAVA_MAINNET = 2222,
     SCROLL_TESTNET = 534353,
+    SCROLL_SEPOLIA = 534351,
     ZKSYNC_MAINNET = 324,
     ARBITRUM_MAINNET = 42161,
     ARBITRUM_NOVA = 42170,
@@ -70,6 +71,10 @@ export enum ChainId {
     TRON_MAINNET = 728126428,
     TRON_TESTNET = 2494104990,
     LINEA_TESTNET = 59140,
+    LINEA_MAINNET = 59144,
+    MANTLE_MAINNET = 5000,
+    MANTLE_TESTNET = 5001,
+    BASE_MAINNET = 8453,
 }
 
 export enum TradeType {
@@ -111,7 +116,8 @@ export const FACTORY_ADDRESS = {
     [ChainId.TELOS_TESTNET]: '0x6db1D2C691DcdF4DA36d3497F68a63C7282a4a44',
     [ChainId.SHARDEUM_TESTNET_2]: '0x1DAcbaB28Decd115c8AA6F183877C71b942aE406',
     [ChainId.KAVA_MAINNET]: '0xA138FAFc30f6Ec6980aAd22656F2F11C38B56a95',
-    [ChainId.SCROLL_TESTNET]: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210', // TODO
+    [ChainId.SCROLL_TESTNET]: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210',
+    [ChainId.SCROLL_SEPOLIA]: '0x0000000000000000000000000000000000000000', // TODO
     [ChainId.ZKSYNC_MAINNET]: '0x40be1cba6c5b47cdf9da7f963b6f761f4c60627d',
     [ChainId.ARBITRUM_MAINNET]: '0xd394e9cc20f43d2651293756f8d320668e850f1b', // arbSwap
     [ChainId.ARBITRUM_NOVA]: '0xf6239423fcf1c19ed2791d9648a90836074242fd', // arbSwap
@@ -121,6 +127,10 @@ export const FACTORY_ADDRESS = {
     [ChainId.TRON_MAINNET]: '0x0000000000000000000000000000000000000000', // TODO
     [ChainId.TRON_TESTNET]: '0x1df14d5e036019f298d2a358bb234cf301e5e8e3', // sunswap.io - TChXfbQLafcoExbcXTtwNZMBKdeW2p1V5G Tron address
     [ChainId.LINEA_TESTNET]: '0xe87BE5A98c65D8F81Ff6ab7dd11E9C3c12C35692', // echodex
+    [ChainId.LINEA_MAINNET]: '0x6D1063F2187442Cc9adbFAD2f55A96B846FCB399', // echodex
+    [ChainId.MANTLE_MAINNET]: '0xE5020961fA51ffd3662CDf307dEf18F9a87Cce7c', // fusionX
+    [ChainId.MANTLE_TESTNET]: '0x272465431A6b86E3B9E5b9bD33f5D103a3F59eDb', // fusionX
+    [ChainId.BASE_MAINNET]: '0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB', // baseSwap
 }
 
 export const INIT_CODE_HASH = {
@@ -152,16 +162,21 @@ export const INIT_CODE_HASH = {
     [ChainId.TELOS_TESTNET]: '0x4386561b28c0ca71b777ab3684458dd9f6c1b3b7fc609c5758f0f00a48625996',
     [ChainId.SHARDEUM_TESTNET_2]: '0x3bde95ed3dcb15c415ca128950d4807b9e3698b981ff73007c9d3c220a5b2f6f',
     [ChainId.KAVA_MAINNET]: '0x851a56ac1b3682251d8341ad09c09bf45fca37af4451453063637d745a94fe1f',
-    [ChainId.SCROLL_TESTNET]: '0x4386561b28c0ca71b777ab3684458dd9f6c1b3b7fc609c5758f0f00a48625996', // TODO
+    [ChainId.SCROLL_TESTNET]: '0x4386561b28c0ca71b777ab3684458dd9f6c1b3b7fc609c5758f0f00a48625996',
+    [ChainId.SCROLL_SEPOLIA]: '0x0000000000000000000000000000000000000000000000000000000000000000', // TODO
     [ChainId.ZKSYNC_MAINNET]: '0x95d5c05820d58f1c8cc736b47fe10a29ddcd2cf73a0d842e8537b9fe510fc618',
     [ChainId.ARBITRUM_MAINNET]: '0x8336ef61546f16041265cbd61fb71f00434b515a1f3dba059227802ec4a4be4f', // arbSwap
     [ChainId.ARBITRUM_NOVA]: '0x70b19cf85a176c6b86e2d324be179104bdc8fafee13d548ae07d28b9f53cbc71', // arbSwap
     [ChainId.OPTIMISM_MAINNET]: '0x0000000000000000000000000000000000000000000000000000000000000000', // TODO
     [ChainId.ZETACHAIN_ATHENS_2]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
     [ChainId.POLYGON_ZK]: '0x0000000000000000000000000000000000000000000000000000000000000000', // TODO
+    [ChainId.LINEA_TESTNET]: '0x60431495276ec4b11356f2c6dd08f5f6c5b673a20a2847bbbd80fa3942100e4b', // echodex
+    [ChainId.LINEA_MAINNET]: '0x0b8162ee38463c04a0629406af3b667364e4487dca66c5c7485a4a5e997811ea', // echodex
+    [ChainId.MANTLE_MAINNET]: '0x58c684aeb03fe49c8a3080db88e425fae262c5ef5bf0e8acffc0526c6e3c03a0', // fusionX
+    [ChainId.MANTLE_TESTNET]: '0x58c684aeb03fe49c8a3080db88e425fae262c5ef5bf0e8acffc0526c6e3c03a0', // fusionX
+    [ChainId.BASE_MAINNET]: '0xb618a2730fae167f5f8ac7bd659dd8436d571872655bcb6fd11f2158c8a64a3b', // baseSwap
     [ChainId.TRON_MAINNET]: '0x0000000000000000000000000000000000000000000000000000000000000000', // TODO
     [ChainId.TRON_TESTNET]: '0x0e26acb4c8f8d3df2264904ab1e00efdc142a9f341741ca7e0a7ae5f9b0c0fa9', // sunswap.io
-    [ChainId.LINEA_TESTNET]: '0x60431495276ec4b11356f2c6dd08f5f6c5b673a20a2847bbbd80fa3942100e4b',
 }
 
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
@@ -186,67 +201,3 @@ export const SOLIDITY_TYPE_MAXIMA = {
     [SolidityType.uint8]: JSBI.BigInt('0xff'),
     [SolidityType.uint256]: JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'),
 }
-
-// Hardcoded addresses for Mute.io on ZKSync.
-// TODO: Remove this once we have a better way to fetch ZKSync pool addresses.
-export const MUTE_POOLS: {
-    tokenA: string
-    tokenB: string
-    address: string
-    name: string
-}[] = [
-    {
-        tokenA: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
-        tokenB: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        address: '0xDFAaB828f5F515E104BaaBa4d8D554DA9096f0e4',
-        name: 'USDC-WETH',
-    },
-    {
-        tokenA: '0x0e97C7a0F8B2C9885C8ac9fC6136e829CbC21d42',
-        tokenB: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        address: '0xb85feb6aF3412d690DFDA280b73EaED73a2315bC',
-        name: 'Mute-WETH',
-    },
-    {
-        tokenA: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        tokenB: '0xc8Ec5B0627C794de0e4ea5d97AD9A556B361d243',
-        address: '0xBe21BCD3a21dC4Dd6C58945f0F5DE4132644020a',
-        name: 'WETH-Whisper',
-    },
-    {
-        tokenA: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        tokenB: '0xbFB4b5616044Eded03e5b1AD75141f0D9Cb1499b',
-        address: '0x042Ded90C26EEA4D860F8E3Bd363Cc4B17CAA00C',
-        name: 'WETH-zkDoge',
-    },
-    {
-        tokenA: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        tokenB: '0x8aAAF6E6167825829Ab29F260f246AFE742FB243',
-        address: '0xF7a13fc63b18341843B8197F074528943098c1A6',
-        name: 'WETH-ZKCULT',
-    },
-    {
-        tokenA: '0x45559297BdEDf453e172833AC7086f7D03f6690B',
-        tokenB: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        address: '0x90CFBAF341d7296ABaD4475Dae2182a3b14bb44e',
-        name: 'ZK INU-WETH',
-    },
-    {
-        tokenA: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        tokenB: '0xA51Bc2433a33c448DD40F7074bCAB751A1922706',
-        address: '0xd0c991F54c54022aD5f98B1468668Da7Dc33B8Ef',
-        name: 'WETH-ZKInu',
-    },
-    {
-        tokenA: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        tokenB: '0x7C9becB53A7702244Ca260Fd01B4748756CE7BB3',
-        address: '0xf9a7ff47A346E242590f87546d1995DE91B8b8B1',
-        name: 'WETH-ZKRISE',
-    },
-    {
-        tokenA: '0x0231B3DE40B6B3BDd28dcEf037F1b7a3fCf5A95a',
-        tokenB: '0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91',
-        address: '0x3d04A8054C1A846370778BA2A4805d1Fe4F30405',
-        name: 'Zynergy-WETH',
-    },
-]

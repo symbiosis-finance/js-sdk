@@ -3,10 +3,9 @@ import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
-import { OneInchTrade } from './oneInchTrade'
+import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
-import { SwapOptions } from '../baseSwapping'
 
 interface AggregatorTradeParams {
     symbiosis: Symbiosis
@@ -17,7 +16,7 @@ interface AggregatorTradeParams {
     to: string
     slippage: number
     clientId: string
-    options?: SwapOptions
+    oneInchProtocols?: OneInchProtocols
 }
 
 class TradeNotInitializedError extends Error {
@@ -52,7 +51,7 @@ export class AggregatorTrade implements SymbiosisTrade {
                 slippage,
                 oracle,
                 dataProvider,
-                this.params.options?.oneInchProtocols
+                this.params.oneInchProtocols
             )
 
             aggregators.push(oneInchTrade.init())

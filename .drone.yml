@@ -9,6 +9,13 @@ steps:
     commands:
       - npm i --silent
 
+  - name: test
+    image: node:lts
+    environment:
+        NODE_ENV: production
+    commands:
+        - npm run test
+
   - name: build/npm-package
     image: node:lts
     environment:

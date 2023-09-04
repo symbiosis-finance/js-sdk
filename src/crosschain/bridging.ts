@@ -1,7 +1,7 @@
 import { MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { BigNumber, Signer } from 'ethers'
-import { Token, TokenAmount } from '../entities'
+import { Token, TokenAmount, wrappedToken } from '../entities'
 import type { Symbiosis } from './symbiosis'
 import { isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
@@ -45,6 +45,14 @@ export interface BridgeExactInParams {
     tokenOut: Token
     from: string
     to: string
+    revertableAddress: string
+}
+
+export type BridgeExactInParams = {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    to: string
+    revertableAddress: string
 }
 
 export class Bridging {
@@ -62,7 +70,7 @@ export class Bridging {
         this.symbiosis = symbiosis
     }
 
-    public async exactIn({ from, to, tokenAmountIn, tokenOut }: BridgeExactInParams): BridgeExactIn {
+    public async exactIn({ from, tokenAmountIn, tokenOut, to, revertableAddress }: BridgeExactInParams): BridgeExactIn {
         this.symbiosis.validateSwapAmounts(tokenAmountIn)
 
         this.tokenAmountIn = tokenAmountIn
@@ -269,10 +277,12 @@ export class Bridging {
             chainId: chainIdOut,
         })
 
+        const token = wrappedToken(this.tokenAmountIn.token)
+
         const calldata = synthesisInterface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            this.tokenAmountIn.token.address, // _token,
+            token.address, // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address

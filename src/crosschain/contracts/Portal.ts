@@ -178,7 +178,6 @@ export interface PortalInterface extends utils.Interface {
         'requestCount()': FunctionFragment
         'requests(bytes32)': FunctionFragment
         'revertBurnRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
-        'revertBurnRequestByBridge(uint256,bytes32,address,address,uint256,address)': FunctionFragment
         'revertSynthesize(uint256,bytes32)': FunctionFragment
         'setMetaRouter(address)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
@@ -223,10 +222,6 @@ export interface PortalInterface extends utils.Interface {
         functionFragment: 'revertBurnRequest',
         values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
     ): string
-    encodeFunctionData(
-        functionFragment: 'revertBurnRequestByBridge',
-        values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
-    ): string
     encodeFunctionData(functionFragment: 'revertSynthesize', values: [BigNumberish, BytesLike]): string
     encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
     encodeFunctionData(functionFragment: 'setTokenThreshold', values: [string, BigNumberish]): string
@@ -270,7 +265,6 @@ export interface PortalInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'requestCount', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'requests', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'revertBurnRequest', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'revertBurnRequestByBridge', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'revertSynthesize', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setMetaRouter', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
@@ -489,16 +483,6 @@ export interface Portal extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
-        revertBurnRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainId: BigNumberish,
-            _sender: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
         revertSynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
@@ -650,16 +634,6 @@ export interface Portal extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
-    revertBurnRequestByBridge(
-        _stableBridgingFee: BigNumberish,
-        _internalID: BytesLike,
-        _receiveSide: string,
-        _oppositeBridge: string,
-        _chainId: BigNumberish,
-        _sender: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
-
     revertSynthesize(
         _stableBridgingFee: BigNumberish,
         _externalID: BytesLike,
@@ -808,16 +782,6 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _chainId: BigNumberish,
             _clientID: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
-
-        revertBurnRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainId: BigNumberish,
-            _sender: string,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -1029,16 +993,6 @@ export interface Portal extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
-        revertBurnRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainId: BigNumberish,
-            _sender: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
         revertSynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
@@ -1177,16 +1131,6 @@ export interface Portal extends BaseContract {
             _oppositeBridge: string,
             _chainId: BigNumberish,
             _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        revertBurnRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainId: BigNumberish,
-            _sender: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

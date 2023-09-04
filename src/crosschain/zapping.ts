@@ -4,7 +4,7 @@ import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
-import { Percent, Token, TokenAmount } from '../entities'
+import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { Error, ErrorCode } from './error'
@@ -29,6 +29,15 @@ export type ZapExactIn = Promise<{
     inTradeType?: SymbiosisTradeType
 }>
 
+type ZappingExactInParams = {
+    tokenAmountIn: TokenAmount
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
+}
+
 export class Zapping {
     protected dataProvider: DataProvider
 
@@ -40,36 +49,31 @@ export class Zapping {
     private slippage!: number
     private deadline!: number
     private ttl!: number
-    private useAggregators!: boolean
 
-    private tradeA: UniLikeTrade | AggregatorTrade | undefined
+    private tradeA: UniLikeTrade | AggregatorTrade | WrapTrade | undefined
 
     private synthToken!: Token
-    private transitStableIn!: Token
+    private transitTokenIn!: Token
 
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
     private readonly poolOracle!: OmniPoolOracle
-    private readonly symbiosis: Symbiosis
 
-    public constructor(symbiosis: Symbiosis) {
-        this.symbiosis = symbiosis
+    public constructor(private readonly symbiosis: Symbiosis, private readonly omniPoolConfig: OmniPoolConfig) {
         this.dataProvider = new DataProvider(symbiosis)
 
-        this.pool = this.symbiosis.omniPool()
-        this.poolOracle = this.symbiosis.omniPoolOracle()
-        this.chainIdOut = this.symbiosis.omniPoolConfig.chainId
+        this.pool = this.symbiosis.omniPool(omniPoolConfig)
+        this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        from: string,
-        to: string,
-        slippage: number,
-        deadline: number,
-        useAggregators = true
-    ): ZapExactIn {
-        this.useAggregators = useAggregators
+    public async exactIn({
+        tokenAmountIn,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+    }: ZappingExactInParams): SwapExactIn {
         this.tokenAmountIn = tokenAmountIn
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
@@ -80,26 +84,30 @@ export class Zapping {
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
-        const transitStables = this.symbiosis.transitStables(this.tokenAmountIn.token.chainId)
-        if (transitStables.find((stable) => stable.equals(this.tokenAmountIn.token))) {
-            // Do not swap if token is already a transit stable
-            this.transitStableIn = this.tokenAmountIn.token
+        const targetPool = this.symbiosis.getOmniPoolByConfig(this.omniPoolConfig)
+        if (!targetPool) {
+            throw new Error(`Unknown omni pool ${this.omniPoolConfig.address}`)
+        }
+        const wrapped = wrappedToken(tokenAmountIn.token)
+        const tokenPool = this.symbiosis.getOmniPoolByToken(wrapped)
+        if (tokenPool?.id === targetPool.id) {
+            this.transitTokenIn = wrapped
         } else {
-            this.transitStableIn = await this.symbiosis.bestTransitStable(this.tokenAmountIn.token.chainId)
+            this.transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         }
 
-        let amountInUsd: TokenAmount
+        let transitAmountIn: TokenAmount
 
-        if (!this.transitStableIn.equals(tokenAmountIn.token)) {
+        if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 
-            amountInUsd = this.tradeA.amountOut
+            transitAmountIn = this.tradeA.amountOut
         } else {
-            amountInUsd = tokenAmountIn
+            transitAmountIn = tokenAmountIn
         }
 
-        this.symbiosis.validateSwapAmounts(amountInUsd)
+        this.symbiosis.validateSwapAmounts(transitAmountIn)
 
         this.synthToken = await this.getSynthToken()
 
@@ -225,13 +233,17 @@ export class Zapping {
         return synthAmount
     }
 
-    private buildTradeA(): UniLikeTrade | AggregatorTrade {
+    private buildTradeA(): UniLikeTrade | AggregatorTrade | WrapTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.transitStableIn
+        const tokenOut = this.transitTokenIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
+        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
+            return new WrapTrade(this.tokenAmountIn, tokenOut, this.to)
+        }
+
+        if (AggregatorTrade.isAvailable(chainId)) {
             return new AggregatorTrade({
                 tokenAmountIn: this.tokenAmountIn,
                 tokenOut,
@@ -273,6 +285,7 @@ export class Zapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
         const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -323,11 +336,12 @@ export class Zapping {
     }
 
     private async getSynthToken(): Promise<Token> {
-        const rep = await this.symbiosis.getRepresentation(this.transitStableIn, this.chainIdOut)
+        const chainIdOut = this.omniPoolConfig.chainId
+        const rep = await this.symbiosis.getRepresentation(this.transitTokenIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${this.transitStableIn.symbol} in chain ${this.chainIdOut} not found`,
+                `Representation of ${this.transitTokenIn.symbol} in chain ${chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -337,6 +351,7 @@ export class Zapping {
 
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(this.chainIdOut)

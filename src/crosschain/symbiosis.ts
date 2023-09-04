@@ -4,7 +4,7 @@ import { BigNumber, Signer, utils } from 'ethers'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { Bridging } from './bridging'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
@@ -34,24 +34,14 @@ import {
     MetaRouter__factory,
     MulticallRouter,
     MulticallRouter__factory,
-    MuteRouter,
-    MuteRouter__factory,
-    NervePool,
-    NervePool__factory,
     OmniPool,
     OmniPool__factory,
     OmniPoolOracle,
     OmniPoolOracle__factory,
     OneInchOracle,
     OneInchOracle__factory,
-    Ooki,
-    Ooki__factory,
     Portal,
     Portal__factory,
-    RenGatewayRegistryV2,
-    RenGatewayRegistryV2__factory,
-    RenMintGatewayV3,
-    RenMintGatewayV3__factory,
     SyncSwapLaunchPool,
     SyncSwapLaunchPool__factory,
     Synthesis,
@@ -60,8 +50,6 @@ import {
     UniLikeRouter__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
-import { getRepresentation } from './getRepresentation'
-import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
 import { statelessWaitForComplete } from './statelessWaitForComplete'
 import { Swapping } from './swapping'
@@ -71,28 +59,48 @@ import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingBeefy } from './zappingBeefy'
 import { ZappingCream } from './zappingCream'
-import { ZappingOoki } from './zappingOoki'
-import { ZappingRenBTC } from './zappingRenBTC'
+import { config as mainnet } from './config/mainnet'
+import { config as testnet } from './config/testnet'
+import { config as dev } from './config/dev'
+import { ZappingBeefy } from './zappingBeefy'
+import { BestPoolSwapping } from './bestPoolSwapping'
+import { ConfigCache } from './config/cache/cache'
+import { OmniPoolInfo } from './config/cache/builder'
+import { PendingRequest } from './revertRequest'
 
-type ConfigName = 'testnet' | 'mainnet'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
     public readonly config: Config
     public readonly clientId: string
-    public readonly omniPoolConfig: OmniPoolConfig
 
-    public constructor(config: ConfigName | Config, clientId: string) {
+    private readonly configCache: ConfigCache
+
+    public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
             this.config = mainnet
         } else if (config === 'testnet') {
             this.config = testnet
+        } else if (config === 'dev') {
+            this.config = dev
         } else {
-            this.config = config
+            throw new Error('Unknown config name')
         }
 
-        this.omniPoolConfig = this.config.omniPool
+        if (overrideConfig) {
+            this.config.chains = this.config.chains.map((chainConfig) => {
+                const found = overrideConfig.chains.find((i) => i.id === chainConfig.id)
+                if (found) {
+                    chainConfig.rpc = found.rpc
+                }
+                return chainConfig
+            })
+        }
+
+        this.configCache = new ConfigCache(config)
+
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
@@ -103,22 +111,17 @@ export class Symbiosis {
         )
     }
 
-    public validateSwapAmounts(amount: TokenAmount) {
-        const parsedAmount = parseFloat(amount.toExact(2))
-        const minAmount = this.config.minSwapAmountInUsd
-        const maxAmount = this.config.maxSwapAmountInUsd
-        if (parsedAmount < minAmount) {
+    public validateSwapAmounts(amount: TokenAmount): void {
+        const { token } = amount
+        const wrapped = wrappedToken(token)
+        const threshold = this.configCache.getTokenThreshold(wrapped)
+        if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
+            const formattedThreshold = utils.formatUnits(threshold, token.decimals)
+
             throw new Error(
-                `The amount is too low: $${parsedAmount}. Min amount: $${minAmount}`,
+                `The amount is too low: ${amount.toFixed(2)}. Min amount: ${formattedThreshold}`,
                 ErrorCode.AMOUNT_TOO_LOW
             )
-        } else if (parsedAmount > maxAmount) {
-            throw new Error(
-                `The amount is too high: $${parsedAmount}. Max amount: $${maxAmount}`,
-                ErrorCode.AMOUNT_TOO_HIGH
-            )
-        } else {
-            // All it`s OK
         }
     }
 
@@ -131,43 +134,32 @@ export class Symbiosis {
         return new Bridging(this)
     }
 
-    public newSwapping() {
-        return new Swapping(this)
+    public newSwapping(omniPoolConfig: OmniPoolConfig) {
+        return new Swapping(this, omniPoolConfig)
+    }
+
+    public bestPoolSwapping() {
+        return new BestPoolSwapping(this)
     }
 
     public newRevertPending(request: PendingRequest) {
         return new RevertPending(this, request)
     }
 
-    public newZapping() {
-        return new Zapping(this)
+    public newZapping(omniPoolConfig: OmniPoolConfig) {
+        return new Zapping(this, omniPoolConfig)
     }
 
-    public newZappingAave() {
-        return new ZappingAave(this)
+    public newZappingAave(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingAave(this, omniPoolConfig)
     }
 
-    public newZappingCream() {
-        return new ZappingCream(this)
+    public newZappingCream(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingCream(this, omniPoolConfig)
     }
 
-    public newZappingRenBTC() {
-        return new ZappingRenBTC(this)
-    }
-
-    public newZappingBeefy() {
-        return new ZappingBeefy(this)
-    }
-
-    public newZappingOoki() {
-        return new ZappingOoki(this)
-    }
-
-    public getPendingRequests(
-        addresses: string[],
-        synthesizeRequestFinder?: SynthesizeRequestFinder
-    ): Promise<PendingRequest[]> {
-        return getPendingRequests(this, addresses, synthesizeRequestFinder)
+    public newZappingBeefy(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingBeefy(this, omniPoolConfig)
     }
 
     public getProvider(chainId: ChainId): StaticJsonRpcProvider {
@@ -234,73 +226,6 @@ export class Symbiosis {
         return KavaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public muteRouter(chainId: ChainId, signer?: Signer): MuteRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return MuteRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {
-        const chainId = tokenA.chainId
-        const address = this.chainConfig(chainId).nerves.find((data) => {
-            return (
-                data.tokens.find((token) => token.toLowerCase() === tokenA.address.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenB.address.toLowerCase())
-            )
-        })?.address
-
-        if (!address) {
-            throw new Error('Nerve pool not found')
-        }
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(address, signerOrProvider)
-    }
-
-    public getNerveTokenIndexes(chainId: ChainId, tokenA: string, tokenB: string) {
-        const pool = this.chainConfig(chainId).nerves.find((data) => {
-            return (
-                data.tokens.find((token) => token.toLowerCase() === tokenA.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenB.toLowerCase())
-            )
-        })
-
-        if (!pool) {
-            throw new Error('Nerve pool not found')
-        }
-
-        const tokens = pool.tokens.map((i) => i.toLowerCase())
-        const indexA = tokens.indexOf(tokenA.toLowerCase())
-        const indexB = tokens.indexOf(tokenB.toLowerCase())
-
-        if (indexA === -1 || indexB === -1) {
-            throw new Error('Cannot find token')
-        }
-
-        return [indexA, indexB]
-    }
-
-    public nervePoolByAddress(address: string, chainId: ChainId, signer?: Signer): NervePool {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(address, signerOrProvider)
-    }
-
-    public nervePoolBySynth(synthTokenAddress: string, chainId: ChainId, signer?: Signer): NervePool {
-        const pool = this.chainConfig(chainId).nerves.find((data) => {
-            return data.tokens[1].toLowerCase() === synthTokenAddress.toLowerCase()
-        })
-
-        if (!pool) {
-            throw new Error('Nerve pool not found')
-        }
-
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(pool.address, signerOrProvider)
-    }
-
     public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
         const signerOrProvider = signer || this.getProvider(chainId)
 
@@ -341,15 +266,15 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public omniPool(signer?: Signer): OmniPool {
-        const { address, chainId } = this.omniPoolConfig
+    public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
+        const { address, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPool__factory.connect(address, signerOrProvider)
     }
 
-    public omniPoolOracle(signer?: Signer): OmniPoolOracle {
-        const { oracle, chainId } = this.omniPoolConfig
+    public omniPoolOracle(config: OmniPoolConfig, signer?: Signer): OmniPoolOracle {
+        const { oracle, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
@@ -365,29 +290,10 @@ export class Symbiosis {
         return OneInchOracle__factory.connect(address, signerOrProvider)
     }
 
-    public renRenGatewayRegistry(chainId: ChainId, signer?: Signer): RenGatewayRegistryV2 {
-        const address = this.chainConfig(chainId).renGatewayRegistry
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return RenGatewayRegistryV2__factory.connect(address, signerOrProvider)
-    }
-
-    public renMintGatewayByAddress(address: string, chainId: ChainId, signer?: Signer): RenMintGatewayV3 {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return RenMintGatewayV3__factory.connect(address, signerOrProvider)
-    }
-
     public beefyVault(address: string, chainId: ChainId, signer?: Signer): BeefyVault {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return BeefyVault__factory.connect(address, signerOrProvider)
-    }
-
-    public ookiIToken(address: string, chainId: ChainId, signer?: Signer): Ooki {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return Ooki__factory.connect(address, signerOrProvider)
     }
 
     public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
@@ -396,40 +302,12 @@ export class Symbiosis {
         return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
     }
 
-    public stables(): Token[] {
-        return this.config.chains
-            .map((chainConfig) => {
-                return chainConfig.stables.map((params) => {
-                    return new Token(params)
-                })
-            })
-            .reduce((acc, tokens) => {
-                return [...acc, ...tokens]
-            }, [])
+    public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
+        return this.configCache.getRepresentation(token, chainId)
     }
 
-    public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
-        return this.stables().find((token) => {
-            return token.chainId === chainId && token.chainFromId === chainFromId && token.isSynthetic
-        })
-    }
-
-    public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
-        if (isTronChainId(chainId)) {
-            address = tronAddressToEvm(address)
-        }
-
-        return this.stables().find((token) => {
-            const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
-
-            if (chainFromId === undefined) return condition
-
-            return condition && token.chainFromId === chainFromId
-        })
-    }
-
-    public async getRepresentation(token: Token, chainId: ChainId): Promise<Token | undefined> {
-        return getRepresentation(this, token, chainId)
+    public getOmniPoolTokenIndex(omniPoolConfig: OmniPoolConfig, token: Token): number {
+        return this.configCache.getOmniPoolTokenIndex(omniPoolConfig, token)
     }
 
     public async getBridgeFee({
@@ -493,56 +371,64 @@ export class Symbiosis {
         return config
     }
 
-    public transitStables(chainId: ChainId): Token[] {
-        const stables = this.findTransitStables(chainId)
-        if (stables.length === 0) {
-            throw new Error(`Cannot find transit stable token for chain ${chainId}`)
-        }
-        return stables
+    // === stables ===
+
+    public tokens(): Token[] {
+        return this.configCache.tokens()
     }
 
-    public async bestTransitStable(chainId: ChainId): Promise<Token> {
-        const stables = this.transitStables(chainId)
-        if (stables.length === 1) {
-            return stables[0]
+    public findToken(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
+        return this.tokens().find((token) => {
+            const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
+
+            if (chainFromId === undefined) return condition
+
+            return condition && token.chainFromId === chainFromId
+        })
+    }
+
+    public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
+        const tokens = this.configCache.tokens().filter((token) => {
+            return token.chainId === chainId
+        })
+        if (tokens.length === 0) {
+            throw new Error(`Cannot find token for chain ${chainId}`)
+        }
+        const omniPool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
+        if (!omniPool) {
+            throw new Error(`Cannot find omniPool ${omniPool}`)
         }
 
-        const pool = this.omniPool()
-        const promises = stables.map(async (i): Promise<[Token, PoolAsset] | undefined> => {
-            const sToken = await getRepresentation(this, i, ChainId.BOBA_BNB)
-            if (!sToken) return
-            const index = await pool.assetToIndex(sToken.address)
-            const asset = await pool.indexToAsset(index)
-            return [i, asset]
-        })
-
-        const pairs = (await Promise.all(promises)).filter((i) => i !== undefined) as [Token, PoolAsset][]
-
-        function assetScore(asset: PoolAsset): BigNumber {
-            const cash = asset.cash
-            const liability = asset.liability
-
-            if (liability.eq(0)) {
-                return BigNumber.from(0)
-            }
-
-            return cash.mul(cash).div(liability)
+        // if token is from manager chain (token's chainIs equals to pool chainId)
+        if (chainId === omniPoolConfig.chainId) {
+            return tokens[0]
         }
 
-        const sortedPairs = pairs.sort((pairA, pairB) => {
-            const a = assetScore(pairA[1])
-            const b = assetScore(pairB[1])
-
-            if (a.gt(b)) {
-                return -1
-            }
-            if (a.lt(b)) {
-                return 1
-            }
-            return 0
+        // find the FIRST suitable token from the tokens list
+        // e.g. the first token has priority
+        const transitToken = tokens.find((token) => {
+            return this.getOmniPoolByToken(token)?.id === omniPool.id
         })
 
-        return sortedPairs[0][0]
+        if (!transitToken) {
+            throw new Error(
+                `Cannot find transitToken for chain ${chainId}. Pool: ${omniPool.id}`,
+                ErrorCode.NO_TRANSIT_TOKEN
+            )
+        }
+        return transitToken
+    }
+
+    public getOmniPoolByConfig(config: OmniPoolConfig): OmniPoolInfo | undefined {
+        return this.configCache.getOmniPoolByConfig(config)
+    }
+
+    public getOmniPoolByToken(token: Token): OmniPoolInfo | undefined {
+        return this.configCache.getOmniPoolByToken(token)
+    }
+
+    public getOmniPoolTokens(omniPoolConfig: OmniPoolConfig): Token[] {
+        return this.configCache.getOmniPoolTokens(omniPoolConfig)
     }
 
     public tronWeb(chainId: ChainId): TronWeb {
@@ -556,12 +442,6 @@ export class Symbiosis {
         }
 
         return new TronWeb({ fullHost: config.rpc, eventNode: config.rpc, solidityNode: config.rpc })
-    }
-
-    public findTransitStables(chainId: ChainId): Token[] {
-        return this.stables().filter((token) => {
-            return token.chainId === chainId && !token.isSynthetic
-        })
     }
 
     public async waitForComplete(chainId: ChainId, txId: string): Promise<string> {

@@ -10,6 +10,7 @@ import { PendingRequest, PendingRequestState, PendingRequestType } from './pendi
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
 import { GetLogTimeoutExceededError, getExternalId, getLogWithTimeout } from './utils'
+import { PendingRequest, PendingRequestState, PendingRequestType } from './revertRequest'
 
 type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never
 
@@ -144,7 +145,7 @@ export class WaitForComplete {
 
         const chainId = chainID.toNumber() as ChainId
 
-        const fromToken = this.symbiosis.findStable(tokenIdFrom, this.chainIdIn)
+        const fromToken = this.symbiosis.findToken(tokenIdFrom, this.chainIdIn)
         if (!fromToken) {
             return
         }

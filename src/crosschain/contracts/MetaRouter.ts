@@ -14,7 +14,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -100,7 +100,7 @@ export declare namespace MetaRouteStructs {
 export interface MetaRouterInterface extends utils.Interface {
     contractName: 'MetaRouter'
     functions: {
-        'externalCall(address,uint256,address,bytes,uint256)': FunctionFragment
+        'externalCall(address,uint256,address,bytes,uint256,address)': FunctionFragment
         'metaMintSwap((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
         'metaRouterGateway()': FunctionFragment
@@ -109,7 +109,7 @@ export interface MetaRouterInterface extends utils.Interface {
 
     encodeFunctionData(
         functionFragment: 'externalCall',
-        values: [string, BigNumberish, string, BytesLike, BigNumberish]
+        values: [string, BigNumberish, string, BytesLike, BigNumberish, string]
     ): string
     encodeFunctionData(functionFragment: 'metaMintSwap', values: [MetaRouteStructs.MetaMintTransactionStruct]): string
     encodeFunctionData(functionFragment: 'metaRoute', values: [MetaRouteStructs.MetaRouteTransactionStruct]): string
@@ -125,8 +125,19 @@ export interface MetaRouterInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'metaRouterGateway', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'returnSwap', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'TransitTokenSent(address,uint256,address)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'TransitTokenSent'): EventFragment
 }
+
+export type TransitTokenSentEvent = TypedEvent<
+    [string, BigNumber, string],
+    { revertableAddress: string; amount: BigNumber; token: string }
+>
+
+export type TransitTokenSentEventFilter = TypedEventFilter<TransitTokenSentEvent>
 
 export interface MetaRouter extends BaseContract {
     contractName: 'MetaRouter'
@@ -158,6 +169,7 @@ export interface MetaRouter extends BaseContract {
             _receiveSide: string,
             _calldata: BytesLike,
             _offset: BigNumberish,
+            _to: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -191,6 +203,7 @@ export interface MetaRouter extends BaseContract {
         _receiveSide: string,
         _calldata: BytesLike,
         _offset: BigNumberish,
+        _to: string,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -224,6 +237,7 @@ export interface MetaRouter extends BaseContract {
             _receiveSide: string,
             _calldata: BytesLike,
             _offset: BigNumberish,
+            _to: string,
             overrides?: CallOverrides
         ): Promise<void>
 
@@ -251,7 +265,14 @@ export interface MetaRouter extends BaseContract {
         ): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'TransitTokenSent(address,uint256,address)'(
+            revertableAddress?: null,
+            amount?: null,
+            token?: null
+        ): TransitTokenSentEventFilter
+        TransitTokenSent(revertableAddress?: null, amount?: null, token?: null): TransitTokenSentEventFilter
+    }
 
     estimateGas: {
         externalCall(
@@ -260,6 +281,7 @@ export interface MetaRouter extends BaseContract {
             _receiveSide: string,
             _calldata: BytesLike,
             _offset: BigNumberish,
+            _to: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -294,6 +316,7 @@ export interface MetaRouter extends BaseContract {
             _receiveSide: string,
             _calldata: BytesLike,
             _offset: BigNumberish,
+            _to: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

@@ -4,12 +4,22 @@ import { MulticallRouter, SyncSwapLaunchPool, SyncSwapLaunchPool__factory } from
 import { ChainId } from '../constants'
 import JSBI from 'jsbi'
 import type { Symbiosis } from './symbiosis'
+import { OmniPoolConfig } from './types'
 
 interface ZappingSyncSwapLaunchPoolParams {
     symbiosis: Symbiosis
     chainId: ChainId
     address: string
     token: Token
+    omniPoolConfig: OmniPoolConfig
+}
+interface ZappingSyncSwapLaunchPoolExactInParams {
+    tokenAmountIn: TokenAmount
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
 }
 
 export class ZappingSyncSwapLaunchPool extends BaseSwapping {
@@ -21,38 +31,36 @@ export class ZappingSyncSwapLaunchPool extends BaseSwapping {
     protected address: string
     protected tokenOut: Token
 
-    constructor({ address, chainId, symbiosis, token }: ZappingSyncSwapLaunchPoolParams) {
-        super(symbiosis)
+    constructor({ address, chainId, symbiosis, token, omniPoolConfig }: ZappingSyncSwapLaunchPoolParams) {
+        super(symbiosis, omniPoolConfig)
 
         this.chainId = chainId
         this.address = address
         this.tokenOut = token
     }
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number,
-        useAggregators = true
-    ): Promise<SwapExactIn> {
+    public async exactIn({
+        tokenAmountIn,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+    }: ZappingSyncSwapLaunchPoolExactInParams): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(this.chainId)
         this.userAddress = to
 
         this.pool = SyncSwapLaunchPool__factory.connect(this.address, this.symbiosis.getProvider(this.chainId))
 
-        return this.doExactIn(
+        return this.doExactIn({
             tokenAmountIn,
-            wrappedToken(this.tokenOut),
+            tokenOut: wrappedToken(this.tokenOut),
             from,
             to,
             revertableAddress,
             slippage,
             deadline,
-            useAggregators
-        )
+        })
     }
 
     protected tradeCTo(): string {

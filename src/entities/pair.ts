@@ -1,5 +1,5 @@
-import { Price } from './fractions/price'
-import { TokenAmount } from './fractions/tokenAmount'
+import { Price } from './fractions'
+import { TokenAmount } from './fractions'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import { keccak256, pack } from '@ethersproject/solidity'
@@ -16,7 +16,6 @@ import {
     MINIMUM_LIQUIDITY,
     ONE,
     ZERO,
-    MUTE_POOLS,
 } from '../constants'
 import { parseBigintIsh, sqrt } from '../utils'
 import { getTronCreate2Address, isTronToken } from '../crosschain/tron'
@@ -36,13 +35,6 @@ export class Pair {
 
         let types: string[] = ['address', 'address']
         let params: (string | boolean)[] = [tokens[0].address, tokens[1].address]
-
-        if (chainId === ChainId.ZKSYNC_MAINNET) {
-            const pool = MUTE_POOLS.find(
-                (pool) => pool.tokenA === tokens[0].address && pool.tokenB === tokens[1].address
-            )
-            return pool?.address ?? '0x0000000000000000000000000000000000000000'
-        }
 
         if (chainId === ChainId.KAVA_MAINNET) {
             types = [...types, 'bool']

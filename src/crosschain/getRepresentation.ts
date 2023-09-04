@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
-import { Token } from '../entities'
+import { Token, wrappedToken } from '../entities'
 import { Symbiosis } from './symbiosis'
 import { isTronToken, tronAddressToEvm } from './tron'
 
@@ -16,11 +16,12 @@ export async function getRepresentation(
         return undefined
     }
 
+    const wrapped = wrappedToken(token)
     let tokenAddress
-    if (isTronToken(token)) {
-        tokenAddress = tronAddressToEvm(token.address)
+    if (isTronToken(wrapped)) {
+        tokenAddress = tronAddressToEvm(wrapped.address)
     } else {
-        tokenAddress = token.address
+        tokenAddress = wrapped.address
     }
 
     try {
@@ -28,14 +29,14 @@ export async function getRepresentation(
         if (token.isSynthetic) {
             representation = await fabric.getRealRepresentation(tokenAddress)
         } else {
-            representation = await fabric.getSyntRepresentation(tokenAddress, token.chainId)
+            representation = await fabric.getSyntRepresentation(tokenAddress, wrapped.chainId)
         }
 
         if (representation === AddressZero) {
             return undefined
         }
 
-        return symbiosis.findStable(representation, chainId)
+        return symbiosis.findToken(representation, chainId)
     } catch (e) {
         console.error(`Error while getting representation of ${token.address} in chain ${chainId}`, e)
         return undefined

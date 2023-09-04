@@ -5,23 +5,33 @@ import { Token, TokenAmount } from '../entities'
 import { SwapExactIn, BaseSwapping } from './baseSwapping'
 import { BeefyVault, MulticallRouter } from './contracts'
 
+type ZappingBeefyExactIn = {
+    tokenAmountIn: TokenAmount
+    vaultAddress: string
+    vaultChainId: ChainId
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
+}
+
 export class ZappingBeefy extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
     protected beefyVault!: BeefyVault
     protected aToken!: string
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        vaultAddress: string,
-        vaultChainId: ChainId,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number,
-        useAggregators = true
-    ): Promise<SwapExactIn> {
+    public async exactIn({
+        tokenAmountIn,
+        vaultAddress,
+        vaultChainId,
+        from,
+        to,
+        revertableAddress,
+        slippage,
+        deadline,
+    }: ZappingBeefyExactIn): SwapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
 
@@ -31,13 +41,21 @@ export class ZappingBeefy extends BaseSwapping {
         const tokenContract = new Contract(tokenAddress, ERC20, this.symbiosis.providers.get(vaultChainId))
         const decimals = await tokenContract.decimals()
 
-        const token = new Token({
+        const tokenOut = new Token({
             address: tokenAddress,
             chainId: vaultChainId,
             decimals,
         })
 
-        return this.doExactIn(tokenAmountIn, token, from, to, revertableAddress, slippage, deadline, useAggregators)
+        return this.doExactIn({
+            tokenAmountIn,
+            tokenOut,
+            from,
+            to,
+            revertableAddress,
+            slippage,
+            deadline,
+        })
     }
 
     protected tradeCTo(): string {
