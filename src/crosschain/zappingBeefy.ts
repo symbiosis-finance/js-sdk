@@ -32,7 +32,7 @@ export class ZappingBeefy extends BaseSwapping {
         revertableAddress,
         slippage,
         deadline,
-    }: ZappingBeefyExactIn): Promise<ZapExactIn> {
+    }: ZappingBeefyExactIn): ZapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
 
