@@ -26,6 +26,8 @@ import {
     Fabric__factory,
     KavaRouter,
     KavaRouter__factory,
+    Mahalend,
+    Mahalend__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -53,7 +55,7 @@ import { ONE_INCH_ORACLE_MAP } from './constants'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
 import { ZappingCream } from './zappingCream'
-
+import { ZappingMahalend } from './zappingMahalend'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
@@ -146,6 +148,10 @@ export class Symbiosis {
 
     public newZappingAave(omniPoolConfig: OmniPoolConfig) {
         return new ZappingAave(this, omniPoolConfig)
+    }
+
+    public newZappingMahalend(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingMahalend(this, omniPoolConfig)
     }
 
     public newZappingCream(omniPoolConfig: OmniPoolConfig) {
@@ -244,6 +250,13 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return Aave__factory.connect(address, signerOrProvider)
+    }
+
+    public mahalendPool(chainId: ChainId, signer?: Signer): Mahalend {
+        const address = this.chainConfig(chainId).mahalendPool
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return Mahalend__factory.connect(address, signerOrProvider)
     }
 
     public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {

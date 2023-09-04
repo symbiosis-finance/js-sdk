@@ -18,6 +18,8 @@ export type ChainConfig = {
     multicallRouter: string
     aavePool: string
     aavePoolDataProvider: string
+    mahalendPool: string
+    mahalendPoolDataProvider: string
     creamComptroller: string
     creamCompoundLens: string
     renGatewayRegistry: string
