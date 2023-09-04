@@ -1,10 +1,11 @@
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
+import { BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount, wrappedToken } from '../entities'
 import { MulticallRouter, SyncSwapLaunchPool, SyncSwapLaunchPool__factory } from './contracts'
 import { ChainId } from '../constants'
 import JSBI from 'jsbi'
 import type { Symbiosis } from './symbiosis'
 import { OmniPoolConfig } from './types'
+import { ZapExactIn } from './zapping'
 
 interface ZappingSyncSwapLaunchPoolParams {
     symbiosis: Symbiosis
@@ -46,7 +47,7 @@ export class ZappingSyncSwapLaunchPool extends BaseSwapping {
         revertableAddress,
         slippage,
         deadline,
-    }: ZappingSyncSwapLaunchPoolExactInParams): Promise<SwapExactIn> {
+    }: ZappingSyncSwapLaunchPoolExactInParams): Promise<ZapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(this.chainId)
         this.userAddress = to
 
