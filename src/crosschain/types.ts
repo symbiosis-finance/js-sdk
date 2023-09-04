@@ -28,7 +28,7 @@ export type ChainConfig = {
     fabric: string
     waitForBlocksCount: number
     blocksPerYear: number
-    revertableAddress: string
+    revertableAddress?: string
 }
 
 export type AdvisorConfig = {

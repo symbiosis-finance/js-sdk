@@ -267,7 +267,7 @@ export class RevertPending {
                 this.symbiosis.portal(chainIdFrom).address, // _receiveSide
                 this.symbiosis.bridge(chainIdFrom).address, // _oppositeBridge
                 chainIdFrom, // _chainId
-                this.symbiosis.chainConfig(chainIdFrom).revertableAddress, // _sender
+                this.symbiosis.chainConfig(chainIdFrom).revertableAddress ?? revertableAddress, // _sender // @@
                 this.symbiosis.clientId, // _clientId
             ])
             receiveSide = synthesis.address
@@ -345,7 +345,7 @@ export class RevertPending {
     }
 
     private getRevertSynthesizeTransactionRequestV2(fee: TokenAmount): TransactionRequest | TronTransactionData {
-        const { internalId, chainIdFrom } = this.request
+        const { internalId, chainIdFrom, revertableAddress } = this.request
         const portal = this.symbiosis.portal(chainIdFrom)
 
         const params = {
@@ -372,7 +372,7 @@ export class RevertPending {
                 contractAddress: portal.address,
                 functionName: 'metaRevertRequest',
                 params: [Object.values(params)],
-                ownerAddress: this.symbiosis.chainConfig(chainIdFrom).revertableAddress, // this.request.revertableAddress, // correct??
+                ownerAddress: this.symbiosis.chainConfig(chainIdFrom).revertableAddress ?? revertableAddress, // this.request.revertableAddress, // correct??
                 value: 0,
             })
             console.log({ tronData })

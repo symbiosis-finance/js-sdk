@@ -6,14 +6,15 @@
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 11 },
-                { "index": 1, "tokenId": 14 },
-                { "index": 2, "tokenId": 13 },
+                { "index": 0, "tokenId": 12 },
+                { "index": 1, "tokenId": 15 },
+                { "index": 2, "tokenId": 14 },
                 { "index": 5, "tokenId": 2 },
-                { "index": 6, "tokenId": 15 },
-                { "index": 8, "tokenId": 18 },
-                { "index": 9, "tokenId": 19 },
-                { "index": 10, "tokenId": 20 }
+                { "index": 6, "tokenId": 16 },
+                { "index": 7, "tokenId": 22 },
+                { "index": 8, "tokenId": 19 },
+                { "index": 9, "tokenId": 20 },
+                { "index": 10, "tokenId": 21 }
             ]
         },
         {
@@ -22,9 +23,9 @@
             "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
             "id": 1,
             "tokens": [
-                { "index": 0, "tokenId": 16 },
-                { "index": 1, "tokenId": 12 },
-                { "index": 2, "tokenId": 17 }
+                { "index": 0, "tokenId": 17 },
+                { "index": 1, "tokenId": 13 },
+                { "index": 2, "tokenId": 18 }
             ]
         }
     ],
@@ -34,13 +35,13 @@
             "symbol": "USDC",
             "name": "USD Coin",
             "chainId": 5,
-            "address": "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "deprecated": false,
+            "address": "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
             "id": 0
         },
         {
@@ -48,13 +49,13 @@
             "symbol": "WETH",
             "name": "Wrapped ETH",
             "chainId": 5,
-            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
+            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
             "id": 1
         },
         {
@@ -62,13 +63,13 @@
             "symbol": "BUSD",
             "name": "Binance USD",
             "chainId": 97,
-            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
             },
             "deprecated": false,
+            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
             "id": 2
         },
         {
@@ -76,13 +77,13 @@
             "symbol": "USDT",
             "name": "USDT",
             "chainId": 43113,
-            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "deprecated": false,
+            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
             "id": 3
         },
         {
@@ -90,13 +91,13 @@
             "symbol": "USDT",
             "name": "USDT",
             "chainId": 80001,
-            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "deprecated": false,
+            "address": "0x9a01bf917477dD9F5D715D188618fc8B7350cd22",
             "id": 4
         },
         {
@@ -104,13 +105,13 @@
             "symbol": "USDC",
             "name": "Circle USD",
             "chainId": 534353,
-            "address": "0x67aE69Fd63b4fc8809ADc224A9b82Be976039509",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
             },
             "deprecated": false,
+            "address": "0x67aE69Fd63b4fc8809ADc224A9b82Be976039509",
             "id": 5
         },
         {
@@ -118,13 +119,13 @@
             "symbol": "WETH",
             "name": "Wrapped ETH",
             "chainId": 534353,
-            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
+            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
             "id": 6
         },
         {
@@ -132,13 +133,13 @@
             "symbol": "WETH",
             "name": "Wrapped ETH",
             "chainId": 534351,
-            "address": "0x5300000000000000000000000000000000000004",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
+            "address": "0x5300000000000000000000000000000000000004",
             "id": 7
         },
         {
@@ -146,13 +147,13 @@
             "symbol": "USDT",
             "name": "Tether",
             "chainId": 7001,
-            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "deprecated": false,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "id": 8
         },
         {
@@ -160,13 +161,13 @@
             "symbol": "USDT",
             "name": "Tether",
             "chainId": 59140,
-            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "deprecated": false,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "id": 9
         },
         {
@@ -174,21 +175,34 @@
             "symbol": "USDT",
             "name": "Tether",
             "chainId": 5001,
-            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "deprecated": false,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "id": 10
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "USDT",
+            "chainId": 2494104990,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "deprecated": false,
+            "address": "0x42a1e39aefa49290f2b3f9ed688d7cecf86cd6e0",
+            "id": 11
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "sUSDC from Goerli",
             "chainId": 97,
-            "address": "0x32Ac07C5D3D6002B853836a48EE8538C9CF29ad4",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -196,7 +210,8 @@
             },
             "chainFromId": 5,
             "deprecated": false,
-            "id": 11,
+            "address": "0x32Ac07C5D3D6002B853836a48EE8538C9CF29ad4",
+            "id": 12,
             "originalId": 0
         },
         {
@@ -204,7 +219,6 @@
             "symbol": "sWETH",
             "name": "sWETH from Goerli",
             "chainId": 97,
-            "address": "0x70470021F81e30497F86962e889BC732CA70aeE1",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -212,7 +226,8 @@
             },
             "chainFromId": 5,
             "deprecated": false,
-            "id": 12,
+            "address": "0x70470021F81e30497F86962e889BC732CA70aeE1",
+            "id": 13,
             "originalId": 1
         },
         {
@@ -220,7 +235,6 @@
             "symbol": "sUSDT",
             "name": "sUSDT from Fuji",
             "chainId": 97,
-            "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -228,7 +242,8 @@
             },
             "chainFromId": 43113,
             "deprecated": false,
-            "id": 13,
+            "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
+            "id": 14,
             "originalId": 3
         },
         {
@@ -236,7 +251,6 @@
             "symbol": "sUSDT",
             "name": "sUSDT from Mumbai",
             "chainId": 97,
-            "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -244,7 +258,8 @@
             },
             "chainFromId": 80001,
             "deprecated": false,
-            "id": 14,
+            "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
+            "id": 15,
             "originalId": 4
         },
         {
@@ -252,7 +267,6 @@
             "symbol": "sUSDC",
             "name": "sUSDC from Scroll Testnet",
             "chainId": 97,
-            "address": "0xe586751BAED5b49Ba521e8169051b11A85b79007",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -260,7 +274,8 @@
             },
             "chainFromId": 534353,
             "deprecated": false,
-            "id": 15,
+            "address": "0xe586751BAED5b49Ba521e8169051b11A85b79007",
+            "id": 16,
             "originalId": 5
         },
         {
@@ -268,7 +283,6 @@
             "symbol": "sWETH",
             "name": "sWETH from Scroll",
             "chainId": 97,
-            "address": "0xabbEf7E6d201e03368DBA03BD7D87B350915f6EE",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -276,7 +290,8 @@
             },
             "chainFromId": 534353,
             "deprecated": false,
-            "id": 16,
+            "address": "0xabbEf7E6d201e03368DBA03BD7D87B350915f6EE",
+            "id": 17,
             "originalId": 6
         },
         {
@@ -284,7 +299,6 @@
             "symbol": "sWETH",
             "name": "sWETH from Scroll Sepolia",
             "chainId": 97,
-            "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -292,7 +306,8 @@
             },
             "chainFromId": 534351,
             "deprecated": false,
-            "id": 17,
+            "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
+            "id": 18,
             "originalId": 7
         },
         {
@@ -300,7 +315,6 @@
             "symbol": "sUSDT",
             "name": "sUSDT from ZetaChain Athens 2",
             "chainId": 97,
-            "address": "0xA31EB10427E47517A4E30DCC17054A2F2692aAe1",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -308,7 +322,8 @@
             },
             "chainFromId": 7001,
             "deprecated": false,
-            "id": 18,
+            "address": "0xA31EB10427E47517A4E30DCC17054A2F2692aAe1",
+            "id": 19,
             "originalId": 8
         },
         {
@@ -316,7 +331,6 @@
             "symbol": "sUSDT",
             "name": "sUSDT from Linea Testnet",
             "chainId": 97,
-            "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -324,7 +338,8 @@
             },
             "chainFromId": 59140,
             "deprecated": false,
-            "id": 19,
+            "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
+            "id": 20,
             "originalId": 9
         },
         {
@@ -332,7 +347,6 @@
             "symbol": "sUSDT",
             "name": "sUSDT from Mantle Testnet",
             "chainId": 97,
-            "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -340,15 +354,31 @@
             },
             "chainFromId": 5001,
             "deprecated": false,
-            "id": 20,
+            "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
+            "id": 21,
             "originalId": 10
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "sUSDT from Shasta (Tron)",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 2494104990,
+            "deprecated": false,
+            "address": "0x519663f7B0a8d4eb9cbA0A8dEBB70e26159539AF",
+            "id": 22,
+            "originalId": 11
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Portal", "value": "0" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Synthesis", "value": "0" },
-        { "tokenId": 11, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
@@ -358,6 +388,8 @@
         { "tokenId": 18, "type": "Synthesis", "value": "0" },
         { "tokenId": 19, "type": "Synthesis", "value": "0" },
         { "tokenId": 20, "type": "Synthesis", "value": "0" },
+        { "tokenId": 21, "type": "Synthesis", "value": "0" },
+        { "tokenId": 22, "type": "Synthesis", "value": "0" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Portal", "value": "0" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
@@ -365,6 +397,7 @@
         { "tokenId": 7, "type": "Portal", "value": "0" },
         { "tokenId": 8, "type": "Portal", "value": "0" },
         { "tokenId": 9, "type": "Portal", "value": "0" },
-        { "tokenId": 10, "type": "Portal", "value": "0" }
+        { "tokenId": 10, "type": "Portal", "value": "0" },
+        { "tokenId": 11, "type": "Portal", "value": "0" }
     ]
 }

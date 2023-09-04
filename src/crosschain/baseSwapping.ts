@@ -128,19 +128,19 @@ export abstract class BaseSwapping {
 
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
-        this.revertableAddresses = revertableAddress
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
-        this.revertableAddresses[tokenAmountIn.token.chainId] = this.symbiosis.chainConfig(
-            tokenAmountIn.token.chainId
-        ).revertableAddress
-        this.revertableAddresses[tokenOut.chainId] = this.symbiosis.chainConfig(tokenOut.chainId).revertableAddress
-        this.revertableAddresses[this.omniPoolConfig.chainId] = this.symbiosis.chainConfig(
-            this.omniPoolConfig.chainId
-        ).revertableAddress
+        // @@ CHECK THIS !! ! ! ! ! ! ! !
+        this.revertableAddresses = {}
+        this.revertableAddresses[tokenAmountIn.token.chainId] =
+            this.symbiosis.chainConfig(tokenAmountIn.token.chainId).revertableAddress ?? revertableAddress
+        this.revertableAddresses[tokenOut.chainId] =
+            this.symbiosis.chainConfig(tokenOut.chainId).revertableAddress ?? revertableAddress
+        this.revertableAddresses[this.omniPoolConfig.chainId] =
+            this.symbiosis.chainConfig(this.omniPoolConfig.chainId).revertableAddress ?? revertableAddress
 
         console.log('this.revertableAddresses', this.revertableAddresses)
 
@@ -227,6 +227,7 @@ export abstract class BaseSwapping {
         }
         return revertableAddresses
     }
+
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
         const MINIMUM_SLIPPAGE = 20 // 0.2%
         if (totalSlippage < MINIMUM_SLIPPAGE) {

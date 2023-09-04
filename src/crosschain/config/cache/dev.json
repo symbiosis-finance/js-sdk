@@ -17,13 +17,13 @@
             "symbol": "WETH",
             "name": "Wrapped ETH",
             "chainId": 5,
-            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
+            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
             "id": 0
         },
         {
@@ -31,13 +31,13 @@
             "symbol": "WETH",
             "name": "Wrapped ETH",
             "chainId": 534353,
-            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
+            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
             "id": 1
         },
         {
@@ -45,7 +45,6 @@
             "symbol": "sWETH",
             "name": "Wrapped Ether from Goerli",
             "chainId": 97,
-            "address": "0xb1c5691B3Cb5e1B673Ef9Aa2599740a1cC76F928",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -53,6 +52,7 @@
             },
             "chainFromId": 5,
             "deprecated": false,
+            "address": "0xb1c5691B3Cb5e1B673Ef9Aa2599740a1cC76F928",
             "id": 2,
             "originalId": 0
         },
@@ -61,7 +61,6 @@
             "symbol": "sWETH",
             "name": "Wrapped Ether from Scroll Testnet",
             "chainId": 97,
-            "address": "0x3624b5e063405e7724cBbC24f504eA3da3e08b81",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -69,6 +68,7 @@
             },
             "chainFromId": 534353,
             "deprecated": false,
+            "address": "0x3624b5e063405e7724cBbC24f504eA3da3e08b81",
             "id": 3,
             "originalId": 1
         }
