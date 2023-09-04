@@ -16,7 +16,7 @@ import {
 } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
+import { AggregatorTrade, IzumiTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
 import { Transit } from './transit'
 import { getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -25,6 +25,19 @@ import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
+import { OmniPoolConfig } from './types'
+import { WrapTrade } from './trade/wrapTrade'
+
+export type SwapExactInParams = {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    from: string
+    to: string
+    revertableAddress: string
+    slippage: number
+    deadline: number
+    oneInchProtocols?: OneInchProtocols
+}
 
 interface SwapInfo {
     fee: TokenAmount
@@ -40,7 +53,6 @@ interface SwapInfo {
 
 export type EthSwapExactIn = SwapInfo & {
     type: 'evm'
-    execute: (signer: Signer) => Execute
     transactionRequest: TransactionRequest
 }
 
@@ -116,7 +128,7 @@ export abstract class BaseSwapping {
 
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
-        this.revertableAddress = revertableAddress
+        this.revertableAddresses = revertableAddress
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
@@ -126,8 +138,8 @@ export abstract class BaseSwapping {
             tokenAmountIn.token.chainId
         ).revertableAddress
         this.revertableAddresses[tokenOut.chainId] = this.symbiosis.chainConfig(tokenOut.chainId).revertableAddress
-        this.revertableAddresses[this.symbiosis.omniPoolConfig.chainId] = this.symbiosis.chainConfig(
-            this.symbiosis.omniPoolConfig.chainId
+        this.revertableAddresses[this.omniPoolConfig.chainId] = this.symbiosis.chainConfig(
+            this.omniPoolConfig.chainId
         ).revertableAddress
 
         console.log('this.revertableAddresses', this.revertableAddresses)
@@ -165,8 +177,6 @@ export abstract class BaseSwapping {
             await this.tradeC.init()
         }
         // <<< NOTE create trades with calculated fee
-
-        const transactionRequest = this.getTransactionRequest(fee, feeV2)
 
         let crossChainFee = fee
         if (feeV2) {
@@ -206,7 +216,6 @@ export abstract class BaseSwapping {
         return {
             ...swapInfo,
             type: 'evm',
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
             transactionRequest,
         }
     }
@@ -273,11 +282,12 @@ export abstract class BaseSwapping {
                 direction: 'burn',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.getRevertableAddress(this.tokenOut.chainId),
-                chainIdIn: this.symbiosis.omniPoolConfig.chainId,
+                chainIdIn: this.omniPoolConfig.chainId,
                 chainIdOut: this.tokenOut.chainId,
             })
             return wfc2.waitForComplete(receipt2)
         }
+
         return new WaitForComplete({
             direction: this.transit.direction,
             chainIdOut: this.tokenOut.chainId,

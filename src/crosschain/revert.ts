@@ -354,7 +354,7 @@ export class RevertPending {
             receiveSide: portal.address,
             managerChainBridge: this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
             sourceChainBridge: this.symbiosis.bridge(chainIdFrom).address,
-            managerChainId: this.symbiosis.omniPoolConfig.chainId,
+            managerChainId: this.omniPoolConfig.chainId,
             sourceChainId: chainIdFrom,
             router: AddressZero, // multicall router
             swapCalldata: [], // swapCalldata,
@@ -548,7 +548,7 @@ export class RevertPending {
             stableBridgingFee: fee.raw.toString(),
             internalID: internalId,
             receiveSide: portal.address,
-            managerChainBridge: this.symbiosis.bridge(this.symbiosis.omniPoolConfig.chainId).address,
+            managerChainBridge: this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
             managerChainId: this.omniPoolConfig.chainId,
             sourceChainBridge: AddressZero,
             sourceChainId: chainIdTo,

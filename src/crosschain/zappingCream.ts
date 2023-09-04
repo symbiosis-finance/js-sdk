@@ -77,7 +77,7 @@ export class ZappingCream extends BaseSwapping {
         revertableAddress,
         slippage,
         deadline,
-    }: SwapExactInParams): SwapExactIn {
+    }: SwapExactInParams): Promise<SwapExactIn> {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
 

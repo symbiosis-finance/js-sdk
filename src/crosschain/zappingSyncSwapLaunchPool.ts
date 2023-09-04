@@ -46,7 +46,7 @@ export class ZappingSyncSwapLaunchPool extends BaseSwapping {
         revertableAddress,
         slippage,
         deadline,
-    }: ZappingSyncSwapLaunchPoolExactInParams): SwapExactIn {
+    }: ZappingSyncSwapLaunchPoolExactInParams): Promise<SwapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(this.chainId)
         this.userAddress = to
 

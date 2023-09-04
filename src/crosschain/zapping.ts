@@ -17,6 +17,8 @@ import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 import { isTronChainId, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
+import { OmniPoolConfig } from './types'
+import { WrapTrade } from './trade/wrapTrade'
 
 export type ZapExactIn = Promise<{
     type: 'tron' | 'evm'
@@ -45,7 +47,6 @@ export class Zapping {
     private to!: string
     private revertableAddress!: string
     private tokenAmountIn!: TokenAmount
-    private readonly chainIdOut: ChainId
     private slippage!: number
     private deadline!: number
     private ttl!: number
@@ -73,11 +74,10 @@ export class Zapping {
         revertableAddress,
         slippage,
         deadline,
-    }: ZappingExactInParams): SwapExactIn {
+    }: ZappingExactInParams): ZapExactIn {
         this.tokenAmountIn = tokenAmountIn
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
-        const { revertableAddress } = this.symbiosis.chainConfig(this.chainIdOut)
         console.log({ revertableAddress })
         this.revertableAddress = tronAddressToEvm(revertableAddress)
         this.slippage = slippage
@@ -298,10 +298,10 @@ export class Zapping {
                     amount: tokenAmount.raw.toString(),
                     rtoken: tokenAmount.token.address,
                     chain2address: this.to,
-                    receiveSide: this.symbiosis.synthesis(this.chainIdOut).address,
-                    oppositeBridge: this.symbiosis.bridge(this.chainIdOut).address,
+                    receiveSide: this.symbiosis.synthesis(chainIdOut).address,
+                    oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
                     syntCaller: this.from,
-                    chainID: this.chainIdOut,
+                    chainID: chainIdOut,
                     swapTokens: [this.synthToken.address],
                     secondDexRouter: AddressZero,
                     secondSwapCalldata: [],
@@ -354,7 +354,7 @@ export class Zapping {
         const chainIdOut = this.omniPoolConfig.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
-        const synthesis = this.symbiosis.synthesis(this.chainIdOut)
+        const synthesis = this.symbiosis.synthesis(chainIdOut)
 
         const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
@@ -368,7 +368,7 @@ export class Zapping {
             internalId,
             contractAddress: synthesis.address,
             revertableAddress: this.revertableAddress,
-            chainId: this.chainIdOut,
+            chainId: chainIdOut,
         })
 
         const calldata = synthesis.interface.encodeFunctionData('metaMintSyntheticToken', [
@@ -392,7 +392,7 @@ export class Zapping {
             receiveSide: synthesis.address,
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
-            chainIdTo: this.chainIdOut,
+            chainIdTo: chainIdOut,
         })
 
         return new TokenAmount(this.synthToken, fee.toString())

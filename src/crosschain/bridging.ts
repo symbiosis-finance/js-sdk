@@ -40,17 +40,10 @@ export type BridgeExactIn = Promise<
     )
 >
 
-export interface BridgeExactInParams {
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    from: string
-    to: string
-    revertableAddress: string
-}
-
 export type BridgeExactInParams = {
     tokenAmountIn: TokenAmount
     tokenOut: Token
+    from: string
     to: string
     revertableAddress: string
 }
@@ -77,7 +70,6 @@ export class Bridging {
         this.tokenOut = tokenOut
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
-        const { revertableAddress } = this.symbiosis.chainConfig(tokenOut.chainId)
         console.log({ revertableAddress })
         this.revertableAddress = tronAddressToEvm(revertableAddress)
         this.direction = tokenAmountIn.token.isSynthetic ? 'burn' : 'mint'
