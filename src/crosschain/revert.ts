@@ -13,9 +13,11 @@ import { WaitForComplete } from './waitForComplete'
 import { OmniTrade } from './trade'
 import { OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
+import { DataProvider } from './dataProvider'
 
 export class RevertPending {
     protected multicallRouter: MulticallRouter
+    protected dataProvider: DataProvider
 
     private deadline!: number
     private slippage!: number
@@ -31,6 +33,7 @@ export class RevertPending {
 
         this.omniPoolConfig = omniPoolConfig
         this.multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
+        this.dataProvider = new DataProvider(symbiosis)
     }
 
     async revert(slippage: number, deadline: number) {
@@ -411,7 +414,8 @@ export class RevertPending {
             this.deadline,
             this.symbiosis,
             to,
-            this.omniPoolConfig
+            this.omniPoolConfig,
+            this.dataProvider
         )
         await omniTrade.init()
 
