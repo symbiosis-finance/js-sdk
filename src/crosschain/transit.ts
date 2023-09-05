@@ -7,6 +7,7 @@ import { CHAINS_PRIORITY } from './constants'
 import { BridgeDirection, OmniPoolConfig } from './types'
 import { OmniTrade } from './trade'
 import { MulticallRouter } from './contracts'
+import { DataProvider } from './dataProvider'
 
 export class Transit {
     public direction: BridgeDirection
@@ -31,6 +32,7 @@ export class Transit {
         protected slippage: number,
         protected deadline: number,
         protected omniPoolConfig: OmniPoolConfig,
+        protected dataProvider: DataProvider,
         protected fee?: TokenAmount
     ) {
         this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, omniPoolConfig.chainId)
@@ -209,7 +211,8 @@ export class Transit {
             this.deadline,
             this.symbiosis,
             to,
-            this.omniPoolConfig
+            this.omniPoolConfig,
+            this.dataProvider
         )
         await trade.init()
 

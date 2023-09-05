@@ -405,6 +405,7 @@ export abstract class BaseSwapping {
             this.slippage['B'],
             this.deadline,
             this.omniPoolConfig,
+            this.dataProvider,
             fee
         )
     }

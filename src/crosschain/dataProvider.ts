@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
 import { Token } from '../entities'
-import { OneInchOracle } from './contracts'
+import { OmniPool, OneInchOracle } from './contracts'
 import { Symbiosis } from './symbiosis'
 import { UniLikeTrade, OneInchTrade, getRateToEth } from './trade'
 
@@ -14,6 +14,12 @@ export class DataProvider {
             const provider = this.symbiosis.getProvider(tokenIn.chainId)
 
             return UniLikeTrade.getPairs(provider, tokenIn, tokenOut)
+        })
+    }
+
+    async indexToAsset(pool: OmniPool, indexOut: number) {
+        return this.fromCache(['indexToAsset', pool.address, indexOut], () => {
+            return pool.indexToAsset(indexOut)
         })
     }
 

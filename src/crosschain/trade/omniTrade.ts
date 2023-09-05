@@ -4,7 +4,9 @@ import { basisPointsToPercent, calculatePriceImpact } from '../utils'
 import { ONE } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
-import {BigNumber} from "ethers";
+import { BigNumber } from 'ethers'
+import { Error, ErrorCode } from '../error'
+import { DataProvider } from '../dataProvider'
 
 export class OmniTrade {
     public route!: Token[]
@@ -22,23 +24,24 @@ export class OmniTrade {
         private readonly deadline: number,
         private readonly symbiosis: Symbiosis,
         private readonly to: string,
-        private readonly omniPoolConfig: OmniPoolConfig
+        private readonly omniPoolConfig: OmniPoolConfig,
+        private readonly dataProvider: DataProvider
     ) {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
     private async validateCashReserves(tokenAmount: TokenAmount, indexOut: number) {
-        const assetOut = await this.pool.indexToAsset(indexOut)
+        const assetOut = await this.dataProvider.indexToAsset(this.pool, indexOut)
         const percent = 70
-        const threshold = assetOut.cash.mul(100).div(percent)
+        const threshold = assetOut.cash.mul(percent).div(100)
 
         const delimiter = BigNumber.from(10).pow(tokenAmount.token.decimals)
         const multiplier = BigNumber.from(10).pow(18)
-        const amount = BigNumber.from(tokenAmount.raw).mul(multiplier).div(delimiter)
+        const amount = BigNumber.from(tokenAmount.raw.toString()).mul(multiplier).div(delimiter)
 
         if (threshold.lt(amount)) {
-            throw new Error(`More than ${percent}% of pool reserves`)
+            throw new Error(`Amount is too high`, ErrorCode.AMOUNT_TOO_HIGH)
         }
     }
 
@@ -48,11 +51,11 @@ export class OmniTrade {
         const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenAmountIn.token)
         const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenOut)
 
+        await this.validateCashReserves(this.tokenAmountIn, indexOut)
+
         const quoteFrom = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
 
         this.amountOut = new TokenAmount(this.tokenOut, quoteFrom.actualToAmount.toString())
-
-        await this.validateCashReserves(this.amountOut, indexOut)
 
         const slippageTolerance = basisPointsToPercent(this.slippage)
         const slippageAdjustedAmountOut = new Fraction(ONE)
