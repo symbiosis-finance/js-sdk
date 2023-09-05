@@ -4,6 +4,7 @@ import { basisPointsToPercent, calculatePriceImpact } from '../utils'
 import { ONE } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
+import {BigNumber} from "ethers";
 
 export class OmniTrade {
     public route!: Token[]
@@ -27,6 +28,20 @@ export class OmniTrade {
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
+    private async validateCashReserves(tokenAmount: TokenAmount, indexOut: number) {
+        const assetOut = await this.pool.indexToAsset(indexOut)
+        const percent = 70
+        const threshold = assetOut.cash.mul(100).div(percent)
+
+        const delimiter = BigNumber.from(10).pow(tokenAmount.token.decimals)
+        const multiplier = BigNumber.from(10).pow(18)
+        const amount = BigNumber.from(tokenAmount.raw).mul(multiplier).div(delimiter)
+
+        if (threshold.lt(amount)) {
+            throw new Error(`More than ${percent}% of pool reserves`)
+        }
+    }
+
     public async init() {
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
@@ -36,6 +51,8 @@ export class OmniTrade {
         const quoteFrom = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
 
         this.amountOut = new TokenAmount(this.tokenOut, quoteFrom.actualToAmount.toString())
+
+        await this.validateCashReserves(this.amountOut, indexOut)
 
         const slippageTolerance = basisPointsToPercent(this.slippage)
         const slippageAdjustedAmountOut = new Fraction(ONE)
