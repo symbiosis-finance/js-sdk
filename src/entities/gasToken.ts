@@ -11,7 +11,7 @@ const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
         decimals,
         icons: {
             small: `https://s2.coinmarketcap.com/static/img/coins/64x64/${iconId}.png`,
-            large: `https://s2.coinmarketcap.com/static/img/coins/128x128/${iconId}.png`,
+            large: `https://s2.coinmarketcap.com/static/img/coins/64x64/${iconId}.png`,
         },
     })
 
@@ -20,8 +20,8 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ETH_RINKEBY]: GAS(ChainId.ETH_RINKEBY, 'ETH', 1027),
     [ChainId.ETH_GOERLI]: GAS(ChainId.ETH_GOERLI, 'ETH', 1027),
     [ChainId.ETH_KOVAN]: GAS(ChainId.ETH_KOVAN, 'ETH', 1027),
-    [ChainId.BSC_MAINNET]: GAS(ChainId.BSC_MAINNET, 'BNB', 15084),
-    [ChainId.BSC_TESTNET]: GAS(ChainId.BSC_TESTNET, 'BNB', 15084),
+    [ChainId.BSC_MAINNET]: GAS(ChainId.BSC_MAINNET, 'BNB', 1839),
+    [ChainId.BSC_TESTNET]: GAS(ChainId.BSC_TESTNET, 'BNB', 1839),
     [ChainId.MATIC_MAINNET]: GAS(ChainId.MATIC_MAINNET, 'MATIC', 3890),
     [ChainId.MATIC_MUMBAI]: GAS(ChainId.MATIC_MUMBAI, 'MATIC', 3890),
     [ChainId.AVAX_MAINNET]: GAS(ChainId.AVAX_MAINNET, 'AVAX', 5805),
