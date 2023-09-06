@@ -248,7 +248,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0xb9667Cf9A495A123b0C43B924f6c2244f42817BE',
+            router: '0x9b1adec00a25fffd87a5bb17f61916e1c26f6844',
             dexFee: 25,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
