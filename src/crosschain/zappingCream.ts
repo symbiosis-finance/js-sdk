@@ -70,15 +70,7 @@ export class ZappingCream extends BaseSwapping {
             .filter((i) => !!i) as Market[]
     }
 
-    public async exactIn({
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        revertableAddress,
-        slippage,
-        deadline,
-    }: SwapExactInParams): ZapExactIn {
+    public async exactIn({ tokenAmountIn, tokenOut, from, to, slippage, deadline }: SwapExactInParams): ZapExactIn {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
 
@@ -105,7 +97,6 @@ export class ZappingCream extends BaseSwapping {
             tokenOut: wrappedTokenOut,
             from,
             to,
-            revertableAddress,
             slippage,
             deadline,
         })

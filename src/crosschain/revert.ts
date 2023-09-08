@@ -267,7 +267,7 @@ export class RevertPending {
                 this.symbiosis.portal(chainIdFrom).address, // _receiveSide
                 this.symbiosis.bridge(chainIdFrom).address, // _oppositeBridge
                 chainIdFrom, // _chainId
-                this.symbiosis.chainConfig(chainIdFrom).revertableAddress ?? revertableAddress, // _sender // @@
+                revertableAddress, // _sender
                 this.symbiosis.clientId, // _clientId
             ])
             receiveSide = synthesis.address
@@ -372,7 +372,7 @@ export class RevertPending {
                 contractAddress: portal.address,
                 functionName: 'metaRevertRequest',
                 params: [Object.values(params)],
-                ownerAddress: this.symbiosis.chainConfig(chainIdFrom).revertableAddress ?? revertableAddress, // this.request.revertableAddress, // correct??
+                ownerAddress: revertableAddress,
                 value: 0,
             })
             console.log({ tronData })

@@ -9,15 +9,7 @@ export class ZappingAave extends BaseSwapping {
     protected aavePool!: Aave
     protected aToken!: string
 
-    public async exactIn({
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        revertableAddress,
-        slippage,
-        deadline,
-    }: SwapExactInParams): ZapExactIn {
+    public async exactIn({ tokenAmountIn, tokenOut, from, to, slippage, deadline }: SwapExactInParams): ZapExactIn {
         this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to
 
@@ -30,7 +22,6 @@ export class ZappingAave extends BaseSwapping {
             tokenOut: wrappedToken(tokenOut),
             from,
             to,
-            revertableAddress,
             slippage,
             deadline,
         })

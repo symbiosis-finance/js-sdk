@@ -18,7 +18,6 @@ interface ZappingSyncSwapLaunchPoolExactInParams {
     tokenAmountIn: TokenAmount
     from: string
     to: string
-    revertableAddress: string
     slippage: number
     deadline: number
 }
@@ -44,7 +43,6 @@ export class ZappingSyncSwapLaunchPool extends BaseSwapping {
         tokenAmountIn,
         from,
         to,
-        revertableAddress,
         slippage,
         deadline,
     }: ZappingSyncSwapLaunchPoolExactInParams): ZapExactIn {
@@ -58,7 +56,6 @@ export class ZappingSyncSwapLaunchPool extends BaseSwapping {
             tokenOut: wrappedToken(this.tokenOut),
             from,
             to,
-            revertableAddress,
             slippage,
             deadline,
         })

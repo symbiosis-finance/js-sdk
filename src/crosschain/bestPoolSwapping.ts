@@ -14,16 +14,7 @@ export class BestPoolSwapping {
 
     public swapping?: Swapping
 
-    async exactIn({
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        revertableAddress,
-        slippage,
-        deadline,
-        oneInchProtocols,
-    }: SwapExactInParams) {
+    async exactIn({ tokenAmountIn, tokenOut, from, to, slippage, deadline, oneInchProtocols }: SwapExactInParams) {
         const omniPools: OmniPoolConfig[] = this.symbiosis.config.omniPools
 
         const results = await Promise.allSettled(
@@ -35,7 +26,6 @@ export class BestPoolSwapping {
                     tokenOut,
                     from,
                     to,
-                    revertableAddress,
                     slippage,
                     deadline,
                     oneInchProtocols,

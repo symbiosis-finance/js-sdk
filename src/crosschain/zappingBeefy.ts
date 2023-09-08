@@ -12,7 +12,6 @@ type ZappingBeefyExactIn = {
     vaultChainId: ChainId
     from: string
     to: string
-    revertableAddress: string
     slippage: number
     deadline: number
 }
@@ -29,7 +28,6 @@ export class ZappingBeefy extends BaseSwapping {
         vaultChainId,
         from,
         to,
-        revertableAddress,
         slippage,
         deadline,
     }: ZappingBeefyExactIn): ZapExactIn {
@@ -53,7 +51,6 @@ export class ZappingBeefy extends BaseSwapping {
             tokenOut,
             from,
             to,
-            revertableAddress,
             slippage,
             deadline,
         })

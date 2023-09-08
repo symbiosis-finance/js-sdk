@@ -28,12 +28,11 @@ import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig } from './types'
 import { WrapTrade } from './trade/wrapTrade'
 
-export type SwapExactInParams = {
+export interface SwapExactInParams {
     tokenAmountIn: TokenAmount
     tokenOut: Token
     from: string
     to: string
-    revertableAddress: string
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
@@ -69,19 +68,17 @@ export interface DetailedSlippage {
     C: number
 }
 
-type RevertableAddresses = Record<number, string>
-
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
 
     protected from!: string
     protected to!: string
-    protected revertableAddresses!: RevertableAddresses
     protected tokenAmountIn!: TokenAmount
     protected tokenOut!: Token
     protected slippage!: DetailedSlippage
     protected deadline!: number
     protected ttl!: number
+    protected revertableAddresses!: { AB: string; BC: string }
 
     protected route!: Token[]
 
@@ -106,7 +103,6 @@ export abstract class BaseSwapping {
         this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
-        this.revertableAddresses = {}
     }
 
     async doExactIn({
@@ -114,7 +110,6 @@ export abstract class BaseSwapping {
         tokenOut,
         from,
         to,
-        revertableAddress,
         slippage,
         deadline,
         oneInchProtocols,
@@ -133,16 +128,11 @@ export abstract class BaseSwapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
-        // @@ CHECK THIS !! ! ! ! ! ! ! !
-        this.revertableAddresses = {}
-        this.revertableAddresses[tokenAmountIn.token.chainId] =
-            this.symbiosis.chainConfig(tokenAmountIn.token.chainId).revertableAddress ?? revertableAddress
-        this.revertableAddresses[tokenOut.chainId] =
-            this.symbiosis.chainConfig(tokenOut.chainId).revertableAddress ?? revertableAddress
-        this.revertableAddresses[this.omniPoolConfig.chainId] =
-            this.symbiosis.chainConfig(this.omniPoolConfig.chainId).revertableAddress ?? revertableAddress
-
-        console.log('this.revertableAddresses', this.revertableAddresses)
+        if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
+            this.revertableAddresses = { AB: from, BC: to }
+        } else {
+            this.revertableAddresses = { AB: from, BC: from }
+        }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
@@ -220,12 +210,8 @@ export abstract class BaseSwapping {
         }
     }
 
-    private getRevertableAddress(chainId: ChainId) {
-        const revertableAddresses = this.revertableAddresses[chainId]
-        if (!revertableAddresses) {
-            throw new Error(`There is not revertable address for chain ${chainId}`)
-        }
-        return revertableAddresses
+    private getRevertableAddress(side: 'AB' | 'BC'): string {
+        return this.revertableAddresses[side]
     }
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
@@ -266,11 +252,12 @@ export abstract class BaseSwapping {
         if (!this.tokenOut) {
             throw new Error('Tokens are not set')
         }
+
         if (this.transit.isV2()) {
             const wfc1 = new WaitForComplete({
                 direction: 'mint',
                 symbiosis: this.symbiosis,
-                revertableAddress: this.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                revertableAddress: this.getRevertableAddress('AB'),
                 chainIdIn: this.tokenAmountIn.token.chainId,
                 chainIdOut: this.omniPoolConfig.chainId,
             })
@@ -282,7 +269,7 @@ export abstract class BaseSwapping {
             const wfc2 = new WaitForComplete({
                 direction: 'burn',
                 symbiosis: this.symbiosis,
-                revertableAddress: this.getRevertableAddress(this.tokenOut.chainId),
+                revertableAddress: this.getRevertableAddress('BC'),
                 chainIdIn: this.omniPoolConfig.chainId,
                 chainIdOut: this.tokenOut.chainId,
             })
@@ -293,7 +280,7 @@ export abstract class BaseSwapping {
             direction: this.transit.direction,
             chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,
-            revertableAddress: this.getRevertableAddress(this.tokenOut.chainId),
+            revertableAddress: this.getRevertableAddress('AB'),
             chainIdIn: this.tokenAmountIn.token.chainId,
         }).waitForComplete(receipt)
     }
@@ -630,7 +617,7 @@ export abstract class BaseSwapping {
                     chain2address: tronAddressToEvm(this.to),
                     receiveSide: tronAddressToEvm(this.symbiosis.portal(this.tokenOut.chainId).address),
                     oppositeBridge: tronAddressToEvm(this.symbiosis.bridge(this.tokenOut.chainId).address),
-                    revertableAddress: this.getRevertableAddress(this.tokenOut.chainId),
+                    revertableAddress: this.getRevertableAddress('AB'),
                     chainID: this.tokenOut.chainId,
                     clientID: this.symbiosis.clientId,
                 },
@@ -669,7 +656,7 @@ export abstract class BaseSwapping {
                     ),
                     finalCalldata: this.transit.isV2() ? this.finalCalldataV2(feeV2) : this.finalCalldata(),
                     finalOffset: this.transit.isV2() ? this.finalOffsetV2() : this.finalOffset(),
-                    revertableAddress: this.getRevertableAddress(chainIdOut),
+                    revertableAddress: this.getRevertableAddress('AB'),
                     clientID: this.symbiosis.clientId,
                 },
             ]),
@@ -696,7 +683,7 @@ export abstract class BaseSwapping {
         const externalId = getExternalId({
             internalId,
             contractAddress: synthesisAddress,
-            revertableAddress: this.getRevertableAddress(chainIdOut),
+            revertableAddress: this.getRevertableAddress('AB'),
             chainId: chainIdOut,
         })
 
@@ -742,7 +729,7 @@ export abstract class BaseSwapping {
         const externalId = getExternalId({
             internalId,
             contractAddress: portalAddress,
-            revertableAddress: this.getRevertableAddress(chainIdOut),
+            revertableAddress: this.getRevertableAddress('BC'),
             chainId: chainIdOut,
         })
 
@@ -781,7 +768,7 @@ export abstract class BaseSwapping {
         const externalId = getExternalId({
             internalId,
             contractAddress: portalAddress,
-            revertableAddress: this.getRevertableAddress(chainIdOut),
+            revertableAddress: this.getRevertableAddress('BC'),
             chainId: chainIdOut,
         })
 
@@ -868,6 +855,7 @@ export abstract class BaseSwapping {
         return this.synthesisV2.address
     }
 
+    // C
     protected finalCalldata(): string | [] {
         return this.tradeC?.callData || []
     }
@@ -885,7 +873,7 @@ export abstract class BaseSwapping {
                 chain2address: tronAddressToEvm(this.to), // address chain2address;
                 receiveSide: tronAddressToEvm(this.symbiosis.portal(this.tokenOut.chainId).address),
                 oppositeBridge: tronAddressToEvm(this.symbiosis.bridge(this.tokenOut.chainId).address),
-                revertableAddress: this.getRevertableAddress(this.tokenOut.chainId),
+                revertableAddress: this.getRevertableAddress('BC'),
                 chainID: this.tokenOut.chainId,
                 clientID: this.symbiosis.clientId,
             },
