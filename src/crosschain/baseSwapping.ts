@@ -290,9 +290,10 @@ export abstract class BaseSwapping {
         const metarouter = this.symbiosis.metaRouter(chainId)
         const providerTo = this.symbiosis.getProvider(chainId)
         const receipt = await providerTo.getTransactionReceipt(transactionHash)
-
+        if (!receipt) {
+            return undefined
+        }
         const eventId = utils.id('TransitTokenSent(address,uint256,address)')
-
         const log = receipt.logs.find((i: Log) => {
             return i.topics[0] === eventId
         })

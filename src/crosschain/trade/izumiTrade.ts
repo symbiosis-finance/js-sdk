@@ -9,6 +9,7 @@ import { getMulticall } from '../multicall'
 import { Symbiosis } from '../symbiosis'
 import { basisPointsToPercent } from '../utils'
 import type { SymbiosisTrade } from './symbiosisTrade'
+import { Multicall2 } from '../contracts/Multicall'
 
 interface IzumiAddresses {
     factory: string
@@ -170,7 +171,20 @@ export class IzumiTrade implements SymbiosisTrade {
             callData: quoterInterface.encodeFunctionData('swapAmount', [this.tokenAmountIn.raw.toString(), path]),
         }))
 
-        const results = await multicall.callStatic.tryAggregate(false, calls)
+        const maxChunkLength = 100
+        const chunks = Math.floor(calls.length / maxChunkLength) + 1
+
+        let results: Multicall2.ResultStructOutput[] = []
+        for (let i = 0; i < chunks; i++) {
+            const from = i * maxChunkLength
+            let to = (i + 1) * maxChunkLength
+            if (to > calls.length) {
+                to = calls.length
+            }
+            const callsPart = calls.slice(from, to)
+            const part = await multicall.callStatic.tryAggregate(false, callsPart)
+            results = [...results, ...part]
+        }
 
         let bestRoute: IzumiRoute | undefined
         let bestOutput: BigNumber | undefined

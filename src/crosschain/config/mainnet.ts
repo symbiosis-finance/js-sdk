@@ -235,8 +235,20 @@ export const config: Config = {
             rpc: 'https://mainnet.telos.net/evm',
             filterBlockOffset: 3000,
             waitForBlocksCount: 120,
-            stables: [],
-            router: '0xb9667Cf9A495A123b0C43B924f6c2244f42817BE',
+            stables: [
+                {
+                    name: 'syUSDC',
+                    address: '0xe6E5f3d264117E030C21920356641DbD5B3d660c',
+                    symbol: 'USDC',
+                    decimals: 6,
+                    chainId: 40,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+            ],
+            router: '0x9b1adec00a25fffd87a5bb17f61916e1c26f6844',
             dexFee: 25,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
@@ -548,7 +560,7 @@ export const config: Config = {
         },
         {
             id: 1101,
-            rpc: 'https://zkevm-rpc.com/',
+            rpc: 'https://rpc.ankr.com/polygon_zkevm',
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -683,7 +695,7 @@ export const config: Config = {
         },
         {
             id: 8453,
-            rpc: 'https://mainnet.base.org',
+            rpc: 'https://base.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -712,11 +724,11 @@ export const config: Config = {
             ],
             router: '0x327Df1E6de05895d2ab08513aaDD9313Fe505d86',
             dexFee: 0,
-            metaRouter: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365',
-            metaRouterGateway: '0xa0079829B9F1Edc5DD0DE3eC104f281745C4bD81',
-            bridge: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
+            metaRouter: '0x6F0f6393e45fE0E7215906B6f9cfeFf53EA139cf',
+            metaRouterGateway: '0x4cfA66497Fa84D739a0f785FBcEe9196f1C64e4a',
+            bridge: '0x8097f0B9f06C27AF9579F75762F971D745bb222F',
             synthesis: '0x0000000000000000000000000000000000000000',
-            portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
+            portal: '0xEE981B2459331AD268cc63CE6167b446AF4161f8',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             aavePool: '0x0000000000000000000000000000000000000000',

@@ -88,10 +88,10 @@ describe('#getOmniPoolByToken', () => {
     test(`by synth which doesn't exist in any pool`, () => {
         const token = new Token({
             decimals: 6,
-            symbol: 'USDC',
-            name: 'syUSDC',
+            symbol: 'USDT',
+            name: 'syUSDT',
             chainId: ChainId.TELOS_MAINNET,
-            address: '0xe6E5f3d264117E030C21920356641DbD5B3d660c',
+            address: '0x7bD3ffe9f0C9CF08FD60e102FEa455A6EA580276',
             isNative: false,
             icons: {
                 large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
