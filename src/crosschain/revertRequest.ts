@@ -6,17 +6,15 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
 import { TokenAmount } from '../entities'
 import { getExternalId } from './utils'
+import { SynthesizeRequestEvent } from './contracts/Portal'
+import { utils } from 'ethers'
+import { OmniPoolConfig } from './types'
+import { Error, ErrorCode } from './error'
 
 type InitProps = {
     validateState: boolean
     synthesizeRequestFinder?: SynthesizeRequestFinder
 }
-
-import { SynthesizeRequestEvent } from './contracts/Portal'
-import { utils } from 'ethers'
-import { OmniPoolConfig } from './types'
-import { Error, ErrorCode } from './error'
-import { isTronChainId } from './tron'
 
 export enum PendingRequestState {
     Default = 0,
