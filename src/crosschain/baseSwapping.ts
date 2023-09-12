@@ -129,9 +129,9 @@ export abstract class BaseSwapping {
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
         if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
-            this.revertableAddresses = { AB: from, BC: to }
+            this.revertableAddresses = { AB: this.from, BC: this.to }
         } else {
-            this.revertableAddresses = { AB: from, BC: from }
+            this.revertableAddresses = { AB: this.from, BC: this.from }
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
@@ -297,6 +297,7 @@ export abstract class BaseSwapping {
         const log = receipt.logs.find((i: Log) => {
             return i.topics[0] === eventId
         })
+
         if (!log) {
             return undefined
         }

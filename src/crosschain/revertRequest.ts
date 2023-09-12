@@ -16,6 +16,7 @@ import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
 import { Error, ErrorCode } from './error'
+import { isTronChainId } from './tron'
 
 export enum PendingRequestState {
     Default = 0,
@@ -159,12 +160,14 @@ export class RevertRequest {
                 `Tx ${this.transactionHash} does not exist on chain ${this.chainId}. Provider ${provider.connection.url}`
             )
         }
+
         let type: PendingRequestType = 'synthesize'
         let log = this.findSynthesizeRequest(receipt)
         if (!log) {
             type = 'burn'
             log = this.findBurnRequest(receipt)
         }
+
         if (!log) {
             throw new Error('Tx does not contain mint/burn event and cannot be reverted')
         }
