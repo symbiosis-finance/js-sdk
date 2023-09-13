@@ -5,7 +5,12 @@ import { isTronChainId, tronAddressToEvm } from './tron'
 import { ChainId } from '../constants'
 import type { Symbiosis } from './symbiosis'
 
-type BridgeRequestType = 'SynthesizeRequest' | 'BurnRequest' | 'RevertSynthesizeRequest' | 'RevertSynthesizeCompleted'
+type BridgeRequestType =
+    | 'SynthesizeRequest'
+    | 'BurnRequest'
+    | 'RevertSynthesizeRequest'
+    | 'RevertSynthesizeCompleted'
+    | 'RevertBurnCompleted'
 
 interface BridgeTxInfo {
     internalId: string
@@ -57,7 +62,7 @@ async function getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: str
         let requestType: BridgeRequestType
         if (revertLog.address.toLowerCase() === portal.address.toLowerCase()) {
             contract = portal
-            requestType = 'RevertSynthesizeRequest'
+            requestType = 'RevertBurnCompleted'
         } else {
             contract = synthesis
             requestType = 'RevertSynthesizeCompleted'
@@ -150,6 +155,12 @@ async function waitOversideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): P
         case 'RevertSynthesizeCompleted': {
             const portal = symbiosis.portal(externalChainId)
             filter = portal.filters.RevertSynthesizeCompleted(externalId)
+            break
+        }
+
+        case 'RevertBurnCompleted': {
+            const synthesis = symbiosis.synthesis(externalChainId)
+            filter = synthesis.filters.RevertBurnCompleted(externalId)
             break
         }
     }
