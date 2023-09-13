@@ -19,6 +19,7 @@ import { Token } from '../../../entities'
 import { config as mainnet } from '../mainnet'
 import { config as testnet } from '../testnet'
 import { config as dev } from '../dev'
+import { config as xdao } from '../xdao'
 import type { ConfigName } from '../../symbiosis'
 import { BigNumberish } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -68,6 +69,8 @@ export class Builder {
             this.config = testnet
         } else if (configName === 'dev') {
             this.config = dev
+        } else if (configName === 'xdao') {
+            this.config = xdao
         } else {
             throw new Error('Unknown config name')
         }
