@@ -209,6 +209,7 @@ export class RevertPending {
 
     private buildMetaBurnCalldata(feeV2?: TokenAmount) {
         const { to, from, chainIdFrom } = this.request
+
         const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
         const synth = this.getSyntheticToken(this.transitTokenFrom)
         if (!synth) {
@@ -216,6 +217,8 @@ export class RevertPending {
         }
 
         const metarouter = this.symbiosis.metaRouter(this.omniPoolConfig.chainId)
+
+        const revertableAddress = isTronChainId(chainIdFrom) ? from : to
 
         const calldata = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
             {
@@ -229,7 +232,7 @@ export class RevertPending {
                 chain2address: from, // NOTE: funds will be returned there if got stuck
                 receiveSide: this.symbiosis.portal(chainIdFrom).address,
                 oppositeBridge: this.symbiosis.bridge(chainIdFrom).address,
-                revertableAddress: to,
+                revertableAddress,
                 chainID: chainIdFrom,
                 clientID: this.symbiosis.clientId,
             },
@@ -288,6 +291,7 @@ export class RevertPending {
             ])
             receiveSide = synthesis.address
         } else {
+            console.log('this?')
             // burn-v2-revert
             const synthesis = this.symbiosis.synthesis(chainIdFrom)
             calldata = synthesis.interface.encodeFunctionData('revertBurnAndBurn', [
@@ -549,12 +553,12 @@ export class RevertPending {
             internalID: internalId,
             receiveSide: portal.address,
             managerChainBridge: this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
-            managerChainId: this.omniPoolConfig.chainId,
             sourceChainBridge: AddressZero,
+            managerChainId: this.omniPoolConfig.chainId,
             sourceChainId: chainIdTo,
-            sourceChainSynthesis: this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
             router: AddressZero, // multicall router
             swapCalldata: [],
+            sourceChainSynthesis: this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
             burnToken: AddressZero,
             burnCalldata: '0x00', // any not empty calldata
             clientID: this.symbiosis.clientId,
@@ -567,7 +571,7 @@ export class RevertPending {
                 abi: TRON_PORTAL_ABI,
                 contractAddress: portal.address,
                 functionName: 'metaRevertRequest',
-                params: [params],
+                params: [Object.values(params)],
                 ownerAddress: this.request.revertableAddress, // correct??
                 value: 0,
             })

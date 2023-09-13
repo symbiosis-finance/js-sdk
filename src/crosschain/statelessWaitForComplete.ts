@@ -37,11 +37,11 @@ async function getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: str
     const portal = symbiosis.portal(chainId)
     const synthesis = symbiosis.synthesis(chainId)
 
-    const metaRevertRequestTopic = portal.interface.getEventTopic('MetaRevertRequest')
+    const revertBurnRequestTopic = portal.interface.getEventTopic('RevertBurnRequest')
     const revertSynthesizeRequestTopic = synthesis.interface.getEventTopic('RevertSynthesizeRequest')
 
     const revertLog = receipt.logs.find((log) => {
-        return !!log.topics.find((topic) => topic === metaRevertRequestTopic || topic === revertSynthesizeRequestTopic)
+        return !!log.topics.find((topic) => topic === revertBurnRequestTopic || topic === revertSynthesizeRequestTopic)
     })
     if (revertLog) {
         const address = revertLog.address.toLowerCase()
@@ -173,14 +173,19 @@ async function waitOversideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): P
 export async function statelessWaitForComplete(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<string> {
     const txIdWithPrefix = isTronChainId(chainId) ? `0x${txId}` : txId
 
+    console.log('tx', txIdWithPrefix)
     const aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)
     if (!aBridgeInfo) {
         throw new Error(`Transaction ${txId} is not a bridge request`)
     }
 
+    console.log('aBridgeInfo', aBridgeInfo)
+
     const bTxId = await waitOversideTx(symbiosis, aBridgeInfo)
+    console.log('bTxId', bTxId)
 
     const bBridgeInfo = await getTxBridgeInfo(symbiosis, aBridgeInfo.externalChainId, bTxId)
+    console.log('bBridgeInfo', bBridgeInfo)
 
     if (!bBridgeInfo) {
         // b-chain is final destination
