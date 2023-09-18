@@ -5,6 +5,7 @@ import { DataProvider } from '../dataProvider'
 import { SymbiosisTrade } from './symbiosisTrade'
 import BigNumber from 'bignumber.js'
 import { BIPS_BASE } from '../constants'
+import { getMinAmount } from '../utils'
 
 interface OpenOceanTradeParams {
     tokenAmountIn: TokenAmount
@@ -50,6 +51,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
     public tokenAmountIn: TokenAmount
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public callDataOffset: number
     public priceImpact!: Percent
@@ -99,7 +101,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
         url.searchParams.set('outTokenAddress', toTokenAddress)
         url.searchParams.set('amount', this.tokenAmountIn.toFixed())
         url.searchParams.set('gasPrice', '5')
-        url.searchParams.set('slippage', this.slippage.toString())
+        url.searchParams.set('slippage', (this.slippage / 100).toString())
         url.searchParams.set('account', this.to)
         url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
 
@@ -116,6 +118,10 @@ export class OpenOceanTrade implements SymbiosisTrade {
         this.routerAddress = to
         this.callData = data
         this.amountOut = new TokenAmount(this.tokenOut, outAmount)
+
+        const amountOutMinRaw = getMinAmount(this.slippage, outAmount)
+        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+
         this.route = [this.tokenAmountIn.token, this.tokenOut]
         this.priceImpact = await this.getPriceImpact({
             tokenAmountIn: this.tokenAmountIn,

@@ -2,7 +2,7 @@ import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils, Signer } from 'ethers'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants'
+import { BigintIsh, ChainId, ONE } from '../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../entities'
 import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
@@ -91,6 +91,11 @@ export function computeTradePriceBreakdown(
 // converts a basis points value to a sdk percent
 export function basisPointsToPercent(num: number): Percent {
     return new Percent(JSBI.BigInt(Math.floor(num)), JSBI.BigInt(10000))
+}
+
+export function getMinAmount(slippage: number, amount: BigintIsh): JSBI {
+    const slippageTolerance = basisPointsToPercent(slippage)
+    return new Fraction(ONE).subtract(slippageTolerance).multiply(amount).quotient
 }
 
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips

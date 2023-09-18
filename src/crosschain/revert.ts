@@ -406,6 +406,7 @@ export class RevertPending {
 
         const omniTrade = new OmniTrade(
             amount,
+            amount, // amountInMin
             tokenOut,
             this.slippage,
             this.deadline,

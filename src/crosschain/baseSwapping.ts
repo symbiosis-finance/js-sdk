@@ -8,7 +8,7 @@ import { BIPS_BASE } from './constants'
 import { AdaRouter, AvaxRouter, KavaRouter, Synthesis, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade } from './trade'
+import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade, IzumiTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
 import { getExternalId, getInternalId } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -16,8 +16,6 @@ import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { OmniPoolConfig } from './types'
-import { WrapTrade } from './trade/wrapTrade'
-import { IzumiTrade } from './trade/izumiTrade'
 
 export type SwapExactInParams = {
     tokenAmountIn: TokenAmount
@@ -33,7 +31,7 @@ export type SwapExactInParams = {
 export type SwapExactIn = Promise<{
     fee: TokenAmount
     tokenAmountOut: TokenAmount
-    tokenAmountOutWithZeroFee: TokenAmount
+    tokenAmountOutMin: TokenAmount
     route: Token[]
     priceImpact: Percent
     amountInUsd: TokenAmount
@@ -133,8 +131,6 @@ export abstract class BaseSwapping {
 
         this.feeV2 = feeV2
 
-        const tokenAmountOutWithZeroFee = this.tokenAmountOut()
-
         // >>> NOTE create trades with calculated fee
         this.transit = this.buildTransit(fee)
         await this.transit.init()
@@ -158,10 +154,16 @@ export abstract class BaseSwapping {
             crossChainFee = new TokenAmount(feeV2.token, feeBase.add(feeV2Base).div(pow).toString())
         }
 
+        const tokenAmountOut = this.tokenAmountOut(feeV2)
+        const tokenAmountOutMin = new TokenAmount(
+            tokenAmountOut.token,
+            JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
+        )
+
         return {
             fee: crossChainFee,
-            tokenAmountOut: this.tokenAmountOut(feeV2),
-            tokenAmountOutWithZeroFee, // uses for calculation pure swap price except fee
+            tokenAmountOut,
+            tokenAmountOutMin,
             route: this.route,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.amountInUsd,
@@ -191,15 +193,23 @@ export abstract class BaseSwapping {
 
         const slippage = Math.floor(totalSlippage / swapsCount)
 
-        const MAX_STABLE_SLIPPAGE = 75 // 0.75%
+        let aMul = 1
+        let cMul = 1
+
+        if (extraSwapsCount == 2) {
+            aMul = 0.8
+            cMul = 1.2
+        }
+
+        const MAX_STABLE_SLIPPAGE = 50 // 0.5%
         if (slippage > MAX_STABLE_SLIPPAGE) {
             const diff = slippage - MAX_STABLE_SLIPPAGE
             const addition = diff / extraSwapsCount
 
-            return { A: slippage + addition, B: MAX_STABLE_SLIPPAGE, C: slippage + addition }
+            return { A: (slippage + addition) * aMul, B: MAX_STABLE_SLIPPAGE, C: (slippage + addition) * cMul }
         }
 
-        return { A: slippage, B: slippage, C: slippage }
+        return { A: slippage * aMul, B: slippage, C: slippage * cMul }
     }
 
     protected approveTo(): string {
@@ -360,7 +370,7 @@ export abstract class BaseSwapping {
                 tokenOut,
                 from,
                 to,
-                slippage: this.slippage['A'] / 100,
+                slippage: this.slippage['A'],
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
@@ -396,9 +406,13 @@ export abstract class BaseSwapping {
     }
 
     protected buildTransit(fee?: TokenAmount): Transit {
+        const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
+        const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
+
         return new Transit(
             this.symbiosis,
-            this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn,
+            amountIn,
+            amountInMin,
             this.tokenOut,
             this.transitTokenIn,
             this.transitTokenOut,
@@ -458,7 +472,7 @@ export abstract class BaseSwapping {
                 tokenOut: this.tokenOut,
                 from,
                 to: this.tradeCTo(),
-                slippage: this.slippage['C'] / 100,
+                slippage: this.slippage['C'],
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
@@ -474,7 +488,7 @@ export abstract class BaseSwapping {
                 this.tokenOut,
                 from,
                 this.tradeCTo(),
-                this.slippage['C'] / 100,
+                this.slippage['C'],
                 oracle,
                 this.dataProvider,
                 this.oneInchProtocols
