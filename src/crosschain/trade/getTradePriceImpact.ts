@@ -54,14 +54,14 @@ export async function getTradePriceImpact({
     const multiplierPow = 18
     const multiplier = BigNumber.from(10).pow(multiplierPow)
 
-    const spot = data[0].mul(multiplier).div(data[1]) // with e18
+    const spot = data[1].mul(multiplier).div(data[0]) // with e18
 
     // calc real rate
     const inBn = BigNumber.from(tokenAmountIn.raw.toString()).mul(BigNumber.from(10).pow(tokenAmountOut.token.decimals))
     const outBn = BigNumber.from(tokenAmountOut.raw.toString()).mul(
         BigNumber.from(10).pow(tokenAmountIn.token.decimals)
     )
-    const real = outBn.mul(multiplier).div(inBn)
+    const real = inBn.mul(multiplier).div(outBn)
 
     const impact = real.mul(multiplier).div(spot)
     const impactNumber = 1 - Number.parseFloat(formatUnits(impact, multiplierPow))
