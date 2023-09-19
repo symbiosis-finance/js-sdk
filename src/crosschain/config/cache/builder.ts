@@ -6,6 +6,8 @@ import { ChainConfig, Config, OmniPoolConfig } from '../../types'
 import {
     Fabric,
     Fabric__factory,
+    MetaRouter,
+    MetaRouter__factory,
     OmniPool,
     OmniPool__factory,
     Portal,
@@ -83,6 +85,7 @@ export class Builder {
     }
 
     public async build() {
+        await this.checkMetarouters()
         const tokens = await this.buildTokensList()
         const omniPools = await this.buildOmniPools(tokens)
         const thresholds = await this.buildThresholds(tokens)
@@ -100,6 +103,58 @@ export class Builder {
     }
 
     // === private ===
+
+    private async checkMetarouters() {
+        const chains = this.config.chains
+
+        let error = false
+        for (let i = 0; i < chains.length; i++) {
+            const chain = chains[i]
+            const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
+
+            const portal = this.portal(chain.id)
+            let portalMetaRouter
+            if (portal.address !== AddressZero) {
+                portalMetaRouter = (await portal.callStatic.metaRouter()).toLowerCase()
+            }
+
+            const synthesis = this.synthesis(chain.id)
+            let synthesisMetaRouter
+            if (synthesis.address !== AddressZero) {
+                synthesisMetaRouter = (await synthesis.callStatic.metaRouter()).toLowerCase()
+            }
+
+            if (
+                (portalMetaRouter && metaRouterAddressFromConfig !== portalMetaRouter) ||
+                (synthesisMetaRouter && metaRouterAddressFromConfig !== synthesisMetaRouter)
+            ) {
+                console.log(chain.id, {
+                    metaRouterAddressFromConfig,
+                    portalMetaRouter,
+                    synthesisMetaRouter,
+                })
+                error = true
+            }
+
+            const metaRouterGatewayAddressFromConfig = chain.metaRouterGateway.toLowerCase()
+            const metaRouter = this.metaRouter(chain.id)
+            const metaRouterGatewayAddressFromContract = (await metaRouter.callStatic.metaRouterGateway()).toLowerCase()
+
+            if (metaRouterGatewayAddressFromConfig !== metaRouterGatewayAddressFromContract) {
+                console.log(chain.id, {
+                    metaRouterGatewayAddressFromConfig,
+                    metaRouterGatewayAddressFromContract,
+                })
+                error = true
+            }
+        }
+
+        if (error) {
+            // console.error('There are differences')
+            throw new Error('There are differences')
+        }
+    }
+
     private async getThresholds(
         tokens: TokenInfo[],
         contract: Portal | Synthesis,
@@ -316,6 +371,12 @@ export class Builder {
         const address = this.chainConfig(chainId).portal
 
         return Portal__factory.connect(address, this.getProvider(chainId))
+    }
+
+    private metaRouter(chainId: ChainId): MetaRouter {
+        const address = this.chainConfig(chainId).metaRouter
+
+        return MetaRouter__factory.connect(address, this.getProvider(chainId))
     }
 
     public omniPool(config: OmniPoolConfig): OmniPool {
