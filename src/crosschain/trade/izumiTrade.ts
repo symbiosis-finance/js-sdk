@@ -1,13 +1,13 @@
 import BNJS from 'bignumber.js'
 import { BigNumber } from 'ethers'
 import { AbiCoder } from 'ethers/lib/utils'
-import { ChainId, ONE } from '../../constants'
-import { Fraction, Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { ChainId } from '../../constants'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { BIPS_BASE } from '../constants'
 import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
 import { getMulticall } from '../multicall'
 import { Symbiosis } from '../symbiosis'
-import { basisPointsToPercent } from '../utils'
+import { getMinAmount } from '../utils'
 import type { SymbiosisTrade } from './symbiosisTrade'
 import { Multicall2 } from '../contracts/Multicall'
 
@@ -107,6 +107,7 @@ export class IzumiTrade implements SymbiosisTrade {
 
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public routerAddress!: string
     public callDataOffset?: number
@@ -220,8 +221,8 @@ export class IzumiTrade implements SymbiosisTrade {
         this.priceImpact = new Percent(impactBNJS.times(BIPS_BASE.toString()).toFixed(0).toString(), BIPS_BASE)
         this.amountOut = new TokenAmount(this.tokenOut, bestOutput.toString())
 
-        const slippageTolerance = basisPointsToPercent(this.slippage)
-        const minAcquired = new Fraction(ONE).add(slippageTolerance).invert().multiply(this.amountOut.raw).quotient
+        const minAcquired = getMinAmount(this.slippage, bestOutput.toString())
+        this.amountOutMin = new TokenAmount(this.tokenOut, minAcquired.toString())
 
         const outputToken = tokens[tokens.length - 1]
 

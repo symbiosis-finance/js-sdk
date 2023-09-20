@@ -140,6 +140,11 @@ export class AggregatorTrade implements SymbiosisTrade {
         return this.trade.amountOut
     }
 
+    get amountOutMin(): TokenAmount {
+        this.assertTradeInitialized()
+        return this.trade.amountOutMin
+    }
+
     get routerAddress(): string {
         this.assertTradeInitialized()
         return this.trade.routerAddress

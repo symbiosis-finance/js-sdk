@@ -8,6 +8,7 @@ export interface SymbiosisTrade {
     callData: string
     tokenAmountIn: TokenAmount
     amountOut: TokenAmount
+    amountOutMin: TokenAmount
     route: Token[]
     priceImpact: Percent
     routerAddress: string

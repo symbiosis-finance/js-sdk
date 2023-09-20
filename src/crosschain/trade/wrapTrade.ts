@@ -20,6 +20,7 @@ export class WrapTrade implements SymbiosisTrade {
 
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public routerAddress!: string
     public callDataOffset?: number
@@ -48,6 +49,7 @@ export class WrapTrade implements SymbiosisTrade {
 
             this.route = [this.tokenAmountIn.token, wethToken]
             this.amountOut = new TokenAmount(wethToken, this.tokenAmountIn.raw)
+            this.amountOutMin = this.amountOut
             this.routerAddress = wethToken.address
 
             this.callData = wethInterface.encodeFunctionData('deposit')
@@ -63,6 +65,7 @@ export class WrapTrade implements SymbiosisTrade {
 
         this.route = [this.tokenAmountIn.token, this.tokenOut]
         this.amountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
+        this.amountOutMin = this.amountOut
         this.routerAddress = unwrapperAddress
 
         this.callData = unwrapperInterface.encodeFunctionData('unwrap', [this.tokenAmountIn.raw.toString(), this.to])

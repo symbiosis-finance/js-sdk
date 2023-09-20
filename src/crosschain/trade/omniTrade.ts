@@ -1,13 +1,13 @@
-import { Fraction, Percent, Token, TokenAmount } from '../../entities'
+import { Percent, Token, TokenAmount } from '../../entities'
 import { OmniPool, OmniPoolOracle } from '../contracts'
-import { basisPointsToPercent, calculatePriceImpact } from '../utils'
-import { ONE } from '../../constants'
+import { calculatePriceImpact, getMinAmount } from '../utils'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
 
 export class OmniTrade {
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
 
@@ -16,6 +16,7 @@ export class OmniTrade {
 
     public constructor(
         public readonly tokenAmountIn: TokenAmount,
+        public readonly tokenAmountInMin: TokenAmount,
         private readonly tokenOut: Token,
         private readonly slippage: number,
         private readonly deadline: number,
@@ -33,21 +34,23 @@ export class OmniTrade {
         const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenAmountIn.token)
         const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenOut)
 
-        const quoteFrom = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
+        const quote = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
 
-        this.amountOut = new TokenAmount(this.tokenOut, quoteFrom.actualToAmount.toString())
+        let quoteMin = quote
+        if (!this.tokenAmountIn.equalTo(this.tokenAmountInMin)) {
+            quoteMin = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountInMin.raw.toString())
+        }
 
-        const slippageTolerance = basisPointsToPercent(this.slippage)
-        const slippageAdjustedAmountOut = new Fraction(ONE)
-            .add(slippageTolerance)
-            .invert()
-            .multiply(this.amountOut.raw).quotient
+        this.amountOut = new TokenAmount(this.tokenOut, quote.actualToAmount.toString())
+
+        const amountOutMinRaw = getMinAmount(this.slippage, quoteMin.actualToAmount.toString())
+        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
         this.callData = this.pool.interface.encodeFunctionData('swap', [
             indexIn,
             indexOut,
             this.tokenAmountIn.raw.toString(),
-            slippageAdjustedAmountOut.toString(),
+            amountOutMinRaw.toString(),
             this.to,
             this.deadline,
         ])
