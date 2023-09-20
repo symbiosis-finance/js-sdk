@@ -8,6 +8,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 import flatMap from 'lodash.flatmap'
+import {Error} from "./error";
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -274,4 +275,55 @@ export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token,
                 return true
             })
     )
+}
+
+export interface DetailedSlippage {
+    A: number
+    B: number
+    C: number
+}
+
+export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
+    const MINIMUM_SLIPPAGE = 20 // 0.2%
+    if (totalSlippage < MINIMUM_SLIPPAGE) {
+        throw new Error('Slippage cannot be less than 0.2%')
+    }
+    let swapsCount = 1
+    let extraSwapsCount = 0
+    if (hasTradeA) {
+        extraSwapsCount += 1
+    }
+
+    if (hasTradeC) {
+        extraSwapsCount += 1
+    }
+    swapsCount += extraSwapsCount
+
+    const slippage = Math.floor(totalSlippage / swapsCount)
+
+    let aMul = 1.0
+    let cMul = 1.0
+
+    if (extraSwapsCount == 2) {
+        aMul = 0.8
+        cMul = 1.2
+    }
+
+    const MAX_STABLE_SLIPPAGE = 50 // 0.5%
+    if (slippage > MAX_STABLE_SLIPPAGE) {
+        const diff = slippage - MAX_STABLE_SLIPPAGE
+        const addition = extraSwapsCount > 0 ? diff / extraSwapsCount : 0
+
+        return {
+            A: hasTradeA ? (slippage + addition) * aMul : 0,
+            B: MAX_STABLE_SLIPPAGE,
+            C: hasTradeC ? (slippage + addition) * cMul : 0,
+        }
+    }
+
+    return {
+        A: hasTradeA ? slippage * aMul : 0,
+        B: slippage,
+        C: hasTradeC ? slippage * cMul : 0,
+    }
 }

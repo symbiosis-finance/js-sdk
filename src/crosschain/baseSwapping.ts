@@ -10,7 +10,7 @@ import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade, IzumiTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
-import { getExternalId, getInternalId } from './utils'
+import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
@@ -40,12 +40,6 @@ export type SwapExactIn = Promise<{
     inTradeType?: SymbiosisTradeType
     outTradeType?: SymbiosisTradeType
 }>
-
-export interface DetailedSlippage {
-    A: number
-    B: number
-    C: number
-}
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -175,41 +169,10 @@ export abstract class BaseSwapping {
     }
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
-        const MINIMUM_SLIPPAGE = 20 // 0.2%
-        if (totalSlippage < MINIMUM_SLIPPAGE) {
-            throw new Error('Slippage cannot be less than 0.2%')
-        }
+        const hasTradeA = !this.transitTokenIn.equals(this.tokenAmountIn.token)
+        const hasTradeC = !this.transitTokenOut.equals(this.tokenOut)
 
-        let swapsCount = 1
-        let extraSwapsCount = 0
-        if (!this.transitTokenIn.equals(this.tokenAmountIn.token)) {
-            extraSwapsCount += 1
-        }
-
-        if (!this.transitTokenOut.equals(this.tokenOut)) {
-            extraSwapsCount += 1
-        }
-        swapsCount += extraSwapsCount
-
-        const slippage = Math.floor(totalSlippage / swapsCount)
-
-        let aMul = 1
-        let cMul = 1
-
-        if (extraSwapsCount == 2) {
-            aMul = 0.8
-            cMul = 1.2
-        }
-
-        const MAX_STABLE_SLIPPAGE = 50 // 0.5%
-        if (slippage > MAX_STABLE_SLIPPAGE) {
-            const diff = slippage - MAX_STABLE_SLIPPAGE
-            const addition = diff / extraSwapsCount
-
-            return { A: (slippage + addition) * aMul, B: MAX_STABLE_SLIPPAGE, C: (slippage + addition) * cMul }
-        }
-
-        return { A: slippage * aMul, B: slippage, C: slippage * cMul }
+        return splitSlippage(totalSlippage, hasTradeA, hasTradeC)
     }
 
     protected approveTo(): string {
