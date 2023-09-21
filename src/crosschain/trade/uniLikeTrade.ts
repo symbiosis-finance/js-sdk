@@ -18,6 +18,7 @@ export class UniLikeTrade implements SymbiosisTrade {
     public trade!: Trade
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
     public routerAddress!: string
@@ -76,11 +77,13 @@ export class UniLikeTrade implements SymbiosisTrade {
 
         this.route = trade.route.path
 
-        const amountOut = computeSlippageAdjustedAmounts(trade, this.slippage).OUTPUT
-        if (!amountOut) {
-            throw new Error('Cannot compute amountOut')
+        this.amountOut = trade.outputAmount
+
+        const amountOutMin = computeSlippageAdjustedAmounts(trade, this.slippage).OUTPUT
+        if (!amountOutMin) {
+            throw new Error('Cannot compute amountOutMin')
         }
-        this.amountOut = amountOut
+        this.amountOutMin = amountOutMin
 
         const { data, offset } = this.buildCallData(trade)
         this.callData = data

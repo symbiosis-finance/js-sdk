@@ -2,12 +2,13 @@ import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils, Signer } from 'ethers'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants'
+import { BigintIsh, ChainId, ONE } from '../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../entities'
 import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 import flatMap from 'lodash.flatmap'
+import {Error} from "./error";
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -91,6 +92,11 @@ export function computeTradePriceBreakdown(
 // converts a basis points value to a sdk percent
 export function basisPointsToPercent(num: number): Percent {
     return new Percent(JSBI.BigInt(Math.floor(num)), JSBI.BigInt(10000))
+}
+
+export function getMinAmount(slippage: number, amount: BigintIsh): JSBI {
+    const slippageTolerance = basisPointsToPercent(slippage)
+    return new Fraction(ONE).subtract(slippageTolerance).multiply(amount).quotient
 }
 
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
@@ -269,4 +275,55 @@ export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token,
                 return true
             })
     )
+}
+
+export interface DetailedSlippage {
+    A: number
+    B: number
+    C: number
+}
+
+export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
+    const MINIMUM_SLIPPAGE = 20 // 0.2%
+    if (totalSlippage < MINIMUM_SLIPPAGE) {
+        throw new Error('Slippage cannot be less than 0.2%')
+    }
+    let swapsCount = 1
+    let extraSwapsCount = 0
+    if (hasTradeA) {
+        extraSwapsCount += 1
+    }
+
+    if (hasTradeC) {
+        extraSwapsCount += 1
+    }
+    swapsCount += extraSwapsCount
+
+    const slippage = Math.floor(totalSlippage / swapsCount)
+
+    let aMul = 1.0
+    let cMul = 1.0
+
+    if (extraSwapsCount == 2) {
+        aMul = 0.8
+        cMul = 1.2
+    }
+
+    const MAX_STABLE_SLIPPAGE = 50 // 0.5%
+    if (slippage > MAX_STABLE_SLIPPAGE) {
+        const diff = slippage - MAX_STABLE_SLIPPAGE
+        const addition = extraSwapsCount > 0 ? diff / extraSwapsCount : 0
+
+        return {
+            A: hasTradeA ? (slippage + addition) * aMul : 0,
+            B: MAX_STABLE_SLIPPAGE,
+            C: hasTradeC ? (slippage + addition) * cMul : 0,
+        }
+    }
+
+    return {
+        A: hasTradeA ? slippage * aMul : 0,
+        B: slippage,
+        C: hasTradeC ? slippage * cMul : 0,
+    }
 }

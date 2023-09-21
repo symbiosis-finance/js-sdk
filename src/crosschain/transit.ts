@@ -16,6 +16,7 @@ export class Transit {
     public route: Token[]
     public priceImpact: Percent
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
 
     public feeToken!: Token
 
@@ -24,8 +25,9 @@ export class Transit {
 
     public constructor(
         protected symbiosis: Symbiosis,
-        protected amountIn: TokenAmount,
-        protected tokenOut: Token,
+        public amountIn: TokenAmount,
+        public amountInMin: TokenAmount,
+        public tokenOut: Token,
         protected transitTokenIn: Token,
         protected transitTokenOut: Token,
         protected slippage: number,
@@ -49,7 +51,8 @@ export class Transit {
 
         this.receiveSide = this.multicallRouter.address
         this.callData = this.buildCalldata()
-        this.amountOut = this.getTradeAmountOut()
+        this.amountOut = this.getTradeAmountOut(this.trade.amountOut)
+        this.amountOutMin = this.getTradeAmountOut(this.trade.amountOutMin)
         this.route = this.trade.route
         this.priceImpact = this.trade.priceImpact
 
@@ -76,8 +79,8 @@ export class Transit {
     /**
      * Amount in stables coming out of the bridge
      */
-    public getBridgeAmountOut(): TokenAmount {
-        const amountOut = new TokenAmount(this.feeToken, this.amountIn.raw)
+    public getBridgeAmountOut(amount: TokenAmount): TokenAmount {
+        const amountOut = new TokenAmount(this.feeToken, amount.raw)
         if (!this.fee) {
             return amountOut
         }
@@ -129,23 +132,23 @@ export class Transit {
         ])
     }
 
-    protected getTradeAmountIn(): TokenAmount {
+    protected getTradeAmountIn(amount: TokenAmount): TokenAmount {
         if (this.direction === 'burn') {
-            return this.amountIn
+            return amount
         }
 
-        return this.getBridgeAmountOut()
+        return this.getBridgeAmountOut(amount)
     }
 
-    protected getTradeAmountOut(): TokenAmount {
-        if (!this.trade) {
+    protected getTradeAmountOut(tradeAmountOut: TokenAmount | undefined): TokenAmount {
+        if (!tradeAmountOut) {
             throw new Error('There is no trade')
         }
         if (this.direction === 'mint' || this.isV2()) {
-            return this.trade.amountOut
+            return tradeAmountOut
         }
 
-        const amountOut = new TokenAmount(this.transitTokenOut, this.trade.amountOut.raw)
+        const amountOut = new TokenAmount(this.transitTokenOut, tradeAmountOut.raw)
 
         if (!this.fee) {
             return amountOut
@@ -197,13 +200,15 @@ export class Transit {
     }
 
     protected async buildTrade(): Promise<OmniTrade> {
-        const tokenAmountIn = this.getTradeAmountIn()
+        const tokenAmountIn = this.getTradeAmountIn(this.amountIn)
+        const tokenAmountInMin = this.getTradeAmountIn(this.amountInMin)
         const tokenOut = this.getTradeTokenOut()
 
         const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 
         const trade = new OmniTrade(
             tokenAmountIn,
+            tokenAmountInMin,
             tokenOut,
             this.slippage,
             this.deadline,

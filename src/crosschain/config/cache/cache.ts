@@ -2,6 +2,7 @@ import type { ConfigName } from '../../symbiosis'
 import mainnet from './mainnet.json'
 import testnet from './testnet.json'
 import dev from './dev.json'
+import xdao from './xdao.json'
 import { Error, ErrorCode } from '../../error'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
@@ -19,6 +20,8 @@ export class ConfigCache {
             this.cache = testnet
         } else if (configName === 'dev') {
             this.cache = dev
+        } else if (configName === 'xdao') {
+            this.cache = xdao
         } else {
             throw new Error('Unknown config name')
         }

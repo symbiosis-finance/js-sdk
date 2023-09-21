@@ -3,7 +3,7 @@ import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
-import { canOneInch } from '../utils'
+import { canOneInch, getMinAmount } from '../utils'
 import { getTradePriceImpact } from './getTradePriceImpact'
 import { SymbiosisTrade } from './symbiosisTrade'
 
@@ -25,6 +25,7 @@ export class OneInchTrade implements SymbiosisTrade {
     public tokenAmountIn: TokenAmount
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
     public routerAddress!: string
@@ -86,7 +87,7 @@ export class OneInchTrade implements SymbiosisTrade {
         url.searchParams.set('amount', this.tokenAmountIn.raw.toString())
         url.searchParams.set('fromAddress', this.from)
         url.searchParams.set('destReceiver', this.to)
-        url.searchParams.set('slippage', this.slippage.toString())
+        url.searchParams.set('slippage', (this.slippage / 100).toString())
         url.searchParams.set('disableEstimate', 'true')
         url.searchParams.set('allowPartialFill', 'false')
         url.searchParams.set('usePatching', 'true')
@@ -114,6 +115,10 @@ export class OneInchTrade implements SymbiosisTrade {
         this.callData = tx.data
         this.callDataOffset = this.getOffset(tx.data)
         this.amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
+
+        const amountOutMinRaw = getMinAmount(this.slippage, amountOutRaw)
+        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+
         this.route = [this.tokenAmountIn.token, this.tokenOut]
         this.priceImpact = await getTradePriceImpact({
             dataProvider: this.dataProvider,
