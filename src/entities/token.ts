@@ -517,7 +517,7 @@ export const WETH = {
     [ChainId.TRON_TESTNET]: new Token({
         chainId: ChainId.TRON_TESTNET,
         address: '0xf060b2655346cf3f825c3300177dff8a2acd89aa',
-        decimals: 18,
+        decimals: 6,
         symbol: 'WTRX',
         isNative: false,
         name: 'Wrapped TRX',
