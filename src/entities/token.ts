@@ -101,8 +101,15 @@ export const WETH = {
     }),
     [ChainId.TRON_MAINNET]: new Token({
         chainId: ChainId.TRON_MAINNET,
-        address: '',
-        decimals: 8,
+        address: '0x891CDB91D149F23B1A45D9C5CA78A88D0CB44C18',
+        decimals: 6,
+        symbol: 'WTRX',
+        isNative: false,
+        name: 'Wrapped TRX',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+        },
     }),
     [ChainId.ETH_MAINNET]: new Token({
         chainId: ChainId.ETH_MAINNET,

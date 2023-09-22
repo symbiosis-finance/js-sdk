@@ -18,13 +18,13 @@
             "symbol": "XDAO",
             "name": "XDAO",
             "chainId": 1,
-            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png"
             },
             "deprecated": false,
+            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
             "id": 0
         },
         {
@@ -32,13 +32,13 @@
             "symbol": "XDAO",
             "name": "XDAO",
             "chainId": 56,
-            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png"
             },
             "deprecated": false,
+            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
             "id": 1
         },
         {
@@ -46,13 +46,13 @@
             "symbol": "XDAO",
             "name": "XDAO",
             "chainId": 137,
-            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png"
             },
             "deprecated": false,
+            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
             "id": 2
         },
         {
@@ -60,7 +60,6 @@
             "symbol": "sXDAO",
             "name": "Synthetic XDAO from Ethereum",
             "chainId": 56288,
-            "address": "0x9D9D79E32fA6A7214Ad79702a36bD520c3c42915",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
@@ -68,6 +67,7 @@
             },
             "chainFromId": 1,
             "deprecated": false,
+            "address": "0x9D9D79E32fA6A7214Ad79702a36bD520c3c42915",
             "id": 3,
             "originalId": 0
         },
@@ -76,7 +76,6 @@
             "symbol": "sXDAO",
             "name": "Synthetic XDAO from BSC",
             "chainId": 56288,
-            "address": "0x263308d316F07815C077C017e9481994d0a0C6Fe",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
@@ -84,6 +83,7 @@
             },
             "chainFromId": 56,
             "deprecated": false,
+            "address": "0x263308d316F07815C077C017e9481994d0a0C6Fe",
             "id": 4,
             "originalId": 1
         },
@@ -92,7 +92,6 @@
             "symbol": "sXDAO",
             "name": "Synthetic XDAO from Polygon",
             "chainId": 56288,
-            "address": "0xeca9F12Ba3E5c2a822d1441C8FFD8C9A90659AF5",
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
@@ -100,6 +99,7 @@
             },
             "chainFromId": 137,
             "deprecated": false,
+            "address": "0xeca9F12Ba3E5c2a822d1441C8FFD8C9A90659AF5",
             "id": 5,
             "originalId": 2
         }

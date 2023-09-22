@@ -28,13 +28,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../../abis/ERC20.json'
 import { isTronChainId } from '../../tron'
-import fs from 'fs/promises'
-import prettier from 'prettier'
-import path from 'path'
-
-const ROOT_PATH = path.join(__dirname, '../')
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const fs = require('fs')
 
 export type Id = number
 
@@ -97,13 +93,16 @@ export class Builder {
         const omniPools = await this.buildOmniPools(tokens)
         const thresholds = await this.buildThresholds(tokens)
 
-        const prettierOptions = await prettier.resolveConfig(ROOT_PATH)
-        const jsonData = prettier.format(JSON.stringify({ omniPools, tokens, thresholds }, null), {
-            ...prettierOptions,
-            parser: 'json',
+        const jsonData = JSON.stringify({
+            omniPools,
+            tokens,
+            thresholds,
+        } as ConfigCacheData)
+        fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err: any) {
+            if (err) {
+                console.log(err)
+            }
         })
-
-        await fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData)
     }
 
     // === private ===

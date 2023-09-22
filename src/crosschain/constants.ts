@@ -114,6 +114,8 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.MANTLE_MAINNET]: [WETH[ChainId.MANTLE_MAINNET]],
     [ChainId.MANTLE_TESTNET]: [WETH[ChainId.MANTLE_TESTNET]],
     [ChainId.BASE_MAINNET]: [WETH[ChainId.BASE_MAINNET]],
+    [ChainId.TRON_MAINNET]: [WETH[ChainId.TRON_MAINNET]],
+    [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -436,6 +438,14 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Tether USD',
         }),
     ],
+    [ChainId.TRON_MAINNET]: [
+        new Token({
+            chainId: ChainId.TRON_MAINNET,
+            address: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+            decimals: 6,
+            symbol: 'USDT',
+            name: 'Tether USD',
+        }),],
     [ChainId.LINEA_TESTNET]: [],
     [ChainId.LINEA_MAINNET]: [],
     [ChainId.MANTLE_MAINNET]: [],
@@ -535,6 +545,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
     [ChainId.POLYGON_ZK]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.TRON_TESTNET]: '0x00e08cb2cd7480ddf6c54430207dff81ce359887',
+    [ChainId.TRON_MAINNET]: '0x32A4F47A74A6810BD0BF861CABAB99656A75DE9E',
     [ChainId.LINEA_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.LINEA_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.MANTLE_MAINNET]: '0xb55cc6B5B402437b66c13c0CEd0EF367aa7c26da',

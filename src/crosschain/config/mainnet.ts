@@ -1,4 +1,5 @@
-import { Config } from '../types'
+import {Config} from '../types'
+import {ChainId} from "../../constants";
 
 export const config: Config = {
     advisor: {
@@ -731,6 +732,40 @@ export const config: Config = {
             portal: '0xEE981B2459331AD268cc63CE6167b446AF4161f8',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 0,
+        },
+        {
+            id: ChainId.TRON_MAINNET,
+            rpc: 'https://api.trongrid.io',
+            filterBlockOffset: 2000,
+            waitForBlocksCount: 20,
+            stables: [
+                {
+                    name: 'Tether USDt',
+                    symbol: 'USDT',
+                    address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
+                    chainId: ChainId.TRON_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+            ],
+            router: '0x6E0617948FE030A7E4970F8389D4AD295F249B7E',
+            dexFee: 30,
+            metaRouter: '0x3b6d52a231ff7f6da748a5dee1eb354eb10e9b98',
+            metaRouterGateway: '0xafb4eefbfdd4f3638e6464ba437a0f04c9c35a96',
+            bridge: '0x5baf3886198c6281939fa1628f22310d07531fdb',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0585da0e4edf1e0b0b57647a7a494736b222f5b7',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x354ed0e8616678f2829feb2e2e9a0e0869fa82fb',
             aavePool: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
