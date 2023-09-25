@@ -187,7 +187,7 @@ export abstract class BaseSwapping {
             inTradeType: this.tradeA?.tradeType,
             outTradeType: this.tradeC?.tradeType,
         }
-        
+
         if (isTronToken(this.tokenAmountIn.token)) {
             const transactionRequest = this.getTronTransactionRequest(fee, feeV2)
 
@@ -717,9 +717,8 @@ export abstract class BaseSwapping {
 
         const portalInterface = Portal__factory.createInterface()
 
-        // TODO: Use contracts from tron if needed
         const calldata = portalInterface.encodeFunctionData('metaUnsynthesize', [
-            '1', // _stableBridgingFee
+            '0', // _stableBridgingFee
             externalId, // _externalID,
             tronAddressToEvm(this.to), // _to
             amount.raw.toString(), // _amount

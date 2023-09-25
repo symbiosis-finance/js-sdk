@@ -65,7 +65,7 @@ export function prepareTronTransaction({
         chain_id: chainId,
         call_value: value?.toString() ?? 0,
         contract_address: TronWeb.address.fromHex(contractAddress),
-        fee_limit: tronWeb.feeLimit,
+        fee_limit: 200000000, // 200 TRX
         function_selector: functionSelector,
         owner_address: TronWeb.address.fromHex(ownerAddress),
         raw_parameter: rawParameter,
