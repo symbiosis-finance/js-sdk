@@ -1,7 +1,7 @@
 import { Builder } from '../builder'
 import { ConfigName } from '../../../symbiosis'
 
-const ENVS: ConfigName[] = ['mainnet', 'testnet', 'dev', 'xdao']
+const ENVS: ConfigName[] = ['mainnet', 'testnet', 'dev', 'bridge']
 
 ;(async () => {
     for (let i = 0; i < ENVS.length; i++) {
