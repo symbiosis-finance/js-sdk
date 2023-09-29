@@ -10,6 +10,11 @@ export const config: Config = {
             address: '0x566E412387AE3FaB8b5Aa3A77178B120BCfF5Af8',
             oracle: '0x851B43189de721dD94AbA767AAd9E6F6d6a95CCA',
         },
+        {
+            chainId: 56288,
+            address: "0xE7e68D336F90f98D22A479253eafA5f2424aCaD8",
+            oracle: "0xDdD4F712F43e26eaDc10e88A0050552c196b0403",
+        },
     ],
     chains: [
         {
@@ -27,6 +32,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0xd38BB40815d2B0c2d2c866e0c72c5728ffC76dd9',
+                    chainId: 1,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
             ],
@@ -62,6 +78,17 @@ export const config: Config = {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png',
                     },
+                },
+                {
+                    name: "Symbiosis",
+                    address: "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
+                    symbol: "SIS",
+                    chainId: 56,
+                    decimals: 18,
+                    icons: {
+                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+                    }
                 },
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
@@ -107,6 +134,108 @@ export const config: Config = {
             portal: '0x3338BE49A5f60e2593337919F9aD7098e9a7Dd7E',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xc5B61b9abC3C6229065cAD0e961aF585C5E0135c',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 0,
+        },
+        {
+            id: 324,
+            rpc: 'https://mainnet.era.zksync.io',
+            filterBlockOffset: 2000,
+            waitForBlocksCount: 12,
+            stables: [
+                {
+                    name: "Symbiosis",
+                    address: "0xdd9f72afED3631a6C85b5369D84875e6c42f1827",
+                    symbol: "SIS",
+                    chainId: 324,
+                    decimals: 18,
+                    icons: {
+                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+                    }
+                },
+            ],
+            router: '0x8B791913eB07C32779a16750e3868aA8495F5964',
+            dexFee: 30,
+            metaRouter: '0x2a2114691965cF1dAa95BfCcCADDF038b0743c74',
+            metaRouterGateway: '0x11Ec3f119bA9fdA6d87317E505B33Cb379c265D9',
+            bridge: '0x82c67f8E4d05Bb6794E40281056e4476a0B89806',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x97b99f47b086a074f214f4A62A3b041599726DC2',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xe004DE550074856bD64Cc1A89A8B3b56bD3eAf31',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 0,
+        },
+        {
+            id: 42161,
+            rpc: 'https://arb1.arbitrum.io/rpc',
+            filterBlockOffset: 2000,
+            waitForBlocksCount: 240,
+            stables: [
+                {
+                    name: "Symbiosis",
+                    address: "0x9E758B8a98a42d612b3D38B66a22074DC03D7370",
+                    symbol: "SIS",
+                    chainId: 42161,
+                    decimals: 18,
+                    icons: {
+                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+                    }
+                },
+            ],
+            router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
+            dexFee: 30,
+            metaRouter: '0x4F82CAA8F34564Ab22371f3c5d22868ab8eDD5E3',
+            metaRouterGateway: '0x2A223EB19085E0AB286205403951F3863A9d45DE',
+            bridge: '0x844e4a0ade23b1BA5642A8d0010E42aE4434Df30',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0425841529882628880fBD228AC90606e0c2e09A',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xF951789c6A356BfbC3033648AA10b5Dd3e9d88C0',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 0,
+        },
+        {
+            id: 59144,
+            rpc: 'https://rpc.linea.build',
+            filterBlockOffset: 2000,
+            waitForBlocksCount: 0,
+            stables: [
+                {
+                    name: "Symbiosis",
+                    address: "0x6EF95B6f3b0F39508e3E04054Be96D5eE39eDE0d",
+                    symbol: "SIS",
+                    chainId: 59144,
+                    decimals: 18,
+                    icons: {
+                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+                    }
+                },
+            ],
+            router: '0xc66149996d0263C0B42D3bC05e50Db88658106cE',
+            dexFee: 30,
+            metaRouter: '0x1DCfbC3fA01b2a86bC3a3f43479cCe9E8D438Adc',
+            metaRouterGateway: '0x0A0B7D1eea99e6189995432fec8172bB2dFFF847',
+            bridge: '0x17efC1d70eA32eb04c6979c6500d12eEE9e3Dcbd',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x7f6fb9f3ce785F3d85772c038Fda58eC9432D421',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xbbA322c98601b707cFfb98092010e0b95d538bB7',
             aavePool: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',

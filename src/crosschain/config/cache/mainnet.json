@@ -7,24 +7,24 @@
             "id": 0,
             "tokens": [
                 { "index": 0, "tokenId": 36 },
-                { "index": 1, "tokenId": 38 },
-                { "index": 2, "tokenId": 41 },
-                { "index": 3, "tokenId": 43 },
+                { "index": 1, "tokenId": 39 },
+                { "index": 2, "tokenId": 42 },
+                { "index": 3, "tokenId": 44 },
                 { "index": 4, "tokenId": 14 },
-                { "index": 5, "tokenId": 47 },
-                { "index": 10, "tokenId": 39 },
-                { "index": 11, "tokenId": 48 },
-                { "index": 12, "tokenId": 51 },
-                { "index": 13, "tokenId": 53 },
-                { "index": 14, "tokenId": 55 },
-                { "index": 15, "tokenId": 57 },
-                { "index": 16, "tokenId": 50 },
-                { "index": 17, "tokenId": 42 },
-                { "index": 18, "tokenId": 61 },
-                { "index": 19, "tokenId": 46 },
-                { "index": 20, "tokenId": 64 },
-                { "index": 21, "tokenId": 60 },
-                { "index": 22, "tokenId": 45 }
+                { "index": 5, "tokenId": 48 },
+                { "index": 10, "tokenId": 40 },
+                { "index": 11, "tokenId": 49 },
+                { "index": 12, "tokenId": 52 },
+                { "index": 13, "tokenId": 54 },
+                { "index": 14, "tokenId": 56 },
+                { "index": 15, "tokenId": 58 },
+                { "index": 16, "tokenId": 51 },
+                { "index": 17, "tokenId": 43 },
+                { "index": 18, "tokenId": 62 },
+                { "index": 19, "tokenId": 47 },
+                { "index": 20, "tokenId": 65 },
+                { "index": 21, "tokenId": 61 },
+                { "index": 22, "tokenId": 46 }
             ]
         },
         {
@@ -33,17 +33,17 @@
             "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 49 },
-                { "index": 2, "tokenId": 58 },
-                { "index": 3, "tokenId": 52 },
-                { "index": 5, "tokenId": 44 },
-                { "index": 6, "tokenId": 40 },
-                { "index": 7, "tokenId": 54 },
-                { "index": 8, "tokenId": 56 },
-                { "index": 9, "tokenId": 37 },
-                { "index": 10, "tokenId": 59 },
-                { "index": 11, "tokenId": 62 },
-                { "index": 12, "tokenId": 63 }
+                { "index": 1, "tokenId": 50 },
+                { "index": 2, "tokenId": 59 },
+                { "index": 3, "tokenId": 53 },
+                { "index": 5, "tokenId": 45 },
+                { "index": 6, "tokenId": 41 },
+                { "index": 7, "tokenId": 55 },
+                { "index": 8, "tokenId": 57 },
+                { "index": 9, "tokenId": 38 },
+                { "index": 10, "tokenId": 60 },
+                { "index": 11, "tokenId": 63 },
+                { "index": 12, "tokenId": 64 }
             ]
         }
     ],
@@ -578,6 +578,22 @@
         },
         {
             "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Ethereum",
+            "chainId": 56288,
+            "address": "0x4E985A18B4Ac70a1C3d986a5f55CB4c5BC8f65AE",
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 1,
+            "deprecated": false,
+            "id": 37,
+            "originalId": 1
+        },
+        {
+            "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Ethereum)",
             "chainId": 56288,
@@ -589,7 +605,7 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "id": 37,
+            "id": 38,
             "originalId": 2
         },
         {
@@ -605,7 +621,7 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "id": 38,
+            "id": 39,
             "originalId": 4
         },
         {
@@ -621,7 +637,7 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "id": 39,
+            "id": 40,
             "originalId": 5
         },
         {
@@ -637,7 +653,7 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "id": 40,
+            "id": 41,
             "originalId": 6
         },
         {
@@ -653,7 +669,7 @@
             },
             "chainFromId": 43114,
             "deprecated": false,
-            "id": 41,
+            "id": 42,
             "originalId": 7
         },
         {
@@ -669,7 +685,7 @@
             },
             "chainFromId": 43114,
             "deprecated": false,
-            "id": 42,
+            "id": 43,
             "originalId": 8
         },
         {
@@ -685,7 +701,7 @@
             },
             "chainFromId": 137,
             "deprecated": false,
-            "id": 43,
+            "id": 44,
             "originalId": 9
         },
         {
@@ -701,7 +717,7 @@
             },
             "chainFromId": 137,
             "deprecated": false,
-            "id": 44,
+            "id": 45,
             "originalId": 10
         },
         {
@@ -717,7 +733,7 @@
             },
             "chainFromId": 40,
             "deprecated": false,
-            "id": 45,
+            "id": 46,
             "originalId": 11
         },
         {
@@ -733,7 +749,7 @@
             },
             "chainFromId": 2222,
             "deprecated": false,
-            "id": 46,
+            "id": 47,
             "originalId": 12
         },
         {
@@ -749,7 +765,7 @@
             },
             "chainFromId": 288,
             "deprecated": false,
-            "id": 47,
+            "id": 48,
             "originalId": 13
         },
         {
@@ -765,7 +781,7 @@
             },
             "chainFromId": 324,
             "deprecated": false,
-            "id": 48,
+            "id": 49,
             "originalId": 15
         },
         {
@@ -781,7 +797,7 @@
             },
             "chainFromId": 324,
             "deprecated": false,
-            "id": 49,
+            "id": 50,
             "originalId": 16
         },
         {
@@ -797,7 +813,7 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "id": 50,
+            "id": 51,
             "originalId": 17
         },
         {
@@ -813,7 +829,7 @@
             },
             "chainFromId": 42161,
             "deprecated": true,
-            "id": 51,
+            "id": 52,
             "originalId": 18
         },
         {
@@ -829,7 +845,7 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "id": 52,
+            "id": 53,
             "originalId": 19
         },
         {
@@ -845,7 +861,7 @@
             },
             "chainFromId": 10,
             "deprecated": false,
-            "id": 53,
+            "id": 54,
             "originalId": 20
         },
         {
@@ -861,7 +877,7 @@
             },
             "chainFromId": 10,
             "deprecated": false,
-            "id": 54,
+            "id": 55,
             "originalId": 21
         },
         {
@@ -877,7 +893,7 @@
             },
             "chainFromId": 42170,
             "deprecated": false,
-            "id": 55,
+            "id": 56,
             "originalId": 22
         },
         {
@@ -893,7 +909,7 @@
             },
             "chainFromId": 42170,
             "deprecated": false,
-            "id": 56,
+            "id": 57,
             "originalId": 23
         },
         {
@@ -909,7 +925,7 @@
             },
             "chainFromId": 1101,
             "deprecated": false,
-            "id": 57,
+            "id": 58,
             "originalId": 24
         },
         {
@@ -925,7 +941,7 @@
             },
             "chainFromId": 1101,
             "deprecated": false,
-            "id": 58,
+            "id": 59,
             "originalId": 25
         },
         {
@@ -941,7 +957,7 @@
             },
             "chainFromId": 59144,
             "deprecated": false,
-            "id": 59,
+            "id": 60,
             "originalId": 26
         },
         {
@@ -957,7 +973,7 @@
             },
             "chainFromId": 59144,
             "deprecated": false,
-            "id": 60,
+            "id": 61,
             "originalId": 27
         },
         {
@@ -973,7 +989,7 @@
             },
             "chainFromId": 5000,
             "deprecated": false,
-            "id": 61,
+            "id": 62,
             "originalId": 28
         },
         {
@@ -989,7 +1005,7 @@
             },
             "chainFromId": 5000,
             "deprecated": false,
-            "id": 62,
+            "id": 63,
             "originalId": 29
         },
         {
@@ -1005,7 +1021,7 @@
             },
             "chainFromId": 8453,
             "deprecated": false,
-            "id": 63,
+            "id": 64,
             "originalId": 30
         },
         {
@@ -1021,7 +1037,7 @@
             },
             "chainFromId": 8453,
             "deprecated": false,
-            "id": 64,
+            "id": 65,
             "originalId": 31
         }
     ],
@@ -1082,6 +1098,7 @@
         { "tokenId": 62, "type": "Synthesis", "value": "0" },
         { "tokenId": 63, "type": "Synthesis", "value": "0" },
         { "tokenId": 64, "type": "Synthesis", "value": "0" },
+        { "tokenId": 65, "type": "Synthesis", "value": "0" },
         { "tokenId": 15, "type": "Portal", "value": "10000000" },
         { "tokenId": 16, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 17, "type": "Portal", "value": "10000000" },
