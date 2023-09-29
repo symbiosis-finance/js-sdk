@@ -12,8 +12,8 @@ export const config: Config = {
         },
         {
             chainId: 56288,
-            address: "0xE7e68D336F90f98D22A479253eafA5f2424aCaD8",
-            oracle: "0xDdD4F712F43e26eaDc10e88A0050552c196b0403",
+            address: '0xE7e68D336F90f98D22A479253eafA5f2424aCaD8',
+            oracle: '0xDdD4F712F43e26eaDc10e88A0050552c196b0403',
         },
     ],
     chains: [
@@ -80,15 +80,15 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: "Symbiosis",
-                    address: "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
-                    symbol: "SIS",
+                    name: 'Symbiosis',
+                    address: '0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835',
+                    symbol: 'SIS',
                     chainId: 56,
                     decimals: 18,
                     icons: {
-                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
-                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
-                    }
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
                 },
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
@@ -148,15 +148,15 @@ export const config: Config = {
             waitForBlocksCount: 12,
             stables: [
                 {
-                    name: "Symbiosis",
-                    address: "0xdd9f72afED3631a6C85b5369D84875e6c42f1827",
-                    symbol: "SIS",
+                    name: 'Symbiosis',
+                    address: '0xdd9f72afED3631a6C85b5369D84875e6c42f1827',
+                    symbol: 'SIS',
                     chainId: 324,
                     decimals: 18,
                     icons: {
-                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
-                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
-                    }
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
                 },
             ],
             router: '0x8B791913eB07C32779a16750e3868aA8495F5964',
@@ -182,15 +182,15 @@ export const config: Config = {
             waitForBlocksCount: 240,
             stables: [
                 {
-                    name: "Symbiosis",
-                    address: "0x9E758B8a98a42d612b3D38B66a22074DC03D7370",
-                    symbol: "SIS",
+                    name: 'Symbiosis',
+                    address: '0x9E758B8a98a42d612b3D38B66a22074DC03D7370',
+                    symbol: 'SIS',
                     chainId: 42161,
                     decimals: 18,
                     icons: {
-                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
-                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
-                    }
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
                 },
             ],
             router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
@@ -216,15 +216,15 @@ export const config: Config = {
             waitForBlocksCount: 0,
             stables: [
                 {
-                    name: "Symbiosis",
-                    address: "0x6EF95B6f3b0F39508e3E04054Be96D5eE39eDE0d",
-                    symbol: "SIS",
+                    name: 'Symbiosis',
+                    address: '0x6EF95B6f3b0F39508e3E04054Be96D5eE39eDE0d',
+                    symbol: 'SIS',
                     chainId: 59144,
                     decimals: 18,
                     icons: {
-                        "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
-                        "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
-                    }
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
                 },
             ],
             router: '0xc66149996d0263C0B42D3bC05e50Db88658106cE',

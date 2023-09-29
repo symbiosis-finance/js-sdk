@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { getMinAmount, splitSlippage} from '../../src'
+import { getMinAmount, splitSlippage } from '../../src'
 
 describe('#getMinAmount', () => {
     test('100 3%', () => {

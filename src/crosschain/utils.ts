@@ -8,7 +8,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 import flatMap from 'lodash.flatmap'
-import {Error} from "./error";
+import { Error } from './error'
 
 interface GetInternalIdParams {
     contractAddress: string
