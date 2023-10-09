@@ -208,7 +208,7 @@ export class RevertPending {
     }
 
     private buildMetaBurnCalldata(feeV2?: TokenAmount) {
-        const { to, from, chainIdFrom } = this.request
+        const { from, chainIdFrom, chainIdTo } = this.request
 
         const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
         const synth = this.getSyntheticToken(this.transitTokenFrom)
@@ -218,7 +218,12 @@ export class RevertPending {
 
         const metarouter = this.symbiosis.metaRouter(this.omniPoolConfig.chainId)
 
-        const revertableAddress = isTronChainId(chainIdFrom) ? from : to
+        let revertableAddress: string
+        if (isTronChainId(chainIdTo)) {
+            revertableAddress = this.symbiosis.getRevertableAddress(chainIdTo)
+        } else {
+            revertableAddress = from
+        }
 
         const calldata = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
             {

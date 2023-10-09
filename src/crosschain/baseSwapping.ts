@@ -129,7 +129,7 @@ export abstract class BaseSwapping {
         } else if (isTronToken(this.tokenOut)) {
             this.revertableAddresses = {
                 AB: this.from,
-                BC: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
         } else {
             this.revertableAddresses = { AB: this.from, BC: this.from }
