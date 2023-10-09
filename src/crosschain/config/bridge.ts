@@ -19,7 +19,7 @@ export const config: Config = {
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0x8804a210e9014c6002be23373de0dc52b596b829',
-        default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+        default: '0x93541c07bE765B4012c5ca81c2CAA88258Dd356A',
     },
     chains: [
         {
