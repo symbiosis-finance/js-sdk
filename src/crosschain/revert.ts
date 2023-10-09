@@ -219,7 +219,7 @@ export class RevertPending {
         const metarouter = this.symbiosis.metaRouter(this.omniPoolConfig.chainId)
 
         let revertableAddress: string
-        if (isTronChainId(chainIdTo)) {
+        if (isTronChainId(chainIdFrom)) {
             revertableAddress = this.symbiosis.getRevertableAddress(chainIdTo)
         } else {
             revertableAddress = from
