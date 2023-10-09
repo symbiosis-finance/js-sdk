@@ -1,3 +1,4 @@
+import { ChainId } from '../../constants'
 import { Config } from '../types'
 
 export const config: Config = {
@@ -11,6 +12,10 @@ export const config: Config = {
             oracle: '0x851B43189de721dD94AbA767AAd9E6F6d6a95CCA',
         },
     ],
+    revertableAddress: {
+        [ChainId.TRON_MAINNET]: '0x8804a210e9014c6002be23373de0dc52b596b829',
+        default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+    },
     chains: [
         {
             id: 1,

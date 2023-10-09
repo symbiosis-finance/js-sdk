@@ -43,6 +43,7 @@ export type OmniPoolConfig = {
 export type Config = {
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
+    revertableAddress: Partial<Record<ChainId, string>> & { default: string }
     chains: ChainConfig[]
 }
 

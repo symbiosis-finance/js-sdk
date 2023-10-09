@@ -470,4 +470,14 @@ export class Symbiosis {
 
         return info
     }
+
+    getRevertableAddress(chainId: ChainId): string {
+        const address = this.config.revertableAddress[chainId]
+
+        if (address) {
+            return address
+        }
+
+        return this.config.revertableAddress.default
+    }
 }

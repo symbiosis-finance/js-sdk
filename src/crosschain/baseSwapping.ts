@@ -121,8 +121,16 @@ export abstract class BaseSwapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
-        if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
-            this.revertableAddresses = { AB: this.from, BC: this.to }
+        if (isTronToken(this.tokenAmountIn.token)) {
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.to,
+            }
+        } else if (isTronToken(this.tokenOut)) {
+            this.revertableAddresses = {
+                AB: this.from,
+                BC: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+            }
         } else {
             this.revertableAddresses = { AB: this.from, BC: this.from }
         }

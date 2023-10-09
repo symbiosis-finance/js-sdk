@@ -1,5 +1,5 @@
-import {Config} from '../types'
-import {ChainId} from "../../constants";
+import { ChainId } from '../../constants'
+import { Config } from '../types'
 
 export const config: Config = {
     advisor: {
@@ -17,6 +17,10 @@ export const config: Config = {
             oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
         },
     ],
+    revertableAddress: {
+        [ChainId.TRON_MAINNET]: '0x8804a210e9014c6002be23373de0dc52b596b829',
+        default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+    },
     chains: [
         {
             id: 1,

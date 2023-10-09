@@ -15,7 +15,7 @@ import { WaitForComplete } from './waitForComplete'
 import { AdaRouter, AvaxRouter, KavaRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
-import { isTronChainId, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
+import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig } from './types'
 import { WrapTrade } from './trade/wrapTrade'
@@ -35,7 +35,6 @@ type ZappingExactInParams = {
     tokenAmountIn: TokenAmount
     from: string
     to: string
-    revertableAddress: string
     slippage: number
     deadline: number
 }
@@ -67,22 +66,20 @@ export class Zapping {
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
-    public async exactIn({
-        tokenAmountIn,
-        from,
-        to,
-        revertableAddress,
-        slippage,
-        deadline,
-    }: ZappingExactInParams): ZapExactIn {
+    public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: ZappingExactInParams): ZapExactIn {
         this.tokenAmountIn = tokenAmountIn
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
-        console.log({ revertableAddress })
-        this.revertableAddress = tronAddressToEvm(revertableAddress)
+
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
+
+        if (isTronToken(this.tokenAmountIn.token)) {
+            this.revertableAddress = this.symbiosis.getRevertableAddress(this.omniPoolConfig.chainId)
+        } else {
+            this.revertableAddress = this.from
+        }
 
         const targetPool = this.symbiosis.getOmniPoolByConfig(this.omniPoolConfig)
         if (!targetPool) {
