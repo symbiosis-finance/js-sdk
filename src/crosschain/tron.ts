@@ -58,9 +58,7 @@ export function prepareTronTransaction({
 
     const functionSelector = getFunctionSelector(functionFragment)
 
-    console.log({ functionFragment, params })
     const rawParameter = tronWeb.utils.abi.encodeParamsV2ByABI(functionFragment, params)
-    console.log('after')
     return {
         chain_id: chainId,
         call_value: value?.toString() ?? 0,
