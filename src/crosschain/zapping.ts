@@ -191,7 +191,17 @@ export class Zapping {
                 abi: TRON_METAROUTER_ABI,
                 contractAddress: metaRouter.address,
                 functionName: 'metaRoute',
-                params: [Object.values(params)],
+                params: [
+                    this.tradeA?.callData || [],
+                    [],
+                    approvedTokens,
+                    this.tradeA?.routerAddress || AddressZero,
+                    AddressZero,
+                    this.tokenAmountIn.raw.toString(),
+                    this.tokenAmountIn.token.isNative,
+                    relayRecipient,
+                    otherSideCalldata,
+                ],
                 ownerAddress: this.from,
                 value: 0,
             })

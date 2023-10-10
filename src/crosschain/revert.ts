@@ -102,7 +102,7 @@ export class RevertPending {
         const wfc = new WaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
-            revertableAddress: revertableAddress,
+            revertableAddress,
             chainIdIn: this.omniPoolConfig.chainId,
             chainIdOut: chainIdFrom,
         })
@@ -123,7 +123,7 @@ export class RevertPending {
         const wfc = new WaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
-            revertableAddress: revertableAddress,
+            revertableAddress,
             chainIdIn: chainIdFrom,
             chainIdOut: chainIdTo,
         })
@@ -190,7 +190,7 @@ export class RevertPending {
         const externalId = getExternalId({
             internalId,
             contractAddress: portal.address,
-            revertableAddress: revertableAddress,
+            revertableAddress,
             chainId: chainIdOut,
         })
 
@@ -380,7 +380,21 @@ export class RevertPending {
                 abi: TRON_PORTAL_ABI,
                 contractAddress: portal.address,
                 functionName: 'metaRevertRequest',
-                params: [Object.values(params)],
+                params: [
+                    fee.raw.toString(),
+                    internalId,
+                    portal.address,
+                    this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
+                    this.symbiosis.bridge(chainIdFrom).address,
+                    this.omniPoolConfig.chainId,
+                    chainIdFrom,
+                    AddressZero, // multicall router
+                    [], // swapCalldata,
+                    this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
+                    AddressZero, //burnToken,
+                    [], // burnCalldata,
+                    this.symbiosis.clientId,
+                ],
                 ownerAddress: revertableAddress,
                 value: 0,
             })
@@ -440,7 +454,7 @@ export class RevertPending {
                 contractAddress: portal.address,
                 functionName: 'revertBurnRequest',
                 params,
-                ownerAddress: this.request.revertableAddress, // correct??
+                ownerAddress: this.request.revertableAddress,
                 value: 0,
             })
         }
@@ -534,7 +548,21 @@ export class RevertPending {
                 abi: TRON_PORTAL_ABI,
                 contractAddress: portal.address,
                 functionName: 'metaRevertRequest',
-                params: [Object.values(params)],
+                params: [
+                    fee.raw.toString(),
+                    internalId,
+                    mChainSynthesis.address,
+                    mChainBridge.address,
+                    this.omniPoolConfig.chainId,
+                    AddressZero,
+                    this.request.chainIdFrom,
+                    mChainSynthesis.address,
+                    router, // multicall router
+                    swapCalldata,
+                    burnToken,
+                    burnCalldata,
+                    this.symbiosis.clientId,
+                ],
                 ownerAddress: this.request.revertableAddress, // correct??
                 value: 0,
             })
@@ -577,8 +605,22 @@ export class RevertPending {
                 abi: TRON_PORTAL_ABI,
                 contractAddress: portal.address,
                 functionName: 'metaRevertRequest',
-                params: [Object.values(params)],
-                ownerAddress: this.request.revertableAddress, // correct??
+                params: [
+                    fee.raw.toString(),
+                    internalId,
+                    portal.address,
+                    this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
+                    AddressZero,
+                    this.omniPoolConfig.chainId,
+                    chainIdTo,
+                    AddressZero, // multicall router
+                    [],
+                    this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
+                    AddressZero,
+                    '0x00', // any not empty calldata
+                    this.symbiosis.clientId,
+                ],
+                ownerAddress: this.request.revertableAddress,
                 value: 0,
             })
         }
