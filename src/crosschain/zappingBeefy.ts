@@ -1,10 +1,9 @@
 import { Contract } from '@ethersproject/contracts'
-import { ChainId } from 'src/constants'
 import ERC20 from '../abis/ERC20.json'
 import { Token, TokenAmount } from '../entities'
-import { BaseSwapping } from './baseSwapping'
+import { BaseSwapping, SwapExactIn } from './baseSwapping'
 import { BeefyVault, MulticallRouter } from './contracts'
-import { ZapExactIn } from './zapping'
+import { ChainId } from '../constants'
 
 type ZappingBeefyExactIn = {
     tokenAmountIn: TokenAmount
@@ -30,7 +29,7 @@ export class ZappingBeefy extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: ZappingBeefyExactIn): ZapExactIn {
+    }: ZappingBeefyExactIn): Promise<SwapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(vaultChainId)
         this.userAddress = to
 

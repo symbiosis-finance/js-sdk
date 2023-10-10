@@ -1,7 +1,6 @@
-import { BaseSwapping, SwapExactInParams } from './baseSwapping'
+import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
 import { wrappedToken } from '../entities'
 import { Aave, MulticallRouter } from './contracts'
-import { ZapExactIn } from './zapping'
 
 export class ZappingAave extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -9,7 +8,14 @@ export class ZappingAave extends BaseSwapping {
     protected aavePool!: Aave
     protected aToken!: string
 
-    public async exactIn({ tokenAmountIn, tokenOut, from, to, slippage, deadline }: SwapExactInParams): ZapExactIn {
+    public async exactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        slippage,
+        deadline,
+    }: SwapExactInParams): Promise<SwapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to
 

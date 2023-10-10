@@ -1,9 +1,8 @@
-import { BaseSwapping, SwapExactInParams } from './baseSwapping'
+import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
 import { wrappedToken } from '../entities'
 import { CreamCErc20__factory, CreamComptroller__factory, Multicall, MulticallRouter } from './contracts'
 import { getMulticall } from './multicall'
 import { ChainId } from '../constants'
-import { ZapExactIn } from './zapping'
 
 type Market = {
     market: string
@@ -70,7 +69,14 @@ export class ZappingCream extends BaseSwapping {
             .filter((i) => !!i) as Market[]
     }
 
-    public async exactIn({ tokenAmountIn, tokenOut, from, to, slippage, deadline }: SwapExactInParams): ZapExactIn {
+    public async exactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        slippage,
+        deadline,
+    }: SwapExactInParams): Promise<SwapExactIn> {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
 
