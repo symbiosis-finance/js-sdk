@@ -24,7 +24,7 @@ export const config: Config = {
     chains: [
         {
             id: 1,
-            rpc: 'https://rpc.ankr.com/eth',
+            rpc: 'https://ethereum.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 12,
             stables: [
@@ -91,7 +91,7 @@ export const config: Config = {
         },
         {
             id: 56,
-            rpc: 'https://rpc.ankr.com/bsc',
+            rpc: 'https://bsc.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
@@ -147,7 +147,7 @@ export const config: Config = {
         },
         {
             id: 43114,
-            rpc: 'https://rpc.ankr.com/avalanche',
+            rpc: 'https://avalanche-c-chain.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -192,7 +192,7 @@ export const config: Config = {
         },
         {
             id: 137,
-            rpc: 'https://rpc.ankr.com/polygon',
+            rpc: 'https://polygon-bor.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 60,
             stables: [
@@ -475,7 +475,7 @@ export const config: Config = {
         },
         {
             id: 10,
-            rpc: 'https://rpc.ankr.com/optimism',
+            rpc: 'https://optimism.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 50,
             stables: [
