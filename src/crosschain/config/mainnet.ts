@@ -779,7 +779,7 @@ export const config: Config = {
         },
         {
             id: ChainId.SCROLL_MAINNET,
-            rpc: 'https://rpc.scroll.io',
+            rpc: 'https://scroll-mainnet-public.unifra.io',
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
