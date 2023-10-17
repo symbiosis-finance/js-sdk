@@ -24,7 +24,7 @@ export const config: Config = {
     chains: [
         {
             id: 1,
-            rpc: 'https://rpc.ankr.com/eth',
+            rpc: 'https://ethereum.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 12,
             stables: [
@@ -82,8 +82,8 @@ export const config: Config = {
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            aavePool: '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2',
+            aavePoolDataProvider: '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3',
             creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
             creamCompoundLens: '0xd400e22dcA840CC7E342DF1d9945684bBd587659',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
@@ -91,7 +91,7 @@ export const config: Config = {
         },
         {
             id: 56,
-            rpc: 'https://rpc.ankr.com/bsc',
+            rpc: 'https://bsc.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
@@ -147,7 +147,7 @@ export const config: Config = {
         },
         {
             id: 43114,
-            rpc: 'https://rpc.ankr.com/avalanche',
+            rpc: 'https://avalanche-c-chain.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -192,7 +192,7 @@ export const config: Config = {
         },
         {
             id: 137,
-            rpc: 'https://rpc.ankr.com/polygon',
+            rpc: 'https://polygon-bor.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 60,
             stables: [
@@ -475,7 +475,7 @@ export const config: Config = {
         },
         {
             id: 10,
-            rpc: 'https://rpc.ankr.com/optimism',
+            rpc: 'https://optimism.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 50,
             stables: [
