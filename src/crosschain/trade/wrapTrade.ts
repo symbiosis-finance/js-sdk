@@ -11,6 +11,7 @@ const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.SCROLL_SEPOLIA]: '0x41151CEfFB743650E14425c7749019E491Fd1987',
     [ChainId.ETH_GOERLI]: '0xc9Fd2AF244FEfb31A62A5A33B9D6261Cec2cb7aA',
     [ChainId.BASE_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+    [ChainId.SCROLL_MAINNET]: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
 }
 
 export class WrapTrade implements SymbiosisTrade {

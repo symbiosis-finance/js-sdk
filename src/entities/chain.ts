@@ -455,6 +455,16 @@ export const chains: Chain[] = [
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
         },
     }),
+    new Chain({
+        id: ChainId.SCROLL_MAINNET,
+        name: 'Scroll',
+        disabled: false,
+        explorer: 'https://scroll.l2scan.co',
+        icons: {
+            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
