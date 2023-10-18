@@ -16,7 +16,7 @@ import {
 } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, IzumiTrade, OneInchTrade, SymbiosisTradeType, UniLikeTrade, WrapTrade } from './trade'
+import { AggregatorTrade, IzumiTrade, SymbiosisTradeType, UniLikeTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
 import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './utils'
 import { WaitForComplete } from './waitForComplete'
