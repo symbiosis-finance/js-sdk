@@ -26,7 +26,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     // [ChainId.ETH_MAINNET]: 'eth',
     // [ChainId.BSC_MAINNET]: 'bsc',
     // [ChainId.MATIC_MAINNET]: 'polygon',
-    // [ChainId.AVAX_MAINNET]: 'avax',
+    [ChainId.AVAX_MAINNET]: 'avax',
     [ChainId.AURORA_MAINNET]: 'aurora',
     [ChainId.HECO_MAINNET]: 'heco',
     [ChainId.KAVA_MAINNET]: 'kava',

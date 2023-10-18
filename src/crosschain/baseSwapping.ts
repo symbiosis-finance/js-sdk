@@ -514,8 +514,7 @@ export abstract class BaseSwapping {
             })
         }
 
-        // POLYGON_ZK only
-        if (chainId === ChainId.POLYGON_ZK && AggregatorTrade.isAvailable(chainId)) {
+        if (AggregatorTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             return new AggregatorTrade({
                 tokenAmountIn: amountIn,
@@ -528,21 +527,6 @@ export abstract class BaseSwapping {
                 clientId: this.symbiosis.clientId,
                 oneInchProtocols: this.oneInchProtocols,
             })
-        }
-
-        if (OneInchTrade.isAvailable(chainId)) {
-            const from = this.symbiosis.metaRouter(chainId).address
-            const oracle = this.symbiosis.oneInchOracle(chainId)
-            return new OneInchTrade(
-                amountIn,
-                this.tokenOut,
-                from,
-                this.tradeCTo(),
-                this.slippage['C'],
-                oracle,
-                this.dataProvider,
-                this.oneInchProtocols
-            )
         }
 
         let routerC: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = this.symbiosis.uniLikeRouter(chainId)
