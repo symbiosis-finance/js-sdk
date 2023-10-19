@@ -16,7 +16,7 @@ interface Protocol {
     img_color: string
 }
 
-const API_URL = 'https://api-symbiosis.1inch.io'
+const API_URL = 'https://api-v2.symbiosis.finance/crosschain/v1/inch/'
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
 export class OneInchTrade implements SymbiosisTrade {
@@ -80,14 +80,14 @@ export class OneInchTrade implements SymbiosisTrade {
             protocols = protocolsOrigin
         }
 
-        const url = new URL(`v5.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
+        const url = new URL(`${this.tokenAmountIn.token.chainId}/swap`, API_URL)
 
-        url.searchParams.set('fromTokenAddress', fromTokenAddress)
-        url.searchParams.set('toTokenAddress', toTokenAddress)
+        url.searchParams.set('src', fromTokenAddress)
+        url.searchParams.set('dst', toTokenAddress)
         url.searchParams.set('amount', this.tokenAmountIn.raw.toString())
-        url.searchParams.set('fromAddress', this.from)
-        url.searchParams.set('destReceiver', this.to)
+        url.searchParams.set('from', this.from)
         url.searchParams.set('slippage', (this.slippage / 100).toString())
+        url.searchParams.set('receiver', this.to)
         url.searchParams.set('disableEstimate', 'true')
         url.searchParams.set('allowPartialFill', 'false')
         url.searchParams.set('usePatching', 'true')
@@ -109,7 +109,7 @@ export class OneInchTrade implements SymbiosisTrade {
             gas: string
             gasPrice: string
         } = json['tx']
-        const amountOutRaw: string = json['toTokenAmount']
+        const amountOutRaw: string = json['toAmount']
 
         this.routerAddress = tx.to
         this.callData = tx.data
@@ -131,8 +131,8 @@ export class OneInchTrade implements SymbiosisTrade {
     }
 
     static async getProtocols(chainId: ChainId): Promise<OneInchProtocols> {
-        const url = `${API_URL}/v5.0/${chainId}/liquidity-sources`
-        const response = await fetch(url)
+        const url = new URL(`${chainId}/liquidity-sources`, API_URL)
+        const response = await fetch(url.toString())
         const json = await response.json()
         if (response.status === 400) {
             throw new Error(`Cannot get 1inch protocols: ${json['description']}`)
