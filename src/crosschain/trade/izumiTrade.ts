@@ -92,6 +92,27 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
             }),
         ],
     },
+    [ChainId.SCROLL_MAINNET]: {
+        factory: '0x8c7d3063579BdB0b90997e18A770eaE32E1eBb08',
+        quoter: '0x33531bDBFE34fa6Fd5963D0423f7699775AacaaF',
+        swap: '0x2db0AFD0045F3518c77eC6591a542e326Befd3D7',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.SCROLL_MAINNET,
+                name: 'Wrapped Ether',
+                symbol: 'WETH',
+                address: '0x5300000000000000000000000000000000000004',
+                decimals: 18,
+            }),
+            new Token({
+                chainId: ChainId.SCROLL_MAINNET,
+                name: 'USD Coin',
+                symbol: 'USDC',
+                address: '0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4',
+                decimals: 18,
+            }),
+        ],
+    },
 }
 
 export class IzumiTrade implements SymbiosisTrade {
