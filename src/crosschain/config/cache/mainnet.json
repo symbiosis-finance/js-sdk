@@ -178,8 +178,8 @@
         },
         {
             "decimals": 6,
-            "symbol": "USDC",
-            "name": "USD Coin (PoS)",
+            "symbol": "USDC.e",
+            "name": "USD Coin (PoS) (USDC.e)",
             "chainId": 137,
             "isNative": false,
             "icons": {

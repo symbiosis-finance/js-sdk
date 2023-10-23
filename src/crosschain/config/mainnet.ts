@@ -197,9 +197,9 @@ export const config: Config = {
             waitForBlocksCount: 60,
             stables: [
                 {
-                    name: 'USD Coin (PoS)',
+                    name: 'USD Coin (PoS) (USDC.e)',
                     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
-                    symbol: 'USDC',
+                    symbol: 'USDC.e',
                     decimals: 6,
                     chainId: 137,
                     icons: {

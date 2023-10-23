@@ -6,15 +6,14 @@
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 12 },
-                { "index": 1, "tokenId": 15 },
-                { "index": 2, "tokenId": 14 },
+                { "index": 0, "tokenId": 11 },
+                { "index": 1, "tokenId": 14 },
+                { "index": 2, "tokenId": 13 },
                 { "index": 5, "tokenId": 2 },
-                { "index": 6, "tokenId": 16 },
-                { "index": 7, "tokenId": 22 },
-                { "index": 8, "tokenId": 19 },
-                { "index": 9, "tokenId": 20 },
-                { "index": 10, "tokenId": 21 }
+                { "index": 6, "tokenId": 15 },
+                { "index": 7, "tokenId": 20 },
+                { "index": 9, "tokenId": 18 },
+                { "index": 10, "tokenId": 19 }
             ]
         },
         {
@@ -23,9 +22,9 @@
             "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
             "id": 1,
             "tokens": [
-                { "index": 0, "tokenId": 17 },
-                { "index": 1, "tokenId": 13 },
-                { "index": 2, "tokenId": 18 }
+                { "index": 0, "tokenId": 16 },
+                { "index": 1, "tokenId": 12 },
+                { "index": 2, "tokenId": 17 }
             ]
         }
     ],
@@ -146,7 +145,7 @@
             "decimals": 6,
             "symbol": "USDT",
             "name": "Tether",
-            "chainId": 7001,
+            "chainId": 59140,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -160,20 +159,6 @@
             "decimals": 6,
             "symbol": "USDT",
             "name": "Tether",
-            "chainId": 59140,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
-            },
-            "deprecated": false,
-            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
-            "id": 9
-        },
-        {
-            "decimals": 6,
-            "symbol": "USDT",
-            "name": "Tether",
             "chainId": 5001,
             "isNative": false,
             "icons": {
@@ -182,7 +167,7 @@
             },
             "deprecated": false,
             "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
-            "id": 10
+            "id": 9
         },
         {
             "decimals": 6,
@@ -196,7 +181,7 @@
             },
             "deprecated": false,
             "address": "0x42a1e39aefa49290f2b3f9ed688d7cecf86cd6e0",
-            "id": 11
+            "id": 10
         },
         {
             "decimals": 6,
@@ -211,7 +196,7 @@
             "chainFromId": 5,
             "deprecated": false,
             "address": "0x32Ac07C5D3D6002B853836a48EE8538C9CF29ad4",
-            "id": 12,
+            "id": 11,
             "originalId": 0
         },
         {
@@ -227,7 +212,7 @@
             "chainFromId": 5,
             "deprecated": false,
             "address": "0x70470021F81e30497F86962e889BC732CA70aeE1",
-            "id": 13,
+            "id": 12,
             "originalId": 1
         },
         {
@@ -243,7 +228,7 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
-            "id": 14,
+            "id": 13,
             "originalId": 3
         },
         {
@@ -259,7 +244,7 @@
             "chainFromId": 80001,
             "deprecated": false,
             "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
-            "id": 15,
+            "id": 14,
             "originalId": 4
         },
         {
@@ -275,7 +260,7 @@
             "chainFromId": 534353,
             "deprecated": false,
             "address": "0xe586751BAED5b49Ba521e8169051b11A85b79007",
-            "id": 16,
+            "id": 15,
             "originalId": 5
         },
         {
@@ -291,7 +276,7 @@
             "chainFromId": 534353,
             "deprecated": false,
             "address": "0xabbEf7E6d201e03368DBA03BD7D87B350915f6EE",
-            "id": 17,
+            "id": 16,
             "originalId": 6
         },
         {
@@ -307,24 +292,8 @@
             "chainFromId": 534351,
             "deprecated": false,
             "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
-            "id": 18,
+            "id": 17,
             "originalId": 7
-        },
-        {
-            "decimals": 6,
-            "symbol": "sUSDT",
-            "name": "sUSDT from ZetaChain Athens 2",
-            "chainId": 97,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
-            },
-            "chainFromId": 7001,
-            "deprecated": false,
-            "address": "0xA31EB10427E47517A4E30DCC17054A2F2692aAe1",
-            "id": 19,
-            "originalId": 8
         },
         {
             "decimals": 6,
@@ -339,8 +308,8 @@
             "chainFromId": 59140,
             "deprecated": false,
             "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
-            "id": 20,
-            "originalId": 9
+            "id": 18,
+            "originalId": 8
         },
         {
             "decimals": 6,
@@ -355,8 +324,8 @@
             "chainFromId": 5001,
             "deprecated": false,
             "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
-            "id": 21,
-            "originalId": 10
+            "id": 19,
+            "originalId": 9
         },
         {
             "decimals": 6,
@@ -371,14 +340,15 @@
             "chainFromId": 2494104990,
             "deprecated": false,
             "address": "0x519663f7B0a8d4eb9cbA0A8dEBB70e26159539AF",
-            "id": 22,
-            "originalId": 11
+            "id": 20,
+            "originalId": 10
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Portal", "value": "0" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 11, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
@@ -388,8 +358,6 @@
         { "tokenId": 18, "type": "Synthesis", "value": "0" },
         { "tokenId": 19, "type": "Synthesis", "value": "0" },
         { "tokenId": 20, "type": "Synthesis", "value": "0" },
-        { "tokenId": 21, "type": "Synthesis", "value": "0" },
-        { "tokenId": 22, "type": "Synthesis", "value": "0" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Portal", "value": "0" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
@@ -397,7 +365,6 @@
         { "tokenId": 7, "type": "Portal", "value": "0" },
         { "tokenId": 8, "type": "Portal", "value": "0" },
         { "tokenId": 9, "type": "Portal", "value": "0" },
-        { "tokenId": 10, "type": "Portal", "value": "0" },
-        { "tokenId": 11, "type": "Portal", "value": "0" }
+        { "tokenId": 10, "type": "Portal", "value": "0" }
     ]
 }
