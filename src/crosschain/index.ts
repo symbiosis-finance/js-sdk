@@ -15,6 +15,7 @@ export * from './dataProvider'
 export { SymbiosisTradeType, getTradePriceImpact, IzumiTrade } from './trade'
 export * from './zappingSyncSwapLaunchPool'
 export * from './bestPoolSwapping'
+export * from './baseSwapping'
 export {
     prepareTronTransaction,
     isTronToken,
