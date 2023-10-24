@@ -305,7 +305,7 @@ export const config: Config = {
         },
         {
             id: 288,
-            rpc: 'https://mainnet.boba.network',
+            rpc: 'https://lightning-replica.boba.network',
             filterBlockOffset: 3000,
             waitForBlocksCount: 0,
             stables: [
