@@ -36,6 +36,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.POLYGON_ZK]: 'polygon_zkevm',
     [ChainId.LINEA_MAINNET]: 'linea',
     [ChainId.BASE_MAINNET]: 'base',
+    [ChainId.SCROLL_MAINNET]: 'scroll',
 }
 
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
