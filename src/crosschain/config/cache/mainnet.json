@@ -220,7 +220,7 @@
         },
         {
             "decimals": 6,
-            "symbol": "USDT",
+            "symbol": "USDt",
             "name": "Tether USDt",
             "chainId": 2222,
             "isNative": false,

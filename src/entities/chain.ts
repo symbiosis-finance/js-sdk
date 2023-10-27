@@ -459,7 +459,7 @@ export const chains: Chain[] = [
         id: ChainId.SCROLL_MAINNET,
         name: 'Scroll',
         disabled: false,
-        explorer: 'https://scroll.l2scan.co',
+        explorer: 'https://scrollscan.com',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',

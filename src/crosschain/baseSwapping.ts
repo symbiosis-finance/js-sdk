@@ -503,17 +503,6 @@ export abstract class BaseSwapping {
             return new WrapTrade(amountIn, this.tokenOut, this.to)
         }
 
-        if (IzumiTrade.isSupported(chainId)) {
-            return new IzumiTrade({
-                symbiosis: this.symbiosis,
-                tokenAmountIn: amountIn,
-                tokenOut: this.tokenOut,
-                slippage: this.slippage['C'],
-                ttl: this.ttl,
-                to: this.to,
-            })
-        }
-
         if (AggregatorTrade.isAvailable(chainId)) {
             const from = this.symbiosis.metaRouter(chainId).address
             return new AggregatorTrade({
@@ -526,6 +515,17 @@ export abstract class BaseSwapping {
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
                 oneInchProtocols: this.oneInchProtocols,
+            })
+        }
+
+        if (IzumiTrade.isSupported(chainId)) {
+            return new IzumiTrade({
+                symbiosis: this.symbiosis,
+                tokenAmountIn: amountIn,
+                tokenOut: this.tokenOut,
+                slippage: this.slippage['C'],
+                ttl: this.ttl,
+                to: this.to,
             })
         }
 

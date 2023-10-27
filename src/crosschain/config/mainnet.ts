@@ -277,7 +277,7 @@ export const config: Config = {
             stables: [
                 {
                     name: 'Tether USDt',
-                    symbol: 'USDT',
+                    symbol: 'USDt',
                     address: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
                     chainId: 2222,
                     decimals: 6,
@@ -565,7 +565,7 @@ export const config: Config = {
         },
         {
             id: 1101,
-            rpc: 'https://rpc.ankr.com/polygon_zkevm',
+            rpc: 'https://zkevm-rpc.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
