@@ -262,6 +262,7 @@ export class Zapping {
                 dataProvider: this.dataProvider,
                 symbiosis: this.symbiosis,
                 clientId: this.symbiosis.clientId,
+                ttl: this.ttl,
             })
         }
 
