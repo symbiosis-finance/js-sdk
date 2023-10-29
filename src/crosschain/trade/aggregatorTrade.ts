@@ -6,6 +6,7 @@ import { Symbiosis } from '../symbiosis'
 import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import {IzumiTrade} from "./izumiTrade";
 
 interface AggregatorTradeParams {
     symbiosis: Symbiosis
@@ -16,6 +17,7 @@ interface AggregatorTradeParams {
     to: string
     slippage: number
     clientId: string
+    ttl: number
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -27,20 +29,24 @@ class TradeNotInitializedError extends Error {
 
 const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('open-ocean')
 
+type TradeType =  OneInchTrade | OpenOceanTrade | IzumiTrade
+
 // Get the best trade from all aggregators
 export class AggregatorTrade implements SymbiosisTrade {
-    protected trade: OneInchTrade | OpenOceanTrade | undefined
+    protected trade: TradeType | undefined
 
     static isAvailable(chainId: ChainId): boolean {
-        return OneInchTrade.isAvailable(chainId) || OpenOceanTrade.isAvailable(chainId)
+        return OneInchTrade.isAvailable(chainId) ||
+            OpenOceanTrade.isAvailable(chainId) ||
+            IzumiTrade.isSupported(chainId)
     }
 
     constructor(private params: AggregatorTradeParams) {}
 
     public async init() {
-        const { dataProvider, from, slippage, symbiosis, to, tokenAmountIn, tokenOut, clientId } = this.params
+        const { dataProvider, from, slippage, symbiosis, to, tokenAmountIn, tokenOut, clientId, ttl } = this.params
 
-        const aggregators: Promise<OneInchTrade | OpenOceanTrade>[] = []
+        const aggregators: Promise<TradeType>[] = []
         if (clientId !== OPEN_OCEAN_CLIENT_ID && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade(
@@ -79,6 +85,18 @@ export class AggregatorTrade implements SymbiosisTrade {
             aggregators.push(Promise.race(promises))
         }
 
+        if (IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
+            const izumiTrade = new IzumiTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenOut,
+                slippage,
+                ttl,
+                to,
+            })
+            aggregators.push(izumiTrade.init())
+        }
+
         if (aggregators.length === 0) {
             throw new Error('No aggregators available for this trade')
         }
@@ -86,7 +104,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         const tradesResults = await Promise.allSettled(aggregators)
 
         // Find the best trade with the lowest price impact
-        let bestTrade: OneInchTrade | OpenOceanTrade | undefined
+        let bestTrade: TradeType | undefined
         for (const trade of tradesResults) {
             if (trade.status === 'rejected') {
                 continue

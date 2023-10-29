@@ -16,7 +16,7 @@ import {
 } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, IzumiTrade, SymbiosisTradeType, UniLikeTrade, WrapTrade } from './trade'
+import { AggregatorTrade, SymbiosisTradeType, UniLikeTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
 import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -424,18 +424,8 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
-                oneInchProtocols: this.oneInchProtocols,
-            })
-        }
-
-        if (IzumiTrade.isSupported(chainId)) {
-            return new IzumiTrade({
-                symbiosis: this.symbiosis,
-                tokenAmountIn: this.tokenAmountIn,
-                tokenOut,
-                slippage: this.slippage['A'],
                 ttl: this.ttl,
-                to,
+                oneInchProtocols: this.oneInchProtocols,
             })
         }
 
@@ -514,18 +504,8 @@ export abstract class BaseSwapping {
                 symbiosis: this.symbiosis,
                 dataProvider: this.dataProvider,
                 clientId: this.symbiosis.clientId,
-                oneInchProtocols: this.oneInchProtocols,
-            })
-        }
-
-        if (IzumiTrade.isSupported(chainId)) {
-            return new IzumiTrade({
-                symbiosis: this.symbiosis,
-                tokenAmountIn: amountIn,
-                tokenOut: this.tokenOut,
-                slippage: this.slippage['C'],
                 ttl: this.ttl,
-                to: this.to,
+                oneInchProtocols: this.oneInchProtocols,
             })
         }
 
