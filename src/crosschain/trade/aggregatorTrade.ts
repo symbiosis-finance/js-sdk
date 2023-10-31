@@ -98,7 +98,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
 
         if (aggregators.length === 0) {
-            throw new Error('No aggregators available for this trade')
+            throw new Error('No aggregators available for this trade. Aggregators count is zero.')
         }
 
         const tradesResults = await Promise.allSettled(aggregators)
@@ -107,6 +107,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         let bestTrade: TradeType | undefined
         for (const trade of tradesResults) {
             if (trade.status === 'rejected') {
+                console.log('Rejected. Reason: ', trade.reason)
                 continue
             }
 
@@ -121,7 +122,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
 
         if (!bestTrade) {
-            throw new Error('No aggregators available for this trade')
+            throw new Error('No aggregators available for this trade. All trades have failed.')
         }
 
         this.trade = bestTrade
