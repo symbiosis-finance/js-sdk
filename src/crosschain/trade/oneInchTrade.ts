@@ -95,11 +95,11 @@ export class OneInchTrade implements SymbiosisTrade {
 
         const response = await fetch(url.toString())
 
-        const json = await response.json()
-
-        if (response.status === 400) {
-            throw new Error(`Cannot build 1inch trade: ${json['description']}`)
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(`Cannot build 1inch trade: ${text}`)
         }
+        const json = await response.json()
 
         const tx: {
             from: string

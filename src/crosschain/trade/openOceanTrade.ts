@@ -110,11 +110,11 @@ export class OpenOceanTrade implements SymbiosisTrade {
 
         const response = await fetch(url.toString())
 
-        const json = await response.json()
-
         if (!response.ok) {
-            throw new Error(`Cannot build OpenOcean trade: ${json}`)
+            const text = await response.text()
+            throw new Error(`Cannot build OpenOcean trade: ${text}`)
         }
+        const json = await response.json()
 
         const { data, outAmount, to } = json.data as OpenOceanQuote
 
