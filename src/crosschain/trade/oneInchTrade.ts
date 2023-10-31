@@ -97,7 +97,7 @@ export class OneInchTrade implements SymbiosisTrade {
 
         if (!response.ok) {
             const text = await response.text()
-            throw new Error(`Cannot build 1inch trade: ${text}`)
+            throw new Error(`Cannot build 1inch trade on chain ${this.tokenAmountIn.token.chainId}: ${text}`)
         }
         const json = await response.json()
 
@@ -133,10 +133,12 @@ export class OneInchTrade implements SymbiosisTrade {
     static async getProtocols(chainId: ChainId): Promise<OneInchProtocols> {
         const url = new URL(`${chainId}/liquidity-sources`, API_URL)
         const response = await fetch(url.toString())
-        const json = await response.json()
-        if (response.status === 400) {
-            throw new Error(`Cannot get 1inch protocols: ${json['description']}`)
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(`Cannot get 1inch protocols for chain ${chainId}: ${text}`)
         }
+        const json = await response.json()
+
         return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
             if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
                 return acc
