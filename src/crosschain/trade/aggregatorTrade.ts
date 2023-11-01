@@ -6,7 +6,7 @@ import { Symbiosis } from '../symbiosis'
 import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
-import {IzumiTrade} from "./izumiTrade";
+import { IzumiTrade } from './izumiTrade'
 
 interface AggregatorTradeParams {
     symbiosis: Symbiosis
@@ -29,16 +29,16 @@ class TradeNotInitializedError extends Error {
 
 const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('open-ocean')
 
-type TradeType =  OneInchTrade | OpenOceanTrade | IzumiTrade
+type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade
 
 // Get the best trade from all aggregators
 export class AggregatorTrade implements SymbiosisTrade {
     protected trade: TradeType | undefined
 
     static isAvailable(chainId: ChainId): boolean {
-        return OneInchTrade.isAvailable(chainId) ||
-            OpenOceanTrade.isAvailable(chainId) ||
-            IzumiTrade.isSupported(chainId)
+        return (
+            OneInchTrade.isAvailable(chainId) || OpenOceanTrade.isAvailable(chainId) || IzumiTrade.isSupported(chainId)
+        )
     }
 
     constructor(private params: AggregatorTradeParams) {}
@@ -50,6 +50,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         if (clientId !== OPEN_OCEAN_CLIENT_ID && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade(
+                this.params.symbiosis,
                 tokenAmountIn,
                 tokenOut,
                 from,

@@ -65,6 +65,7 @@ import { BestPoolSwapping } from './bestPoolSwapping'
 import { ConfigCache } from './config/cache/cache'
 import { OmniPoolInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
+import { MakeOneInchRequestFn, makeOneInchRequest } from './oneInchRequest'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'bridge'
 
@@ -75,6 +76,8 @@ export class Symbiosis {
     public readonly clientId: string
 
     private readonly configCache: ConfigCache
+
+    public readonly makeOneInchRequest: MakeOneInchRequestFn
 
     public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
@@ -89,15 +92,18 @@ export class Symbiosis {
             throw new Error('Unknown config name')
         }
 
-        if (overrideConfig) {
+        if (overrideConfig?.chains) {
+            const { chains } = this.config
             this.config.chains = this.config.chains.map((chainConfig) => {
-                const found = overrideConfig.chains.find((i) => i.id === chainConfig.id)
+                const found = chains.find((i) => i.id === chainConfig.id)
                 if (found) {
                     chainConfig.rpc = found.rpc
                 }
                 return chainConfig
             })
         }
+
+        this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequest
 
         this.configCache = new ConfigCache(config)
 
