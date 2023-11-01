@@ -1,8 +1,8 @@
-import fetch from 'isomorphic-unfetch'
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
+import { Symbiosis } from '../symbiosis'
 import { canOneInch, getMinAmount } from '../utils'
 import { getTradePriceImpact } from './getTradePriceImpact'
 import { SymbiosisTrade } from './symbiosisTrade'
@@ -16,7 +16,6 @@ interface Protocol {
     img_color: string
 }
 
-const API_URL = 'https://api-v2.symbiosis.finance/crosschain/v1/inch/'
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
 export class OneInchTrade implements SymbiosisTrade {
@@ -32,6 +31,7 @@ export class OneInchTrade implements SymbiosisTrade {
     public oracle: OneInchOracle
     public callDataOffset?: number
 
+    private readonly symbiosis: Symbiosis
     private readonly tokenOut: Token
     private readonly from: string
     private readonly to: string
@@ -44,6 +44,7 @@ export class OneInchTrade implements SymbiosisTrade {
     }
 
     public constructor(
+        symbiosis: Symbiosis,
         tokenAmountIn: TokenAmount,
         tokenOut: Token,
         from: string,
@@ -53,6 +54,7 @@ export class OneInchTrade implements SymbiosisTrade {
         dataProvider: DataProvider,
         protocols?: OneInchProtocols
     ) {
+        this.symbiosis = symbiosis
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
@@ -80,26 +82,27 @@ export class OneInchTrade implements SymbiosisTrade {
             protocols = protocolsOrigin
         }
 
-        const url = new URL(`${this.tokenAmountIn.token.chainId}/swap`, API_URL)
+        const searchParams = new URLSearchParams()
 
-        url.searchParams.set('src', fromTokenAddress)
-        url.searchParams.set('dst', toTokenAddress)
-        url.searchParams.set('amount', this.tokenAmountIn.raw.toString())
-        url.searchParams.set('from', this.from)
-        url.searchParams.set('slippage', (this.slippage / 100).toString())
-        url.searchParams.set('receiver', this.to)
-        url.searchParams.set('disableEstimate', 'true')
-        url.searchParams.set('allowPartialFill', 'false')
-        url.searchParams.set('usePatching', 'true')
-        url.searchParams.set('protocols', protocols.join(','))
+        searchParams.set('src', fromTokenAddress)
+        searchParams.set('dst', toTokenAddress)
+        searchParams.set('amount', this.tokenAmountIn.raw.toString())
+        searchParams.set('from', this.from)
+        searchParams.set('slippage', (this.slippage / 100).toString())
+        searchParams.set('receiver', this.to)
+        searchParams.set('disableEstimate', 'true')
+        searchParams.set('allowPartialFill', 'false')
+        searchParams.set('usePatching', 'true')
+        searchParams.set('protocols', protocols.join(','))
 
-        const response = await fetch(url.toString())
+        let json: any
+        try {
+            json = await this.symbiosis.makeOneInchRequest(`${this.tokenAmountIn.token.chainId}/swap`, searchParams)
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error'
 
-        if (!response.ok) {
-            const text = await response.text()
-            throw new Error(`Cannot build 1inch trade on chain ${this.tokenAmountIn.token.chainId}: ${text}`)
+            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${message}`)
         }
-        const json = await response.json()
 
         const tx: {
             from: string
@@ -130,25 +133,25 @@ export class OneInchTrade implements SymbiosisTrade {
         return this
     }
 
-    static async getProtocols(chainId: ChainId): Promise<OneInchProtocols> {
-        const url = new URL(`${chainId}/liquidity-sources`, API_URL)
-        const response = await fetch(url.toString())
-        if (!response.ok) {
-            const text = await response.text()
-            throw new Error(`Cannot get 1inch protocols for chain ${chainId}: ${text}`)
-        }
-        const json = await response.json()
+    static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
+        try {
+            const json = await symbiosis.makeOneInchRequest(`${chainId}/liquidity-sources`)
 
-        return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
-            if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
+            return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
+                if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
+                    return acc
+                }
+                if (protocol.id.includes('PMM')) {
+                    return acc
+                }
+                acc.push(protocol.id)
                 return acc
-            }
-            if (protocol.id.includes('PMM')) {
-                return acc
-            }
-            acc.push(protocol.id)
-            return acc
-        }, [])
+            }, [])
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error'
+
+            throw new Error(`Cannot get 1inch swap on chain ${chainId}: ${message}`)
+        }
     }
 
     private getOffset(callData: string) {

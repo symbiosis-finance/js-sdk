@@ -1,4 +1,5 @@
 import { ChainId, TokenConstructor } from '../constants'
+import { MakeOneInchRequestFn } from './oneInchRequest'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -52,5 +53,6 @@ export type OverrideChainConfig = {
     rpc: string
 }
 export type OverrideConfig = {
-    chains: OverrideChainConfig[]
+    chains?: OverrideChainConfig[]
+    makeOneInchRequest?: MakeOneInchRequestFn
 }
