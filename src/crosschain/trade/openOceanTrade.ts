@@ -128,16 +128,24 @@ export class OpenOceanTrade implements SymbiosisTrade {
         this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
         this.route = [this.tokenAmountIn.token, this.tokenOut]
-        this.priceImpact = await this.getPriceImpact({
-            tokenAmountIn: this.tokenAmountIn,
-            tokenAmountOut: this.amountOut,
-            dataProvider: this.dataProvider,
-        })
+        try {
+            this.priceImpact = await this.getPriceImpact({
+                tokenAmountIn: this.tokenAmountIn,
+                tokenAmountOut: this.amountOut,
+                dataProvider: this.dataProvider,
+            })
+        } catch {
+            this.priceImpact = new Percent('0')
+        }
 
         return this
     }
 
     private async getPriceImpact({ tokenAmountIn, tokenAmountOut }: GetPriceImpactParams): Promise<Percent> {
+        if (!tokenAmountIn.token.symbol || !tokenAmountOut.token.symbol) {
+            throw new Error(`Cannot get OpenOcean token prices`)
+        }
+
         const getTokensResponse = await fetch(`${this.endpoint}/specify_tokenList`, {
             method: 'POST',
             headers: {
