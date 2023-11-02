@@ -465,6 +465,16 @@ export const chains: Chain[] = [
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
         },
     }),
+    new Chain({
+        id: ChainId.MANTA_MAINNET,
+        name: 'Manta',
+        disabled: false,
+        explorer: 'https://pacific-explorer.manta.network',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13631.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13631.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
