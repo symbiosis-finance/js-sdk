@@ -129,7 +129,12 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
 
         if (!bestTrade) {
-            // If no trade found, fallback to Uniswap like trade
+            const inToken = tokenAmountIn.token
+
+            console.log(
+                `No aggregetor trade found for ${inToken.chainId}/${inToken.address} -> ${tokenOut.chainId}/${tokenOut.address}. Fallback to unilike.`
+            )
+
             this.trade = await this.buildUniLikeTrade()
             return this
         }
