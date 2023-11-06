@@ -93,7 +93,7 @@ export class Symbiosis {
         }
 
         if (overrideConfig?.chains) {
-            const { chains } = this.config
+            const { chains } = overrideConfig
             this.config.chains = this.config.chains.map((chainConfig) => {
                 const found = chains.find((i) => i.id === chainConfig.id)
                 if (found) {
