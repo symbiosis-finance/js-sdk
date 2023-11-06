@@ -839,6 +839,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xb73603C5d87fA094B7314C74ACE2e64D165016fb',
+                    chainId: ChainId.MANTA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
