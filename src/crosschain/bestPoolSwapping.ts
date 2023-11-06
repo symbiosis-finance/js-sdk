@@ -25,10 +25,14 @@ export class BestPoolSwapping {
         const { omniPools } = this.symbiosis.config
 
         const swapWithoutTrades = omniPools.find((omniPoolConfig) => {
-            const transitTokenIn = this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
-            const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+            try {
+                const transitTokenIn = this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
+                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
 
-            return transitTokenIn.equals(wrappedToken(tokenIn)) && transitTokenOut.equals(wrappedToken(tokenOut))
+                return transitTokenIn.equals(wrappedToken(tokenIn)) && transitTokenOut.equals(wrappedToken(tokenOut))
+            } catch {
+                return false
+            }
         })
 
         if (swapWithoutTrades) {
@@ -36,9 +40,13 @@ export class BestPoolSwapping {
         }
 
         return omniPools.find((omniPoolConfig) => {
-            const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+            try {
+                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
 
-            return transitTokenOut.equals(wrappedToken(tokenOut))
+                return transitTokenOut.equals(wrappedToken(tokenOut))
+            } catch {
+                return false
+            }
         })
     }
 
