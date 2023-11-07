@@ -140,7 +140,7 @@ export abstract class BaseSwapping {
 
         const [fee, feeV2] = await Promise.all([
             this.getFee(this.transit.feeToken),
-            this.transit.isV2() ? await this.getFeeV2() : undefined,
+            this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
 
         this.feeV2 = feeV2
