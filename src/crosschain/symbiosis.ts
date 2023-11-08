@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber, Signer, utils } from 'ethers'
-import fetch from 'isomorphic-unfetch'
+import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
@@ -69,6 +69,10 @@ import { MakeOneInchRequestFn, makeOneInchRequestFactory } from './oneInchReques
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'bridge'
 
+const defaultFetch: typeof fetch = (url, init) => {
+    return isomorphicFetch(url, init)
+}
+
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
@@ -104,7 +108,7 @@ export class Symbiosis {
                 return chainConfig
             })
         }
-        this.fetch = overrideConfig?.fetch ?? fetch
+        this.fetch = overrideConfig?.fetch ?? defaultFetch
 
         this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
 
