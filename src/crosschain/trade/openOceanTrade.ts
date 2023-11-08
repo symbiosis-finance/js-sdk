@@ -1,18 +1,17 @@
-import fetch from 'isomorphic-unfetch'
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
-import { DataProvider } from '../dataProvider'
 import { SymbiosisTrade } from './symbiosisTrade'
-import BigNumber from 'bignumber.js'
-import { BIPS_BASE } from '../constants'
 import { getMinAmount } from '../utils'
+import type { Symbiosis } from '../symbiosis'
+import { BIPS_BASE } from '../constants'
+import BigNumber from 'bignumber.js'
 
 interface OpenOceanTradeParams {
+    symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
     tokenOut: Token
     to: string
     slippage: number
-    dataProvider: DataProvider
 }
 
 interface OpenOceanQuote {
@@ -20,6 +19,7 @@ interface OpenOceanQuote {
     inAmount: string
     outAmount: string
     data: string
+    price_impact: string
 }
 
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
@@ -44,12 +44,6 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 const BASE_URL = 'https://open-api.openocean.finance/v3'
 
-interface GetPriceImpactParams {
-    dataProvider: DataProvider
-    tokenAmountIn: TokenAmount
-    tokenAmountOut: TokenAmount
-}
-
 export class OpenOceanTrade implements SymbiosisTrade {
     public tradeType = 'open-ocean' as const
 
@@ -65,7 +59,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
     private chain?: string
     private endpoint: string
 
-    private readonly dataProvider: DataProvider
+    private readonly symbiosis: Symbiosis
     private readonly tokenOut: Token
     private readonly to: string
     private readonly slippage: number
@@ -74,12 +68,13 @@ export class OpenOceanTrade implements SymbiosisTrade {
         return Object.keys(OPEN_OCEAN_NETWORKS).includes(chainId.toString())
     }
 
-    public constructor({ tokenAmountIn, tokenOut, to, slippage, dataProvider }: OpenOceanTradeParams) {
+    public constructor({ symbiosis, tokenAmountIn, tokenOut, to, slippage }: OpenOceanTradeParams) {
+        this.symbiosis = symbiosis
+
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.to = to
         this.slippage = slippage
-        this.dataProvider = dataProvider
         this.callDataOffset = 4 + 8 * 32
         this.endpoint = BASE_URL
     }
@@ -110,7 +105,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
         url.searchParams.set('account', this.to)
         url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
 
-        const response = await fetch(url.toString())
+        const response = await this.symbiosis.fetch(url.toString())
 
         if (!response.ok) {
             const text = await response.text()
@@ -118,7 +113,11 @@ export class OpenOceanTrade implements SymbiosisTrade {
         }
         const json = await response.json()
 
-        const { data, outAmount, to } = json.data as OpenOceanQuote
+        if (json.code !== 200) {
+            throw new Error(`Cannot build OpenOcean trade: ${JSON.stringify(json)}}`)
+        }
+
+        const { data, outAmount, to, price_impact: priceImpactString } = json.data as OpenOceanQuote
 
         this.routerAddress = to
         this.callData = data
@@ -128,62 +127,22 @@ export class OpenOceanTrade implements SymbiosisTrade {
         this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
         this.route = [this.tokenAmountIn.token, this.tokenOut]
-        try {
-            this.priceImpact = await this.getPriceImpact({
-                tokenAmountIn: this.tokenAmountIn,
-                tokenAmountOut: this.amountOut,
-                dataProvider: this.dataProvider,
-            })
-        } catch {
-            this.priceImpact = new Percent('0')
-        }
+
+        this.priceImpact = this.convertPriceImpact(priceImpactString)
 
         return this
     }
 
-    private async getPriceImpact({ tokenAmountIn, tokenAmountOut }: GetPriceImpactParams): Promise<Percent> {
-        if (!tokenAmountIn.token.symbol || !tokenAmountOut.token.symbol) {
-            throw new Error(`Cannot get OpenOcean token prices`)
+    private convertPriceImpact(value?: string) {
+        if (!value) {
+            return new Percent('0')
         }
 
-        const getTokensResponse = await fetch(`${this.endpoint}/specify_tokenList`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tokens: [tokenAmountIn.token.symbol, tokenAmountOut.token.symbol],
-            }),
-        })
-
-        if (!getTokensResponse.ok) {
-            throw new Error(`Cannot get OpenOcean tokenList`)
+        const number = new BigNumber(value.split('%')[0])
+        if (number.isNaN()) {
+            return new Percent('0')
         }
 
-        const tokens = await getTokensResponse.json()
-
-        const inPrice = tokens.data.find(
-            (token: any) => token.symbol.toLowerCase() === tokenAmountIn.token.symbol?.toLowerCase()
-        )?.usd
-        const outPrice = tokens.data.find(
-            (token: any) => token.symbol.toLowerCase() === tokenAmountOut.token.symbol?.toLowerCase()
-        )?.usd
-
-        if (inPrice === undefined || outPrice === undefined) {
-            throw new Error(`Cannot find OpenOcean token prices`)
-        }
-
-        const spot = outPrice / inPrice
-
-        const outDecimals = new BigNumber(10).pow(tokenAmountOut.token.decimals)
-        const inBn = new BigNumber(tokenAmountIn.raw.toString()).multipliedBy(outDecimals)
-
-        const inDecimals = new BigNumber(10).pow(tokenAmountIn.token.decimals)
-        const outBn = new BigNumber(tokenAmountOut.raw.toString()).multipliedBy(inDecimals)
-        const real = inBn.div(outBn)
-
-        const impact = new BigNumber(1).minus(real.div(spot))
-
-        return new Percent(impact.multipliedBy(BIPS_BASE.toString()).integerValue().toString(), BIPS_BASE)
+        return new Percent(number.multipliedBy(100).integerValue().toString(), BIPS_BASE)
     }
 }

@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber, Signer, utils } from 'ethers'
-// import fetch from 'isomorphic-unfetch'
+import fetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
@@ -65,7 +65,7 @@ import { BestPoolSwapping } from './bestPoolSwapping'
 import { ConfigCache } from './config/cache/cache'
 import { OmniPoolInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
-import { MakeOneInchRequestFn, makeOneInchRequest } from './oneInchRequest'
+import { MakeOneInchRequestFn, makeOneInchRequestFactory } from './oneInchRequest'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'bridge'
 
@@ -78,6 +78,8 @@ export class Symbiosis {
     private readonly configCache: ConfigCache
 
     public readonly makeOneInchRequest: MakeOneInchRequestFn
+
+    public readonly fetch: typeof fetch
 
     public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
@@ -102,8 +104,9 @@ export class Symbiosis {
                 return chainConfig
             })
         }
+        this.fetch = overrideConfig?.fetch ?? fetch
 
-        this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequest
+        this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
 
         this.configCache = new ConfigCache(config)
 
@@ -335,20 +338,22 @@ export class Symbiosis {
             client_id: utils.parseBytes32String(this.clientId),
         }
 
-        return fetch(`${this.config.advisor.url}/v1/swap/price`, {
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(params),
         })
-            .then(async (response) => {
-                if (!response.ok) {
-                    return Promise.reject(new Error(await response.text()))
-                }
-                return response.json()
-            })
-            .then(({ price }) => JSBI.BigInt(price))
+
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(text)
+        }
+
+        const { price } = await response.json()
+
+        return JSBI.BigInt(price)
     }
 
     public filterBlockOffset(chainId: ChainId): number {

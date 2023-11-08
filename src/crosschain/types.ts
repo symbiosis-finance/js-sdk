@@ -55,4 +55,5 @@ export type OverrideChainConfig = {
 export type OverrideConfig = {
     chains?: OverrideChainConfig[]
     makeOneInchRequest?: MakeOneInchRequestFn
+    fetch?: typeof fetch
 }

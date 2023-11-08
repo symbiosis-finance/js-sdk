@@ -68,11 +68,11 @@ export class AggregatorTrade implements SymbiosisTrade {
 
         if (OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const openOceanTrade = new OpenOceanTrade({
+                symbiosis,
                 slippage,
                 to,
                 tokenAmountIn,
                 tokenOut,
-                dataProvider,
             })
 
             const promises: Promise<OpenOceanTrade>[] = [openOceanTrade.init()]
