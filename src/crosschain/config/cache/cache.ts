@@ -11,24 +11,24 @@ import { BigNumber } from 'ethers'
 import { OmniPoolConfig } from '../../types'
 
 export class ConfigCache {
-    private readonly cache: ConfigCacheData
+    private readonly data: ConfigCacheData
 
     public constructor(configName: ConfigName) {
         if (configName === 'mainnet') {
-            this.cache = mainnet
+            this.data = mainnet
         } else if (configName === 'testnet') {
-            this.cache = testnet
+            this.data = testnet
         } else if (configName === 'dev') {
-            this.cache = dev
+            this.data = dev
         } else if (configName === 'bridge') {
-            this.cache = bridge
+            this.data = bridge
         } else {
             throw new Error('Unknown config name')
         }
     }
 
     public tokens(): Token[] {
-        return this.cache.tokens.map((attributes) => {
+        return this.data.tokens.map((attributes) => {
             return new Token(attributes)
         })
     }
@@ -49,7 +49,7 @@ export class ConfigCache {
         const tokenInfo = this.getTokenInfoByToken(token)
         const type = token.isSynthetic ? 'Synthesis' : 'Portal'
 
-        const threshold = this.cache.thresholds.find((i) => {
+        const threshold = this.data.thresholds.find((i) => {
             return i.tokenId === tokenInfo.id && i.type === type
         })
         if (!threshold) {
@@ -60,7 +60,7 @@ export class ConfigCache {
     }
 
     public getOmniPoolByConfig(omniPoolConfig: OmniPoolConfig): OmniPoolInfo | undefined {
-        return this.cache.omniPools.find((i) => {
+        return this.data.omniPools.find((i) => {
             return (
                 i.address.toLowerCase() === omniPoolConfig.address.toLowerCase() && i.chainId === omniPoolConfig.chainId
             )
@@ -68,7 +68,7 @@ export class ConfigCache {
     }
 
     public getOmniPoolById(id: Id): OmniPoolInfo | undefined {
-        return this.cache.omniPools.find((i) => i.id === id)
+        return this.data.omniPools.find((i) => i.id === id)
     }
 
     // FIXME
@@ -86,7 +86,7 @@ export class ConfigCache {
             return this.getTokenInfoByToken(i).id
         })
 
-        return this.cache.omniPools.find((pool) => {
+        return this.data.omniPools.find((pool) => {
             return pool.tokens.find((i) => {
                 return ids.includes(i.tokenId)
             })
@@ -129,7 +129,7 @@ export class ConfigCache {
     // PRIVATE
 
     private getTokenInfoById(id: Id): TokenInfo {
-        const tokenInfo = this.cache.tokens.find((i) => i.id === id)
+        const tokenInfo = this.data.tokens.find((i) => i.id === id)
 
         if (!tokenInfo) {
             throw new Error(`Can't get tokenInfo for id ${id}`)
@@ -139,7 +139,7 @@ export class ConfigCache {
     }
 
     private getTokenInfoByToken(token: Token): TokenInfo {
-        const found = this.cache.tokens.find((i) => {
+        const found = this.data.tokens.find((i) => {
             return (
                 i.address.toLowerCase() === token.address.toLowerCase() &&
                 i.chainId === token.chainId &&
@@ -172,7 +172,7 @@ export class ConfigCache {
         }
         const wrapped = wrappedToken(token)
         const tokenInfo = this.getTokenInfoByToken(wrapped)
-        return this.cache.tokens
+        return this.data.tokens
             .filter((i) => {
                 return i.originalId === tokenInfo.id
             })

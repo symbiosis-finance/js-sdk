@@ -1,14 +1,15 @@
+import { getAddress } from 'ethers/lib/utils'
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Token, TokenAmount } from '../../entities'
+import { isTronChainId, tronAddressToEvm } from '../tron'
+import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
-import { getDecimals } from './getDecimals'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
+import { getDecimals } from './getDecimals'
 import { onchainSwap } from './onchainSwap'
 import { SwapExactInContex, SwapExactInParams, SwapExactInResult } from './types'
-import { isTronChainId, tronAddressToEvm } from '../tron'
-import { getAddress } from 'ethers/lib/utils'
-import { isWrapSupported, wrap } from './wrap'
 import { isUnwrapSupported, unwrap } from './unwrap'
+import { isWrapSupported, wrap } from './wrap'
 
 function validateAddress(chainId: ChainId, address: string): void {
     if (isTronChainId(chainId)) {
@@ -89,6 +90,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (inToken.chainId === outToken.chainId) {
         return onchainSwap(swapContext)
+    }
+
+    if (isBridgeSupported(swapContext)) {
+        return bridge(swapContext)
     }
 
     return crosschainSwap(swapContext)

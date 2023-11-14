@@ -52,6 +52,12 @@ export interface SwapExactInCrosschain extends CrosschainSwapInfo {
     kind: 'crosschain-swap'
 }
 
+export interface SwapExactInBridge {
+    kind: 'bridge'
+    fee: TokenAmount
+    tokenAmountOut: TokenAmount
+}
+
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -62,5 +68,11 @@ export type SwapExactInTransactionPayload =
           transactionRequest: TronTransactionData
       }
 
-export type SwapExactInResult = (SwapExactInOnchain | SwapExactInCrosschain | SwapExactInWrap | SwapExactInUnwrap) &
+export type SwapExactInResult = (
+    | SwapExactInOnchain
+    | SwapExactInCrosschain
+    | SwapExactInWrap
+    | SwapExactInUnwrap
+    | SwapExactInBridge
+) &
     SwapExactInTransactionPayload
