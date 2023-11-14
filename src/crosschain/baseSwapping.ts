@@ -28,7 +28,7 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
-interface SwapInfo {
+export interface CrossChainSwapInfo {
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
@@ -40,17 +40,17 @@ interface SwapInfo {
     outTradeType?: SymbiosisTradeType
 }
 
-export type EthSwapExactIn = SwapInfo & {
+export type EthSwapExactIn = CrossChainSwapInfo & {
     type: 'evm'
     transactionRequest: TransactionRequest
 }
 
-export type TronSwapExactIn = SwapInfo & {
+export type TronSwapExactIn = CrossChainSwapInfo & {
     type: 'tron'
     transactionRequest: TronTransactionData
 }
 
-export type SwapExactIn = TronSwapExactIn | EthSwapExactIn
+export type CrosschainSwapExactInResult = TronSwapExactIn | EthSwapExactIn
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -97,7 +97,7 @@ export abstract class BaseSwapping {
         slippage,
         deadline,
         oneInchProtocols,
-    }: SwapExactInParams): Promise<SwapExactIn> {
+    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -172,7 +172,7 @@ export abstract class BaseSwapping {
             JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
         )
 
-        const swapInfo: SwapInfo = {
+        const swapInfo: CrossChainSwapInfo = {
             fee: crossChainFee,
             tokenAmountOut,
             tokenAmountOutMin,

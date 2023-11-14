@@ -1,4 +1,4 @@
-import { ChainId } from '../../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
@@ -15,8 +15,6 @@ interface Protocol {
     img: string
     img_color: string
 }
-
-const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
 export class OneInchTrade implements SymbiosisTrade {
     tradeType = '1inch' as const

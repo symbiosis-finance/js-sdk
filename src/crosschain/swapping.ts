@@ -1,7 +1,7 @@
-import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
+import { BaseSwapping, CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
 
 export class Swapping extends BaseSwapping {
-    public async exactIn(params: SwapExactInParams): Promise<SwapExactIn> {
+    public async exactIn(params: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         return this.doExactIn(params)
     }
 }

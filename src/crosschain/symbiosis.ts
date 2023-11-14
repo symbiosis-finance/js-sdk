@@ -66,6 +66,7 @@ import { ConfigCache } from './config/cache/cache'
 import { OmniPoolInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
 import { MakeOneInchRequestFn, makeOneInchRequestFactory } from './oneInchRequest'
+import { SwapExactInParams, swapExactIn, SwapExactInResult } from './swapExactIn'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'bridge'
 
@@ -141,6 +142,10 @@ export class Symbiosis {
     public chains(): Chain[] {
         const ids = this.config.chains.map((i) => i.id)
         return chains.filter((i) => ids.includes(i.id))
+    }
+
+    public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+        return swapExactIn({ symbiosis: this, ...params })
     }
 
     public newBridging() {
