@@ -6,9 +6,10 @@
             "oracle": "0x851B43189de721dD94AbA767AAd9E6F6d6a95CCA",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 8 },
-                { "index": 1, "tokenId": 10 },
-                { "index": 2, "tokenId": 12 }
+                { "index": 0, "tokenId": 9 },
+                { "index": 1, "tokenId": 11 },
+                { "index": 2, "tokenId": 13 },
+                { "index": 3, "tokenId": 16 }
             ]
         },
         {
@@ -17,11 +18,11 @@
             "oracle": "0xDdD4F712F43e26eaDc10e88A0050552c196b0403",
             "id": 1,
             "tokens": [
-                { "index": 0, "tokenId": 9 },
-                { "index": 1, "tokenId": 11 },
-                { "index": 2, "tokenId": 14 },
-                { "index": 3, "tokenId": 15 },
-                { "index": 4, "tokenId": 13 }
+                { "index": 0, "tokenId": 10 },
+                { "index": 1, "tokenId": 12 },
+                { "index": 2, "tokenId": 15 },
+                { "index": 3, "tokenId": 17 },
+                { "index": 4, "tokenId": 14 }
             ]
         }
     ],
@@ -126,6 +127,20 @@
         },
         {
             "decimals": 18,
+            "symbol": "XDAO",
+            "name": "XDAO",
+            "chainId": 42161,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png"
+            },
+            "deprecated": false,
+            "address": "0x71eebA415A523F5C952Cc2f06361D5443545Ad28",
+            "id": 7
+        },
+        {
+            "decimals": 18,
             "symbol": "SIS",
             "name": "Symbiosis",
             "chainId": 59144,
@@ -136,7 +151,7 @@
             },
             "deprecated": false,
             "address": "0x6EF95B6f3b0F39508e3E04054Be96D5eE39eDE0d",
-            "id": 7
+            "id": 8
         },
         {
             "decimals": 18,
@@ -151,7 +166,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x9D9D79E32fA6A7214Ad79702a36bD520c3c42915",
-            "id": 8,
+            "id": 9,
             "originalId": 0
         },
         {
@@ -167,7 +182,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x36Bf038c530f151C430c77663bB0EE0Bd8B6EE02",
-            "id": 9,
+            "id": 10,
             "originalId": 1
         },
         {
@@ -183,7 +198,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x263308d316F07815C077C017e9481994d0a0C6Fe",
-            "id": 10,
+            "id": 11,
             "originalId": 2
         },
         {
@@ -199,7 +214,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x787F2a2A883B59E756B707D3f6b8c503Dc064493",
-            "id": 11,
+            "id": 12,
             "originalId": 3
         },
         {
@@ -215,7 +230,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0xeca9F12Ba3E5c2a822d1441C8FFD8C9A90659AF5",
-            "id": 12,
+            "id": 13,
             "originalId": 4
         },
         {
@@ -231,7 +246,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xe517857bEC19d1d534339bA32a43F15E33CE6b8d",
-            "id": 13,
+            "id": 14,
             "originalId": 5
         },
         {
@@ -247,8 +262,24 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x2460F2c6533e4E191e2466CE07aC3b3C45703256",
-            "id": 14,
+            "id": 15,
             "originalId": 6
+        },
+        {
+            "decimals": 18,
+            "symbol": "sXDAO",
+            "name": "Synthetic XDAO From Arbitrum",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png"
+            },
+            "chainFromId": 42161,
+            "deprecated": false,
+            "address": "0x460cd75279Aa77110Bd1149bB6150b19668b36FD",
+            "id": 16,
+            "originalId": 7
         },
         {
             "decimals": 18,
@@ -263,26 +294,28 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x880b78dde4baCcdD5089aE1383AE9ca30ea7AA6D",
-            "id": 15,
-            "originalId": 7
+            "id": 17,
+            "originalId": 8
         }
     ],
     "thresholds": [
-        { "tokenId": 0, "type": "Portal", "value": "0" },
+        { "tokenId": 0, "type": "Portal", "value": "10000000000000000000" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
-        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "10000000000000000000" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
-        { "tokenId": 4, "type": "Portal", "value": "0" },
+        { "tokenId": 4, "type": "Portal", "value": "10000000000000000000" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 6, "type": "Portal", "value": "0" },
-        { "tokenId": 7, "type": "Portal", "value": "0" },
-        { "tokenId": 8, "type": "Synthesis", "value": "0" },
+        { "tokenId": 7, "type": "Portal", "value": "10000000000000000000" },
+        { "tokenId": 8, "type": "Portal", "value": "0" },
         { "tokenId": 9, "type": "Synthesis", "value": "0" },
         { "tokenId": 10, "type": "Synthesis", "value": "0" },
         { "tokenId": 11, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
-        { "tokenId": 15, "type": "Synthesis", "value": "0" }
+        { "tokenId": 15, "type": "Synthesis", "value": "0" },
+        { "tokenId": 16, "type": "Synthesis", "value": "0" },
+        { "tokenId": 17, "type": "Synthesis", "value": "0" }
     ]
 }

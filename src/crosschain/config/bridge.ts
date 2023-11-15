@@ -197,6 +197,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
+                {
+                    name: 'XDAO',
+                    address: '0x71eebA415A523F5C952Cc2f06361D5443545Ad28',
+                    symbol: 'XDAO',
+                    decimals: 18,
+                    chainId: 42161,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21760.png',
+                    },
+                },
             ],
             router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
             dexFee: 30,
