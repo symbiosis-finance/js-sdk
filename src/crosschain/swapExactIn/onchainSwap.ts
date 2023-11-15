@@ -1,7 +1,7 @@
 import { DataProvider } from '../dataProvider'
 import { AggregatorTrade } from '../trade'
 import { preparePayload } from './preparePayload'
-import { SwapExactInContex, SwapExactInOnchain, SwapExactInTransactionPayload } from './types'
+import { SwapExactInOnchain, SwapExactInParams, SwapExactInTransactionPayload } from './types'
 
 export async function onchainSwap({
     symbiosis,
@@ -9,11 +9,10 @@ export async function onchainSwap({
     toAddress,
     fromAddress,
     slippage,
-    inAmount,
+    inTokenAmount,
     outToken,
     oneInchProtocols,
-    inTokenChainId,
-}: SwapExactInContex): Promise<SwapExactInOnchain & SwapExactInTransactionPayload> {
+}: SwapExactInParams): Promise<SwapExactInOnchain & SwapExactInTransactionPayload> {
     const dataProvider = new DataProvider(symbiosis)
     const ttl = deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
@@ -23,7 +22,7 @@ export async function onchainSwap({
         clientId: symbiosis.clientId,
         dataProvider,
         slippage,
-        tokenAmountIn: inAmount,
+        tokenAmountIn: inTokenAmount,
         tokenOut: outToken,
         ttl,
         oneInchProtocols,
@@ -33,10 +32,10 @@ export async function onchainSwap({
 
     const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType } = aggregatorTrade
 
-    const value = inAmount.token.isNative ? inAmount.raw.toString() : '0'
+    const value = inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : '0'
 
     const payload = preparePayload({
-        chainId: inTokenChainId,
+        chainId: inTokenAmount.token.chainId,
         fromAddress,
         toAddress: routerAddress,
         value,

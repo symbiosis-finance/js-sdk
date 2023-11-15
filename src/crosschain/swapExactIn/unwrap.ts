@@ -1,36 +1,36 @@
 import { TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
-import { SwapExactInContex, SwapExactInTransactionPayload, SwapExactInUnwrap } from './types'
+import { SwapExactInParams, SwapExactInTransactionPayload, SwapExactInUnwrap } from './types'
 
-export function isUnwrapSupported(context: SwapExactInContex): boolean {
-    const weth = WETH[context.inTokenChainId]
+export function isUnwrapSupported(params: SwapExactInParams): boolean {
+    const { inTokenAmount, outToken } = params
 
-    return (
-        context.inTokenChainId === context.outTokenChainId &&
-        context.outToken.isNative &&
-        weth &&
-        weth.address.toLowerCase() === context.inTokenAddress.toLowerCase()
-    )
+    const inChainId = inTokenAmount.token.chainId
+    const outChainId = outToken.chainId
+
+    const weth = WETH[inChainId]
+
+    return inChainId === outChainId && outToken.isNative && weth && weth.equals(inTokenAmount.token)
 }
 
-export async function unwrap(context: SwapExactInContex): Promise<SwapExactInUnwrap & SwapExactInTransactionPayload> {
+export async function unwrap(params: SwapExactInParams): Promise<SwapExactInUnwrap & SwapExactInTransactionPayload> {
     const wethInterface = Weth__factory.createInterface()
 
-    const amountOut = new TokenAmount(context.outToken, context.inAmount.raw)
+    const amountOut = new TokenAmount(params.outToken, params.inTokenAmount.raw)
 
-    const callData = wethInterface.encodeFunctionData('withdraw', [context.inAmount.raw.toString()])
+    const callData = wethInterface.encodeFunctionData('withdraw', [params.inTokenAmount.raw.toString()])
 
     const payload = preparePayload({
-        chainId: context.inTokenChainId,
-        fromAddress: context.fromAddress,
-        toAddress: context.inTokenAddress,
+        chainId: params.inTokenAmount.token.chainId,
+        fromAddress: params.fromAddress,
+        toAddress: params.inTokenAmount.token.address,
         callData,
     })
 
     return {
         kind: 'unwrap',
-        route: [context.inAmount.token, context.outToken],
+        route: [params.inTokenAmount.token, params.outToken],
         tokenAmountOut: amountOut,
         ...payload,
     }

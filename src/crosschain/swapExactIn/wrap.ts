@@ -1,43 +1,47 @@
 import { TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
-import { SwapExactInContex, SwapExactInTransactionPayload, SwapExactInWrap } from './types'
+import { SwapExactInParams, SwapExactInTransactionPayload, SwapExactInWrap } from './types'
 
-export function isWrapSupported(context: SwapExactInContex): boolean {
-    const weth = WETH[context.inTokenChainId]
+export function isWrapSupported(params: SwapExactInParams): boolean {
+    const { inTokenAmount, outToken } = params
 
-    return (
-        context.inTokenChainId === context.outTokenChainId &&
-        context.inAmount.token.isNative &&
-        weth &&
-        weth.address.toLowerCase() === context.outTokenAddress.toLowerCase()
-    )
+    const inChainId = inTokenAmount.token.chainId
+    const outChainId = outToken.chainId
+
+    const weth = WETH[inChainId]
+
+    return inChainId === outChainId && inTokenAmount.token.isNative && weth && weth.equals(outToken)
 }
 
-export async function wrap(context: SwapExactInContex): Promise<SwapExactInWrap & SwapExactInTransactionPayload> {
-    const weth = WETH[context.inTokenChainId]
+export async function wrap(params: SwapExactInParams): Promise<SwapExactInWrap & SwapExactInTransactionPayload> {
+    const { inTokenAmount } = params
+
+    const { chainId } = inTokenAmount.token
+
+    const weth = WETH[chainId]
 
     if (!weth) {
-        throw new Error(`Wrap token not found for chain ${context.inTokenChainId}`)
+        throw new Error(`Wrap token not found for chain ${chainId}`)
     }
 
     const wethInterface = Weth__factory.createInterface()
 
-    const amountOut = new TokenAmount(weth, context.inAmount.raw)
+    const amountOut = new TokenAmount(weth, inTokenAmount.raw)
 
     const callData = wethInterface.encodeFunctionData('deposit')
 
     const payload = preparePayload({
-        chainId: context.inTokenChainId,
-        fromAddress: context.fromAddress,
+        chainId,
+        fromAddress: params.fromAddress,
         toAddress: weth.address,
-        value: context.inAmount.raw.toString(),
+        value: inTokenAmount.raw.toString(),
         callData,
     })
 
     return {
         kind: 'wrap',
-        route: [context.inAmount.token, weth],
+        route: [inTokenAmount.token, weth],
         tokenAmountOut: amountOut,
         ...payload,
     }

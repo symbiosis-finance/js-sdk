@@ -1,4 +1,4 @@
-import { SwapExactInContex, SwapExactInCrosschain, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInCrosschain, SwapExactInTransactionPayload } from './types'
 
 export async function crosschainSwap({
     symbiosis,
@@ -6,10 +6,10 @@ export async function crosschainSwap({
     fromAddress,
     slippage,
     toAddress,
-    inAmount,
+    inTokenAmount,
     outToken,
     oneInchProtocols,
-}: SwapExactInContex): Promise<SwapExactInCrosschain & SwapExactInTransactionPayload> {
+}: SwapExactInParams): Promise<SwapExactInCrosschain & SwapExactInTransactionPayload> {
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
     const {
@@ -21,7 +21,7 @@ export async function crosschainSwap({
         from: fromAddress,
         slippage,
         to: toAddress,
-        tokenAmountIn: inAmount,
+        tokenAmountIn: inTokenAmount,
         tokenOut: outToken,
         oneInchProtocols,
     })

@@ -1,100 +1,96 @@
-import { getAddress } from 'ethers/lib/utils'
-import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
-import { Token, TokenAmount } from '../../entities'
-import { isTronChainId, tronAddressToEvm } from '../tron'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
-import { getDecimals } from './getDecimals'
 import { onchainSwap } from './onchainSwap'
-import { SwapExactInContex, SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from './types'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
 
-function validateAddress(chainId: ChainId, address: string): void {
-    if (isTronChainId(chainId)) {
-        tronAddressToEvm(address)
-    }
-
-    getAddress(address)
-}
-
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, inTokenAddress, inTokenChainId, outTokenAddress, outTokenChainId, amount } = params
+    const { inTokenAmount, outToken } = params
 
-    if (inTokenChainId === outTokenChainId && inTokenAddress === outTokenAddress) {
+    if (inTokenAmount.token.equals(outToken)) {
         throw new Error('Cannot swap same tokens')
     }
 
-    try {
-        validateAddress(inTokenChainId, inTokenAddress)
-    } catch (error) {
-        throw new Error(`Invalid address: ${inTokenChainId}/${inTokenAddress}`)
+    if (isWrapSupported(params)) {
+        return wrap(params)
     }
 
-    try {
-        validateAddress(outTokenChainId, outTokenAddress)
-    } catch (error) {
-        throw new Error(`Invalid address: ${outTokenChainId}/${outTokenAddress}`)
+    if (isUnwrapSupported(params)) {
+        return unwrap(params)
     }
 
-    const [decimalsIn, decimalsOut] = await getDecimals(
-        symbiosis,
-        { address: inTokenAddress, chainId: inTokenChainId },
-        { address: outTokenAddress, chainId: outTokenChainId }
-    )
-
-    if (decimalsIn === undefined || decimalsOut === undefined) {
-        throw new Error(
-            `Cannot fetch decimals for ${inTokenChainId}/${inTokenAddress} and ${outTokenChainId}/${outTokenAddress}`
-        )
+    if (isFeeCollectorSwapSupported(params)) {
+        return feeCollectorSwap(params)
     }
 
-    const isInTokenNative = inTokenAddress.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
-    const isOutTokenNative = outTokenAddress.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
-
-    const inToken = new Token({
-        chainId: inTokenChainId,
-        decimals: decimalsIn,
-        address: isInTokenNative ? '' : inTokenAddress,
-        isNative: isInTokenNative,
-    })
-
-    const outToken = new Token({
-        chainId: outTokenChainId,
-        decimals: decimalsOut,
-        address: isOutTokenNative ? '' : outTokenAddress,
-        isNative: isOutTokenNative,
-    })
-
-    const inAmount = new TokenAmount(inToken, amount)
-
-    const swapContext: SwapExactInContex = {
-        ...params,
-        inAmount,
-        outToken,
+    if (inTokenAmount.token.chainId === outToken.chainId) {
+        return onchainSwap(params)
     }
 
-    if (isWrapSupported(swapContext)) {
-        return wrap(swapContext)
+    if (isBridgeSupported(params)) {
+        return bridge(params)
     }
 
-    if (isUnwrapSupported(swapContext)) {
-        return unwrap(swapContext)
-    }
-
-    if (isFeeCollectorSwapSupported(swapContext)) {
-        return feeCollectorSwap(swapContext)
-    }
-
-    if (inToken.chainId === outToken.chainId) {
-        return onchainSwap(swapContext)
-    }
-
-    if (isBridgeSupported(swapContext)) {
-        return bridge(swapContext)
-    }
-
-    return crosschainSwap(swapContext)
+    return crosschainSwap(params)
 }
+
+// Swap exact in unknown tokens
+// function validateAddress(chainId: ChainId, address: string): void {
+//     if (isTronChainId(chainId)) {
+//         tronAddressToEvm(address)
+//     }
+
+//     getAddress(address)
+// }
+
+// try {
+//     validateAddress(inTokenChainId, inTokenAddress)
+// } catch (error) {
+//     throw new Error(`Invalid address: ${inTokenChainId}/${inTokenAddress}`)
+// }
+
+// try {
+//     validateAddress(outTokenChainId, outTokenAddress)
+// } catch (error) {
+//     throw new Error(`Invalid address: ${outTokenChainId}/${outTokenAddress}`)
+// }
+
+// const [decimalsIn, decimalsOut] = await getDecimals(
+//     symbiosis,
+//     { address: inTokenAddress, chainId: inTokenChainId },
+//     { address: outTokenAddress, chainId: outTokenChainId }
+// )
+
+// if (decimalsIn === undefined || decimalsOut === undefined) {
+//     throw new Error(
+//         `Cannot fetch decimals for ${inTokenChainId}/${inTokenAddress} and ${outTokenChainId}/${outTokenAddress}`
+//     )
+// }
+
+// const inToken = new Token({
+//     chainId: inTokenChainId,
+//     decimals: decimalsIn,
+//     address: isInTokenNative ? '' : inTokenAddress,
+//     isNative: isInTokenNative,
+// })
+
+// const outToken = new Token({
+//     chainId: outTokenChainId,
+//     decimals: decimalsOut,
+//     address: isOutTokenNative ? '' : outTokenAddress,
+//     isNative: isOutTokenNative,
+// })
+
+// const inAmount = new TokenAmount(inToken, amount)
+
+// const isInTokenNative = inTokenAddress.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
+// const isOutTokenNative = outTokenAddress.toLowerCase() === NATIVE_TOKEN_ADDRESS.toLowerCase()
+
+// const swapContext: SwapExactInContex = {
+//     ...params,
+//     inAmount,
+//     outToken,
+// }

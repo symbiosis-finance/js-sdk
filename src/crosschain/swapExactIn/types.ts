@@ -5,25 +5,16 @@ import { Symbiosis } from '../symbiosis'
 import { SymbiosisTradeType } from '../trade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { TronTransactionData } from '../tron'
-import { ChainId } from '../../constants'
 
 export interface SwapExactInParams {
     symbiosis: Symbiosis
     fromAddress: string
     toAddress: string
-    amount: string
-    inTokenAddress: string
-    inTokenChainId: ChainId
-    outTokenAddress: string
-    outTokenChainId: ChainId
+    inTokenAmount: TokenAmount
+    outToken: Token
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
-}
-
-export interface SwapExactInContex extends SwapExactInParams {
-    inAmount: TokenAmount
-    outToken: Token
 }
 
 export interface SwapExactInOnchain {

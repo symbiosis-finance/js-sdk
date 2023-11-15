@@ -3,7 +3,7 @@ import { BigNumber, BytesLike } from 'ethers'
 import { ChainId } from '../../constants'
 import { TokenAmount } from '../../entities'
 import { onchainSwap } from './onchainSwap'
-import { SwapExactInContex, SwapExactInOnchain, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInOnchain, SwapExactInTransactionPayload } from './types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 
@@ -29,41 +29,44 @@ const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
     [ChainId.MANTA_MAINNET]: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
 }
 
-export function isFeeCollectorSwapSupported(context: SwapExactInContex): boolean {
-    const { inTokenChainId, outTokenChainId } = context
+export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {
+    const inChainId = params.inTokenAmount.token.chainId
+    const outChainId = params.outToken.chainId
 
-    return inTokenChainId === outTokenChainId && FEE_COLLECTOR_ADDRESES[inTokenChainId] !== undefined
+    return inChainId === outChainId && FEE_COLLECTOR_ADDRESES[inChainId] !== undefined
 }
 
 export async function feeCollectorSwap(
-    context: SwapExactInContex
+    params: SwapExactInParams
 ): Promise<SwapExactInOnchain & SwapExactInTransactionPayload> {
-    const { symbiosis, toAddress } = context
+    const { symbiosis, toAddress } = params
 
-    const feeCollectorAddress = FEE_COLLECTOR_ADDRESES[context.inTokenChainId]
+    const inChainId = params.inTokenAmount.token.chainId
+
+    const feeCollectorAddress = FEE_COLLECTOR_ADDRESES[inChainId]
     if (!feeCollectorAddress) {
-        throw new Error(`Fee collector not found for chain ${context.inTokenChainId}`)
+        throw new Error(`Fee collector not found for chain ${inChainId}`)
     }
 
-    const provider = symbiosis.getProvider(context.inTokenChainId)
+    const provider = symbiosis.getProvider(inChainId)
     const contract = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
     // TODO: Multicall
     const fee: BigNumber = await contract.callStatic.fee()
     const approveAddress: string = await contract.callStatic.onchainGateway()
 
-    let inAmount = context.inAmount
-    if (inAmount.token.isNative) {
-        const feeTokenAmount = new TokenAmount(inAmount.token, fee.toString())
-        if (inAmount.lessThan(feeTokenAmount)) {
+    let inTokenAmount = params.inTokenAmount
+    if (inTokenAmount.token.isNative) {
+        const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
+        if (inTokenAmount.lessThan(feeTokenAmount)) {
             throw new Error(`Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`)
         }
 
-        inAmount = inAmount.subtract(feeTokenAmount)
+        inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
     }
 
     // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap({ ...context, inAmount, fromAddress: feeCollectorAddress })
+    const result = await onchainSwap({ ...params, inTokenAmount, fromAddress: feeCollectorAddress })
 
     let value: string
     let callData: BytesLike
@@ -75,7 +78,7 @@ export async function feeCollectorSwap(
         callData = result.transactionRequest.data as BytesLike
     }
 
-    if (inAmount.token.isNative) {
+    if (inTokenAmount.token.isNative) {
         /**
          * To maintain consistency with any potential fees charged by the aggregator,
          * we calculate the total value by adding the fee to the value obtained from the aggregator.
@@ -86,16 +89,16 @@ export async function feeCollectorSwap(
     }
 
     callData = contract.interface.encodeFunctionData('onswap', [
-        inAmount.token.isNative ? AddressZero : inAmount.token.address,
-        inAmount.raw.toString(),
+        inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
+        inTokenAmount.raw.toString(),
         toAddress,
-        inAmount.token.isNative ? AddressZero : approveAddress,
+        inTokenAmount.token.isNative ? AddressZero : approveAddress,
         callData,
     ])
 
     const payload = preparePayload({
-        chainId: context.inTokenChainId,
-        fromAddress: context.fromAddress,
+        chainId: inChainId,
+        fromAddress: params.fromAddress,
         toAddress: feeCollectorAddress,
         value,
         callData,
