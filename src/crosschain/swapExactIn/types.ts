@@ -1,6 +1,5 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { Percent, Token, TokenAmount } from '../../entities'
-import { CrossChainSwapInfo as CrosschainSwapInfo } from '../baseSwapping'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTradeType } from '../trade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
@@ -17,38 +16,6 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
-export interface SwapExactInOnchain {
-    kind: 'onchain-swap'
-    route: Token[]
-    tokenAmountOut: TokenAmount
-    tokenAmountOutMin: TokenAmount
-    priceImpact: Percent
-    approveTo: string
-    tradeType: SymbiosisTradeType
-}
-
-export interface SwapExactInWrap {
-    kind: 'wrap'
-    route: Token[]
-    tokenAmountOut: TokenAmount
-}
-
-export interface SwapExactInUnwrap {
-    kind: 'unwrap'
-    route: Token[]
-    tokenAmountOut: TokenAmount
-}
-
-export interface SwapExactInCrosschain extends CrosschainSwapInfo {
-    kind: 'crosschain-swap'
-}
-
-export interface SwapExactInBridge {
-    kind: 'bridge'
-    fee: TokenAmount
-    tokenAmountOut: TokenAmount
-}
-
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -59,11 +26,15 @@ export type SwapExactInTransactionPayload =
           transactionRequest: TronTransactionData
       }
 
-export type SwapExactInResult = (
-    | SwapExactInOnchain
-    | SwapExactInCrosschain
-    | SwapExactInWrap
-    | SwapExactInUnwrap
-    | SwapExactInBridge
-) &
-    SwapExactInTransactionPayload
+export type SwapExactInResult = {
+    kind: 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge'
+    route: Token[]
+    tokenAmountOut: TokenAmount
+    tokenAmountOutMin?: TokenAmount
+    priceImpact?: Percent
+    approveTo?: string
+    inTradeType?: SymbiosisTradeType
+    outTradeType?: SymbiosisTradeType
+    amountInUsd?: TokenAmount
+    fee?: TokenAmount
+} & SwapExactInTransactionPayload

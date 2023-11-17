@@ -1,4 +1,4 @@
-import { Percent, Token, TokenAmount } from 'src/entities'
+import { Percent, Token, TokenAmount } from '../../entities'
 
 export type SymbiosisTradeType = 'dex' | '1inch' | 'open-ocean' | 'wrap' | 'izumi'
 

@@ -1,7 +1,7 @@
 import { TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
-import { SwapExactInParams, SwapExactInTransactionPayload, SwapExactInUnwrap } from './types'
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 export function isUnwrapSupported(params: SwapExactInParams): boolean {
     const { inTokenAmount, outToken } = params
@@ -14,7 +14,7 @@ export function isUnwrapSupported(params: SwapExactInParams): boolean {
     return inChainId === outChainId && outToken.isNative && weth && weth.equals(inTokenAmount.token)
 }
 
-export async function unwrap(params: SwapExactInParams): Promise<SwapExactInUnwrap & SwapExactInTransactionPayload> {
+export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const wethInterface = Weth__factory.createInterface()
 
     const amountOut = new TokenAmount(params.outToken, params.inTokenAmount.raw)
@@ -31,6 +31,7 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInUnwr
     return {
         kind: 'unwrap',
         route: [params.inTokenAmount.token, params.outToken],
+        tokenAmountOutMin: amountOut,
         tokenAmountOut: amountOut,
         ...payload,
     }

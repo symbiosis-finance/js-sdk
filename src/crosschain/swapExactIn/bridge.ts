@@ -1,5 +1,5 @@
 import { wrappedToken } from '../../entities'
-import { SwapExactInBridge, SwapExactInParams, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount, outToken, symbiosis } = context
@@ -16,7 +16,7 @@ export function isBridgeSupported(context: SwapExactInParams): boolean {
     return !!representation && representation.equals(wrappedOutToken)
 }
 
-export async function bridge(context: SwapExactInParams): Promise<SwapExactInBridge & SwapExactInTransactionPayload> {
+export async function bridge(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken } = context
 
     const briging = context.symbiosis.newBridging()
@@ -35,6 +35,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInBri
 
     return {
         kind: 'bridge',
+        route: [inTokenAmount.token, outToken],
         fee: result.fee,
         tokenAmountOut: result.tokenAmountOut,
         ...payload,

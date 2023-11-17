@@ -1,7 +1,7 @@
 import { TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
-import { SwapExactInParams, SwapExactInTransactionPayload, SwapExactInWrap } from './types'
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 export function isWrapSupported(params: SwapExactInParams): boolean {
     const { inTokenAmount, outToken } = params
@@ -14,7 +14,7 @@ export function isWrapSupported(params: SwapExactInParams): boolean {
     return inChainId === outChainId && inTokenAmount.token.isNative && weth && weth.equals(outToken)
 }
 
-export async function wrap(params: SwapExactInParams): Promise<SwapExactInWrap & SwapExactInTransactionPayload> {
+export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount } = params
 
     const { chainId } = inTokenAmount.token

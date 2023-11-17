@@ -1,7 +1,7 @@
 import { DataProvider } from '../dataProvider'
 import { AggregatorTrade } from '../trade'
 import { preparePayload } from './preparePayload'
-import { SwapExactInOnchain, SwapExactInParams, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 export async function onchainSwap({
     symbiosis,
@@ -12,7 +12,7 @@ export async function onchainSwap({
     inTokenAmount,
     outToken,
     oneInchProtocols,
-}: SwapExactInParams): Promise<SwapExactInOnchain & SwapExactInTransactionPayload> {
+}: SwapExactInParams): Promise<SwapExactInResult> {
     const dataProvider = new DataProvider(symbiosis)
     const ttl = deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
@@ -49,7 +49,7 @@ export async function onchainSwap({
         tokenAmountOutMin: amountOutMin,
         priceImpact,
         route,
-        tradeType,
+        inTradeType: tradeType,
         ...payload,
     }
 }

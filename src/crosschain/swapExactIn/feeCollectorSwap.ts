@@ -3,7 +3,7 @@ import { BigNumber, BytesLike } from 'ethers'
 import { ChainId } from '../../constants'
 import { TokenAmount } from '../../entities'
 import { onchainSwap } from './onchainSwap'
-import { SwapExactInParams, SwapExactInOnchain, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInResult } from './types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 
@@ -36,9 +36,7 @@ export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean 
     return inChainId === outChainId && FEE_COLLECTOR_ADDRESES[inChainId] !== undefined
 }
 
-export async function feeCollectorSwap(
-    params: SwapExactInParams
-): Promise<SwapExactInOnchain & SwapExactInTransactionPayload> {
+export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, toAddress } = params
 
     const inChainId = params.inTokenAmount.token.chainId
