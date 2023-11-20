@@ -67,7 +67,7 @@ const log = await swapping.waitForComplete(receipt)
 
 // check if transit token was received instead target token
 const transitTokenSent = await symbiosis.findTransitTokenSent(
-    tokenAmountIn.token.chainId,
+    tokenOut.chainId,
     log.transactionHash
 )
 
