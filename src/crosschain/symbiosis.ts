@@ -71,7 +71,7 @@ import { SwapExactInParams, swapExactIn, SwapExactInResult } from './swapExactIn
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'bridge'
 
 const defaultFetch: typeof fetch = (url, init) => {
-    return isomorphicFetch(url, init)
+    return isomorphicFetch(url as string, init)
 }
 
 export class Symbiosis {
