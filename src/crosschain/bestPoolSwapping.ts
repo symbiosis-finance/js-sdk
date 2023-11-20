@@ -7,7 +7,6 @@ import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
-type FindTransitTokenSentArgs = Parameters<typeof Swapping.prototype.findTransitTokenSent>
 
 const SOCKET_IO_PARTNER_ID = utils.formatBytes32String('socket-io')
 
@@ -106,15 +105,6 @@ export class BestPoolSwapping {
         }
 
         return this.swapping.waitForComplete(...args)
-    }
-
-    // Need to backward compatibility to Swapping
-    async findTransitTokenSent(...args: FindTransitTokenSentArgs) {
-        if (!this.swapping) {
-            throw new Error('Swapping is not started')
-        }
-
-        return this.swapping.findTransitTokenSent(...args)
     }
 
     private getOptimalOmniPool(tokenIn: Token, tokenOut: Token): OmniPoolConfig | undefined {
