@@ -4,7 +4,11 @@ import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from './types'
 
 export function isUnwrapSupported(params: SwapExactInParams): boolean {
-    const { inTokenAmount, outToken } = params
+    const { inTokenAmount, outToken, fromAddress, toAddress } = params
+
+    if (fromAddress.toLowerCase() !== toAddress.toLowerCase()) {
+        return false
+    }
 
     const inChainId = inTokenAmount.token.chainId
     const outChainId = outToken.chainId
