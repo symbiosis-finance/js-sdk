@@ -11,9 +11,12 @@ export function isBridgeSupported(context: SwapExactInParams): boolean {
         return false
     }
 
-    const representation = symbiosis.getRepresentation(wrappedInToken, wrappedOutToken.chainId)
-
-    return !!representation && representation.equals(wrappedOutToken)
+    try {
+        const representation = symbiosis.getRepresentation(wrappedInToken, wrappedOutToken.chainId)
+        return !!representation && representation.equals(wrappedOutToken)
+    } catch {
+        return false
+    }
 }
 
 export async function bridge(context: SwapExactInParams): Promise<SwapExactInResult> {
