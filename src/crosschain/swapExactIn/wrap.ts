@@ -1,5 +1,6 @@
 import { TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
+import { getFunctionSelector } from '../tron'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from './types'
 
@@ -35,7 +36,10 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
 
     const callData = wethInterface.encodeFunctionData('deposit')
 
+    const functionSelector = getFunctionSelector(wethInterface.getFunction('deposit'))
+
     const payload = preparePayload({
+        functionSelector,
         chainId,
         fromAddress: params.fromAddress,
         toAddress: weth.address,

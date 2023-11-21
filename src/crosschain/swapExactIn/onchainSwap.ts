@@ -30,11 +30,13 @@ export async function onchainSwap({
 
     await aggregatorTrade.init()
 
-    const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType } = aggregatorTrade
+    const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType, functionSelector } =
+        aggregatorTrade
 
     const value = inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : '0'
 
     const payload = preparePayload({
+        functionSelector,
         chainId: inTokenAmount.token.chainId,
         fromAddress,
         toAddress: routerAddress,

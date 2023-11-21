@@ -9,6 +9,7 @@ import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../utils'
 import { SymbiosisTrade } from './symbiosisTrade'
+import { getFunctionSelector } from '../tron'
 
 export class UniLikeTrade implements SymbiosisTrade {
     tradeType = 'dex' as const
@@ -23,6 +24,7 @@ export class UniLikeTrade implements SymbiosisTrade {
     public priceImpact!: Percent
     public routerAddress!: string
     public callDataOffset?: number
+    public functionSelector?: string
 
     private pairs!: Pair[]
 
@@ -85,9 +87,10 @@ export class UniLikeTrade implements SymbiosisTrade {
         }
         this.amountOutMin = amountOutMin
 
-        const { data, offset } = this.buildCallData(trade)
+        const { data, offset, functionSelector } = this.buildCallData(trade)
         this.callData = data
         this.callDataOffset = offset
+        this.functionSelector = functionSelector
 
         if (!this.callData) {
             throw new Error('Cannot build callData')
@@ -96,7 +99,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         return this
     }
 
-    private buildCallData(trade: Trade): { data: string; offset: number } {
+    private buildCallData(trade: Trade): { data: string; offset: number; functionSelector: string } {
         const { methodName, args, offset } = Router.swapCallParameters(trade, {
             allowedSlippage: new Percent(JSBI.BigInt(Math.floor(this.slippage)), BIPS_BASE),
             recipient: this.to,
@@ -111,7 +114,10 @@ export class UniLikeTrade implements SymbiosisTrade {
             method = methodName.replace('ETH', 'ADA')
         }
 
+        const functionAbi = this.router.interface.getFunction(method)
+
         return {
+            functionSelector: getFunctionSelector(functionAbi),
             data: this.router.interface.encodeFunctionData(method as any, args as any),
             offset,
         }

@@ -6,6 +6,7 @@ import { onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from './types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
+import { getFunctionSelector } from '../tron'
 
 const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
@@ -94,7 +95,10 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
         callData,
     ])
 
+    const functionSelector = getFunctionSelector(contract.interface.getFunction('onswap'))
+
     const payload = preparePayload({
+        functionSelector,
         chainId: inChainId,
         fromAddress: params.fromAddress,
         toAddress: feeCollectorAddress,
