@@ -171,7 +171,7 @@ async function waitOversideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): P
 }
 
 export async function statelessWaitForComplete(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<string> {
-    const txIdWithPrefix = isTronChainId(chainId) ? `0x${txId}` : txId
+    const txIdWithPrefix = txId.startsWith('0x') ? txId : `0x${txId}`
 
     console.log('tx', txIdWithPrefix)
     const aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)

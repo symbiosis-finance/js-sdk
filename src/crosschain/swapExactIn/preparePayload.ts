@@ -1,3 +1,4 @@
+import TronWeb from 'tronweb'
 import { ChainId } from '../../constants'
 import { isTronChainId } from '../tron'
 import { SwapExactInTransactionPayload } from './types'
@@ -24,9 +25,10 @@ export function preparePayload({
             transactionRequest: {
                 call_value: value,
                 chain_id: chainId,
-                contract_address: toAddress,
-                owner_address: fromAddress,
+                contract_address: TronWeb.address.fromHex(toAddress),
+                owner_address: TronWeb.address.fromHex(fromAddress),
                 raw_parameter: callData,
+                fee_limit: 150000000, // Default fee limit - 150 TRX
             },
         }
     }

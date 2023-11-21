@@ -1,3 +1,4 @@
+import { tronAddressToEvm } from '../tron'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
@@ -9,6 +10,9 @@ import { isWrapSupported, wrap } from './wrap'
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken } = params
+
+    params.fromAddress = tronAddressToEvm(params.fromAddress)
+    params.toAddress = tronAddressToEvm(params.toAddress)
 
     if (inTokenAmount.token.equals(outToken)) {
         throw new Error('Cannot swap same tokens')
