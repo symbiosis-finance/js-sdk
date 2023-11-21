@@ -1,6 +1,6 @@
 import { Contract, EventFilter } from '@ethersproject/contracts'
 import { getExternalId, getLogWithTimeout } from './utils'
-import { isTronChainId, tronAddressToEvm } from './tron'
+import { tronAddressToEvm } from './tron'
 
 import { ChainId } from '../constants'
 import type { Symbiosis } from './symbiosis'
