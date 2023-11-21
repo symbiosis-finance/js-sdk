@@ -2,7 +2,7 @@ import type { ConfigName } from '../../symbiosis'
 import mainnet from './mainnet.json'
 import testnet from './testnet.json'
 import dev from './dev.json'
-import bridge from './bridge.json'
+import teleport from './teleport.json'
 import { Error, ErrorCode } from '../../error'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
@@ -20,8 +20,8 @@ export class ConfigCache {
             this.cache = testnet
         } else if (configName === 'dev') {
             this.cache = dev
-        } else if (configName === 'bridge') {
-            this.cache = bridge
+        } else if (configName === 'teleport') {
+            this.cache = teleport
         } else {
             throw new Error('Unknown config name')
         }

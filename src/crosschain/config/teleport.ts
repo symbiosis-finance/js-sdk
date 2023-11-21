@@ -3,7 +3,7 @@ import { Config } from '../types'
 
 export const config: Config = {
     advisor: {
-        url: 'https://api.bridge.symbiosis.finance/calculations',
+        url: 'https://api.teleport.symbiosis.finance/calculations',
     },
     omniPools: [
         {
