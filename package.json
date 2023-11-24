@@ -28,6 +28,7 @@
     "dependencies": {
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
+        "crypto-js": "^4.2.0",
         "decimal.js-light": "^2.5.0",
         "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
