@@ -1,57 +1,40 @@
-import { DataProvider } from '../dataProvider'
-import { AggregatorTrade } from '../trade'
-import { preparePayload } from './preparePayload'
+import { aggregatorsSwap } from './aggregatorsSwap'
+import { isOKXSwapSupported, okxSwap } from './okxSwap'
 import { SwapExactInParams, SwapExactInResult } from './types'
 
-export async function onchainSwap({
-    symbiosis,
-    deadline,
-    toAddress,
-    fromAddress,
-    slippage,
-    inTokenAmount,
-    outToken,
-    oneInchProtocols,
-}: SwapExactInParams): Promise<SwapExactInResult> {
-    const dataProvider = new DataProvider(symbiosis)
-    const ttl = deadline - Math.floor(Date.now() / 1000)
-    const aggregatorTrade = new AggregatorTrade({
-        symbiosis,
-        to: toAddress,
-        from: fromAddress,
-        clientId: symbiosis.clientId,
-        dataProvider,
-        slippage,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: outToken,
-        ttl,
-        oneInchProtocols,
-    })
+export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    const requests: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
 
-    await aggregatorTrade.init()
-
-    const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType, functionSelector } =
-        aggregatorTrade
-
-    const value = inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : '0'
-
-    const payload = preparePayload({
-        functionSelector,
-        chainId: inTokenAmount.token.chainId,
-        fromAddress,
-        toAddress: routerAddress,
-        value,
-        callData,
-    })
-
-    return {
-        kind: 'onchain-swap',
-        approveTo: routerAddress,
-        tokenAmountOut: amountOut,
-        tokenAmountOutMin: amountOutMin,
-        priceImpact,
-        route,
-        inTradeType: tradeType,
-        ...payload,
+    if (isOKXSwapSupported(params)) {
+        requests.push(okxSwap(params))
     }
+
+    const settled = await Promise.allSettled(requests)
+
+    const errors: Error[] = []
+    let bestResult: SwapExactInResult | undefined = undefined
+
+    for (const result of settled) {
+        if (result.status === 'rejected') {
+            errors.push(result.reason)
+            continue
+        }
+
+        const { value } = result
+
+        if (!bestResult) {
+            bestResult = value
+            continue
+        }
+
+        if (value.tokenAmountOut.greaterThan(bestResult.tokenAmountOut)) {
+            bestResult = value
+        }
+    }
+
+    if (!bestResult) {
+        throw new AggregateError(errors, 'No aggregator found')
+    }
+
+    return bestResult
 }

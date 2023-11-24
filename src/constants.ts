@@ -209,3 +209,4 @@ export const SOLIDITY_TYPE_MAXIMA = {
 }
 
 export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
+export const NATIVE_TOKEN_ADDRES_TRON = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb' as const
