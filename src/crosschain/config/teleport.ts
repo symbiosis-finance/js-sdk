@@ -71,7 +71,7 @@ export const config: Config = {
             id: 56,
             rpc: 'https://rpc.ankr.com/bsc',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
+            waitForBlocksCount: 10,
             stables: [
                 {
                     name: 'XDAO',
@@ -116,7 +116,7 @@ export const config: Config = {
             id: 137,
             rpc: 'https://rpc.ankr.com/polygon',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 60,
+            waitForBlocksCount: 17,
             stables: [
                 {
                     name: 'XDAO',
