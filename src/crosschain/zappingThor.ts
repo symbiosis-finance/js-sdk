@@ -1,7 +1,7 @@
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { BaseSwapping, SwapExactIn } from './baseSwapping'
-import { MulticallRouter } from './contracts'
+import {MulticallRouter, ThorRouter__factory} from './contracts'
 import fetch from 'isomorphic-unfetch'
 
 type ThorQuote = {
@@ -35,6 +35,33 @@ const USDC = new Token({
         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
     },
 })
+// const USDC = new Token({
+//     address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+//     chainId: ChainId.AVAX_MAINNET,
+//     decimals: 6,
+//     name: 'USDC',
+//     symbol: 'USDC',
+//     icons: {
+//         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+//         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+//     },
+// })
+
+// 10,906,622.11325023 - ETH.USDC
+// 314,301.72108573 - BNB.USDC
+// 1,421,908.34953829 - AVAX USDC
+
+function toThorToken(token: Token): string {
+    let chain
+    if (token.chainId === ChainId.AVAX_MAINNET) {
+        chain = 'AVAX'
+    } else if (token.chainId === ChainId.ETH_MAINNET) {
+        chain = 'ETH'
+    } else {
+        throw new Error('Unknown chain')
+    }
+    return `${chain}.${token.symbol}-${token.address.toUpperCase()}`
+}
 
 function toThorAmount(tokenAmount: TokenAmount): string {
     return (parseInt(tokenAmount.toSignificant(8)) * 1e8).toString()
@@ -44,7 +71,7 @@ export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected bitcoinAddress!: string
 
-    protected thorTokenIn = `ETH.USDC-${USDC.address.toUpperCase()}`
+    protected thorTokenIn = toThorToken(USDC)
     protected thorTokenOut = 'BTC.BTC'
     protected thorVault!: string
     protected thorQuote!: ThorQuote
@@ -52,6 +79,7 @@ export class ZappingThor extends BaseSwapping {
     protected async doPostTransitAction() {
         const amount = toThorAmount(this.transit.amountOut)
         this.thorQuote = await this.getThorQuote(amount)
+        console.log('this.thorQuote', this.thorQuote)
     }
 
     public async exactIn(
@@ -109,7 +137,8 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('to_asset', this.thorTokenOut)
         url.searchParams.set('amount', amount)
         url.searchParams.set('destination', this.bitcoinAddress)
-        url.searchParams.set('tolerance_bps', '500') // 5%
+        console.log('slippage', this.slippage['C'].toString())
+        url.searchParams.set('tolerance_bps', this.slippage['C'].toString())
 
         const response = await fetch(url.toString())
 
@@ -145,9 +174,8 @@ export class ZappingThor extends BaseSwapping {
     }
 
     private buildMulticall() {
-        const burnCalldata = this.symbiosis
-            .thorRouter()
-            .interface.encodeFunctionData('depositWithExpiry', [
+        const burnCalldata = ThorRouter__factory.createInterface()
+            .encodeFunctionData('depositWithExpiry', [
                 this.thorVault,
                 USDC.address,
                 toThorAmount(this.transit.amountOut),

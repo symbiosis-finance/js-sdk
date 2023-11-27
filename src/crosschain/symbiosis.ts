@@ -44,8 +44,6 @@ import {
     SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
-    ThorRouter,
-    ThorRouter__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
 } from './contracts'
@@ -308,13 +306,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OneInchOracle__factory.connect(address, signerOrProvider)
-    }
-
-    public thorRouter(signer?: Signer): ThorRouter {
-        const address = '0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146'
-        const signerOrProvider = signer || this.getProvider(ChainId.ETH_MAINNET)
-
-        return ThorRouter__factory.connect(address, signerOrProvider)
     }
 
     public beefyVault(address: string, chainId: ChainId, signer?: Signer): BeefyVault {
