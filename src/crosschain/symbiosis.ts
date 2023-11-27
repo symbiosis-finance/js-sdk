@@ -1,10 +1,12 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer, utils } from 'ethers'
-import fetch from 'isomorphic-unfetch'
+import { BigNumber, Signer, utils } from 'ethers'
+import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
+import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { Bridging } from './bridging'
+import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
     Aave,
     Aave__factory,
@@ -24,26 +26,22 @@ import {
     CreamComptroller__factory,
     Fabric,
     Fabric__factory,
+    KavaRouter,
+    KavaRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
     MulticallRouter__factory,
-    NervePool,
-    NervePool__factory,
     OmniPool,
     OmniPool__factory,
     OmniPoolOracle,
     OmniPoolOracle__factory,
     OneInchOracle,
     OneInchOracle__factory,
-    Ooki,
-    Ooki__factory,
     Portal,
     Portal__factory,
-    RenGatewayRegistryV2,
-    RenGatewayRegistryV2__factory,
-    RenMintGatewayV3,
-    RenMintGatewayV3__factory,
+    SyncSwapLaunchPool,
+    SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
     ThorRouter,
@@ -52,66 +50,94 @@ import {
     UniLikeRouter__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
-import { getRepresentation } from './getRepresentation'
-import { getPendingRequests, PendingRequest, SynthesizeRequestFinder } from './pending'
 import { RevertPending } from './revert'
+import { statelessWaitForComplete } from './statelessWaitForComplete'
 import { Swapping } from './swapping'
-import { ChainConfig, Config, OmniPoolConfig } from './types'
-import { ONE_INCH_ORACLE_MAP } from './constants'
+import { getTransactionInfoById, isTronChainId } from './tron'
+import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
 import { Zapping } from './zapping'
 import { ZappingAave } from './zappingAave'
+import { ZappingBeefy } from './zappingBeefy'
 import { ZappingCream } from './zappingCream'
-import { ZappingRenBTC } from './zappingRenBTC'
-import { ZappingOoki } from './zappingOoki'
-
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
-import { ZappingBeefy } from './zappingBeefy'
+import { config as dev } from './config/dev'
+import { config as teleport } from './config/teleport'
+import { BestPoolSwapping } from './bestPoolSwapping'
+import { ConfigCache } from './config/cache/cache'
+import { OmniPoolInfo } from './config/cache/builder'
+import { PendingRequest } from './revertRequest'
+import { MakeOneInchRequestFn, makeOneInchRequestFactory } from './oneInchRequest'
 import { ZappingThor } from './zappingThor'
 
-type ConfigName = 'testnet' | 'mainnet'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'teleport'
+
+const defaultFetch: typeof fetch = (url, init) => {
+    return isomorphicFetch(url, init)
+}
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
     public readonly config: Config
     public readonly clientId: string
-    public readonly omniPoolConfig: OmniPoolConfig
 
-    public constructor(config: ConfigName | Config, clientId: string) {
+    private readonly configCache: ConfigCache
+
+    public readonly makeOneInchRequest: MakeOneInchRequestFn
+
+    public readonly fetch: typeof fetch
+
+    public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
             this.config = mainnet
         } else if (config === 'testnet') {
             this.config = testnet
+        } else if (config === 'dev') {
+            this.config = dev
+        } else if (config === 'teleport') {
+            this.config = teleport
         } else {
-            this.config = config
+            throw new Error('Unknown config name')
         }
-        this.omniPoolConfig = this.config.omniPool
+
+        if (overrideConfig?.chains) {
+            const { chains } = overrideConfig
+            this.config.chains = this.config.chains.map((chainConfig) => {
+                const found = chains.find((i) => i.id === chainConfig.id)
+                if (found) {
+                    chainConfig.rpc = found.rpc
+                }
+                return chainConfig
+            })
+        }
+        this.fetch = overrideConfig?.fetch ?? defaultFetch
+
+        this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
+
+        this.configCache = new ConfigCache(config)
+
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
-            this.config.chains.map((i) => {
-                return [i.id, new StaticJsonRpcProvider(i.rpc, i.id)]
+            this.config.chains.map((chain) => {
+                const rpc = isTronChainId(chain.id) ? `${chain.rpc}/jsonrpc` : chain.rpc
+                return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
     }
 
-    public validateSwapAmounts(amount: TokenAmount) {
-        const parsedAmount = parseFloat(amount.toExact(2))
-        const minAmount = this.config.minSwapAmountInUsd
-        const maxAmount = this.config.maxSwapAmountInUsd
-        if (parsedAmount < minAmount) {
+    public validateSwapAmounts(amount: TokenAmount): void {
+        const { token } = amount
+        const wrapped = wrappedToken(token)
+        const threshold = this.configCache.getTokenThreshold(wrapped)
+        if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
+            const formattedThreshold = utils.formatUnits(threshold, token.decimals)
+
             throw new Error(
-                `The amount is too low: $${parsedAmount}. Min amount: $${minAmount}`,
+                `The amount is too low: ${amount.toFixed(2)}. Min amount: ${formattedThreshold}`,
                 ErrorCode.AMOUNT_TOO_LOW
             )
-        } else if (parsedAmount > maxAmount) {
-            throw new Error(
-                `The amount is too high: $${parsedAmount}. Max amount: $${maxAmount}`,
-                ErrorCode.AMOUNT_TOO_HIGH
-            )
-        } else {
-            // All it`s OK
         }
     }
 
@@ -124,47 +150,36 @@ export class Symbiosis {
         return new Bridging(this)
     }
 
-    public newSwapping() {
-        return new Swapping(this)
+    public newSwapping(omniPoolConfig: OmniPoolConfig) {
+        return new Swapping(this, omniPoolConfig)
+    }
+
+    public bestPoolSwapping() {
+        return new BestPoolSwapping(this)
     }
 
     public newRevertPending(request: PendingRequest) {
         return new RevertPending(this, request)
     }
 
-    public newZapping() {
-        return new Zapping(this)
+    public newZapping(omniPoolConfig: OmniPoolConfig) {
+        return new Zapping(this, omniPoolConfig)
     }
 
-    public newZappingAave() {
-        return new ZappingAave(this)
+    public newZappingAave(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingAave(this, omniPoolConfig)
     }
 
-    public newZappingCream() {
-        return new ZappingCream(this)
+    public newZappingThor(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingThor(this, omniPoolConfig)
     }
 
-    public newZappingRenBTC() {
-        return new ZappingRenBTC(this)
+    public newZappingCream(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingCream(this, omniPoolConfig)
     }
 
-    public newZappingThor() {
-        return new ZappingThor(this)
-    }
-
-    public newZappingBeefy() {
-        return new ZappingBeefy(this)
-    }
-
-    public newZappingOoki() {
-        return new ZappingOoki(this)
-    }
-
-    public getPendingRequests(
-        address: string,
-        synthesizeRequestFinder?: SynthesizeRequestFinder
-    ): Promise<PendingRequest[]> {
-        return getPendingRequests(this, address, synthesizeRequestFinder)
+    public newZappingBeefy(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingBeefy(this, omniPoolConfig)
     }
 
     public getProvider(chainId: ChainId): StaticJsonRpcProvider {
@@ -224,64 +239,11 @@ export class Symbiosis {
         return AdaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public nervePool(tokenA: Token, tokenB: Token, signer?: Signer): NervePool {
-        const chainId = tokenA.chainId
-        const address = this.chainConfig(chainId).nerves.find((data) => {
-            return (
-                data.tokens.find((token) => token.toLowerCase() === tokenA.address.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenB.address.toLowerCase())
-            )
-        })?.address
-
-        if (!address) {
-            throw new Error('Nerve pool not found')
-        }
+    public kavaRouter(chainId: ChainId, signer?: Signer): KavaRouter {
+        const address = this.chainConfig(chainId).router
         const signerOrProvider = signer || this.getProvider(chainId)
 
-        return NervePool__factory.connect(address, signerOrProvider)
-    }
-
-    public getNerveTokenIndexes(chainId: ChainId, tokenA: string, tokenB: string) {
-        const pool = this.chainConfig(chainId).nerves.find((data) => {
-            return (
-                data.tokens.find((token) => token.toLowerCase() === tokenA.toLowerCase()) &&
-                data.tokens.find((token) => token.toLowerCase() === tokenB.toLowerCase())
-            )
-        })
-
-        if (!pool) {
-            throw new Error('Nerve pool not found')
-        }
-
-        const tokens = pool.tokens.map((i) => i.toLowerCase())
-        const indexA = tokens.indexOf(tokenA.toLowerCase())
-        const indexB = tokens.indexOf(tokenB.toLowerCase())
-
-        if (indexA === -1 || indexB === -1) {
-            throw new Error('Cannot find token')
-        }
-
-        return [indexA, indexB]
-    }
-
-    public nervePoolByAddress(address: string, chainId: ChainId, signer?: Signer): NervePool {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(address, signerOrProvider)
-    }
-
-    public nervePoolBySynth(synthTokenAddress: string, chainId: ChainId, signer?: Signer): NervePool {
-        const pool = this.chainConfig(chainId).nerves.find((data) => {
-            return data.tokens[1].toLowerCase() === synthTokenAddress.toLowerCase()
-        })
-
-        if (!pool) {
-            throw new Error('Nerve pool not found')
-        }
-
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return NervePool__factory.connect(pool.address, signerOrProvider)
+        return KavaRouter__factory.connect(address, signerOrProvider)
     }
 
     public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
@@ -324,15 +286,15 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public omniPool(signer?: Signer): OmniPool {
-        const { address, chainId } = this.omniPoolConfig
+    public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
+        const { address, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPool__factory.connect(address, signerOrProvider)
     }
 
-    public omniPoolOracle(signer?: Signer): OmniPoolOracle {
-        const { oracle, chainId } = this.omniPoolConfig
+    public omniPoolOracle(config: OmniPoolConfig, signer?: Signer): OmniPoolOracle {
+        const { oracle, chainId } = config
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
@@ -348,24 +310,11 @@ export class Symbiosis {
         return OneInchOracle__factory.connect(address, signerOrProvider)
     }
 
-    public renRenGatewayRegistry(chainId: ChainId, signer?: Signer): RenGatewayRegistryV2 {
-        const address = this.chainConfig(chainId).renGatewayRegistry
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return RenGatewayRegistryV2__factory.connect(address, signerOrProvider)
-    }
-
     public thorRouter(signer?: Signer): ThorRouter {
         const address = '0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146'
         const signerOrProvider = signer || this.getProvider(ChainId.ETH_MAINNET)
 
         return ThorRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public renMintGatewayByAddress(address: string, chainId: ChainId, signer?: Signer): RenMintGatewayV3 {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return RenMintGatewayV3__factory.connect(address, signerOrProvider)
     }
 
     public beefyVault(address: string, chainId: ChainId, signer?: Signer): BeefyVault {
@@ -374,48 +323,18 @@ export class Symbiosis {
         return BeefyVault__factory.connect(address, signerOrProvider)
     }
 
-    public ookiIToken(address: string, chainId: ChainId, signer?: Signer): Ooki {
+    public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
         const signerOrProvider = signer || this.getProvider(chainId)
 
-        return Ooki__factory.connect(address, signerOrProvider)
+        return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
     }
 
-    public stables(): Token[] {
-        return this.config.chains
-            .map((chainConfig) => {
-                return chainConfig.stables.map((params) => {
-                    return new Token(params)
-                })
-            })
-            .reduce((acc, tokens) => {
-                return [...acc, ...tokens]
-            }, [])
+    public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
+        return this.configCache.getRepresentation(token, chainId)
     }
 
-    public findTransitStable(chainId: ChainId): Token | undefined {
-        const chainHasStablePool = this.chainConfig(chainId).nerves.length > 0
-        return this.stables().find((token) => {
-            return token.chainId === chainId && (!token.isSynthetic || !chainHasStablePool)
-        })
-    }
-    public findSyntheticStable(chainId: ChainId, chainFromId: ChainId): Token | undefined {
-        return this.stables().find((token) => {
-            return token.chainId === chainId && token.chainFromId === chainFromId && token.isSynthetic
-        })
-    }
-
-    public findStable(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
-        return this.stables().find((token) => {
-            const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
-
-            if (chainFromId === undefined) return condition
-
-            return condition && token.chainFromId === chainFromId
-        })
-    }
-
-    public async getRepresentation(token: Token, chainId: ChainId): Promise<Token | undefined> {
-        return getRepresentation(this, token, chainId)
+    public getOmniPoolTokenIndex(omniPoolConfig: OmniPoolConfig, token: Token): number {
+        return this.configCache.getOmniPoolTokenIndex(omniPoolConfig, token)
     }
 
     public async getBridgeFee({
@@ -437,20 +356,22 @@ export class Symbiosis {
             client_id: utils.parseBytes32String(this.clientId),
         }
 
-        return fetch(`${this.config.advisor.url}/v1/swap/price`, {
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(params),
         })
-            .then(async (response) => {
-                if (!response.ok) {
-                    return Promise.reject(new Error(await response.text()))
-                }
-                return response.json()
-            })
-            .then(({ price }) => JSBI.BigInt(price))
+
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(text)
+        }
+
+        const { price } = await response.json()
+
+        return JSBI.BigInt(price)
     }
 
     public filterBlockOffset(chainId: ChainId): number {
@@ -479,15 +400,113 @@ export class Symbiosis {
         return config
     }
 
-    public transitStable(chainId: ChainId): Token {
-        const stable = this.findTransitStable(chainId)
-        if (stable === undefined) {
-            throw new Error(`Cannot find transit stable token for chain ${chainId}`)
-        }
-        return stable
+    // === stables ===
+
+    public tokens(): Token[] {
+        return this.configCache.tokens()
     }
 
-    public isTransitStable(token: Token): boolean {
-        return token.address === this.transitStable(token.chainId).address
+    public findToken(address: string, chainId: ChainId, chainFromId?: ChainId): Token | undefined {
+        return this.tokens().find((token) => {
+            const condition = token.address.toLowerCase() === address.toLowerCase() && token.chainId === chainId
+
+            if (chainFromId === undefined) return condition
+
+            return condition && token.chainFromId === chainFromId
+        })
+    }
+
+    public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
+        const tokens = this.configCache.tokens().filter((token) => {
+            return token.chainId === chainId
+        })
+        if (tokens.length === 0) {
+            throw new Error(`Cannot find token for chain ${chainId}`)
+        }
+        const omniPool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
+        if (!omniPool) {
+            throw new Error(`Cannot find omniPool ${omniPool}`)
+        }
+
+        // if token is from manager chain (token's chainIs equals to pool chainId)
+        if (chainId === omniPoolConfig.chainId) {
+            return tokens[0]
+        }
+
+        // find the FIRST suitable token from the tokens list
+        // e.g. the first token has priority
+        const transitToken = tokens.find((token) => {
+            return this.getOmniPoolByToken(token)?.id === omniPool.id
+        })
+
+        if (!transitToken) {
+            throw new Error(
+                `Cannot find transitToken for chain ${chainId}. Pool: ${omniPool.id}`,
+                ErrorCode.NO_TRANSIT_TOKEN
+            )
+        }
+        return transitToken
+    }
+
+    public getOmniPoolByConfig(config: OmniPoolConfig): OmniPoolInfo | undefined {
+        return this.configCache.getOmniPoolByConfig(config)
+    }
+
+    public getOmniPoolByToken(token: Token): OmniPoolInfo | undefined {
+        return this.configCache.getOmniPoolByToken(token)
+    }
+
+    public getOmniPoolTokens(omniPoolConfig: OmniPoolConfig): Token[] {
+        return this.configCache.getOmniPoolTokens(omniPoolConfig)
+    }
+
+    public tronWeb(chainId: ChainId): TronWeb {
+        if (!isTronChainId(chainId)) {
+            throw new Error(`Chain ${chainId} is not Tron chain`)
+        }
+
+        const config = this.chainConfig(chainId)
+        if (!config) {
+            throw new Error(`Could not find Tron config for chain ${chainId}`)
+        }
+
+        return new TronWeb({ fullHost: config.rpc, eventNode: config.rpc, solidityNode: config.rpc })
+    }
+
+    public async waitForComplete(chainId: ChainId, txId: string): Promise<string> {
+        return statelessWaitForComplete(this, chainId, txId)
+    }
+
+    async tronWaitForMined(chainId: ChainId, txId: string): Promise<TransactionInfo> {
+        let info: TransactionInfo | undefined
+
+        const tronWeb = this.tronWeb(chainId)
+
+        const TRIES = 10
+        for (let i = 0; i < TRIES; i++) {
+            const response = await getTransactionInfoById(tronWeb, txId)
+            if (response) {
+                info = response
+                break
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+        }
+
+        if (!info) {
+            throw new Error('Transaction not found')
+        }
+
+        return info
+    }
+
+    getRevertableAddress(chainId: ChainId): string {
+        const address = this.config.revertableAddress[chainId]
+
+        if (address) {
+            return address
+        }
+
+        return this.config.revertableAddress.default
     }
 }

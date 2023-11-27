@@ -67,7 +67,7 @@ export const chains: Chain[] = [
         id: ChainId.ETH_GOERLI,
         name: 'Goerli',
         disabled: false,
-        explorer: 'https://goerli.etherscan.io/',
+        explorer: 'https://goerli.etherscan.io',
         icons: {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
@@ -301,6 +301,178 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SCROLL_TESTNET,
+        name: 'Scroll Alpha',
+        disabled: false,
+        explorer: 'https://blockscout.scroll.io',
+        icons: {
+            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SCROLL_SEPOLIA,
+        name: 'Scroll Sepolia',
+        disabled: false,
+        explorer: 'https://sepolia-blockscout.scroll.io',
+        icons: {
+            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ZKSYNC_MAINNET,
+        name: 'ZkSync Era',
+        disabled: false,
+        explorer: 'https://explorer.zksync.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ARBITRUM_MAINNET,
+        name: 'Arbitrum One',
+        disabled: false,
+        explorer: 'https://arbiscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ARBITRUM_NOVA,
+        name: 'Arbitrum Nova',
+        disabled: false,
+        explorer: 'https://nova.arbiscan.io',
+        icons: {
+            small: 'https://l2beat.com/icons/nova.png',
+            large: 'https://l2beat.com/icons/nova.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.OPTIMISM_MAINNET,
+        name: 'Optimism',
+        disabled: false,
+        explorer: 'https://optimistic.etherscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11840.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.ZETACHAIN_ATHENS_2,
+        name: 'ZetaChain',
+        disabled: false,
+        explorer: 'https://explorer.zetachain.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.POLYGON_ZK,
+        name: 'Polygon zkEVM',
+        disabled: false,
+        explorer: 'https://zkevm.polygonscan.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.TRON_MAINNET,
+        name: 'Tron',
+        disabled: false,
+        explorer: 'https://tronscan.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.TRON_TESTNET,
+        name: 'Tron Testnet',
+        disabled: false,
+        explorer: 'https://shasta.tronscan.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.LINEA_TESTNET,
+        name: 'Linea',
+        disabled: false,
+        explorer: 'https://goerli.lineascan.build',
+        icons: {
+            small: 'https://l2beat.com/icons/linea.png',
+            large: 'https://l2beat.com/icons/linea.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.LINEA_MAINNET,
+        name: 'Linea',
+        disabled: false,
+        explorer: 'https://lineascan.build',
+        icons: {
+            small: 'https://l2beat.com/icons/linea.png',
+            large: 'https://l2beat.com/icons/linea.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.MANTLE_MAINNET,
+        name: 'Mantle',
+        disabled: false,
+        explorer: 'https://explorer.mantle.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.MANTLE_TESTNET,
+        name: 'Mantle',
+        disabled: false,
+        explorer: 'https://explorer.testnet.mantle.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.BASE_MAINNET,
+        name: 'Base',
+        disabled: false,
+        explorer: 'https://basescan.org',
+        icons: {
+            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
+            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SCROLL_MAINNET,
+        name: 'Scroll',
+        disabled: false,
+        explorer: 'https://scrollscan.com',
+        icons: {
+            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.MANTA_MAINNET,
+        name: 'Manta',
+        disabled: false,
+        explorer: 'https://pacific-explorer.manta.network',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13631.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13631.png',
         },
     }),
 ]

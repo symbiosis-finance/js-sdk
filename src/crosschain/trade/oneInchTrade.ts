@@ -1,20 +1,21 @@
-import fetch from 'isomorphic-unfetch'
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
-import { canOneInch } from '../utils'
+import { Symbiosis } from '../symbiosis'
+import { canOneInch, getMinAmount } from '../utils'
 import { getTradePriceImpact } from './getTradePriceImpact'
 import { SymbiosisTrade } from './symbiosisTrade'
 
-export interface Protocol {
+export type OneInchProtocols = string[]
+
+interface Protocol {
     id: string
     title: string
     img: string
     img_color: string
 }
 
-const API_URL = 'https://api.1inch.io'
 const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 
 export class OneInchTrade implements SymbiosisTrade {
@@ -23,31 +24,37 @@ export class OneInchTrade implements SymbiosisTrade {
     public tokenAmountIn: TokenAmount
     public route!: Token[]
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
     public callData!: string
     public priceImpact!: Percent
     public routerAddress!: string
     public oracle: OneInchOracle
     public callDataOffset?: number
 
+    private readonly symbiosis: Symbiosis
     private readonly tokenOut: Token
     private readonly from: string
     private readonly to: string
     private readonly slippage: number
     private readonly dataProvider: DataProvider
+    private readonly protocols: OneInchProtocols
 
     static isAvailable(chainId: ChainId): boolean {
         return canOneInch(chainId)
     }
 
     public constructor(
+        symbiosis: Symbiosis,
         tokenAmountIn: TokenAmount,
         tokenOut: Token,
         from: string,
         to: string,
         slippage: number,
         oracle: OneInchOracle,
-        dataProvider: DataProvider
+        dataProvider: DataProvider,
+        protocols?: OneInchProtocols
     ) {
+        this.symbiosis = symbiosis
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
         this.from = from
@@ -55,6 +62,7 @@ export class OneInchTrade implements SymbiosisTrade {
         this.slippage = slippage
         this.oracle = oracle
         this.dataProvider = dataProvider
+        this.protocols = protocols || []
     }
 
     public async init() {
@@ -68,27 +76,32 @@ export class OneInchTrade implements SymbiosisTrade {
             toTokenAddress = NATIVE_TOKEN_ADDRESS
         }
 
-        const protocols = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+        const protocolsOrigin = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+        let protocols = this.protocols.filter((x) => protocolsOrigin.includes(x))
+        if (protocols.length === 0) {
+            protocols = protocolsOrigin
+        }
 
-        const url = new URL(`v4.0/${this.tokenAmountIn.token.chainId}/swap`, API_URL)
+        const searchParams = new URLSearchParams()
 
-        url.searchParams.set('fromTokenAddress', fromTokenAddress)
-        url.searchParams.set('toTokenAddress', toTokenAddress)
-        url.searchParams.set('amount', this.tokenAmountIn.raw.toString())
-        url.searchParams.set('fromAddress', this.from)
-        url.searchParams.set('destReceiver', this.to)
-        url.searchParams.set('slippage', this.slippage.toString())
-        url.searchParams.set('disableEstimate', 'true')
-        url.searchParams.set('allowPartialFill', 'false')
-        url.searchParams.set('usePatching', 'true')
-        url.searchParams.set('protocols', protocols.map((protocol) => protocol.id).join(','))
+        searchParams.set('src', fromTokenAddress)
+        searchParams.set('dst', toTokenAddress)
+        searchParams.set('amount', this.tokenAmountIn.raw.toString())
+        searchParams.set('from', this.from)
+        searchParams.set('slippage', (this.slippage / 100).toString())
+        searchParams.set('receiver', this.to)
+        searchParams.set('disableEstimate', 'true')
+        searchParams.set('allowPartialFill', 'false')
+        searchParams.set('usePatching', 'true')
+        searchParams.set('protocols', protocols.join(','))
 
-        const response = await fetch(url.toString())
+        let json: any
+        try {
+            json = await this.symbiosis.makeOneInchRequest(`${this.tokenAmountIn.token.chainId}/swap`, searchParams)
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error'
 
-        const json = await response.json()
-
-        if (response.status === 400) {
-            throw new Error(`Cannot build 1inch trade: ${json['description']}`)
+            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${message}`)
         }
 
         const tx: {
@@ -99,12 +112,16 @@ export class OneInchTrade implements SymbiosisTrade {
             gas: string
             gasPrice: string
         } = json['tx']
-        const amountOutRaw: string = json['toTokenAmount']
+        const amountOutRaw: string = json['toAmount']
 
         this.routerAddress = tx.to
         this.callData = tx.data
         this.callDataOffset = this.getOffset(tx.data)
         this.amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
+
+        const amountOutMinRaw = getMinAmount(this.slippage, amountOutRaw)
+        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+
         this.route = [this.tokenAmountIn.token, this.tokenOut]
         this.priceImpact = await getTradePriceImpact({
             dataProvider: this.dataProvider,
@@ -116,27 +133,30 @@ export class OneInchTrade implements SymbiosisTrade {
         return this
     }
 
-    static async getProtocols(chainId: ChainId): Promise<Protocol[]> {
-        const url = `${API_URL}/v4.0/${chainId}/liquidity-sources`
-        const response = await fetch(url)
-        const json = await response.json()
-        if (response.status === 400) {
-            throw new Error(`Cannot get 1inch protocols: ${json['description']}`)
+    static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
+        try {
+            const json = await symbiosis.makeOneInchRequest(`${chainId}/liquidity-sources`)
+
+            return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
+                if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
+                    return acc
+                }
+                if (protocol.id.includes('PMM')) {
+                    return acc
+                }
+                acc.push(protocol.id)
+                return acc
+            }, [])
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error'
+
+            throw new Error(`Cannot get 1inch swap on chain ${chainId}: ${message}`)
         }
-        return json['protocols'].reduce((acc: Protocol[], protocol: Protocol) => {
-            if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
-                return acc
-            }
-            if (protocol.id.includes('PMM')) {
-                return acc
-            }
-            acc.push(protocol)
-            return acc
-        }, [])
     }
 
     private getOffset(callData: string) {
         const methods = [
+            // V4
             {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256,bytes),bytes)
                 sigHash: '7c025200',
@@ -151,6 +171,33 @@ export class OneInchTrade implements SymbiosisTrade {
                 // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,uint256,address)
                 sigHash: 'baba5855',
                 offset: 292,
+            },
+            {
+                // uniswapV3SwapTo(address,uint256,uint256,uint256[])
+                sigHash: 'bc80f1a8',
+                offset: 68,
+            },
+
+            // V5
+            {
+                // clipperSwapTo(address,address,address,address,uint256,uint256,uint256,bytes32,bytes32)
+                sigHash: '093d4fa5',
+                offset: 164, // +
+            },
+            {
+                // swap(address,(address,address,address,address,uint256,uint256,uint256),bytes,bytes)
+                sigHash: '12aa3caf',
+                offset: 196, // +/-
+            },
+            {
+                // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,address)
+                sigHash: '5a099843',
+                offset: 196,
+            },
+            {
+                // unoswapTo(address,address,uint256,uint256,uint256[])
+                sigHash: 'f78dc253',
+                offset: 100,
             },
             {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])

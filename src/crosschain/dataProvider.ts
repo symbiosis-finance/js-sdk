@@ -2,18 +2,12 @@ import { ChainId } from '../constants'
 import { Token } from '../entities'
 import { OneInchOracle } from './contracts'
 import { Symbiosis } from './symbiosis'
-import { UniLikeTrade, OneInchTrade, getRateToEth } from './trade'
+import { OneInchTrade, UniLikeTrade, getRateToEth } from './trade'
 
 export class DataProvider {
     private cache = new Map<string, any>()
 
     constructor(private readonly symbiosis: Symbiosis) {}
-
-    async getRepresentation(token: Token, chainId: ChainId) {
-        return this.fromCache(['getRepresentation', token.address, token.chainId, chainId], () =>
-            this.symbiosis.getRepresentation(token, chainId)
-        )
-    }
 
     async getPairs(tokenIn: Token, tokenOut: Token) {
         return this.fromCache(['getPairs', tokenIn.address, tokenIn.address], () => {
@@ -25,7 +19,7 @@ export class DataProvider {
 
     async getOneInchProtocols(chainId: ChainId) {
         return this.fromCache(['getOneInchProtocols', chainId], () => {
-            return OneInchTrade.getProtocols(chainId)
+            return OneInchTrade.getProtocols(this.symbiosis, chainId)
         })
     }
 

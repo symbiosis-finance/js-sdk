@@ -1,8 +1,8 @@
 import invariant from 'tiny-invariant'
 
-import { TradeType } from './constants'
+import { ChainId, TradeType } from './constants'
 import { validateAndParseAddress } from './utils'
-import { TokenAmount, Percent, Trade } from './entities'
+import { Percent, TokenAmount, Trade } from './entities'
 
 /**
  * Options for producing the arguments to send call to the router.
@@ -29,6 +29,12 @@ export interface TradeOptions {
     feeOnTransfer?: boolean
 }
 
+type Route = {
+    from: string
+    to: string
+    stable: boolean
+}
+
 /**
  * The parameters to use in the call to the Uniswap V2 Router to execute a trade.
  */
@@ -40,7 +46,7 @@ export interface SwapParameters {
     /**
      * The arguments to pass to the method, all hex encoded.
      */
-    args: (string | string[])[]
+    args: (string | string[] | Route[])[]
     /**
      * The amount of wei to send in hex.
      */
@@ -75,12 +81,28 @@ export abstract class Router {
         const to: string = validateAndParseAddress(options.recipient)
         const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
         const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
-        const path: string[] = trade.route.path.map((token) => token.address)
+
+        let path
+
+        if (trade.inputAmount.token.chainId === ChainId.KAVA_MAINNET) {
+            const routes: Route[] = []
+            for (let i = 0; i < trade.route.path.length - 1; i++) {
+                routes.push({
+                    from: trade.route.path[i].address,
+                    to: trade.route.path[i + 1].address,
+                    stable: false,
+                })
+            }
+            path = routes
+        } else {
+            path = trade.route.path.map((token) => token.address)
+        }
+
         const deadline = `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
         const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
         let methodName: string
-        let args: (string | string[])[]
+        let args: (string | string[] | Route[])[]
         let value: string
         let offset: number
         switch (trade.tradeType) {

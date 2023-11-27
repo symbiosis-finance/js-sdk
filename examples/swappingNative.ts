@@ -34,49 +34,46 @@ const tokenOut = new Token({
     decimals: 18,
 })
 
-async function swapNative() {
-    const swapping = symbiosis.newSwapping()
+const swapping = symbiosis.newSwapping()
 
-    // Calculates fee for swapping between chains and transactionRequest
-    console.log('Calculating swap...')
-    try {
-        const { transactionRequest, fee, tokenAmountOut, route, priceImpact } = await swapping.exactIn(
-            tokenAmountIn, // TokenAmount object
-            tokenOut, // Token object
-            wallet.address, // from account address
-            wallet.address, // to account address
-            wallet.address, // account who can revert stucked transaction
-            300, // 3% slippage
-            Date.now() + 20 * 60 // 20 minutes deadline
-        )
+// Calculates fee for swapping between chains and transactionRequest
+console.log('Calculating swap...')
+try {
+    const { transactionRequest, fee, tokenAmountOut, route, priceImpact, type } = await swapping.exactIn(
+        tokenAmountIn, // TokenAmount object
+        tokenOut, // Token object
+        wallet.address, // from account address
+        wallet.address, // to account address
+        wallet.address, // account who can revert stucked transaction
+        300, // 3% slippage
+        Date.now() + 20 * 60 // 20 minutes deadline
+    )
 
-        console.log({
-            tokenAmountIn: tokenAmountIn.toSignificant(),
-            fee: fee.toSignificant(),
-            tokenAmountOut: tokenAmountOut.toSignificant(),
-            route: route.map((i) => i.symbol).join(' -> '),
-            priceImpact: priceImpact.toSignificant(),
-        })
-
-        // Send transaction to chain
-        const transactionResponse = await wallet
-            .connect(symbiosis.getProvider(transactionRequest.chainId as ChainId))
-            .sendTransaction(transactionRequest)
-        console.log('Transaction sent', transactionResponse.hash)
-
-        // Wait for transaction to be mined
-        const receipt = await transactionResponse.wait(1)
-        console.log('Transaction mined', receipt.transactionHash)
-
-        // Wait for transaction to be completed on recipient chain
-        const log = await swapping.waitForComplete(receipt)
-        console.log('Cross-chain swap completed', log.transactionHash)
-    } catch (e) {
-        console.error(e)
+    if (type !== 'evm') {
+        throw new Error('This example works only with EVM chains')
     }
-}
 
-console.log('>>>')
-swapNative().then(() => {
-    console.log('<<<')
-})
+    console.log({
+        tokenAmountIn: tokenAmountIn.toSignificant(),
+        fee: fee.toSignificant(),
+        tokenAmountOut: tokenAmountOut.toSignificant(),
+        route: route.map((i) => i.symbol).join(' -> '),
+        priceImpact: priceImpact.toSignificant(),
+    })
+
+    // Send transaction to chain
+    const transactionResponse = await wallet
+        .connect(symbiosis.getProvider(transactionRequest.chainId as ChainId))
+        .sendTransaction(transactionRequest)
+    console.log('Transaction sent', transactionResponse.hash)
+
+    // Wait for transaction to be mined
+    const receipt = await transactionResponse.wait(1)
+    console.log('Transaction mined', receipt.transactionHash)
+
+    // Wait for transaction to be completed on recipient chain
+    const log = await swapping.waitForComplete(receipt)
+    console.log('Cross-chain swap completed', log.transactionHash)
+} catch (e) {
+    console.error(e)
+}

@@ -1,24 +1,25 @@
-import { Price } from './fractions/price'
-import { TokenAmount } from './fractions/tokenAmount'
+import { Price } from './fractions'
+import { TokenAmount } from './fractions'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
-import { pack, keccak256 } from '@ethersproject/solidity'
-import { getCreate2Address } from '@ethersproject/address'
+import { keccak256, pack } from '@ethersproject/solidity'
+import { getCreate2Address as getEvmCreate2Address } from '@ethersproject/address'
 
 import {
+    _1000,
+    _998,
     BigintIsh,
+    ChainId,
     FACTORY_ADDRESS,
+    FIVE,
     INIT_CODE_HASH,
     MINIMUM_LIQUIDITY,
-    ZERO,
     ONE,
-    FIVE,
-    _998,
-    _1000,
-    ChainId,
+    ZERO,
 } from '../constants'
-import { sqrt, parseBigintIsh } from '../utils'
-import { InsufficientReservesError, InsufficientInputAmountError } from '../errors'
+import { parseBigintIsh, sqrt } from '../utils'
+import { getTronCreate2Address, isTronToken } from '../crosschain/tron'
+import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 
 let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
@@ -30,15 +31,27 @@ export class Pair {
     public static getAddress(tokenA: Token, tokenB: Token): string {
         const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
+        const chainId = tokens[0].chainId
+
+        let types: string[] = ['address', 'address']
+        let params: (string | boolean)[] = [tokens[0].address, tokens[1].address]
+
+        if (chainId === ChainId.KAVA_MAINNET) {
+            types = [...types, 'bool']
+            params = [...params, false]
+        }
+
         if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
+            const getCreate2Address = isTronToken(tokenA) ? getTronCreate2Address : getEvmCreate2Address
+
             PAIR_ADDRESS_CACHE = {
                 ...PAIR_ADDRESS_CACHE,
                 [tokens[0].address]: {
                     ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
                     [tokens[1].address]: getCreate2Address(
-                        FACTORY_ADDRESS[tokens[0].chainId],
-                        keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
-                        INIT_CODE_HASH[tokens[0].chainId]
+                        FACTORY_ADDRESS[chainId],
+                        keccak256(['bytes'], [pack(types, params)]),
+                        INIT_CODE_HASH[chainId]
                     ),
                 },
             }

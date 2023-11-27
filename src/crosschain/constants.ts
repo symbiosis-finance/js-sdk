@@ -30,6 +30,23 @@ export const CHAINS_PRIORITY = [
     ChainId.HECO_TESTNET,
     ChainId.SHARDEUM_TESTNET_2,
     ChainId.KAVA_MAINNET,
+    ChainId.SCROLL_TESTNET,
+    ChainId.SCROLL_SEPOLIA,
+    ChainId.ZKSYNC_MAINNET,
+    ChainId.ARBITRUM_MAINNET,
+    ChainId.ARBITRUM_NOVA,
+    ChainId.OPTIMISM_MAINNET,
+    ChainId.ZETACHAIN_ATHENS_2,
+    ChainId.POLYGON_ZK,
+    ChainId.TRON_MAINNET,
+    ChainId.TRON_TESTNET,
+    ChainId.LINEA_TESTNET,
+    ChainId.LINEA_MAINNET,
+    ChainId.MANTLE_MAINNET,
+    ChainId.MANTLE_TESTNET,
+    ChainId.BASE_MAINNET,
+    ChainId.SCROLL_MAINNET,
+    ChainId.MANTA_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -40,15 +57,23 @@ type ChainTokensList = {
 export const ONE_INCH_CHAINS: ChainId[] = [
     ChainId.ETH_MAINNET,
     ChainId.BSC_MAINNET,
-    ChainId.AVAX_MAINNET,
     ChainId.MATIC_MAINNET,
+    ChainId.OPTIMISM_MAINNET,
+    ChainId.ARBITRUM_MAINNET,
+    ChainId.AVAX_MAINNET,
+    ChainId.ZKSYNC_MAINNET,
+    ChainId.BASE_MAINNET,
 ]
 
 export const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
-    [ChainId.ETH_MAINNET]: '0x07D91f5fb9Bf7798734C3f606dB065549F6893bb',
-    [ChainId.BSC_MAINNET]: '0xfbD61B037C325b959c0F6A7e69D8f37770C2c550',
-    [ChainId.AVAX_MAINNET]: '0xBd0c7AaF0bF082712EbE919a9dD94b2d978f79A9',
-    [ChainId.MATIC_MAINNET]: '0x7F069df72b7A39bCE9806e3AfaF579E54D8CF2b9',
+    [ChainId.ETH_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.BSC_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.MATIC_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.OPTIMISM_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.ARBITRUM_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.AVAX_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.ZKSYNC_MAINNET]: '0xC762d56614D3411eC6fABD56cb075D904b801613',
+    [ChainId.BASE_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
 }
 
 export const WETH_ONLY: ChainTokensList = {
@@ -78,6 +103,23 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.TELOS_TESTNET]: [WETH[ChainId.TELOS_TESTNET]],
     [ChainId.SHARDEUM_TESTNET_2]: [WETH[ChainId.SHARDEUM_TESTNET_2]],
     [ChainId.KAVA_MAINNET]: [WETH[ChainId.KAVA_MAINNET]],
+    [ChainId.SCROLL_TESTNET]: [WETH[ChainId.SCROLL_TESTNET]],
+    [ChainId.SCROLL_SEPOLIA]: [WETH[ChainId.SCROLL_SEPOLIA]],
+    [ChainId.ZKSYNC_MAINNET]: [WETH[ChainId.ZKSYNC_MAINNET]],
+    [ChainId.ARBITRUM_MAINNET]: [WETH[ChainId.ARBITRUM_MAINNET]],
+    [ChainId.ARBITRUM_NOVA]: [WETH[ChainId.ARBITRUM_NOVA]],
+    [ChainId.OPTIMISM_MAINNET]: [WETH[ChainId.OPTIMISM_MAINNET]],
+    [ChainId.ZETACHAIN_ATHENS_2]: [WETH[ChainId.ZETACHAIN_ATHENS_2]],
+    [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK]],
+    [ChainId.LINEA_TESTNET]: [WETH[ChainId.LINEA_TESTNET]],
+    [ChainId.LINEA_MAINNET]: [WETH[ChainId.LINEA_MAINNET]],
+    [ChainId.MANTLE_MAINNET]: [WETH[ChainId.MANTLE_MAINNET]],
+    [ChainId.MANTLE_TESTNET]: [WETH[ChainId.MANTLE_TESTNET]],
+    [ChainId.BASE_MAINNET]: [WETH[ChainId.BASE_MAINNET]],
+    [ChainId.TRON_MAINNET]: [WETH[ChainId.TRON_MAINNET]],
+    [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET]],
+    [ChainId.SCROLL_MAINNET]: [WETH[ChainId.SCROLL_MAINNET]],
+    [ChainId.MANTA_MAINNET]: [WETH[ChainId.MANTA_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -342,7 +384,80 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             decimals: 18,
         }),
     ],
-    [ChainId.KAVA_MAINNET]: [],
+    [ChainId.KAVA_MAINNET]: [
+        new Token({
+            chainId: ChainId.KAVA_MAINNET,
+            address: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
+    [ChainId.SCROLL_TESTNET]: [],
+    [ChainId.SCROLL_SEPOLIA]: [],
+    [ChainId.ZKSYNC_MAINNET]: [
+        new Token({
+            chainId: ChainId.ZKSYNC_MAINNET,
+            address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
+    [ChainId.ARBITRUM_MAINNET]: [
+        new Token({
+            chainId: ChainId.ARBITRUM_MAINNET,
+            address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
+    [ChainId.ARBITRUM_NOVA]: [
+        new Token({
+            chainId: ChainId.ARBITRUM_NOVA,
+            address: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
+    [ChainId.OPTIMISM_MAINNET]: [
+        new Token({
+            chainId: ChainId.OPTIMISM_MAINNET,
+            address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+            decimals: 6,
+            symbol: 'USDC',
+            name: 'USD Coin',
+        }),
+    ],
+    [ChainId.ZETACHAIN_ATHENS_2]: [],
+    [ChainId.POLYGON_ZK]: [],
+    [ChainId.TRON_TESTNET]: [
+        new Token({
+            chainId: ChainId.TRON_TESTNET,
+            address: 'TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs',
+            decimals: 6,
+            symbol: 'USDT',
+            name: 'Tether USD',
+        }),
+    ],
+    [ChainId.TRON_MAINNET]: [
+        new Token({
+            chainId: ChainId.TRON_MAINNET,
+            address: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+            decimals: 6,
+            symbol: 'USDT',
+            name: 'Tether USD',
+        }),
+    ],
+    [ChainId.LINEA_TESTNET]: [],
+    [ChainId.LINEA_MAINNET]: [],
+    [ChainId.MANTLE_MAINNET]: [],
+    [ChainId.MANTLE_TESTNET]: [],
+    [ChainId.BASE_MAINNET]: [],
+    [ChainId.SCROLL_MAINNET]: [],
+    [ChainId.MANTA_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -366,6 +481,24 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.AURORA_MAINNET],
     ],
     [ChainId.KAVA_MAINNET]: [WETH[ChainId.KAVA_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.KAVA_MAINNET]],
+    [ChainId.ZKSYNC_MAINNET]: [
+        WETH[ChainId.ZKSYNC_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ZKSYNC_MAINNET],
+    ],
+    [ChainId.ARBITRUM_MAINNET]: [
+        WETH[ChainId.ARBITRUM_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ARBITRUM_MAINNET],
+    ],
+    [ChainId.ARBITRUM_NOVA]: [
+        WETH[ChainId.ARBITRUM_NOVA],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ARBITRUM_NOVA],
+    ],
+    [ChainId.OPTIMISM_MAINNET]: [
+        WETH[ChainId.OPTIMISM_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.OPTIMISM_MAINNET],
+    ],
+    [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.POLYGON_ZK]],
+    [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TRON_TESTNET]],
 }
 
 /**
@@ -410,4 +543,21 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.TELOS_TESTNET]: '0x9a01bf917477dd9f5d715d188618fc8b7350cd22',
     [ChainId.SHARDEUM_TESTNET_2]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
     [ChainId.KAVA_MAINNET]: '0x30A62aA52Fa099C4B227869EB6aeaDEda054d121',
+    [ChainId.SCROLL_TESTNET]: '0x41b5984f45AfB2560a0ED72bB69A98E8b32B3cCA',
+    [ChainId.SCROLL_SEPOLIA]: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210',
+    [ChainId.ZKSYNC_MAINNET]: '0x52192C3De01535a9Ad2743A5Fe4f774868103C20',
+    [ChainId.ARBITRUM_MAINNET]: '0x80c7dd17b01855a6d2347444a0fcc36136a314de',
+    [ChainId.ARBITRUM_NOVA]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.OPTIMISM_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.ZETACHAIN_ATHENS_2]: '0x9a01bf917477dD9F5D715D188618fc8B7350cd22',
+    [ChainId.POLYGON_ZK]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.TRON_TESTNET]: '0x00e08cb2cd7480ddf6c54430207dff81ce359887',
+    [ChainId.TRON_MAINNET]: '0x32A4F47A74A6810BD0BF861CABAB99656A75DE9E',
+    [ChainId.LINEA_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.LINEA_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.MANTLE_MAINNET]: '0xb55cc6B5B402437b66c13c0CEd0EF367aa7c26da',
+    [ChainId.MANTLE_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.BASE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.SCROLL_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.MANTA_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }

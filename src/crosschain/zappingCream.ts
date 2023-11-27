@@ -1,5 +1,5 @@
-import { SwapExactIn, BaseSwapping } from './baseSwapping'
-import { Token, TokenAmount, wrappedToken } from '../entities'
+import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
+import { wrappedToken } from '../entities'
 import { CreamCErc20__factory, CreamComptroller__factory, Multicall, MulticallRouter } from './contracts'
 import { getMulticall } from './multicall'
 import { ChainId } from '../constants'
@@ -69,16 +69,14 @@ export class ZappingCream extends BaseSwapping {
             .filter((i) => !!i) as Market[]
     }
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        tokenOut: Token,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number,
-        useAggregators = true
-    ): SwapExactIn {
+    public async exactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        slippage,
+        deadline,
+    }: SwapExactInParams): Promise<SwapExactIn> {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
 
@@ -100,16 +98,14 @@ export class ZappingCream extends BaseSwapping {
 
         this.creamPoolAddress = markets[index].market
 
-        return this.doExactIn(
+        return this.doExactIn({
             tokenAmountIn,
-            wrappedTokenOut,
+            tokenOut: wrappedTokenOut,
             from,
             to,
-            revertableAddress,
             slippage,
             deadline,
-            useAggregators
-        )
+        })
     }
 
     protected tradeCTo(): string {

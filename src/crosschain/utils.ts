@@ -2,11 +2,13 @@ import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils, Signer } from 'ethers'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants'
-import { Fraction, Percent, TokenAmount, Trade } from '../entities'
-import { BIPS_BASE, ONE_INCH_CHAINS } from './constants'
+import { BigintIsh, ChainId, ONE } from '../constants'
+import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../entities'
+import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from './constants'
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
+import flatMap from 'lodash.flatmap'
+import { Error } from './error'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -92,6 +94,11 @@ export function basisPointsToPercent(num: number): Percent {
     return new Percent(JSBI.BigInt(Math.floor(num)), JSBI.BigInt(10000))
 }
 
+export function getMinAmount(slippage: number, amount: BigintIsh): JSBI {
+    const slippageTolerance = basisPointsToPercent(slippage)
+    return new Fraction(ONE).subtract(slippageTolerance).multiply(amount).quotient
+}
+
 // computes the minimum amount out and maximum amount in for a trade given a user specified allowed slippage in bips
 export function computeSlippageAdjustedAmounts(
     trade: Trade | undefined,
@@ -126,7 +133,7 @@ export class GetLogTimeoutExceededError extends Error {
     }
 }
 
-const DEFAULT_EXCEED_DELAY = 1000 * 60 * 20 // 20 minutes
+export const DEFAULT_EXCEED_DELAY = 1000 * 60 * 20 // 20 minutes
 
 interface GetLogsWithTimeoutParams {
     symbiosis: Symbiosis
@@ -151,7 +158,7 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        const period = 1000 * 60
+        const period = 1000 * 60 // 60 seconds
         let pastTime = 0
 
         const interval = setInterval(() => {
@@ -217,4 +224,106 @@ export async function prepareTransactionRequest(
     }
 
     return preparedTransactionRequest
+}
+
+export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token, Token][] {
+    const chainId = tokenIn.chainId
+
+    // Base tokens for building intermediary trading routes
+    const bases = BASES_TO_CHECK_TRADES_AGAINST[chainId]
+    if (!bases) {
+        throw new Error('Bases not found')
+    }
+
+    // All pairs from base tokens
+    const basePairs: [Token, Token][] = flatMap(bases, (base: Token): [Token, Token][] =>
+        bases.map((otherBase) => [base, otherBase])
+    ).filter(([t0, t1]) => t0.address !== t1.address)
+
+    const [tokenA, tokenB] = [wrappedToken(tokenIn), wrappedToken(tokenOut)]
+    if (!tokenA || !tokenB) {
+        return []
+    }
+
+    return (
+        [
+            // the direct pair
+            [tokenA, tokenB],
+            // token A against all bases
+            ...bases.map((base): [Token, Token] => [tokenA, base]),
+            // token B against all bases
+            ...bases.map((base): [Token, Token] => [tokenB, base]),
+            // each base against all bases
+            ...basePairs,
+        ]
+            .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
+            .filter(([t0, t1]) => t0.address !== t1.address)
+            // This filter will remove all the pairs that are not supported by the CUSTOM_BASES settings
+            // This option is currently not used on Pancake swap
+            .filter(([t0, t1]) => {
+                if (!chainId) return true
+                const customBases = CUSTOM_BASES[chainId]
+                if (!customBases) return true
+
+                const customBasesA: Token[] | undefined = customBases[t0.address]
+                const customBasesB: Token[] | undefined = customBases[t1.address]
+
+                if (!customBasesA && !customBasesB) return true
+                if (customBasesA && !customBasesA.find((base) => t1.equals(base))) return false
+                if (customBasesB && !customBasesB.find((base) => t0.equals(base))) return false
+
+                return true
+            })
+    )
+}
+
+export interface DetailedSlippage {
+    A: number
+    B: number
+    C: number
+}
+
+export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
+    const MINIMUM_SLIPPAGE = 20 // 0.2%
+    if (totalSlippage < MINIMUM_SLIPPAGE) {
+        throw new Error('Slippage cannot be less than 0.2%')
+    }
+    let swapsCount = 1
+    let extraSwapsCount = 0
+    if (hasTradeA) {
+        extraSwapsCount += 1
+    }
+
+    if (hasTradeC) {
+        extraSwapsCount += 1
+    }
+    swapsCount += extraSwapsCount
+
+    const slippage = Math.floor(totalSlippage / swapsCount)
+
+    let aMul = 1.0
+    let cMul = 1.0
+
+    if (extraSwapsCount == 2) {
+        aMul = 0.8
+        cMul = 1.2
+    }
+
+    const MAX_STABLE_SLIPPAGE = 50 // 0.5%
+    if (slippage > MAX_STABLE_SLIPPAGE) {
+        const diff = slippage - MAX_STABLE_SLIPPAGE
+        const addition = extraSwapsCount > 0 ? diff / extraSwapsCount : 0
+
+        return {
+            A: hasTradeA ? (slippage + addition) * aMul : 0,
+            B: MAX_STABLE_SLIPPAGE,
+            C: hasTradeC ? (slippage + addition) * cMul : 0,
+        }
+    }
+
+    return {
+        A: hasTradeA ? slippage * aMul : 0,
+        B: slippage,
+        C: hasTradeC ? slippage * cMul : 0,
+    }
 }

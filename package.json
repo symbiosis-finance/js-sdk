@@ -1,7 +1,7 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "2.9.16",
-    "main": "dist/index.js",
+    "version": "3.0.35",
+    "main": "dist/index.cjs.js",
     "typings": "dist/index.d.ts",
     "files": [
         "dist"
@@ -14,72 +14,51 @@
     "bugs": {
         "url": "https://github.com/symbiosis-finance/js-sdk/issues"
     },
-    "module": "dist/symbiosis-js-sdk.esm.js",
+    "module": "dist/index.esm.js",
     "scripts": {
-        "build": "dts build",
-        "start": "dts watch",
-        "test": "dts test",
-        "lint": "dts lint src",
-        "lint:fix": "dts lint src --fix",
+        "build": "tsup",
+        "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
-        "prettier:fix": "prettier --write --ignore-unknown src",
-        "prepublishOnly": "dts build",
+        "prettier:fix": "prettier --write --ignore-unknown src test",
+        "prepublishOnly": "tsc --noEmit && tsup",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
-        "prepare": "husky install"
-    },
-    "lint-staged": {
-        "*.{ts,json}": [
-            "prettier src --write",
-            "eslint src --ext .ts,.json"
-        ],
-        "*.js": "eslint --cache --fix"
+        "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
+        "test": "vitest test/crosschain"
     },
     "dependencies": {
-        "@renproject/chains-bitcoin": "^3.4.2",
-        "@renproject/chains-ethereum": "^3.4.3",
-        "@renproject/ren": "~3.3.0",
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
         "decimal.js-light": "^2.5.0",
+        "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
-        "isomorphic-unfetch": "^3.1.0",
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
-        "toformat": "^2.0.0"
+        "toformat": "^2.0.0",
+        "tronweb": "^5.3.0"
     },
     "peerDependencies": {
-        "@ethersproject/address": "^5.2.0",
-        "@ethersproject/bignumber": "^5.2.0",
-        "@ethersproject/contracts": "^5.2.0",
-        "@ethersproject/networks": "^5.2.0",
-        "@ethersproject/providers": "^5.2.0",
-        "@ethersproject/solidity": "^5.2.0",
-        "@ethersproject/units": "^5.2.0"
+        "ethers": "^5.2.0"
     },
     "devDependencies": {
-        "@ethersproject/address": "^5.0.2",
-        "@ethersproject/contracts": "^5.0.2",
-        "@ethersproject/networks": "^5.0.2",
-        "@ethersproject/providers": "^5.0.5",
-        "@ethersproject/solidity": "^5.0.2",
-        "@ethersproject/units": "^5.2.0",
         "@typechain/ethers-v5": "^9.0.0",
         "@types/big.js": "^4.0.5",
         "@types/jest": "^27.0.3",
         "@types/lodash.flatmap": "^4.5.6",
+        "@types/prettier": "2.7.3",
         "@typescript-eslint/eslint-plugin": "^5.8.0",
         "@typescript-eslint/parser": "^5.8.0",
         "babel-plugin-transform-jsbi-to-bigint": "^1.3.1",
-        "dts-cli": "^1.2.0",
         "eslint": "^8.5.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",
-        "husky": "^7.0.4",
-        "lint-staged": "^12.3.2",
+        "ethers": "^5.2.0",
         "prettier": "2.5.1",
+        "ts-node": "^10.9.1",
+        "tsup": "^7.2.0",
         "typechain": "^7.0.0",
-        "typescript": "^4.5.5"
+        "typescript": "^5.0.4",
+        "vitest": "^0.34.2"
     },
     "engines": {
         "node": ">=10"

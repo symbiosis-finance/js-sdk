@@ -1,0 +1,82 @@
+{
+    "omniPools": [
+        {
+            "chainId": 97,
+            "address": "0x789001A80a8EdBBEE07876b0dF58c3eAdEE89877",
+            "oracle": "0x2cD94CB0F4cBC4a51c3e9c4b88d03B982bE24608",
+            "id": 0,
+            "tokens": [
+                { "index": 2, "tokenId": 3 },
+                { "index": 3, "tokenId": 2 }
+            ]
+        }
+    ],
+    "tokens": [
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped ETH",
+            "chainId": 5,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "deprecated": false,
+            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+            "id": 0
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped ETH",
+            "chainId": 534353,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "deprecated": false,
+            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
+            "id": 1
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether from Goerli",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 5,
+            "deprecated": false,
+            "address": "0xb1c5691B3Cb5e1B673Ef9Aa2599740a1cC76F928",
+            "id": 2,
+            "originalId": 0
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Wrapped Ether from Scroll Testnet",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 534353,
+            "deprecated": false,
+            "address": "0x3624b5e063405e7724cBbC24f504eA3da3e08b81",
+            "id": 3,
+            "originalId": 1
+        }
+    ],
+    "thresholds": [
+        { "tokenId": 0, "type": "Portal", "value": "0" },
+        { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 3, "type": "Synthesis", "value": "0" },
+        { "tokenId": 1, "type": "Portal", "value": "0" }
+    ]
+}

@@ -1,11 +1,10 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Symbiosis } from './symbiosis'
-import { DataProvider } from './dataProvider'
 import { Percent, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { CHAINS_PRIORITY } from './constants'
-import { BridgeDirection } from './types'
+import { BridgeDirection, OmniPoolConfig } from './types'
 import { OmniTrade } from './trade'
 import { MulticallRouter } from './contracts'
 
@@ -17,6 +16,7 @@ export class Transit {
     public route: Token[]
     public priceImpact: Percent
     public amountOut!: TokenAmount
+    public amountOutMin!: TokenAmount
 
     public feeToken!: Token
 
@@ -25,19 +25,18 @@ export class Transit {
 
     public constructor(
         protected symbiosis: Symbiosis,
-        protected dataProvider: DataProvider,
-        protected amountIn: TokenAmount,
-        protected tokenOut: Token,
+        public amountIn: TokenAmount,
+        public amountInMin: TokenAmount,
+        public tokenOut: Token,
+        protected transitTokenIn: Token,
+        protected transitTokenOut: Token,
         protected slippage: number,
         protected deadline: number,
+        protected omniPoolConfig: OmniPoolConfig,
         protected fee?: TokenAmount
     ) {
-        this.direction = Transit.getDirection(
-            amountIn.token.chainId,
-            tokenOut.chainId,
-            symbiosis.omniPoolConfig.chainId
-        )
-        this.multicallRouter = this.symbiosis.multicallRouter(this.symbiosis.omniPoolConfig.chainId)
+        this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, omniPoolConfig.chainId)
+        this.multicallRouter = this.symbiosis.multicallRouter(omniPoolConfig.chainId)
 
         this.route = []
         this.receiveSide = AddressZero
@@ -46,13 +45,14 @@ export class Transit {
     }
 
     public async init(): Promise<Transit> {
-        this.feeToken = await this.getFeeToken()
+        this.feeToken = this.getFeeToken()
 
         this.trade = await this.buildTrade()
 
         this.receiveSide = this.multicallRouter.address
         this.callData = this.buildCalldata()
-        this.amountOut = this.getTradeAmountOut()
+        this.amountOut = this.getTradeAmountOut(this.trade.amountOut)
+        this.amountOutMin = this.getTradeAmountOut(this.trade.amountOutMin)
         this.route = this.trade.route
         this.priceImpact = this.trade.priceImpact
 
@@ -79,14 +79,16 @@ export class Transit {
     /**
      * Amount in stables coming out of the bridge
      */
-    public getBridgeAmountOut(): TokenAmount {
-        const amountOut = new TokenAmount(this.feeToken, this.amountIn.raw)
+    public getBridgeAmountOut(amount: TokenAmount): TokenAmount {
+        const amountOut = new TokenAmount(this.feeToken, amount.raw)
         if (!this.fee) {
             return amountOut
         }
         if (amountOut.lessThan(this.fee)) {
             throw new Error(
-                `Amount $${amountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                `Amount ${amountOut.toSignificant()} ${
+                    amountOut.token.symbol
+                } less than fee ${this.fee.toSignificant()} ${this.fee.token.symbol}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
@@ -126,28 +128,27 @@ export class Transit {
             [this.trade.pool.address], // receiveSides
             [this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address], // path
             [100], // offset
-            this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address,
+            this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address,
         ])
     }
 
-    protected getTradeAmountIn(): TokenAmount {
+    protected getTradeAmountIn(amount: TokenAmount): TokenAmount {
         if (this.direction === 'burn') {
-            return this.amountIn
+            return amount
         }
 
-        return this.getBridgeAmountOut()
+        return this.getBridgeAmountOut(amount)
     }
 
-    protected getTradeAmountOut(): TokenAmount {
-        if (!this.trade) {
+    protected getTradeAmountOut(tradeAmountOut: TokenAmount | undefined): TokenAmount {
+        if (!tradeAmountOut) {
             throw new Error('There is no trade')
         }
         if (this.direction === 'mint' || this.isV2()) {
-            return this.trade.amountOut
+            return tradeAmountOut
         }
 
-        const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId)
-        const amountOut = new TokenAmount(transitStableOut, this.trade.amountOut.raw)
+        const amountOut = new TokenAmount(this.transitTokenOut, tradeAmountOut.raw)
 
         if (!this.fee) {
             return amountOut
@@ -155,43 +156,43 @@ export class Transit {
 
         if (amountOut.lessThan(this.fee)) {
             throw new Error(
-                `Amount $${amountOut.toSignificant()} less than fee $${this.fee.toSignificant()}`,
+                `Amount ${amountOut.toSignificant()} ${
+                    amountOut.token.symbol
+                } less than fee ${this.fee.toSignificant()} ${this.fee.token.symbol}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
         return amountOut.subtract(this.fee)
     }
 
-    protected async getFeeToken(): Promise<Token> {
-        const transitStableOutChainId = this.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.tokenOut.chainId
+    protected getFeeToken(): Token {
+        const transitTokenOutChainId = this.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
 
         if (this.direction === 'burn') {
-            return this.symbiosis.transitStable(transitStableOutChainId) // USDC | BUSD
+            return this.transitTokenOut // USDC | BUSD
         }
 
         // mint or v2
-        const transitStableIn = this.symbiosis.transitStable(this.amountIn.token.chainId) // USDC
-        const rep = await this.dataProvider.getRepresentation(transitStableIn, transitStableOutChainId) // sUSDC
+        const rep = this.symbiosis.getRepresentation(this.transitTokenIn, transitTokenOutChainId) // sToken
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.chainId}:${transitStableIn.symbol} in chain ${transitStableOutChainId} not found`,
+                `Representation of ${this.transitTokenIn.chainId}:${this.transitTokenIn.symbol} in chain ${transitTokenOutChainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
         return rep
     }
 
-    protected async getTradeTokenOut(): Promise<Token> {
+    protected getTradeTokenOut(): Token {
         if (this.direction === 'mint') {
-            return this.symbiosis.transitStable(this.tokenOut.chainId)
+            return this.transitTokenOut
         }
 
-        const transitStableInChainId = this.isV2() ? this.symbiosis.omniPoolConfig.chainId : this.amountIn.token.chainId
-        const transitStableOut = this.symbiosis.transitStable(this.tokenOut.chainId) // USDC
-        const rep = await this.dataProvider.getRepresentation(transitStableOut, transitStableInChainId) // sUSDC
+        const transitTokenInChainId = this.isV2() ? this.omniPoolConfig.chainId : this.amountIn.token.chainId
+        const rep = this.symbiosis.getRepresentation(this.transitTokenOut, transitTokenInChainId) // sUSDC
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableOut.symbol} in chain ${transitStableInChainId} not found`,
+                `Representation of ${this.transitTokenOut.symbol} in chain ${transitTokenInChainId} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -199,12 +200,22 @@ export class Transit {
     }
 
     protected async buildTrade(): Promise<OmniTrade> {
-        const tokenAmountIn = this.getTradeAmountIn()
-        const tokenOut = await this.getTradeTokenOut()
+        const tokenAmountIn = this.getTradeAmountIn(this.amountIn)
+        const tokenAmountInMin = this.getTradeAmountIn(this.amountInMin)
+        const tokenOut = this.getTradeTokenOut()
 
-        const to = this.symbiosis.metaRouter(this.symbiosis.omniPoolConfig.chainId).address
+        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 
-        const trade = new OmniTrade(tokenAmountIn, tokenOut, this.slippage, this.deadline, this.symbiosis, to)
+        const trade = new OmniTrade(
+            tokenAmountIn,
+            tokenAmountInMin,
+            tokenOut,
+            this.slippage,
+            this.deadline,
+            this.symbiosis,
+            to,
+            this.omniPoolConfig
+        )
         await trade.init()
 
         return trade

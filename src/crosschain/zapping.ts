@@ -3,28 +3,40 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { Signer, BigNumber } from 'ethers'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants'
-import { Percent, Token, TokenAmount } from '../entities'
+import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { UniLikeTrade, AggregatorTrade, SymbiosisTradeType } from './trade'
+import { AggregatorTrade, SymbiosisTradeType } from './trade'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { AdaRouter, AvaxRouter, OmniPool, OmniPoolOracle, UniLikeRouter } from './contracts'
+import { OmniPool, OmniPoolOracle } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
+import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
+import { TRON_METAROUTER_ABI } from './tronAbis'
+import { OmniPoolConfig } from './types'
+import { WrapTrade } from './trade/wrapTrade'
 
-export type SwapExactIn = Promise<{
-    execute: (signer: Signer) => Execute
+export type ZapExactIn = Promise<{
+    type: 'tron' | 'evm'
+    execute?: (signer: Signer) => Execute
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     priceImpact: Percent
     amountInUsd: TokenAmount
-    transactionRequest: TransactionRequest
+    transactionRequest: TronTransactionData | TransactionRequest
     inTradeType?: SymbiosisTradeType
 }>
+
+type ZappingExactInParams = {
+    tokenAmountIn: TokenAmount
+    from: string
+    to: string
+    slippage: number
+    deadline: number
+}
 
 export class Zapping {
     protected dataProvider: DataProvider
@@ -36,55 +48,62 @@ export class Zapping {
     private slippage!: number
     private deadline!: number
     private ttl!: number
-    private useAggregators!: boolean
 
-    private tradeA: UniLikeTrade | AggregatorTrade | undefined
+    private tradeA: AggregatorTrade | WrapTrade | undefined
 
     private synthToken!: Token
+    private transitTokenIn!: Token
 
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
     private readonly poolOracle!: OmniPoolOracle
-    private readonly symbiosis: Symbiosis
 
-    public constructor(symbiosis: Symbiosis) {
-        this.symbiosis = symbiosis
+    public constructor(private readonly symbiosis: Symbiosis, private readonly omniPoolConfig: OmniPoolConfig) {
         this.dataProvider = new DataProvider(symbiosis)
 
-        this.pool = this.symbiosis.omniPool()
-        this.poolOracle = this.symbiosis.omniPoolOracle()
+        this.pool = this.symbiosis.omniPool(omniPoolConfig)
+        this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
     }
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        from: string,
-        to: string,
-        revertableAddress: string,
-        slippage: number,
-        deadline: number,
-        useAggregators = true
-    ): SwapExactIn {
-        this.useAggregators = useAggregators
+    public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: ZappingExactInParams): ZapExactIn {
         this.tokenAmountIn = tokenAmountIn
-        this.from = from
-        this.to = to
-        this.revertableAddress = revertableAddress
+        this.from = tronAddressToEvm(from)
+        this.to = tronAddressToEvm(to)
+
         this.slippage = slippage
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
-        let amountInUsd: TokenAmount
+        if (isTronToken(this.tokenAmountIn.token)) {
+            this.revertableAddress = this.symbiosis.getRevertableAddress(this.omniPoolConfig.chainId)
+        } else {
+            this.revertableAddress = this.from
+        }
 
-        if (!this.symbiosis.isTransitStable(tokenAmountIn.token)) {
+        const targetPool = this.symbiosis.getOmniPoolByConfig(this.omniPoolConfig)
+        if (!targetPool) {
+            throw new Error(`Unknown omni pool ${this.omniPoolConfig.address}`)
+        }
+        const wrapped = wrappedToken(tokenAmountIn.token)
+        const tokenPool = this.symbiosis.getOmniPoolByToken(wrapped)
+        if (tokenPool?.id === targetPool.id) {
+            this.transitTokenIn = wrapped
+        } else {
+            this.transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
+        }
+
+        let transitAmountIn: TokenAmount
+
+        if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
 
-            amountInUsd = this.tradeA.amountOut
+            transitAmountIn = this.tradeA.amountOut
         } else {
-            amountInUsd = tokenAmountIn
+            transitAmountIn = tokenAmountIn
         }
 
-        this.symbiosis.validateSwapAmounts(amountInUsd)
+        this.symbiosis.validateSwapAmounts(transitAmountIn)
 
         this.synthToken = await this.getSynthToken()
 
@@ -98,14 +117,25 @@ export class Zapping {
 
         const transactionRequest = this.getTransactionRequest(fee)
 
-        return {
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
+        const base = {
             fee,
             tokenAmountOut: this.omniLiquidity.amountOut,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.getSynthAmount(fee),
             transactionRequest,
             inTradeType: this.tradeA?.tradeType,
+        }
+        if ('call_value' in transactionRequest) {
+            return {
+                ...base,
+                type: 'tron',
+            }
+        }
+
+        return {
+            ...base,
+            type: 'evm',
+            execute: (signer: Signer) => this.execute(transactionRequest, signer),
         }
     }
 
@@ -119,7 +149,7 @@ export class Zapping {
         }).waitForComplete(receipt)
     }
 
-    private getTransactionRequest(fee: TokenAmount): TransactionRequest {
+    private getTransactionRequest(fee: TokenAmount): TransactionRequest | TronTransactionData {
         const chainId = this.tokenAmountIn.token.chainId
         const metaRouter = this.symbiosis.metaRouter(chainId)
 
@@ -141,19 +171,44 @@ export class Zapping {
                 ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
                 : undefined
 
-        const data = metaRouter.interface.encodeFunctionData('metaRoute', [
-            {
-                firstSwapCalldata: this.tradeA?.callData || [],
-                secondSwapCalldata: [],
-                approvedTokens,
-                firstDexRouter: this.tradeA?.routerAddress || AddressZero,
-                secondDexRouter: AddressZero,
-                amount: this.tokenAmountIn.raw.toString(),
-                nativeIn: this.tokenAmountIn.token.isNative,
-                relayRecipient,
-                otherSideCalldata,
-            },
-        ])
+        const params = {
+            firstSwapCalldata: this.tradeA?.callData || [],
+            secondSwapCalldata: [],
+            approvedTokens,
+            firstDexRouter: this.tradeA?.routerAddress || AddressZero,
+            secondDexRouter: AddressZero,
+            amount: this.tokenAmountIn.raw.toString(),
+            nativeIn: this.tokenAmountIn.token.isNative,
+            relayRecipient,
+            otherSideCalldata,
+        }
+
+        if (isTronChainId(chainId)) {
+            return prepareTronTransaction({
+                chainId: chainId,
+                tronWeb: this.symbiosis.tronWeb(chainId),
+                abi: TRON_METAROUTER_ABI,
+                contractAddress: metaRouter.address,
+                functionName: 'metaRoute',
+                params: [
+                    [
+                        this.tradeA?.callData || [],
+                        [],
+                        approvedTokens,
+                        this.tradeA?.routerAddress || AddressZero,
+                        AddressZero,
+                        this.tokenAmountIn.raw.toString(),
+                        this.tokenAmountIn.token.isNative,
+                        relayRecipient,
+                        otherSideCalldata,
+                    ],
+                ],
+                ownerAddress: this.from,
+                value: 0,
+            })
+        }
+
+        const data = metaRouter.interface.encodeFunctionData('metaRoute', [params])
 
         return {
             chainId,
@@ -186,36 +241,27 @@ export class Zapping {
         return synthAmount
     }
 
-    private buildTradeA(): UniLikeTrade | AggregatorTrade {
+    private buildTradeA(): AggregatorTrade | WrapTrade {
         const chainId = this.tokenAmountIn.token.chainId
-        const tokenOut = this.symbiosis.transitStable(chainId)
+        const tokenOut = this.transitTokenIn
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (this.useAggregators && AggregatorTrade.isAvailable(chainId)) {
-            return new AggregatorTrade({
-                tokenAmountIn: this.tokenAmountIn,
-                tokenOut,
-                from,
-                to,
-                slippage: this.slippage / 100,
-                dataProvider: this.dataProvider,
-                symbiosis: this.symbiosis,
-                clientId: this.symbiosis.clientId,
-            })
+        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
+            return new WrapTrade(this.tokenAmountIn, tokenOut, this.to)
         }
 
-        const dexFee = this.symbiosis.dexFee(chainId)
-
-        let routerA: UniLikeRouter | AvaxRouter | AdaRouter = this.symbiosis.uniLikeRouter(chainId)
-        if (chainId === ChainId.AVAX_MAINNET) {
-            routerA = this.symbiosis.avaxRouter(chainId)
-        }
-        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
-            routerA = this.symbiosis.adaRouter(chainId)
-        }
-
-        return new UniLikeTrade(this.tokenAmountIn, tokenOut, to, this.slippage, this.ttl, routerA, dexFee)
+        return new AggregatorTrade({
+            tokenAmountIn: this.tokenAmountIn,
+            tokenOut,
+            from,
+            to,
+            slippage: this.slippage / 100,
+            dataProvider: this.dataProvider,
+            symbiosis: this.symbiosis,
+            clientId: this.symbiosis.clientId,
+            ttl: this.ttl,
+        })
     }
 
     private buildOmniLiquidity(fee?: TokenAmount): OmniLiquidity {
@@ -230,7 +276,7 @@ export class Zapping {
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
         const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
 
         const portal = this.symbiosis.portal(chainIdIn)
@@ -281,13 +327,12 @@ export class Zapping {
     }
 
     private async getSynthToken(): Promise<Token> {
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
-        const transitStableIn = this.symbiosis.transitStable(this.tokenAmountIn.token.chainId)
-        const rep = await this.symbiosis.getRepresentation(transitStableIn, chainIdOut)
+        const chainIdOut = this.omniPoolConfig.chainId
+        const rep = await this.symbiosis.getRepresentation(this.transitTokenIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
-                `Representation of ${transitStableIn.symbol} in chain ${chainIdOut} not found`,
+                `Representation of ${this.transitTokenIn.symbol} in chain ${chainIdOut} not found`,
                 ErrorCode.NO_ROUTE
             )
         }
@@ -297,7 +342,7 @@ export class Zapping {
 
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
-        const chainIdOut = this.symbiosis.omniPoolConfig.chainId
+        const chainIdOut = this.omniPoolConfig.chainId
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)

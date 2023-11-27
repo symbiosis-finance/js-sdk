@@ -1,15 +1,8 @@
-import { Signer } from 'ethers'
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
 import { BaseSwapping, SwapExactIn } from './baseSwapping'
 import { MulticallRouter } from './contracts'
 import fetch from 'isomorphic-unfetch'
-
-export type ZappingThorExactIn = Promise<
-    Omit<Awaited<SwapExactIn>, 'execute'> & {
-        execute: ReturnType<ZappingThor['buildExecute']>
-    }
->
 
 type ThorQuote = {
     memo: string
@@ -65,30 +58,25 @@ export class ZappingThor extends BaseSwapping {
         tokenAmountIn: TokenAmount,
         from: string,
         to: string,
-        revertableAddress: string,
         slippage: number,
         deadline: number,
-        use1Inch = true
-    ): ZappingThorExactIn {
+    ): Promise<SwapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(USDC.chainId)
         this.bitcoinAddress = to
 
         this.thorVault = await this.getThorVault()
 
-        const { execute, ...result } = await this.doExactIn(
+        const result  = await this.doExactIn({
             tokenAmountIn,
-            USDC,
+            tokenOut: USDC,
             from,
-            from,
-            revertableAddress,
+            to: from,
             slippage,
             deadline,
-            use1Inch
-        )
+        })
 
         return {
             ...result,
-            execute: this.buildExecute(execute),
             tokenAmountOut: this.thorQuote.amountOut,
         }
     }
@@ -144,16 +132,6 @@ export class ZappingThor extends BaseSwapping {
         return this.multicallRouter.address
     }
 
-    public async waitForThor(transactionHash: string): Promise<string | undefined> {
-        return new Promise<string | undefined>((resolve, reject) => {
-            try {
-                resolve(transactionHash) // FIXME correct BTC hash
-            } catch (e) {
-                reject(e)
-            }
-        })
-    }
-
     protected finalReceiveSide(): string {
         return this.multicallRouter.address
     }
@@ -190,27 +168,5 @@ export class ZappingThor extends BaseSwapping {
             offsets,
             this.from,
         ])
-    }
-
-    private buildExecute(execute: Awaited<SwapExactIn>['execute']) {
-        return async (signer: Signer) => {
-            const { response, waitForMined } = await execute(signer)
-
-            return {
-                response,
-                waitForMined: async () => {
-                    const { receipt } = await waitForMined()
-
-                    return {
-                        receipt,
-                        waitForComplete: async () => {
-                            const log = await this.waitForComplete(receipt)
-
-                            return { log, waitForThor: () => this.waitForThor(log.transactionHash) }
-                        },
-                    }
-                },
-            }
-        }
     }
 }
