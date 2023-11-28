@@ -1,4 +1,4 @@
-import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
+import { BaseSwapping, CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
 import { wrappedToken } from '../entities'
 import { CreamCErc20__factory, CreamComptroller__factory, Multicall, MulticallRouter } from './contracts'
 import { getMulticall } from './multicall'
@@ -76,7 +76,7 @@ export class ZappingCream extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: SwapExactInParams): Promise<SwapExactIn> {
+    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         const wrappedTokenOut = wrappedToken(tokenOut)
         const chainIdOut = wrappedTokenOut.chainId
 

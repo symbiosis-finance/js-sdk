@@ -1,6 +1,6 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
-import { BigNumber, utils } from 'ethers'
+import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
@@ -28,7 +28,7 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
-interface SwapInfo {
+export interface CrossChainSwapInfo {
     fee: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
@@ -40,17 +40,17 @@ interface SwapInfo {
     outTradeType?: SymbiosisTradeType
 }
 
-export type EthSwapExactIn = SwapInfo & {
+export type EthSwapExactIn = CrossChainSwapInfo & {
     type: 'evm'
     transactionRequest: TransactionRequest
 }
 
-export type TronSwapExactIn = SwapInfo & {
+export type TronSwapExactIn = CrossChainSwapInfo & {
     type: 'tron'
     transactionRequest: TronTransactionData
 }
 
-export type SwapExactIn = TronSwapExactIn | EthSwapExactIn
+export type CrosschainSwapExactInResult = TronSwapExactIn | EthSwapExactIn
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -97,7 +97,7 @@ export abstract class BaseSwapping {
         slippage,
         deadline,
         oneInchProtocols,
-    }: SwapExactInParams): Promise<SwapExactIn> {
+    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -175,7 +175,7 @@ export abstract class BaseSwapping {
             JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
         )
 
-        const swapInfo: SwapInfo = {
+        const swapInfo: CrossChainSwapInfo = {
             fee: crossChainFee,
             tokenAmountOut,
             tokenAmountOutMin,
@@ -259,36 +259,6 @@ export abstract class BaseSwapping {
             revertableAddress: this.getRevertableAddress('AB'),
             chainIdIn: this.tokenAmountIn.token.chainId,
         }).waitForComplete(receipt)
-    }
-
-    public async findTransitTokenSent(transactionHash: string): Promise<TokenAmount | undefined> {
-        const chainId = this.tokenOut.chainId
-        const metarouter = this.symbiosis.metaRouter(chainId)
-        const providerTo = this.symbiosis.getProvider(chainId)
-        const receipt = await providerTo.getTransactionReceipt(transactionHash)
-        if (!receipt) {
-            return undefined
-        }
-        const eventId = utils.id('TransitTokenSent(address,uint256,address)')
-        const log = receipt.logs.find((i: Log) => {
-            return i.topics[0] === eventId
-        })
-
-        if (!log) {
-            return undefined
-        }
-
-        const parsedLog = metarouter.interface.parseLog(log)
-
-        const token = this.symbiosis.tokens().find((i: Token) => {
-            return i.chainId === chainId && i.address.toLowerCase() === parsedLog.args.token.toLowerCase()
-        })
-
-        if (!token) {
-            return undefined
-        }
-
-        return new TokenAmount(token, parsedLog.args.amount.toString())
     }
 
     protected getEvmTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TransactionRequest {

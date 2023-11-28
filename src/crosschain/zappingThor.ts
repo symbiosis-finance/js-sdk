@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
-import { Token, TokenAmount } from '../entities'
-import {BaseSwapping, SwapExactIn, SwapExactInParams} from './baseSwapping'
+import {GAS_TOKEN, Token, TokenAmount} from '../entities'
+import {BaseSwapping, CrosschainSwapExactInResult, SwapExactInParams} from './baseSwapping'
 import {MulticallRouter, ThorRouter__factory} from './contracts'
 import fetch from 'isomorphic-unfetch'
 
@@ -10,19 +10,6 @@ type ThorQuote = {
     router: string
     expiry: string
 }
-
-const BTC = new Token({
-    chainId: ChainId.BTC_MAINNET,
-    symbol: 'BTC',
-    name: 'Bitcoin',
-    address: '',
-    decimals: 8,
-    isNative: true,
-    icons: {
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-    },
-})
 
 // const USDC = new Token({
 //     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -54,7 +41,7 @@ function toThorToken(token: Token): string {
     } else if (token.chainId === ChainId.ETH_MAINNET) {
         chain = 'ETH'
     } else {
-        throw new Error('Unknown chain')
+        throw new Error('toThorToken: unknown chain')
     }
     return `${chain}.${token.symbol}-${token.address.toUpperCase()}`
 }
@@ -78,7 +65,7 @@ export class ZappingThor extends BaseSwapping {
         console.log('this.thorQuote', this.thorQuote)
     }
 
-    public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: SwapExactInParams): Promise<SwapExactIn> {
+    public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         this.multicallRouter = this.symbiosis.multicallRouter(USDC.chainId)
         this.bitcoinAddress = to
 
@@ -141,7 +128,7 @@ export class ZappingThor extends BaseSwapping {
 
         return {
             memo,
-            amountOut: new TokenAmount(BTC, expected_amount_out),
+            amountOut: new TokenAmount(GAS_TOKEN[ChainId.BTC_MAINNET], expected_amount_out),
             router,
             expiry,
         }

@@ -1,13 +1,12 @@
-import type { Symbiosis } from './symbiosis'
-import type { Swapping } from './swapping'
-import type { OmniPoolConfig } from './types'
-import type { SwapExactInParams } from './baseSwapping'
-import { ErrorCode } from './error'
-import { Token, TokenAmount, wrappedToken } from '../entities'
 import { utils } from 'ethers'
+import { Token, TokenAmount, wrappedToken } from '../entities'
+import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
+import { ErrorCode } from './error'
+import type { Swapping } from './swapping'
+import type { Symbiosis } from './symbiosis'
+import type { OmniPoolConfig } from './types'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
-type FindTransitTokenSentArgs = Parameters<typeof Swapping.prototype.findTransitTokenSent>
 
 const SOCKET_IO_PARTNER_ID = utils.formatBytes32String('socket-io')
 
@@ -17,40 +16,15 @@ export class BestPoolSwapping {
 
     public swapping?: Swapping
 
-    private getOptimalOmniPool(tokenIn: Token, tokenOut: Token): OmniPoolConfig | undefined {
-        if (this.symbiosis.clientId !== SOCKET_IO_PARTNER_ID) {
-            return undefined
-        }
-
-        const { omniPools } = this.symbiosis.config
-
-        const swapWithoutTrades = omniPools.find((omniPoolConfig) => {
-            try {
-                const transitTokenIn = this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
-                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
-
-                return transitTokenIn.equals(wrappedToken(tokenIn)) && transitTokenOut.equals(wrappedToken(tokenOut))
-            } catch {
-                return false
-            }
-        })
-
-        if (swapWithoutTrades) {
-            return swapWithoutTrades
-        }
-
-        return omniPools.find((omniPoolConfig) => {
-            try {
-                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
-
-                return transitTokenOut.equals(wrappedToken(tokenOut))
-            } catch {
-                return false
-            }
-        })
-    }
-
-    async exactIn({ tokenAmountIn, tokenOut, from, to, slippage, deadline, oneInchProtocols }: SwapExactInParams) {
+    async exactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        slippage,
+        deadline,
+        oneInchProtocols,
+    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         const { omniPools } = this.symbiosis.config
 
         const exactInParams: SwapExactInParams = {
@@ -83,9 +57,9 @@ export class BestPoolSwapping {
             })
         )
 
-        let swapping: any
-        let actionResult: any
-        let actionError: any
+        let swapping: Swapping | undefined
+        let actionResult: CrosschainSwapExactInResult | undefined
+        let actionError: ErrorCode | undefined
 
         for (const item of results) {
             if (item.status !== 'fulfilled') {
@@ -107,7 +81,7 @@ export class BestPoolSwapping {
             actionResult = value.actionResult
         }
 
-        if (!actionResult) {
+        if (!actionResult || !swapping) {
             throw actionError
         }
 
@@ -133,12 +107,36 @@ export class BestPoolSwapping {
         return this.swapping.waitForComplete(...args)
     }
 
-    // Need to backward compatibility to Swapping
-    async findTransitTokenSent(...args: FindTransitTokenSentArgs) {
-        if (!this.swapping) {
-            throw new Error('Swapping is not started')
+    private getOptimalOmniPool(tokenIn: Token, tokenOut: Token): OmniPoolConfig | undefined {
+        if (this.symbiosis.clientId !== SOCKET_IO_PARTNER_ID) {
+            return undefined
         }
 
-        return this.swapping.findTransitTokenSent(...args)
+        const { omniPools } = this.symbiosis.config
+
+        const swapWithoutTrades = omniPools.find((omniPoolConfig) => {
+            try {
+                const transitTokenIn = this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
+                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+
+                return transitTokenIn.equals(wrappedToken(tokenIn)) && transitTokenOut.equals(wrappedToken(tokenOut))
+            } catch {
+                return false
+            }
+        })
+
+        if (swapWithoutTrades) {
+            return swapWithoutTrades
+        }
+
+        return omniPools.find((omniPoolConfig) => {
+            try {
+                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+
+                return transitTokenOut.equals(wrappedToken(tokenOut))
+            } catch {
+                return false
+            }
+        })
     }
 }

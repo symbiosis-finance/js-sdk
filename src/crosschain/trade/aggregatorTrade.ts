@@ -142,7 +142,9 @@ export class AggregatorTrade implements SymbiosisTrade {
         return this
     }
 
-    private assertTradeInitialized(): asserts this is { trade: OneInchTrade | OpenOceanTrade } {
+    private assertTradeInitialized(): asserts this is {
+        trade: OneInchTrade | OpenOceanTrade | UniLikeTrade | IzumiTrade
+    } {
         if (!this.trade) {
             throw new TradeNotInitializedError()
         }
@@ -217,5 +219,15 @@ export class AggregatorTrade implements SymbiosisTrade {
     get tradeType(): SymbiosisTradeType {
         this.assertTradeInitialized()
         return this.trade.tradeType
+    }
+
+    get functionSelector(): string | undefined {
+        this.assertTradeInitialized()
+
+        if ('functionSelector' in this.trade) {
+            return this.trade.functionSelector
+        }
+
+        return undefined
     }
 }

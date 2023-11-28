@@ -1,4 +1,4 @@
-import { StaticJsonRpcProvider } from '@ethersproject/providers'
+import { StaticJsonRpcProvider, Log } from '@ethersproject/providers'
 import { BigNumber, Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
@@ -66,12 +66,13 @@ import { ConfigCache } from './config/cache/cache'
 import { OmniPoolInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
 import { MakeOneInchRequestFn, makeOneInchRequestFactory } from './oneInchRequest'
+import { SwapExactInParams, swapExactIn, SwapExactInResult } from './swapExactIn'
 import { ZappingThor } from './zappingThor'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'teleport'
 
 const defaultFetch: typeof fetch = (url, init) => {
-    return isomorphicFetch(url, init)
+    return isomorphicFetch(url as string, init)
 }
 
 export class Symbiosis {
@@ -142,6 +143,10 @@ export class Symbiosis {
     public chains(): Chain[] {
         const ids = this.config.chains.map((i) => i.id)
         return chains.filter((i) => ids.includes(i.id))
+    }
+
+    public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+        return swapExactIn({ symbiosis: this, ...params })
     }
 
     public newBridging() {
@@ -466,6 +471,38 @@ export class Symbiosis {
 
     public async waitForComplete(chainId: ChainId, txId: string): Promise<string> {
         return statelessWaitForComplete(this, chainId, txId)
+    }
+
+    public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {
+        const metarouter = this.metaRouter(chainId)
+        const providerTo = this.getProvider(chainId)
+
+        const receipt = await providerTo.getTransactionReceipt(transactionHash)
+
+        if (!receipt) {
+            return undefined
+        }
+
+        const eventId = utils.id('TransitTokenSent(address,uint256,address)')
+        const log = receipt.logs.find((log: Log) => {
+            return log.topics[0] === eventId
+        })
+
+        if (!log) {
+            return undefined
+        }
+
+        const parsedLog = metarouter.interface.parseLog(log)
+
+        const token = this.tokens().find((token: Token) => {
+            return token.chainId === chainId && token.address.toLowerCase() === parsedLog.args.token.toLowerCase()
+        })
+
+        if (!token) {
+            return undefined
+        }
+
+        return new TokenAmount(token, parsedLog.args.amount.toString())
     }
 
     async tronWaitForMined(chainId: ChainId, txId: string): Promise<TransactionInfo> {

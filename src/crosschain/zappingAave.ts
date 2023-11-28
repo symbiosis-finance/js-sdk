@@ -1,4 +1,4 @@
-import { BaseSwapping, SwapExactIn, SwapExactInParams } from './baseSwapping'
+import { BaseSwapping, CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
 import { wrappedToken } from '../entities'
 import { Aave, MulticallRouter } from './contracts'
 
@@ -15,7 +15,7 @@ export class ZappingAave extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: SwapExactInParams): Promise<SwapExactIn> {
+    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         this.multicallRouter = this.symbiosis.multicallRouter(tokenOut.chainId)
         this.userAddress = to
 

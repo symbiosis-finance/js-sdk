@@ -1,4 +1,4 @@
-import { ChainId } from '../../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { getMinAmount } from '../utils'
@@ -41,7 +41,6 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.MANTA_MAINNET]: 'manta',
 }
 
-const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
 const BASE_URL = 'https://open-api.openocean.finance/v3'
 
 export class OpenOceanTrade implements SymbiosisTrade {

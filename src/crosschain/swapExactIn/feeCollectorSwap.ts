@@ -1,0 +1,114 @@
+import { AddressZero } from '@ethersproject/constants'
+import { BigNumber, BytesLike } from 'ethers'
+import { ChainId } from '../../constants'
+import { TokenAmount } from '../../entities'
+import { onchainSwap } from './onchainSwap'
+import { SwapExactInParams, SwapExactInResult } from './types'
+import { FeeCollector__factory } from '../contracts'
+import { preparePayload } from './preparePayload'
+import { getFunctionSelector } from '../tron'
+
+const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
+    [ChainId.ETH_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
+    [ChainId.BSC_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
+    [ChainId.AVAX_MAINNET]: '0xA257F3FE4E4032291516DC355eDF90664e9eB932',
+    [ChainId.MATIC_MAINNET]: '0x9d74807B8fA79d49bb95CF988Af3c25Fb1437B4f',
+    [ChainId.MANTLE_MAINNET]: '0x7B4E28E7273aA8CB64C56fF191ebF43b64f409F9',
+    [ChainId.LINEA_MAINNET]: '0x0f91052dc5B4baE53d0FeA5DAe561A117268f5d2',
+    [ChainId.POLYGON_ZK]: '0xB79A4F5828eb55c10D7abF4bFe9a9f5d11aA84e0',
+    [ChainId.BASE_MAINNET]: '0xF951789c6A356BfbC3033648AA10b5Dd3e9d88C0',
+    [ChainId.ARBITRUM_MAINNET]: '0x4FDA0599b78a49d289577a8DF2046459abC04d82',
+    // [ChainId.ARBITRUM_NOVA]: '0x7B4E28E7273aA8CB64C56fF191ebF43b64f409F9',
+    [ChainId.OPTIMISM_MAINNET]: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
+    // [ChainId.TELOS_MAINNET]: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
+    [ChainId.ZKSYNC_MAINNET]: '0x56C343E7cE75e53e58Ed2f3743C6f137c13D2013',
+    // [ChainId.BOBA_MAINNET]: '0xB79A4F5828eb55c10D7abF4bFe9a9f5d11aA84e0',
+    [ChainId.KAVA_MAINNET]: '0xca506793A420E901BbCa8066be5661E3C52c84c2',
+    // [ChainId.BOBA_BNB]: '0x7e0B73141c8a1AC26B8693e9F34cf42BE17Fea2C',
+    // [ChainId.TRON_MAINNET]: '0x5112ac3d77551b9f670eb34ef75984246164e38d',
+    [ChainId.SCROLL_MAINNET]: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
+    [ChainId.MANTA_MAINNET]: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
+}
+
+export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {
+    const inChainId = params.inTokenAmount.token.chainId
+    const outChainId = params.outToken.chainId
+
+    return inChainId === outChainId && FEE_COLLECTOR_ADDRESES[inChainId] !== undefined
+}
+
+export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    const { symbiosis, toAddress } = params
+
+    const inChainId = params.inTokenAmount.token.chainId
+
+    const feeCollectorAddress = FEE_COLLECTOR_ADDRESES[inChainId]
+    if (!feeCollectorAddress) {
+        throw new Error(`Fee collector not found for chain ${inChainId}`)
+    }
+
+    const provider = symbiosis.getProvider(inChainId)
+    const contract = FeeCollector__factory.connect(feeCollectorAddress, provider)
+
+    // TODO: Multicall
+    const fee: BigNumber = await contract.callStatic.fee()
+    const approveAddress: string = await contract.callStatic.onchainGateway()
+
+    let inTokenAmount = params.inTokenAmount
+    if (inTokenAmount.token.isNative) {
+        const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
+        if (inTokenAmount.lessThan(feeTokenAmount)) {
+            throw new Error(`Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`)
+        }
+
+        inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
+    }
+
+    // Get onchain swap transaction what will be executed by fee collector
+    const result = await onchainSwap({ ...params, inTokenAmount, fromAddress: feeCollectorAddress })
+
+    let value: string
+    let callData: BytesLike
+    if (result.transactionType === 'tron') {
+        value = result.transactionRequest.call_value.toString()
+        callData = result.transactionRequest.raw_parameter
+    } else {
+        value = result.transactionRequest.value?.toString() as string
+        callData = result.transactionRequest.data as BytesLike
+    }
+
+    if (inTokenAmount.token.isNative) {
+        /**
+         * To maintain consistency with any potential fees charged by the aggregator,
+         * we calculate the total value by adding the fee to the value obtained from the aggregator.
+         */
+        value = BigNumber.from(value).add(fee).toString()
+    } else {
+        value = fee.toString()
+    }
+
+    callData = contract.interface.encodeFunctionData('onswap', [
+        inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
+        inTokenAmount.raw.toString(),
+        toAddress,
+        inTokenAmount.token.isNative ? AddressZero : approveAddress,
+        callData,
+    ])
+
+    const functionSelector = getFunctionSelector(contract.interface.getFunction('onswap'))
+
+    const payload = preparePayload({
+        functionSelector,
+        chainId: inChainId,
+        fromAddress: params.fromAddress,
+        toAddress: feeCollectorAddress,
+        value,
+        callData,
+    })
+
+    return {
+        ...result,
+        ...payload,
+        approveTo: approveAddress,
+    }
+}
