@@ -3,7 +3,7 @@ import { Config } from '../types'
 
 export const config: Config = {
     advisor: {
-        url: 'https://api.bridge.symbiosis.finance/calculations',
+        url: 'https://api.teleport.symbiosis.finance/calculations',
     },
     omniPools: [
         {
@@ -71,7 +71,7 @@ export const config: Config = {
             id: 56,
             rpc: 'https://rpc.ankr.com/bsc',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
+            waitForBlocksCount: 10,
             stables: [
                 {
                     name: 'XDAO',
@@ -116,7 +116,7 @@ export const config: Config = {
             id: 137,
             rpc: 'https://rpc.ankr.com/polygon',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 60,
+            waitForBlocksCount: 17,
             stables: [
                 {
                     name: 'XDAO',
@@ -274,6 +274,40 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x6BB1864d4e5A58dfcD142d9f560bB6389742822E',
             multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 0,
+        },
+        {
+            id: ChainId.SCROLL_MAINNET,
+            rpc: 'https://scroll-mainnet-public.unifra.io',
+            filterBlockOffset: 2000,
+            waitForBlocksCount: 20,
+            stables: [
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0x1467b62A6AE5CdcB10A6a8173cfe187DD2C5a136',
+                    chainId: ChainId.SCROLL_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x6F0f6393e45fE0E7215906B6f9cfeFf53EA139cf',
+            metaRouterGateway: '0x4cfA66497Fa84D739a0f785FBcEe9196f1C64e4a',
+            bridge: '0x1DCfbC3fA01b2a86bC3a3f43479cCe9E8D438Adc',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x9b1c1949995E43E6d391A4FDA207bf4386Ee5a32',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x086488E659253FF26D0C743325C059FB57Ca7934',
             aavePool: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',

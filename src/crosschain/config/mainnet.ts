@@ -93,7 +93,7 @@ export const config: Config = {
             id: 56,
             rpc: 'https://bsc.publicnode.com',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
+            waitForBlocksCount: 10,
             stables: [
                 {
                     name: 'BUSD Token',
@@ -194,7 +194,7 @@ export const config: Config = {
             id: 137,
             rpc: 'https://polygon-bor.publicnode.com',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 60,
+            waitForBlocksCount: 17,
             stables: [
                 {
                     name: 'USD Coin (PoS) (USDC.e)',
@@ -239,7 +239,7 @@ export const config: Config = {
             id: 40,
             rpc: 'https://mainnet.telos.net/evm',
             filterBlockOffset: 3000,
-            waitForBlocksCount: 120,
+            waitForBlocksCount: 180,
             stables: [
                 {
                     name: 'syUSDC',
@@ -477,7 +477,7 @@ export const config: Config = {
             id: 10,
             rpc: 'https://optimism.publicnode.com',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 50,
+            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'USD Coin',
@@ -522,7 +522,7 @@ export const config: Config = {
             id: 42170,
             rpc: 'https://nova.arbitrum.io/rpc',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 60,
+            waitForBlocksCount: 2,
             stables: [
                 {
                     name: 'USD Coin',
