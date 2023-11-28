@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
 import { Token, TokenAmount } from '../entities'
-import { BaseSwapping, SwapExactIn } from './baseSwapping'
+import {BaseSwapping, SwapExactIn, SwapExactInParams} from './baseSwapping'
 import {MulticallRouter, ThorRouter__factory} from './contracts'
 import fetch from 'isomorphic-unfetch'
 
@@ -24,21 +24,10 @@ const BTC = new Token({
     },
 })
 
-const USDC = new Token({
-    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    chainId: ChainId.ETH_MAINNET,
-    decimals: 8,
-    name: 'USDC',
-    symbol: 'USDC',
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
 // const USDC = new Token({
-//     address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
-//     chainId: ChainId.AVAX_MAINNET,
-//     decimals: 6,
+//     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+//     chainId: ChainId.ETH_MAINNET,
+//     decimals: 8,
 //     name: 'USDC',
 //     symbol: 'USDC',
 //     icons: {
@@ -46,10 +35,17 @@ const USDC = new Token({
 //         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
 //     },
 // })
-
-// 10,906,622.11325023 - ETH.USDC
-// 314,301.72108573 - BNB.USDC
-// 1,421,908.34953829 - AVAX USDC
+const USDC = new Token({
+    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+    chainId: ChainId.AVAX_MAINNET,
+    decimals: 6,
+    name: 'USDC',
+    symbol: 'USDC',
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    },
+})
 
 function toThorToken(token: Token): string {
     let chain
@@ -82,19 +78,13 @@ export class ZappingThor extends BaseSwapping {
         console.log('this.thorQuote', this.thorQuote)
     }
 
-    public async exactIn(
-        tokenAmountIn: TokenAmount,
-        from: string,
-        to: string,
-        slippage: number,
-        deadline: number,
-    ): Promise<SwapExactIn> {
+    public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: SwapExactInParams): Promise<SwapExactIn> {
         this.multicallRouter = this.symbiosis.multicallRouter(USDC.chainId)
         this.bitcoinAddress = to
 
         this.thorVault = await this.getThorVault()
 
-        const result  = await this.doExactIn({
+        const result = await this.doExactIn({
             tokenAmountIn,
             tokenOut: USDC,
             from,
@@ -135,10 +125,10 @@ export class ZappingThor extends BaseSwapping {
 
         url.searchParams.set('from_asset', this.thorTokenIn)
         url.searchParams.set('to_asset', this.thorTokenOut)
+        url.searchParams.set('refund_address', this.from)
         url.searchParams.set('amount', amount)
         url.searchParams.set('destination', this.bitcoinAddress)
-        console.log('slippage', this.slippage['C'].toString())
-        url.searchParams.set('tolerance_bps', this.slippage['C'].toString())
+        url.searchParams.set('tolerance_bps', '300') // 3%
 
         const response = await fetch(url.toString())
 
