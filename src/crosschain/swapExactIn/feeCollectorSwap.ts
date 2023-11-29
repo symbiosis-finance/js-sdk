@@ -38,7 +38,7 @@ export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean 
 }
 
 export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, toAddress } = params
+    const { symbiosis } = params
 
     const inChainId = params.inTokenAmount.token.chainId
 
@@ -69,12 +69,15 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
 
     let value: string
     let callData: BytesLike
+    let routerAddress: string
     if (result.transactionType === 'tron') {
         value = result.transactionRequest.call_value.toString()
         callData = result.transactionRequest.raw_parameter
+        routerAddress = result.transactionRequest.contract_address
     } else {
         value = result.transactionRequest.value?.toString() as string
         callData = result.transactionRequest.data as BytesLike
+        routerAddress = result.transactionRequest.to as string
     }
 
     if (inTokenAmount.token.isNative) {
@@ -90,8 +93,8 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     callData = contract.interface.encodeFunctionData('onswap', [
         inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
         inTokenAmount.raw.toString(),
-        toAddress,
-        inTokenAmount.token.isNative ? AddressZero : approveAddress,
+        routerAddress,
+        inTokenAmount.token.isNative ? AddressZero : result.approveTo,
         callData,
     ])
 

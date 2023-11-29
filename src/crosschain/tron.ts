@@ -77,8 +77,13 @@ export function prepareTronTransaction({
 
 const ADDRESS_PREFIX_REGEX = /^(41)/
 
-export function tronAddressToEvm(address: string) {
-    return TronWeb.address.toHex(address).replace(ADDRESS_PREFIX_REGEX, '0x')
+export function tronAddressToEvm(address: string): string {
+    // TODO add bitcoin-address-validation
+    try {
+        return TronWeb.address.toHex(address).replace(ADDRESS_PREFIX_REGEX, '0x')
+    } catch (e) {
+        return address
+    }
 }
 
 export function isTronChainId(chainId: ChainId): boolean {

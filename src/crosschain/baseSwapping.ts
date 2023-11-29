@@ -153,7 +153,7 @@ export abstract class BaseSwapping {
 
         await this.doPostTransitAction()
         if (!this.transitTokenOut.equals(tokenOut)) {
-            this.tradeC = this.buildTradeC(feeV2)
+            this.tradeC = this.buildTradeC()
             await this.tradeC.init()
         }
         // <<< NOTE create trades with calculated fee
@@ -419,24 +419,29 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected buildTradeC(feeV2?: TokenAmount) {
+    protected getTradeCAmountIn(): TokenAmount {
         let amountIn = this.transit.amountOut
 
         if (this.transit.isV2()) {
             let amountRaw = amountIn.raw
-            if (feeV2) {
-                if (amountIn.lessThan(feeV2)) {
+            if (this.feeV2) {
+                if (amountIn.lessThan(this.feeV2)) {
                     throw new Error(
                         `Amount ${amountIn.toSignificant()} ${
                             amountIn.token.symbol
-                        } less than fee ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
+                        } less than fee ${this.feeV2.toSignificant()} ${this.feeV2.token.symbol}`,
                         ErrorCode.AMOUNT_LESS_THAN_FEE
                     )
                 }
-                amountRaw = JSBI.subtract(amountRaw, feeV2.raw)
+                amountRaw = JSBI.subtract(amountRaw, this.feeV2.raw)
             }
             amountIn = new TokenAmount(this.transitTokenOut, amountRaw)
         }
+        return amountIn
+    }
+
+    protected buildTradeC() {
+        const amountIn = this.getTradeCAmountIn()
 
         const chainId = this.tokenOut.chainId
 

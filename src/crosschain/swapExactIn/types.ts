@@ -32,7 +32,7 @@ export type SwapExactInResult = {
     tokenAmountOut: TokenAmount
     tokenAmountOutMin?: TokenAmount
     priceImpact?: Percent
-    approveTo?: string
+    approveTo: string
     inTradeType?: SymbiosisTradeType
     outTradeType?: SymbiosisTradeType
     amountInUsd?: TokenAmount
