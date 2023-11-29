@@ -47,10 +47,17 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
         callData,
     })
 
+    let approveTo: string
+    if (payload.transactionType === 'tron') {
+        approveTo = payload.transactionRequest.contract_address
+    } else {
+        approveTo = payload.transactionRequest.to as string
+    }
     return {
         kind: 'wrap',
         route: [inTokenAmount.token, weth],
         tokenAmountOut: amountOut,
+        approveTo,
         ...payload,
     }
 }

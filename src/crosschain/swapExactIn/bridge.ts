@@ -36,11 +36,18 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
         transactionRequest: result.transactionRequest,
     } as SwapExactInTransactionPayload
 
+    let approveTo: string
+    if (payload.transactionType === 'tron') {
+        approveTo = payload.transactionRequest.contract_address
+    } else {
+        approveTo = payload.transactionRequest.to as string
+    }
     return {
         kind: 'bridge',
         route: [inTokenAmount.token, outToken],
         fee: result.fee,
         tokenAmountOut: result.tokenAmountOut,
+        approveTo,
         ...payload,
     }
 }
