@@ -1,12 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
-import { BigNumber, BytesLike } from 'ethers'
+import { BigNumber, BytesLike, utils } from 'ethers'
 import { ChainId } from '../../constants'
 import { TokenAmount } from '../../entities'
 import { onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from './types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
-import { getFunctionSelector } from '../tron'
+import { getFunctionSelector, tronAddressToEvm } from '../tron'
 
 const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
@@ -18,14 +18,14 @@ const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
     [ChainId.POLYGON_ZK]: '0xB79A4F5828eb55c10D7abF4bFe9a9f5d11aA84e0',
     [ChainId.BASE_MAINNET]: '0xF951789c6A356BfbC3033648AA10b5Dd3e9d88C0',
     [ChainId.ARBITRUM_MAINNET]: '0x4FDA0599b78a49d289577a8DF2046459abC04d82',
-    // [ChainId.ARBITRUM_NOVA]: '0x7B4E28E7273aA8CB64C56fF191ebF43b64f409F9',
+    [ChainId.ARBITRUM_NOVA]: '0x7B4E28E7273aA8CB64C56fF191ebF43b64f409F9',
     [ChainId.OPTIMISM_MAINNET]: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
-    // [ChainId.TELOS_MAINNET]: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
+    [ChainId.TELOS_MAINNET]: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
     [ChainId.ZKSYNC_MAINNET]: '0x56C343E7cE75e53e58Ed2f3743C6f137c13D2013',
-    // [ChainId.BOBA_MAINNET]: '0xB79A4F5828eb55c10D7abF4bFe9a9f5d11aA84e0',
+    [ChainId.BOBA_MAINNET]: '0xB79A4F5828eb55c10D7abF4bFe9a9f5d11aA84e0',
     [ChainId.KAVA_MAINNET]: '0xca506793A420E901BbCa8066be5661E3C52c84c2',
-    // [ChainId.BOBA_BNB]: '0x7e0B73141c8a1AC26B8693e9F34cf42BE17Fea2C',
-    // [ChainId.TRON_MAINNET]: '0x5112ac3d77551b9f670eb34ef75984246164e38d',
+    [ChainId.BOBA_BNB]: '0x7e0B73141c8a1AC26B8693e9F34cf42BE17Fea2C',
+    [ChainId.TRON_MAINNET]: '0x5112ac3d77551b9f670eb34ef75984246164e38d',
     [ChainId.SCROLL_MAINNET]: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
     [ChainId.MANTA_MAINNET]: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
 }
@@ -72,8 +72,9 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     let routerAddress: string
     if (result.transactionType === 'tron') {
         value = result.transactionRequest.call_value.toString()
-        callData = result.transactionRequest.raw_parameter
-        routerAddress = result.transactionRequest.contract_address
+        const method = utils.id(result.transactionRequest.function_selector).slice(0, 10)
+        callData = method + result.transactionRequest.raw_parameter
+        routerAddress = tronAddressToEvm(result.transactionRequest.contract_address)
     } else {
         value = result.transactionRequest.value?.toString() as string
         callData = result.transactionRequest.data as BytesLike

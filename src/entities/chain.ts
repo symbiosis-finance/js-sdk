@@ -187,7 +187,7 @@ export const chains: Chain[] = [
         id: ChainId.BOBA_MAINNET,
         name: 'Boba Ethereum',
         disabled: false,
-        explorer: 'https://blockexplorer.boba.network',
+        explorer: 'https://eth.bobascan.com',
         icons: {
             small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png',
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-ethereum/logo.png',
@@ -217,7 +217,7 @@ export const chains: Chain[] = [
         id: ChainId.BOBA_BNB,
         name: 'Boba BNB',
         disabled: false,
-        explorer: 'https://blockexplorer.bnb.boba.network',
+        explorer: 'https://bnb.bobascan.com',
         icons: {
             small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
