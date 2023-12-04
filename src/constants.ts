@@ -212,4 +212,16 @@ export const SOLIDITY_TYPE_MAXIMA = {
 }
 
 export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' as const
-export const NATIVE_TOKEN_ADDRES_TRON = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb' as const
+export const NATIVE_TOKEN_ADDRESS_MAP: Partial<Record<ChainId, string>> = {
+    [ChainId.TRON_MAINNET]: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
+    [ChainId.METIS_MAINNET]: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
+} as const
+
+export function getNativeTokenAddress(chainId: ChainId) {
+    const specificTokenAddress = NATIVE_TOKEN_ADDRESS_MAP[chainId]
+    if (specificTokenAddress) {
+        return specificTokenAddress
+    }
+
+    return NATIVE_TOKEN_ADDRESS
+}

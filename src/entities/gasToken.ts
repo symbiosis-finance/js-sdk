@@ -15,6 +15,17 @@ const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
         },
     })
 
+export const GAS_TOKEN_METIS_MAINNET = new Token({
+    chainId: ChainId.METIS_MAINNET,
+    address: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
+    symbol: 'METIS',
+    decimals: 18,
+    icons: {
+        small: `https://s3.openocean.finance/token_logos/logos/1675591118302_8481324929046925.jpeg`,
+        large: `https://s3.openocean.finance/token_logos/logos/1675591118302_8481324929046925.jpeg`,
+    },
+    name: 'Metis',
+})
 export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ETH_MAINNET]: GAS(ChainId.ETH_MAINNET, 'ETH', 1027),
     [ChainId.ETH_RINKEBY]: GAS(ChainId.ETH_RINKEBY, 'ETH', 1027),
@@ -61,5 +72,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.TRON_MAINNET]: GAS(ChainId.TRON_MAINNET, 'TRX', 1958, 6),
     [ChainId.SCROLL_MAINNET]: GAS(ChainId.SCROLL_MAINNET, 'ETH', 1027),
     [ChainId.MANTA_MAINNET]: GAS(ChainId.MANTA_MAINNET, 'ETH', 1027),
-    [ChainId.METIS_MAINNET]: GAS(ChainId.METIS_MAINNET, 'METIS', 9640),
+    [ChainId.METIS_MAINNET]: GAS_TOKEN_METIS_MAINNET,
 }
