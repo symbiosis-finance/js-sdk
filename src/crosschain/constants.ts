@@ -47,6 +47,7 @@ export const CHAINS_PRIORITY = [
     ChainId.BASE_MAINNET,
     ChainId.SCROLL_MAINNET,
     ChainId.MANTA_MAINNET,
+    ChainId.METIS_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -120,6 +121,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET]],
     [ChainId.SCROLL_MAINNET]: [WETH[ChainId.SCROLL_MAINNET]],
     [ChainId.MANTA_MAINNET]: [WETH[ChainId.MANTA_MAINNET]],
+    [ChainId.METIS_MAINNET]: [WETH[ChainId.METIS_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -458,6 +460,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.BASE_MAINNET]: [],
     [ChainId.SCROLL_MAINNET]: [],
     [ChainId.MANTA_MAINNET]: [],
+    [ChainId.METIS_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -560,4 +563,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.BASE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.SCROLL_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.MANTA_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.METIS_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }

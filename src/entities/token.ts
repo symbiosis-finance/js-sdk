@@ -617,4 +617,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.METIS_MAINNET]: new Token({
+        chainId: ChainId.METIS_MAINNET,
+        address: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
+        decimals: 18,
+        symbol: 'WMETIS',
+        isNative: false,
+        name: 'Wrapped METIS',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9640.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9640.png',
+        },
+    }),
 }

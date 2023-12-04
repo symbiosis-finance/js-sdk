@@ -39,6 +39,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.SCROLL_MAINNET]: 'scroll',
     [ChainId.MANTLE_MAINNET]: 'mantle',
     [ChainId.MANTA_MAINNET]: 'manta',
+    [ChainId.METIS_MAINNET]: 'metis',
 }
 
 const BASE_URL = 'https://open-api.openocean.finance/v3'

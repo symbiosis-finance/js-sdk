@@ -475,6 +475,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13631.png',
         },
     }),
+    new Chain({
+        id: ChainId.METIS_MAINNET,
+        name: 'Metis',
+        disabled: false,
+        explorer: 'https://explorer.metis.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9640.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/128x128/9640.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
