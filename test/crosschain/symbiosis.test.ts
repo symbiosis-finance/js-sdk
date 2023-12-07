@@ -135,10 +135,10 @@ describe('#transitToken', () => {
             expect(token.chainId).toBe(ChainId.ETH_MAINNET)
             expect(token.address).toBe('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')
         })
-        test('BUSD is in BNB', () => {
+        test('USDC is in BNB', () => {
             const token = symbiosis.transitToken(ChainId.BSC_MAINNET, omniPoolConfig)
             expect(token.chainId).toBe(ChainId.BSC_MAINNET)
-            expect(token.address).toBe('0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56')
+            expect(token.address).toBe('0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d')
         })
         test('USDC.e is in Avalanche', () => {
             const token = symbiosis.transitToken(ChainId.AVAX_MAINNET, omniPoolConfig)
