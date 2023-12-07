@@ -130,7 +130,7 @@ export class AggregatorTrade implements SymbiosisTrade {
             const inToken = tokenAmountIn.token
 
             console.log(
-                `No aggregetor trade found for ${inToken.chainId}/${inToken.address} -> ${tokenOut.chainId}/${tokenOut.address}. Fallback to unilike.`
+                `No aggregator trade found for ${inToken.chainId}/${inToken.address} -> ${tokenOut.chainId}/${tokenOut.address}. Fallback to unilike.`
             )
 
             this.trade = await this.buildUniLikeTrade()

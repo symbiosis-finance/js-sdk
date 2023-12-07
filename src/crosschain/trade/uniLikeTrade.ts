@@ -75,7 +75,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         if (!priceImpact) {
             throw new Error('Cannot calculate priceImpact')
         }
-        this.priceImpact = priceImpact
+        this.priceImpact = priceImpact.multiply(new Percent('-100'))
 
         this.route = trade.route.path
 
