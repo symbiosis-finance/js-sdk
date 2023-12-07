@@ -7,12 +7,12 @@
             "id": 0,
             "tokens": [
                 { "index": 0, "tokenId": 42 },
-                { "index": 1, "tokenId": 45 },
+                { "index": 1, "tokenId": 46 },
                 { "index": 2, "tokenId": 48 },
                 { "index": 3, "tokenId": 50 },
                 { "index": 4, "tokenId": 14 },
                 { "index": 5, "tokenId": 54 },
-                { "index": 10, "tokenId": 46 },
+                { "index": 10, "tokenId": 45 },
                 { "index": 11, "tokenId": 55 },
                 { "index": 12, "tokenId": 58 },
                 { "index": 13, "tokenId": 60 },
@@ -112,20 +112,6 @@
         },
         {
             "decimals": 18,
-            "symbol": "BUSD",
-            "name": "BUSD Token",
-            "chainId": 56,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
-            },
-            "deprecated": false,
-            "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
-            "id": 4
-        },
-        {
-            "decimals": 18,
             "symbol": "USDC",
             "name": "USD Coin",
             "chainId": 56,
@@ -136,6 +122,20 @@
             },
             "deprecated": false,
             "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+            "id": 4
+        },
+        {
+            "decimals": 18,
+            "symbol": "BUSD",
+            "name": "BUSD Token",
+            "chainId": 56,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
+            },
+            "deprecated": true,
+            "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
             "id": 5
         },
         {
@@ -700,22 +700,6 @@
         },
         {
             "decimals": 18,
-            "symbol": "sBUSD",
-            "name": "Synthetic Binance-Peg BUSD Token from BSC",
-            "chainId": 56288,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
-            },
-            "chainFromId": 56,
-            "deprecated": false,
-            "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
-            "id": 45,
-            "originalId": 4
-        },
-        {
-            "decimals": 18,
             "symbol": "sUSDC",
             "name": "Synthetic Binance-Peg USD Coin from BSC",
             "chainId": 56288,
@@ -727,6 +711,22 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB",
+            "id": 45,
+            "originalId": 4
+        },
+        {
+            "decimals": 18,
+            "symbol": "sBUSD",
+            "name": "Synthetic Binance-Peg BUSD Token from BSC",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png"
+            },
+            "chainFromId": 56,
+            "deprecated": true,
+            "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
             "id": 46,
             "originalId": 5
         },
@@ -1232,8 +1232,8 @@
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Portal", "value": "0" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
-        { "tokenId": 4, "type": "Portal", "value": "8000000000000000000" },
-        { "tokenId": 5, "type": "Portal", "value": "10000000000000000000" },
+        { "tokenId": 4, "type": "Portal", "value": "10000000000000000000" },
+        { "tokenId": 5, "type": "Portal", "value": "8000000000000000000" },
         { "tokenId": 6, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 38, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Synthesis", "value": "0" },
