@@ -3,7 +3,7 @@ import { Config } from '../types'
 
 export const config: Config = {
     advisor: {
-        url: 'https://api-v2.symbiosis.finance/calculations',
+        url: 'https://zksync-migration.symbiosis.finance/calculations',
     },
     omniPools: [
         {
