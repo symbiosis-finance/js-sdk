@@ -195,6 +195,7 @@ export class RevertPending {
 
         const calldata = portal.interface.encodeFunctionData('metaUnsynthesize', [
             '0', // _stableBridgingFee
+            '', // _crossChainID
             externalId, // _externalID,
             revertableAddress, // _to
             fromTokenAmount.raw.toString(), // _amount
@@ -228,6 +229,7 @@ export class RevertPending {
             {
                 stableBridgingFee: feeV2 ? feeV2.raw.toString() : '0',
                 amount: '0',
+                cross_chainID: '',
                 syntCaller: metarouter.address,
                 finalReceiveSide: AddressZero,
                 sToken: synth.address,

@@ -22,6 +22,7 @@ export declare namespace MetaRouteStructs {
     export type MetaMintTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
+        cross_chainID: BytesLike
         externalID: BytesLike
         tokenReal: string
         chainID: BigNumberish
@@ -39,6 +40,7 @@ export declare namespace MetaRouteStructs {
         BigNumber,
         string,
         string,
+        string,
         BigNumber,
         string,
         string[],
@@ -50,6 +52,7 @@ export declare namespace MetaRouteStructs {
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
+        cross_chainID: string
         externalID: string
         tokenReal: string
         chainID: BigNumber
@@ -101,7 +104,7 @@ export interface MetaRouterInterface extends utils.Interface {
     contractName: 'MetaRouter'
     functions: {
         'externalCall(address,uint256,address,bytes,uint256,address)': FunctionFragment
-        'metaMintSwap((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'metaMintSwap((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
         'metaRouterGateway()': FunctionFragment
         'returnSwap(address,uint256,address,bytes,address,address,bytes)': FunctionFragment
@@ -134,7 +137,7 @@ export interface MetaRouterInterface extends utils.Interface {
 
 export type TransitTokenSentEvent = TypedEvent<
     [string, BigNumber, string],
-    { revertableAddress: string; amount: BigNumber; token: string }
+    { to: string; amount: BigNumber; token: string }
 >
 
 export type TransitTokenSentEventFilter = TypedEventFilter<TransitTokenSentEvent>
@@ -266,12 +269,8 @@ export interface MetaRouter extends BaseContract {
     }
 
     filters: {
-        'TransitTokenSent(address,uint256,address)'(
-            revertableAddress?: null,
-            amount?: null,
-            token?: null
-        ): TransitTokenSentEventFilter
-        TransitTokenSent(revertableAddress?: null, amount?: null, token?: null): TransitTokenSentEventFilter
+        'TransitTokenSent(address,uint256,address)'(to?: null, amount?: null, token?: null): TransitTokenSentEventFilter
+        TransitTokenSent(to?: null, amount?: null, token?: null): TransitTokenSentEventFilter
     }
 
     estimateGas: {

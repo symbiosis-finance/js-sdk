@@ -275,6 +275,7 @@ export class Bridging {
         const calldata = synthesisInterface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
+            '', // crossChainId
             token.address, // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
@@ -319,6 +320,7 @@ export class Bridging {
         const calldata = portalInterface.encodeFunctionData('unsynthesize', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
+            '', // crossChainID
             this.tokenOut.address, // rtoken,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address

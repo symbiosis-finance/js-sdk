@@ -170,7 +170,7 @@ export interface PortalInterface extends utils.Interface {
         'metaRevertRequest((uint256,bytes32,address,address,address,uint256,uint256,address,bytes,address,address,bytes,bytes32))': FunctionFragment
         'metaRouter()': FunctionFragment
         'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address,bytes32))': FunctionFragment
-        'metaUnsynthesize(uint256,bytes32,address,uint256,address,address,bytes,uint256)': FunctionFragment
+        'metaUnsynthesize(uint256,bytes32,bytes32,address,uint256,address,address,bytes,uint256)': FunctionFragment
         'owner()': FunctionFragment
         'pause()': FunctionFragment
         'paused()': FunctionFragment
@@ -189,7 +189,7 @@ export interface PortalInterface extends utils.Interface {
         'tokenWhitelist(address)': FunctionFragment
         'transferOwnership(address)': FunctionFragment
         'unpause()': FunctionFragment
-        'unsynthesize(uint256,bytes32,address,uint256,address)': FunctionFragment
+        'unsynthesize(uint256,bytes32,bytes32,address,uint256,address)': FunctionFragment
         'unsynthesizeStates(bytes32)': FunctionFragment
         'versionRecipient()': FunctionFragment
         'wrapper()': FunctionFragment
@@ -210,7 +210,7 @@ export interface PortalInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'metaUnsynthesize',
-        values: [BigNumberish, BytesLike, string, BigNumberish, string, string, BytesLike, BigNumberish]
+        values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, string, string, BytesLike, BigNumberish]
     ): string
     encodeFunctionData(functionFragment: 'owner', values?: undefined): string
     encodeFunctionData(functionFragment: 'pause', values?: undefined): string
@@ -244,7 +244,7 @@ export interface PortalInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'unsynthesize',
-        values: [BigNumberish, BytesLike, string, BigNumberish, string]
+        values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, string]
     ): string
     encodeFunctionData(functionFragment: 'unsynthesizeStates', values: [BytesLike]): string
     encodeFunctionData(functionFragment: 'versionRecipient', values?: undefined): string
@@ -282,7 +282,7 @@ export interface PortalInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'wrapper', data: BytesLike): Result
 
     events: {
-        'BurnCompleted(bytes32,address,uint256,uint256,address)': EventFragment
+        'BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)': EventFragment
         'ClientIdLog(bytes32,bytes32)': EventFragment
         'MetaRevertRequest(bytes32,address)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
@@ -311,9 +311,10 @@ export interface PortalInterface extends utils.Interface {
 }
 
 export type BurnCompletedEvent = TypedEvent<
-    [string, string, BigNumber, BigNumber, string],
+    [string, string, string, BigNumber, BigNumber, string],
     {
         id: string
+        cross_chainID: string
         to: string
         amount: BigNumber
         bridgingFee: BigNumber
@@ -440,6 +441,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
+            _cross_chainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -549,6 +551,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,
@@ -591,6 +594,7 @@ export interface Portal extends BaseContract {
 
     metaUnsynthesize(
         _stableBridgingFee: BigNumberish,
+        _cross_chainID: BytesLike,
         _externalID: BytesLike,
         _to: string,
         _amount: BigNumberish,
@@ -700,6 +704,7 @@ export interface Portal extends BaseContract {
     unsynthesize(
         _stableBridgingFee: BigNumberish,
         _externalID: BytesLike,
+        _cross_chainID: BytesLike,
         _token: string,
         _amount: BigNumberish,
         _to: string,
@@ -742,6 +747,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
+            _cross_chainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -837,6 +843,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,
@@ -851,8 +858,9 @@ export interface Portal extends BaseContract {
     }
 
     filters: {
-        'BurnCompleted(bytes32,address,uint256,uint256,address)'(
+        'BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)'(
             id?: BytesLike | null,
+            cross_chainID?: BytesLike | null,
             to?: string | null,
             amount?: null,
             bridgingFee?: null,
@@ -860,6 +868,7 @@ export interface Portal extends BaseContract {
         ): BurnCompletedEventFilter
         BurnCompleted(
             id?: BytesLike | null,
+            cross_chainID?: BytesLike | null,
             to?: string | null,
             amount?: null,
             bridgingFee?: null,
@@ -961,6 +970,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
+            _cross_chainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -1059,6 +1069,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,
@@ -1102,6 +1113,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
+            _cross_chainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -1200,6 +1212,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,

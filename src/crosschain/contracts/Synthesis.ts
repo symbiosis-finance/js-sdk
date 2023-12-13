@@ -21,6 +21,7 @@ export declare namespace MetaRouteStructs {
     export type MetaBurnTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
+        cross_chainID: BytesLike
         syntCaller: string
         finalReceiveSide: string
         sToken: string
@@ -41,6 +42,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
+        string,
         BigNumber,
         string,
         string,
@@ -51,6 +53,7 @@ export declare namespace MetaRouteStructs {
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
+        cross_chainID: string
         syntCaller: string
         finalReceiveSide: string
         sToken: string
@@ -67,6 +70,7 @@ export declare namespace MetaRouteStructs {
     export type MetaMintTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
+        cross_chainID: BytesLike
         externalID: BytesLike
         tokenReal: string
         chainID: BigNumberish
@@ -84,6 +88,7 @@ export declare namespace MetaRouteStructs {
         BigNumber,
         string,
         string,
+        string,
         BigNumber,
         string,
         string[],
@@ -95,6 +100,7 @@ export declare namespace MetaRouteStructs {
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
+        cross_chainID: string
         externalID: string
         tokenReal: string
         chainID: BigNumber
@@ -116,10 +122,10 @@ export interface SynthesisInterface extends utils.Interface {
         'fabric()': FunctionFragment
         'initialize(address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
-        'metaBurnSyntheticToken((uint256,uint256,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))': FunctionFragment
-        'metaMintSyntheticToken((uint256,uint256,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'metaBurnSyntheticToken((uint256,uint256,bytes32,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))': FunctionFragment
+        'metaMintSyntheticToken((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRouter()': FunctionFragment
-        'mintSyntheticToken(uint256,bytes32,address,uint256,uint256,address)': FunctionFragment
+        'mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)': FunctionFragment
         'owner()': FunctionFragment
         'pause()': FunctionFragment
         'paused()': FunctionFragment
@@ -160,7 +166,7 @@ export interface SynthesisInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'metaRouter', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'mintSyntheticToken',
-        values: [BigNumberish, BytesLike, string, BigNumberish, BigNumberish, string]
+        values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, BigNumberish, string]
     ): string
     encodeFunctionData(functionFragment: 'owner', values?: undefined): string
     encodeFunctionData(functionFragment: 'pause', values?: undefined): string
@@ -228,13 +234,12 @@ export interface SynthesisInterface extends utils.Interface {
         'ClientIdLog(bytes32,bytes32)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
-        'RevertBurnAndBurnRequest(bytes32,address,bytes32,address,uint256,address,address,uint256,address)': EventFragment
         'RevertBurnCompleted(bytes32,address,uint256,uint256,address)': EventFragment
         'RevertSynthesizeRequest(bytes32,address)': EventFragment
         'SetFabric(address)': EventFragment
         'SetMetaRouter(address)': EventFragment
         'SetTokenThreshold(address,uint256)': EventFragment
-        'SynthesizeCompleted(bytes32,address,uint256,uint256,address)': EventFragment
+        'SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)': EventFragment
         'Unpaused(address)': EventFragment
     }
 
@@ -242,7 +247,6 @@ export interface SynthesisInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'RevertBurnAndBurnRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertBurnCompleted'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'RevertSynthesizeRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'SetFabric'): EventFragment
@@ -279,23 +283,6 @@ export type PausedEvent = TypedEvent<[string], { account: string }>
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
-export type RevertBurnAndBurnRequestEvent = TypedEvent<
-    [string, string, string, string, BigNumber, string, string, BigNumber, string],
-    {
-        externalID: string
-        recipient: string
-        internalId: string
-        from: string
-        chainID: BigNumber
-        revertableAddress: string
-        to: string
-        amount: BigNumber
-        token: string
-    }
->
-
-export type RevertBurnAndBurnRequestEventFilter = TypedEventFilter<RevertBurnAndBurnRequestEvent>
-
 export type RevertBurnCompletedEvent = TypedEvent<
     [string, string, BigNumber, BigNumber, string],
     {
@@ -326,10 +313,11 @@ export type SetTokenThresholdEvent = TypedEvent<[string, BigNumber], { token: st
 export type SetTokenThresholdEventFilter = TypedEventFilter<SetTokenThresholdEvent>
 
 export type SynthesizeCompletedEvent = TypedEvent<
-    [string, string, BigNumber, BigNumber, string],
+    [string, string, string, BigNumber, BigNumber, string],
     {
         id: string
         to: string
+        cross_chainID: string
         amount: BigNumber
         bridgingFee: BigNumber
         token: string
@@ -407,6 +395,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,
@@ -557,6 +546,7 @@ export interface Synthesis extends BaseContract {
     mintSyntheticToken(
         _stableBridgingFee: BigNumberish,
         _externalID: BytesLike,
+        _cross_chainID: BytesLike,
         _tokenReal: string,
         _chainID: BigNumberish,
         _amount: BigNumberish,
@@ -707,6 +697,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,
@@ -831,29 +822,6 @@ export interface Synthesis extends BaseContract {
         'Paused(address)'(account?: null): PausedEventFilter
         Paused(account?: null): PausedEventFilter
 
-        'RevertBurnAndBurnRequest(bytes32,address,bytes32,address,uint256,address,address,uint256,address)'(
-            externalID?: null,
-            recipient?: null,
-            internalId?: null,
-            from?: string | null,
-            chainID?: BigNumberish | null,
-            revertableAddress?: string | null,
-            to?: null,
-            amount?: null,
-            token?: null
-        ): RevertBurnAndBurnRequestEventFilter
-        RevertBurnAndBurnRequest(
-            externalID?: null,
-            recipient?: null,
-            internalId?: null,
-            from?: string | null,
-            chainID?: BigNumberish | null,
-            revertableAddress?: string | null,
-            to?: null,
-            amount?: null,
-            token?: null
-        ): RevertBurnAndBurnRequestEventFilter
-
         'RevertBurnCompleted(bytes32,address,uint256,uint256,address)'(
             id?: BytesLike | null,
             to?: string | null,
@@ -884,9 +852,10 @@ export interface Synthesis extends BaseContract {
         'SetTokenThreshold(address,uint256)'(token?: null, threshold?: null): SetTokenThresholdEventFilter
         SetTokenThreshold(token?: null, threshold?: null): SetTokenThresholdEventFilter
 
-        'SynthesizeCompleted(bytes32,address,uint256,uint256,address)'(
+        'SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)'(
             id?: BytesLike | null,
             to?: string | null,
+            cross_chainID?: BytesLike | null,
             amount?: null,
             bridgingFee?: null,
             token?: null
@@ -894,6 +863,7 @@ export interface Synthesis extends BaseContract {
         SynthesizeCompleted(
             id?: BytesLike | null,
             to?: string | null,
+            cross_chainID?: BytesLike | null,
             amount?: null,
             bridgingFee?: null,
             token?: null
@@ -945,6 +915,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,
@@ -1081,6 +1052,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
+            _cross_chainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,

@@ -367,6 +367,7 @@ export class Zapping {
                 stableBridgingFee: '1',
                 amount: amount.raw.toString(),
                 externalID: externalId,
+                cross_chainID: '',
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
