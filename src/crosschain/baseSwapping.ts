@@ -583,8 +583,8 @@ export abstract class BaseSwapping {
             {
                 stableBridgingFee: '0',
                 amount: amount.raw.toString(),
-                externalID: externalId,
                 crossChainID: CROSS_CHAIN_ID,
+                externalID: externalId,
                 tokenReal: tronAddressToEvm(amount.token.address),
                 chainID: chainIdIn,
                 to: tronAddressToEvm(this.to),
