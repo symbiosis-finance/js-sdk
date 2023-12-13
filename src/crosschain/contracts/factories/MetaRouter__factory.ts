@@ -90,7 +90,7 @@ const _abi = [
                     },
                     {
                         internalType: 'bytes32',
-                        name: 'cross_chainID',
+                        name: 'crossChainID',
                         type: 'bytes32',
                     },
                     {

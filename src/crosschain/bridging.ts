@@ -10,6 +10,7 @@ import { getExternalId, getInternalId, prepareTransactionRequest } from './utils
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { Portal__factory, Synthesis__factory } from './contracts'
+import {CROSS_CHAIN_ID} from "./constants";
 
 export type RequestNetworkType = 'evm' | 'tron'
 
@@ -275,7 +276,7 @@ export class Bridging {
         const calldata = synthesisInterface.encodeFunctionData('mintSyntheticToken', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            '', // crossChainId
+            CROSS_CHAIN_ID, // crossChainID
             token.address, // _token,
             chainIdIn, // block.chainid,
             this.tokenAmountIn.raw.toString(), // _amount,
@@ -320,7 +321,7 @@ export class Bridging {
         const calldata = portalInterface.encodeFunctionData('unsynthesize', [
             '1', // _stableBridgingFee,
             externalId, // externalID,
-            '', // crossChainID
+            CROSS_CHAIN_ID, // crossChainID
             this.tokenOut.address, // rtoken,
             this.tokenAmountIn.raw.toString(), // _amount,
             this.to, // _chain2address

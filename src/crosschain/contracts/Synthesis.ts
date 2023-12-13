@@ -21,7 +21,7 @@ export declare namespace MetaRouteStructs {
     export type MetaBurnTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
-        cross_chainID: BytesLike
+        crossChainID: BytesLike
         syntCaller: string
         finalReceiveSide: string
         sToken: string
@@ -53,7 +53,7 @@ export declare namespace MetaRouteStructs {
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
-        cross_chainID: string
+        crossChainID: string
         syntCaller: string
         finalReceiveSide: string
         sToken: string
@@ -70,7 +70,7 @@ export declare namespace MetaRouteStructs {
     export type MetaMintTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
-        cross_chainID: BytesLike
+        crossChainID: BytesLike
         externalID: BytesLike
         tokenReal: string
         chainID: BigNumberish
@@ -100,7 +100,7 @@ export declare namespace MetaRouteStructs {
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
-        cross_chainID: string
+        crossChainID: string
         externalID: string
         tokenReal: string
         chainID: BigNumber
@@ -317,7 +317,7 @@ export type SynthesizeCompletedEvent = TypedEvent<
     {
         id: string
         to: string
-        cross_chainID: string
+        crossChainID: string
         amount: BigNumber
         bridgingFee: BigNumber
         token: string
@@ -395,7 +395,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,
@@ -546,7 +546,7 @@ export interface Synthesis extends BaseContract {
     mintSyntheticToken(
         _stableBridgingFee: BigNumberish,
         _externalID: BytesLike,
-        _cross_chainID: BytesLike,
+        _crossChainID: BytesLike,
         _tokenReal: string,
         _chainID: BigNumberish,
         _amount: BigNumberish,
@@ -697,7 +697,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,
@@ -855,7 +855,7 @@ export interface Synthesis extends BaseContract {
         'SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)'(
             id?: BytesLike | null,
             to?: string | null,
-            cross_chainID?: BytesLike | null,
+            crossChainID?: BytesLike | null,
             amount?: null,
             bridgingFee?: null,
             token?: null
@@ -863,7 +863,7 @@ export interface Synthesis extends BaseContract {
         SynthesizeCompleted(
             id?: BytesLike | null,
             to?: string | null,
-            cross_chainID?: BytesLike | null,
+            crossChainID?: BytesLike | null,
             amount?: null,
             bridgingFee?: null,
             token?: null
@@ -915,7 +915,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,
@@ -1052,7 +1052,7 @@ export interface Synthesis extends BaseContract {
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _tokenReal: string,
             _chainID: BigNumberish,
             _amount: BigNumberish,

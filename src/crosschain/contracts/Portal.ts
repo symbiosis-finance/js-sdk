@@ -314,7 +314,7 @@ export type BurnCompletedEvent = TypedEvent<
     [string, string, string, BigNumber, BigNumber, string],
     {
         id: string
-        cross_chainID: string
+        crossChainID: string
         to: string
         amount: BigNumber
         bridgingFee: BigNumber
@@ -441,7 +441,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -551,7 +551,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,
@@ -594,7 +594,7 @@ export interface Portal extends BaseContract {
 
     metaUnsynthesize(
         _stableBridgingFee: BigNumberish,
-        _cross_chainID: BytesLike,
+        _crossChainID: BytesLike,
         _externalID: BytesLike,
         _to: string,
         _amount: BigNumberish,
@@ -704,7 +704,7 @@ export interface Portal extends BaseContract {
     unsynthesize(
         _stableBridgingFee: BigNumberish,
         _externalID: BytesLike,
-        _cross_chainID: BytesLike,
+        _crossChainID: BytesLike,
         _token: string,
         _amount: BigNumberish,
         _to: string,
@@ -747,7 +747,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -843,7 +843,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,
@@ -860,7 +860,7 @@ export interface Portal extends BaseContract {
     filters: {
         'BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)'(
             id?: BytesLike | null,
-            cross_chainID?: BytesLike | null,
+            crossChainID?: BytesLike | null,
             to?: string | null,
             amount?: null,
             bridgingFee?: null,
@@ -868,7 +868,7 @@ export interface Portal extends BaseContract {
         ): BurnCompletedEventFilter
         BurnCompleted(
             id?: BytesLike | null,
-            cross_chainID?: BytesLike | null,
+            crossChainID?: BytesLike | null,
             to?: string | null,
             amount?: null,
             bridgingFee?: null,
@@ -970,7 +970,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -1069,7 +1069,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,
@@ -1113,7 +1113,7 @@ export interface Portal extends BaseContract {
 
         metaUnsynthesize(
             _stableBridgingFee: BigNumberish,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _externalID: BytesLike,
             _to: string,
             _amount: BigNumberish,
@@ -1212,7 +1212,7 @@ export interface Portal extends BaseContract {
         unsynthesize(
             _stableBridgingFee: BigNumberish,
             _externalID: BytesLike,
-            _cross_chainID: BytesLike,
+            _crossChainID: BytesLike,
             _token: string,
             _amount: BigNumberish,
             _to: string,

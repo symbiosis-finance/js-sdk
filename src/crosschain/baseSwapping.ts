@@ -3,7 +3,7 @@ import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/prov
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import { BIPS_BASE } from './constants'
+import {BIPS_BASE, CROSS_CHAIN_ID} from './constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
@@ -497,7 +497,7 @@ export abstract class BaseSwapping {
                     stableBridgingFee: fee.raw.toString(),
                     amount: amount.raw.toString(),
                     syntCaller: tronAddressToEvm(this.from),
-                    cross_chainID: '',
+                    crossChainID: CROSS_CHAIN_ID,
                     finalReceiveSide: tronAddressToEvm(this.finalReceiveSide()),
                     sToken: tronAddressToEvm(amount.token.address),
                     finalCallData: this.finalCalldata(),
@@ -584,7 +584,7 @@ export abstract class BaseSwapping {
                 stableBridgingFee: '0',
                 amount: amount.raw.toString(),
                 externalID: externalId,
-                cross_chainID: '',
+                crossChainID: CROSS_CHAIN_ID,
                 tokenReal: tronAddressToEvm(amount.token.address),
                 chainID: chainIdIn,
                 to: tronAddressToEvm(this.to),
@@ -628,7 +628,7 @@ export abstract class BaseSwapping {
 
         const calldata = portalInterface.encodeFunctionData('metaUnsynthesize', [
             '0', // _stableBridgingFee
-            '', // crossChainID
+            CROSS_CHAIN_ID, // crossChainID
             externalId, // _externalID,
             tronAddressToEvm(this.to), // _to
             amount.raw.toString(), // _amount
@@ -665,7 +665,7 @@ export abstract class BaseSwapping {
 
         const calldata = portalInterface.encodeFunctionData('metaUnsynthesize', [
             '0', // _stableBridgingFee
-            '', // crossChainID
+            CROSS_CHAIN_ID, // crossChainID
             externalId, // _externalID,
             tronAddressToEvm(this.to), // _to
             this.transit.amountOut.raw.toString(), // _amount
@@ -756,7 +756,7 @@ export abstract class BaseSwapping {
                 stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
                 amount: this.transit.amountOut.raw.toString(), // uint256 amount;
                 syntCaller: tronAddressToEvm(this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address), // address syntCaller;
-                cross_chainID: '',
+                crossChainID: CROSS_CHAIN_ID,
                 finalReceiveSide: tronAddressToEvm(this.finalReceiveSide()), // address finalReceiveSide;
                 sToken: tronAddressToEvm(this.transit.amountOut.token.address), // address sToken;
                 finalCallData: this.finalCalldata(), // bytes finalCallData;

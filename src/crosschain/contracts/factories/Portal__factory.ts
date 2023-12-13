@@ -18,7 +18,7 @@ const _abi = [
             {
                 indexed: true,
                 internalType: 'bytes32',
-                name: 'cross_chainID',
+                name: 'crossChainID',
                 type: 'bytes32',
             },
             {
@@ -575,7 +575,7 @@ const _abi = [
             },
             {
                 internalType: 'bytes32',
-                name: '_cross_chainID',
+                name: '_crossChainID',
                 type: 'bytes32',
             },
             {
@@ -1067,7 +1067,7 @@ const _abi = [
             },
             {
                 internalType: 'bytes32',
-                name: '_cross_chainID',
+                name: '_crossChainID',
                 type: 'bytes32',
             },
             {

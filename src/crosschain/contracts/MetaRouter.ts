@@ -22,7 +22,7 @@ export declare namespace MetaRouteStructs {
     export type MetaMintTransactionStruct = {
         stableBridgingFee: BigNumberish
         amount: BigNumberish
-        cross_chainID: BytesLike
+        crossChainID: BytesLike
         externalID: BytesLike
         tokenReal: string
         chainID: BigNumberish
@@ -52,7 +52,7 @@ export declare namespace MetaRouteStructs {
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
-        cross_chainID: string
+        crossChainID: string
         externalID: string
         tokenReal: string
         chainID: BigNumber

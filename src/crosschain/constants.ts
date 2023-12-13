@@ -3,6 +3,8 @@ import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
 
+export const CROSS_CHAIN_ID = '0x0000000000000000000000000000000000000000000000000000000000000000'
+
 export const CHAINS_PRIORITY = [
     ChainId.ETH_MAINNET,
     ChainId.ETH_RINKEBY,
