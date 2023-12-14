@@ -3,7 +3,7 @@ import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/prov
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import {BIPS_BASE, CROSS_CHAIN_ID} from './constants'
+import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'

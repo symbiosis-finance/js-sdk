@@ -15,7 +15,7 @@ import { OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
 import { isTronChainId, prepareTronTransaction, TronTransactionData } from './tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
-import {CROSS_CHAIN_ID} from "./constants";
+import { CROSS_CHAIN_ID } from './constants'
 
 type RevertBase = {
     type: 'tron' | 'evm'

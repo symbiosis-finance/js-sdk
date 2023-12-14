@@ -10,7 +10,7 @@ import { getExternalId, getInternalId, prepareTransactionRequest } from './utils
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { Portal__factory, Synthesis__factory } from './contracts'
-import {CROSS_CHAIN_ID} from "./constants";
+import { CROSS_CHAIN_ID } from './constants'
 
 export type RequestNetworkType = 'evm' | 'tron'
 
