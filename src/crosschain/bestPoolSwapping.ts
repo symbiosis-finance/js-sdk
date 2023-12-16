@@ -25,7 +25,8 @@ export class BestPoolSwapping {
         deadline,
         oneInchProtocols,
     }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
-        const { omniPools } = this.symbiosis.config
+        // const { omniPools } = this.symbiosis.config
+        const omniPools = [this.symbiosis.config.omniPools[0]]
 
         const exactInParams: SwapExactInParams = {
             tokenAmountIn,
