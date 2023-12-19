@@ -36,6 +36,12 @@ export const TRON_PORTAL_ABI = [
             },
             {
                 indexed: true,
+                internalType: 'bytes32',
+                name: 'crossChainID',
+                type: 'bytes32',
+            },
+            {
+                indexed: true,
                 internalType: 'address',
                 name: 'to',
                 type: 'address',
@@ -98,6 +104,25 @@ export const TRON_PORTAL_ABI = [
             },
         ],
         name: 'MetaRevertRequest',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'previousOwner',
+                type: 'address',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'newOwner',
+                type: 'address',
+            },
+        ],
+        name: 'OwnershipTransferStarted',
         type: 'event',
     },
     {
@@ -193,12 +218,38 @@ export const TRON_PORTAL_ABI = [
         inputs: [
             {
                 indexed: false,
+                internalType: 'address[]',
+                name: 'tokens',
+                type: 'address[]',
+            },
+        ],
+        name: 'SetBalanceOf',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
                 internalType: 'address',
                 name: 'metaRouter',
                 type: 'address',
             },
         ],
         name: 'SetMetaRouter',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'address',
+                name: 'timelock',
+                type: 'address',
+            },
+        ],
+        name: 'SetTimelock',
         type: 'event',
     },
     {
@@ -294,12 +345,44 @@ export const TRON_PORTAL_ABI = [
             {
                 indexed: false,
                 internalType: 'address',
+                name: 'token',
+                type: 'address',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'address',
+                name: 'portal',
+                type: 'address',
+            },
+        ],
+        name: 'TokenTransferred',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'address',
                 name: 'account',
                 type: 'address',
             },
         ],
         name: 'Unpaused',
         type: 'event',
+    },
+    {
+        inputs: [],
+        name: 'acceptOwnership',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
     },
     {
         inputs: [
@@ -549,6 +632,11 @@ export const TRON_PORTAL_ABI = [
             },
             {
                 internalType: 'bytes32',
+                name: '_crossChainID',
+                type: 'bytes32',
+            },
+            {
+                internalType: 'bytes32',
                 name: '_externalID',
                 type: 'bytes32',
             },
@@ -616,6 +704,19 @@ export const TRON_PORTAL_ABI = [
                 internalType: 'bool',
                 name: '',
                 type: 'bool',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'pendingOwner',
+        outputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
             },
         ],
         stateMutability: 'view',
@@ -739,12 +840,38 @@ export const TRON_PORTAL_ABI = [
     {
         inputs: [
             {
+                internalType: 'address[]',
+                name: '_tokens',
+                type: 'address[]',
+            },
+        ],
+        name: 'setBalanceOf',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
                 internalType: 'contract IMetaRouter',
                 name: '_metaRouter',
                 type: 'address',
             },
         ],
         name: 'setMetaRouter',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: '_timelock',
+                type: 'address',
+            },
+        ],
+        name: 'setTimelock',
         outputs: [],
         stateMutability: 'nonpayable',
         type: 'function',
@@ -965,6 +1092,19 @@ export const TRON_PORTAL_ABI = [
         type: 'function',
     },
     {
+        inputs: [],
+        name: 'timelock',
+        outputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
         inputs: [
             {
                 internalType: 'address',
@@ -1006,6 +1146,24 @@ export const TRON_PORTAL_ABI = [
         inputs: [
             {
                 internalType: 'address',
+                name: '_portal',
+                type: 'address',
+            },
+            {
+                internalType: 'address',
+                name: '_token',
+                type: 'address',
+            },
+        ],
+        name: 'transfer',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
                 name: 'newOwner',
                 type: 'address',
             },
@@ -1032,6 +1190,11 @@ export const TRON_PORTAL_ABI = [
             {
                 internalType: 'bytes32',
                 name: '_externalID',
+                type: 'bytes32',
+            },
+            {
+                internalType: 'bytes32',
+                name: '_crossChainID',
                 type: 'bytes32',
             },
             {

@@ -5,6 +5,31 @@ export const TRON_METAROUTER_ABI = [
         type: 'constructor',
     },
     {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'address',
+                name: 'token',
+                type: 'address',
+            },
+        ],
+        name: 'TransitTokenSent',
+        type: 'event',
+    },
+    {
         inputs: [
             {
                 internalType: 'address',
@@ -31,6 +56,11 @@ export const TRON_METAROUTER_ABI = [
                 name: '_offset',
                 type: 'uint256',
             },
+            {
+                internalType: 'address',
+                name: '_to',
+                type: 'address',
+            },
         ],
         name: 'externalCall',
         outputs: [],
@@ -50,6 +80,11 @@ export const TRON_METAROUTER_ABI = [
                         internalType: 'uint256',
                         name: 'amount',
                         type: 'uint256',
+                    },
+                    {
+                        internalType: 'bytes32',
+                        name: 'crossChainID',
+                        type: 'bytes32',
                     },
                     {
                         internalType: 'bytes32',
