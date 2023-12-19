@@ -362,7 +362,8 @@ export class Symbiosis {
 
         if (!response.ok) {
             const text = await response.text()
-            throw new Error(text)
+            const json = JSON.parse(text)
+            throw new Error(json.message ?? text)
         }
 
         const { price } = await response.json()
