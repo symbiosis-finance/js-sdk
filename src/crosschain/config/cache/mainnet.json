@@ -1308,7 +1308,7 @@
         { "tokenId": 29, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 30, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 31, "type": "Portal", "value": "10000000" },
-        { "tokenId": 32, "type": "Portal", "value": "8000000" },
+        { "tokenId": 32, "type": "Portal", "value": "0" },
         { "tokenId": 33, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 34, "type": "Portal", "value": "10000000" },
         { "tokenId": 35, "type": "Portal", "value": "5000000000000000" },

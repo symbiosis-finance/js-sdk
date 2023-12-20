@@ -768,7 +768,7 @@ export const config: Config = {
             metaRouterGateway: '0xd62546e8143f0b272694da173bab1b2e3219a56a',
             bridge: '0xc5a6517050c44ba78295f57f4754bb68f8705321',
             synthesis: '0x0000000000000000000000000000000000000000',
-            portal: '0x652016161ed951415c3b275bf0755fb85326453c',
+            portal: '0xbacc8e4edfcb33e523ba248fb3ce72c3e5b20c72',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x354ed0e8616678f2829feb2e2e9a0e0869fa82fb',
             aavePool: '0x0000000000000000000000000000000000000000',
