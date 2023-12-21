@@ -75,7 +75,7 @@ export class ZappingAave extends BaseSwapping {
             if (this.transit.direction === 'mint') {
                 supplyToken = this.transit.amountOut.token
             } else {
-                supplyToken = this.transit.feeToken
+                supplyToken = this.tokenOut
             }
         }
 
