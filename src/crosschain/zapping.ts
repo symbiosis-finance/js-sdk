@@ -11,7 +11,7 @@ import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, SymbiosisTradeType } from './trade'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
-import { OmniPool, OmniPoolOracle } from './contracts'
+import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
@@ -40,6 +40,7 @@ type ZappingExactInParams = {
 
 export class Zapping {
     protected dataProvider: DataProvider
+    protected multicallRouter: MulticallRouter
 
     private from!: string
     private to!: string
@@ -63,6 +64,8 @@ export class Zapping {
 
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
+
+        this.multicallRouter = this.symbiosis.multicallRouter(omniPoolConfig.chainId)
     }
 
     public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: ZappingExactInParams): ZapExactIn {
@@ -270,6 +273,17 @@ export class Zapping {
         return new OmniLiquidity(tokenAmountIn, this.to, this.slippage, this.deadline, this.pool, this.poolOracle)
     }
 
+    private getMulticallData(): string {
+        return this.multicallRouter.interface.encodeFunctionData('multicall', [
+            '0', // amount will be patched
+            [this.omniLiquidity.callData], // _calldata
+            [this.pool.address], // _receiveSides
+            [this.synthToken.address], // _path
+            [this.omniLiquidity.callDataOffset], // _offset
+            this.to, // _to
+        ])
+    }
+
     private otherSideSynthCallData(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn) {
             throw new Error('Token is not set')
@@ -293,12 +307,12 @@ export class Zapping {
                     oppositeBridge: this.symbiosis.bridge(chainIdOut).address,
                     syntCaller: this.from,
                     chainID: chainIdOut,
-                    swapTokens: [this.synthToken.address],
-                    secondDexRouter: AddressZero,
-                    secondSwapCalldata: [],
-                    finalReceiveSide: this.pool.address,
-                    finalCalldata: this.omniLiquidity.callData,
-                    finalOffset: this.omniLiquidity.callDataOffset,
+                    swapTokens: [this.synthToken.address, this.synthToken.address],
+                    secondDexRouter: this.multicallRouter.address,
+                    secondSwapCalldata: this.getMulticallData(),
+                    finalReceiveSide: AddressZero,
+                    finalCalldata: [],
+                    finalOffset: 0,
                     revertableAddress: this.revertableAddress,
                     clientID: this.symbiosis.clientId,
                 },
@@ -371,12 +385,12 @@ export class Zapping {
                 tokenReal: amount.token.address,
                 chainID: chainIdIn,
                 to: this.to,
-                swapTokens: [this.synthToken.address],
-                secondDexRouter: AddressZero,
-                secondSwapCalldata: [],
-                finalReceiveSide: this.pool.address,
-                finalCalldata: this.omniLiquidity.callData,
-                finalOffset: this.omniLiquidity.callDataOffset,
+                swapTokens: [this.synthToken.address, this.synthToken.address],
+                secondDexRouter: this.multicallRouter.address,
+                secondSwapCalldata: this.getMulticallData(),
+                finalReceiveSide: AddressZero,
+                finalCalldata: [],
+                finalOffset: 0,
             },
         ])
 
