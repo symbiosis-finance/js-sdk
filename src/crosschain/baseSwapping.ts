@@ -539,11 +539,9 @@ export abstract class BaseSwapping {
                     swapTokens: this.swapTokens().map(tronAddressToEvm),
                     secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
                     secondSwapCalldata: this.secondSwapCalldata(),
-                    finalReceiveSide: tronAddressToEvm(
-                        this.transit.isV2() ? this.finalReceiveSideV2() : this.finalReceiveSide()
-                    ),
-                    finalCalldata: this.transit.isV2() ? this.finalCalldataV2(feeV2) : this.finalCalldata(),
-                    finalOffset: this.transit.isV2() ? this.finalOffsetV2() : this.finalOffset(),
+                    finalReceiveSide: tronAddressToEvm(this.transit.isV2() ? this.finalReceiveSideV2() : AddressZero),
+                    finalCalldata: this.transit.isV2() ? this.finalCalldataV2(feeV2) : [],
+                    finalOffset: this.transit.isV2() ? this.finalOffsetV2() : 0,
                     revertableAddress: this.getRevertableAddress('AB'),
                     clientID: this.symbiosis.clientId,
                 },
@@ -591,11 +589,9 @@ export abstract class BaseSwapping {
                 swapTokens: this.swapTokens().map(tronAddressToEvm),
                 secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
                 secondSwapCalldata: this.secondSwapCalldata(),
-                finalReceiveSide: tronAddressToEvm(
-                    this.transit.isV2() ? this.finalReceiveSideV2() : this.finalReceiveSide()
-                ),
-                finalCalldata: this.transit.isV2() ? this.finalCalldataV2() : this.finalCalldata(),
-                finalOffset: this.transit.isV2() ? this.finalOffsetV2() : this.finalOffset(),
+                finalReceiveSide: tronAddressToEvm(this.transit.isV2() ? this.finalReceiveSideV2() : AddressZero),
+                finalCalldata: this.transit.isV2() ? this.finalCalldataV2() : [],
+                finalOffset: this.transit.isV2() ? this.finalOffsetV2() : 0,
             },
         ])
 
@@ -730,11 +726,36 @@ export abstract class BaseSwapping {
     }
 
     protected secondDexRouter(): string {
-        return this.transit.receiveSide
+        const multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
+        return multicallRouter.address
     }
 
     protected secondSwapCalldata(): string | [] {
-        return this.transit.callData
+        if (!this.transit.trade) {
+            return []
+        }
+
+        const calldatas = [this.transit.trade.callData]
+        const receiveSides = [this.transit.trade.pool.address]
+        const paths = [this.transit.trade.tokenAmountIn.token.address, this.transit.trade.amountOut.token.address]
+        const offsets = [this.transit.trade.callDataOffset]
+
+        if (this.transit.direction === 'mint' && this.tradeC) {
+            calldatas.push(this.finalCalldata() as string)
+            receiveSides.push(this.finalReceiveSide())
+            paths.push(wrappedToken(this.tradeC.amountOut.token).address)
+            offsets.push(this.finalOffset())
+        }
+
+        const multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
+        return multicallRouter.interface.encodeFunctionData('multicall', [
+            this.transit.amountIn.raw.toString(),
+            calldatas, // calldata
+            receiveSides, // receiveSides
+            paths, // path
+            offsets, // offset
+            this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address,
+        ])
     }
 
     protected finalReceiveSide(): string {

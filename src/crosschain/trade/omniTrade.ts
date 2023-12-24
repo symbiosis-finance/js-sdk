@@ -9,6 +9,7 @@ export class OmniTrade {
     public amountOut!: TokenAmount
     public amountOutMin!: TokenAmount
     public callData!: string
+    public callDataOffset: number
     public priceImpact!: Percent
 
     public readonly pool: OmniPool
@@ -26,6 +27,7 @@ export class OmniTrade {
     ) {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
+        this.callDataOffset = 100
     }
 
     public async init() {

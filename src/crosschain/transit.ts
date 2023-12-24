@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Symbiosis } from './symbiosis'
 import { Percent, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
@@ -6,22 +5,16 @@ import { Error, ErrorCode } from './error'
 import { CHAINS_PRIORITY } from './constants'
 import { BridgeDirection, OmniPoolConfig } from './types'
 import { OmniTrade } from './trade'
-import { MulticallRouter } from './contracts'
 
 export class Transit {
     public direction: BridgeDirection
 
-    public receiveSide: string
-    public callData: string | []
     public route: Token[]
     public priceImpact: Percent
     public amountOut!: TokenAmount
     public amountOutMin!: TokenAmount
-
     public feeToken!: Token
-
-    protected trade: OmniTrade | undefined
-    protected multicallRouter: MulticallRouter
+    public trade: OmniTrade | undefined
 
     public constructor(
         protected symbiosis: Symbiosis,
@@ -36,11 +29,8 @@ export class Transit {
         protected fee?: TokenAmount
     ) {
         this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, omniPoolConfig.chainId)
-        this.multicallRouter = this.symbiosis.multicallRouter(omniPoolConfig.chainId)
 
         this.route = []
-        this.receiveSide = AddressZero
-        this.callData = []
         this.priceImpact = new Percent('0')
     }
 
@@ -49,8 +39,6 @@ export class Transit {
 
         this.trade = await this.buildTrade()
 
-        this.receiveSide = this.multicallRouter.address
-        this.callData = this.buildCalldata()
         this.amountOut = this.getTradeAmountOut(this.trade.amountOut)
         this.amountOutMin = this.getTradeAmountOut(this.trade.amountOutMin)
         this.route = this.trade.route
@@ -115,21 +103,6 @@ export class Transit {
         }
 
         return indexIn > indexOut ? 'burn' : 'mint'
-    }
-
-    protected buildCalldata(): string {
-        if (!this.trade) {
-            throw new Error('buildCalldata: trade is undefined')
-        }
-
-        return this.multicallRouter.interface.encodeFunctionData('multicall', [
-            this.amountIn.raw.toString(),
-            [this.trade.callData], // calldata
-            [this.trade.pool.address], // receiveSides
-            [this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address], // path
-            [100], // offset
-            this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address,
-        ])
     }
 
     protected getTradeAmountIn(amount: TokenAmount): TokenAmount {
@@ -204,7 +177,7 @@ export class Transit {
         const tokenAmountInMin = this.getTradeAmountIn(this.amountInMin)
         const tokenOut = this.getTradeTokenOut()
 
-        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
+        const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
 
         const trade = new OmniTrade(
             tokenAmountIn,
