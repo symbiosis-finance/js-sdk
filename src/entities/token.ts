@@ -629,4 +629,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9640.png',
         },
     }),
+    [ChainId.OKX_X1_TESTNET]: new Token({
+        chainId: ChainId.OKX_X1_TESTNET,
+        address: '0x87A851C652E5d772ba61ec320753c6349bb3C1E3',
+        decimals: 18,
+        symbol: 'WOKB',
+        isNative: false,
+        name: 'Wrapped OKB',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
+        },
+    }),
 }

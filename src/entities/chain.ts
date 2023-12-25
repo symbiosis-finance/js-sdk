@@ -485,6 +485,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/128x128/9640.png',
         },
     }),
+    new Chain({
+        id: ChainId.OKX_X1_TESTNET,
+        name: 'OKX X1 Testnet',
+        disabled: false,
+        explorer: 'https://www.oklink.com/x1-test',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
