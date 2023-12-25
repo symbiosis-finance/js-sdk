@@ -113,6 +113,36 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
             }),
         ],
     },
+    [ChainId.OKX_X1_TESTNET]: {
+        factory: '0x64c2F1306b4ED3183E7B345158fd01c19C0d8c5E',
+        quoter: '0xF6FFe4f3FdC8BBb7F70FFD48e61f17D1e343dDfD',
+        swap: '0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3',
+        baseTokens: [
+            new Token({
+                name: 'WETH',
+                symbol: 'WETH',
+                address: '0xbec7859bc3d0603bec454f7194173e36bf2aa5c8',
+                chainId: ChainId.OKX_X1_TESTNET,
+                decimals: 18,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                },
+            }),
+            new Token({
+                chainId: ChainId.OKX_X1_TESTNET,
+                address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
+                decimals: 18,
+                symbol: 'WOKB',
+                isNative: false,
+                name: 'Wrapped OKB',
+                icons: {
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
+                },
+            }),
+        ],
+    },
 }
 
 export class IzumiTrade implements SymbiosisTrade {
@@ -167,8 +197,11 @@ export class IzumiTrade implements SymbiosisTrade {
             allRoutes.push({ tokens: [tokenIn, tokenOut], path, fees: [fee] })
         })
 
+        const wrappedTokenIn = wrappedToken(tokenIn)
+        const wrappedTokenOut = wrappedToken(tokenOut)
+
         for (const baseToken of addresses.baseTokens) {
-            if (baseToken.equals(this.tokenAmountIn.token) || baseToken.equals(this.tokenOut)) {
+            if (baseToken.equals(wrappedTokenIn) || baseToken.equals(wrappedTokenOut)) {
                 continue
             }
 

@@ -631,7 +631,7 @@ export const WETH = {
     }),
     [ChainId.OKX_X1_TESTNET]: new Token({
         chainId: ChainId.OKX_X1_TESTNET,
-        address: '0x87A851C652E5d772ba61ec320753c6349bb3C1E3',
+        address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
         decimals: 18,
         symbol: 'WOKB',
         isNative: false,
