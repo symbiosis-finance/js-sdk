@@ -13,8 +13,7 @@
                 { "index": 6, "tokenId": 16 },
                 { "index": 7, "tokenId": 21 },
                 { "index": 9, "tokenId": 19 },
-                { "index": 10, "tokenId": 20 },
-                { "index": 12, "tokenId": 22 }
+                { "index": 10, "tokenId": 20 }
             ]
         },
         {
@@ -25,7 +24,8 @@
             "tokens": [
                 { "index": 0, "tokenId": 17 },
                 { "index": 1, "tokenId": 13 },
-                { "index": 2, "tokenId": 18 }
+                { "index": 2, "tokenId": 18 },
+                { "index": 3, "tokenId": 22 }
             ]
         }
     ],
