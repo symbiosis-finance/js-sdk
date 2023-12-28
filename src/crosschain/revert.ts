@@ -383,19 +383,19 @@ export class RevertPending {
                 functionName: 'metaRevertRequest',
                 params: [
                     [
-                        fee.raw.toString(),
-                        internalId,
-                        portal.address,
-                        this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
-                        this.symbiosis.bridge(chainIdFrom).address,
-                        this.omniPoolConfig.chainId,
-                        chainIdFrom,
-                        AddressZero, // multicall router
-                        [], // swapCalldata,
-                        this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
-                        AddressZero, //burnToken,
-                        [], // burnCalldata,
-                        this.symbiosis.clientId,
+                        fee.raw.toString(), // stableBridgingFee, uint256
+                        internalId, // internalID, bytes32
+                        portal.address, // receiveSide, address
+                        this.symbiosis.bridge(this.omniPoolConfig.chainId).address, // managerChainBridge, address
+                        this.symbiosis.bridge(chainIdFrom).address, // sourceChainBridge, address
+                        this.omniPoolConfig.chainId, // managerChainId, uint256
+                        chainIdFrom, // sourceChainId, uint256
+                        AddressZero, // router, address
+                        [], // swapCalldata, bytes
+                        this.symbiosis.synthesis(this.omniPoolConfig.chainId).address, // sourceChainSynthesis, address
+                        AddressZero, // burnToken, address
+                        [], // burnCalldata, bytes
+                        this.symbiosis.clientId, // clientID, bytes32
                     ],
                 ],
                 ownerAddress: revertableAddress,
@@ -551,19 +551,19 @@ export class RevertPending {
                 functionName: 'metaRevertRequest',
                 params: [
                     [
-                        fee.raw.toString(),
-                        internalId,
-                        mChainSynthesis.address,
-                        mChainBridge.address,
-                        this.omniPoolConfig.chainId,
-                        AddressZero,
-                        this.request.chainIdFrom,
-                        mChainSynthesis.address,
-                        router, // multicall router
-                        swapCalldata,
-                        burnToken,
-                        burnCalldata,
-                        this.symbiosis.clientId,
+                        fee.raw.toString(), // stableBridgingFee, uint256
+                        internalId, // internalID, bytes32
+                        mChainSynthesis.address, // receiveSide, address
+                        mChainBridge.address, // managerChainBridge, address
+                        AddressZero, // sourceChainBridge, address
+                        this.omniPoolConfig.chainId, // managerChainId, uint256
+                        this.request.chainIdFrom, // sourceChainId, uint256
+                        router, // router, address
+                        swapCalldata, // swapCalldata, bytes
+                        mChainSynthesis.address, // sourceChainSynthesis, address
+                        burnToken, // burnToken, address
+                        burnCalldata, // burnCalldata, bytes
+                        this.symbiosis.clientId, // clientID, bytes32
                     ],
                 ],
                 ownerAddress: this.request.revertableAddress, // correct??
@@ -610,19 +610,19 @@ export class RevertPending {
                 functionName: 'metaRevertRequest',
                 params: [
                     [
-                        fee.raw.toString(),
-                        internalId,
-                        portal.address,
-                        this.symbiosis.bridge(this.omniPoolConfig.chainId).address,
-                        AddressZero,
-                        this.omniPoolConfig.chainId,
-                        chainIdTo,
-                        AddressZero, // multicall router
-                        [],
-                        this.symbiosis.synthesis(this.omniPoolConfig.chainId).address,
-                        AddressZero,
-                        '0x00', // any not empty calldata
-                        this.symbiosis.clientId,
+                        fee.raw.toString(), // stableBridgingFee, uint256
+                        internalId, // internalID, bytes32
+                        portal.address, // receiveSide, address
+                        this.symbiosis.bridge(this.omniPoolConfig.chainId).address, // managerChainBridge, address
+                        AddressZero, // sourceChainBridge, address
+                        this.omniPoolConfig.chainId, // managerChainId, uint256
+                        chainIdTo, // sourceChainId, uint256
+                        AddressZero, // multicall router, address
+                        [], // swapCalldata, bytes
+                        this.symbiosis.synthesis(this.omniPoolConfig.chainId).address, // sourceChainSynthesis, address
+                        AddressZero, // burnToken, address
+                        '0x00', // burnCalldata, bytes, any not empty calldata
+                        this.symbiosis.clientId, // clientID, bytes32
                     ],
                 ],
                 ownerAddress: this.request.revertableAddress,
