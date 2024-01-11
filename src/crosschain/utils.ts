@@ -75,7 +75,10 @@ export function computeTradePriceBreakdown(
 
     // the x*y=k impact
     const priceImpactWithoutFeePercent = priceImpactWithoutFeeFraction
-        ? new Percent(priceImpactWithoutFeeFraction?.numerator, priceImpactWithoutFeeFraction?.denominator)
+        ? new Percent(
+              JSBI.multiply(priceImpactWithoutFeeFraction?.numerator, JSBI.BigInt('-1')),
+              priceImpactWithoutFeeFraction?.denominator
+          )
         : undefined
 
     // the amount of the input that accrues to LPs
