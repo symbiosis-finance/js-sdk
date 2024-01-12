@@ -211,7 +211,7 @@ describe('#transitToken', () => {
         })
         test('USDC is in Polygon zkEVM', () => {
             const chainId = ChainId.POLYGON_ZK
-            const address = '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035'.toLowerCase()
+            const address = '0x37eAA0eF3549a5Bb7D431be78a3D99BD360d19e5'.toLowerCase()
 
             const token = symbiosis.transitToken(chainId, omniPoolConfig)
             expect(token.chainId).toBe(chainId)
