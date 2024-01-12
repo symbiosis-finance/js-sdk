@@ -47,39 +47,48 @@ describe('#splitSlippage', () => {
         })
     })
 
+    test('3% false true', () => {
+        const detailedSlippage = splitSlippage(300, false, true)
+        expect(detailedSlippage).toStrictEqual({
+            A: 0,
+            B: 50,
+            C: 300,
+        })
+    })
+
     test('3% true true', () => {
         const detailedSlippage = splitSlippage(300, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 100,
+            A: 125,
             B: 50,
-            C: 150,
+            C: 300,
         })
     })
 
     test('2% true true', () => {
         const detailedSlippage = splitSlippage(200, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 59.2,
+            A: 74.8,
             B: 50,
-            C: 88.8,
+            C: 200,
         })
     })
 
     test('1% true true', () => {
         const detailedSlippage = splitSlippage(100, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 26.400000000000002,
-            B: 33,
-            C: 39.6,
+            A: 33.3,
+            B: 33.3,
+            C: 100,
         })
     })
 
     test('0.2% true true', () => {
         const detailedSlippage = splitSlippage(20, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 4.800000000000001,
-            B: 6,
-            C: 7.199999999999999,
+            A: 6.6,
+            B: 6.6,
+            C: 20,
         })
     })
 })

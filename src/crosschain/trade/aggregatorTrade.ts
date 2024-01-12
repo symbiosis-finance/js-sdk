@@ -29,7 +29,7 @@ class TradeNotInitializedError extends Error {
     }
 }
 
-const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('open-ocean')
+const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('openocean')
 
 type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniLikeTrade
 
@@ -49,7 +49,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         const { dataProvider, from, slippage, symbiosis, to, tokenAmountIn, tokenOut, clientId, ttl } = this.params
 
         const aggregators: Promise<TradeType>[] = []
-        if (clientId !== OPEN_OCEAN_CLIENT_ID && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade(
                 this.params.symbiosis,
