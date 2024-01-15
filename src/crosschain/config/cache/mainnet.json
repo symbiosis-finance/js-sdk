@@ -1362,9 +1362,9 @@
         { "tokenId": 35, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 36, "type": "Portal", "value": "10000000" },
         { "tokenId": 37, "type": "Portal", "value": "5000000000000000" },
-        { "tokenId": 78, "type": "Portal", "value": "0" },
-        { "tokenId": 79, "type": "Portal", "value": "0" },
-        { "tokenId": 80, "type": "Portal", "value": "0" },
+        { "tokenId": 78, "type": "Portal", "value": "10000000" },
+        { "tokenId": 79, "type": "Portal", "value": "5000000000000000" },
+        { "tokenId": 80, "type": "Portal", "value": "10000000" },
         { "tokenId": 78, "type": "Synthesis", "value": "0" },
         { "tokenId": 79, "type": "Synthesis", "value": "0" },
         { "tokenId": 80, "type": "Synthesis", "value": "0" }
