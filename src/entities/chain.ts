@@ -495,6 +495,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
         },
     }),
+    new Chain({
+        id: ChainId.BAHAMUT_MAINNET,
+        name: 'Bahamut',
+        disabled: false,
+        explorer: 'https://www.ftnscan.com/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

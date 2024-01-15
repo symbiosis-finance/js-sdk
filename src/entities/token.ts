@@ -641,4 +641,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
         },
     }),
+    [ChainId.BAHAMUT_MAINNET]: new Token({
+        chainId: ChainId.BAHAMUT_MAINNET,
+        address: '0x0000000000000000000000000000000000000000',
+        decimals: 18,
+        symbol: 'WFTN',
+        isNative: false,
+        name: 'Wrapped FTN',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
+        },
+    }),
 }
