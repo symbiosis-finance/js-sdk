@@ -68,6 +68,7 @@ import { PendingRequest } from './revertRequest'
 import { MakeOneInchRequestFn, makeOneInchRequestFactory } from './oneInchRequest'
 import { SwapExactInParams, swapExactIn, SwapExactInResult } from './swapExactIn'
 import { ZappingThor } from './zappingThor'
+import { delay } from '../utils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'teleport'
 
@@ -519,7 +520,7 @@ export class Symbiosis {
                 break
             }
 
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            await delay(1000)
         }
 
         if (!info) {

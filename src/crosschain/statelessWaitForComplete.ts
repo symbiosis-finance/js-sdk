@@ -4,6 +4,8 @@ import { tronAddressToEvm } from './tron'
 
 import { ChainId } from '../constants'
 import type { Symbiosis } from './symbiosis'
+import fetch from 'isomorphic-unfetch'
+import { delay } from '../utils'
 
 type BridgeRequestType =
     | 'SynthesizeRequest'
@@ -129,7 +131,7 @@ async function getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: str
     return { internalId, externalId, externalChainId, requestType }
 }
 
-async function waitOversideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): Promise<string> {
+async function waitOtherSideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): Promise<string> {
     const { requestType, externalChainId, externalId, internalId } = bridgeInfo
 
     let filter: EventFilter
@@ -181,16 +183,88 @@ export async function statelessWaitForComplete(symbiosis: Symbiosis, chainId: Ch
 
     console.log('aBridgeInfo', aBridgeInfo)
 
-    const bTxId = await waitOversideTx(symbiosis, aBridgeInfo)
+    const bTxId = await waitOtherSideTx(symbiosis, aBridgeInfo)
     console.log('bTxId', bTxId)
 
     const bBridgeInfo = await getTxBridgeInfo(symbiosis, aBridgeInfo.externalChainId, bTxId)
     console.log('bBridgeInfo', bBridgeInfo)
 
+    // if b-chain is final destination
     if (!bBridgeInfo) {
-        // b-chain is final destination
-        return bTxId
+        return tryToFindThorChainDepositAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
     }
 
-    return waitOversideTx(symbiosis, bBridgeInfo)
+    const cTxId = await waitOtherSideTx(symbiosis, bBridgeInfo)
+
+    return tryToFindThorChainDepositAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
+}
+
+export async function tryToFindThorChainDepositAndWait(symbiosis: Symbiosis, chainId: ChainId, txHash: string) {
+    const isBtc = await findThorChainDeposit(symbiosis, chainId, txHash)
+    if (!isBtc) {
+        return txHash
+    }
+    return waitForThorChainTx(txHash.startsWith('0x') ? txHash.slice(2) : txHash)
+}
+
+export async function findThorChainDeposit(symbiosis: Symbiosis, chainId: ChainId, txHash: string) {
+    const provider = symbiosis.getProvider(chainId)
+    const receipt = await provider.getTransactionReceipt(txHash)
+
+    if (!receipt) {
+        throw new TxNotFound(txHash)
+    }
+
+    const thorChainDepositTopic0 = '0xef519b7eb82aaf6ac376a6df2d793843ebfd593de5f1a0601d3cc6ab49ebb395'
+    const log = receipt.logs.find((log) => {
+        return log.topics[0] === thorChainDepositTopic0
+    })
+
+    return !!log
+}
+
+type ThorStatusResponse = {
+    observed_tx: {
+        tx: {
+            id: string
+        }
+        out_hashes?: string[]
+        status?: string
+    }
+}
+export async function getTransactionStatus(txHash: string): Promise<string | undefined> {
+    const url = `https://thornode.ninerealms.com/thorchain/tx/${txHash}`
+
+    const response = await fetch(url)
+
+    if (!response.ok) {
+        const text = await response.text()
+        console.error(`ThorChain status response error: ${text}`)
+        return
+    }
+
+    const json: ThorStatusResponse = await response.json()
+
+    const { status, out_hashes } = json.observed_tx
+    if (status === 'done' && out_hashes && out_hashes.length > 0) {
+        return out_hashes[0]
+    }
+
+    return
+}
+
+export async function waitForThorChainTx(txHash: string): Promise<string> {
+    const MINUTES = 20
+    let btcHash: string | undefined = undefined
+    for (let i = 0; i < MINUTES; i++) {
+        btcHash = await getTransactionStatus(txHash)
+        if (btcHash) {
+            break
+        }
+        await delay(60 * 1000) // wait for 1 minute
+    }
+    if (!btcHash) {
+        throw new TxNotFound(txHash)
+    }
+    return btcHash
 }

@@ -302,11 +302,11 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
     }
     swapsCount += extraSwapsCount
 
-    const slippage = Math.floor(totalSlippage * 10 / swapsCount) / 10
+    const slippage = Math.floor((totalSlippage * 10) / swapsCount) / 10
     const MAX_STABLE_SLIPPAGE = 50 // 0.5%
     if (slippage > MAX_STABLE_SLIPPAGE) {
         const diff = slippage - MAX_STABLE_SLIPPAGE
-        const addition = extraSwapsCount > 0 ? Math.floor(diff * 10 / extraSwapsCount) / 10 : 0
+        const addition = extraSwapsCount > 0 ? Math.floor((diff * 10) / extraSwapsCount) / 10 : 0
 
         return {
             A: hasTradeA ? slippage + addition : 0,
