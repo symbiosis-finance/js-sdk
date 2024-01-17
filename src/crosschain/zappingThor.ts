@@ -71,17 +71,22 @@ type ThorPool = {
 }
 
 function toThorToken(token: Token): string {
+    const chain = toThorChain(token.chainId)
+    return `${chain}.${token.symbol}-${token.address.toUpperCase()}`
+}
+
+function toThorChain(chainId: ChainId): string {
     let chain
-    if (token.chainId === ChainId.AVAX_MAINNET) {
+    if (chainId === ChainId.AVAX_MAINNET) {
         chain = 'AVAX'
-    } else if (token.chainId === ChainId.ETH_MAINNET) {
+    } else if (chainId === ChainId.ETH_MAINNET) {
         chain = 'ETH'
-    } else if (token.chainId === ChainId.BSC_MAINNET) {
+    } else if (chainId === ChainId.BSC_MAINNET) {
         chain = 'BSC'
     } else {
-        throw new Error('toThorToken: unknown chain')
+        throw new Error('toThorChain: unknown chain')
     }
-    return `${chain}.${token.symbol}-${token.address.toUpperCase()}`
+    return chain
 }
 
 function toThorAmount(tokenAmount: TokenAmount): BigNumber {
@@ -111,21 +116,22 @@ export class ZappingThor extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
-        this.thorTokenIn = ETH_USDC
-        if (tokenAmountIn.token.chainId === ChainId.ETH_MAINNET) {
-            this.thorTokenIn = AVAX_USDC
-        }
-
-        // this.thorTokenIn = AVAX_USDC
-        // if (tokenAmountIn.token.chainId === ChainId.AVAX_MAINNET) {
-        //     this.thorTokenIn = ETH_USDC
+        // this.thorTokenIn = ETH_USDC
+        // if (tokenAmountIn.token.chainId === ChainId.ETH_MAINNET) {
+        //     this.thorTokenIn = AVAX_USDC
         // }
-        await this.getThorPools(this.thorTokenIn)
+
+        this.thorTokenIn = AVAX_USDC
+        if (tokenAmountIn.token.chainId === ChainId.AVAX_MAINNET) {
+            this.thorTokenIn = ETH_USDC
+        }
+        const thorPool = await ZappingThor.getThorPools(this.thorTokenIn)
+        console.log('Routing via', { thorPool })
 
         this.multicallRouter = this.symbiosis.multicallRouter(this.thorTokenIn.chainId)
         this.bitcoinAddress = to
 
-        this.thorVault = await this.getThorVault()
+        this.thorVault = await ZappingThor.getThorVault(this.thorTokenIn)
 
         const result = await this.doExactIn({
             tokenAmountIn,
@@ -148,7 +154,7 @@ export class ZappingThor extends BaseSwapping {
         }
     }
 
-    protected async getThorPools(token: Token): Promise<ThorPool> {
+    protected static async getThorPools(token: Token): Promise<ThorPool> {
         const url = new URL('/thorchain/pools', thorApiUrl)
         const response = await fetch(url.toString())
 
@@ -166,7 +172,7 @@ export class ZappingThor extends BaseSwapping {
         return found
     }
 
-    protected async getThorVault(): Promise<string> {
+    protected static async getThorVault(token: Token): Promise<string> {
         const url = new URL('/thorchain/inbound_addresses', thorApiUrl)
         const response = await fetch(url.toString())
 
@@ -177,7 +183,7 @@ export class ZappingThor extends BaseSwapping {
         }
 
         const found = json.find((i: any) => {
-            return i.chain === 'ETH'
+            return i.chain === toThorChain(token.chainId)
         })
         if (!found) {
             throw new Error('Thor vault not found')
@@ -236,7 +242,6 @@ export class ZappingThor extends BaseSwapping {
         const amount = this.getTradeCAmountIn()
 
         if (this.tradeC) {
-            console.log('TRADE_C!', this.transit.amountOut.raw.toString(), amount.raw.toString())
             callDatas.push(this.tradeC.callData)
             receiveSides.push(this.tradeC.routerAddress)
             path.push(this.tradeC.tokenAmountIn.token.address)
