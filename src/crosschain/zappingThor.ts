@@ -121,6 +121,7 @@ export class ZappingThor extends BaseSwapping {
         let bestResult: CrosschainSwapExactInResult | undefined = undefined
         let bestThorPool: ThorPool | undefined = undefined
         let bestThorToken: Token | undefined = undefined
+        let bestThorQuote: ThorQuote | undefined = undefined
         for (let i = 0; i < THOR_TOKENS.length; i++) {
             try {
                 const thorToken = THOR_TOKENS[i]
@@ -143,10 +144,11 @@ export class ZappingThor extends BaseSwapping {
                     deadline,
                 })
 
-                if (bestResult === undefined || result.tokenAmountOut.greaterThan(bestResult.tokenAmountOut)) {
+                if (!bestResult || !bestThorQuote || this.thorQuote.amountOut.greaterThan(bestThorQuote.amountOut)) {
                     bestResult = result
                     bestThorPool = thorPool
                     bestThorToken = thorToken
+                    bestThorQuote = this.thorQuote
                 }
             } catch (e) {
                 console.error(e)

@@ -254,7 +254,7 @@ export async function getTransactionStatus(txHash: string): Promise<string | und
 }
 
 export async function waitForThorChainTx(txHash: string): Promise<string> {
-    const MINUTES = 20
+    const MINUTES = 60
     let btcHash: string | undefined = undefined
     for (let i = 0; i < MINUTES; i++) {
         btcHash = await getTransactionStatus(txHash)
