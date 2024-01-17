@@ -95,6 +95,8 @@ function toThorAmount(tokenAmount: TokenAmount): BigNumber {
     return BigNumber.from(tokenAmount.raw.toString()).mul(thorDecimals).div(tokenDecimals)
 }
 
+const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
+
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected bitcoinAddress!: string
@@ -116,39 +118,52 @@ export class ZappingThor extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
-        // this.thorTokenIn = ETH_USDC
-        // if (tokenAmountIn.token.chainId === ChainId.ETH_MAINNET) {
-        //     this.thorTokenIn = AVAX_USDC
-        // }
+        let bestResult: CrosschainSwapExactInResult | undefined = undefined
+        let bestThorPool: ThorPool | undefined = undefined
+        let bestThorToken: Token | undefined = undefined
+        for (let i = 0; i < THOR_TOKENS.length; i++) {
+            try {
+                const thorToken = THOR_TOKENS[i]
 
-        this.thorTokenIn = AVAX_USDC
-        if (tokenAmountIn.token.chainId === ChainId.AVAX_MAINNET) {
-            this.thorTokenIn = ETH_USDC
+                this.thorTokenIn = thorToken // NOTE: bad practice. set for doPostTransitAction invocation only
+
+                const thorPool = await ZappingThor.getThorPools(thorToken)
+
+                this.multicallRouter = this.symbiosis.multicallRouter(thorToken.chainId)
+                this.bitcoinAddress = to
+
+                this.thorVault = await ZappingThor.getThorVault(thorToken)
+
+                const result = await this.doExactIn({
+                    tokenAmountIn,
+                    tokenOut: thorToken,
+                    from,
+                    to: from,
+                    slippage,
+                    deadline,
+                })
+
+                if (bestResult === undefined || result.tokenAmountOut.greaterThan(bestResult.tokenAmountOut)) {
+                    bestResult = result
+                    bestThorPool = thorPool
+                    bestThorToken = thorToken
+                }
+            } catch (e) {
+                console.error(e)
+            }
         }
-        const thorPool = await ZappingThor.getThorPools(this.thorTokenIn)
-        console.log('Routing via', { thorPool })
-
-        this.multicallRouter = this.symbiosis.multicallRouter(this.thorTokenIn.chainId)
-        this.bitcoinAddress = to
-
-        this.thorVault = await ZappingThor.getThorVault(this.thorTokenIn)
-
-        const result = await this.doExactIn({
-            tokenAmountIn,
-            tokenOut: this.thorTokenIn,
-            from,
-            to: from,
-            slippage,
-            deadline,
-        })
+        if (!bestResult || !bestThorToken || !bestThorPool) {
+            throw new Error(`Can't build route upto the THORChain`)
+        }
+        console.log('Routing via', { bestThorPool })
 
         // >> for display route purposes only
-        result.route.push(new Token({ ...this.thorTokenIn, chainId: ChainId.BTC_MAINNET }))
-        result.route.push(BTC)
+        bestResult.route.push(new Token({ ...bestThorToken, chainId: ChainId.BTC_MAINNET }))
+        bestResult.route.push(BTC)
         // << for display route purposes only
 
         return {
-            ...result,
+            ...bestResult,
             tokenAmountOut: this.thorQuote.amountOut,
             outTradeType: 'thor-chain',
         }
