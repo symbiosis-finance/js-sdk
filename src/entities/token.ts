@@ -385,8 +385,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped TLOS',
         icons: {
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
+            large: 'https://raw.githubusercontent.com/telosnetwork/token-list/main/logos/wtlos.png',
+            small: 'https://raw.githubusercontent.com/telosnetwork/token-list/main/logos/wtlos.png',
         },
     }),
     [ChainId.TELOS_TESTNET]: new Token({
@@ -397,8 +397,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped TLOS',
         icons: {
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18580.png',
+            large: 'https://raw.githubusercontent.com/telosnetwork/token-list/main/logos/wtlos.png',
+            small: 'https://raw.githubusercontent.com/telosnetwork/token-list/main/logos/wtlos.png',
         },
     }),
     [ChainId.SHARDEUM_TESTNET_2]: new Token({
