@@ -6,6 +6,7 @@ export enum ErrorCode {
     'AMOUNT_LESS_THAN_FEE',
     'NO_TRANSIT_TOKEN',
     'NO_TRANSIT_POOL',
+    'MIN_THORCHAIN_AMOUNT_IN',
 }
 
 export class Error {

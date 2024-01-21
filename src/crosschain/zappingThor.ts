@@ -4,7 +4,7 @@ import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
 import { MulticallRouter, ThorRouter__factory } from './contracts'
 import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { Error } from './error'
+import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
 
 export interface ZappingThorExactInParams {
@@ -107,6 +107,10 @@ export class ZappingThor extends BaseSwapping {
     protected thorQuote!: ThorQuote
 
     protected async doPostTransitAction() {
+        const amountIn = parseFloat(this.transit.amountIn.toSignificant())
+        if (amountIn < 500) {
+            throw new Error('The min swap amount towards Bitcoin is $500', ErrorCode.MIN_THORCHAIN_AMOUNT_IN)
+        }
         const amount = this.getTradeCAmountIn()
         this.thorQuote = await this.getThorQuote(amount)
     }
@@ -150,7 +154,10 @@ export class ZappingThor extends BaseSwapping {
                     bestThorToken = thorToken
                     bestThorQuote = this.thorQuote
                 }
-            } catch (e) {
+            } catch (e: any) {
+                if (e.code === ErrorCode.MIN_THORCHAIN_AMOUNT_IN) {
+                    throw new Error(e.message)
+                }
                 console.error(e)
             }
         }
