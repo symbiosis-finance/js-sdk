@@ -21,6 +21,10 @@ type ThorQuote = {
     amountOut: TokenAmount
     router: string
     expiry: string
+    fees: {
+        asset: string
+        total: string
+    }
 }
 
 const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
@@ -174,7 +178,9 @@ export class ZappingThor extends BaseSwapping {
         return {
             ...bestResult,
             tokenAmountOut: this.thorQuote.amountOut,
+            tokenAmountOutMin: this.thorQuote.amountOut,
             outTradeType: 'thor-chain',
+            extraFee: new TokenAmount(BTC, this.thorQuote.fees.total),
         }
     }
 
@@ -233,13 +239,14 @@ export class ZappingThor extends BaseSwapping {
         if (json.error) {
             throw new Error(json.error)
         }
-        const { memo, expected_amount_out, router, expiry } = json
+        const { memo, expected_amount_out, router, expiry, fees } = json
 
         return {
             memo,
             amountOut: new TokenAmount(BTC, expected_amount_out),
             router,
             expiry,
+            fees,
         }
     }
 

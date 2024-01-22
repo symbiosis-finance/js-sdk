@@ -30,6 +30,7 @@ export interface SwapExactInParams {
 
 export interface CrossChainSwapInfo {
     fee: TokenAmount
+    extraFee?: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
     route: Token[]

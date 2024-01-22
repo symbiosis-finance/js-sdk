@@ -37,4 +37,5 @@ export type SwapExactInResult = {
     outTradeType?: SymbiosisTradeType
     amountInUsd?: TokenAmount
     fee?: TokenAmount
+    extraFee?: TokenAmount
 } & SwapExactInTransactionPayload
