@@ -8,7 +8,7 @@
             "tokens": [
                 { "index": 0, "tokenId": 42 },
                 { "index": 1, "tokenId": 46 },
-                { "index": 2, "tokenId": 49 },
+                { "index": 2, "tokenId": 48 },
                 { "index": 3, "tokenId": 50 },
                 { "index": 4, "tokenId": 14 },
                 { "index": 5, "tokenId": 54 },
@@ -19,7 +19,7 @@
                 { "index": 14, "tokenId": 62 },
                 { "index": 15, "tokenId": 64 },
                 { "index": 16, "tokenId": 57 },
-                { "index": 17, "tokenId": 48 },
+                { "index": 17, "tokenId": 49 },
                 { "index": 18, "tokenId": 68 },
                 { "index": 19, "tokenId": 53 },
                 { "index": 20, "tokenId": 71 },
@@ -154,6 +154,20 @@
         },
         {
             "decimals": 6,
+            "symbol": "USDC.e",
+            "name": "USD Coin",
+            "chainId": 43114,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "deprecated": false,
+            "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+            "id": 7
+        },
+        {
+            "decimals": 6,
             "symbol": "USDC",
             "name": "USD Coin",
             "chainId": 43114,
@@ -164,20 +178,6 @@
             },
             "deprecated": false,
             "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
-            "id": 7
-        },
-        {
-            "decimals": 6,
-            "symbol": "USDC.e",
-            "name": "USD Coin",
-            "chainId": 43114,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "deprecated": true,
-            "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
             "id": 8
         },
         {
@@ -748,6 +748,22 @@
         },
         {
             "decimals": 6,
+            "symbol": "sUSDC.e",
+            "name": "Synthetic USD Coin from Avalanche",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 43114,
+            "deprecated": false,
+            "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
+            "id": 48,
+            "originalId": 7
+        },
+        {
+            "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Avalanche",
             "chainId": 56288,
@@ -759,22 +775,6 @@
             "chainFromId": 43114,
             "deprecated": false,
             "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0",
-            "id": 48,
-            "originalId": 7
-        },
-        {
-            "decimals": 6,
-            "symbol": "sUSDC.e",
-            "name": "Synthetic USD Coin from Avalanche",
-            "chainId": 56288,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "chainFromId": 43114,
-            "deprecated": true,
-            "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
             "id": 49,
             "originalId": 8
         },
@@ -1288,8 +1288,8 @@
         { "tokenId": 5, "type": "Synthesis", "value": "0" },
         { "tokenId": 6, "type": "Synthesis", "value": "0" },
         { "tokenId": 38, "type": "Synthesis", "value": "0" },
-        { "tokenId": 7, "type": "Portal", "value": "10000000" },
-        { "tokenId": 8, "type": "Portal", "value": "8000000" },
+        { "tokenId": 7, "type": "Portal", "value": "8000000" },
+        { "tokenId": 8, "type": "Portal", "value": "10000000" },
         { "tokenId": 9, "type": "Portal", "value": "8000000" },
         { "tokenId": 10, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 11, "type": "Portal", "value": "0" },

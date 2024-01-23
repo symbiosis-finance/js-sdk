@@ -154,8 +154,8 @@ export const config: Config = {
             stables: [
                 {
                     name: 'USD Coin',
-                    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
-                    symbol: 'USDC',
+                    address: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
+                    symbol: 'USDC.e',
                     decimals: 6,
                     chainId: 43114,
                     icons: {
@@ -164,10 +164,9 @@ export const config: Config = {
                     },
                 },
                 {
-                    deprecated: true,
                     name: 'USD Coin',
-                    address: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
-                    symbol: 'USDC.e',
+                    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+                    symbol: 'USDC',
                     decimals: 6,
                     chainId: 43114,
                     icons: {
