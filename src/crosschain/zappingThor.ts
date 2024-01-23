@@ -230,6 +230,8 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('amount', toThorAmount(amount).toString())
         url.searchParams.set('destination', this.bitcoinAddress)
         url.searchParams.set('streaming_interval', '1')
+        url.searchParams.set('affiliate', 'sy')
+        url.searchParams.set('affiliate_bps', '30')
         // url.searchParams.set('tolerance_bps', '300') // 3% FIXME
 
         const response = await fetch(url.toString())

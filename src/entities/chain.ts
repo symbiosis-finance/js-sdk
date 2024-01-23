@@ -317,7 +317,7 @@ export const chains: Chain[] = [
         id: ChainId.SCROLL_SEPOLIA,
         name: 'Scroll Sepolia',
         disabled: false,
-        explorer: 'https://sepolia-blockscout.scroll.io',
+        explorer: 'https://scroll-sepolia.l2scan.co',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
@@ -327,7 +327,7 @@ export const chains: Chain[] = [
         id: ChainId.ZKSYNC_MAINNET,
         name: 'ZkSync Era',
         disabled: false,
-        explorer: 'https://explorer.zksync.io',
+        explorer: 'https://zksync-era.l2scan.co',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
@@ -419,7 +419,7 @@ export const chains: Chain[] = [
         id: ChainId.LINEA_MAINNET,
         name: 'Linea',
         disabled: false,
-        explorer: 'https://lineascan.build',
+        explorer: 'https://linea.l2scan.co',
         icons: {
             small: 'https://l2beat.com/icons/linea.png',
             large: 'https://l2beat.com/icons/linea.png',
@@ -449,7 +449,7 @@ export const chains: Chain[] = [
         id: ChainId.BASE_MAINNET,
         name: 'Base',
         disabled: false,
-        explorer: 'https://basescan.org',
+        explorer: 'https://base.l2scan.co',
         icons: {
             small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
@@ -459,7 +459,7 @@ export const chains: Chain[] = [
         id: ChainId.SCROLL_MAINNET,
         name: 'Scroll',
         disabled: false,
-        explorer: 'https://scrollscan.com',
+        explorer: 'https://scroll.l2scan.co',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
