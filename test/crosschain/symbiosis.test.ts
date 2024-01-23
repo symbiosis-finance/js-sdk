@@ -143,7 +143,7 @@ describe('#transitToken', () => {
         test('USDC.e is in Avalanche', () => {
             const token = symbiosis.transitToken(ChainId.AVAX_MAINNET, omniPoolConfig)
             expect(token.chainId).toBe(ChainId.AVAX_MAINNET)
-            expect(token.address).toBe('0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E')
+            expect(token.address).toBe('0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664')
         })
         test('USDC is in Polygon', () => {
             const chainId = ChainId.MATIC_MAINNET
