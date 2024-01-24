@@ -9,7 +9,7 @@ import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../tron'
 
 const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
-    [ChainId.ETH_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
+    [ChainId.ETH_MAINNET]: '0xff9b21c3bfa4bce9b20b55fed56d102ced48b0f6',
     [ChainId.BSC_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
     [ChainId.AVAX_MAINNET]: '0xA257F3FE4E4032291516DC355eDF90664e9eB932',
     [ChainId.MATIC_MAINNET]: '0x9d74807B8fA79d49bb95CF988Af3c25Fb1437B4f',
