@@ -126,6 +126,8 @@ export class ZappingThor extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
+        this.bitcoinAddress = to
+
         let bestResult: CrosschainSwapExactInResult | undefined = undefined
         let bestThorPool: ThorPool | undefined = undefined
         let bestThorToken: Token | undefined = undefined
@@ -137,9 +139,7 @@ export class ZappingThor extends BaseSwapping {
                 this.thorTokenIn = thorToken // NOTE: bad practice. set for doPostTransitAction invocation only
 
                 const thorPool = await ZappingThor.getThorPools(thorToken)
-
                 this.multicallRouter = this.symbiosis.multicallRouter(thorToken.chainId)
-                this.bitcoinAddress = to
 
                 this.thorVault = await ZappingThor.getThorVault(thorToken)
 

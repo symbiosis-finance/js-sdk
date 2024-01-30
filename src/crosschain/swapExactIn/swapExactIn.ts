@@ -1,4 +1,4 @@
-import { tronAddressToEvm } from '../tron'
+import { isTronChainId, tronAddressToEvm } from '../tron'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
@@ -13,8 +13,12 @@ import { thorChainSwap } from './thorChainSwap'
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken } = params
 
-    params.fromAddress = tronAddressToEvm(params.fromAddress)
-    params.toAddress = tronAddressToEvm(params.toAddress)
+    if (isTronChainId(inTokenAmount.token.chainId)) {
+        params.fromAddress = tronAddressToEvm(params.fromAddress)
+    }
+    if (isTronChainId(outToken.chainId)) {
+        params.toAddress = tronAddressToEvm(params.toAddress)
+    }
 
     if (inTokenAmount.token.equals(outToken)) {
         throw new Error('Cannot swap same tokens')
