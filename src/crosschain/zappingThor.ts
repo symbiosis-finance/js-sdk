@@ -234,7 +234,11 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('affiliate_bps', '0')
         // url.searchParams.set('tolerance_bps', '300') // 3% FIXME
 
-        const response = await fetch(url.toString())
+        const response = await fetch(url.toString(), {
+            headers: {
+                'x-client-id': 'symbiosis',
+            },
+        })
 
         const json = await response.json()
 

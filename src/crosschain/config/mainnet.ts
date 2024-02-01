@@ -483,7 +483,7 @@ export const config: Config = {
             stables: [
                 {
                     name: 'USD Coin',
-                    symbol: 'USDC',
+                    symbol: 'USDC.e',
                     address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
                     chainId: 10,
                     decimals: 6,
