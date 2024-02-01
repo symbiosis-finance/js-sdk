@@ -186,7 +186,11 @@ export class ZappingThor extends BaseSwapping {
 
     protected static async getThorPools(token: Token): Promise<ThorPool> {
         const url = new URL('/thorchain/pools', thorApiUrl)
-        const response = await fetch(url.toString())
+        const response = await fetch(url.toString(), {
+            headers: {
+                'x-client-id': 'symbiosis',
+            },
+        })
 
         const json = (await response.json()) as ThorPool[]
 
@@ -204,7 +208,11 @@ export class ZappingThor extends BaseSwapping {
 
     protected static async getThorVault(token: Token): Promise<string> {
         const url = new URL('/thorchain/inbound_addresses', thorApiUrl)
-        const response = await fetch(url.toString())
+        const response = await fetch(url.toString(), {
+            headers: {
+                'x-client-id': 'symbiosis',
+            },
+        })
 
         const json = await response.json()
 
