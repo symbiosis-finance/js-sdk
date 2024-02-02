@@ -72,6 +72,11 @@ import { delay } from '../utils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'teleport'
 
+export type DiscountTier = {
+    amount: string
+    discount: number
+}
+
 const defaultFetch: typeof fetch = (url, init) => {
     return isomorphicFetch(url as string, init)
 }
@@ -84,9 +89,27 @@ export class Symbiosis {
 
     private readonly configCache: ConfigCache
 
+    private signature: string | undefined
+
     public readonly makeOneInchRequest: MakeOneInchRequestFn
 
     public readonly fetch: typeof fetch
+
+    public setSignature(signature: string) {
+        this.signature = signature
+    }
+
+    public async getDiscountTiers(): Promise<DiscountTier[]> {
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount-tiers`)
+
+        if (!response.ok) {
+            const text = await response.text()
+            const json = JSON.parse(text)
+            throw new Error(json.message ?? text)
+        }
+
+        return await response.json()
+    }
 
     public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
@@ -351,6 +374,7 @@ export class Symbiosis {
             receive_side: receiveSide,
             call_data: calldata,
             client_id: utils.parseBytes32String(this.clientId),
+            signature: this.signature,
         }
 
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {
