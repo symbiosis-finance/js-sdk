@@ -505,6 +505,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
         },
     }),
+    new Chain({
+        id: ChainId.MODE_MAINNET,
+        name: 'Mode',
+        disabled: false,
+        explorer: 'https://explorer.mode.network',
+        icons: {
+            small: 'https://assets-global.website-files.com/64c906a6ed3c4d809558853b/64d0b081f0331ac3c64c5e4d_flav.png',
+            large: 'https://assets-global.website-files.com/64c906a6ed3c4d809558853b/64d0b081f0331ac3c64c5e4d_flav.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

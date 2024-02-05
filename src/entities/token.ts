@@ -653,4 +653,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
         },
     }),
+    [ChainId.MODE_MAINNET]: new Token({
+        chainId: ChainId.MODE_MAINNET,
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
 }
