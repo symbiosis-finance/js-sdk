@@ -28,6 +28,8 @@ import {
     Fabric__factory,
     KavaRouter,
     KavaRouter__factory,
+    KimRouter,
+    KimRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -271,6 +273,12 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return KavaRouter__factory.connect(address, signerOrProvider)
+    }
+    public kimRouter(chainId: ChainId, signer?: Signer): KimRouter {
+        const address = this.chainConfig(chainId).router
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return KimRouter__factory.connect(address, signerOrProvider)
     }
 
     public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
