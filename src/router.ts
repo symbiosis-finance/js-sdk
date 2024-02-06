@@ -108,27 +108,39 @@ export abstract class Router {
         switch (trade.tradeType) {
             case TradeType.EXACT_INPUT:
                 if (trade.inputAmount.token.isNative) {
-                    methodName = useFeeOnTransfer
-                        ? 'swapExactETHForTokensSupportingFeeOnTransferTokens'
-                        : 'swapExactETHForTokens'
+                    methodName = 'swapExactETHForTokens'
                     // (uint amountOutMin, address[] call  data path, address to, uint deadline)
                     args = [amountOut, path, to, deadline]
+                    if (useFeeOnTransfer) {
+                        methodName = 'swapExactETHForTokensSupportingFeeOnTransferTokens'
+                        if (trade.outputAmount.token.chainId === ChainId.MODE_MAINNET) {
+                            args = [amountOut, path, to, to, deadline]
+                        }
+                    }
                     value = amountIn
                     offset = 0
                 } else if (trade.outputAmount.token.isNative) {
-                    methodName = useFeeOnTransfer
-                        ? 'swapExactTokensForETHSupportingFeeOnTransferTokens'
-                        : 'swapExactTokensForETH'
+                    methodName = 'swapExactTokensForETH'
                     // (uint amountIn, uint amountOutMin, address[] call data path, address to, uint deadline)
                     args = [amountIn, amountOut, path, to, deadline]
+                    if (useFeeOnTransfer) {
+                        methodName = 'swapExactTokensForETHSupportingFeeOnTransferTokens'
+                        if (trade.outputAmount.token.chainId === ChainId.MODE_MAINNET) {
+                            args = [amountIn, amountOut, path, to, to, deadline]
+                        }
+                    }
                     value = ZERO_HEX
                     offset = 36
                 } else {
-                    methodName = useFeeOnTransfer
-                        ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-                        : 'swapExactTokensForTokens'
+                    methodName = 'swapExactTokensForTokens'
                     // (uint amountIn, uint amountOutMin, address[] call data path, address to, uint deadline)
                     args = [amountIn, amountOut, path, to, deadline]
+                    if (useFeeOnTransfer) {
+                        methodName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+                        if (trade.outputAmount.token.chainId === ChainId.MODE_MAINNET) {
+                            args = [amountIn, amountOut, path, to, to, deadline]
+                        }
+                    }
                     value = ZERO_HEX
                     offset = 36
                 }

@@ -4,7 +4,7 @@ import { ChainId } from '../../constants'
 import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
 import { Router } from '../../router'
 import { BIPS_BASE } from '../constants'
-import { AdaRouter, AvaxRouter, KavaRouter, Pair__factory, UniLikeRouter } from '../contracts'
+import { AdaRouter, AvaxRouter, KavaRouter, KimRouter, Pair__factory, UniLikeRouter } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../utils'
@@ -32,7 +32,7 @@ export class UniLikeTrade implements SymbiosisTrade {
     private readonly to: string
     private readonly deadline: number
     private readonly slippage: number
-    private readonly router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter
+    private readonly router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter
     private readonly dexFee: number
 
     public constructor(
@@ -41,7 +41,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         to: string,
         slippage: number,
         deadline: number,
-        router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter,
+        router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter,
         dexFee: number
     ) {
         this.tokenAmountIn = tokenAmountIn
@@ -104,6 +104,7 @@ export class UniLikeTrade implements SymbiosisTrade {
             allowedSlippage: new Percent(JSBI.BigInt(Math.floor(this.slippage)), BIPS_BASE),
             recipient: this.to,
             ttl: this.deadline,
+            feeOnTransfer: trade.inputAmount.token.chainId === ChainId.MODE_MAINNET, // kim.exchange has extra param `referrer`
         })
 
         let method = methodName

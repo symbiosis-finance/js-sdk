@@ -7,7 +7,7 @@ import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { IzumiTrade } from './izumiTrade'
-import { AdaRouter, AvaxRouter, KavaRouter, UniLikeRouter } from '../contracts'
+import { AdaRouter, AvaxRouter, KavaRouter, KimRouter, UniLikeRouter } from '../contracts'
 import { UniLikeTrade } from './uniLikeTrade'
 
 interface AggregatorTradeParams {
@@ -153,7 +153,7 @@ export class AggregatorTrade implements SymbiosisTrade {
     private async buildUniLikeTrade(): Promise<UniLikeTrade> {
         const { symbiosis, tokenAmountIn, tokenOut, to, slippage, ttl } = this.params
         const { chainId } = tokenAmountIn.token
-        let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter = symbiosis.uniLikeRouter(chainId)
+        let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter = symbiosis.uniLikeRouter(chainId)
 
         if (chainId === ChainId.AVAX_MAINNET) {
             routerA = symbiosis.avaxRouter(chainId)
@@ -163,6 +163,9 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
         if ([ChainId.KAVA_MAINNET].includes(chainId)) {
             routerA = symbiosis.kavaRouter(chainId)
+        }
+        if ([ChainId.MODE_MAINNET].includes(chainId)) {
+            routerA = symbiosis.kimRouter(chainId)
         }
 
         const dexFee = symbiosis.dexFee(chainId)
