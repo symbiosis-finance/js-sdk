@@ -29,6 +29,7 @@ export interface SwapExactInParams {
 }
 
 export interface CrossChainSwapInfo {
+    save: TokenAmount
     fee: TokenAmount
     extraFee?: TokenAmount
     tokenAmountOut: TokenAmount
@@ -141,11 +142,12 @@ export abstract class BaseSwapping {
 
         this.route = this.getRoute()
 
-        const [fee, feeV2] = await Promise.all([
+        const [{ fee, save }, feeV2Raw] = await Promise.all([
             this.getFee(this.transit.feeToken),
             this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
 
+        const feeV2 = feeV2Raw?.fee
         this.feeV2 = feeV2
 
         // >>> NOTE create trades with calculated fee
@@ -170,6 +172,17 @@ export abstract class BaseSwapping {
             crossChainFee = new TokenAmount(feeV2.token, feeBase.add(feeV2Base).div(pow).toString())
         }
 
+        let crossChainSave = save
+        if (feeV2Raw?.save) {
+            const pow = BigNumber.from(10).pow(save.token.decimals)
+            const powV2 = BigNumber.from(10).pow(feeV2Raw.save.token.decimals)
+
+            const feeBase = BigNumber.from(save.raw.toString()).mul(powV2)
+            const feeV2Base = BigNumber.from(feeV2Raw.save.raw.toString()).mul(pow)
+
+            crossChainSave = new TokenAmount(feeV2Raw.save.token, feeBase.add(feeV2Base).div(pow).toString())
+        }
+
         const tokenAmountOut = this.tokenAmountOut(feeV2)
         const tokenAmountOutMin = new TokenAmount(
             tokenAmountOut.token,
@@ -177,6 +190,7 @@ export abstract class BaseSwapping {
         )
 
         const swapInfo: CrossChainSwapInfo = {
+            save: crossChainSave,
             fee: crossChainFee,
             tokenAmountOut,
             tokenAmountOutMin,
@@ -675,32 +689,38 @@ export abstract class BaseSwapping {
         return [portalAddress, calldata]
     }
 
-    protected async getFee(feeToken: Token): Promise<TokenAmount> {
+    protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         const chainIdFrom = this.tokenAmountIn.token.chainId
         const chainIdTo = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata] =
             this.transit.direction === 'burn' ? this.feeBurnCallData() : this.feeMintCallData() // mint or v2
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee, save } = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom,
             chainIdTo,
         })
 
-        return new TokenAmount(feeToken, fee.toString())
+        return {
+            fee: new TokenAmount(feeToken, fee),
+            save: new TokenAmount(feeToken, save),
+        }
     }
 
-    protected async getFeeV2(): Promise<TokenAmount> {
+    protected async getFeeV2(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         const feeToken = this.transitTokenOut
         const [receiveSide, calldata] = this.feeBurnCallDataV2()
 
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee, save } = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom: this.omniPoolConfig.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
-        return new TokenAmount(feeToken, fee.toString())
+        return {
+            fee: new TokenAmount(feeToken, fee),
+            save: new TokenAmount(feeToken, save),
+        }
     }
 
     protected approvedTokens(): string[] {

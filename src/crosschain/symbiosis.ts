@@ -397,7 +397,7 @@ export class Symbiosis {
         receiveSide: string
         chainIdFrom: ChainId
         chainIdTo: ChainId
-    }): Promise<JSBI> {
+    }): Promise<{ price: JSBI; save: JSBI }> {
         const params = {
             chain_id_from: chainIdFrom,
             chain_id_to: chainIdTo,
@@ -421,9 +421,12 @@ export class Symbiosis {
             throw new Error(json.message ?? text)
         }
 
-        const { price } = await response.json()
+        const { price, save } = await response.json()
 
-        return JSBI.BigInt(price)
+        return {
+            price: JSBI.BigInt(price),
+            save: JSBI.BigInt(save),
+        }
     }
 
     public filterBlockOffset(chainId: ChainId): number {

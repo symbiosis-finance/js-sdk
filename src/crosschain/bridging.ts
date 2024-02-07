@@ -283,14 +283,14 @@ export class Bridging {
             this.to, // _chain2address
         ])
 
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee } = await this.symbiosis.getBridgeFee({
             receiveSide: synthesisAddress,
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: this.tokenOut.chainId,
         })
 
-        return new TokenAmount(this.tokenOut, fee.toString())
+        return new TokenAmount(this.tokenOut, fee)
     }
 
     private async getBurnFee(): Promise<TokenAmount> {
@@ -327,14 +327,14 @@ export class Bridging {
             this.to, // _chain2address
         ])
 
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee } = await this.symbiosis.getBridgeFee({
             receiveSide: portalAddress,
             calldata,
             chainIdFrom: chainIdIn,
             chainIdTo: chainIdOut,
         })
 
-        return new TokenAmount(this.tokenOut, fee.toString())
+        return new TokenAmount(this.tokenOut, fee)
     }
 
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {

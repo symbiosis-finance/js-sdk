@@ -164,13 +164,13 @@ export class RevertPending {
         const feeToken = this.transitTokenFrom
         const [receiveSide, calldata] = await this.feeBurnCallDataV2()
 
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee } = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom: this.omniPoolConfig.chainId,
             chainIdTo: this.request.chainIdFrom,
         })
-        return new TokenAmount(feeToken, fee.toString())
+        return new TokenAmount(feeToken, fee)
     }
 
     protected async feeBurnCallDataV2(): Promise<[string, string]> {
@@ -311,7 +311,7 @@ export class RevertPending {
             receiveSide = synthesis.address
         }
 
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee } = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom: advisorChainIdFrom,

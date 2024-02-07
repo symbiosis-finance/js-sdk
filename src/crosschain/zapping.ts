@@ -394,13 +394,13 @@ export class Zapping {
             },
         ])
 
-        const fee = await this.symbiosis.getBridgeFee({
+        const { price: fee } = await this.symbiosis.getBridgeFee({
             receiveSide: synthesis.address,
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: chainIdOut,
         })
 
-        return new TokenAmount(this.synthToken, fee.toString())
+        return new TokenAmount(this.synthToken, fee)
     }
 }
