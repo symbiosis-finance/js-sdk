@@ -113,6 +113,28 @@ export class Symbiosis {
         return await response.json()
     }
 
+    public async getDiscount(signature: string): Promise<number> {
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                signature,
+            }),
+        })
+
+        if (!response.ok) {
+            const text = await response.text()
+            const json = JSON.parse(text)
+            throw new Error(json.message ?? text)
+        }
+
+        const json = await response.json()
+
+        return json['percent'] as number
+    }
+
     public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         if (config === 'mainnet') {
             this.config = mainnet
