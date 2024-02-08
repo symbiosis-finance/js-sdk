@@ -97,12 +97,24 @@ export class Symbiosis {
 
     public readonly fetch: typeof fetch
 
-    public setSignature(signature: string) {
+    public setSignature(signature: string | undefined) {
         this.signature = signature
     }
 
     public async getDiscountTiers(): Promise<DiscountTier[]> {
-        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount-tiers`)
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount/tiers`)
+
+        if (!response.ok) {
+            const text = await response.text()
+            const json = JSON.parse(text)
+            throw new Error(json.message ?? text)
+        }
+
+        return await response.json()
+    }
+
+    public async getDiscountChains(): Promise<ChainId[]> {
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount/chains`)
 
         if (!response.ok) {
             const text = await response.text()
