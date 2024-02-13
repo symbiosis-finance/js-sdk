@@ -515,6 +515,16 @@ export const chains: Chain[] = [
             large: 'https://assets-global.website-files.com/64c906a6ed3c4d809558853b/64d0b081f0331ac3c64c5e4d_flav.png',
         },
     }),
+    new Chain({
+        id: ChainId.RSK_MAINNET,
+        name: 'RSK',
+        disabled: false,
+        explorer: 'https://rootstock.blockscout.com',
+        icons: {
+            small: 'https://rootstock.blockscout.com/favicon/favicon-32x32.png',
+            large: 'https://rootstock.blockscout.com/favicon/favicon-32x32.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

@@ -53,6 +53,7 @@ export const CHAINS_PRIORITY = [
     ChainId.OKX_X1_TESTNET,
     ChainId.BAHAMUT_MAINNET,
     ChainId.MODE_MAINNET,
+    ChainId.RSK_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -130,6 +131,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.OKX_X1_TESTNET]: [WETH[ChainId.OKX_X1_TESTNET]],
     [ChainId.BAHAMUT_MAINNET]: [WETH[ChainId.BAHAMUT_MAINNET]],
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET]],
+    [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -472,6 +474,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.OKX_X1_TESTNET]: [],
     [ChainId.BAHAMUT_MAINNET]: [],
     [ChainId.MODE_MAINNET]: [],
+    [ChainId.RSK_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -514,6 +517,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.POLYGON_ZK]],
     [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TRON_TESTNET]],
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MODE_MAINNET]],
+    [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.RSK_MAINNET]],
 }
 
 /**
@@ -579,4 +583,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.OKX_X1_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.BAHAMUT_MAINNET]: '0xa385B1436fD2A6a1c6865E22c522A1aA40CaDCC6',
     [ChainId.MODE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.RSK_MAINNET]: '0xca11bde05977b3631167028862be2a173976ca11',
 }

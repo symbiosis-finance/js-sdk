@@ -665,4 +665,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.RSK_MAINNET]: new Token({
+        chainId: ChainId.RSK_MAINNET,
+        address: '0x542fda317318ebf1d3deaf76e0b632741a7e677d',
+        decimals: 18,
+        symbol: 'WRBTC',
+        isNative: false,
+        name: 'Wrapped BTC',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3626.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3626.png',
+        },
+    }),
 }
