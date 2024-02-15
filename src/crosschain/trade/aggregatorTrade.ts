@@ -9,6 +9,7 @@ import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { IzumiTrade } from './izumiTrade'
 import { AdaRouter, AvaxRouter, KavaRouter, KimRouter, UniLikeRouter } from '../contracts'
 import { UniLikeTrade } from './uniLikeTrade'
+import { UniV3Trade } from './uniV3Trade'
 
 interface AggregatorTradeParams {
     symbiosis: Symbiosis
@@ -31,7 +32,7 @@ class TradeNotInitializedError extends Error {
 
 const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('openocean')
 
-type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniLikeTrade
+type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniLikeTrade | UniV3Trade
 
 // Get the best trade from all aggregators
 export class AggregatorTrade implements SymbiosisTrade {
@@ -39,7 +40,10 @@ export class AggregatorTrade implements SymbiosisTrade {
 
     static isAvailable(chainId: ChainId): boolean {
         return (
-            OneInchTrade.isAvailable(chainId) || OpenOceanTrade.isAvailable(chainId) || IzumiTrade.isSupported(chainId)
+            OneInchTrade.isAvailable(chainId) ||
+            OpenOceanTrade.isAvailable(chainId) ||
+            IzumiTrade.isSupported(chainId) ||
+            UniV3Trade.isSupported(chainId)
         )
     }
 
@@ -100,6 +104,18 @@ export class AggregatorTrade implements SymbiosisTrade {
             aggregators.push(izumiTrade.init())
         }
 
+        if (UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
+            const uniV3Trade = new UniV3Trade({
+                symbiosis,
+                tokenAmountIn,
+                tokenOut,
+                slippage,
+                ttl,
+                to,
+            })
+            aggregators.push(uniV3Trade.init())
+        }
+
         if (aggregators.length === 0) {
             // If no trade found, fallback to Uniswap like trade
             this.trade = await this.buildUniLikeTrade()
@@ -143,7 +159,7 @@ export class AggregatorTrade implements SymbiosisTrade {
     }
 
     private assertTradeInitialized(): asserts this is {
-        trade: OneInchTrade | OpenOceanTrade | UniLikeTrade | IzumiTrade
+        trade: TradeType
     } {
         if (!this.trade) {
             throw new TradeNotInitializedError()

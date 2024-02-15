@@ -31,7 +31,7 @@ const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
     [ChainId.METIS_MAINNET]: '0x81aB74A9f9d7457fF47dfD102e78A340cF72EC39',
     [ChainId.BAHAMUT_MAINNET]: '0x70A16EB2B39A5573A8138b18582111bBA480fb8F',
     [ChainId.MODE_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
-    [ChainId.RSK_MAINNET]: '0x2b7aa8bdc40b6d3d19d0de7480c4db8d5b6495e2',
+    // [ChainId.RSK_MAINNET]: '0x2b7aa8bdc40b6d3d19d0de7480c4db8d5b6495e2',
 }
 
 export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {

@@ -22,12 +22,16 @@ export async function getPool(factory: UniV3Factory, tokenA: Token, tokenB: Toke
         poolContract.slot0(),
     ])
 
+    // FIXME
+    const t0 = new Token(tokenA.chainId, token0, tokenA.decimals)
+    const t1 = new Token(tokenB.chainId, token1, tokenB.decimals)
+
     return new Pool(
-        token0,
-        token1,
+        t0,
+        t1,
         fee,
-        slot0[0], // sqrtPriceX96
-        liquidity,
+        slot0[0].toString(), // sqrtPriceX96
+        liquidity.toString(),
         slot0[1] // tick
     )
 }
