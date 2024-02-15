@@ -26,8 +26,8 @@
         "test": "vitest test/crosschain"
     },
     "dependencies": {
-        "@uniswap/sdk-core": "^4.1.2",
-        "@uniswap/v3-sdk": "^3.10.2",
+        "@uniswap/sdk-core": "3.1.0",
+        "@uniswap/v3-sdk": "3.9.0",
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
         "decimal.js-light": "^2.5.0",
