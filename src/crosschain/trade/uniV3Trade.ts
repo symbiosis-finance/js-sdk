@@ -1,10 +1,9 @@
 import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount, wrappedAmount, wrappedToken } from '../../entities'
+import { Percent, Token, TokenAmount } from '../../entities'
 import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router__factory } from '../contracts'
 import { Symbiosis } from '../symbiosis'
 import type { SymbiosisTrade } from './symbiosisTrade'
 import {
-    // ADDRESS_ZERO,
     encodeRouteToPath,
     FeeAmount,
     MethodParameters,
@@ -20,7 +19,7 @@ import { getPool } from './uniV3Trade/pool'
 import { Currency, CurrencyAmount, Percent as PercentUni, TradeType, validateAndParseAddress } from '@uniswap/sdk-core'
 import { getOutputQuote } from './uniV3Trade/getOutputQuote'
 import JSBI from 'jsbi'
-import { toUniCurrency, toUniToken } from './uniV3Trade/toUniTypes'
+import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
 import invariant from 'tiny-invariant'
 import { IV3SwapRouter } from '../contracts/UniV3Router'
 
@@ -40,12 +39,7 @@ interface UniV3TradeParams {
     to: string
 }
 
-// const POSSIBLE_FEES = [
-//     FeeAmount.LOWEST,
-//     FeeAmount.LOW,
-//     FeeAmount.MEDIUM,
-//     FeeAmount.HIGH
-// ]
+const POSSIBLE_FEES = [FeeAmount.LOWEST, FeeAmount.LOW, FeeAmount.MEDIUM, FeeAmount.HIGH]
 
 const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
     [ChainId.RSK_MAINNET]: {
@@ -108,44 +102,58 @@ export class UniV3Trade implements SymbiosisTrade {
 
         const { quoter, swap, factory } = addresses
 
-        const tokenIn = toUniToken(wrappedToken(this.tokenAmountIn.token))
-        const tokenOut = toUniToken(wrappedToken(this.tokenOut))
-
-        const factoryContract = UniV3Factory__factory.connect(factory, provider)
-        const pool = await getPool(factoryContract, tokenIn, tokenOut, FeeAmount.LOW)
-
-        const swapRoute = new Route([pool], tokenIn, tokenOut)
-
-        const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
-
-        const amountOut = await getOutputQuote(quoterContract, wrappedAmount(this.tokenAmountIn), swapRoute)
-        this.amountOut = new TokenAmount(this.tokenOut, amountOut.toString())
-        this.amountOutMin = new TokenAmount(this.tokenOut, amountOut.toString())
-
         const currencyIn = toUniCurrency(this.tokenAmountIn.token)
         const currencyOut = toUniCurrency(this.tokenOut)
+
+        const factoryContract = UniV3Factory__factory.connect(factory, provider)
+        const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
+
+        let bestSwapRoute: Route<Currency, Currency> | undefined = undefined
+        let bestAmountOut: JSBI | undefined = undefined
+        for (let i = 0; i < POSSIBLE_FEES.length; i++) {
+            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, POSSIBLE_FEES[i])
+            if (!pool) {
+                continue
+            }
+            const swapRoute = new Route([pool], currencyIn, currencyOut)
+            const result = await getOutputQuote(quoterContract, toUniCurrencyAmount(this.tokenAmountIn), swapRoute)
+
+            const amountOut = JSBI.BigInt(result.toString())
+            if (!bestAmountOut || JSBI.greaterThan(amountOut, bestAmountOut)) {
+                bestAmountOut = amountOut
+                bestSwapRoute = swapRoute
+            }
+        }
+        if (!bestAmountOut || !bestSwapRoute) {
+            throw new Error('Route not found')
+        }
+
+        this.amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
+        this.amountOutMin = new TokenAmount(this.tokenOut, bestAmountOut.toString())
+
         const trade = Trade.createUncheckedTrade({
-            route: swapRoute,
+            route: bestSwapRoute,
             inputAmount: CurrencyAmount.fromRawAmount(currencyIn, this.tokenAmountIn.raw.toString()),
-            outputAmount: CurrencyAmount.fromRawAmount(currencyOut, JSBI.BigInt(amountOut)),
+            outputAmount: CurrencyAmount.fromRawAmount(currencyOut, bestAmountOut),
             tradeType: TradeType.EXACT_INPUT,
         })
 
         const options: SwapOptions = {
             slippageTolerance: new PercentUni(this.slippage.toString(), '10000'),
-            deadline: Math.floor(Date.now() / 1000) + this.ttl, // 20 minutes from the current Unix time
+            deadline: Math.floor(Date.now() / 1000) + this.ttl,
             recipient: this.to,
         }
         const methodParameters = UniV3Trade.swapCallParameters([trade], options, swap)
 
-        // FIXME
-        // this.priceImpact = new Percent(trade.priceImpact.numerator, trade.priceImpact.denominator)
+        this.priceImpact = new Percent(
+            JSBI.multiply(trade.priceImpact.numerator, JSBI.BigInt('-1')),
+            trade.priceImpact.denominator
+        )
         this.callDataOffset = UniV3Trade.getOffset(methodParameters.calldata)
         this.routerAddress = swap
         this.callData = methodParameters.calldata
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        console.log('this.callDataOffset', this.callDataOffset)
         return this
     }
 

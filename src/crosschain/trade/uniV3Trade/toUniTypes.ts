@@ -1,6 +1,6 @@
 import { Token as TokenUni, CurrencyAmount, Currency } from '@uniswap/sdk-core'
 import { Token, TokenAmount } from '../../../entities'
-import { RBTC } from './wrbtc'
+import { GasToken } from './gasToken'
 
 export function toUniToken(token: Token): TokenUni {
     return new TokenUni(token.chainId, token.address, token.decimals)
@@ -8,12 +8,12 @@ export function toUniToken(token: Token): TokenUni {
 
 export function toUniCurrency(token: Token): Currency {
     if (token.isNative) {
-        return RBTC.onChain(token.chainId)
+        return GasToken.onChain(token.chainId)
     }
     return toUniToken(token)
 }
 
-export function toUniTokenAmount(tokenAmount: TokenAmount): CurrencyAmount<Currency> {
-    const token = toUniToken(tokenAmount.token)
-    return CurrencyAmount.fromRawAmount(token, tokenAmount.raw.toString())
+export function toUniCurrencyAmount(tokenAmount: TokenAmount): CurrencyAmount<Currency> {
+    const currency = toUniCurrency(tokenAmount.token)
+    return CurrencyAmount.fromRawAmount(currency, tokenAmount.raw.toString())
 }

@@ -4,7 +4,7 @@ import { WETH } from '../../../entities'
 import invariant from 'tiny-invariant'
 import { toUniToken } from './toUniTypes'
 
-export class RBTC extends NativeCurrency {
+export class GasToken extends NativeCurrency {
     protected constructor(chainId: number) {
         super(chainId, 18, 'RBTC', 'RBTC')
     }
@@ -15,10 +15,10 @@ export class RBTC extends NativeCurrency {
         return toUniToken(weth9)
     }
 
-    private static _etherCache: { [chainId: number]: Ether } = {}
+    private static _cache: { [chainId: number]: Ether } = {}
 
-    public static onChain(chainId: number): RBTC {
-        return this._etherCache[chainId] ?? (this._etherCache[chainId] = new RBTC(chainId))
+    public static onChain(chainId: number): GasToken {
+        return this._cache[chainId] ?? (this._cache[chainId] = new GasToken(chainId))
     }
 
     public equals(other: Currency): boolean {

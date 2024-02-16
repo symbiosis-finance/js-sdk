@@ -1,19 +1,16 @@
-import { Currency, TradeType } from '@uniswap/sdk-core'
+import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
 import { Route, SwapQuoter } from '@uniswap/v3-sdk'
 import { UniV3Quoter } from '../../contracts'
 import { ethers } from 'ethers'
-import { TokenAmount } from '../../../entities'
-import { toUniTokenAmount } from './toUniTypes'
 
-export async function getOutputQuote(quoter: UniV3Quoter, tokenAmount: TokenAmount, route: Route<Currency, Currency>) {
-    const { calldata } = await SwapQuoter.quoteCallParameters(
-        route,
-        toUniTokenAmount(tokenAmount),
-        TradeType.EXACT_INPUT,
-        {
-            useQuoterV2: true,
-        }
-    )
+export async function getOutputQuote(
+    quoter: UniV3Quoter,
+    currencyAmount: CurrencyAmount<Currency>,
+    route: Route<Currency, Currency>
+) {
+    const { calldata } = await SwapQuoter.quoteCallParameters(route, currencyAmount, TradeType.EXACT_INPUT, {
+        useQuoterV2: true,
+    })
 
     const quoteCallReturnData = await quoter.provider.call({
         to: quoter.address,
