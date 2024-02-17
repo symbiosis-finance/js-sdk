@@ -1,8 +1,8 @@
-import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-import { Unwrapper__factory, Weth__factory } from '../contracts'
-import { getFunctionSelector } from '../tron'
-import type { SymbiosisTrade } from './symbiosisTrade'
+import {ChainId} from '../../constants'
+import {Percent, Token, TokenAmount, wrappedToken} from '../../entities'
+import {Unwrapper__factory, Weth__factory} from '../contracts'
+import {getFunctionSelector} from '../tron'
+import type {SymbiosisTrade} from './symbiosisTrade'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
@@ -21,6 +21,10 @@ const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.SCROLL_TESTNET]: '0x2135c0ab678F25E9cbB4BbBd55B68DE1E36D1E81',
     [ChainId.SCROLL_SEPOLIA]: '0x41151CEfFB743650E14425c7749019E491Fd1987',
     [ChainId.ETH_GOERLI]: '0xc9Fd2AF244FEfb31A62A5A33B9D6261Cec2cb7aA',
+
+    [ChainId.SYMBIOSIS_ALPHA]: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38',
+    [ChainId.SYMBIOSIS_BETA]: '0x6db1D2C691DcdF4DA36d3497F68a63C7282a4a44',
+    [ChainId.SYMBIOSIS_GAMMA]: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38'
 }
 
 export class WrapTrade implements SymbiosisTrade {
@@ -36,7 +40,8 @@ export class WrapTrade implements SymbiosisTrade {
     public callDataOffset?: number
     public functionSelector!: string
 
-    public constructor(public tokenAmountIn: TokenAmount, private tokenOut: Token, private to: string) {}
+    public constructor(public tokenAmountIn: TokenAmount, private tokenOut: Token, private to: string) {
+    }
 
     public static isSupported(tokenAmountIn: TokenAmount, tokenOut: Token): boolean {
         const wrappedInToken = wrappedToken(tokenAmountIn.token)

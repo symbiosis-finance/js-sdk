@@ -525,6 +525,36 @@ export const chains: Chain[] = [
             large: 'https://rootstock.blockscout.com/favicon/favicon-32x32.png',
         },
     }),
+    new Chain({
+        id: ChainId.SYMBIOSIS_ALPHA,
+        name: 'Symbiosis Alpha',
+        disabled: false,
+        explorer: 'http://136.243.152.247:4000',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SYMBIOSIS_BETA,
+        name: 'Symbiosis Beta',
+        disabled: false,
+        explorer: 'http://136.243.152.247:4001',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SYMBIOSIS_GAMMA,
+        name: 'Symbiosis Gamma',
+        disabled: false,
+        explorer: 'http://136.243.152.247:4002',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
