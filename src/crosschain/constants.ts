@@ -54,6 +54,9 @@ export const CHAINS_PRIORITY = [
     ChainId.BAHAMUT_MAINNET,
     ChainId.MODE_MAINNET,
     ChainId.RSK_MAINNET,
+    ChainId.SYMBIOSIS_ALPHA,
+    ChainId.SYMBIOSIS_BETA,
+    ChainId.SYMBIOSIS_GAMMA,
 ]
 
 // a list of tokens by chain
