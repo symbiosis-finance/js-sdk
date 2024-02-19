@@ -1,5 +1,5 @@
-import {ChainId} from '../../constants'
-import {Config} from '../types'
+import { ChainId } from '../../constants'
+import { Config } from '../types'
 
 export const config: Config = {
     advisor: {
@@ -10,7 +10,7 @@ export const config: Config = {
             chainId: ChainId.SYMBIOSIS_BETA,
             address: '0xe19f85478Ee6C4D67d14386F646Dd1E9C4461A9b',
             oracle: '0x042cF6a0690C9B8607c5B19Cb18807F1D66c9339',
-        }
+        },
     ],
     revertableAddress: {
         default: '0xd1d950F53e78BB9f434c07F16218f8149f7CE542',
@@ -18,20 +18,22 @@ export const config: Config = {
     chains: [
         {
             id: ChainId.SYMBIOSIS_ALPHA,
-            rpc:"http://136.243.152.247:8980",
+            rpc: 'http://136.243.152.247:8980',
             filterBlockOffset: 2000,
             waitForBlocksCount: 5,
-            stables: [{
-                name: 'Wrapped Ether',
-                symbol: 'WETH',
-                address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
-                chainId: ChainId.SYMBIOSIS_ALPHA,
-                decimals: 18,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+            stables: [
+                {
+                    name: 'Wrapped Ether',
+                    symbol: 'WETH',
+                    address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
+                    chainId: ChainId.SYMBIOSIS_ALPHA,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
                 },
-            }],
+            ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 30,
             metaRouter: '0xE52e3c838CC91C60a701E78B5043ba9eeEeb55db',
@@ -50,20 +52,22 @@ export const config: Config = {
         },
         {
             id: ChainId.SYMBIOSIS_BETA,
-            rpc: "http://136.243.152.247:8982",
+            rpc: 'http://136.243.152.247:8982',
             filterBlockOffset: 2000,
             waitForBlocksCount: 5,
-            stables: [{
-                name: 'Wrapped Ether',
-                symbol: 'WETH',
-                address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
-                chainId: ChainId.SYMBIOSIS_BETA,
-                decimals: 18,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+            stables: [
+                {
+                    name: 'Wrapped Ether',
+                    symbol: 'WETH',
+                    address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
+                    chainId: ChainId.SYMBIOSIS_BETA,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
                 },
-            }],
+            ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 30,
             metaRouter: '0xE52e3c838CC91C60a701E78B5043ba9eeEeb55db',
@@ -82,20 +86,22 @@ export const config: Config = {
         },
         {
             id: ChainId.SYMBIOSIS_GAMMA,
-            rpc: "http://136.243.152.247:8984",
+            rpc: 'http://136.243.152.247:8984',
             filterBlockOffset: 2000,
             waitForBlocksCount: 5,
-            stables: [{
-                name: 'Wrapped Ether',
-                symbol: 'WETH',
-                address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
-                chainId: ChainId.SYMBIOSIS_GAMMA,
-                decimals: 18,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+            stables: [
+                {
+                    name: 'Wrapped Ether',
+                    symbol: 'WETH',
+                    address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
+                    chainId: ChainId.SYMBIOSIS_GAMMA,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
                 },
-            }],
+            ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 30,
             metaRouter: '0xE52e3c838CC91C60a701E78B5043ba9eeEeb55db',
@@ -111,6 +117,6 @@ export const config: Config = {
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             blocksPerYear: 0,
-        }
+        },
     ],
 }

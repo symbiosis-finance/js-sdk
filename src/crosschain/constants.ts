@@ -477,7 +477,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.OKX_X1_TESTNET]: [],
     [ChainId.BAHAMUT_MAINNET]: [],
     [ChainId.MODE_MAINNET]: [],
-    [ChainId.RSK_MAINNET]: []
+    [ChainId.RSK_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -520,7 +520,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.POLYGON_ZK]],
     [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TRON_TESTNET]],
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MODE_MAINNET]],
-    [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.RSK_MAINNET]]
+    [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.RSK_MAINNET]],
 }
 
 /**

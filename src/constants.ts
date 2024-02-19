@@ -84,7 +84,7 @@ export enum ChainId {
     RSK_MAINNET = 30,
     SYMBIOSIS_ALPHA = 100000000,
     SYMBIOSIS_BETA = 200000000,
-    SYMBIOSIS_GAMMA = 300000000
+    SYMBIOSIS_GAMMA = 300000000,
 }
 
 export enum TradeType {
