@@ -974,6 +974,7 @@ export const config: Config = {
         {
             id: ChainId.RSK_MAINNET,
             rpc: 'https://public-node.rsk.co',
+            // logsRpc: 'https://rootstock.blockscout.com/api/eth-rpc',
             filterBlockOffset: 2000,
             waitForBlocksCount: 2,
             stables: [

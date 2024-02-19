@@ -11,6 +11,7 @@ export type BridgeDirection = 'burn' | 'mint' | 'v2'
 export type ChainConfig = {
     id: ChainId
     rpc: string
+    logsRpc?: string
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]

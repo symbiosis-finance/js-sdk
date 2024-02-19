@@ -245,7 +245,14 @@ export class Symbiosis {
         return new ZappingBeefy(this, omniPoolConfig)
     }
 
-    public getProvider(chainId: ChainId): StaticJsonRpcProvider {
+    public getProvider(chainId: ChainId, useLogsRpc = false): StaticJsonRpcProvider {
+        if (useLogsRpc) {
+            const config = this.config.chains.find((i) => i.id === chainId)
+            if (config && config.logsRpc) {
+                return new StaticJsonRpcProvider(config.logsRpc, chainId)
+            }
+        }
+
         const provider = this.providers.get(chainId)
         if (!provider) {
             throw new Error('No provider for given chainId')

@@ -86,7 +86,7 @@ export class OneInchTrade implements SymbiosisTrade {
         searchParams.set('dst', toTokenAddress)
         searchParams.set('amount', this.tokenAmountIn.raw.toString())
         searchParams.set('from', this.from)
-        searchParams.set('slippage', (this.slippage / 100).toString())
+        searchParams.set('slippage', (this.slippage / 100).toFixed(4))
         searchParams.set('receiver', this.to)
         searchParams.set('disableEstimate', 'true')
         searchParams.set('allowPartialFill', 'false')

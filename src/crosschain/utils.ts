@@ -151,7 +151,7 @@ export async function getLogWithTimeout({
     filter,
     exceedDelay: exceedTimeout = DEFAULT_EXCEED_DELAY,
 }: GetLogsWithTimeoutParams): Promise<Log> {
-    const provider = symbiosis.getProvider(chainId)
+    const provider = symbiosis.getProvider(chainId, true)
 
     let activeFilter = filter
     if (!activeFilter.fromBlock) {
