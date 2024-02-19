@@ -92,17 +92,17 @@ export const WETH = {
     [ChainId.SYMBIOSIS_ALPHA]: new Token({
         chainId: ChainId.SYMBIOSIS_ALPHA,
         address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
-        decimals: 16,
+        decimals: 18,
     }),
     [ChainId.SYMBIOSIS_BETA]: new Token({
         chainId: ChainId.SYMBIOSIS_BETA,
         address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
-        decimals: 16,
+        decimals: 18,
     }),
     [ChainId.SYMBIOSIS_GAMMA]: new Token({
         chainId: ChainId.SYMBIOSIS_GAMMA,
         address: '0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB',
-        decimals: 16,
+        decimals: 18,
     }),
     [ChainId.BTC_MAINNET]: new Token({
         chainId: ChainId.BTC_MAINNET,
