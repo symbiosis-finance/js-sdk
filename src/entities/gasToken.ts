@@ -27,6 +27,9 @@ export const GAS_TOKEN_METIS_MAINNET = new Token({
     name: 'Metis',
 })
 export const GAS_TOKEN: Record<ChainId, Token> = {
+    [ChainId.SYMBIOSIS_ALPHA]: GAS(ChainId.SYMBIOSIS_ALPHA, 'ETH', 1027),
+    [ChainId.SYMBIOSIS_BETA]: GAS(ChainId.SYMBIOSIS_BETA, 'ETH', 1027),
+    [ChainId.SYMBIOSIS_GAMMA]: GAS(ChainId.SYMBIOSIS_GAMMA, 'ETH', 1027),
     [ChainId.ETH_MAINNET]: GAS(ChainId.ETH_MAINNET, 'ETH', 1027),
     [ChainId.ETH_RINKEBY]: GAS(ChainId.ETH_RINKEBY, 'ETH', 1027),
     [ChainId.ETH_GOERLI]: GAS(ChainId.ETH_GOERLI, 'ETH', 1027),
@@ -76,5 +79,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.OKX_X1_TESTNET]: GAS(ChainId.OKX_X1_TESTNET, 'OKB', 3897),
     [ChainId.BAHAMUT_MAINNET]: GAS(ChainId.BAHAMUT_MAINNET, 'FTN', 22615),
     [ChainId.MODE_MAINNET]: GAS(ChainId.MODE_MAINNET, 'ETH', 1027),
-    [ChainId.RSK_MAINNET]: GAS(ChainId.RSK_MAINNET, 'RBTC', 3626),
+    [ChainId.RSK_MAINNET]: GAS(ChainId.RSK_MAINNET, 'RBTC', 3626)
 }

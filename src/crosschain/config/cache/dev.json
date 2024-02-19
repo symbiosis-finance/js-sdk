@@ -1,13 +1,13 @@
 {
     "omniPools": [
         {
-            "chainId": 97,
-            "address": "0x789001A80a8EdBBEE07876b0dF58c3eAdEE89877",
-            "oracle": "0x2cD94CB0F4cBC4a51c3e9c4b88d03B982bE24608",
+            "chainId": 200000000,
+            "address": "0xe19f85478Ee6C4D67d14386F646Dd1E9C4461A9b",
+            "oracle": "0x042cF6a0690C9B8607c5B19Cb18807F1D66c9339",
             "id": 0,
             "tokens": [
-                { "index": 2, "tokenId": 3 },
-                { "index": 3, "tokenId": 2 }
+                { "index": 0, "tokenId": 3 },
+                { "index": 2, "tokenId": 4 }
             ]
         }
     ],
@@ -15,68 +15,83 @@
         {
             "decimals": 18,
             "symbol": "WETH",
-            "name": "Wrapped ETH",
-            "chainId": 5,
+            "name": "Wrapped Ether",
+            "chainId": 100000000,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
-            "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "id": 0
         },
         {
             "decimals": 18,
             "symbol": "WETH",
-            "name": "Wrapped ETH",
-            "chainId": 534353,
+            "name": "Wrapped Ether",
+            "chainId": 200000000,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
-            "address": "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
             "id": 1
         },
         {
             "decimals": 18,
-            "symbol": "sWETH",
-            "name": "Wrapped Ether from Goerli",
-            "chainId": 97,
+            "symbol": "WETH",
+            "name": "Wrapped Ether",
+            "chainId": 300000000,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "chainFromId": 5,
             "deprecated": false,
-            "address": "0xb1c5691B3Cb5e1B673Ef9Aa2599740a1cC76F928",
-            "id": 2,
+            "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
+            "id": 2
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ether from Symbiosis Alpha",
+            "chainId": 200000000,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 100000000,
+            "deprecated": false,
+            "address": "0x7Fb542acdf25aCf06b8263cadc2F61523a5975b7",
+            "id": 3,
             "originalId": 0
         },
         {
             "decimals": 18,
-            "symbol": "sWETH",
-            "name": "Wrapped Ether from Scroll Testnet",
-            "chainId": 97,
+            "symbol": "WETH",
+            "name": "Wrapped Ether from Symbiosis Gamma",
+            "chainId": 200000000,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "chainFromId": 534353,
+            "chainFromId": 300000000,
             "deprecated": false,
-            "address": "0x3624b5e063405e7724cBbC24f504eA3da3e08b81",
-            "id": 3,
-            "originalId": 1
+            "address": "0x191d0F1774a75aF6b108946a2497E443Cfe83060",
+            "id": 4,
+            "originalId": 2
         }
     ],
     "thresholds": [
-        { "tokenId": 0, "type": "Portal", "value": "0" },
-        { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 0, "type": "Portal", "value": "5000000000000000" },
+        { "tokenId": 1, "type": "Synthesis", "value": "0" },
         { "tokenId": 3, "type": "Synthesis", "value": "0" },
-        { "tokenId": 1, "type": "Portal", "value": "0" }
+        { "tokenId": 4, "type": "Synthesis", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "5000000000000000" }
     ]
 }

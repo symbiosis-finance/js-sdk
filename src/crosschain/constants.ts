@@ -132,6 +132,9 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.BAHAMUT_MAINNET]: [WETH[ChainId.BAHAMUT_MAINNET]],
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET]],
     [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET]],
+    [ChainId.SYMBIOSIS_ALPHA]: [WETH[ChainId.SYMBIOSIS_ALPHA]],
+    [ChainId.SYMBIOSIS_BETA]: [WETH[ChainId.SYMBIOSIS_BETA]],
+    [ChainId.SYMBIOSIS_GAMMA]: [WETH[ChainId.SYMBIOSIS_GAMMA]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -474,7 +477,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.OKX_X1_TESTNET]: [],
     [ChainId.BAHAMUT_MAINNET]: [],
     [ChainId.MODE_MAINNET]: [],
-    [ChainId.RSK_MAINNET]: [],
+    [ChainId.RSK_MAINNET]: []
 }
 
 // used to construct intermediary pairs for trading
@@ -517,7 +520,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.POLYGON_ZK]: [WETH[ChainId.POLYGON_ZK], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.POLYGON_ZK]],
     [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TRON_TESTNET]],
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MODE_MAINNET]],
-    [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.RSK_MAINNET]],
+    [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.RSK_MAINNET]]
 }
 
 /**
@@ -528,6 +531,9 @@ export const CUSTOM_BASES: {
     [chainId in ChainId]?: { [tokenAddress: string]: Token[] }
 } = {
     [ChainId.BSC_MAINNET]: {},
+    [ChainId.SYMBIOSIS_ALPHA]: {},
+    [ChainId.SYMBIOSIS_BETA]: {},
+    [ChainId.SYMBIOSIS_GAMMA]: {},
 }
 
 // one basis point
@@ -584,4 +590,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.BAHAMUT_MAINNET]: '0xa385B1436fD2A6a1c6865E22c522A1aA40CaDCC6',
     [ChainId.MODE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.RSK_MAINNET]: '0xca11bde05977b3631167028862be2a173976ca11',
+    [ChainId.SYMBIOSIS_ALPHA]: '0x777a4bbF36dff3a3E81bCAbd234cDB07030184ca',
+    [ChainId.SYMBIOSIS_BETA]: '0x917993382Cf8A055B15Ff85A6cce952B46abF595',
+    [ChainId.SYMBIOSIS_GAMMA]: '0x6342918CB47fF1E7a392bcBa65e430c8984594D6',
 }
