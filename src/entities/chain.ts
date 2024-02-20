@@ -517,7 +517,7 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.RSK_MAINNET,
-        name: 'RSK',
+        name: 'Rootstock',
         disabled: false,
         explorer: 'https://rootstock.blockscout.com',
         icons: {
