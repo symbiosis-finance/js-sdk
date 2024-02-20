@@ -138,8 +138,10 @@ export class UniV3Trade implements SymbiosisTrade {
             tradeType: TradeType.EXACT_INPUT,
         })
 
+        const slippageTolerance = new PercentUni((this.slippage * 100).toFixed(0), '1000000')
+
         const options: SwapOptions = {
-            slippageTolerance: new PercentUni(this.slippage.toString(), '10000'),
+            slippageTolerance,
             deadline: Math.floor(Date.now() / 1000) + this.ttl,
             recipient: this.to,
         }
