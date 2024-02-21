@@ -22,6 +22,7 @@ import JSBI from 'jsbi'
 import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
 import invariant from 'tiny-invariant'
 import { IV3SwapRouter } from '../contracts/UniV3Router'
+import { Error } from '../error'
 
 interface Deployment {
     factory: string
