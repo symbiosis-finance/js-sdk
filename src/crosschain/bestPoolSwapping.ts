@@ -1,4 +1,3 @@
-import { utils } from 'ethers'
 import { Token, TokenAmount, wrappedToken } from '../entities'
 import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
 import { ErrorCode } from './error'
@@ -7,8 +6,6 @@ import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
-
-const SOCKET_IO_PARTNER_ID = utils.formatBytes32String('socket-io')
 
 // Swapping wrapper what select best omni pool for swapping
 export class BestPoolSwapping {
@@ -108,10 +105,6 @@ export class BestPoolSwapping {
     }
 
     private getOptimalOmniPool(tokenIn: Token, tokenOut: Token): OmniPoolConfig | undefined {
-        if (this.symbiosis.clientId !== SOCKET_IO_PARTNER_ID) {
-            return undefined
-        }
-
         const { omniPools } = this.symbiosis.config
 
         const swapWithoutTrades = omniPools.find((omniPoolConfig) => {
