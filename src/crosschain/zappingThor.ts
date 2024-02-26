@@ -239,7 +239,7 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('destination', this.bitcoinAddress)
         url.searchParams.set('streaming_interval', '1')
         url.searchParams.set('affiliate', 'sy')
-        url.searchParams.set('affiliate_bps', '0')
+        url.searchParams.set('affiliate_bps', '20')
         // url.searchParams.set('tolerance_bps', '300') // 3% FIXME
 
         const response = await fetch(url.toString(), {
