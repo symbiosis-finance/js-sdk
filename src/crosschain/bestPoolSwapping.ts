@@ -124,6 +124,9 @@ export class BestPoolSwapping {
 
         return omniPools.find((omniPoolConfig) => {
             try {
+                // error will be thrown if there is no transit token
+                this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
+
                 const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
 
                 return transitTokenOut.equals(wrappedToken(tokenOut))
