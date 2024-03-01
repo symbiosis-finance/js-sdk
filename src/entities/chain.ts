@@ -525,6 +525,16 @@ export const chains: Chain[] = [
             large: 'https://rootstock.blockscout.com/favicon/favicon-32x32.png',
         },
     }),
+    new Chain({
+        id: ChainId.BLAST_MAINNET,
+        name: 'Blast',
+        disabled: false,
+        explorer: 'https://blastscan.io',
+        icons: {
+            small: 'https://assets.coingecko.com/coins/images/35494/standard/blast2.jpeg?1708919600',
+            large: 'https://assets.coingecko.com/coins/images/35494/standard/blast2.jpeg?1708919600',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
