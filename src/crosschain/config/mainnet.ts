@@ -16,6 +16,11 @@ export const config: Config = {
             address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
             oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
         },
+        {
+            chainId: 56288,
+            address: '0xA267C428b16728831Be52b144F78b8F054411f55',
+            oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -70,6 +75,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+                {
+                    name: 'Wrapped BTC',
+                    symbol: 'WBTC',
+                    address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+                    chainId: 1,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                     },
                 },
             ],
@@ -127,6 +143,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Binance-Peg BTCB Token',
+                    symbol: 'BTCB',
+                    address: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
+                    chainId: 56,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
                     },
                 },
             ],
@@ -399,6 +426,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Wrapped BTC',
+                    symbol: 'WBTC',
+                    address: '0xBBeB516fb02a01611cBBE0453Fe3c580D7281011',
+                    chainId: 324,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
                     },
                 },
             ],
@@ -999,6 +1037,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
+                    },
+                },
+                {
+                    name: 'Wrapped RBTC',
+                    symbol: 'WRBTC',
+                    address: '0x542fda317318ebf1d3deaf76e0b632741a7e677d',
+                    chainId: ChainId.RSK_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
                     },
                 },
             ],
