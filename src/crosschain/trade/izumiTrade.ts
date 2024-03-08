@@ -143,6 +143,12 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
             }),
         ],
     },
+    // [ChainId.MERLIN_MAINNET]: {
+    //     swap: '0x1aFa5D7f89743219576Ef48a9826261bE6378a68',
+    //     factory: '0xE29a6620DAc789B8a76e9b9eC8fE9B7cf2B663D5',
+    //     quoter: '',
+    //     baseTokens: [],
+    // },
 }
 
 export class IzumiTrade implements SymbiosisTrade {
