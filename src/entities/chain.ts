@@ -535,6 +535,16 @@ export const chains: Chain[] = [
             large: 'https://assets.coingecko.com/coins/images/35494/standard/blast2.jpeg?1708919600',
         },
     }),
+    new Chain({
+        id: ChainId.MERLIN_MAINNET,
+        name: 'Merlin',
+        disabled: false,
+        explorer: 'https://scan.merlinchain.io',
+        icons: {
+            small: 'https://assets.coingecko.com/asset_platforms/images/188/small/merlin-chain.jpeg?1708522313',
+            large: 'https://assets.coingecko.com/asset_platforms/images/188/small/merlin-chain.jpeg?1708522313',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

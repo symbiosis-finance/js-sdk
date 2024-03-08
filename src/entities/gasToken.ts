@@ -78,4 +78,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.MODE_MAINNET]: GAS(ChainId.MODE_MAINNET, 'ETH', 1027),
     [ChainId.RSK_MAINNET]: GAS(ChainId.RSK_MAINNET, 'RBTC', 3626),
     [ChainId.BLAST_MAINNET]: GAS(ChainId.BLAST_MAINNET, 'ETH', 1027),
+    [ChainId.MERLIN_MAINNET]: GAS(ChainId.MERLIN_MAINNET, 'BTC', 1),
 }

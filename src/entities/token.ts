@@ -689,4 +689,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.MERLIN_MAINNET]: new Token({
+        chainId: ChainId.MERLIN_MAINNET,
+        address: '0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA',
+        decimals: 18,
+        symbol: 'WBTC',
+        isNative: false,
+        name: 'Wrapped BTC',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+        },
+    }),
 }

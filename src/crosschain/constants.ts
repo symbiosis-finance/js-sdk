@@ -55,6 +55,7 @@ export const CHAINS_PRIORITY = [
     ChainId.MODE_MAINNET,
     ChainId.RSK_MAINNET,
     ChainId.BLAST_MAINNET,
+    ChainId.MERLIN_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -134,6 +135,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET]],
     [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET]],
     [ChainId.BLAST_MAINNET]: [WETH[ChainId.BLAST_MAINNET]],
+    [ChainId.MERLIN_MAINNET]: [WETH[ChainId.MERLIN_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -478,6 +480,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.MODE_MAINNET]: [],
     [ChainId.RSK_MAINNET]: [],
     [ChainId.BLAST_MAINNET]: [],
+    [ChainId.MERLIN_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -521,7 +524,14 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.TRON_TESTNET]: [WETH[ChainId.TRON_TESTNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TRON_TESTNET]],
     [ChainId.MODE_MAINNET]: [WETH[ChainId.MODE_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MODE_MAINNET]],
     [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.RSK_MAINNET]],
-    [ChainId.BLAST_MAINNET]: [WETH[ChainId.BLAST_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BLAST_MAINNET]],
+    [ChainId.BLAST_MAINNET]: [
+        WETH[ChainId.BLAST_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BLAST_MAINNET],
+    ],
+    [ChainId.MERLIN_MAINNET]: [
+        WETH[ChainId.MERLIN_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MERLIN_MAINNET],
+    ],
 }
 
 /**
@@ -589,4 +599,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.MODE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.RSK_MAINNET]: '0xca11bde05977b3631167028862be2a173976ca11',
     [ChainId.BLAST_MAINNET]: '0xca11bde05977b3631167028862be2a173976ca11',
+    [ChainId.MERLIN_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
 }
