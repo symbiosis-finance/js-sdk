@@ -143,12 +143,27 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
             }),
         ],
     },
-    // [ChainId.MERLIN_MAINNET]: {
-    //     swap: '0x1aFa5D7f89743219576Ef48a9826261bE6378a68',
-    //     factory: '0xE29a6620DAc789B8a76e9b9eC8fE9B7cf2B663D5',
-    //     quoter: '',
-    //     baseTokens: [],
-    // },
+    [ChainId.MERLIN_MAINNET]: {
+        swap: '0x1aFa5D7f89743219576Ef48a9826261bE6378a68',
+        factory: '0xE29a6620DAc789B8a76e9b9eC8fE9B7cf2B663D5',
+        quoter: '0x2569bcE69287618e2cd004f785d016F7DF29232F',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.MERLIN_MAINNET,
+                name: 'Wrapped BTC',
+                symbol: 'WBTC',
+                address: '0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA',
+                decimals: 18,
+            }),
+            new Token({
+                chainId: ChainId.MERLIN_MAINNET,
+                name: 'iZUMi Bond USD',
+                symbol: 'iUSD',
+                address: '0x0A3BB08b3a15A19b4De82F8AcFc862606FB69A2D',
+                decimals: 18,
+            }),
+        ],
+    },
 }
 
 export class IzumiTrade implements SymbiosisTrade {
