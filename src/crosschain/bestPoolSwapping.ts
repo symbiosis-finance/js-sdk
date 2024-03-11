@@ -37,11 +37,16 @@ export class BestPoolSwapping {
         const optimalOmniPool = this.getOptimalOmniPool(tokenAmountIn.token, tokenOut)
 
         if (optimalOmniPool) {
-            const action = this.symbiosis.newSwapping(optimalOmniPool)
-            const actionResult = await action.exactIn(exactInParams)
+            try {
+                const action = this.symbiosis.newSwapping(optimalOmniPool)
+                const actionResult = await action.exactIn(exactInParams)
 
-            this.swapping = action
-            return actionResult
+                this.swapping = action
+                return actionResult
+            } catch (e) {
+                console.error(e)
+                // continue
+            }
         }
 
         const results = await Promise.allSettled(
