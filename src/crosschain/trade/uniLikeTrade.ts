@@ -10,6 +10,7 @@ import { getMulticall } from '../multicall'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../utils'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { getFunctionSelector } from '../tron'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export class UniLikeTrade implements SymbiosisTrade {
     tradeType = 'dex' as const
@@ -55,6 +56,9 @@ export class UniLikeTrade implements SymbiosisTrade {
     }
 
     public async init(dataProvider?: DataProvider) {
+        if (this.routerAddress === AddressZero) {
+            throw new Error('Router address is zero')
+        }
         if (dataProvider) {
             this.pairs = await dataProvider.getPairs(this.tokenAmountIn.token, this.tokenOut)
         } else {
