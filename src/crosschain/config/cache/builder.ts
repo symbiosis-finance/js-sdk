@@ -141,6 +141,9 @@ export class Builder {
 
             const metaRouterGatewayAddressFromConfig = chain.metaRouterGateway.toLowerCase()
             const metaRouter = this.metaRouter(chain.id)
+            if (metaRouter.address === AddressZero) {
+                continue
+            }
             const metaRouterGatewayAddressFromContract = (await metaRouter.callStatic.metaRouterGateway()).toLowerCase()
 
             if (metaRouterGatewayAddressFromConfig !== metaRouterGatewayAddressFromContract) {
@@ -153,7 +156,6 @@ export class Builder {
         }
 
         if (error) {
-            // console.error('There are differences')
             throw new Error('There are differences')
         }
     }

@@ -25,9 +25,13 @@ export type SwapExactInTransactionPayload =
           transactionType: 'tron'
           transactionRequest: TronTransactionData
       }
+    | {
+          transactionType: 'btc'
+          transactionRequest: NonNullable<unknown> // FIXME
+      }
 
 export type SwapExactInResult = {
-    kind: 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge'
+    kind: 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'btc-swap'
     route: Token[]
     tokenAmountOut: TokenAmount
     tokenAmountOutMin?: TokenAmount

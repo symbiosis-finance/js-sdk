@@ -1,6 +1,6 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 
-export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount } = context
 
     const omniPool = context.symbiosis.config.omniPools[0]
