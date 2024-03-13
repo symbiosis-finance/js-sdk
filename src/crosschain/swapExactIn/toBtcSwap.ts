@@ -1,5 +1,15 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import { ChainId } from '../../constants'
 
+export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
+    const { outToken } = context
+
+    const isThorChainSwapSupported = outToken.chainId === ChainId.BTC_MAINNET
+
+    const isNativeSwapSupported = false // TODO
+
+    return isThorChainSwapSupported || isNativeSwapSupported
+}
 export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount } = context
 

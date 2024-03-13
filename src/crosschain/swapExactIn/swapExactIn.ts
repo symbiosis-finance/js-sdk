@@ -6,9 +6,8 @@ import { onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from './types'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
-import { ChainId } from '../../constants'
-import { toBtcSwap } from './toBtcSwap'
-import {fromBtcSwap} from "./fromBtcSwap";
+import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
+import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -45,11 +44,11 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return bridge(params)
     }
 
-    if (inTokenAmount.token.chainId === ChainId.BTC_MAINNET) {
+    if (isFromBtcSwapSupported(params)) {
         return fromBtcSwap(params)
     }
 
-    if (outToken.chainId === ChainId.BTC_MAINNET) {
+    if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
     }
 

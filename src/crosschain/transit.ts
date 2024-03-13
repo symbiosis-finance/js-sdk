@@ -44,7 +44,7 @@ export class Transit {
         this.route = this.trade.route
         this.priceImpact = this.trade.priceImpact
 
-        this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
+        // this.symbiosis.validateSwapAmounts(this.getBridgeAmountIn())
 
         return this
     }

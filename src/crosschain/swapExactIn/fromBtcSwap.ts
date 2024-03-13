@@ -5,6 +5,7 @@ import { TokenAmount } from '../../entities'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error } from '../error'
 import { BigNumber } from 'ethers'
+import { isBtc } from '../utils'
 
 const API: Partial<Record<ChainId, { forwarder: string; relayer: string }>> = {
     [ChainId.BTC_MAINNET]: {
@@ -18,6 +19,22 @@ const API: Partial<Record<ChainId, { forwarder: string; relayer: string }>> = {
 }
 
 // const symBTCAddress = '0x56d02ab3d1608f1b3e0a209224cefb978c801e20'
+
+export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
+    const { inTokenAmount, outToken, symbiosis } = context
+
+    debugger
+    if (!isBtc(inTokenAmount.token.chainId)) {
+        return false
+    }
+
+    try {
+        const representation = symbiosis.getRepresentation(inTokenAmount.token, outToken.chainId)
+        return !!representation && representation.equals(outToken)
+    } catch {
+        return false
+    }
+}
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken } = context

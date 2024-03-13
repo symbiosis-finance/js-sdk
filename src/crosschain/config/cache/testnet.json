@@ -1,5 +1,13 @@
 {
-    "omniPools": [],
+    "omniPools": [
+        {
+            "chainId": 97,
+            "address": "0x569D2a232F5f2a462673fAf184ED9640e8A9F4D8",
+            "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
+            "id": 0,
+            "tokens": []
+        }
+    ],
     "tokens": [
         {
             "decimals": 8,
