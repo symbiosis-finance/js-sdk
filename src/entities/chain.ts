@@ -545,6 +545,16 @@ export const chains: Chain[] = [
             large: 'https://assets.coingecko.com/asset_platforms/images/188/small/merlin-chain.jpeg?1708522313',
         },
     }),
+    new Chain({
+        id: ChainId.ZKLINK_MAINNET,
+        name: 'ZkLink',
+        disabled: false,
+        explorer: 'https://explorer.zklink.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13039.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13039.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

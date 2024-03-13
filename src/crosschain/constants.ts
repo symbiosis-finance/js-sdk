@@ -56,6 +56,7 @@ export const CHAINS_PRIORITY = [
     ChainId.RSK_MAINNET,
     ChainId.BLAST_MAINNET,
     ChainId.MERLIN_MAINNET,
+    ChainId.ZKLINK_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -136,6 +137,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.RSK_MAINNET]: [WETH[ChainId.RSK_MAINNET]],
     [ChainId.BLAST_MAINNET]: [WETH[ChainId.BLAST_MAINNET]],
     [ChainId.MERLIN_MAINNET]: [WETH[ChainId.MERLIN_MAINNET]],
+    [ChainId.ZKLINK_MAINNET]: [WETH[ChainId.ZKLINK_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -481,6 +483,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.RSK_MAINNET]: [],
     [ChainId.BLAST_MAINNET]: [],
     [ChainId.MERLIN_MAINNET]: [],
+    [ChainId.ZKLINK_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -531,6 +534,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.MERLIN_MAINNET]: [
         WETH[ChainId.MERLIN_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MERLIN_MAINNET],
+    ],
+    [ChainId.ZKLINK_MAINNET]: [
+        WETH[ChainId.ZKLINK_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ZKLINK_MAINNET],
     ],
 }
 
@@ -600,4 +607,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.RSK_MAINNET]: '0xca11bde05977b3631167028862be2a173976ca11',
     [ChainId.BLAST_MAINNET]: '0xca11bde05977b3631167028862be2a173976ca11',
     [ChainId.MERLIN_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
+    [ChainId.ZKLINK_MAINNET]: '0x7E06D0CD8D3fDDBB875345dF389d986f810A49F6',
 }
