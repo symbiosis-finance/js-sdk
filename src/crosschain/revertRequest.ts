@@ -64,26 +64,35 @@ export const findSourceChainData = async (
     if (!foundSynthesizeCompleted) return undefined
     const externalId = foundSynthesizeCompleted.topics?.[1]
 
+    const chains = symbiosis.chains().filter((chain) => {
+        return chain.id !== chainIdFrom && chain.id !== chainIdTo
+    })
+
+    const promises = chains.map((chain) => {
+        return findSynthesizeRequestOnChain(symbiosis, chain.id, revertableAddress, externalId, omniPoolConfig)
+    })
+    const results = await Promise.allSettled(promises)
+
     let sourceChainId = undefined
     let fromAddress = undefined
-    const chains = symbiosis.chains()
-    for (let i = 0; i < chains.length; i++) {
+    let error = undefined
+    for (let i = 0; i < results.length; i++) {
+        const item = results[i]
         const chainId = chains[i].id
-        if (chainId === chainIdFrom || chainId === chainIdTo) {
+        if (item.status !== 'fulfilled') {
+            error = `Error occurred on chain ${chainId} while loading findSynthesizeRequestOnChain`
+            console.error(error, item)
+            // TODO notify sentry about this
             continue
         }
-        const foundSynthesizeRequest = await findSynthesizeRequestOnChain(
-            symbiosis,
-            chainId,
-            revertableAddress,
-            externalId,
-            omniPoolConfig
-        )
-        if (foundSynthesizeRequest !== undefined) {
+        if (item.value) {
             sourceChainId = chainId
-            fromAddress = foundSynthesizeRequest.args.from
+            fromAddress = item.value.args.from
             break
         }
+    }
+    if (error && !synthesizeRequestFinder) {
+        throw new Error(error)
     }
 
     if (!fromAddress && synthesizeRequestFinder) {
@@ -213,7 +222,7 @@ export class RevertRequest {
                 if (data) {
                     const { sourceChainId, fromAddress } = data
                     from = fromAddress
-                    const sourceChainToken = await this.symbiosis.transitToken(sourceChainId, omniPoolConfig)
+                    const sourceChainToken = this.symbiosis.transitToken(sourceChainId, omniPoolConfig)
                     chainIdFrom = sourceChainToken.chainId
                     fromTokenAmount = new TokenAmount(
                         sourceChainToken,
@@ -223,7 +232,7 @@ export class RevertRequest {
                         ).toString()
                     )
                 } else {
-                    const transitToken = await this.symbiosis.transitToken(chainIdTo, omniPoolConfig)
+                    const transitToken = this.symbiosis.transitToken(chainIdTo, omniPoolConfig)
                     type = 'burn-v2-revert'
                     fromTokenAmount = new TokenAmount(transitToken, fromTokenAmount.raw)
                 }
