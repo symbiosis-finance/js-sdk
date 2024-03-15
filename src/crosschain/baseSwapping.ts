@@ -375,7 +375,7 @@ export abstract class BaseSwapping {
                     throw new Error(
                         `Amount ${this.transit.amountOut.toSignificant()} ${
                             feeV2.token.symbol
-                        } less than fee ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
+                        } less than feeV2 ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
                         ErrorCode.AMOUNT_LESS_THAN_FEE
                     )
                 }
@@ -444,7 +444,7 @@ export abstract class BaseSwapping {
                     throw new Error(
                         `Amount ${amountIn.toSignificant()} ${
                             amountIn.token.symbol
-                        } less than fee ${this.feeV2.toSignificant()} ${this.feeV2.token.symbol}`,
+                        } less than feeV2 ${this.feeV2.toSignificant()} ${this.feeV2.token.symbol}`,
                         ErrorCode.AMOUNT_LESS_THAN_FEE
                     )
                 }

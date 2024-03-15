@@ -37,6 +37,10 @@ export class Transit {
     public async init(): Promise<Transit> {
         this.feeToken = this.getFeeToken()
 
+        if (this.isV2()) {
+            this.symbiosis.validateSwapAmounts(this.amountIn)
+        }
+
         this.trade = await this.buildTrade()
 
         this.amountOut = this.getTradeAmountOut(this.trade.amountOut)
