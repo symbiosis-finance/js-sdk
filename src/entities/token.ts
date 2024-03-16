@@ -643,7 +643,7 @@ export const WETH = {
     }),
     [ChainId.BAHAMUT_MAINNET]: new Token({
         chainId: ChainId.BAHAMUT_MAINNET,
-        address: '0x0000000000000000000000000000000000000000',
+        address: '0x4084aB20f8ffcA76C19AAF854Fb5fe9DE6217fBB',
         decimals: 18,
         symbol: 'WFTN',
         isNative: false,
