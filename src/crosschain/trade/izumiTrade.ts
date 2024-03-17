@@ -171,6 +171,13 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
         baseTokens: [
             new Token({
                 chainId: ChainId.ZKLINK_MAINNET,
+                name: 'Wrapped ETH',
+                symbol: 'WETH',
+                address: '0x8280a4e7D5B3B658ec4580d3Bc30f5e50454F169',
+                decimals: 18,
+            }),
+            new Token({
+                chainId: ChainId.ZKLINK_MAINNET,
                 name: 'Tether USD (Ethereum)',
                 symbol: 'USDT.Eth',
                 address: '0x0ace5E8e1Be0d3Df778f639d79fa8231b376b9F1',
@@ -181,6 +188,13 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
                 name: 'USD Coin (Ethereum)',
                 symbol: 'USDC.Eth',
                 address: '0x220B1C622c8c169a9174f42CEA89a9E2f83B63F6',
+                decimals: 6,
+            }),
+            new Token({
+                chainId: ChainId.ZKLINK_MAINNET,
+                name: 'USD Coin (Arbitrum)',
+                symbol: 'USDC.Arbi',
+                address: '0x7581469cb53E786F39ff26E8aF6Fd750213dAcEd',
                 decimals: 6,
             }),
         ],
