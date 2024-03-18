@@ -135,18 +135,6 @@ export const WETH = {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
         },
     }),
-    [ChainId.ETH_GOERLI]: new Token({
-        chainId: ChainId.ETH_GOERLI,
-        address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
-        decimals: 18,
-        symbol: 'WETH',
-        isNative: false,
-        name: 'Wrapped ETH',
-        icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
-        },
-    }),
     [ChainId.ETH_KOVAN]: new Token({
         chainId: ChainId.ETH_KOVAN,
         address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
@@ -425,18 +413,6 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
         },
     }),
-    [ChainId.SCROLL_TESTNET]: new Token({
-        chainId: ChainId.SCROLL_TESTNET,
-        address: '0xa1EA0B2354F5A344110af2b6AD68e75545009a03',
-        decimals: 18,
-        symbol: 'WETH',
-        isNative: false,
-        name: 'Wrapped ETH',
-        icons: {
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-        },
-    }),
     [ChainId.SCROLL_SEPOLIA]: new Token({
         chainId: ChainId.SCROLL_SEPOLIA,
         address: '0x5300000000000000000000000000000000000004',
@@ -713,4 +689,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.SEPOLIA_TESTNET]: new Token({
+        chainId: ChainId.SEPOLIA_TESTNET,
+        address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    })
 }

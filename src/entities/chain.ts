@@ -64,16 +64,6 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
-        id: ChainId.ETH_GOERLI,
-        name: 'Goerli',
-        disabled: false,
-        explorer: 'https://goerli.etherscan.io',
-        icons: {
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
-        },
-    }),
-    new Chain({
         id: ChainId.ETH_KOVAN,
         name: 'Kovan',
         disabled: false,
@@ -301,16 +291,6 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
-        },
-    }),
-    new Chain({
-        id: ChainId.SCROLL_TESTNET,
-        name: 'Scroll Alpha',
-        disabled: false,
-        explorer: 'https://blockscout.scroll.io',
-        icons: {
-            small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
-            large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
         },
     }),
     new Chain({

@@ -29,7 +29,6 @@ export const GAS_TOKEN_METIS_MAINNET = new Token({
 export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ETH_MAINNET]: GAS(ChainId.ETH_MAINNET, 'ETH', 1027),
     [ChainId.ETH_RINKEBY]: GAS(ChainId.ETH_RINKEBY, 'ETH', 1027),
-    [ChainId.ETH_GOERLI]: GAS(ChainId.ETH_GOERLI, 'ETH', 1027),
     [ChainId.ETH_KOVAN]: GAS(ChainId.ETH_KOVAN, 'ETH', 1027),
     [ChainId.BSC_MAINNET]: GAS(ChainId.BSC_MAINNET, 'BNB', 1839),
     [ChainId.BSC_TESTNET]: GAS(ChainId.BSC_TESTNET, 'BNB', 1839),
@@ -55,7 +54,6 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.TELOS_TESTNET]: GAS(ChainId.TELOS_TESTNET, 'TLOS', 4660),
     [ChainId.SHARDEUM_TESTNET_2]: GAS(ChainId.SHARDEUM_TESTNET_2, 'SHM', 22353),
     [ChainId.KAVA_MAINNET]: GAS(ChainId.KAVA_MAINNET, 'KAVA', 4846),
-    [ChainId.SCROLL_TESTNET]: GAS(ChainId.SCROLL_TESTNET, 'ETH', 1027),
     [ChainId.SCROLL_SEPOLIA]: GAS(ChainId.SCROLL_SEPOLIA, 'ETH', 1027),
     [ChainId.ZKSYNC_MAINNET]: GAS(ChainId.ZKSYNC_MAINNET, 'ETH', 1027),
     [ChainId.ARBITRUM_MAINNET]: GAS(ChainId.ARBITRUM_MAINNET, 'ETH', 1027),
@@ -80,4 +78,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.BLAST_MAINNET]: GAS(ChainId.BLAST_MAINNET, 'ETH', 1027),
     [ChainId.MERLIN_MAINNET]: GAS(ChainId.MERLIN_MAINNET, 'BTC', 1),
     [ChainId.ZKLINK_MAINNET]: GAS(ChainId.ZKLINK_MAINNET, 'ETH', 1027),
+    [ChainId.SEPOLIA_TESTNET]: GAS(ChainId.SEPOLIA_TESTNET, 'ETH', 1027)
 }
