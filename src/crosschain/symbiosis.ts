@@ -1,10 +1,10 @@
 import { StaticJsonRpcProvider, Log } from '@ethersproject/providers'
-import { BigNumber, Signer, utils } from 'ethers'
+import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
+import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
@@ -184,20 +184,6 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
-    }
-
-    public validateSwapAmounts(amount: TokenAmount): void {
-        const { token } = amount
-        const wrapped = wrappedToken(token)
-        const threshold = this.configCache.getTokenThreshold(wrapped)
-        if (BigNumber.from(amount.raw.toString()).lt(threshold)) {
-            const formattedThreshold = utils.formatUnits(threshold, token.decimals)
-
-            throw new Error(
-                `The amount is too low: ${amount.toFixed(2)}. Min amount: ${formattedThreshold}`,
-                ErrorCode.AMOUNT_TOO_LOW
-            )
-        }
     }
 
     public chains(): Chain[] {
