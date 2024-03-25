@@ -132,7 +132,7 @@ export const config: Config = {
             stables: [
                 {
                     name: 'Wrapped ETH',
-                    address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
+                    address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14',
                     symbol: 'WETH',
                     decimals: 18,
                     chainId: 11155111,

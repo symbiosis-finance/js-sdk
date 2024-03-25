@@ -9,9 +9,9 @@
                 { "index": 1, "tokenId": 10 },
                 { "index": 2, "tokenId": 9 },
                 { "index": 5, "tokenId": 0 },
-                { "index": 7, "tokenId": 14 },
-                { "index": 9, "tokenId": 12 },
-                { "index": 10, "tokenId": 13 }
+                { "index": 7, "tokenId": 15 },
+                { "index": 9, "tokenId": 13 },
+                { "index": 10, "tokenId": 14 }
             ]
         },
         {
@@ -20,8 +20,9 @@
             "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
             "id": 1,
             "tokens": [
-                { "index": 2, "tokenId": 11 },
-                { "index": 3, "tokenId": 15 }
+                { "index": 2, "tokenId": 12 },
+                { "index": 3, "tokenId": 16 },
+                { "index": 4, "tokenId": 11 }
             ]
         }
     ],
@@ -79,7 +80,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "deprecated": false,
-            "address": "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
+            "address": "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14",
             "id": 3
         },
         {
@@ -186,6 +187,22 @@
         },
         {
             "decimals": 18,
+            "symbol": "sWETH from Sepolia",
+            "name": "Synthetic Wrapped Ether from Sepolia",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 11155111,
+            "deprecated": false,
+            "address": "0x00cdFB6D4b467f07909acCF77EA832F593539d40",
+            "id": 11,
+            "originalId": 3
+        },
+        {
+            "decimals": 18,
             "symbol": "sWETH",
             "name": "sWETH from Scroll Sepolia",
             "chainId": 97,
@@ -197,7 +214,7 @@
             "chainFromId": 534351,
             "deprecated": false,
             "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
-            "id": 11,
+            "id": 12,
             "originalId": 4
         },
         {
@@ -213,7 +230,7 @@
             "chainFromId": 59140,
             "deprecated": false,
             "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
-            "id": 12,
+            "id": 13,
             "originalId": 5
         },
         {
@@ -229,7 +246,7 @@
             "chainFromId": 5001,
             "deprecated": false,
             "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
-            "id": 13,
+            "id": 14,
             "originalId": 6
         },
         {
@@ -245,7 +262,7 @@
             "chainFromId": 2494104990,
             "deprecated": false,
             "address": "0x519663f7B0a8d4eb9cbA0A8dEBB70e26159539AF",
-            "id": 14,
+            "id": 15,
             "originalId": 7
         },
         {
@@ -261,7 +278,7 @@
             "chainFromId": 195,
             "deprecated": false,
             "address": "0x2Ebb3706D7d4c1CE49CdA8daE287b9114Bf82c8f",
-            "id": 15,
+            "id": 16,
             "originalId": 8
         }
     ],
@@ -274,9 +291,10 @@
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
         { "tokenId": 15, "type": "Synthesis", "value": "0" },
+        { "tokenId": 16, "type": "Synthesis", "value": "0" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Portal", "value": "5000000000000000" },
         { "tokenId": 4, "type": "Portal", "value": "0" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 6, "type": "Portal", "value": "0" },
