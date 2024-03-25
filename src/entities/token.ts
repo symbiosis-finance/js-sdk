@@ -700,5 +700,5 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
-    })
+    }),
 }

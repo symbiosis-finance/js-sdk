@@ -17,7 +17,7 @@ export const config: Config = {
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
     chains: [
-       {
+        {
             id: 97,
             rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
             filterBlockOffset: 2000,

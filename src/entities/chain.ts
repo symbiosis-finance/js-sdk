@@ -537,14 +537,14 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.SEPOLIA_TESTNET,
-        name: "Sepolia",
+        name: 'Sepolia',
         disabled: false,
         explorer: 'https://sepolia.etherscan.io',
         icons: {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
         },
-    })
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
