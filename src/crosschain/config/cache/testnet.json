@@ -6,12 +6,12 @@
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
             "id": 0,
             "tokens": [
-                { "index": 1, "tokenId": 9 },
-                { "index": 2, "tokenId": 8 },
+                { "index": 1, "tokenId": 10 },
+                { "index": 2, "tokenId": 9 },
                 { "index": 5, "tokenId": 0 },
-                { "index": 7, "tokenId": 13 },
-                { "index": 9, "tokenId": 11 },
-                { "index": 10, "tokenId": 12 }
+                { "index": 7, "tokenId": 14 },
+                { "index": 9, "tokenId": 12 },
+                { "index": 10, "tokenId": 13 }
             ]
         },
         {
@@ -20,8 +20,8 @@
             "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
             "id": 1,
             "tokens": [
-                { "index": 2, "tokenId": 10 },
-                { "index": 3, "tokenId": 14 }
+                { "index": 2, "tokenId": 11 },
+                { "index": 3, "tokenId": 15 }
             ]
         }
     ],
@@ -72,6 +72,20 @@
             "decimals": 18,
             "symbol": "WETH",
             "name": "Wrapped ETH",
+            "chainId": 11155111,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "deprecated": false,
+            "address": "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
+            "id": 3
+        },
+        {
+            "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped ETH",
             "chainId": 534351,
             "isNative": false,
             "icons": {
@@ -80,7 +94,7 @@
             },
             "deprecated": false,
             "address": "0x5300000000000000000000000000000000000004",
-            "id": 3
+            "id": 4
         },
         {
             "decimals": 6,
@@ -94,7 +108,7 @@
             },
             "deprecated": false,
             "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
-            "id": 4
+            "id": 5
         },
         {
             "decimals": 6,
@@ -108,7 +122,7 @@
             },
             "deprecated": false,
             "address": "0xAED47A51AeFa6f95A388aDA3c459d94FF46fC4BB",
-            "id": 5
+            "id": 6
         },
         {
             "decimals": 6,
@@ -122,7 +136,7 @@
             },
             "deprecated": false,
             "address": "0x42a1e39aefa49290f2b3f9ed688d7cecf86cd6e0",
-            "id": 6
+            "id": 7
         },
         {
             "decimals": 18,
@@ -136,7 +150,7 @@
             },
             "deprecated": false,
             "address": "0xBec7859BC3d0603BeC454F7194173E36BF2Aa5C8",
-            "id": 7
+            "id": 8
         },
         {
             "decimals": 6,
@@ -151,7 +165,7 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0x9505A4F9108aE474c8fAeC17a22e68566c6C12C8",
-            "id": 8,
+            "id": 9,
             "originalId": 1
         },
         {
@@ -167,7 +181,7 @@
             "chainFromId": 80001,
             "deprecated": false,
             "address": "0xA4bd5C28114341c53e347b17b67d551AFd455516",
-            "id": 9,
+            "id": 10,
             "originalId": 2
         },
         {
@@ -183,8 +197,8 @@
             "chainFromId": 534351,
             "deprecated": false,
             "address": "0x20A121bdFaa7657e94c06B77c7f3EB0AFf9751ab",
-            "id": 10,
-            "originalId": 3
+            "id": 11,
+            "originalId": 4
         },
         {
             "decimals": 6,
@@ -199,8 +213,8 @@
             "chainFromId": 59140,
             "deprecated": false,
             "address": "0x0f6aAc42997Df922C1b7ae12D0b7c873dbC97fE3",
-            "id": 11,
-            "originalId": 4
+            "id": 12,
+            "originalId": 5
         },
         {
             "decimals": 6,
@@ -215,8 +229,8 @@
             "chainFromId": 5001,
             "deprecated": false,
             "address": "0x5165BdcF32eCFC6de38B69C0b366ad317bc44f91",
-            "id": 12,
-            "originalId": 5
+            "id": 13,
+            "originalId": 6
         },
         {
             "decimals": 6,
@@ -231,8 +245,8 @@
             "chainFromId": 2494104990,
             "deprecated": false,
             "address": "0x519663f7B0a8d4eb9cbA0A8dEBB70e26159539AF",
-            "id": 13,
-            "originalId": 6
+            "id": 14,
+            "originalId": 7
         },
         {
             "decimals": 18,
@@ -247,25 +261,26 @@
             "chainFromId": 195,
             "deprecated": false,
             "address": "0x2Ebb3706D7d4c1CE49CdA8daE287b9114Bf82c8f",
-            "id": 14,
-            "originalId": 7
+            "id": 15,
+            "originalId": 8
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Synthesis", "value": "0" },
-        { "tokenId": 8, "type": "Synthesis", "value": "0" },
         { "tokenId": 9, "type": "Synthesis", "value": "0" },
         { "tokenId": 10, "type": "Synthesis", "value": "0" },
         { "tokenId": 11, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
+        { "tokenId": 15, "type": "Synthesis", "value": "0" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
         { "tokenId": 2, "type": "Portal", "value": "0" },
         { "tokenId": 3, "type": "Portal", "value": "0" },
         { "tokenId": 4, "type": "Portal", "value": "0" },
         { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 6, "type": "Portal", "value": "0" },
-        { "tokenId": 7, "type": "Portal", "value": "5000000000000000" }
+        { "tokenId": 7, "type": "Portal", "value": "0" },
+        { "tokenId": 8, "type": "Portal", "value": "5000000000000000" }
     ]
 }

@@ -130,7 +130,17 @@ export const config: Config = {
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
-
+                        {
+                            name: 'Wrapped ETH',
+                            address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
+                            symbol: 'WETH',
+                            decimals: 18,
+                            chainId: 11155111,
+                            icons: {
+                                large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                                small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                            },
+                        },
             ],
             router: '0xDe886ff69fE234c8db2e2694788e73aa6be8d0c7',
             dexFee: 30,
