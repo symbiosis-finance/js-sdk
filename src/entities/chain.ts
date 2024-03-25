@@ -535,6 +535,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13039.png',
         },
     }),
+    new Chain({
+        id: ChainId.SEPOLIA_TESTNET,
+        name: "Sepolia",
+        disabled: false,
+        explorer: 'https://sepolia.etherscan.io',
+        icons: {
+            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    })
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
