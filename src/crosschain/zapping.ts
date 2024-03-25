@@ -95,18 +95,10 @@ export class Zapping {
             this.transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         }
 
-        let transitAmountIn: TokenAmount
-
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
-
-            transitAmountIn = this.tradeA.amountOut
-        } else {
-            transitAmountIn = tokenAmountIn
         }
-
-        this.symbiosis.validateSwapAmounts(transitAmountIn)
 
         this.synthToken = await this.getSynthToken()
 
