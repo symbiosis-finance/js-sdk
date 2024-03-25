@@ -339,7 +339,7 @@ export class Zapping {
         if (!rep) {
             throw new Error(
                 `Representation of ${this.transitTokenIn.symbol} in chain ${chainIdOut} not found`,
-                ErrorCode.NO_ROUTE
+                ErrorCode.NO_REPRESENTATION_FOUND
             )
         }
 

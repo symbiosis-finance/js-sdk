@@ -42,9 +42,10 @@ export class RevertPending {
     private omniPoolConfig: OmniPoolConfig
 
     constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
-        const omniPoolConfig = symbiosis.getOmniPoolByToken(this.request.fromTokenAmount.token)
+        const token = this.request.fromTokenAmount.token
+        const omniPoolConfig = symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {
-            throw new Error('No omni pool found for token', ErrorCode.NO_TRANSIT_POOL)
+            throw new Error(`Cannot find omni pool config by token ${token.address}`)
         }
 
         this.omniPoolConfig = omniPoolConfig

@@ -9,7 +9,7 @@ import { getExternalId } from './utils'
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
-import { Error, ErrorCode } from './error'
+import { Error } from './error'
 
 type InitProps = {
     validateState: boolean
@@ -190,10 +190,7 @@ export class RevertRequest {
         }
         const omniPoolConfig = this.symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {
-            throw new Error(
-                `Cannot find omni pool config for chain ${chainIdTo} with token ${tokenAddress}`,
-                ErrorCode.NO_TRANSIT_POOL
-            )
+            throw new Error(`Cannot find omni pool config by token ${tokenAddress}`)
         }
 
         let fromTokenAmount = new TokenAmount(token, amount)

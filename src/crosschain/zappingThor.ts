@@ -160,7 +160,7 @@ export class ZappingThor extends BaseSwapping {
                 }
             } catch (e: any) {
                 if (e.code === ErrorCode.MIN_THORCHAIN_AMOUNT_IN) {
-                    throw new Error(e.message)
+                    throw e
                 }
                 console.error(e)
             }

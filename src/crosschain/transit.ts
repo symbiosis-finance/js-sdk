@@ -148,7 +148,7 @@ export class Transit {
         if (!rep) {
             throw new Error(
                 `Representation of ${this.transitTokenIn.chainId}:${this.transitTokenIn.symbol} in chain ${transitTokenOutChainId} not found`,
-                ErrorCode.NO_ROUTE
+                ErrorCode.NO_REPRESENTATION_FOUND
             )
         }
         return rep
@@ -164,7 +164,7 @@ export class Transit {
         if (!rep) {
             throw new Error(
                 `Representation of ${this.transitTokenOut.symbol} in chain ${transitTokenInChainId} not found`,
-                ErrorCode.NO_ROUTE
+                ErrorCode.NO_REPRESENTATION_FOUND
             )
         }
         return rep
