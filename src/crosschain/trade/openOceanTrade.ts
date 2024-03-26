@@ -23,16 +23,17 @@ interface OpenOceanQuote {
 }
 
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
-    // 1inch supported chains
-    // [ChainId.ETH_MAINNET]: 'eth',
-    // [ChainId.BSC_MAINNET]: 'bsc',
-    // [ChainId.MATIC_MAINNET]: 'polygon',
-    // [ChainId.AVAX_MAINNET]: 'avax',
-    // [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
-    // [ChainId.OPTIMISM_MAINNET]: 'optimism',
-    // [ChainId.ZKSYNC_MAINNET]: 'zksync',
-    // [ChainId.BASE_MAINNET]: 'base',
-
+    // ---  1inch supported chains
+    [ChainId.ETH_MAINNET]: 'eth',
+    [ChainId.BSC_MAINNET]: 'bsc',
+    [ChainId.ZKSYNC_MAINNET]: 'zksync',
+    [ChainId.MATIC_MAINNET]: 'polygon',
+    [ChainId.BASE_MAINNET]: 'base',
+    [ChainId.AVAX_MAINNET]: 'avax',
+    [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
+    [ChainId.OPTIMISM_MAINNET]: 'optimism',
+    // --- OpenOcean supported only chains
+    [ChainId.BOBA_MAINNET]: 'boba',
     [ChainId.AURORA_MAINNET]: 'aurora',
     [ChainId.HECO_MAINNET]: 'heco',
     [ChainId.KAVA_MAINNET]: 'kava',
