@@ -10,16 +10,31 @@ export const config: Config = {
             chainId: 56288,
             address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
             oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
+            generalPurpose: true,
         },
         {
             chainId: 56288,
             address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
             oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
+            generalPurpose: true,
         },
         {
             chainId: 56288,
             address: '0xA267C428b16728831Be52b144F78b8F054411f55',
             oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
+            generalPurpose: true,
+        },
+        {
+            chainId: 56288,
+            address: '0x7b905059Bdd00844280EBf54E00A087006B2D242',
+            oracle: '0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5',
+            generalPurpose: false,
+        },
+        {
+            chainId: 56288,
+            address: '0xB5D99bE6089720d1aD3DB2a5a16D5765605704df',
+            oracle: '0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E',
+            generalPurpose: false,
         },
     ],
     revertableAddress: {
@@ -28,7 +43,7 @@ export const config: Config = {
     },
     chains: [
         {
-            id: 1,
+            id: ChainId.ETH_MAINNET,
             rpc: 'https://ethereum.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 12,
@@ -38,7 +53,7 @@ export const config: Config = {
                     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
                     symbol: 'USDC',
                     decimals: 6,
-                    chainId: 1,
+                    chainId: ChainId.ETH_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -48,7 +63,7 @@ export const config: Config = {
                     name: 'Symbiosis',
                     symbol: 'SIS',
                     address: '0xd38BB40815d2B0c2d2c866e0c72c5728ffC76dd9',
-                    chainId: 1,
+                    chainId: ChainId.ETH_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
@@ -59,7 +74,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-                    chainId: 1,
+                    chainId: ChainId.ETH_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -70,7 +85,7 @@ export const config: Config = {
                     name: 'Tether USD',
                     symbol: 'USDT',
                     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-                    chainId: 1,
+                    chainId: ChainId.ETH_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
@@ -81,11 +96,22 @@ export const config: Config = {
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-                    chainId: 1,
+                    chainId: ChainId.ETH_MAINNET,
                     decimals: 8,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+                {
+                    name: 'Milady Meme Coin',
+                    symbol: 'LADYS',
+                    address: '0x12970E6868f88f6557B76120662c1B3E50A646bf',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
                     },
                 },
             ],
@@ -106,7 +132,7 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 56,
+            id: ChainId.BSC_MAINNET,
             rpc: 'https://bsc.publicnode.com',
             filterBlockOffset: 2000,
             waitForBlocksCount: 10,
@@ -116,7 +142,7 @@ export const config: Config = {
                     address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
                     symbol: 'USDC',
                     decimals: 18,
-                    chainId: 56,
+                    chainId: ChainId.BSC_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -128,7 +154,7 @@ export const config: Config = {
                     address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
                     symbol: 'BUSD',
                     decimals: 18,
-                    chainId: 56,
+                    chainId: ChainId.BSC_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png',
@@ -138,7 +164,7 @@ export const config: Config = {
                     name: 'Ethereum Token',
                     symbol: 'ETH',
                     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
-                    chainId: 56,
+                    chainId: ChainId.BSC_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -149,11 +175,22 @@ export const config: Config = {
                     name: 'Binance-Peg BTCB Token',
                     symbol: 'BTCB',
                     address: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
-                    chainId: 56,
+                    chainId: ChainId.BSC_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
             ],
@@ -401,7 +438,7 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 324,
+            id: ChainId.ZKSYNC_MAINNET,
             rpc: 'https://mainnet.era.zksync.io',
             filterBlockOffset: 2000,
             waitForBlocksCount: 12,
@@ -410,7 +447,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
-                    chainId: 324,
+                    chainId: ChainId.ZKSYNC_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -421,7 +458,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
-                    chainId: 324,
+                    chainId: ChainId.ZKSYNC_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -432,11 +469,22 @@ export const config: Config = {
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0xBBeB516fb02a01611cBBE0453Fe3c580D7281011',
-                    chainId: 324,
+                    chainId: ChainId.ZKSYNC_MAINNET,
                     decimals: 8,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0xdd9f72afED3631a6C85b5369D84875e6c42f1827',
+                    chainId: ChainId.ZKSYNC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
             ],
@@ -457,7 +505,7 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 42161,
+            id: ChainId.ARBITRUM_MAINNET,
             rpc: 'https://arb1.arbitrum.io/rpc',
             filterBlockOffset: 2000,
             waitForBlocksCount: 240,
@@ -466,7 +514,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-                    chainId: 42161,
+                    chainId: ChainId.ARBITRUM_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -478,7 +526,7 @@ export const config: Config = {
                     name: 'USD Coin (Arb1)',
                     symbol: 'USDC.e',
                     address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
-                    chainId: 42161,
+                    chainId: ChainId.ARBITRUM_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -489,11 +537,33 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
-                    chainId: 42161,
+                    chainId: ChainId.ARBITRUM_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0x9E758B8a98a42d612b3D38B66a22074DC03D7370',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
+                },
+                {
+                    name: 'Milady Meme Coin',
+                    symbol: 'LADYS',
+                    address: '0x3b60FF35D3f7F62d636b067dD0dC0dFdAd670E4E',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
                     },
                 },
             ],
@@ -661,7 +731,7 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 59144,
+            id: ChainId.LINEA_MAINNET,
             rpc: 'https://rpc.linea.build',
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
@@ -670,7 +740,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f',
-                    chainId: 59144,
+                    chainId: ChainId.LINEA_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -681,11 +751,22 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x176211869cA2b568f2A7D4EE941E073a821EE1ff',
-                    chainId: 59144,
+                    chainId: ChainId.LINEA_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0x6EF95B6f3b0F39508e3E04054Be96D5eE39eDE0d',
+                    chainId: ChainId.LINEA_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
             ],
@@ -855,6 +936,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis',
+                    symbol: 'SIS',
+                    address: '0x1467b62A6AE5CdcB10A6a8173cfe187DD2C5a136',
+                    chainId: ChainId.SCROLL_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
             ],

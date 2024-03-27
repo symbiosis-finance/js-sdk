@@ -4,6 +4,7 @@
             "chainId": 97,
             "address": "0x569D2a232F5f2a462673fAf184ED9640e8A9F4D8",
             "oracle": "0xcE29b84160fe8B6Fc1c6E5aD66F1F43279F2F1C9",
+            "generalPurpose": true,
             "id": 0,
             "tokens": [
                 { "index": 1, "tokenId": 10 },
@@ -18,6 +19,7 @@
             "chainId": 97,
             "address": "0xc44AF80948B8a20bb781277559457ce0F2893b8b",
             "oracle": "0x69cE6CA199c5Ca995C954c15F925D68ee0810153",
+            "generalPurpose": true,
             "id": 1,
             "tokens": [
                 { "index": 2, "tokenId": 12 },

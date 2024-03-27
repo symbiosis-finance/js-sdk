@@ -22,8 +22,6 @@ export class BestPoolSwapping {
         deadline,
         oneInchProtocols,
     }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
-        const { omniPools } = this.symbiosis.config
-
         const exactInParams: SwapExactInParams = {
             tokenAmountIn,
             tokenOut,
@@ -35,7 +33,6 @@ export class BestPoolSwapping {
         }
 
         const optimalOmniPool = this.getOptimalOmniPool(tokenAmountIn.token, tokenOut)
-
         if (optimalOmniPool) {
             try {
                 const action = this.symbiosis.newSwapping(optimalOmniPool)
@@ -45,19 +42,23 @@ export class BestPoolSwapping {
                 return actionResult
             } catch (e) {
                 console.error(e)
-                // continue
+                // try to build a route through general purpose pools
             }
         }
 
-        const results = await Promise.allSettled(
-            omniPools.map(async (omniPoolConfig) => {
+        const { omniPools } = this.symbiosis.config
+
+        const promises = omniPools
+            .filter((omniPoolConfig) => omniPoolConfig.generalPurpose)
+            .map(async (omniPoolConfig) => {
                 const action = this.symbiosis.newSwapping(omniPoolConfig)
 
                 const actionResult = await action.exactIn(exactInParams)
 
                 return { action, actionResult }
             })
-        )
+
+        const results = await Promise.allSettled(promises)
 
         let swapping: Swapping | undefined
         let actionResult: CrosschainSwapExactInResult | undefined
@@ -146,17 +147,19 @@ export class BestPoolSwapping {
             return swapWithoutTrades
         }
 
-        return omniPools.find((omniPoolConfig) => {
-            try {
-                // error will be thrown if there is no transit token
-                this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
+        return omniPools
+            .filter((omniPoolConfig) => omniPoolConfig.generalPurpose)
+            .find((omniPoolConfig) => {
+                try {
+                    // error will be thrown if there is no transit token
+                    this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
 
-                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+                    const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
 
-                return transitTokenOut.equals(wrappedToken(tokenOut))
-            } catch {
-                return false
-            }
-        })
+                    return transitTokenOut.equals(wrappedToken(tokenOut))
+                } catch {
+                    return false
+                }
+            })
     }
 }

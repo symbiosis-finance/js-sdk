@@ -1,12 +1,12 @@
-import {Log, StaticJsonRpcProvider} from '@ethersproject/providers'
-import {Signer, utils} from 'ethers'
+import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
-import TronWeb, {TransactionInfo} from 'tronweb'
-import {ChainId} from '../constants'
-import {Chain, chains, Token, TokenAmount} from '../entities'
-import {Bridging} from './bridging'
-import {ONE_INCH_ORACLE_MAP} from './constants'
+import TronWeb, { TransactionInfo } from 'tronweb'
+import { ChainId } from '../constants'
+import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Bridging } from './bridging'
+import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
     Aave,
     Aave__factory,
@@ -49,30 +49,29 @@ import {
     UniLikeRouter,
     UniLikeRouter__factory,
 } from './contracts'
-import {Error, ErrorCode} from './error'
-import {RevertPending} from './revert'
-import {statelessWaitForComplete} from './statelessWaitForComplete'
-import {Swapping} from './swapping'
-import {getTransactionInfoById, isTronChainId} from './tron'
-import {ChainConfig, Config, OmniPoolConfig, OverrideConfig} from './types'
-import {Zapping} from './zapping'
-import {ZappingAave} from './zappingAave'
-import {ZappingBeefy} from './zappingBeefy'
-import {ZappingCream} from './zappingCream'
-import {config as mainnet} from './config/mainnet'
-import {config as testnet} from './config/testnet'
-import {config as dev} from './config/dev'
-import {config as teleport} from './config/teleport'
-import {BestPoolSwapping} from './bestPoolSwapping'
-import {ConfigCache} from './config/cache/cache'
-import {OmniPoolInfo} from './config/cache/builder'
-import {PendingRequest} from './revertRequest'
-import {makeOneInchRequestFactory, MakeOneInchRequestFn} from './oneInchRequest'
-import {swapExactIn, SwapExactInParams, SwapExactInResult} from './swapExactIn'
-import {ZappingThor} from './zappingThor'
-import {delay} from '../utils'
+import { Error, ErrorCode } from './error'
+import { RevertPending } from './revert'
+import { statelessWaitForComplete } from './statelessWaitForComplete'
+import { Swapping } from './swapping'
+import { getTransactionInfoById, isTronChainId } from './tron'
+import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
+import { Zapping } from './zapping'
+import { ZappingAave } from './zappingAave'
+import { ZappingBeefy } from './zappingBeefy'
+import { ZappingCream } from './zappingCream'
+import { config as mainnet } from './config/mainnet'
+import { config as testnet } from './config/testnet'
+import { config as dev } from './config/dev'
+import { BestPoolSwapping } from './bestPoolSwapping'
+import { ConfigCache } from './config/cache/cache'
+import { OmniPoolInfo } from './config/cache/builder'
+import { PendingRequest } from './revertRequest'
+import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchRequest'
+import { swapExactIn, SwapExactInParams, SwapExactInResult } from './swapExactIn'
+import { ZappingThor } from './zappingThor'
+import { delay } from '../utils'
 
-export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'teleport'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
 export type DiscountTier = {
     amount: string
@@ -154,8 +153,6 @@ export class Symbiosis {
             this.config = testnet
         } else if (config === 'dev') {
             this.config = dev
-        } else if (config === 'teleport') {
-            this.config = teleport
         } else {
             throw new Error('Unknown config name')
         }

@@ -40,6 +40,7 @@ export type OmniPoolConfig = {
     chainId: ChainId
     address: string
     oracle: string
+    generalPurpose: boolean
 }
 
 export type Config = {
