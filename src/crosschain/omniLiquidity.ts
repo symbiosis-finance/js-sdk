@@ -1,6 +1,5 @@
-import { ONE } from '../constants'
-import { Fraction, Percent, Token, TokenAmount } from '../entities'
-import { basisPointsToPercent } from './utils'
+import { Percent, Token, TokenAmount } from '../entities'
+import { getMinAmount } from './utils'
 import { OmniPool, OmniPoolOracle } from './contracts'
 
 export class OmniLiquidity {
@@ -31,12 +30,7 @@ export class OmniLiquidity {
             chainId: network.chainId,
         })
         this.amountOut = new TokenAmount(lpToken, depositEstimate.lpTokenToMint.toString())
-
-        const slippageTolerance = basisPointsToPercent(this.slippage)
-        const slippageAdjustedAmountOut = new Fraction(ONE)
-            .add(slippageTolerance)
-            .invert()
-            .multiply(this.amountOut.raw).quotient
+        const slippageAdjustedAmountOut = getMinAmount(this.slippage, this.amountOut.raw)
 
         this.callData = this.pool.interface.encodeFunctionData('deposit', [
             index,
