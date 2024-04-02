@@ -1,4 +1,4 @@
-import { Token, TokenAmount, wrappedToken } from '../entities'
+import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
 import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
@@ -37,6 +37,12 @@ export class BestPoolSwapping {
             try {
                 const action = this.symbiosis.newSwapping(optimalOmniPool)
                 const actionResult = await action.exactIn(exactInParams)
+
+                // 2%
+                const priceImpactThreshold = new Percent('-2', '100')
+                if (actionResult.priceImpact.lessThan(priceImpactThreshold)) {
+                    throw new Error('Price impact of optimal octopool is too high')
+                }
 
                 this.swapping = action
                 return actionResult
