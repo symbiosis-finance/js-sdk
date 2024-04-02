@@ -38,8 +38,8 @@ export class BestPoolSwapping {
                 const action = this.symbiosis.newSwapping(optimalOmniPool)
                 const actionResult = await action.exactIn(exactInParams)
 
-                // 2%
-                const priceImpactThreshold = new Percent('-2', '100')
+                // -0.5%
+                const priceImpactThreshold = new Percent('-5', '1000')
                 if (actionResult.priceImpact.lessThan(priceImpactThreshold)) {
                     throw new Error('Price impact of optimal octopool is too high')
                 }
