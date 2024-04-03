@@ -1960,6 +1960,7 @@
         { "tokenId": 50, "type": "Portal", "value": "0" },
         { "tokenId": 51, "type": "Portal", "value": "0" },
         { "tokenId": 52, "type": "Portal", "value": "0" },
+        { "tokenId": 53, "type": "Portal", "value": "0" },
         { "tokenId": 54, "type": "Portal", "value": "0" }
     ]
 }

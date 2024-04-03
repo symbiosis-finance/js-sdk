@@ -7,6 +7,7 @@ import { SwapExactInParams, SwapExactInResult } from './types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../tron'
+import { Error, ErrorCode } from '../error'
 
 const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0xff9b21c3bfa4bce9b20b55fed56d102ced48b0f6',
@@ -64,8 +65,11 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     let inTokenAmount = params.inTokenAmount
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
-        if (inTokenAmount.lessThan(feeTokenAmount)) {
-            throw new Error(`Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`)
+        if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
+            throw new Error(
+                `Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
         }
 
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
