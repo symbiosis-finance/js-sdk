@@ -445,7 +445,7 @@ export const config: Config = {
             stables: [
                 {
                     name: 'USD Coin',
-                    symbol: 'USDC',
+                    symbol: 'USDC.e',
                     address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
                     chainId: ChainId.ZKSYNC_MAINNET,
                     decimals: 6,

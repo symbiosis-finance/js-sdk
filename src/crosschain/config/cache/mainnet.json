@@ -369,7 +369,7 @@
         },
         {
             "decimals": 6,
-            "symbol": "USDC",
+            "symbol": "USDC.e",
             "name": "USD Coin",
             "chainId": 324,
             "isNative": false,
