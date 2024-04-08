@@ -77,7 +77,7 @@ export class Bridging {
         const fee = await this.getFee()
 
         const tokenAmountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
-        if (tokenAmountOut.lessThan(fee)) {
+        if (tokenAmountOut.lessThan(fee) || tokenAmountIn.equalTo(fee)) {
             throw new Error(
                 `Amount ${tokenAmountOut.toSignificant()} ${
                     tokenAmountOut.token.symbol

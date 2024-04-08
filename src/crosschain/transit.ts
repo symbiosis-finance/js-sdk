@@ -70,7 +70,7 @@ export class Transit {
         if (!this.fee) {
             return amountOut
         }
-        if (amountOut.lessThan(this.fee)) {
+        if (amountOut.lessThan(this.fee) || amountOut.equalTo(this.fee)) {
             throw new Error(
                 `Amount ${amountOut.toSignificant()} ${
                     amountOut.token.symbol
@@ -125,7 +125,7 @@ export class Transit {
             return amountOut
         }
 
-        if (amountOut.lessThan(this.fee)) {
+        if (amountOut.lessThan(this.fee) || amountOut.equalTo(this.fee)) {
             throw new Error(
                 `Amount ${amountOut.toSignificant()} ${
                     amountOut.token.symbol
