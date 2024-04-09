@@ -64,7 +64,7 @@ import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
 import { BestPoolSwapping } from './bestPoolSwapping'
 import { ConfigCache } from './config/cache/cache'
-import { OmniPoolInfo } from './config/cache/builder'
+import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
 import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchRequest'
 import { swapExactIn, SwapExactInParams, SwapExactInResult } from './swapExactIn'
@@ -519,6 +519,10 @@ export class Symbiosis {
 
     public getOmniPoolTokens(omniPoolConfig: OmniPoolConfig): Token[] {
         return this.configCache.getOmniPoolTokens(omniPoolConfig)
+    }
+
+    public getTokenInfoById(tokenId: Id): TokenInfo {
+        return this.configCache.getTokenInfoById(tokenId)
     }
 
     public tronWeb(chainId: ChainId): TronWeb {
