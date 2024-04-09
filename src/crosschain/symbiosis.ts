@@ -167,6 +167,10 @@ export class Symbiosis {
                 return chainConfig
             })
         }
+        if (overrideConfig?.limits) {
+            this.config.limits = overrideConfig.limits
+        }
+
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
         this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)

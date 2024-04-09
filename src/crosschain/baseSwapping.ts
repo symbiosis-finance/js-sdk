@@ -1,4 +1,5 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
+import { parseUnits } from '@ethersproject/units'
 import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
@@ -412,9 +413,30 @@ export abstract class BaseSwapping {
         })
     }
 
+    protected validateLimits(amount: TokenAmount): void {
+        const { token } = amount
+        const limit = this.symbiosis.config.limits?.[token.chainId]?.[token.address]
+        if (!limit) {
+            return
+        }
+        const amountRaw = parseUnits(limit, token.decimals).toString()
+        if (amountRaw === '0') {
+            return
+        }
+        const limitTokenAmount = new TokenAmount(token, amountRaw)
+        if (amount.greaterThan(limitTokenAmount)) {
+            throw new Error(
+                `Swap amount is too high. Max: ${limitTokenAmount.toSignificant(4)} ${limitTokenAmount.token.symbol}`,
+                ErrorCode.AMOUNT_TOO_HIGH
+            )
+        }
+    }
+
     protected buildTransit(fee?: TokenAmount): Transit {
         const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
+
+        this.validateLimits(amountIn)
 
         return new Transit(
             this.symbiosis,

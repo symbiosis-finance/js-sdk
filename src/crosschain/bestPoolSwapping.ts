@@ -153,19 +153,17 @@ export class BestPoolSwapping {
             return swapWithoutTrades
         }
 
-        return omniPools
-            .filter((omniPoolConfig) => omniPoolConfig.generalPurpose)
-            .find((omniPoolConfig) => {
-                try {
-                    // error will be thrown if there is no transit token
-                    this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
+        return omniPools.find((omniPoolConfig) => {
+            try {
+                // error will be thrown if there is no transit token
+                this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
 
-                    const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
 
-                    return transitTokenOut.equals(wrappedToken(tokenOut))
-                } catch {
-                    return false
-                }
-            })
+                return transitTokenOut.equals(wrappedToken(tokenOut))
+            } catch {
+                return false
+            }
+        })
     }
 }

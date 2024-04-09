@@ -5,6 +5,7 @@ export enum ErrorCode {
     'NO_TRANSIT_TOKEN',
     'MIN_THORCHAIN_AMOUNT_IN',
     'ADVISOR_ERROR',
+    'AMOUNT_TOO_HIGH',
 }
 
 export class Error {
