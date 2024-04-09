@@ -123,9 +123,7 @@ export class ConfigCache {
         })
     }
 
-    // PRIVATE
-
-    private getTokenInfoById(id: Id): TokenInfo {
+    public getTokenInfoById(id: Id): TokenInfo {
         const tokenInfo = this.data.tokens.find((i) => i.id === id)
 
         if (!tokenInfo) {
@@ -134,6 +132,8 @@ export class ConfigCache {
 
         return tokenInfo
     }
+
+    // --- PRIVATE ---
 
     private getTokenInfoByToken(token: Token): TokenInfo {
         const found = this.data.tokens.find((i) => {
