@@ -41,7 +41,7 @@ export const config: Config = {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
         default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     },
-    limits: {},
+    limits: [],
     chains: [
         {
             id: ChainId.ETH_MAINNET,

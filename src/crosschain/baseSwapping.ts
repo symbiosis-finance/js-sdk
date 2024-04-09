@@ -415,11 +415,13 @@ export abstract class BaseSwapping {
 
     protected validateLimits(amount: TokenAmount): void {
         const { token } = amount
-        const limit = this.symbiosis.config.limits?.[token.chainId]?.[token.address]
+        const limit = (this.symbiosis.config.limits || []).find((limit) => {
+            return limit.address.toLowerCase() === token.address.toLowerCase() && limit.chainId === token.chainId
+        })
         if (!limit) {
             return
         }
-        const amountRaw = parseUnits(limit, token.decimals).toString()
+        const amountRaw = parseUnits(limit.value, token.decimals).toString()
         if (amountRaw === '0') {
             return
         }
