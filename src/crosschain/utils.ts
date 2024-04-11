@@ -151,7 +151,11 @@ export async function getLogWithTimeout({
     filter,
     exceedDelay: exceedTimeout = DEFAULT_EXCEED_DELAY,
 }: GetLogsWithTimeoutParams): Promise<Log> {
-    const provider = symbiosis.getProvider(chainId, true)
+    const spareRpcs = symbiosis.config.chains.find((chain) => chain.id === chainId)?.spareRpcs ?? []
+    const maxAttempts = spareRpcs.length
+
+    let provider = symbiosis.getProvider(chainId)
+    let attempt = 0
 
     let activeFilter = filter
     if (!activeFilter.fromBlock) {
@@ -161,37 +165,34 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        const period = 1000 * 60 // 60 seconds
+        const period = 1000 * 10 // 10 seconds
         let pastTime = 0
 
-        const interval = setInterval(() => {
+        const getLogs = async () => {
             pastTime += period
             if (pastTime > exceedTimeout) {
                 clearInterval(interval)
-                provider.off(activeFilter, listener)
                 reject(new GetLogTimeoutExceededError(activeFilter))
                 return
             }
-            provider
-                .getLogs(activeFilter)
-                .then((logs) => {
-                    if (logs.length > 0) {
-                        resolve(logs[0])
-                        clearInterval(interval)
-                        provider.off(activeFilter, listener)
-                    }
-                })
-                .catch((error) => {
-                    reject(error)
-                })
-        }, period)
 
-        const listener = (log: Log) => {
-            clearInterval(interval)
-            resolve(log)
+            try {
+                const logs = await provider.getLogs(activeFilter)
+                if (logs.length > 0) {
+                    resolve(logs[0])
+                    clearInterval(interval)
+                    return
+                }
+            } catch (error) {
+                if (attempt < maxAttempts) {
+                    provider = symbiosis.getProvider(chainId, spareRpcs[attempt])
+                    attempt++
+                    getLogs()
+                }
+            }
         }
 
-        provider.once(activeFilter, listener)
+        const interval = setInterval(getLogs, period)
     })
 }
 
