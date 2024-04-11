@@ -355,8 +355,6 @@ export abstract class BaseSwapping {
         const pib = this.transit.priceImpact || zero
         const pic = this.tradeC?.priceImpact || zero
 
-        // console.log([pia, pib, pic].map((i) => i.toSignificant()))
-
         let pi = pia.add(pib).add(pic)
 
         const max = new Percent(JSBI.BigInt(10000), BIPS_BASE) // 100%
