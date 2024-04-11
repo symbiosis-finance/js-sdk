@@ -158,7 +158,7 @@ function _promiseRaceResolved<T>(promises: Promise<T>[]): Promise<T> {
         }
 
         promises.forEach((promise) => {
-            // Promise.resolve to promisify any value
+            // Promise.resolve to "promisify" any value
             Promise.resolve(promise).then(resolve).catch(onReject)
         })
     })
