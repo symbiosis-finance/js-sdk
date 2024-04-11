@@ -188,6 +188,8 @@ export async function getLogWithTimeout({
                     provider = symbiosis.getProvider(chainId, spareRpcs[attempt])
                     attempt++
                     getLogs()
+                } else {
+                    clearInterval(interval)
                 }
             }
         }
