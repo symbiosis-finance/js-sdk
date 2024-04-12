@@ -180,7 +180,11 @@ export class Symbiosis {
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
-            this.config.chains.map((chain) => [chain.id, new StaticJsonRpcProvider(chain.rpc, chain.id)])
+            this.config.chains.map((chain) => {
+                const rpc = isTronChainId(chain.id) ? `${chain.rpc}/jsonrpc` : chain.rpc
+
+                return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
+            })
         )
     }
 
@@ -231,7 +235,9 @@ export class Symbiosis {
 
     public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
         if (rpc) {
-            return new StaticJsonRpcProvider(rpc, chainId)
+            const url = isTronChainId(chainId) ? `${rpc}/jsonrpc` : rpc
+
+            return new StaticJsonRpcProvider(url, chainId)
         }
 
         const provider = this.providers.get(chainId)

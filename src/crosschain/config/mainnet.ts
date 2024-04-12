@@ -481,6 +481,17 @@ export const config: Config = {
                     },
                 },
                 {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4',
+                    chainId: ChainId.ZKSYNC_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
@@ -931,8 +942,7 @@ export const config: Config = {
         },
         {
             id: ChainId.TRON_MAINNET,
-            rpc: 'https://api.trongrid.io/jsonrpc',
-            spareRpcs: ['https://tron-rpc.publicnode.com', 'https://rpc.ankr.com/tron_jsonrpc'],
+            rpc: 'https://api.trongrid.io',
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
@@ -1028,11 +1038,7 @@ export const config: Config = {
         {
             id: ChainId.MANTA_MAINNET,
             rpc: 'https://pacific-rpc.manta.network/http',
-            spareRpcs: [
-                'https://1rpc.io/manta',
-                'https://pacific-rpc.manta.network/http',
-                'https://manta-pacific.drpc.org',
-            ],
+            spareRpcs: ['https://1rpc.io/manta', 'https://manta-pacific.drpc.org'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 6,
             stables: [
