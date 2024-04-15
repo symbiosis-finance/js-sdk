@@ -477,7 +477,7 @@ export class Symbiosis {
         })
     }
 
-    public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
+    public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig, preferableToken?: Token): Token {
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId
         })
@@ -494,11 +494,27 @@ export class Symbiosis {
             return tokens[0]
         }
 
-        // find the FIRST suitable token from the tokens list
-        // e.g. the first token has priority
-        const transitToken = tokens.find((token) => {
-            return this.getOmniPoolByToken(token)?.id === omniPool.id
-        })
+        let transitToken: Token | undefined
+
+        if (preferableToken) {
+            const preferableTokenFound = this.configCache.tokens().find((i) => {
+                return i.equals(preferableToken)
+            })
+            if (preferableTokenFound && !preferableTokenFound.deprecated) {
+                const preferablePool = this.getOmniPoolByToken(preferableTokenFound)
+                if (preferablePool?.id === omniPool.id) {
+                    transitToken = preferableTokenFound
+                }
+            }
+        }
+
+        if (!transitToken) {
+            // find the FIRST suitable token from the tokens list
+            // e.g. the first token has priority
+            transitToken = tokens.find((token) => {
+                return this.getOmniPoolByToken(token)?.id === omniPool.id
+            })
+        }
 
         if (!transitToken) {
             throw new Error(
