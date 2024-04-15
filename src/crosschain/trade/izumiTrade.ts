@@ -317,18 +317,23 @@ export class IzumiTrade implements SymbiosisTrade {
         }
 
         const { path, tokens } = bestRoute
-
         const pointsBefore = await this.getCurrentPoolPoints(bestRoute)
         const initDecimalPriceEndByStart = getPriceDecimalEndByStart(bestRoute, pointsBefore)
+        const initDecimalPriceEndByStartTrimmed = new BNJS(initDecimalPriceEndByStart.toFixed(4))
 
-        const spotPriceBNJS = new BNJS(this.tokenAmountIn.raw.toString())
-            .dividedBy(10 ** this.tokenAmountIn.token.decimals)
-            .dividedBy(initDecimalPriceEndByStart)
+        this.priceImpact = new Percent('0')
 
-        const bestOutputBNJS = new BNJS(bestOutput.toString()).dividedBy(10 ** this.tokenOut.decimals)
-        const impactBNJS = spotPriceBNJS.minus(bestOutputBNJS).div(bestOutputBNJS).negated()
+        if (!initDecimalPriceEndByStartTrimmed.isEqualTo('0')) {
+            const spotPriceBNJS = new BNJS(this.tokenAmountIn.raw.toString())
+                .dividedBy(10 ** this.tokenAmountIn.token.decimals)
+                .dividedBy(initDecimalPriceEndByStart)
 
-        this.priceImpact = new Percent(impactBNJS.times(BIPS_BASE.toString()).toFixed(0).toString(), BIPS_BASE)
+            const bestOutputBNJS = new BNJS(bestOutput.toString()).dividedBy(10 ** this.tokenOut.decimals)
+            const impactBNJS = spotPriceBNJS.minus(bestOutputBNJS).div(bestOutputBNJS).negated()
+
+            this.priceImpact = new Percent(impactBNJS.times(BIPS_BASE.toString()).toFixed(0).toString(), BIPS_BASE)
+        }
+
         this.amountOut = new TokenAmount(this.tokenOut, bestOutput.toString())
 
         const minAcquired = getMinAmount(this.slippage, bestOutput.toString())

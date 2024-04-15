@@ -46,6 +46,11 @@ export const config: Config = {
         {
             id: ChainId.ETH_MAINNET,
             rpc: 'https://ethereum.publicnode.com',
+            spareRpcs: [
+                'https://eth.llamarpc.com',
+                'https://ethereum-rpc.publicnode.com',
+                'https://eth-pokt.nodies.app',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 12,
             stables: [
@@ -135,6 +140,7 @@ export const config: Config = {
         {
             id: ChainId.BSC_MAINNET,
             rpc: 'https://bsc.publicnode.com',
+            spareRpcs: ['https://bsc-rpc.publicnode.com', 'https://rpc.ankr.com/bsc', 'https://binance.llamarpc.com'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 10,
             stables: [
@@ -212,8 +218,9 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 43114,
+            id: ChainId.AVAX_MAINNET,
             rpc: 'https://avalanche-c-chain.publicnode.com',
+            spareRpcs: ['https://avalanche.drpc.org', 'https://avax.meowrpc.com', 'https://rpc.ankr.com/avalanche'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -258,8 +265,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 137,
+            id: ChainId.MATIC_MAINNET,
             rpc: 'https://polygon-bor.publicnode.com',
+            spareRpcs: [
+                'https://polygon.llamarpc.com',
+                'https://rpc-mainnet.maticvigil.com',
+                'https://polygon.meowrpc.com',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 17,
             stables: [
@@ -303,8 +315,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 40,
+            id: ChainId.TELOS_MAINNET,
             rpc: 'https://mainnet.telos.net/evm',
+            spareRpcs: [
+                'https://mainnet15.telos.net/evm',
+                'https://rpc3.us.telos.net/evm',
+                'https://evm.telos.detroitledger.tech/evm',
+            ],
             filterBlockOffset: 3000,
             waitForBlocksCount: 180,
             stables: [
@@ -337,8 +354,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 2222,
-            rpc: 'https://evm.kava.io/',
+            id: ChainId.KAVA_MAINNET,
+            rpc: 'https://evm.kava.io',
+            spareRpcs: [
+                'https://kava-evm-rpc.publicnode.com',
+                'https://rpc.ankr.com/kava_evm',
+                'https://evm.kava-rpc.com',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -371,8 +393,9 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 288,
+            id: ChainId.BOBA_MAINNET,
             rpc: 'https://lightning-replica.boba.network',
+            spareRpcs: ['https://replica.boba.network', 'https://1rpc.io/boba/eth', 'https://mainnet.boba.network'],
             filterBlockOffset: 3000,
             waitForBlocksCount: 0,
             stables: [
@@ -407,6 +430,7 @@ export const config: Config = {
         {
             id: 56288,
             rpc: 'https://replica.bnb.boba.network',
+            spareRpcs: ['https://bnb.boba.network', 'https://gateway.tenderly.co/public/boba-bnb'],
             filterBlockOffset: 3000,
             waitForBlocksCount: 0,
             stables: [
@@ -441,6 +465,7 @@ export const config: Config = {
         {
             id: ChainId.ZKSYNC_MAINNET,
             rpc: 'https://mainnet.era.zksync.io',
+            spareRpcs: ['https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 12,
             stables: [
@@ -448,6 +473,17 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC.e',
                     address: '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
+                    chainId: ChainId.ZKSYNC_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4',
                     chainId: ChainId.ZKSYNC_MAINNET,
                     decimals: 6,
                     icons: {
@@ -508,6 +544,11 @@ export const config: Config = {
         {
             id: ChainId.ARBITRUM_MAINNET,
             rpc: 'https://arb1.arbitrum.io/rpc',
+            spareRpcs: [
+                'https://arbitrum.llamarpc.com',
+                'https://arbitrum-one.public.blastapi.io',
+                'https://1rpc.io/arb',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 240,
             stables: [
@@ -585,8 +626,9 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 10,
+            id: ChainId.OPTIMISM_MAINNET,
             rpc: 'https://optimism.publicnode.com',
+            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://1rpc.io/op', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -630,8 +672,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 42170,
+            id: ChainId.ARBITRUM_NOVA,
             rpc: 'https://nova.arbitrum.io/rpc',
+            spareRpcs: [
+                'https://arbitrum-nova.drpc.org',
+                'https://arbitrum-nova.public.blastapi.io',
+                'https://arbitrum-nova-rpc.publicnode.com',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 2,
             stables: [
@@ -675,8 +722,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 1101,
+            id: ChainId.POLYGON_ZK,
             rpc: 'https://rpc.ankr.com/polygon_zkevm',
+            spareRpcs: [
+                'https://polygon-zkevm.drpc.org',
+                'https://zkevm-rpc.com',
+                'https://polygon-zkevm-mainnet.public.blastapi.io',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -734,6 +786,7 @@ export const config: Config = {
         {
             id: ChainId.LINEA_MAINNET,
             rpc: 'https://rpc.linea.build',
+            spareRpcs: ['https://1rpc.io/linea', 'https://linea.drpc.org', 'https://linea.decubate.com'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -788,8 +841,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 5000,
+            id: ChainId.MANTLE_MAINNET,
             rpc: 'https://rpc.mantle.xyz',
+            spareRpcs: [
+                'https://mantle-rpc.publicnode.com',
+                'https://mantle-mainnet.public.blastapi.io',
+                'https://rpc.ankr.com/mantle',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 10,
             stables: [
@@ -833,8 +891,13 @@ export const config: Config = {
             blocksPerYear: 0,
         },
         {
-            id: 8453,
+            id: ChainId.BASE_MAINNET,
             rpc: 'https://base.publicnode.com',
+            spareRpcs: [
+                'https://mainnet.base.org',
+                'https://base.llamarpc.com',
+                'https://base.blockpi.network/v1/rpc/public',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -897,11 +960,11 @@ export const config: Config = {
             ],
             router: '0x6E0617948FE030A7E4970F8389D4AD295F249B7E',
             dexFee: 30,
-            metaRouter: '0xbd9d3d1ec3008a779f194e888b0a32efee0c6fc6',
-            metaRouterGateway: '0xd62546e8143f0b272694da173bab1b2e3219a56a',
+            metaRouter: '0x0863786bbf4561f4a2a8be5a9ddf152afd8ae25c',
+            metaRouterGateway: '0x49e1816a2cf475515e7c80c9f0f0e16ae499198b',
             bridge: '0xc5a6517050c44ba78295f57f4754bb68f8705321',
             synthesis: '0x0000000000000000000000000000000000000000',
-            portal: '0xbacc8e4edfcb33e523ba248fb3ce72c3e5b20c72',
+            portal: '0xd83b5752b42856a08087748de6095af0be52d299',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x354ed0e8616678f2829feb2e2e9a0e0869fa82fb',
             aavePool: '0x0000000000000000000000000000000000000000',
@@ -914,6 +977,11 @@ export const config: Config = {
         {
             id: ChainId.SCROLL_MAINNET,
             rpc: 'https://rpc.scroll.io',
+            spareRpcs: [
+                'https://scroll-mainnet.public.blastapi.io',
+                'https://rpc.ankr.com/scroll',
+                'https://scroll.drpc.org',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 20,
             stables: [
@@ -970,6 +1038,7 @@ export const config: Config = {
         {
             id: ChainId.MANTA_MAINNET,
             rpc: 'https://pacific-rpc.manta.network/http',
+            spareRpcs: ['https://1rpc.io/manta', 'https://manta-pacific.drpc.org'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 6,
             stables: [
@@ -1015,6 +1084,11 @@ export const config: Config = {
         {
             id: ChainId.METIS_MAINNET,
             rpc: 'https://andromeda.metis.io/?owner=1088',
+            spareRpcs: [
+                'https://metis.drpc.org',
+                'https://metis-pokt.nodies.app',
+                'https://metis-mainnet.public.blastapi.io',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 0,
             stables: [
@@ -1049,6 +1123,7 @@ export const config: Config = {
         {
             id: ChainId.BAHAMUT_MAINNET,
             rpc: 'https://rpc1.bahamut.io',
+            spareRpcs: ['https://bahamut-rpc.publicnode.com', 'https://rpc2.bahamut.iox'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 5,
             stables: [
@@ -1083,6 +1158,7 @@ export const config: Config = {
         {
             id: ChainId.MODE_MAINNET,
             rpc: 'https://mainnet.mode.network',
+            spareRpcs: ['https://1rpc.io/mode', 'https://mode.drpc.org'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -1117,7 +1193,7 @@ export const config: Config = {
         {
             id: ChainId.RSK_MAINNET,
             rpc: 'https://public-node.rsk.co',
-            logsRpc: 'https://go.getblock.io/a4cf9dc5a3e347aaa1bb46315f2b874d',
+            spareRpcs: ['https://go.getblock.io/a4cf9dc5a3e347aaa1bb46315f2b874d', 'https://mycrypto.rsk.co'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 2,
             stables: [
@@ -1163,6 +1239,11 @@ export const config: Config = {
         {
             id: ChainId.BLAST_MAINNET,
             rpc: 'https://rpc.ankr.com/blast',
+            spareRpcs: [
+                'https://rpc.blast.io',
+                'https://blastl2-mainnet.public.blastapi.io',
+                'https://blast.blockpi.network/v1/rpc/public',
+            ],
             filterBlockOffset: 2000,
             waitForBlocksCount: 30,
             stables: [
@@ -1197,6 +1278,7 @@ export const config: Config = {
         {
             id: ChainId.MERLIN_MAINNET,
             rpc: 'https://rpc.merlinchain.io',
+            spareRpcs: ['https://merlin.blockpi.network/v1/rpc/public'],
             filterBlockOffset: 2000,
             waitForBlocksCount: 240,
             stables: [

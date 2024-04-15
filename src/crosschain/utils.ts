@@ -145,13 +145,35 @@ interface GetLogsWithTimeoutParams {
     exceedDelay?: number
 }
 
+function _promiseRaceResolved<T>(promises: Promise<T>[]): Promise<T> {
+    let rejectCounter = 0
+    const totalPromises = promises.length
+
+    return new Promise((resolve, reject) => {
+        const onReject = () => {
+            rejectCounter++
+            if (rejectCounter === totalPromises) {
+                reject(new Error('All promises were rejected.'))
+            }
+        }
+
+        promises.forEach((promise) => {
+            // Promise.resolve to "promisify" any value
+            Promise.resolve(promise).then(resolve).catch(onReject)
+        })
+    })
+}
+
 export async function getLogWithTimeout({
     symbiosis,
     chainId,
     filter,
     exceedDelay: exceedTimeout = DEFAULT_EXCEED_DELAY,
 }: GetLogsWithTimeoutParams): Promise<Log> {
-    const provider = symbiosis.getProvider(chainId, true)
+    const spareRpcs = symbiosis.config.chains.find((chain) => chain.id === chainId)?.spareRpcs ?? []
+    const spareProviders = spareRpcs.map((rpc) => symbiosis.getProvider(chainId, rpc))
+
+    const provider = symbiosis.getProvider(chainId)
 
     let activeFilter = filter
     if (!activeFilter.fromBlock) {
@@ -161,37 +183,33 @@ export async function getLogWithTimeout({
     }
 
     return new Promise((resolve, reject) => {
-        const period = 1000 * 60 // 60 seconds
+        const period = 1000 * 10 // 10 seconds
         let pastTime = 0
+        let logs: Log[] = []
 
-        const interval = setInterval(() => {
+        const getLogs = async () => {
             pastTime += period
             if (pastTime > exceedTimeout) {
                 clearInterval(interval)
-                provider.off(activeFilter, listener)
                 reject(new GetLogTimeoutExceededError(activeFilter))
                 return
             }
-            provider
-                .getLogs(activeFilter)
-                .then((logs) => {
-                    if (logs.length > 0) {
-                        resolve(logs[0])
-                        clearInterval(interval)
-                        provider.off(activeFilter, listener)
-                    }
-                })
-                .catch((error) => {
-                    reject(error)
-                })
-        }, period)
 
-        const listener = (log: Log) => {
-            clearInterval(interval)
-            resolve(log)
+            try {
+                logs = await provider.getLogs(activeFilter)
+            } catch (error) {
+                logs = await _promiseRaceResolved(
+                    spareProviders.map((spareProvider) => spareProvider.getLogs(activeFilter))
+                )
+            } finally {
+                if (logs.length > 0) {
+                    resolve(logs[0])
+                    clearInterval(interval)
+                }
+            }
         }
 
-        provider.once(activeFilter, listener)
+        const interval = setInterval(getLogs, period)
     })
 }
 

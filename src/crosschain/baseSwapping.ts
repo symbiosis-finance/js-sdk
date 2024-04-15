@@ -55,6 +55,19 @@ export type TronSwapExactIn = CrossChainSwapInfo & {
 
 export type CrosschainSwapExactInResult = TronSwapExactIn | EthSwapExactIn
 
+// // FIXME exception for the first time USDC launch
+// const CIRCLE_USDC_ZKSYNC = new Token({
+//     name: 'USD Coin',
+//     symbol: 'USDC',
+//     address: '0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4',
+//     chainId: ChainId.ZKSYNC_MAINNET,
+//     decimals: 6,
+//     icons: {
+//         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+//         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+//     },
+// })
+
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
 
@@ -105,8 +118,16 @@ export abstract class BaseSwapping {
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
 
-        this.transitTokenIn = this.symbiosis.transitToken(this.tokenAmountIn.token.chainId, this.omniPoolConfig)
-        this.transitTokenOut = this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
+        this.transitTokenIn = this.symbiosis.transitToken(
+            this.tokenAmountIn.token.chainId,
+            this.omniPoolConfig
+            // CIRCLE_USDC_ZKSYNC.equals(tokenAmountIn.token) ? CIRCLE_USDC_ZKSYNC : undefined
+        )
+        this.transitTokenOut = this.symbiosis.transitToken(
+            this.tokenOut.chainId,
+            this.omniPoolConfig
+            // CIRCLE_USDC_ZKSYNC.equals(tokenOut) ? CIRCLE_USDC_ZKSYNC : undefined
+        )
 
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
@@ -354,8 +375,6 @@ export abstract class BaseSwapping {
         const pia = this.tradeA?.priceImpact || zero
         const pib = this.transit.priceImpact || zero
         const pic = this.tradeC?.priceImpact || zero
-
-        // console.log([pia, pib, pic].map((i) => i.toSignificant()))
 
         let pi = pia.add(pib).add(pic)
 
