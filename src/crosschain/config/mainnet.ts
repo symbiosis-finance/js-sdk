@@ -1280,7 +1280,7 @@ export const config: Config = {
             rpc: 'https://rpc.merlinchain.io',
             spareRpcs: ['https://merlin.blockpi.network/v1/rpc/public'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 240,
+            waitForBlocksCount: 80,
             stables: [
                 {
                     name: 'Wrapped BTC',
