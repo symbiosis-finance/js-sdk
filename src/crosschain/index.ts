@@ -26,4 +26,5 @@ export {
     type TronTransactionData,
 } from './tron'
 export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
-export type { SwapExactInResult, FEE_COLLECTOR_ADDRESSES } from './swapExactIn'
+export type { SwapExactInResult } from './swapExactIn'
+export { FEE_COLLECTOR_ADDRESSES } from './swapExactIn'
