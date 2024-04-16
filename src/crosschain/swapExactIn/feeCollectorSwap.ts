@@ -9,7 +9,7 @@ import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../tron'
 import { Error, ErrorCode } from '../error'
 
-const FEE_COLLECTOR_ADDRESES: Partial<Record<ChainId, string>> = {
+export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0xff9b21c3bfa4bce9b20b55fed56d102ced48b0f6',
     [ChainId.BSC_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
     [ChainId.AVAX_MAINNET]: '0xA257F3FE4E4032291516DC355eDF90664e9eB932',
@@ -42,7 +42,7 @@ export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean 
     const inChainId = params.inTokenAmount.token.chainId
     const outChainId = params.outToken.chainId
 
-    return inChainId === outChainId && FEE_COLLECTOR_ADDRESES[inChainId] !== undefined
+    return inChainId === outChainId && FEE_COLLECTOR_ADDRESSES[inChainId] !== undefined
 }
 
 export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -50,7 +50,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
 
     const inChainId = params.inTokenAmount.token.chainId
 
-    const feeCollectorAddress = FEE_COLLECTOR_ADDRESES[inChainId]
+    const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[inChainId]
     if (!feeCollectorAddress) {
         throw new Error(`Fee collector not found for chain ${inChainId}`)
     }
