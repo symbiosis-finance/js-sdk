@@ -33,7 +33,6 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
     [ChainId.OPTIMISM_MAINNET]: 'optimism',
     // --- OpenOcean supported only chains
-    [ChainId.BOBA_MAINNET]: 'boba',
     [ChainId.AURORA_MAINNET]: 'aurora',
     [ChainId.HECO_MAINNET]: 'heco',
     [ChainId.KAVA_MAINNET]: 'kava',
@@ -45,6 +44,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.METIS_MAINNET]: 'metis',
     [ChainId.BLAST_MAINNET]: 'blast',
     [ChainId.MODE_MAINNET]: 'mode',
+    [ChainId.RSK_MAINNET]: 'rootstock',
 }
 
 const BASE_URL = 'https://open-api.openocean.finance/v3'

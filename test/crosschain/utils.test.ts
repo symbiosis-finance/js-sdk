@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { getMinAmount, splitSlippage } from '../../src'
+import { calculateGasMargin, getMinAmount, splitSlippage } from '../../src'
+import { BigNumber } from 'ethers'
 
 describe('#getMinAmount', () => {
     test('100 3%', () => {
@@ -25,6 +26,24 @@ describe('#getMinAmount', () => {
     test('1000076215 1%', () => {
         const minAmount = getMinAmount(100, '1000076215')
         expect(minAmount.toString()).toBe('990075452')
+    })
+})
+
+describe('#calculateGasMargin', () => {
+    test('100k -> 150k', () => {
+        const originalGasLimit = BigNumber.from(100000) // 100k
+        const increasedGasLimit = calculateGasMargin(originalGasLimit)
+        expect(increasedGasLimit.toString()).toBe('150000')
+    })
+    test('150k -> 225k', () => {
+        const originalGasLimit = BigNumber.from(150000) // 150k
+        const increasedGasLimit = calculateGasMargin(originalGasLimit)
+        expect(increasedGasLimit.toString()).toBe('225000')
+    })
+    test('1m -> 1.5m', () => {
+        const originalGasLimit = BigNumber.from(1000000) // 1m
+        const increasedGasLimit = calculateGasMargin(originalGasLimit)
+        expect(increasedGasLimit.toString()).toBe('1500000')
     })
 })
 
