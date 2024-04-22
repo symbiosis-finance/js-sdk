@@ -28,7 +28,6 @@ export type ChainConfig = {
     synthesis: string
     portal: string
     fabric: string
-    waitForBlocksCount: number
     blocksPerYear: number
 }
 

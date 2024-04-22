@@ -52,7 +52,6 @@ export const config: Config = {
                 'https://eth-pokt.nodies.app',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 12,
             stables: [
                 {
                     name: 'USD Coin',
@@ -142,7 +141,6 @@ export const config: Config = {
             rpc: 'https://bsc.publicnode.com',
             spareRpcs: ['https://bsc-rpc.publicnode.com', 'https://rpc.ankr.com/bsc', 'https://binance.llamarpc.com'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 10,
             stables: [
                 {
                     name: 'USD Coin',
@@ -222,7 +220,6 @@ export const config: Config = {
             rpc: 'https://avalanche-c-chain.publicnode.com',
             spareRpcs: ['https://avalanche.drpc.org', 'https://avax.meowrpc.com', 'https://rpc.ankr.com/avalanche'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'USD Coin',
@@ -273,7 +270,6 @@ export const config: Config = {
                 'https://polygon.meowrpc.com',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 17,
             stables: [
                 {
                     name: 'USD Coin (PoS) (USDC.e)',
@@ -323,7 +319,6 @@ export const config: Config = {
                 'https://evm.telos.detroitledger.tech/evm',
             ],
             filterBlockOffset: 3000,
-            waitForBlocksCount: 180,
             stables: [
                 {
                     name: 'syUSDC',
@@ -362,7 +357,6 @@ export const config: Config = {
                 'https://evm.kava-rpc.com',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'Tether USDt',
@@ -397,7 +391,6 @@ export const config: Config = {
             rpc: 'https://lightning-replica.boba.network',
             spareRpcs: ['https://replica.boba.network', 'https://1rpc.io/boba/eth', 'https://mainnet.boba.network'],
             filterBlockOffset: 3000,
-            waitForBlocksCount: 0,
             stables: [
                 {
                     name: 'USD Coin',
@@ -432,7 +425,6 @@ export const config: Config = {
             rpc: 'https://replica.bnb.boba.network',
             spareRpcs: ['https://bnb.boba.network', 'https://gateway.tenderly.co/public/boba-bnb'],
             filterBlockOffset: 3000,
-            waitForBlocksCount: 0,
             stables: [
                 {
                     name: 'USD Coin',
@@ -467,7 +459,6 @@ export const config: Config = {
             rpc: 'https://mainnet.era.zksync.io',
             spareRpcs: ['https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 12,
             stables: [
                 {
                     name: 'USD Coin',
@@ -550,7 +541,6 @@ export const config: Config = {
                 'https://1rpc.io/arb',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 240,
             stables: [
                 {
                     name: 'USD Coin',
@@ -630,7 +620,6 @@ export const config: Config = {
             rpc: 'https://optimism.publicnode.com',
             spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://1rpc.io/op', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'USD Coin',
@@ -680,7 +669,6 @@ export const config: Config = {
                 'https://arbitrum-nova-rpc.publicnode.com',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 2,
             stables: [
                 {
                     name: 'USD Coin',
@@ -730,7 +718,6 @@ export const config: Config = {
                 'https://polygon-zkevm-mainnet.public.blastapi.io',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 0,
             stables: [
                 // {
                 //     name: 'USD Coin',
@@ -788,7 +775,6 @@ export const config: Config = {
             rpc: 'https://rpc.linea.build',
             spareRpcs: ['https://1rpc.io/linea', 'https://linea.drpc.org', 'https://linea.decubate.com'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 0,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -849,7 +835,6 @@ export const config: Config = {
                 'https://rpc.ankr.com/mantle',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 10,
             stables: [
                 {
                     name: 'USD Coin',
@@ -899,7 +884,6 @@ export const config: Config = {
                 'https://base.blockpi.network/v1/rpc/public',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -944,7 +928,6 @@ export const config: Config = {
             id: ChainId.TRON_MAINNET,
             rpc: 'https://api.trongrid.io',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
             stables: [
                 {
                     name: 'Tether USDt',
@@ -983,7 +966,6 @@ export const config: Config = {
                 'https://scroll.drpc.org',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1040,7 +1022,6 @@ export const config: Config = {
             rpc: 'https://pacific-rpc.manta.network/http',
             spareRpcs: ['https://1rpc.io/manta', 'https://manta-pacific.drpc.org'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 6,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1090,7 +1071,6 @@ export const config: Config = {
                 'https://metis-mainnet.public.blastapi.io',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 0,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1125,7 +1105,6 @@ export const config: Config = {
             rpc: 'https://rpc1.bahamut.io',
             spareRpcs: ['https://bahamut-rpc.publicnode.com', 'https://rpc2.bahamut.iox'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 5,
             stables: [
                 {
                     name: 'USD Coin',
@@ -1160,7 +1139,6 @@ export const config: Config = {
             rpc: 'https://mainnet.mode.network',
             spareRpcs: ['https://1rpc.io/mode', 'https://mode.drpc.org'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1195,7 +1173,6 @@ export const config: Config = {
             rpc: 'https://public-node.rsk.co',
             spareRpcs: ['https://go.getblock.io/a4cf9dc5a3e347aaa1bb46315f2b874d', 'https://mycrypto.rsk.co'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 2,
             stables: [
                 {
                     name: 'Tether USD',
@@ -1245,7 +1222,6 @@ export const config: Config = {
                 'https://blast.blockpi.network/v1/rpc/public',
             ],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 30,
             stables: [
                 {
                     name: 'Wrapped ETH',
@@ -1280,7 +1256,6 @@ export const config: Config = {
             rpc: 'https://rpc.merlinchain.io',
             spareRpcs: ['https://merlin.blockpi.network/v1/rpc/public'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 80,
             stables: [
                 {
                     name: 'Wrapped BTC',
@@ -1314,7 +1289,6 @@ export const config: Config = {
             id: ChainId.ZKLINK_MAINNET,
             rpc: 'https://rpc.zklink.io',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 0,
             stables: [
                 {
                     name: 'Wrapped ETH',

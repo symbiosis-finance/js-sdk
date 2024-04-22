@@ -28,7 +28,6 @@ export const config: Config = {
             id: 97,
             rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
             stables: [
                 {
                     name: 'Binance USD',
@@ -62,7 +61,6 @@ export const config: Config = {
             id: 43113,
             rpc: 'https://rpc.ankr.com/avalanche_fuji',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
             stables: [
                 {
                     name: 'USDT',
@@ -96,7 +94,6 @@ export const config: Config = {
             id: 80001,
             rpc: 'https://rpc.ankr.com/polygon_mumbai',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 60,
             stables: [
                 {
                     name: 'USDT',
@@ -130,7 +127,6 @@ export const config: Config = {
             id: 11155111,
             rpc: 'https://rpc.sepolia.org',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
             stables: [
                 {
                     name: 'Wrapped ETH',
@@ -164,7 +160,6 @@ export const config: Config = {
             id: 534351,
             rpc: 'https://sepolia-rpc.scroll.io',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 1,
             stables: [
                 {
                     name: 'Wrapped ETH',
@@ -198,7 +193,6 @@ export const config: Config = {
             id: 59140,
             rpc: 'https://rpc.goerli.linea.build',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 5,
             stables: [
                 {
                     name: 'Tether',
@@ -232,7 +226,6 @@ export const config: Config = {
             id: 5001,
             rpc: 'https://rpc.testnet.mantle.xyz',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 5,
             stables: [
                 {
                     name: 'Tether',
@@ -266,7 +259,6 @@ export const config: Config = {
             id: 2494104990,
             rpc: 'https://api.shasta.trongrid.io',
             filterBlockOffset: 3000,
-            waitForBlocksCount: 19,
             stables: [
                 {
                     name: 'USDT',
@@ -300,7 +292,6 @@ export const config: Config = {
             id: ChainId.OKX_X1_TESTNET,
             rpc: 'https://testrpc.x1.tech',
             filterBlockOffset: 3000,
-            waitForBlocksCount: 0,
             stables: [
                 {
                     name: 'WETH',
