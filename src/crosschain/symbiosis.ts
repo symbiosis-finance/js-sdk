@@ -42,6 +42,8 @@ import {
     OneInchOracle__factory,
     Portal,
     Portal__factory,
+    SymBtc,
+    SymBtc__factory,
     SyncSwapLaunchPool,
     SyncSwapLaunchPool__factory,
     Synthesis,
@@ -51,7 +53,11 @@ import {
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
-import { statelessWaitForComplete } from './statelessWaitForComplete'
+import {
+    statelessWaitForComplete,
+    waitBtcTxToComplete,
+    waitSynthesisBtcEvmTransactionComplete,
+} from './statelessWaitForComplete'
 import { Swapping } from './swapping'
 import { getTransactionInfoById, isTronChainId } from './tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
@@ -273,6 +279,16 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return Fabric__factory.connect(address, signerOrProvider)
+    }
+
+    public symBtc(chainId: ChainId, signer?: Signer): SymBtc {
+        const address = this.chainConfig(chainId).symBtc
+        if (!address) {
+            throw new Error(`This chain ${chainId} doesn't have symBtc contract`)
+        }
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return SymBtc__factory.connect(address, signerOrProvider)
     }
 
     public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {
@@ -556,6 +572,14 @@ export class Symbiosis {
 
     public async waitForComplete(chainId: ChainId, txId: string): Promise<string> {
         return statelessWaitForComplete(this, chainId, txId)
+    }
+
+    public async waitBtcTransferComplete(btcAddress: string, blockConfirmations?: number): Promise<string> {
+        return waitBtcTxToComplete(btcAddress, blockConfirmations)
+    }
+
+    public async waitSynthesisBtcEvmTransactionComplete(chainId: ChainId, btcTx: string): Promise<string> {
+        return waitSynthesisBtcEvmTransactionComplete({ symbiosis: this, chainId, btcTx })
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {

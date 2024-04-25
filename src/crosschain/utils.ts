@@ -339,3 +339,8 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
         C: hasTradeC ? totalSlippage : 0,
     }
 }
+
+export function isBtc(chainId: ChainId | undefined) {
+    if (!chainId) return false
+    return [ChainId.BTC_TESTNET, ChainId.BTC_MAINNET].includes(chainId)
+}

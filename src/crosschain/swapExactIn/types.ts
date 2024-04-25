@@ -13,6 +13,7 @@ export interface SwapExactInParams {
     outToken: Token
     slippage: number
     deadline: number
+    evmAccount?: string
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -25,9 +26,13 @@ export type SwapExactInTransactionPayload =
           transactionType: 'tron'
           transactionRequest: TronTransactionData
       }
+    | {
+          transactionType: 'btc'
+          transactionRequest: any // FIXME
+      }
 
 export type SwapExactInResult = {
-    kind: 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge'
+    kind: 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap' | 'to-btc-swap'
     route: Token[]
     tokenAmountOut: TokenAmount
     tokenAmountOutMin?: TokenAmount

@@ -3,9 +3,10 @@ import { getExternalId, getLogWithTimeout } from './utils'
 import { tronAddressToEvm } from './tron'
 
 import { ChainId } from '../constants'
-import type { Symbiosis } from './symbiosis'
+import { Symbiosis } from './symbiosis'
 import fetch from 'isomorphic-unfetch'
 import { delay } from '../utils'
+import { BTC_FORWARDER_API } from './swapExactIn/fromBtcSwap'
 
 type BridgeRequestType =
     | 'SynthesizeRequest'
@@ -268,3 +269,144 @@ export async function waitForThorChainTx(txHash: string): Promise<string> {
     }
     return btcHash
 }
+
+// --- start Bitcoin transaction wait ---
+interface WrapTx {
+    feeLimit: number
+    info: {
+        fee: number
+        op: number
+        sbfee: number
+        tail: string
+        to: string
+    }
+}
+interface AddressInfo {
+    legacyAddress: string
+    revealAddress: string
+    validUntil: string
+    wrap: WrapTx
+}
+
+interface TransactionBtcInfo {
+    commitOutputIdx: number
+    commitTx: string
+    incomeOutputIdx: number
+    incomeTx: string
+    revealTx: string
+}
+
+interface Block {
+    blockHash: string
+    blockTime: number
+    confirmations: number
+}
+
+interface WrapOperation {
+    btcFee: number
+    revealInputIdx: number
+    revealTx: string
+    serial: number
+    stableBridgingFee: number
+    tail: string
+    to: string
+    value: number
+}
+
+interface WaitBtcTxToCompleteResponse {
+    addressInfo: AddressInfo
+    transactions: TransactionBtcInfo[]
+}
+interface TxResponse {
+    addressInfo: AddressInfo
+    block: Block
+    txInfo: TransactionBtcInfo
+    wrap: WrapOperation
+}
+
+export async function waitBtcTxToComplete(btcAddress: string, blockConfirmations = 1): Promise<string> {
+    const addressInfoUrl = new URL(`${BTC_FORWARDER_API.testnet}/address?address=${btcAddress}`)
+    const txInfoUrl = new URL(`${BTC_FORWARDER_API.testnet}/tx`)
+
+    const _fetchData = async (url: URL) => {
+        const response = await fetch(url)
+        if (!response.ok) {
+            const text = await response.text()
+            const json = JSON.parse(text)
+            throw new Error(json.message ?? text)
+        }
+
+        const data = await response.json()
+
+        return data
+    }
+
+    return new Promise((resolve, reject) => {
+        const POLLING_INTERVAL = 1000 * 10 // 10 seconds
+        const DEFAULT_EXCEED_DELAY = 1000 * 60 * 20 // 20 minutes
+
+        let pastTime = 0
+
+        let addressResponse: WaitBtcTxToCompleteResponse
+        let txResponse: TxResponse
+
+        const getBtcAddressInfo = async () => {
+            pastTime += POLLING_INTERVAL
+            if (pastTime > DEFAULT_EXCEED_DELAY) {
+                clearInterval(interval)
+                // [TODO]: Make specific class for error
+                reject(new Error(`No revealTx related with address: ${btcAddress}`))
+                return
+            }
+
+            try {
+                if (!addressResponse?.transactions[0]?.revealTx) {
+                    addressResponse = await _fetchData(addressInfoUrl)
+                    txInfoUrl.searchParams.append('txid', addressResponse.transactions[0].revealTx)
+                } else {
+                    txResponse = await _fetchData(txInfoUrl)
+                }
+            } catch (error) {
+                console.log('Error from Forawrder tx', error)
+            } finally {
+                if (txResponse?.block?.confirmations >= blockConfirmations) {
+                    resolve(txResponse.txInfo.revealTx)
+                    clearInterval(interval)
+                }
+            }
+        }
+
+        const interval = setInterval(getBtcAddressInfo, POLLING_INTERVAL)
+    })
+}
+
+interface BtcEvmTransactionCompleteParams {
+    symbiosis: Symbiosis
+    btcTx: string
+    chainId: ChainId
+}
+// [TODO]: Architecture and file organization ???
+export async function waitSynthesisBtcEvmTransactionComplete({
+    symbiosis,
+    btcTx,
+    chainId,
+}: BtcEvmTransactionCompleteParams): Promise<string> {
+    const symBtc = symbiosis.symBtc(chainId)
+    const synthesis = symbiosis.synthesis(chainId)
+
+    console.log('----INPUT---', btcTx)
+    const externalId = await symBtc.getBTCExternalID(
+        `0x${Buffer.from(btcTx, 'hex').reverse().toString('hex')}`,
+        0,
+        synthesis.address
+    )
+    console.log('---external id---', externalId)
+    const filter = synthesis.filters.BTCSynthesizeCompleted(externalId)
+
+    const log = await getLogWithTimeout({ symbiosis, chainId, filter })
+
+    console.log('----event logs--- ', log)
+
+    return log.transactionHash
+}
+// --- end Bitcoin transaction wait ---

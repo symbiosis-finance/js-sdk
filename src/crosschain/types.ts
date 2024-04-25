@@ -12,6 +12,7 @@ export type ChainConfig = {
     id: ChainId
     rpc: string
     spareRpcs?: string[]
+    isBtcChain?: boolean
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]
@@ -26,6 +27,7 @@ export type ChainConfig = {
     router: string
     bridge: string
     synthesis: string
+    symBtc?: string
     portal: string
     fabric: string
     waitForBlocksCount: number

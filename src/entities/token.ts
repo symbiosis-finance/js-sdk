@@ -691,7 +691,7 @@ export const WETH = {
     }),
     [ChainId.SEPOLIA_TESTNET]: new Token({
         chainId: ChainId.SEPOLIA_TESTNET,
-        address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14',
+        address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
         decimals: 18,
         symbol: 'WETH',
         isNative: false,

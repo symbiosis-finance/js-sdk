@@ -112,10 +112,15 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
+            if (chain?.symBtc || chain.isBtcChain) {
+                continue
+            }
+
             const portal = this.portal(chain.id)
             let portalMetaRouter
             if (portal.address !== AddressZero) {
                 portalMetaRouter = (await portal.callStatic.metaRouter()).toLowerCase()
+                console.log('meta router', portalMetaRouter)
             }
 
             const synthesis = this.synthesis(chain.id)
@@ -262,17 +267,20 @@ export class Builder {
 
     private async buildTokensList() {
         const stables = this.stables()
-
         const realTokensWithId: TokenInfo[] = []
-
         let idCounter = 0
 
+        // --- add id for each stable(swapable) coin as index ---
         for (idCounter; idCounter < stables.length; idCounter++) {
             realTokensWithId.push({ ...stables[idCounter], id: idCounter })
         }
-        const tokens: TokenInfo[] = [...realTokensWithId]
+
+        const tokens: TokenInfo[] = realTokensWithId
+        console.log('real token with ids', realTokensWithId)
 
         const chainsWithFabric = this.config.chains.filter((chain) => chain.fabric !== AddressZero)
+
+        // --- On this network exists synthetic tokens ---
         for (let i = 0; i < chainsWithFabric.length; i++) {
             const chainWithFabric = chainsWithFabric[i]
             console.log(`Get fabric in chain ${chainWithFabric.id}`)
@@ -287,7 +295,7 @@ export class Builder {
             }))
 
             const synthResults = await multicall.callStatic.tryAggregate(false, synthCalls)
-            const synths = synthResults.map(([success, returnData]) => {
+            const synthTokenAddresses = synthResults.map(([success, returnData]) => {
                 if (!success) {
                     throw new Error(`Cannot get representations from fabric on chain ${chainWithFabric.id}`)
                 }
@@ -300,11 +308,13 @@ export class Builder {
                 return synthAddress
             })
 
-            for (let j = 0; j < synths.length; j++) {
-                const address = synths[j]
+            for (let j = 0; j < synthTokenAddresses.length; j++) {
+                const address = synthTokenAddresses[j]
                 if (!address) {
                     continue
                 }
+
+                console.log('address', address, realTokensWithId, realTokensWithId[j])
                 const erc20 = new Contract(address, ERC20, fabric.provider)
 
                 const token: TokenInfo = {

@@ -30,6 +30,7 @@
         "@uniswap/v3-sdk": "3.9.0",
         "big.js": "^5.2.2",
         "bignumber.js": "^9.0.1",
+        "bitcoinjs-lib": "^6.1.5",
         "decimal.js-light": "^2.5.0",
         "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
