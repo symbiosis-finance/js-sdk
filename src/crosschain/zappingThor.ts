@@ -170,7 +170,7 @@ export class ZappingThor extends BaseSwapping {
         if (!bestResult || !bestThorToken || !bestThorPool) {
             throw new Error(`Can't build route upto the THORChain`)
         }
-        console.log('Routing via', { bestThorPool })
+        // console.log('Routing via', { bestThorPool })
 
         // >> for display route purposes only
         bestResult.route.push(new Token({ ...bestThorToken, chainId: ChainId.BTC_MAINNET }))
