@@ -44,12 +44,12 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return fromBtcSwap(params)
     }
 
-    if (isBridgeSupported(params)) {
-        return bridge(params)
-    }
-
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
+    }
+
+    if (isBridgeSupported(params)) {
+        return bridge(params)
     }
 
     return crosschainSwap(params)

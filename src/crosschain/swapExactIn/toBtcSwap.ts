@@ -1,10 +1,11 @@
-import { networks, address } from 'bitcoinjs-lib'
+import { networks, address, Network } from 'bitcoinjs-lib'
 
 import { ChainId } from '../../constants'
 import { TokenAmount } from '../../entities'
 import { Synthesis__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import { getFunctionSelector } from '../tron'
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
     const { outToken, inTokenAmount } = context
@@ -22,11 +23,15 @@ export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, outToken } = context
+    const { inTokenAmount } = context
 
-    const isThorChainSwap = false
+    const isNativeSwapSupported = !!context.symbiosis.chainConfig(inTokenAmount.token.chain!.id).symBtc
 
-    // Thor chain flow
+    if (isNativeSwapSupported) {
+        return _burnSyntheticBtc(context)
+    }
+
+    // Thor chain fallback
     const omniPool = context.symbiosis.config.omniPools[0]
     const zappingThor = context.symbiosis.newZappingThor(omniPool)
 
@@ -50,54 +55,66 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
     }
 }
 
-// --- start utility functions
-function getNetwork(chain: string): networks.Network | undefined {
+// --- start BTC utility functions ---
+
+export const BTC_NETWORKS: Record<ChainId.BTC_MAINNET | ChainId.BTC_TESTNET, Network> = {
+    [ChainId.BTC_MAINNET]: networks.bitcoin,
+    [ChainId.BTC_TESTNET]: networks.testnet,
+}
+
+export function getPkScript(addr: string, btcChain: Network): Buffer {
+    return address.toOutputScript(addr, btcChain)
+}
+
+export function getAddress(pkScript: string, btcChain: Network): string {
+    return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
+}
+// --- end  BTC utility functions ---
+
+export async function _burnSyntheticBtc({
+    inTokenAmount,
+    outToken,
+    symbiosis,
+    fromAddress,
+    toAddress,
+}: SwapExactInParams): Promise<SwapExactInResult> {
+    const synthesisInterface = Synthesis__factory.createInterface()
+    const symBtcContract = symbiosis.symBtc(inTokenAmount.token.chainId)
+
+    const syntheticBtcTokenAddress = await symBtcContract.getSyntToken()
+    const amountOut = new TokenAmount(outToken, inTokenAmount.raw)
+    // partner's id to identify them
+    const clientId = '0x0000000000000000000000000000000000000000000000000000000000000000'
+    // const minBtcFee = await symbiosis.synthesis?.minFeeBTC() // uncomment
+    const minBtcFee = '12500' //[TODO]: remove
+
+    //@ts-ignore
+    const callData = synthesisInterface.encodeFunctionData('burnSyntheticTokenBTC', [
+        0,
+        inTokenAmount.raw.toString(),
+        getPkScript(toAddress, BTC_NETWORKS[ChainId.BTC_TESTNET]), // [TODO]: Change it for mainnet
+        syntheticBtcTokenAddress,
+        clientId,
+    ])
+
+    console.log('--caldata to btc swap ---', callData)
+
+
+    const payload = preparePayload({
+        chainId: inTokenAmount.token.chainId,
+        fromAddress,
+        toAddress: await symBtcContract.synthesis(),
+        callData,
+    })
+
+    const totalTokenAmountOut = amountOut.subtract(new TokenAmount(outToken, minBtcFee))
+
     return {
-        mainnet: networks.bitcoin,
-        testnet3: networks.testnet,
-    }[chain]
+        kind: 'to-btc-swap',
+        route: [inTokenAmount.token, outToken],
+        tokenAmountOut: totalTokenAmountOut,
+        approveTo: payload.transactionRequest.to,
+        fee: new TokenAmount(inTokenAmount.token, minBtcFee),
+        ...payload,
+    }
 }
-
-export function getPkScript(addr: string, chain: string): Buffer {
-    return address.toOutputScript(addr, getNetwork(chain))
-}
-
-export function getAddress(pkScript: string, chain: string): string {
-    return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), getNetwork(chain))
-}
-// --- end  utility functions
-
-// export async function _burnSyntheticBtc({inTokenAmount, outToken, symbiosis, fromAddress}: SwapExactInParams): Promise<SwapExactInResult> {
-//     const synthesisInterface = Synthesis__factory.createInterface()
-
-//     const amountOut = new TokenAmount(outToken, inTokenAmount.raw)
-//     const clientId = '0x1234560000000000000000000000000000000000000000000000000000000000'
-
-//     const callData = synthesisInterface.encodeFunctionData('burnSyntheticTokenBTC', [
-//         0,
-//         inTokenAmount.raw,
-//         getPkScript(to, "testnet3"), // [TODO]: Change it from toggle networks
-//         symbiosis.symBtc.getSyntToken(outToken.chain?.id),
-//         clientId
-//     ])
-
-//     const callData =''
-
-//     const functionSelector =''
-
-//     const payload = preparePayload({
-//         functionSelector,
-//         chainId: inTokenAmount.token.chainId,
-//         fromAddress: fromAddress,
-//         toAddress: inTokenAmount.token.address,
-//         callData,
-//     })
-
-//     return {
-//         kind: 'to-btc-swap',
-//         route: [inTokenAmount.token, outToken],
-//         tokenAmountOut: amountOut,
-//         approveTo: payload.transactionRequest.to
-//         ...payload,
-//     }
-// }

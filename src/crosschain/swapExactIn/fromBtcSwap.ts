@@ -51,7 +51,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             validUntil,
             tokenAmountOut: new TokenAmount(outToken, totalTokenAmountOut.raw),
         },
-        route: [],
+        route: [inTokenAmount.token, outToken],
         tokenAmountOut: new TokenAmount(outToken, totalTokenAmountOut.raw),
         approveTo: AddressZero,
         inTradeType: undefined,

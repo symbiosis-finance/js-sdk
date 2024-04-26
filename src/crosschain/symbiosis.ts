@@ -55,9 +55,8 @@ import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
 import {
     statelessWaitForComplete,
-    waitBtcTxToComplete,
-    waitSynthesisBtcEvmTransactionComplete,
-} from './statelessWaitForComplete'
+    StatelessWaitForCompleteParams,
+} from './statelessWaitForComplete/statelessWaitForComplete'
 import { Swapping } from './swapping'
 import { getTransactionInfoById, isTronChainId } from './tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
@@ -570,16 +569,14 @@ export class Symbiosis {
         return new TronWeb({ fullHost: config.rpc, eventNode: config.rpc, solidityNode: config.rpc })
     }
 
-    public async waitForComplete(chainId: ChainId, txId: string): Promise<string> {
-        return statelessWaitForComplete(this, chainId, txId)
-    }
-
-    public async waitBtcTransferComplete(btcAddress: string, blockConfirmations?: number): Promise<string> {
-        return waitBtcTxToComplete(btcAddress, blockConfirmations)
-    }
-
-    public async waitSynthesisBtcEvmTransactionComplete(chainId: ChainId, btcTx: string): Promise<string> {
-        return waitSynthesisBtcEvmTransactionComplete({ symbiosis: this, chainId, btcTx })
+    public async waitForComplete<T extends string>({
+        chainId,
+        operation,
+        txId,
+        btcAddress,
+        btcId,
+    }: Omit<StatelessWaitForCompleteParams, 'symbiosis'>): Promise<T | string | undefined> {
+        return statelessWaitForComplete<T>({ symbiosis: this, chainId, txId, operation, btcAddress, btcId })
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {

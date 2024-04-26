@@ -1,20 +1,20 @@
 import { describe, expect, test } from 'vitest'
 import {
     findThorChainDeposit,
-    getTransactionStatus,
+    getThorTransactionStatus,
     tryToFindThorChainDepositAndWait,
     waitForThorChainTx,
-} from '../../src/crosschain/statelessWaitForComplete'
+} from '../../src/crosschain/statelessWaitForComplete/statelessWaitForComplete'
 import { ChainId, Symbiosis } from '../../src'
 
 describe('#getTransactionStatus', () => {
     test('ok', async () => {
-        const btcHash = await getTransactionStatus('b2230dbc77e0331959040f68971c2135bcd0377c00b55ccd1aff91f0a8752ddd')
+        const btcHash = await getThorTransactionStatus('b2230dbc77e0331959040f68971c2135bcd0377c00b55ccd1aff91f0a8752ddd')
 
         expect(btcHash).toBe('A6F4FBA9CB25F7700F644D9B5753FCC51C7030B5C4B9F99ECFBB58225E74F9D7')
     })
     test('fail', async () => {
-        const btcHash = await getTransactionStatus('incorrect_hash')
+        const btcHash = await getThorTransactionStatus('incorrect_hash')
 
         expect(btcHash).toBe(undefined)
     })
@@ -26,7 +26,7 @@ describe('#waitForThorChainTx', () => {
         expect(btcHash).toBe('A6F4FBA9CB25F7700F644D9B5753FCC51C7030B5C4B9F99ECFBB58225E74F9D7')
     })
     test('fail', async () => {
-        const btcHash = await getTransactionStatus('incorrect_hash')
+        const btcHash = await getThorTransactionStatus('incorrect_hash')
 
         expect(btcHash).toBe(undefined)
     })

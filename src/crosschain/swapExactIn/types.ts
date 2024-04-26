@@ -28,7 +28,7 @@ export type SwapExactInTransactionPayload =
       }
     | {
           transactionType: 'btc'
-          transactionRequest: any // FIXME
+          transactionRequest: any //[TODO]: specific type
       }
 
 export type SwapExactInResult = {
