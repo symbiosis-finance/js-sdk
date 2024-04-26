@@ -131,7 +131,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         let bestTrade: TradeType | undefined
         for (const trade of tradesResults) {
             if (trade.status === 'rejected') {
-                console.error(`AggregatorTrade rejected: ${JSON.stringify(trade.reason)}`)
+                console.error(`AggregatorTrade rejected: ${JSON.stringify(trade.reason?.toString())}`)
                 continue
             }
 
