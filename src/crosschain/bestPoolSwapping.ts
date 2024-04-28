@@ -8,6 +8,7 @@ import {utils} from "ethers";
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
+// TODO move to Symbiosis instance' params
 const DIRECT_ROUTE_CLIENTS = [
     utils.formatBytes32String('lifi')
 ]
