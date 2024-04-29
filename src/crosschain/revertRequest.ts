@@ -82,7 +82,6 @@ export const findSourceChainData = async (
         if (item.status !== 'fulfilled') {
             error = `Error occurred on chain ${chainId} while loading findSynthesizeRequestOnChain`
             console.error(error, item)
-            // TODO notify sentry about this
             continue
         }
         if (item.value) {

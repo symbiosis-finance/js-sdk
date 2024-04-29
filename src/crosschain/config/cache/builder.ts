@@ -97,7 +97,7 @@ export class Builder {
         } as ConfigCacheData)
         fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err: any) {
             if (err) {
-                console.log(err)
+                console.error(err)
             }
         })
     }
@@ -155,7 +155,6 @@ export class Builder {
         }
 
         if (error) {
-            // console.error('There are differences')
             throw new Error('There are differences')
         }
     }

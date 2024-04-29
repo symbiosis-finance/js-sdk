@@ -16,7 +16,6 @@ export const config: Config = {
             rpc: 'https://sepolia.gateway.tenderly.co',
             spareRpcs: ['https://sepolia.drpc.org', 'https://rpc-sepolia.rockx.com'],
             filterBlockOffset: 2000,
-            waitForBlocksCount: 3,
             stables: [
                 {
                     name: 'Wrapped ETH',
@@ -63,7 +62,6 @@ export const config: Config = {
             isBtcChain: true,
             rpc: '',
             filterBlockOffset: 2000, // ??
-            waitForBlocksCount: 2,
             stables: [
                 {
                     name: 'Bitcoin',

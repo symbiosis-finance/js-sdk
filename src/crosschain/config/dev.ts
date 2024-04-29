@@ -22,7 +22,6 @@ export const config: Config = {
             id: 97,
             rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
             filterBlockOffset: 2000,
-            waitForBlocksCount: 20,
             stables: [],
             router: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',
             dexFee: 30,

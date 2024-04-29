@@ -101,6 +101,8 @@ function toThorAmount(tokenAmount: TokenAmount): BigNumber {
 
 const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
+const MIN_AMOUNT_IN = 500
+
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected bitcoinAddress!: string
@@ -112,8 +114,8 @@ export class ZappingThor extends BaseSwapping {
 
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
-        if (amountIn < 100) {
-            throw new Error('The min swap amount towards Bitcoin is $100', ErrorCode.MIN_THORCHAIN_AMOUNT_IN)
+        if (amountIn < MIN_AMOUNT_IN) {
+            throw new Error(`The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`, ErrorCode.MIN_THORCHAIN_AMOUNT_IN)
         }
         const amount = this.getTradeCAmountIn()
         this.thorQuote = await this.getThorQuote(amount)
@@ -168,7 +170,7 @@ export class ZappingThor extends BaseSwapping {
         if (!bestResult || !bestThorToken || !bestThorPool) {
             throw new Error(`Can't build route upto the THORChain`)
         }
-        console.log('Routing via', { bestThorPool })
+        // console.log('Routing via', { bestThorPool })
 
         // >> for display route purposes only
         bestResult.route.push(new Token({ ...bestThorToken, chainId: ChainId.BTC_MAINNET }))

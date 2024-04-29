@@ -63,5 +63,3 @@ async function _findThorChainDeposit(symbiosis: Symbiosis, chainId: ChainId, txH
 
     return !!log
 }
-
-

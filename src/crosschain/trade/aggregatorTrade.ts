@@ -34,6 +34,14 @@ const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('openocean')
 
 type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniLikeTrade | UniV3Trade
 
+function limitOpenOceanPromise() {
+    return new Promise((_resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error('Timeout OO'))
+        }, 5 * 1000)
+    }) as Promise<OpenOceanTrade>
+}
+
 // Get the best trade from all aggregators
 export class AggregatorTrade implements SymbiosisTrade {
     protected trade: TradeType | undefined
@@ -81,12 +89,7 @@ export class AggregatorTrade implements SymbiosisTrade {
 
             const promises: Promise<OpenOceanTrade>[] = [openOceanTrade.init()]
             if (clientId !== OPEN_OCEAN_CLIENT_ID) {
-                const limitPromise = new Promise((_resolve, reject) => {
-                    setTimeout(() => {
-                        reject('Timeout OO')
-                    }, 5 * 1000)
-                }) as Promise<OpenOceanTrade>
-                promises.push(limitPromise)
+                promises.push(limitOpenOceanPromise())
             }
 
             aggregators.push(Promise.race(promises))
@@ -128,7 +131,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         let bestTrade: TradeType | undefined
         for (const trade of tradesResults) {
             if (trade.status === 'rejected') {
-                console.log('Rejected. Reason: ', trade.reason?.toString?.().replace(/(\r\n|\n|\r)/gm, ''))
+                console.error(`AggregatorTrade rejected: ${JSON.stringify(trade.reason?.toString())}`)
                 continue
             }
 
@@ -145,9 +148,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         if (!bestTrade) {
             const inToken = tokenAmountIn.token
 
-            console.log(
-                `No aggregator trade found for ${inToken.chainId}/${inToken.address} -> ${tokenOut.chainId}/${tokenOut.address}. Fallback to unilike.`
-            )
+            console.error(`AggregatorTrade fallback: ${inToken.chainId}/${inToken.address} -> ${tokenOut.chainId}/${tokenOut.address}`)
 
             this.trade = await this.buildUniLikeTrade()
             return this

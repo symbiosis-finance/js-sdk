@@ -62,10 +62,22 @@ async function _getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: st
 
     const revertBurnRequestTopic = portal.interface.getEventTopic('RevertBurnRequest')
     const revertSynthesizeRequestTopic = synthesis.interface.getEventTopic('RevertSynthesizeRequest')
+    const metaRevertRequestTopic = portal.interface.getEventTopic('MetaRevertRequest')
 
-    const revertLog = receipt.logs.find((log) => {
-        return !!log.topics.find((topic) => topic === revertBurnRequestTopic || topic === revertSynthesizeRequestTopic)
+    let revertLog = receipt.logs.find((log) => {
+        return !!log.topics.find((topic) => {
+            return topic === revertBurnRequestTopic || topic === revertSynthesizeRequestTopic
+        })
     })
+    let isMetaRevertRequest = false
+    if (!revertLog) {
+        revertLog = receipt.logs.find((log) => {
+            return !!log.topics.find((topic) => {
+                return topic === metaRevertRequestTopic
+            })
+        })
+        isMetaRevertRequest = !!revertLog
+    }
     if (revertLog) {
         const address = revertLog.address.toLowerCase()
         if (address !== portal.address.toLowerCase() && address !== synthesis.address.toLowerCase()) {
@@ -85,7 +97,11 @@ async function _getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: st
         let requestType: BridgeRequestType
         if (revertLog.address.toLowerCase() === portal.address.toLowerCase()) {
             contract = portal
-            requestType = 'RevertBurnCompleted'
+            if (isMetaRevertRequest) {
+                requestType = 'RevertSynthesizeRequest'
+            } else {
+                requestType = 'RevertBurnCompleted'
+            }
         } else {
             contract = synthesis
             requestType = 'RevertSynthesizeCompleted'
