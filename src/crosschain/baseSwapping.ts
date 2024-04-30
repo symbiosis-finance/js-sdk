@@ -97,8 +97,6 @@ export abstract class BaseSwapping {
     protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
 
-    protected feeV2: TokenAmount | undefined
-
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
         this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
@@ -170,15 +168,14 @@ export abstract class BaseSwapping {
         ])
 
         const feeV2 = feeV2Raw?.fee
-        this.feeV2 = feeV2
 
         // >>> NOTE create trades with calculated fee
         this.transit = this.buildTransit(fee)
         await this.transit.init()
 
-        await this.doPostTransitAction()
+        await this.doPostTransitAction(feeV2)
         if (!this.transitTokenOut.equals(tokenOut)) {
-            this.tradeC = this.buildTradeC()
+            this.tradeC = this.buildTradeC(feeV2)
             await this.tradeC.init()
         }
         // <<< NOTE create trades with calculated fee
@@ -248,7 +245,7 @@ export abstract class BaseSwapping {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    protected async doPostTransitAction() {}
+    protected async doPostTransitAction(_feeV2?: TokenAmount) {}
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
         const hasTradeA = !this.transitTokenIn.equals(this.tokenAmountIn.token)
@@ -477,29 +474,29 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected getTradeCAmountIn(): TokenAmount {
+    protected getTradeCAmountIn(feeV2?: TokenAmount): TokenAmount {
         let amountIn = this.transit.amountOut
 
         if (this.transit.isV2()) {
             let amountRaw = amountIn.raw
-            if (this.feeV2) {
-                if (amountIn.lessThan(this.feeV2) || amountIn.equalTo(this.feeV2)) {
+            if (feeV2) {
+                if (amountIn.lessThan(feeV2) || amountIn.equalTo(feeV2)) {
                     throw new Error(
                         `Amount ${amountIn.toSignificant()} ${
                             amountIn.token.symbol
-                        } less than feeV2 ${this.feeV2.toSignificant()} ${this.feeV2.token.symbol}`,
+                        } less than feeV2 ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
                         ErrorCode.AMOUNT_LESS_THAN_FEE
                     )
                 }
-                amountRaw = JSBI.subtract(amountRaw, this.feeV2.raw)
+                amountRaw = JSBI.subtract(amountRaw, feeV2.raw)
             }
             amountIn = new TokenAmount(this.transitTokenOut, amountRaw)
         }
         return amountIn
     }
 
-    protected buildTradeC() {
-        const amountIn = this.getTradeCAmountIn()
+    protected buildTradeC(feeV2?: TokenAmount) {
+        const amountIn = this.getTradeCAmountIn(feeV2)
 
         const chainId = this.tokenOut.chainId
 

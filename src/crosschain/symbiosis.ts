@@ -42,8 +42,6 @@ import {
     OneInchOracle__factory,
     Portal,
     Portal__factory,
-    SyncSwapLaunchPool,
-    SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
     UniLikeRouter,
@@ -377,12 +375,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return BeefyVault__factory.connect(address, signerOrProvider)
-    }
-
-    public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
     }
 
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {

@@ -112,12 +112,15 @@ export class ZappingThor extends BaseSwapping {
     protected thorVault!: string
     protected thorQuote!: ThorQuote
 
-    protected async doPostTransitAction() {
+    protected async doPostTransitAction(feeV2?: TokenAmount) {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
         if (amountIn < MIN_AMOUNT_IN) {
-            throw new Error(`The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`, ErrorCode.MIN_THORCHAIN_AMOUNT_IN)
+            throw new Error(
+                `The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`,
+                ErrorCode.MIN_THORCHAIN_AMOUNT_IN
+            )
         }
-        const amount = this.getTradeCAmountIn()
+        const amount = this.getTradeCAmountIn(feeV2)
         this.thorQuote = await this.getThorQuote(amount)
     }
 
@@ -137,6 +140,7 @@ export class ZappingThor extends BaseSwapping {
         for (let i = 0; i < THOR_TOKENS.length; i++) {
             try {
                 const thorToken = THOR_TOKENS[i]
+                // TODO check if thorToken is a transit token on token.chainId
 
                 this.thorTokenIn = thorToken // NOTE: bad practice. set for doPostTransitAction invocation only
 
@@ -287,14 +291,6 @@ export class ZappingThor extends BaseSwapping {
         const receiveSides = []
         const path = []
         const offsets = []
-        const amount = this.getTradeCAmountIn()
-
-        if (this.tradeC) {
-            callDatas.push(this.tradeC.callData)
-            receiveSides.push(this.tradeC.routerAddress)
-            path.push(this.tradeC.tokenAmountIn.token.address)
-            offsets.push(this.tradeC.callDataOffset!)
-        }
 
         const expiry = Math.floor(Date.now() / 1000) + 60 * 60 // + 1h
         const burnCalldata = ThorRouter__factory.createInterface().encodeFunctionData('depositWithExpiry', [
@@ -311,7 +307,7 @@ export class ZappingThor extends BaseSwapping {
         offsets.push(100)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
-            amount.raw.toString(),
+            '0', // will be patched
             callDatas,
             receiveSides,
             path,
