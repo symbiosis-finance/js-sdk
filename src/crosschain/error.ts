@@ -6,6 +6,7 @@ export enum ErrorCode {
     'MIN_THORCHAIN_AMOUNT_IN',
     'ADVISOR_ERROR',
     'AMOUNT_TOO_HIGH',
+    'AMOUNT_TOO_LOW',
 }
 
 export class Error {
