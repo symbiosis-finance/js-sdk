@@ -16,6 +16,8 @@ export class Transit {
     public feeToken!: Token
     public trade: OmniTrade | undefined
 
+    protected fee?: TokenAmount
+
     public constructor(
         protected symbiosis: Symbiosis,
         public amountIn: TokenAmount,
@@ -25,8 +27,7 @@ export class Transit {
         protected transitTokenOut: Token,
         protected slippage: number,
         protected deadline: number,
-        protected omniPoolConfig: OmniPoolConfig,
-        protected fee?: TokenAmount
+        protected omniPoolConfig: OmniPoolConfig
     ) {
         this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, omniPoolConfig.chainId)
 
@@ -34,7 +35,8 @@ export class Transit {
         this.priceImpact = new Percent('0')
     }
 
-    public async init(): Promise<Transit> {
+    public async init(fee?: TokenAmount): Promise<Transit> {
+        this.fee = fee
         this.feeToken = this.getFeeToken()
 
         this.trade = await this.buildTrade()
@@ -136,7 +138,7 @@ export class Transit {
         return amountOut.subtract(this.fee)
     }
 
-    protected getFeeToken(): Token {
+    public getFeeToken(): Token {
         const transitTokenOutChainId = this.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
 
         if (this.direction === 'burn') {

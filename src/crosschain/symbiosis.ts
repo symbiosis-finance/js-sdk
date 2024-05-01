@@ -76,6 +76,24 @@ export type DiscountTier = {
     discount: number
 }
 
+type AdvisorChainConfigToken = {
+    address: string
+    fee_rounding: string
+    symbol: string
+    total_limit: string | null
+    tx_limit: string | null
+}
+
+export type AdvisorChainConfig = {
+    chain_id: ChainId
+    fee: number
+    portal: {
+        address: string
+        tokens: AdvisorChainConfigToken[]
+    }
+    block_indent: number
+}
+
 const defaultFetch: typeof fetch = (url, init) => {
     return isomorphicFetch(url as string, init)
 }
@@ -100,6 +118,18 @@ export class Symbiosis {
 
     public async getDiscountTiers(): Promise<DiscountTier[]> {
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount/tiers`)
+
+        if (!response.ok) {
+            const text = await response.text()
+            const json = JSON.parse(text)
+            throw new Error(json.message ?? text)
+        }
+
+        return await response.json()
+    }
+
+    public async getAdvisorConfigs(): Promise<AdvisorChainConfig[]> {
+        const response = await this.fetch(`${this.config.advisor.url}/v1/swap/configs`)
 
         if (!response.ok) {
             const text = await response.text()

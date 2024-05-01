@@ -7,7 +7,7 @@ import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from './contracts'
 import { DataProvider } from './dataProvider'
-import type { Symbiosis } from './symbiosis'
+import type { AdvisorChainConfig, Symbiosis } from './symbiosis'
 import { AggregatorTrade, SymbiosisTradeType, WrapTrade } from './trade'
 import { Transit } from './transit'
 import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './utils'
@@ -18,6 +18,7 @@ import { OneInchProtocols } from './trade/oneInchTrade'
 import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig } from './types'
+import { ChainId } from '../constants'
 
 export interface SwapExactInParams {
     tokenAmountIn: TokenAmount
@@ -27,6 +28,7 @@ export interface SwapExactInParams {
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
+    advisorConfigs?: AdvisorChainConfig[]
 }
 
 export interface CrossChainSwapInfo {
@@ -111,6 +113,7 @@ export abstract class BaseSwapping {
         slippage,
         deadline,
         oneInchProtocols,
+        advisorConfigs,
     }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
@@ -149,7 +152,16 @@ export abstract class BaseSwapping {
         }
 
         this.transit = this.buildTransit()
-        await this.transit.init()
+
+        const feeToken = this.transit.getFeeToken()
+        let feeRaw
+        if (feeToken.chainId === ChainId.BOBA_BNB && advisorConfigs) {
+            feeRaw = await this.getFeeFromConfig(feeToken, advisorConfigs)
+        } else {
+            feeRaw = await this.getFee(feeToken)
+        }
+        const { fee, save } = feeRaw
+        await this.transit.init(fee)
 
         await this.doPostTransitAction()
 
@@ -162,16 +174,9 @@ export abstract class BaseSwapping {
 
         this.route = this.getRoute()
 
-        const [{ fee, save }, feeV2Raw] = await Promise.all([
-            this.getFee(this.transit.feeToken),
-            this.transit.isV2() ? this.getFeeV2() : undefined,
-        ])
-
-        const feeV2 = feeV2Raw?.fee
-
-        // >>> NOTE create trades with calculated fee
-        this.transit = this.buildTransit(fee)
-        await this.transit.init()
+        const { fee: feeV2, save: saveV2 } = this.transit.isV2()
+            ? await this.getFeeV2()
+            : { fee: undefined, save: undefined }
 
         await this.doPostTransitAction(feeV2)
         if (!this.transitTokenOut.equals(tokenOut)) {
@@ -192,14 +197,14 @@ export abstract class BaseSwapping {
         }
 
         let crossChainSave = save
-        if (feeV2Raw?.save) {
+        if (saveV2) {
             const pow = BigNumber.from(10).pow(save.token.decimals)
-            const powV2 = BigNumber.from(10).pow(feeV2Raw.save.token.decimals)
+            const powV2 = BigNumber.from(10).pow(saveV2.token.decimals)
 
-            const feeBase = BigNumber.from(save.raw.toString()).mul(powV2)
-            const feeV2Base = BigNumber.from(feeV2Raw.save.raw.toString()).mul(pow)
+            const saveBase = BigNumber.from(save.raw.toString()).mul(powV2)
+            const saveV2Base = BigNumber.from(saveV2.raw.toString()).mul(pow)
 
-            crossChainSave = new TokenAmount(feeV2Raw.save.token, feeBase.add(feeV2Base).div(pow).toString())
+            crossChainSave = new TokenAmount(saveV2.token, saveBase.add(saveV2Base).div(pow).toString())
         }
 
         const tokenAmountOut = this.tokenAmountOut(feeV2)
@@ -240,11 +245,41 @@ export abstract class BaseSwapping {
         }
     }
 
+    private async getFeeFromConfig(feeToken: Token, configs: AdvisorChainConfig[]) {
+        let configToken = feeToken
+        if (feeToken.chainFromId) {
+            const rep = this.symbiosis.getRepresentation(feeToken, feeToken.chainFromId)
+            if (!rep) {
+                throw new Error('FIXED FEE: Rep not found')
+            }
+            configToken = rep
+        }
+        const config = configs.find((i) => {
+            return i.chain_id === configToken.chainId
+        })
+        if (!config) {
+            throw new Error('FIXED FEE: Config not found')
+        }
+        if (!config.portal) {
+            throw new Error('FIXED FEE: Config portal not found')
+        }
+        const token = config.portal.tokens.find((i) => {
+            return i.address.toLowerCase() === configToken.address.toLowerCase()
+        })
+        if (!token) {
+            throw new Error('FIXED FEE: Token not found')
+        }
+        return {
+            fee: new TokenAmount(feeToken, parseUnits(token.fee_rounding, configToken.decimals).toString()),
+            save: new TokenAmount(feeToken, '0'),
+        }
+    }
+
     private getRevertableAddress(side: 'AB' | 'BC'): string {
         return this.revertableAddresses[side]
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
     protected async doPostTransitAction(_feeV2?: TokenAmount) {}
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
@@ -463,7 +498,7 @@ export abstract class BaseSwapping {
         }
     }
 
-    protected buildTransit(fee?: TokenAmount): Transit {
+    protected buildTransit(): Transit {
         const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
 
@@ -478,8 +513,7 @@ export abstract class BaseSwapping {
             this.transitTokenOut,
             this.slippage['B'],
             this.deadline,
-            this.omniPoolConfig,
-            fee
+            this.omniPoolConfig
         )
     }
 

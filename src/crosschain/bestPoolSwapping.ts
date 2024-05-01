@@ -26,6 +26,8 @@ export class BestPoolSwapping {
         deadline,
         oneInchProtocols,
     }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
+        const advisorConfigs = await this.symbiosis.getAdvisorConfigs()
+
         const exactInParams: SwapExactInParams = {
             tokenAmountIn,
             tokenOut,
@@ -34,6 +36,7 @@ export class BestPoolSwapping {
             slippage,
             deadline,
             oneInchProtocols,
+            advisorConfigs,
         }
 
         const optimalOmniPool = this.getOptimalOmniPool(tokenAmountIn.token, tokenOut)
