@@ -57,6 +57,20 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
             }),
         ],
     },
+    [ChainId.CORE_MAINNET]: {
+        factory: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+        quoter: '0x640129e6b5C31B3b12640A5b39FECdCa9F81C640',
+        swap: '0x734583f62Bb6ACe3c9bA9bd5A53143CA2Ce8C55A',
+        baseTokens: [
+            new Token({
+                name: 'Tether USD',
+                symbol: 'USDT',
+                address: '0x900101d06A7426441Ae63e9AB3B9b0F63Be145F1',
+                chainId: ChainId.CORE_MAINNET,
+                decimals: 6,
+            }),
+        ],
+    },
 }
 
 export class UniV3Trade implements SymbiosisTrade {
@@ -109,17 +123,35 @@ export class UniV3Trade implements SymbiosisTrade {
         const factoryContract = UniV3Factory__factory.connect(factory, provider)
         const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
 
-        let bestSwapRoute: Route<Currency, Currency> | undefined = undefined
-        let bestAmountOut: JSBI | undefined = undefined
-        for (let i = 0; i < POSSIBLE_FEES.length; i++) {
-            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, POSSIBLE_FEES[i])
+        const promises = POSSIBLE_FEES.map(async (fee) => {
+            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee)
             if (!pool) {
-                continue
+                return
             }
             const swapRoute = new Route([pool], currencyIn, currencyOut)
             const result = await getOutputQuote(quoterContract, toUniCurrencyAmount(this.tokenAmountIn), swapRoute)
+            return {
+                fee,
+                swapRoute,
+                amountOut: JSBI.BigInt(result.toString()),
+            }
+        })
 
-            const amountOut = JSBI.BigInt(result.toString())
+        const results = await Promise.allSettled(promises)
+
+        let bestSwapRoute: Route<Currency, Currency> | undefined = undefined
+        let bestAmountOut: JSBI | undefined = undefined
+        for (const result of results) {
+            if (result.status === 'rejected') {
+                console.error(`UniV3Trade rejected: ${JSON.stringify(result.reason?.toString())}`)
+                continue
+            }
+
+            if (!result.value) {
+                continue
+            }
+
+            const { amountOut, swapRoute } = result.value
             if (!bestAmountOut || JSBI.greaterThan(amountOut, bestAmountOut)) {
                 bestAmountOut = amountOut
                 bestSwapRoute = swapRoute
