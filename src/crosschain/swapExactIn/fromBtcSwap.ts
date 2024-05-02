@@ -76,10 +76,12 @@ async function _getDepositAddresses(evmReceiverAddress: string, feeLimit: string
         'Content-Type': 'application/json',
     })
 
+    const minBtcFee = await _getMinBtcFee()
+
     const raw = JSON.stringify({
         info: {
             to: evmReceiverAddress,
-            fee: 0, // [TODO] Get from /portal minBtcFee (portal btc + evm synth execute metaMintSyntheticTokenBTC)
+            fee: minBtcFee, // [TODO] Get from /portal minBtcFee (portal btc + evm synth execute metaMintSyntheticTokenBTC)
             op: 0, // 0 - is wrap operation
             sbfee: 0, // stable bridging fee for tail execution in satoshi
             tail: '', // calldata for next swap from contract SymBtc.FromBTCTransactionTail
@@ -141,4 +143,22 @@ async function _getBtcForwarderFee(evmReceiverAddress: string): Promise<string> 
     const { feeLimit } = await response.json()
 
     return feeLimit
+}
+
+async function _getMinBtcFee(): Promise<string> {
+    // kind of the state: 0=finalized 1=pending 2=best
+    const portalApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/portal?kind=0`)
+
+    const response = await fetch(portalApiUrl)
+    if (!response.ok) {
+        const text = await response.text()
+        const json = JSON.parse(text)
+        throw new Error(json.message ?? text)
+    }
+
+    const {
+        state: { minBtcFee },
+    } = await response.json()
+
+    return minBtcFee
 }
