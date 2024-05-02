@@ -5,12 +5,57 @@ export const config: Config = {
     advisor: {
         url: 'https://api.testnet.symbiosis.finance/calculations',
     },
-    omniPools: [],
+    omniPools: [
+        {
+            chainId: ChainId.SEPOLIA_TESTNET,
+            address: '0x9A857D526A9e53697a9Df5fFc40bCCD70E7A0388', // Btc octopul
+            oracle: '0x14be03e34B05a87A028acfF0292C1AF135D26699',
+            generalPurpose: true,
+        },
+    ],
     revertableAddress: {
         [ChainId.TRON_TESTNET]: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
     chains: [
+        {
+            id: ChainId.AVAX_TESTNET,
+            rpc: 'https://api.avax-test.network/ext/bc/C/rpc',
+            spareRpcs: [
+                'https://avalanche-fuji-c-chain-rpc.publicnode.com',
+                'https://ava-testnet.public.blastapi.io/ext/bc/C/rpcZ',
+            ],
+            filterBlockOffset: 2000,
+            stables: [
+                {
+                    name: 'Wrapped BTC',
+                    address: '0x9374Ea7A11c5B185A6631effF22c015E71c67581', // address erc-20 btc
+                    symbol: 'WBTC',
+                    decimals: 8,
+                    chainId: ChainId.AVAX_TESTNET,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000', // DEX Univ2, legacy
+            dexFee: 30, // 0.03%
+            metaRouter: '0x0EB4Bb54E1551Db887ADdDAbD2562da13fE57D14', // Orchestrate between synth contracts and doing swaps ???
+            metaRouterGateway: '0xbA2269b1E4b2eb62FdaA2c7D7bbaC052d4FD05cE', // Entrypoint contract, for approve purpose only
+            bridge: '0xcC0DB081360Eb259bdf6911976c51cAF1B72e845', //  generate oracle request for relayers , proxy to portal and synthetus
+            synthesis: '0x0000000000000000000000000000000000000000', // [IMPORTANT]: Burn/Mint Synth function
+            symBtc: '0x0000000000000000000000000000000000000000', // [!!OLD!!!! contract change] new is 0xc7F1A6768B16De4BB15c146fd5030cD9F50533ab special contract for btc operation connected with synthesis
+            portal: '0x78Bb4D4872121f162BB3e938F0d10cf34E999648', // Release/lock base tokens
+            fabric: '0x0000000000000000000000000000000000000000', // [IMPORTANT]: Contract that stores token representations and create them as fabric method
+            multicallRouter: '0x8C9D3CE1D59d73259018dBC9859F6eBe62Bbf862', // multiple operations
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            blocksPerYear: 2336000,
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+        },
         {
             id: ChainId.SEPOLIA_TESTNET,
             rpc: 'https://sepolia.gateway.tenderly.co',

@@ -1,6 +1,32 @@
 {
-    "omniPools": [],
+    "omniPools": [
+        {
+            "chainId": 11155111,
+            "address": "0x9A857D526A9e53697a9Df5fFc40bCCD70E7A0388",
+            "oracle": "0x14be03e34B05a87A028acfF0292C1AF135D26699",
+            "generalPurpose": true,
+            "id": 0,
+            "tokens": [
+                { "index": 0, "tokenId": 4 },
+                { "index": 1, "tokenId": 5 }
+            ]
+        }
+    ],
     "tokens": [
+        {
+            "decimals": 8,
+            "symbol": "WBTC",
+            "name": "Wrapped BTC",
+            "chainId": 43113,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "deprecated": false,
+            "address": "0x9374Ea7A11c5B185A6631effF22c015E71c67581",
+            "id": 0
+        },
         {
             "decimals": 18,
             "symbol": "WETH",
@@ -13,7 +39,7 @@
             },
             "deprecated": false,
             "address": "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
-            "id": 0
+            "id": 1
         },
         {
             "decimals": 8,
@@ -27,7 +53,7 @@
             },
             "deprecated": false,
             "address": "0xD0684a311F47AD7fdFf03951d7b91996Be9326E1",
-            "id": 1
+            "id": 2
         },
         {
             "decimals": 8,
@@ -41,7 +67,23 @@
             },
             "deprecated": false,
             "address": "0x3412197A707413310520010CD5adCCFA657e9dee",
-            "id": 2
+            "id": 3
+        },
+        {
+            "decimals": 8,
+            "symbol": "sBTC",
+            "name": "Synthetic BTC",
+            "chainId": 11155111,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 43113,
+            "deprecated": false,
+            "address": "0xD058A1425301a400C4e901E78006655CB07F325A",
+            "id": 4,
+            "originalId": 0
         },
         {
             "decimals": 8,
@@ -56,16 +98,19 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0x4d0EF82dfE2896eE3222bE5a9e9188ae1DCcd05F",
-            "id": 3,
-            "originalId": 2
+            "id": 5,
+            "originalId": 3
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Portal", "value": "0" },
         { "tokenId": 1, "type": "Portal", "value": "0" },
-        { "tokenId": 3, "type": "Portal", "value": "0" },
-        { "tokenId": 0, "type": "Synthesis", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 4, "type": "Portal", "value": "0" },
+        { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 1, "type": "Synthesis", "value": "0" },
-        { "tokenId": 3, "type": "Synthesis", "value": "0" }
+        { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 4, "type": "Synthesis", "value": "0" },
+        { "tokenId": 5, "type": "Synthesis", "value": "0" }
     ]
 }
