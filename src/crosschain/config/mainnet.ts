@@ -1336,7 +1336,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x0000000000000000000000000000000000000000',
+            router: '0x4ddDD324F205e5989bAF8aD0FFCa41f4E5d9841D',
             dexFee: 0,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',

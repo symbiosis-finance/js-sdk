@@ -57,20 +57,20 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
             }),
         ],
     },
-    [ChainId.CORE_MAINNET]: {
-        factory: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-        quoter: '0x640129e6b5C31B3b12640A5b39FECdCa9F81C640',
-        swap: '0x734583f62Bb6ACe3c9bA9bd5A53143CA2Ce8C55A',
-        baseTokens: [
-            new Token({
-                name: 'Tether USD',
-                symbol: 'USDT',
-                address: '0x900101d06A7426441Ae63e9AB3B9b0F63Be145F1',
-                chainId: ChainId.CORE_MAINNET,
-                decimals: 6,
-            }),
-        ],
-    },
+    // [ChainId.CORE_MAINNET]: {
+    //     factory: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+    //     quoter: '0x640129e6b5C31B3b12640A5b39FECdCa9F81C640',
+    //     swap: '0x734583f62Bb6ACe3c9bA9bd5A53143CA2Ce8C55A',
+    //     baseTokens: [
+    //         new Token({
+    //             name: 'Tether USD',
+    //             symbol: 'USDT',
+    //             address: '0x900101d06A7426441Ae63e9AB3B9b0F63Be145F1',
+    //             chainId: ChainId.CORE_MAINNET,
+    //             decimals: 6,
+    //         }),
+    //     ],
+    // },
 }
 
 export class UniV3Trade implements SymbiosisTrade {

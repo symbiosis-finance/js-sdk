@@ -703,7 +703,7 @@ export const WETH = {
     }),
     [ChainId.CORE_MAINNET]: new Token({
         chainId: ChainId.CORE_MAINNET,
-        address: '0x40375c92d9faf44d2f9db9bd9ba41a3317a2404f',
+        address: '0x191E94fa59739e188dcE837F7f6978d84727AD01',
         decimals: 18,
         symbol: 'WCORE',
         isNative: false,
