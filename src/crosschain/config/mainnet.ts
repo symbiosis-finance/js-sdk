@@ -1255,7 +1255,7 @@ export const config: Config = {
             id: ChainId.MERLIN_MAINNET,
             rpc: 'https://rpc.merlinchain.io',
             spareRpcs: ['https://merlin.blockpi.network/v1/rpc/public'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped BTC',
