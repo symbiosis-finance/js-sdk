@@ -701,4 +701,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.CORE_MAINNET]: new Token({
+        chainId: ChainId.CORE_MAINNET,
+        address: '0x191E94fa59739e188dcE837F7f6978d84727AD01',
+        decimals: 18,
+        symbol: 'WCORE',
+        isNative: false,
+        name: 'Wrapped CORE',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
+        },
+    }),
 }

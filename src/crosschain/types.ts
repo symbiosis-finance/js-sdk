@@ -44,17 +44,18 @@ export type OmniPoolConfig = {
     generalPurpose: boolean
 }
 
-export type AmountLimit = {
+export type SwapLimit = {
     chainId: ChainId
     address: string
-    value: string
+    min: string
+    max: string
 }
 
 export type Config = {
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
-    limits?: AmountLimit[]
+    limits?: SwapLimit[]
     chains: ChainConfig[]
 }
 
@@ -64,7 +65,7 @@ export type OverrideChainConfig = {
 }
 export type OverrideConfig = {
     chains?: OverrideChainConfig[]
-    limits?: AmountLimit[]
+    limits?: SwapLimit[]
     makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
 }

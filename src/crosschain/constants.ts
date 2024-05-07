@@ -55,6 +55,7 @@ export const CHAINS_PRIORITY = [
     ChainId.BLAST_MAINNET,
     ChainId.MERLIN_MAINNET,
     ChainId.ZKLINK_MAINNET,
+    ChainId.CORE_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -134,6 +135,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.BLAST_MAINNET]: [WETH[ChainId.BLAST_MAINNET]],
     [ChainId.MERLIN_MAINNET]: [WETH[ChainId.MERLIN_MAINNET]],
     [ChainId.ZKLINK_MAINNET]: [WETH[ChainId.ZKLINK_MAINNET]],
+    [ChainId.CORE_MAINNET]: [WETH[ChainId.CORE_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -479,6 +481,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.BLAST_MAINNET]: [],
     [ChainId.MERLIN_MAINNET]: [],
     [ChainId.ZKLINK_MAINNET]: [],
+    [ChainId.CORE_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -534,6 +537,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.ZKLINK_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ZKLINK_MAINNET],
     ],
+    [ChainId.CORE_MAINNET]: [WETH[ChainId.CORE_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.CORE_MAINNET]],
 }
 
 /**
@@ -602,4 +606,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.MERLIN_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
     [ChainId.ZKLINK_MAINNET]: '0x7E06D0CD8D3fDDBB875345dF389d986f810A49F6',
     [ChainId.SEPOLIA_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.CORE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }

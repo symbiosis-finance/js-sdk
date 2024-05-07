@@ -440,16 +440,29 @@ export abstract class BaseSwapping {
         if (!limit) {
             return
         }
-        const amountRaw = parseUnits(limit.value, token.decimals).toString()
-        if (amountRaw === '0') {
-            return
+        const maxAmountRaw = parseUnits(limit.max, token.decimals).toString()
+        if (maxAmountRaw !== '0') {
+            const maxLimitTokenAmount = new TokenAmount(token, maxAmountRaw)
+            if (amount.greaterThan(maxLimitTokenAmount)) {
+                throw new Error(
+                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${
+                        maxLimitTokenAmount.token.symbol
+                    }`,
+                    ErrorCode.AMOUNT_TOO_HIGH
+                )
+            }
         }
-        const limitTokenAmount = new TokenAmount(token, amountRaw)
-        if (amount.greaterThan(limitTokenAmount)) {
-            throw new Error(
-                `Swap amount is too high. Max: ${limitTokenAmount.toSignificant(4)} ${limitTokenAmount.token.symbol}`,
-                ErrorCode.AMOUNT_TOO_HIGH
-            )
+        const minAmountRaw = parseUnits(limit.min, token.decimals).toString()
+        if (minAmountRaw !== '0') {
+            const minLimitTokenAmount = new TokenAmount(token, minAmountRaw)
+            if (amount.lessThan(minLimitTokenAmount)) {
+                throw new Error(
+                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${
+                        minLimitTokenAmount.token.symbol
+                    }`,
+                    ErrorCode.AMOUNT_TOO_LOW
+                )
+            }
         }
     }
 

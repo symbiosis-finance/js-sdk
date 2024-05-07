@@ -307,7 +307,7 @@ export const chains: Chain[] = [
         id: ChainId.ZKSYNC_MAINNET,
         name: 'ZkSync Era',
         disabled: false,
-        explorer: 'https://zksync-era.l2scan.co',
+        explorer: 'https://era.zksync.network',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24091.png',
@@ -399,7 +399,7 @@ export const chains: Chain[] = [
         id: ChainId.LINEA_MAINNET,
         name: 'Linea',
         disabled: false,
-        explorer: 'https://linea.l2scan.co',
+        explorer: 'https://lineascan.build',
         icons: {
             small: 'https://l2beat.com/icons/linea.png',
             large: 'https://l2beat.com/icons/linea.png',
@@ -429,7 +429,7 @@ export const chains: Chain[] = [
         id: ChainId.BASE_MAINNET,
         name: 'Base',
         disabled: false,
-        explorer: 'https://base.l2scan.co',
+        explorer: 'https://basescan.org',
         icons: {
             small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/base/logo.png',
@@ -439,7 +439,7 @@ export const chains: Chain[] = [
         id: ChainId.SCROLL_MAINNET,
         name: 'Scroll',
         disabled: false,
-        explorer: 'https://scroll.l2scan.co',
+        explorer: 'https://scrollscan.com',
         icons: {
             small: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
             large: 'https://res.cloudinary.com/dzkjyvmsn/image/upload/v1680688496/scroll_p8h6bl.png',
@@ -479,7 +479,7 @@ export const chains: Chain[] = [
         id: ChainId.BAHAMUT_MAINNET,
         name: 'Bahamut',
         disabled: false,
-        explorer: 'https://www.ftnscan.com/',
+        explorer: 'https://www.ftnscan.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
@@ -543,6 +543,16 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.CORE_MAINNET,
+        name: 'CORE',
+        disabled: false,
+        explorer: 'https://scan.coredao.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
         },
     }),
 ]
