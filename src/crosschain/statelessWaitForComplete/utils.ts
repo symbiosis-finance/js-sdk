@@ -53,6 +53,7 @@ export async function longPolling<T>({
             }
         }
 
+        func()
         const interval = setInterval(func, pollingInterval)
     })
 }
