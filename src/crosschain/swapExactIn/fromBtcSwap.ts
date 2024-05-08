@@ -30,18 +30,20 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const { evmAccount, inTokenAmount, outToken } = context
 
     if (!evmAccount || (evmAccount && !isAddress(evmAccount))) {
-        throw new Error('No returnable EVM address was provided')
+        throw new Error('No EVM address was provided')
     }
 
     // 1) [TODO]: Fee 2-nd synthesis, 3-rd from advisor in btc
     // 2) tail to next swap on evm
 
-    const btcForwarderFeeSatoshi = await _getBtcForwarderFee(evmAccount)
+    const btcForwarderFeeRaw = await _getBtcForwarderFee(evmAccount)
 
-    const { validUntil, revealAddress } = await _getDepositAddresses(evmAccount, btcForwarderFeeSatoshi)
+    const { validUntil, revealAddress } = await _getDepositAddresses(evmAccount, btcForwarderFeeRaw)
 
-    //[TODO]: minus all fees
-    const totalTokenAmountOut = inTokenAmount.subtract(new TokenAmount(inTokenAmount.token, btcForwarderFeeSatoshi))
+    const btcForwarderFee = new TokenAmount(inTokenAmount.token, btcForwarderFeeRaw)
+
+    const totalTokenAmountOut = inTokenAmount.subtract(btcForwarderFee) //[TODO]: minus all fees
+    const tokenAmountOut = new TokenAmount(outToken, totalTokenAmountOut.raw)
 
     return {
         kind: 'from-btc-swap',
@@ -49,15 +51,15 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         transactionRequest: {
             depositAddress: revealAddress,
             validUntil,
-            tokenAmountOut: new TokenAmount(outToken, totalTokenAmountOut.raw),
+            tokenAmountOut,
         },
         route: [inTokenAmount.token, outToken],
-        tokenAmountOut: new TokenAmount(outToken, totalTokenAmountOut.raw),
+        tokenAmountOut,
         approveTo: AddressZero,
         inTradeType: undefined,
         outTradeType: undefined,
         amountInUsd: undefined,
-        fee: new TokenAmount(inTokenAmount.token, btcForwarderFeeSatoshi), // [TODO]: fee from upper tasks
+        fee: btcForwarderFee,
         save: undefined,
         extraFee: undefined,
     }
@@ -70,12 +72,6 @@ interface DepositAddressResult {
 }
 
 async function _getDepositAddresses(evmReceiverAddress: string, feeLimit: string): Promise<DepositAddressResult> {
-    const wrapApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/wrap`)
-    const myHeaders = new Headers({
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-    })
-
     const minBtcFee = await _getMinBtcFee()
 
     const raw = JSON.stringify({
@@ -89,6 +85,11 @@ async function _getDepositAddresses(evmReceiverAddress: string, feeLimit: string
         feeLimit,
     })
 
+    const wrapApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/wrap`)
+    const myHeaders = new Headers({
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+    })
     const requestOptions = {
         method: 'POST',
         headers: myHeaders,

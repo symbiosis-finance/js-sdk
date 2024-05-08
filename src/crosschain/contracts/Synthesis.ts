@@ -167,6 +167,7 @@ export interface SynthesisInterface extends utils.Interface {
     contractName: 'Synthesis'
     functions: {
         'bridge()': FunctionFragment
+        'burnSerialBTC()': FunctionFragment
         'burnSyntheticToken(uint256,address,uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
         'burnSyntheticTokenBTC(uint256,uint256,bytes,address,bytes32)': FunctionFragment
         'fabric()': FunctionFragment
@@ -176,6 +177,8 @@ export interface SynthesisInterface extends utils.Interface {
         'metaMintSyntheticToken((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaMintSyntheticTokenBTC((uint256,uint256,uint64,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRouter()': FunctionFragment
+        'minFeeBTC()': FunctionFragment
+        'mintSerialBTC()': FunctionFragment
         'mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)': FunctionFragment
         'owner()': FunctionFragment
         'pause()': FunctionFragment
@@ -200,6 +203,7 @@ export interface SynthesisInterface extends utils.Interface {
     }
 
     encodeFunctionData(functionFragment: 'bridge', values?: undefined): string
+    encodeFunctionData(functionFragment: 'burnSerialBTC', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'burnSyntheticToken',
         values: [BigNumberish, string, BigNumberish, string, string, string, string, BigNumberish, BytesLike]
@@ -224,6 +228,8 @@ export interface SynthesisInterface extends utils.Interface {
         values: [MetaRouteStructs.MetaMintTransactionBTCStruct]
     ): string
     encodeFunctionData(functionFragment: 'metaRouter', values?: undefined): string
+    encodeFunctionData(functionFragment: 'minFeeBTC', values?: undefined): string
+    encodeFunctionData(functionFragment: 'mintSerialBTC', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'mintSyntheticToken',
         values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, BigNumberish, string]
@@ -262,6 +268,7 @@ export interface SynthesisInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'versionRecipient', values?: undefined): string
 
     decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'burnSerialBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'burnSyntheticToken', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'burnSyntheticTokenBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'fabric', data: BytesLike): Result
@@ -271,6 +278,8 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'metaMintSyntheticToken', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaMintSyntheticTokenBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaRouter', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'minFeeBTC', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'mintSerialBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'mintSyntheticToken', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
@@ -462,6 +471,8 @@ export interface Synthesis extends BaseContract {
     functions: {
         bridge(overrides?: CallOverrides): Promise<[string]>
 
+        burnSerialBTC(overrides?: CallOverrides): Promise<[BigNumber]>
+
         burnSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _stoken: string,
@@ -511,6 +522,10 @@ export interface Synthesis extends BaseContract {
         ): Promise<ContractTransaction>
 
         metaRouter(overrides?: CallOverrides): Promise<[string]>
+
+        minFeeBTC(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        mintSerialBTC(overrides?: CallOverrides): Promise<[BigNumber]>
 
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
@@ -632,6 +647,8 @@ export interface Synthesis extends BaseContract {
 
     bridge(overrides?: CallOverrides): Promise<string>
 
+    burnSerialBTC(overrides?: CallOverrides): Promise<BigNumber>
+
     burnSyntheticToken(
         _stableBridgingFee: BigNumberish,
         _stoken: string,
@@ -681,6 +698,10 @@ export interface Synthesis extends BaseContract {
     ): Promise<ContractTransaction>
 
     metaRouter(overrides?: CallOverrides): Promise<string>
+
+    minFeeBTC(overrides?: CallOverrides): Promise<BigNumber>
+
+    mintSerialBTC(overrides?: CallOverrides): Promise<BigNumber>
 
     mintSyntheticToken(
         _stableBridgingFee: BigNumberish,
@@ -802,6 +823,8 @@ export interface Synthesis extends BaseContract {
     callStatic: {
         bridge(overrides?: CallOverrides): Promise<string>
 
+        burnSerialBTC(overrides?: CallOverrides): Promise<BigNumber>
+
         burnSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _stoken: string,
@@ -851,6 +874,10 @@ export interface Synthesis extends BaseContract {
         ): Promise<void>
 
         metaRouter(overrides?: CallOverrides): Promise<string>
+
+        minFeeBTC(overrides?: CallOverrides): Promise<BigNumber>
+
+        mintSerialBTC(overrides?: CallOverrides): Promise<BigNumber>
 
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
@@ -1072,6 +1099,8 @@ export interface Synthesis extends BaseContract {
     estimateGas: {
         bridge(overrides?: CallOverrides): Promise<BigNumber>
 
+        burnSerialBTC(overrides?: CallOverrides): Promise<BigNumber>
+
         burnSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _stoken: string,
@@ -1121,6 +1150,10 @@ export interface Synthesis extends BaseContract {
         ): Promise<BigNumber>
 
         metaRouter(overrides?: CallOverrides): Promise<BigNumber>
+
+        minFeeBTC(overrides?: CallOverrides): Promise<BigNumber>
+
+        mintSerialBTC(overrides?: CallOverrides): Promise<BigNumber>
 
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,
@@ -1228,6 +1261,8 @@ export interface Synthesis extends BaseContract {
     populateTransaction: {
         bridge(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
+        burnSerialBTC(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
         burnSyntheticToken(
             _stableBridgingFee: BigNumberish,
             _stoken: string,
@@ -1277,6 +1312,10 @@ export interface Synthesis extends BaseContract {
         ): Promise<PopulatedTransaction>
 
         metaRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        minFeeBTC(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        mintSerialBTC(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         mintSyntheticToken(
             _stableBridgingFee: BigNumberish,

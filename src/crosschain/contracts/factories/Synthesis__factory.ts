@@ -384,6 +384,19 @@ const _abi = [
         type: 'function',
     },
     {
+        inputs: [],
+        name: 'burnSerialBTC',
+        outputs: [
+            {
+                internalType: 'BtcSerial',
+                name: '',
+                type: 'uint64',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
         inputs: [
             {
                 internalType: 'uint256',
@@ -800,6 +813,32 @@ const _abi = [
                 internalType: 'contract IMetaRouter',
                 name: '',
                 type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'minFeeBTC',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'mintSerialBTC',
+        outputs: [
+            {
+                internalType: 'BtcSerial',
+                name: '',
+                type: 'uint64',
             },
         ],
         stateMutability: 'view',

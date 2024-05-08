@@ -115,7 +115,10 @@ export class ZappingThor extends BaseSwapping {
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
         if (amountIn < MIN_AMOUNT_IN) {
-            throw new Error(`The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`, ErrorCode.MIN_THORCHAIN_AMOUNT_IN)
+            throw new Error(
+                `The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`,
+                ErrorCode.MIN_THORCHAIN_AMOUNT_IN
+            )
         }
         const amount = this.getTradeCAmountIn()
         this.thorQuote = await this.getThorQuote(amount)

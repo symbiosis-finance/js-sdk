@@ -5,19 +5,15 @@ import { TokenAmount } from '../../entities'
 import { Synthesis__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { getFunctionSelector } from '../tron'
+import { isBtc } from '../utils'
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { outToken, inTokenAmount } = context
+    const { outToken, inTokenAmount, symbiosis } = context
 
     const isThorChainSwapSupported = outToken.chainId === ChainId.BTC_MAINNET
 
-    let isNativeSwapSupported = false
-
-    if (inTokenAmount.token.chain?.id) {
-        // if symBtc contract deployed on chain we could Burn and exit to native BTC
-        isNativeSwapSupported = !!context.symbiosis.chainConfig(inTokenAmount.token.chain?.id).symBtc
-    }
+    // if symBtc contract deployed on chain we could Burn and exit to native BTC
+    const isNativeSwapSupported = !!symbiosis.chainConfig(inTokenAmount.token.chainId).symBtc
 
     return isThorChainSwapSupported || isNativeSwapSupported
 }
@@ -31,7 +27,7 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
         return _burnSyntheticBtc(context)
     }
 
-    // Thor chain fallback
+    // ThorChain fallback
     const omniPool = context.symbiosis.config.omniPools[0]
     const zappingThor = context.symbiosis.newZappingThor(omniPool)
 
@@ -56,8 +52,9 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
 }
 
 // --- start BTC utility functions ---
+type BtcChainId = ChainId.BTC_MAINNET | ChainId.BTC_TESTNET
 
-export const BTC_NETWORKS: Record<ChainId.BTC_MAINNET | ChainId.BTC_TESTNET, Network> = {
+export const BTC_NETWORKS: Record<BtcChainId, Network> = {
     [ChainId.BTC_MAINNET]: networks.bitcoin,
     [ChainId.BTC_TESTNET]: networks.testnet,
 }
@@ -78,43 +75,50 @@ export async function _burnSyntheticBtc({
     fromAddress,
     toAddress,
 }: SwapExactInParams): Promise<SwapExactInResult> {
+    const chainIdOut = outToken.chainId
+    if (!isBtc(chainIdOut)) {
+        throw new Error('Destination is not Bitcoin')
+    }
+
+    const chainId = inTokenAmount.token.chainId
     const synthesisInterface = Synthesis__factory.createInterface()
-    const symBtcContract = symbiosis.symBtc(inTokenAmount.token.chainId)
-
+    const symBtcContract = symbiosis.symBtc(chainId)
     const syntheticBtcTokenAddress = await symBtcContract.getSyntToken()
-    const amountOut = new TokenAmount(outToken, inTokenAmount.raw)
-    // partner's id to identify them
-    const clientId = '0x0000000000000000000000000000000000000000000000000000000000000000'
-    // const minBtcFee = await symbiosis.synthesis?.minFeeBTC() // uncomment
-    const minBtcFee = '12500' //[TODO]: remove
 
-    //@ts-ignore
+    if (inTokenAmount.token.address.toLowerCase() !== syntheticBtcTokenAddress.toLowerCase()) {
+        throw new Error('Incorrect synthetic BTC address')
+    }
+
+    const amountOut = new TokenAmount(outToken, inTokenAmount.raw)
+    const synthesis = symbiosis.synthesis(chainId)
+
+    const to = getPkScript(toAddress, BTC_NETWORKS[chainIdOut as BtcChainId])
+
+    const minBtcFee = await synthesis.minFeeBTC()
+
     const callData = synthesisInterface.encodeFunctionData('burnSyntheticTokenBTC', [
-        0,
-        inTokenAmount.raw.toString(),
-        getPkScript(toAddress, BTC_NETWORKS[ChainId.BTC_TESTNET]), // [TODO]: Change it for mainnet
-        syntheticBtcTokenAddress,
-        clientId,
+        minBtcFee.toString(), // _stableBridgingFee must be >= minBtcFee
+        inTokenAmount.raw.toString(), // _amount
+        to, // _to
+        inTokenAmount.token.address, // _stoken
+        symbiosis.clientId, // _clientID
     ])
 
-    console.log('--caldata to btc swap ---', callData)
-
-
     const payload = preparePayload({
-        chainId: inTokenAmount.token.chainId,
+        chainId,
         fromAddress,
-        toAddress: await symBtcContract.synthesis(),
+        toAddress: synthesis.address,
         callData,
     })
-
-    const totalTokenAmountOut = amountOut.subtract(new TokenAmount(outToken, minBtcFee))
+    const fee = new TokenAmount(outToken, minBtcFee.toString())
+    const totalTokenAmountOut = amountOut.subtract(fee)
 
     return {
         kind: 'to-btc-swap',
         route: [inTokenAmount.token, outToken],
         tokenAmountOut: totalTokenAmountOut,
         approveTo: payload.transactionRequest.to,
-        fee: new TokenAmount(inTokenAmount.token, minBtcFee),
+        fee,
         ...payload,
     }
 }

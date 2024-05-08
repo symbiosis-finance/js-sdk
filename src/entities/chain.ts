@@ -25,7 +25,7 @@ export const chains: Chain[] = [
         id: ChainId.BTC_MAINNET,
         name: 'Bitcoin',
         disabled: false,
-        explorer: 'https://www.blockchain.com/btc',
+        explorer: 'https://mempool.space',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
@@ -36,7 +36,7 @@ export const chains: Chain[] = [
         id: ChainId.BTC_TESTNET,
         name: 'Bitcoin',
         disabled: false,
-        explorer: 'https://www.blockchain.com/btc-testnet',
+        explorer: 'https://mempool.space/testnet',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',

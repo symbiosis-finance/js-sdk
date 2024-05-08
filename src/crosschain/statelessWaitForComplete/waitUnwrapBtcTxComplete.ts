@@ -36,5 +36,5 @@ export async function waitUnwrapBtcTxComplete(burnSerialBTC: string): Promise<st
         error: new WaitUnwrapBtcTxComplete('waitUnwrapBtcTxComplete timeout exceed'),
     })
 
-    return resut?.outputIdx
+    return resut?.tx
 }

@@ -4,14 +4,12 @@ import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
 import { Error, ErrorCode } from './error'
-import {utils} from "ethers";
+import { utils } from 'ethers'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
 // TODO move to Symbiosis instance' params
-const DIRECT_ROUTE_CLIENTS = [
-    utils.formatBytes32String('lifi')
-]
+const DIRECT_ROUTE_CLIENTS = [utils.formatBytes32String('lifi')]
 
 // Swapping wrapper what select best omni pool for swapping
 export class BestPoolSwapping {
