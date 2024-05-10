@@ -4,6 +4,8 @@ import { getMulticall } from '../../multicall'
 
 import { ChainConfig, Config, OmniPoolConfig } from '../../types'
 import {
+    Bridge,
+    Bridge__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -16,7 +18,6 @@ import {
     Synthesis__factory,
 } from '../../contracts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Error } from '../../error'
 import { Token } from '../../../entities'
 import { config as mainnet } from '../mainnet'
 import { config as testnet } from '../testnet'
@@ -85,24 +86,54 @@ export class Builder {
     }
 
     public async build() {
-        await this.checkMetarouters()
-        const tokens = await this.buildTokensList()
-        const omniPools = await this.buildOmniPools(tokens)
-        const thresholds = await this.buildThresholds(tokens)
+        try {
+            await this.checkTransmitters()
+            await this.checkMetarouters()
+            const tokens = await this.buildTokensList()
+            const omniPools = await this.buildOmniPools(tokens)
+            const thresholds = await this.buildThresholds(tokens)
 
-        const jsonData = JSON.stringify({
-            omniPools,
-            tokens,
-            thresholds,
-        } as ConfigCacheData)
-        fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err: any) {
-            if (err) {
-                console.error(err)
-            }
-        })
+            const jsonData = JSON.stringify({
+                omniPools,
+                tokens,
+                thresholds,
+            } as ConfigCacheData)
+            fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err: any) {
+                if (err) {
+                    console.error(err)
+                }
+            })
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     // === private ===
+
+    private async checkTransmitters() {
+        const chains = this.config.chains
+        let error: string | undefined
+        for (let i = 0; i < chains.length; i++) {
+            const chain = chains[i]
+            const bridge = this.bridge(chain.id)
+
+            if (chain.portal !== AddressZero) {
+                const ok = await bridge.isTransmitter(chain.portal)
+                if (!ok) {
+                    error = `${chain.id} Portal is not transmitter`
+                }
+            }
+            if (chain.synthesis !== AddressZero) {
+                const ok = await bridge.isTransmitter(chain.synthesis)
+                if (!ok) {
+                    error = `${chain.id} Synthesis is not transmitter`
+                }
+            }
+        }
+        if (error) {
+            throw new Error(error)
+        }
+    }
 
     private async checkMetarouters() {
         const chains = this.config.chains
@@ -120,7 +151,6 @@ export class Builder {
             let portalMetaRouter
             if (portal.address !== AddressZero) {
                 portalMetaRouter = (await portal.callStatic.metaRouter()).toLowerCase()
-                console.log('meta router', portalMetaRouter)
             }
 
             const synthesis = this.synthesis(chain.id)
@@ -275,7 +305,6 @@ export class Builder {
         }
 
         const tokens: TokenInfo[] = realTokensWithId
-        console.log('real token with ids', realTokensWithId)
 
         const chainsWithFabric = this.config.chains.filter((chain) => chain.fabric !== AddressZero)
 
@@ -313,7 +342,6 @@ export class Builder {
                     continue
                 }
 
-                console.log('address', address, realTokensWithId, realTokensWithId[j])
                 const erc20 = new Contract(address, ERC20, fabric.provider)
 
                 const token: TokenInfo = {
@@ -380,6 +408,12 @@ export class Builder {
         const address = this.chainConfig(chainId).portal
 
         return Portal__factory.connect(address, this.getProvider(chainId))
+    }
+
+    private bridge(chainId: ChainId): Bridge {
+        const address = this.chainConfig(chainId).bridge
+
+        return Bridge__factory.connect(address, this.getProvider(chainId))
     }
 
     private metaRouter(chainId: ChainId): MetaRouter {

@@ -39,9 +39,9 @@ export async function statelessWaitForComplete<T>({
                 result = waitBridgeForComplete(symbiosis, chainId, txId) as Promise<T>
             }
             break
-        case WaitOperation.BURN_SYNTH_BTC:
-            if (txId && chainId) {
-                result = waitBurnSyntheticBtcEvm(symbiosis, chainId, txId) as Promise<T>
+        case WaitOperation.WRAP_BTC:
+            if (btcAddress) {
+                result = waitWrapBtcTxToComplete(btcAddress) as Promise<T>
             }
             break
         case WaitOperation.CREATE_SYNTH_BTC:
@@ -49,9 +49,9 @@ export async function statelessWaitForComplete<T>({
                 result = waitSynthBtcEvmTxComplete({ symbiosis, chainId, btcTx: txId }) as Promise<T>
             }
             break
-        case WaitOperation.WRAP_BTC:
-            if (btcAddress) {
-                result = waitWrapBtcTxToComplete(btcAddress) as Promise<T>
+        case WaitOperation.BURN_SYNTH_BTC:
+            if (txId && chainId) {
+                result = waitBurnSyntheticBtcEvm(symbiosis, chainId, txId) as Promise<T>
             }
             break
         case WaitOperation.UNWRAP_BTC:

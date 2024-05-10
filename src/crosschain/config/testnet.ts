@@ -23,7 +23,7 @@ export const config: Config = {
             rpc: 'https://api.avax-test.network/ext/bc/C/rpc',
             spareRpcs: [
                 'https://avalanche-fuji-c-chain-rpc.publicnode.com',
-                'https://ava-testnet.public.blastapi.io/ext/bc/C/rpcZ',
+                'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc',
             ],
             filterBlockOffset: 2000,
             stables: [
@@ -89,7 +89,7 @@ export const config: Config = {
             dexFee: 30, // 0.03%
             metaRouter: '0xe19f85478Ee6C4D67d14386F646Dd1E9C4461A9b', // Orchestrate between synth contracts and doing swaps ???
             metaRouterGateway: '0xfB589f8B73a32D2e7867b8529408f6f8306887B6', // Entrypoint contract, for approve purpose only
-            bridge: '0x042cF6a0690C9B8607c5B19Cb18807F1D66c9339', //  generate oracle request for relayers , proxy to portal and synthetus
+            bridge: '0x7dc13B605508F91Fcd3bf7803C2b96B43941B4E8', //  generate oracle request for relayers , proxy to portal and synthetus
             synthesis: '0x3e6235b91c6734821b4037E6459f861E465D4192', // [IMPORTANT]: Burn/Mint Synth function
             symBtc: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365', // [!!OLD!!!! contract change] new is 0xc7F1A6768B16De4BB15c146fd5030cD9F50533ab special contract for btc operation connected with synthesis
             portal: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38', // Release/lock base tokens  !!!????? Don't know real address for this contracts
