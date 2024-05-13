@@ -6,6 +6,7 @@ import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
+import { getMinAmount } from './utils'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
@@ -19,6 +20,7 @@ export interface ZappingThorExactInParams {
 type ThorQuote = {
     memo: string
     amountOut: TokenAmount
+    amountOutMin: TokenAmount
     router: string
     expiry: string
     fees: {
@@ -101,7 +103,7 @@ function toThorAmount(tokenAmount: TokenAmount): BigNumber {
 
 const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
-const MIN_AMOUNT_IN = 500
+const MIN_AMOUNT_IN = 100
 
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -115,7 +117,10 @@ export class ZappingThor extends BaseSwapping {
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
         if (amountIn < MIN_AMOUNT_IN) {
-            throw new Error(`The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`, ErrorCode.MIN_THORCHAIN_AMOUNT_IN)
+            throw new Error(
+                `The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`,
+                ErrorCode.MIN_THORCHAIN_AMOUNT_IN
+            )
         }
         const amount = this.getTradeCAmountIn()
         this.thorQuote = await this.getThorQuote(amount)
@@ -180,7 +185,7 @@ export class ZappingThor extends BaseSwapping {
         return {
             ...bestResult,
             tokenAmountOut: this.thorQuote.amountOut,
-            tokenAmountOutMin: this.thorQuote.amountOut,
+            tokenAmountOutMin: this.thorQuote.amountOutMin,
             outTradeType: 'thor-chain',
             extraFee: new TokenAmount(BTC, this.thorQuote.fees.total),
         }
@@ -240,9 +245,9 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('amount', toThorAmount(amount).toString())
         url.searchParams.set('destination', this.bitcoinAddress)
         url.searchParams.set('streaming_interval', '1')
+        url.searchParams.set('streaming_quantity', '0')
         url.searchParams.set('affiliate', 'sy')
         url.searchParams.set('affiliate_bps', '20')
-        // url.searchParams.set('tolerance_bps', '300') // 3% FIXME
 
         const response = await fetch(url.toString(), {
             headers: {
@@ -255,11 +260,16 @@ export class ZappingThor extends BaseSwapping {
         if (json.error) {
             throw new Error(json.error)
         }
-        const { memo, expected_amount_out, router, expiry, fees } = json
+        const { memo, expected_amount_out: expectedAmountOut, router, expiry, fees } = json
+
+        const defaultSlippage = 300 // 3%
+        const expectedAmountOutWithSlippage = getMinAmount(defaultSlippage, expectedAmountOut)
+        const patchedMemo = memo.replace('0/1/0', `${expectedAmountOutWithSlippage.toString()}/1/0`)
 
         return {
-            memo,
-            amountOut: new TokenAmount(BTC, expected_amount_out),
+            memo: patchedMemo,
+            amountOut: new TokenAmount(BTC, expectedAmountOut),
+            amountOutMin: new TokenAmount(BTC, expectedAmountOutWithSlippage),
             router,
             expiry,
             fees,
