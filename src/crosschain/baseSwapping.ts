@@ -270,7 +270,10 @@ export abstract class BaseSwapping {
             throw new Error('FIXED FEE: Token not found')
         }
         return {
-            fee: new TokenAmount(feeToken, parseUnits(token.fee_rounding, configToken.decimals).toString()),
+            fee: new TokenAmount(
+                feeToken,
+                parseUnits(Number(token.fee_rounding).toString(), configToken.decimals).toString()
+            ),
             save: new TokenAmount(feeToken, '0'),
         }
     }
