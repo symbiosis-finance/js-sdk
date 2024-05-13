@@ -263,7 +263,9 @@ export async function getTransactionStatus(txHash: string): Promise<string | und
 
     const { status, out_hashes } = json.observed_tx
     if (status === 'done' && out_hashes && out_hashes.length > 0) {
-        return out_hashes[0]
+        return out_hashes.find((outHash) => {
+            return outHash !== '0000000000000000000000000000000000000000000000000000000000000000'
+        })
     }
 
     return
