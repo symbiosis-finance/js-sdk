@@ -8,6 +8,7 @@ import { isAddress } from 'ethers/lib/utils'
 import { OmniTrade } from '../trade'
 import { CROSS_CHAIN_ID } from '../constants'
 import { Symbiosis } from '../symbiosis'
+import { Portal__factory } from '../contracts'
 
 export const BTC_FORWARDER_API = {
     testnet: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
@@ -31,14 +32,50 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     // 2) tail to next swap on evm
 
     let tail = ''
+
+    // destination of swap is not Bitcoin sBtc
     if (!symbiosis.getRepresentation(inTokenAmount.token, outToken.chainId)?.equals(outToken)) {
-        const { address: secondDexRouter, data: secondSwapCalldata, route: swapTokens } = await _buildPoolTrade(context)
+        const {
+            address: secondDexRouter,
+            data: secondSwapCalldata,
+            route: swapTokens,
+            tokenAmountOut,
+        } = await _buildPoolTrade(context)
+
+        // calc stableBridgingFee pass as param below in function
+        const portalAddress = symbiosis.chainConfig(outToken.chainId).portal
+        const portalInterface = Portal__factory.createInterface()
+
+        // prepare calldata to calc fee in stable coins (WBTC)
+        const calldata = portalInterface.encodeFunctionData('metaUnsynthesize', [
+            '0', // _stableBridgingFee
+            CROSS_CHAIN_ID, // crossChainID
+            CROSS_CHAIN_ID, // _externalID,
+            evmAccount, // _to  delete: (use evm address)
+            tokenAmountOut.raw.toString(), // _amount delete: (amount of unlocked token)
+            outToken.address, // _rToken delete: real token address (WBTC on Fuji)
+            AddressZero, // _finalReceiveSide delete: (address dex 0)
+            [], // _finalCalldata  (address dex [])
+            0, // _finalOffset  (address dex 0)
+        ])
+
+        const { price: stableBridgingFee } = await symbiosis.getBridgeFee({
+            receiveSide: portalAddress,
+            calldata,
+            chainIdFrom: inTokenAmount.token.chainId,
+            chainIdTo: outToken.chainId,
+        })
 
         const {
             address: finalReceiveSide,
             data: finalCalldata,
             offset: finalOffset,
-        } = await _metaBurnSyntheticToken(symbiosis, swapTokens[swapTokens.length - 1], toAddress)
+        } = await _metaBurnSyntheticToken(
+            symbiosis,
+            swapTokens[swapTokens.length - 1],
+            toAddress,
+            stableBridgingFee.toString()
+        )
 
         const symBtcContract = symbiosis.symBtc(swapTokens[0].chainId)
         const params = {
@@ -49,8 +86,11 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             finalCalldata,
             finalOffset,
         }
-        tail = await symBtcContract.callStatic.packBTCTransactionTail(params)
+        const tailHex = await symBtcContract.callStatic.packBTCTransactionTail(params)
+        // for compact purpose base-16-->base-64
+        tail = Buffer.from(tailHex.slice(2), 'hex').toString('base64')
     }
+
     const btcForwarderFeeRaw = await _getBtcForwarderFee(evmAccount, tail)
     const { validUntil, revealAddress } = await _getDepositAddresses(evmAccount, btcForwarderFeeRaw, tail)
 
@@ -87,7 +127,8 @@ interface MetaBurnSyntheticTokenResult {
 async function _metaBurnSyntheticToken(
     symbiosis: Symbiosis,
     tokenToBurn: Token,
-    toAddress: string
+    toAddress: string,
+    stableBridgingFee: string
 ): Promise<MetaBurnSyntheticTokenResult> {
     if (!tokenToBurn.chainFromId) {
         throw new Error('_buildFinalSwap: token is not synthetic')
@@ -95,16 +136,17 @@ async function _metaBurnSyntheticToken(
     const chainIdTo = tokenToBurn.chainFromId
 
     const synthesis = symbiosis.synthesis(tokenToBurn.chainId)
+
     const data = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
         {
-            stableBridgingFee: '0', // TODO
+            stableBridgingFee,
             amount: '0', // to be patched
             syntCaller: symbiosis.metaRouter(tokenToBurn.chainId).address,
             crossChainID: CROSS_CHAIN_ID,
-            finalReceiveSide: AddressZero, // TODO
+            finalReceiveSide: AddressZero, // TODO dex part C-swap
             sToken: tokenToBurn.address,
-            finalCallData: [], // TODO
-            finalOffset: 0, // TODO
+            finalCallData: [], // TODO dex part C-swap
+            finalOffset: 0, // TODO dex part C-swap
             chain2address: toAddress,
             receiveSide: symbiosis.portal(chainIdTo).address,
             oppositeBridge: symbiosis.bridge(chainIdTo).address,
@@ -125,6 +167,7 @@ interface SecondSwapResult {
     address: string
     data: string
     route: Token[]
+    tokenAmountOut: TokenAmount
 }
 
 async function _buildPoolTrade(context: SwapExactInParams): Promise<SecondSwapResult> {
@@ -157,6 +200,7 @@ async function _buildPoolTrade(context: SwapExactInParams): Promise<SecondSwapRe
 
     const multicallRouter = symbiosis.multicallRouter(pool.chainId)
 
+    // called via multicall to patch amount
     const data = multicallRouter.interface.encodeFunctionData('multicall', [
         tokenAmountIn.raw.toString(), // amount to be patched
         [trade.callData], // calldatas
@@ -170,6 +214,7 @@ async function _buildPoolTrade(context: SwapExactInParams): Promise<SecondSwapRe
         address: multicallRouter.address,
         data,
         route: [synthIn, synthOut],
+        tokenAmountOut: trade.amountOut,
     }
 }
 
@@ -192,7 +237,7 @@ async function _getDepositAddresses(
             fee: minBtcFee,
             op: 0, // 0 - is wrap operation
             sbfee: 0, // stable bridging fee for tail execution in satoshi
-            tail: btoa(tail), // calldata for next swap from contract SymBtc.FromBTCTransactionTail
+            tail, // calldata for next swap from contract SymBtc.FromBTCTransactionTail
         },
         feeLimit,
     })
@@ -237,7 +282,7 @@ async function _getBtcForwarderFee(evmReceiverAddress: string, tail: string): Pr
         info: {
             op: 0, // 0 - wrap operation
             to: evmReceiverAddress,
-            tail: btoa(tail),
+            tail,
         },
     })
 
