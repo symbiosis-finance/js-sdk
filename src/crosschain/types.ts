@@ -66,4 +66,5 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
+    directRouteClients?: string[]
 }
