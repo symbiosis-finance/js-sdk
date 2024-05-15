@@ -56,6 +56,7 @@ export const CHAINS_PRIORITY = [
     ChainId.MERLIN_MAINNET,
     ChainId.ZKLINK_MAINNET,
     ChainId.CORE_MAINNET,
+    ChainId.SEPOLIA_TESTNET,
 ]
 
 // a list of tokens by chain
@@ -136,6 +137,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.MERLIN_MAINNET]: [WETH[ChainId.MERLIN_MAINNET]],
     [ChainId.ZKLINK_MAINNET]: [WETH[ChainId.ZKLINK_MAINNET]],
     [ChainId.CORE_MAINNET]: [WETH[ChainId.CORE_MAINNET]],
+    [ChainId.SEPOLIA_TESTNET]: [WETH[ChainId.SEPOLIA_TESTNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {

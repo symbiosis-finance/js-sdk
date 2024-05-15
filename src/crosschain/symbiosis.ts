@@ -46,6 +46,8 @@ import {
     SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
+    TonBridge,
+    TonBridge__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
 } from './contracts'
@@ -70,6 +72,7 @@ import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchReques
 import { swapExactIn, SwapExactInParams, SwapExactInResult } from './swapExactIn'
 import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
+import { ZappingTon } from './zappingTon'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -235,6 +238,10 @@ export class Symbiosis {
         return new ZappingBeefy(this, omniPoolConfig)
     }
 
+    public newZappingTon(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingTon(this, omniPoolConfig)
+    }
+
     public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
         if (rpc) {
             const url = isTronChainId(chainId) ? `${rpc}/jsonrpc` : rpc
@@ -247,6 +254,12 @@ export class Symbiosis {
             throw new Error('No provider for given chainId')
         }
         return provider
+    }
+
+    public tonBridge(chainId: ChainId, address: string, signer?: Signer): TonBridge {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return TonBridge__factory.connect(address, signerOrProvider)
     }
 
     public portal(chainId: ChainId, signer?: Signer): Portal {

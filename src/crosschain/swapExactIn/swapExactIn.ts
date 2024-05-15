@@ -8,6 +8,7 @@ import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
 import { ChainId } from '../../constants'
 import { thorChainSwap } from './thorChainSwap'
+import { tonSwap } from './tonSwap'
 
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -46,6 +47,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (outToken.chainId === ChainId.BTC_MAINNET) {
         return thorChainSwap(params)
+    }
+
+    if (outToken.chainId === ChainId.TON_MAINNET) {
+        return tonSwap(params)
     }
 
     return crosschainSwap(params)

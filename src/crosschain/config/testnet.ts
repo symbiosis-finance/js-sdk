@@ -140,7 +140,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0xDe886ff69fE234c8db2e2694788e73aa6be8d0c7',
+            router: '0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008',
             dexFee: 30,
             metaRouter: '0xab5694083Ae2c94023fBcdBf00e6f6e9715CC2Bc',
             metaRouterGateway: '0xAC176B92F6AbC9c286F0742853ABF430AAb053b3',
