@@ -112,11 +112,6 @@ const _abi = [
                 type: 'uint256',
             },
             {
-                internalType: 'address',
-                name: '_token',
-                type: 'address',
-            },
-            {
                 components: [
                     {
                         internalType: 'int8',

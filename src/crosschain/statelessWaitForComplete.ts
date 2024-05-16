@@ -6,6 +6,8 @@ import { ChainId } from '../constants'
 import type { Symbiosis } from './symbiosis'
 import fetch from 'isomorphic-unfetch'
 import { delay } from '../utils'
+import { TransactionReceipt } from '@ethersproject/providers'
+import { Bridge__factory } from './contracts'
 
 type BridgeRequestType =
     | 'SynthesizeRequest'
@@ -207,23 +209,16 @@ export async function statelessWaitForComplete(symbiosis: Symbiosis, chainId: Ch
 
     // if b-chain is final destination
     if (!bBridgeInfo) {
-        return tryToFindThorChainDepositAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
+        return tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
     }
 
     const cTxId = await waitOtherSideTx(symbiosis, bBridgeInfo)
+    console.log('cTxId', cTxId)
 
-    return tryToFindThorChainDepositAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
+    return tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
 }
 
-export async function tryToFindThorChainDepositAndWait(symbiosis: Symbiosis, chainId: ChainId, txHash: string) {
-    const isBtc = await findThorChainDeposit(symbiosis, chainId, txHash)
-    if (!isBtc) {
-        return txHash
-    }
-    return waitForThorChainTx(txHash.startsWith('0x') ? txHash.slice(2) : txHash)
-}
-
-export async function findThorChainDeposit(symbiosis: Symbiosis, chainId: ChainId, txHash: string) {
+export async function tryToFindExtraStepsAndWait(symbiosis: Symbiosis, chainId: ChainId, txHash: string) {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
 
@@ -231,6 +226,34 @@ export async function findThorChainDeposit(symbiosis: Symbiosis, chainId: ChainI
         throw new TxNotFound(txHash)
     }
 
+    const isThorChainDeposit = await findThorChainDeposit(receipt)
+    if (isThorChainDeposit) {
+        return waitForThorChainTx(txHash.startsWith('0x') ? txHash.slice(2) : txHash)
+    }
+
+    const isTonDeposit = await findTonOracleRequest(receipt)
+    if (isTonDeposit) {
+        console.log('This is TON deposit. TON tracking have to be implemented')
+    }
+    return txHash
+}
+
+async function findTonOracleRequest(receipt: TransactionReceipt) {
+    const oracleRequestToTonTopic0 = '0x532dbb6d061eee97ab4370060f60ede10b3dc361cc1214c07ae5e34dd86e6aaf'
+    const log = receipt.logs.find((log) => {
+        return log.topics[0] === oracleRequestToTonTopic0
+    })
+    if (!log) {
+        return false
+    }
+
+    const decoded = Bridge__factory.createInterface().decodeEventLog('OracleRequest', log.data)
+
+    const tonChainIds = ['7777777771', '7777777772']
+    return tonChainIds.includes(decoded.chainId.toString())
+}
+
+export async function findThorChainDeposit(receipt: TransactionReceipt) {
     const thorChainDepositTopic0 = '0xef519b7eb82aaf6ac376a6df2d793843ebfd593de5f1a0601d3cc6ab49ebb395'
     const log = receipt.logs.find((log) => {
         return log.topics[0] === thorChainDepositTopic0

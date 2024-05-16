@@ -7,6 +7,7 @@ import { MulticallRouter, TonBridge } from './contracts'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { OneInchProtocols } from './trade/oneInchTrade'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 const TON_TOKEN_DECIMALS = 9
 const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)
@@ -25,22 +26,44 @@ const TON = new Token({
     },
 })
 
-const CONFIG: Partial<Record<ChainId, { bridge: string; wTon: Token }>> = {
-    [ChainId.SEPOLIA_TESTNET]: {
-        bridge: '0xe7c0F17555CFC962fe96fcd274B653A8bff708B6',
+const wTonAttributes = {
+    decimals: TON_TOKEN_DECIMALS,
+    name: 'Wrapped Toncoin',
+    symbol: 'wTon',
+    icons: {
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+    },
+}
+const CONFIG: { chainId: ChainId; bridge: string; wTon: Token }[] = [
+    {
+        chainId: ChainId.SEPOLIA_TESTNET,
+        bridge: '0x3A1e6dA810637fb1c99fa0899b4F402A60E131D2',
         wTon: new Token({
             chainId: ChainId.SEPOLIA_TESTNET,
             address: '0x331f40cc27aC106e1d5242CE633dc6436626a6F8',
-            decimals: TON_TOKEN_DECIMALS,
-            name: 'Wrapped Toncoin',
-            symbol: 'wTon',
-            icons: {
-                small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-            },
+            ...wTonAttributes,
         }),
     },
-}
+    {
+        chainId: ChainId.BSC_MAINNET,
+        bridge: AddressZero,
+        wTon: new Token({
+            chainId: ChainId.BSC_MAINNET,
+            address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
+            ...wTonAttributes,
+        }),
+    },
+    {
+        chainId: ChainId.ETH_MAINNET,
+        bridge: AddressZero,
+        wTon: new Token({
+            chainId: ChainId.ETH_MAINNET,
+            address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
+            ...wTonAttributes,
+        }),
+    },
+]
 
 export interface ZappingTonExactInParams {
     tokenAmountIn: TokenAmount
@@ -54,7 +77,6 @@ export class ZappingTon extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected userAddress!: string
     protected tonBridge!: TonBridge
-    protected tonChainId!: ChainId
 
     public async exactIn({
         tokenAmountIn,
@@ -63,19 +85,19 @@ export class ZappingTon extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingTonExactInParams): Promise<CrosschainSwapExactInResult> {
-        const tonChainId = ChainId.SEPOLIA_TESTNET // FIXME
-
-        this.from = from
-        this.tonChainId = tonChainId
-        this.multicallRouter = this.symbiosis.multicallRouter(tonChainId)
-        this.userAddress = to
-
-        const config = CONFIG[tonChainId]
+        // find suitable config for current env
+        const options = CONFIG.filter((i) => {
+            return this.symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
+        })
+        const config = options[0] // select the first suitable
         if (!config) {
-            throw new Error(`There are no wTon for chain ${tonChainId}`)
+            throw new Error(`There are no suitable config options`)
         }
 
-        this.tonBridge = this.symbiosis.tonBridge(tonChainId, config.bridge)
+        this.from = from
+        this.multicallRouter = this.symbiosis.multicallRouter(config.chainId)
+        this.userAddress = to
+        this.tonBridge = this.symbiosis.tonBridge(config.chainId, config.bridge)
 
         const { tokenAmountOut, ...result } = await this.doExactIn({
             tokenAmountIn,
@@ -98,6 +120,7 @@ export class ZappingTon extends BaseSwapping {
 
         return {
             ...result,
+            route: [...result.route, new Token({ ...config.wTon, chainId: ChainId.TON_MAINNET })], // add TON for display purposes only
             tokenAmountOut: tonAmountOut,
             tokenAmountOutMin: tonAmountOut,
             extraFee: bridgeFee,
@@ -133,7 +156,6 @@ export class ZappingTon extends BaseSwapping {
 
         const bridgeCallData = this.tonBridge.interface.encodeFunctionData('callBridgeRequest', [
             this.tradeC.amountOut.raw.toString(),
-            '0x331f40cc27aC106e1d5242CE633dc6436626a6F8', // FIXME
             {
                 workchain: address.wc,
                 address_hash: `0x${TonWeb.utils.bytesToHex(address.hashPart)}`,

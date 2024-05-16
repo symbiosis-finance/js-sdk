@@ -34,7 +34,7 @@ export interface TonBridgeInterface extends utils.Interface {
     functions: {
         'bridgeChainId()': FunctionFragment
         'broadcaster()': FunctionFragment
-        'callBridgeRequest(uint256,address,(int8,bytes32))': FunctionFragment
+        'callBridgeRequest(uint256,(int8,bytes32))': FunctionFragment
         'changeBridgeChainId(uint256)': FunctionFragment
         'changeBroadcaster(address)': FunctionFragment
         'changeSymbiosisBridge(address)': FunctionFragment
@@ -51,7 +51,7 @@ export interface TonBridgeInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'broadcaster', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'callBridgeRequest',
-        values: [BigNumberish, string, TonBridge.TonAddressStruct]
+        values: [BigNumberish, TonBridge.TonAddressStruct]
     ): string
     encodeFunctionData(functionFragment: 'changeBridgeChainId', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'changeBroadcaster', values: [string]): string
@@ -143,7 +143,6 @@ export interface TonBridge extends BaseContract {
 
         callBridgeRequest(
             _amount: BigNumberish,
-            _token: string,
             _tonAddress: TonBridge.TonAddressStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
@@ -196,7 +195,6 @@ export interface TonBridge extends BaseContract {
 
     callBridgeRequest(
         _amount: BigNumberish,
-        _token: string,
         _tonAddress: TonBridge.TonAddressStruct,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
@@ -249,7 +247,6 @@ export interface TonBridge extends BaseContract {
 
         callBridgeRequest(
             _amount: BigNumberish,
-            _token: string,
             _tonAddress: TonBridge.TonAddressStruct,
             overrides?: CallOverrides
         ): Promise<void>
@@ -308,7 +305,6 @@ export interface TonBridge extends BaseContract {
 
         callBridgeRequest(
             _amount: BigNumberish,
-            _token: string,
             _tonAddress: TonBridge.TonAddressStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
@@ -362,7 +358,6 @@ export interface TonBridge extends BaseContract {
 
         callBridgeRequest(
             _amount: BigNumberish,
-            _token: string,
             _tonAddress: TonBridge.TonAddressStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
