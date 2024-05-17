@@ -29,13 +29,16 @@ const TON = new Token({
 const wTonAttributes = {
     decimals: TON_TOKEN_DECIMALS,
     name: 'Wrapped Toncoin',
-    symbol: 'wTon',
+    symbol: 'WTON',
     icons: {
         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
     },
 }
-const CONFIG: { chainId: ChainId; bridge: string; wTon: Token }[] = [
+
+type Option = { chainId: ChainId; bridge: string; wTon: Token }
+
+const OPTIONS: Option[] = [
     {
         chainId: ChainId.SEPOLIA_TESTNET,
         bridge: '0x3A1e6dA810637fb1c99fa0899b4F402A60E131D2',
@@ -85,28 +88,47 @@ export class ZappingTon extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingTonExactInParams): Promise<CrosschainSwapExactInResult> {
-        // find suitable config for current env
-        const options = CONFIG.filter((i) => {
+        this.from = from
+        this.userAddress = to
+
+        // find suitable option for current env
+        const options = OPTIONS.filter((i) => {
             return this.symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
         })
-        const config = options[0] // select the first suitable
-        if (!config) {
-            throw new Error(`There are no suitable config options`)
+        if (options.length === 0) {
+            throw new Error(`There are no suitable option options`)
         }
 
-        this.from = from
-        this.multicallRouter = this.symbiosis.multicallRouter(config.chainId)
-        this.userAddress = to
-        this.tonBridge = this.symbiosis.tonBridge(config.chainId, config.bridge)
+        let bestResult: CrosschainSwapExactInResult | undefined
+        let bestOption: Option | undefined
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i]
 
-        const { tokenAmountOut, ...result } = await this.doExactIn({
-            tokenAmountIn,
-            tokenOut: config.wTon,
-            from,
-            to: from,
-            slippage,
-            deadline,
-        })
+            // NOTE very bad experience to set instance variables to be able to calculate
+            // not possible to make parallel
+            this.multicallRouter = this.symbiosis.multicallRouter(option.chainId)
+            this.tonBridge = this.symbiosis.tonBridge(option.chainId, option.bridge)
+
+            const result = await this.doExactIn({
+                tokenAmountIn,
+                tokenOut: option.wTon,
+                from,
+                to: from,
+                slippage,
+                deadline,
+            })
+
+            if (bestResult && bestResult.tokenAmountOut.greaterThanOrEqual(result.tokenAmountOut.raw)) {
+                continue
+            }
+            bestResult = result
+            bestOption = option
+        }
+
+        if (!bestOption || !bestResult) {
+            throw new Error('All options failed')
+        }
+        const { tokenAmountOut, ...rest } = bestResult
 
         let tonAmountOut = new TokenAmount(TON, tokenAmountOut.raw.toString())
         if (BigNumber.from(tonAmountOut.raw.toString()).lt(MIN_WTON_AMOUNT.toString())) {
@@ -118,12 +140,16 @@ export class ZappingTon extends BaseSwapping {
         const bridgeFee = this.estimateBridgeFee(tokenAmountOut)
         tonAmountOut = tonAmountOut.subtract(bridgeFee)
 
+        // add artificial wTON on TON_MAINNET for display route purposes only
+        const displayToken = new Token({ ...bestOption.wTon, chainId: ChainId.TON_MAINNET })
+
         return {
-            ...result,
-            route: [...result.route, new Token({ ...config.wTon, chainId: ChainId.TON_MAINNET })], // add TON for display purposes only
+            ...rest,
+            route: [...rest.route, displayToken],
             tokenAmountOut: tonAmountOut,
             tokenAmountOutMin: tonAmountOut,
             extraFee: bridgeFee,
+            outTradeType: 'ton-bridge',
         }
     }
 
