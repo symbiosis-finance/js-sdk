@@ -1,4 +1,4 @@
-import { parseUnits } from '@ethersproject/units'
+import { formatUnits, parseUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import TonWeb from 'tonweb'
 import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
@@ -7,7 +7,6 @@ import { MulticallRouter, TonBridge } from './contracts'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 const TON_TOKEN_DECIMALS = 9
 const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)
@@ -50,7 +49,7 @@ const OPTIONS: Option[] = [
     },
     {
         chainId: ChainId.BSC_MAINNET,
-        bridge: AddressZero,
+        bridge: '0x35D39bB2cbc51ce6c03f0306d0D8d56948b1f990',
         wTon: new Token({
             chainId: ChainId.BSC_MAINNET,
             address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
@@ -59,7 +58,7 @@ const OPTIONS: Option[] = [
     },
     {
         chainId: ChainId.ETH_MAINNET,
-        bridge: AddressZero,
+        bridge: '0x195A07D222a82b50DB84e8f47B71504D1E8C5fa2',
         wTon: new Token({
             chainId: ChainId.ETH_MAINNET,
             address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
@@ -104,10 +103,11 @@ export class ZappingTon extends BaseSwapping {
         for (let i = 0; i < options.length; i++) {
             const option = options[i]
 
-            // NOTE very bad experience to set instance variables to be able to calculate
-            // not possible to make parallel
+            // >>> FIXME very bad experience to set instance variables to be able to calculate, hence not possible to make parallel
             this.multicallRouter = this.symbiosis.multicallRouter(option.chainId)
             this.tonBridge = this.symbiosis.tonBridge(option.chainId, option.bridge)
+            this.feeV2 = undefined
+            // <<<
 
             const result = await this.doExactIn({
                 tokenAmountIn,
@@ -133,7 +133,7 @@ export class ZappingTon extends BaseSwapping {
         let tonAmountOut = new TokenAmount(TON, tokenAmountOut.raw.toString())
         if (BigNumber.from(tonAmountOut.raw.toString()).lt(MIN_WTON_AMOUNT.toString())) {
             throw new Error(
-                `Amount ${tonAmountOut.toSignificant()} less than fee ${tonAmountOut.toSignificant}`,
+                `Amount ${tonAmountOut.toSignificant()} less than fee ${formatUnits(MIN_WTON_AMOUNT, 9)}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
