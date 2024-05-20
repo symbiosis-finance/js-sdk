@@ -8,7 +8,7 @@ import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { OneInchProtocols } from './trade/oneInchTrade'
 
-const TON_TOKEN_DECIMALS = 9
+export const TON_TOKEN_DECIMALS = 9
 const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)
 const STATIC_BRIDGE_FEE = parseUnits('5', TON_TOKEN_DECIMALS)
 
@@ -24,51 +24,11 @@ const TON = new Token({
         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
     },
 })
-
-const wTonAttributes = {
-    decimals: TON_TOKEN_DECIMALS,
-    name: 'Wrapped Toncoin',
-    symbol: 'WTON',
-    icons: {
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-    },
-}
-
-type Option = { chainId: ChainId; bridge: string; wTon: Token }
-
-const OPTIONS: Option[] = [
-    {
-        chainId: ChainId.SEPOLIA_TESTNET,
-        bridge: '0x3A1e6dA810637fb1c99fa0899b4F402A60E131D2',
-        wTon: new Token({
-            chainId: ChainId.SEPOLIA_TESTNET,
-            address: '0x331f40cc27aC106e1d5242CE633dc6436626a6F8',
-            ...wTonAttributes,
-        }),
-    },
-    {
-        chainId: ChainId.BSC_MAINNET,
-        bridge: '0x35D39bB2cbc51ce6c03f0306d0D8d56948b1f990',
-        wTon: new Token({
-            chainId: ChainId.BSC_MAINNET,
-            address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
-            ...wTonAttributes,
-        }),
-    },
-    {
-        chainId: ChainId.ETH_MAINNET,
-        bridge: '0x195A07D222a82b50DB84e8f47B71504D1E8C5fa2',
-        wTon: new Token({
-            chainId: ChainId.ETH_MAINNET,
-            address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
-            ...wTonAttributes,
-        }),
-    },
-]
+export type Option = { chainId: ChainId; bridge: string; wTon: Token }
 
 export interface ZappingTonExactInParams {
     tokenAmountIn: TokenAmount
+    option: Option
     from: string
     to: string
     slippage: number
@@ -82,6 +42,7 @@ export class ZappingTon extends BaseSwapping {
 
     public async exactIn({
         tokenAmountIn,
+        option,
         from,
         to,
         slippage,
@@ -89,46 +50,19 @@ export class ZappingTon extends BaseSwapping {
     }: ZappingTonExactInParams): Promise<CrosschainSwapExactInResult> {
         this.from = from
         this.userAddress = to
+        this.multicallRouter = this.symbiosis.multicallRouter(option.chainId)
+        this.tonBridge = this.symbiosis.tonBridge(option.chainId, option.bridge)
 
-        // find suitable option for current env
-        const options = OPTIONS.filter((i) => {
-            return this.symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
+        const result = await this.doExactIn({
+            tokenAmountIn,
+            tokenOut: option.wTon,
+            from,
+            to: from,
+            slippage,
+            deadline,
         })
-        if (options.length === 0) {
-            throw new Error(`There are no suitable option options`)
-        }
 
-        let bestResult: CrosschainSwapExactInResult | undefined
-        let bestOption: Option | undefined
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i]
-
-            // >>> FIXME very bad experience to set instance variables to be able to calculate, hence not possible to make parallel
-            this.multicallRouter = this.symbiosis.multicallRouter(option.chainId)
-            this.tonBridge = this.symbiosis.tonBridge(option.chainId, option.bridge)
-            this.feeV2 = undefined
-            // <<<
-
-            const result = await this.doExactIn({
-                tokenAmountIn,
-                tokenOut: option.wTon,
-                from,
-                to: from,
-                slippage,
-                deadline,
-            })
-
-            if (bestResult && bestResult.tokenAmountOut.greaterThanOrEqual(result.tokenAmountOut.raw)) {
-                continue
-            }
-            bestResult = result
-            bestOption = option
-        }
-
-        if (!bestOption || !bestResult) {
-            throw new Error('All options failed')
-        }
-        const { tokenAmountOut, ...rest } = bestResult
+        const { tokenAmountOut, ...rest } = result
 
         let tonAmountOut = new TokenAmount(TON, tokenAmountOut.raw.toString())
         if (BigNumber.from(tonAmountOut.raw.toString()).lt(MIN_WTON_AMOUNT.toString())) {
@@ -141,7 +75,7 @@ export class ZappingTon extends BaseSwapping {
         tonAmountOut = tonAmountOut.subtract(bridgeFee)
 
         // add artificial wTON on TON_MAINNET for display route purposes only
-        const displayToken = new Token({ ...bestOption.wTon, chainId: ChainId.TON_MAINNET })
+        const displayToken = new Token({ ...option.wTon, chainId: ChainId.TON_MAINNET })
 
         return {
             ...rest,
