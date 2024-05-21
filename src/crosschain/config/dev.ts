@@ -37,7 +37,6 @@ export const config: Config = {
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
     ],
 }

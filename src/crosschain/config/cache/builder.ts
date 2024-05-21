@@ -143,7 +143,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (chain?.symBtc || chain.isBtcChain) {
+            if (chain.type === 'bitcoin') {
                 continue
             }
 

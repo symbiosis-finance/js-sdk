@@ -134,7 +134,6 @@ export const config: Config = {
             creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
             creamCompoundLens: '0xd400e22dcA840CC7E342DF1d9945684bBd587659',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.BSC_MAINNET,
@@ -213,7 +212,6 @@ export const config: Config = {
             creamComptroller: '0x589de0f0ccf905477646599bb3e5c622c84cc0ba',
             creamCompoundLens: '0x06fd4e17Dd35d0dE9FE17eeAE4e94fBA57fEF154',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.AVAX_MAINNET,
@@ -259,7 +257,6 @@ export const config: Config = {
             creamComptroller: '0x486Af39519B4Dc9a7fCcd318217352830E8AD9b4',
             creamCompoundLens: '0x5b4058A9000e86fe136Ac896352C4DFD539E32a1',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.MATIC_MAINNET,
@@ -308,7 +305,6 @@ export const config: Config = {
             creamComptroller: '0x20CA53E2395FA571798623F1cFBD11Fe2C114c24',
             creamCompoundLens: '0xa7B0C2e904d597b89b4bf91927A3B90459f8bb9E',
             renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.TELOS_MAINNET,
@@ -346,7 +342,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.KAVA_MAINNET,
@@ -384,7 +379,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.BOBA_MAINNET,
@@ -418,7 +412,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: 56288,
@@ -452,7 +445,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
@@ -530,7 +522,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.ARBITRUM_MAINNET,
@@ -613,7 +604,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
@@ -658,7 +648,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.ARBITRUM_NOVA,
@@ -707,7 +696,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.POLYGON_ZK,
@@ -768,7 +756,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.LINEA_MAINNET,
@@ -824,7 +811,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.MANTLE_MAINNET,
@@ -873,7 +859,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.BASE_MAINNET,
@@ -922,7 +907,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.TRON_MAINNET,
@@ -955,7 +939,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.SCROLL_MAINNET,
@@ -1015,7 +998,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.MANTA_MAINNET,
@@ -1060,7 +1042,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.METIS_MAINNET,
@@ -1098,7 +1079,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.BAHAMUT_MAINNET,
@@ -1132,7 +1112,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.MODE_MAINNET,
@@ -1166,7 +1145,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.RSK_MAINNET,
@@ -1211,7 +1189,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.BLAST_MAINNET,
@@ -1249,7 +1226,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.MERLIN_MAINNET,
@@ -1283,7 +1259,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.ZKLINK_MAINNET,
@@ -1316,7 +1291,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
         {
             id: ChainId.CORE_MAINNET,
@@ -1350,7 +1324,6 @@ export const config: Config = {
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 0,
         },
     ],
 }

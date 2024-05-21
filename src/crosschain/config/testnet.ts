@@ -53,7 +53,6 @@ export const config: Config = {
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 2336000,
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
@@ -85,28 +84,27 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0xDe886ff69fE234c8db2e2694788e73aa6be8d0c7', // DEX Univ2, legacy
-            dexFee: 30, // 0.03%
-            metaRouter: '0xe19f85478Ee6C4D67d14386F646Dd1E9C4461A9b', // Orchestrate between synth contracts and doing swaps ???
-            metaRouterGateway: '0xfB589f8B73a32D2e7867b8529408f6f8306887B6', // Entrypoint contract, for approve purpose only
-            bridge: '0x7dc13B605508F91Fcd3bf7803C2b96B43941B4E8', //  generate oracle request for relayers , proxy to portal and synthetus
-            synthesis: '0x3e6235b91c6734821b4037E6459f861E465D4192', // [IMPORTANT]: Burn/Mint Synth function
-            symBtc: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365', // [!!OLD!!!! contract change] new is 0xc7F1A6768B16De4BB15c146fd5030cD9F50533ab special contract for btc operation connected with synthesis
-            portal: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38', // Release/lock base tokens  !!!????? Don't know real address for this contracts
-            fabric: '0xb4ADe33Bba3512c8c0B489cbd03aAd3557EC49Ca', // [IMPORTANT]: Contract that stores token representations and create them as fabric method
-            multicallRouter: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210', // multiple operations
+            router: '0xDe886ff69fE234c8db2e2694788e73aa6be8d0c7',
+            dexFee: 30,
+            metaRouter: '0x8b03ad402ab3f1477bdfa64647718e5c537c0029',
+            metaRouterGateway: '0xc3b59B4a7961EF8FD24C9838731D1f598884F53d',
+            bridge: '0x7dc13B605508F91Fcd3bf7803C2b96B43941B4E8',
+            synthesis: '0x3e6235b91c6734821b4037E6459f861E465D4192',
+            symBtc: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365', // [OLD!!!] new one is 0xc7F1A6768B16De4BB15c146fd5030cD9F50533ab
+            portal: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38',
+            fabric: '0xb4ADe33Bba3512c8c0B489cbd03aAd3557EC49Ca',
+            multicallRouter: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210',
             aavePool: '0x0000000000000000000000000000000000000000',
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 2336000,
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: ChainId.BTC_TESTNET,
-            isBtcChain: true,
+            type: 'bitcoin',
             rpc: '',
-            filterBlockOffset: 2000, // ??
+            filterBlockOffset: 2000,
             stables: [
                 {
                     name: 'Bitcoin',
@@ -133,7 +131,6 @@ export const config: Config = {
             aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
             creamComptroller: '0x0000000000000000000000000000000000000000',
             creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            blocksPerYear: 52650, // from 140 avg block per day
             renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
     ],
