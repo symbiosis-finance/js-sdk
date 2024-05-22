@@ -105,33 +105,18 @@ const _abi = [
             {
                 components: [
                     {
-                        internalType: 'address[]',
-                        name: 'swapTokens',
-                        type: 'address[]',
-                    },
-                    {
                         internalType: 'address',
-                        name: 'secondDexRouter',
+                        name: 'receiveSide',
                         type: 'address',
                     },
                     {
                         internalType: 'bytes',
-                        name: 'secondSwapCalldata',
-                        type: 'bytes',
-                    },
-                    {
-                        internalType: 'address',
-                        name: 'finalReceiveSide',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'bytes',
-                        name: 'finalCalldata',
+                        name: 'receiveSideCalldata',
                         type: 'bytes',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'finalOffset',
+                        name: 'receiveSideOffset',
                         type: 'uint256',
                     },
                 ],
@@ -257,33 +242,18 @@ const _abi = [
             {
                 components: [
                     {
-                        internalType: 'address[]',
-                        name: 'swapTokens',
-                        type: 'address[]',
-                    },
-                    {
                         internalType: 'address',
-                        name: 'secondDexRouter',
+                        name: 'receiveSide',
                         type: 'address',
                     },
                     {
                         internalType: 'bytes',
-                        name: 'secondSwapCalldata',
-                        type: 'bytes',
-                    },
-                    {
-                        internalType: 'address',
-                        name: 'finalReceiveSide',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'bytes',
-                        name: 'finalCalldata',
+                        name: 'receiveSideCalldata',
                         type: 'bytes',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'finalOffset',
+                        name: 'receiveSideOffset',
                         type: 'uint256',
                     },
                 ],
@@ -365,6 +335,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: 'mpc',
+        outputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
         name: 'owner',
         outputs: [
             {
@@ -381,33 +364,18 @@ const _abi = [
             {
                 components: [
                     {
-                        internalType: 'address[]',
-                        name: 'swapTokens',
-                        type: 'address[]',
-                    },
-                    {
                         internalType: 'address',
-                        name: 'secondDexRouter',
+                        name: 'receiveSide',
                         type: 'address',
                     },
                     {
                         internalType: 'bytes',
-                        name: 'secondSwapCalldata',
-                        type: 'bytes',
-                    },
-                    {
-                        internalType: 'address',
-                        name: 'finalReceiveSide',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'bytes',
-                        name: 'finalCalldata',
+                        name: 'receiveSideCalldata',
                         type: 'bytes',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'finalOffset',
+                        name: 'receiveSideOffset',
                         type: 'uint256',
                     },
                 ],
@@ -473,33 +441,18 @@ const _abi = [
             {
                 components: [
                     {
-                        internalType: 'address[]',
-                        name: 'swapTokens',
-                        type: 'address[]',
-                    },
-                    {
                         internalType: 'address',
-                        name: 'secondDexRouter',
+                        name: 'receiveSide',
                         type: 'address',
                     },
                     {
                         internalType: 'bytes',
-                        name: 'secondSwapCalldata',
-                        type: 'bytes',
-                    },
-                    {
-                        internalType: 'address',
-                        name: 'finalReceiveSide',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'bytes',
-                        name: 'finalCalldata',
+                        name: 'receiveSideCalldata',
                         type: 'bytes',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'finalOffset',
+                        name: 'receiveSideOffset',
                         type: 'uint256',
                     },
                 ],

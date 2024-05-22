@@ -19,21 +19,15 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace SymBtc {
     export type FromBTCTransactionTailStruct = {
-        swapTokens: string[]
-        secondDexRouter: string
-        secondSwapCalldata: BytesLike
-        finalReceiveSide: string
-        finalCalldata: BytesLike
-        finalOffset: BigNumberish
+        receiveSide: string
+        receiveSideCalldata: BytesLike
+        receiveSideOffset: BigNumberish
     }
 
-    export type FromBTCTransactionTailStructOutput = [string[], string, string, string, string, BigNumber] & {
-        swapTokens: string[]
-        secondDexRouter: string
-        secondSwapCalldata: string
-        finalReceiveSide: string
-        finalCalldata: string
-        finalOffset: BigNumber
+    export type FromBTCTransactionTailStructOutput = [string, string, BigNumber] & {
+        receiveSide: string
+        receiveSideCalldata: string
+        receiveSideOffset: BigNumber
     }
 }
 
@@ -43,16 +37,17 @@ export interface SymBtcInterface extends utils.Interface {
         'bridge()': FunctionFragment
         'btcChainId()': FunctionFragment
         'btcTokenAddress()': FunctionFragment
-        'getBTCCalldata(uint256,bytes32,uint32,uint64,uint256,uint256,address,(address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'getBTCCalldata(uint256,bytes32,uint32,uint64,uint256,uint256,address,(address,bytes,uint256))': FunctionFragment
         'getBTCExternalID(bytes32,uint32,address)': FunctionFragment
         'getBTCInternalID(bytes32,uint32)': FunctionFragment
         'getBtcTotalSupply()': FunctionFragment
-        'getHashBTC(uint256,bytes32,uint32,uint64,uint256,uint256,address,(address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'getHashBTC(uint256,bytes32,uint32,uint64,uint256,uint256,address,(address,bytes,uint256))': FunctionFragment
         'getMpcHash(address)': FunctionFragment
         'getSyntToken()': FunctionFragment
         'initialize(address,address,address,uint256)': FunctionFragment
+        'mpc()': FunctionFragment
         'owner()': FunctionFragment
-        'packBTCTransactionTail((address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'packBTCTransactionTail((address,bytes,uint256))': FunctionFragment
         'renounceOwnership()': FunctionFragment
         'synthesis()': FunctionFragment
         'transferOwnership(address)': FunctionFragment
@@ -94,6 +89,7 @@ export interface SymBtcInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'getMpcHash', values: [string]): string
     encodeFunctionData(functionFragment: 'getSyntToken', values?: undefined): string
     encodeFunctionData(functionFragment: 'initialize', values: [string, string, string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'mpc', values?: undefined): string
     encodeFunctionData(functionFragment: 'owner', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'packBTCTransactionTail',
@@ -115,6 +111,7 @@ export interface SymBtcInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'getMpcHash', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'getSyntToken', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'mpc', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'packBTCTransactionTail', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
@@ -210,6 +207,8 @@ export interface SymBtc extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
+        mpc(overrides?: CallOverrides): Promise<[string]>
+
         owner(overrides?: CallOverrides): Promise<[string]>
 
         packBTCTransactionTail(
@@ -285,6 +284,8 @@ export interface SymBtc extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
+    mpc(overrides?: CallOverrides): Promise<string>
+
     owner(overrides?: CallOverrides): Promise<string>
 
     packBTCTransactionTail(
@@ -359,6 +360,8 @@ export interface SymBtc extends BaseContract {
             _chainId: BigNumberish,
             overrides?: CallOverrides
         ): Promise<void>
+
+        mpc(overrides?: CallOverrides): Promise<string>
 
         owner(overrides?: CallOverrides): Promise<string>
 
@@ -441,6 +444,8 @@ export interface SymBtc extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
+        mpc(overrides?: CallOverrides): Promise<BigNumber>
+
         owner(overrides?: CallOverrides): Promise<BigNumber>
 
         packBTCTransactionTail(
@@ -517,6 +522,8 @@ export interface SymBtc extends BaseContract {
             _chainId: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
+
+        mpc(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 

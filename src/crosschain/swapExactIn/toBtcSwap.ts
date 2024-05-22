@@ -8,12 +8,11 @@ import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } f
 import { isBtc } from '../utils'
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { outToken, inTokenAmount, symbiosis } = context
+    const { outToken } = context
 
     const isThorChainSwapSupported = outToken.chainId === ChainId.BTC_MAINNET
 
-    // if symBtc contract deployed on chain we could Burn and exit to native BTC
-    const isNativeSwapSupported = !!symbiosis.chainConfig(inTokenAmount.token.chainId).symBtc
+    const isNativeSwapSupported = outToken.chainId === ChainId.BTC_MAINNET
 
     return isThorChainSwapSupported || isNativeSwapSupported
 }

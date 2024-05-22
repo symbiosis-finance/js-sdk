@@ -8,6 +8,7 @@ import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '../../constants'
+import { MetaRouteStructs } from '../contracts/MetaRouter'
 
 export const BTC_FORWARDER_API = {
     testnet: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
@@ -21,76 +22,43 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const {
-        evmAccount,
-        inTokenAmount,
-        outToken,
-        symbiosis,
-        fromAddress,
-        toAddress,
-        deadline,
-        slippage,
-        oneInchProtocols,
-    } = context
+    const { evmAccount, inTokenAmount, outToken, symbiosis } = context
 
     if (!evmAccount || (evmAccount && !isAddress(evmAccount))) {
         throw new Error('fromBtcSwap: No EVM address was provided')
     }
 
-    // 1) [TODO]: Fee 2-nd synthesis, 3-rd from advisor in btc
-    // 2) tail to next swap on evm
-
     const sBtc = symbiosis.getRepresentation(inTokenAmount.token, ChainId.SEPOLIA_TESTNET)
     if (!sBtc) {
         throw new Error('fromBtcSwap: No sBtc token found')
     }
-    const sBtcTokenAmount = new TokenAmount(sBtc, inTokenAmount.raw)
 
     // destination of swap is not Bitcoin sBtc
     const isBtcBridging = outToken.equals(sBtc)
 
-    let tail = ''
+    let tail: string
+    let tokenAmountOut: TokenAmount
+    let btcForwarderFee: TokenAmount
 
+    const sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
     if (!isBtcBridging) {
-        const bestPoolSwapping = symbiosis.bestPoolSwapping()
+        tail = ''
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(evmAccount, tail))
+        const { tail: tail1 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
-        const { transactionRequest } = await bestPoolSwapping.exactIn({
-            tokenAmountIn: sBtcTokenAmount,
-            tokenOut: outToken,
-            from: fromAddress,
-            to: toAddress,
-            slippage,
-            deadline,
-            oneInchProtocols,
-        })
+        tail = tail1
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(evmAccount, tail))
+        const { tokenAmountOut: ta, tail: tail2 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
-        const data = (transactionRequest as TransactionRequest).data!
-
-        const result = MetaRouter__factory.createInterface().decodeFunctionResult('metaRoute', data)
-
-        console.log({ result })
-        debugger
-        const symBtcContract = symbiosis.symBtc(ChainId.SEPOLIA_TESTNET)
-        const params = {
-            swapTokens: [],
-            secondDexRouter: '',
-            secondSwapCalldata: '',
-            finalReceiveSide: '',
-            finalCalldata: [],
-            finalOffset: 0,
-        }
-        const tailHex = await symBtcContract.callStatic.packBTCTransactionTail(params)
-        // for compact purpose base-16-->base-64
-        tail = Buffer.from(tailHex.slice(2), 'hex').toString('base64')
+        tail = tail2
+        tokenAmountOut = ta
+    } else {
+        tail = ''
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(evmAccount, tail))
+        tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
     }
 
-    const btcForwarderFeeRaw = await _getBtcForwarderFee(evmAccount, tail)
-    const { validUntil, revealAddress } = await _getDepositAddresses(evmAccount, btcForwarderFeeRaw, tail)
-
-    const btcForwarderFee = new TokenAmount(inTokenAmount.token, btcForwarderFeeRaw)
-
-    const totalTokenAmountOut = inTokenAmount.subtract(btcForwarderFee) //[TODO]: minus all fees
-    const tokenAmountOut = new TokenAmount(outToken, totalTokenAmountOut.raw)
+    const { validUntil, revealAddress } = await _getDepositAddresses(evmAccount, btcForwarderFee.raw.toString(), tail)
 
     return {
         kind: 'from-btc-swap',
@@ -109,6 +77,40 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         fee: btcForwarderFee,
         save: undefined,
         extraFee: undefined,
+    }
+}
+
+async function buildTail(
+    context: SwapExactInParams,
+    tokenAmountIn: TokenAmount
+): Promise<{ tokenAmountOut: TokenAmount; tail: string }> {
+    const { fromAddress, toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
+    const bestPoolSwapping = symbiosis.bestPoolSwapping()
+
+    const { transactionRequest, tokenAmountOut } = await bestPoolSwapping.exactIn({
+        tokenAmountIn,
+        tokenOut: outToken,
+        from: fromAddress,
+        to: toAddress,
+        slippage,
+        deadline,
+        oneInchProtocols,
+    })
+
+    const data = (transactionRequest as TransactionRequest).data!
+    const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
+    const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
+
+    const symBtcContract = symbiosis.symBtc(ChainId.SEPOLIA_TESTNET) // FIXME chainId hardcoded
+    const tail = await symBtcContract.callStatic.packBTCTransactionTail({
+        receiveSide: tx.relayRecipient,
+        receiveSideCalldata: tx.otherSideCalldata,
+        receiveSideOffset: 100, // metaSynthesize struct
+    })
+
+    return {
+        tokenAmountOut,
+        tail,
     }
 }
 
@@ -131,9 +133,9 @@ async function _getDepositAddresses(
             fee: minBtcFee,
             op: 0, // 0 - is wrap operation
             sbfee: 0, // stable bridging fee for tail execution in satoshi
-            tail, // calldata for next swap from contract SymBtc.FromBTCTransactionTail
+            tail: Buffer.from(tail.slice(2), 'hex').toString('base64'), // calldata for next swap from contract SymBtc.FromBTCTransactionTail
         },
-        feeLimit,
+        feeLimit: Number(feeLimit), // FIXME
     })
 
     const wrapApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/wrap`)
@@ -176,7 +178,7 @@ async function _getBtcForwarderFee(evmReceiverAddress: string, tail: string): Pr
         info: {
             op: 0, // 0 - wrap operation
             to: evmReceiverAddress,
-            tail,
+            tail: Buffer.from(tail.slice(2), 'hex').toString('base64'),
         },
     })
 
