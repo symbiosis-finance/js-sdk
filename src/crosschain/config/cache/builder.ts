@@ -87,7 +87,7 @@ export class Builder {
 
     public async build() {
         try {
-            // TODO check portal tokens whitelisted
+            await this.checkPortalTokensWhitelisted()
             await this.checkTransmitters()
             await this.checkMetarouters()
             const tokens = await this.buildTokensList()
@@ -112,8 +112,8 @@ export class Builder {
     // === private ===
 
     private async checkTransmitters() {
+        console.log('checkTransmitters')
         const chains = this.config.chains
-        let error: string | undefined
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
             const bridge = this.bridge(chain.id)
@@ -121,22 +121,38 @@ export class Builder {
             if (chain.portal !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.portal)
                 if (!ok) {
-                    error = `${chain.id} Portal is not transmitter`
+                    throw new Error(`${chain.id} Portal is not transmitter`)
                 }
             }
             if (chain.synthesis !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.synthesis)
                 if (!ok) {
-                    error = `${chain.id} Synthesis is not transmitter`
+                    throw new Error(`${chain.id} Synthesis is not transmitter`)
                 }
             }
         }
-        if (error) {
-            throw new Error(error)
+    }
+    private async checkPortalTokensWhitelisted() {
+        console.log('checkPortalTokensWhitelisted')
+        const chains = this.config.chains
+        for (let i = 0; i < chains.length; i++) {
+            const chain = chains[i]
+
+            const portal = this.portal(chain.id)
+            if (portal.address !== AddressZero) {
+                for (let j = 0; j < chain.stables.length; j++) {
+                    const token = chain.stables[j]
+                    const ok = await portal.tokenWhitelist(token.address)
+                    if (!ok) {
+                        throw new Error(`${chain.id} Token ${token.address} is not whitelisted on portal`)
+                    }
+                }
+            }
         }
     }
 
     private async checkMetarouters() {
+        console.log('checkMetarouters')
         const chains = this.config.chains
 
         let error = false
@@ -196,6 +212,7 @@ export class Builder {
         type: 'Portal' | 'Synthesis',
         chain: ChainConfig
     ): Promise<TokenThreshold[]> {
+        console.log('getThresholds')
         const multicall = await getMulticall(this.getProvider(chain.id))
         const chainTokens = tokens.filter((token) => token.chainId === chain.id)
         const calls = chainTokens.map((token) => ({
