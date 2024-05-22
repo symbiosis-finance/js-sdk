@@ -7,9 +7,9 @@ export const config: Config = {
     },
     omniPools: [
         {
-            chainId: ChainId.SEPOLIA_TESTNET,
-            address: '0x9A857D526A9e53697a9Df5fFc40bCCD70E7A0388', // Btc octopul
-            oracle: '0x14be03e34B05a87A028acfF0292C1AF135D26699',
+            chainId: ChainId.BSC_TESTNET,
+            address: '0xFC385a59b2728cA437057E3cDBA4a2611B75c406', // BTC octopool
+            oracle: '0xfdF3dBF16a7Dc8078FE4E9D0c1ac391dfb8B19aF',
             generalPurpose: true,
         },
     ],
@@ -18,6 +18,26 @@ export const config: Config = {
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
     chains: [
+        {
+            id: ChainId.BSC_TESTNET,
+            rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
+            filterBlockOffset: 2000,
+            stables: [],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179',
+            metaRouterGateway: '0xaa067db6103E4b792bbE09540B5a7757F79d582a',
+            bridge: '0xB299eee0Ed46b7a34C01F2a01fc83a0B45aA88AF',
+            synthesis: '0x08f5c28ff0622FeF758c2C3c2a5EAEeb63D60D4c',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0x9B8D0e0765cDa999910ff31A2204080E1192EfC7',
+            multicallRouter: '0x086D8d30822086941729DF294f0e52E42EdC17F9',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+        },
         {
             id: ChainId.AVAX_TESTNET,
             rpc: 'https://api.avax-test.network/ext/bc/C/rpc',
@@ -62,22 +82,11 @@ export const config: Config = {
             filterBlockOffset: 2000,
             stables: [
                 {
-                    name: 'Wrapped ETH',
-                    address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
-                    symbol: 'WETH',
-                    decimals: 18,
-                    chainId: ChainId.SEPOLIA_TESTNET,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
-                    },
-                },
-                {
-                    name: 'Wrapped BTC',
-                    address: '0xD0684a311F47AD7fdFf03951d7b91996Be9326E1',
-                    symbol: 'WBTC',
+                    name: 'Synthetic BTC',
+                    address: '0x4d0EF82dfE2896eE3222bE5a9e9188ae1DCcd05F',
+                    symbol: 'sBTC',
                     decimals: 8,
-                    chainId: ChainId.SEPOLIA_TESTNET,
+                    chainId: 11155111,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',

@@ -87,6 +87,7 @@ export class Builder {
 
     public async build() {
         try {
+            // TODO check portal tokens whitelisted
             await this.checkTransmitters()
             await this.checkMetarouters()
             const tokens = await this.buildTokensList()
