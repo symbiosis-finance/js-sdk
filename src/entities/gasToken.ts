@@ -80,4 +80,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ZKLINK_MAINNET]: GAS(ChainId.ZKLINK_MAINNET, 'ETH', 1027),
     [ChainId.SEPOLIA_TESTNET]: GAS(ChainId.SEPOLIA_TESTNET, 'ETH', 1027),
     [ChainId.CORE_MAINNET]: GAS(ChainId.CORE_MAINNET, 'CORE', 23254),
+    [ChainId.TON_MAINNET]: GAS(ChainId.TON_MAINNET, 'TON', 11419, 9),
 }

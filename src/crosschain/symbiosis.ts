@@ -48,6 +48,8 @@ import {
     SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
+    TonBridge,
+    TonBridge__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
 } from './contracts'
@@ -75,6 +77,8 @@ import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchReques
 import { swapExactIn, SwapExactInParams, SwapExactInResult } from './swapExactIn'
 import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
+import { ZappingTon } from './zappingTon'
+import { ZappingNativeBtc } from './zappingNativeBtc'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -92,6 +96,7 @@ export class Symbiosis {
 
     public readonly config: Config
     public readonly clientId: string
+    public readonly isDirectRouteClient: boolean
 
     private readonly configCache: ConfigCache
 
@@ -183,6 +188,7 @@ export class Symbiosis {
         this.configCache = new ConfigCache(config)
 
         this.clientId = utils.formatBytes32String(clientId)
+        this.isDirectRouteClient = (overrideConfig?.directRouteClients || []).includes(clientId)
 
         this.providers = new Map(
             this.config.chains.map((chain) => {
@@ -230,12 +236,20 @@ export class Symbiosis {
         return new ZappingThor(this, omniPoolConfig)
     }
 
+    public newZappingNativeBtc(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingNativeBtc(this, omniPoolConfig)
+    }
+
     public newZappingCream(omniPoolConfig: OmniPoolConfig) {
         return new ZappingCream(this, omniPoolConfig)
     }
 
     public newZappingBeefy(omniPoolConfig: OmniPoolConfig) {
         return new ZappingBeefy(this, omniPoolConfig)
+    }
+
+    public newZappingTon(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingTon(this, omniPoolConfig)
     }
 
     public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
@@ -250,6 +264,12 @@ export class Symbiosis {
             throw new Error('No provider for given chainId')
         }
         return provider
+    }
+
+    public tonBridge(chainId: ChainId, address: string, signer?: Signer): TonBridge {
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return TonBridge__factory.connect(address, signerOrProvider)
     }
 
     public portal(chainId: ChainId, signer?: Signer): Portal {

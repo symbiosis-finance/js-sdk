@@ -4,12 +4,8 @@ import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
 import { Error, ErrorCode } from './error'
-import { utils } from 'ethers'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
-
-// TODO move to Symbiosis instance' params
-const DIRECT_ROUTE_CLIENTS = [utils.formatBytes32String('lifi')]
 
 // Swapping wrapper what select best omni pool for swapping
 export class BestPoolSwapping {
@@ -42,7 +38,7 @@ export class BestPoolSwapping {
                 const action = this.symbiosis.newSwapping(optimalOmniPool)
                 const actionResult = await action.exactIn(exactInParams)
 
-                if (!DIRECT_ROUTE_CLIENTS.includes(this.symbiosis.clientId)) {
+                if (!this.symbiosis.isDirectRouteClient) {
                     const priceImpactThreshold = new Percent('-5', '1000') // -0.5%
                     if (actionResult.priceImpact.lessThan(priceImpactThreshold)) {
                         throw new Error('Price impact of optimal octopool is too high')

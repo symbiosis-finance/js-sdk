@@ -93,7 +93,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0xDe886ff69fE234c8db2e2694788e73aa6be8d0c7',
+            router: '0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008',
             dexFee: 30,
             metaRouter: '0x8b03ad402ab3f1477bdfa64647718e5c537c0029',
             metaRouterGateway: '0xc3b59B4a7961EF8FD24C9838731D1f598884F53d',

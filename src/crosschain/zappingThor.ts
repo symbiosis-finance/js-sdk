@@ -6,9 +6,11 @@ import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
+import { getMinAmount } from './utils'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
+    thorTokenIn: Token
     from: string
     to: string
     slippage: number
@@ -19,6 +21,7 @@ export interface ZappingThorExactInParams {
 type ThorQuote = {
     memo: string
     amountOut: TokenAmount
+    amountOutMin: TokenAmount
     router: string
     expiry: string
     fees: {
@@ -28,29 +31,6 @@ type ThorQuote = {
 }
 
 const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
-
-const ETH_USDC = new Token({
-    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    chainId: ChainId.ETH_MAINNET,
-    decimals: 6,
-    name: 'USDC',
-    symbol: 'USDC',
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
-const AVAX_USDC = new Token({
-    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
-    chainId: ChainId.AVAX_MAINNET,
-    decimals: 6,
-    name: 'USDC',
-    symbol: 'USDC',
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
 
 const thorApiUrl = 'https://thornode.ninerealms.com'
 
@@ -99,9 +79,7 @@ function toThorAmount(tokenAmount: TokenAmount): BigNumber {
     return BigNumber.from(tokenAmount.raw.toString()).mul(thorDecimals).div(tokenDecimals)
 }
 
-const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
-
-const MIN_AMOUNT_IN = 500
+const MIN_AMOUNT_IN = 100
 
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -126,64 +104,38 @@ export class ZappingThor extends BaseSwapping {
 
     public async exactIn({
         tokenAmountIn,
+        thorTokenIn,
         from,
         to,
         slippage,
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
         this.bitcoinAddress = to
+        this.thorTokenIn = thorTokenIn
 
-        let bestResult: CrosschainSwapExactInResult | undefined = undefined
-        let bestThorPool: ThorPool | undefined = undefined
-        let bestThorToken: Token | undefined = undefined
-        let bestThorQuote: ThorQuote | undefined = undefined
-        for (let i = 0; i < THOR_TOKENS.length; i++) {
-            try {
-                const thorToken = THOR_TOKENS[i]
+        // check if there is "Available" ThorChain pool at the moment
+        await ZappingThor.getThorPools(thorTokenIn)
 
-                this.thorTokenIn = thorToken // NOTE: bad practice. set for doPostTransitAction invocation only
+        this.multicallRouter = this.symbiosis.multicallRouter(thorTokenIn.chainId)
+        this.thorVault = await ZappingThor.getThorVault(thorTokenIn)
 
-                const thorPool = await ZappingThor.getThorPools(thorToken)
-                this.multicallRouter = this.symbiosis.multicallRouter(thorToken.chainId)
-
-                this.thorVault = await ZappingThor.getThorVault(thorToken)
-
-                const result = await this.doExactIn({
-                    tokenAmountIn,
-                    tokenOut: thorToken,
-                    from,
-                    to: from,
-                    slippage,
-                    deadline,
-                })
-
-                if (!bestResult || !bestThorQuote || this.thorQuote.amountOut.greaterThan(bestThorQuote.amountOut)) {
-                    bestResult = result
-                    bestThorPool = thorPool
-                    bestThorToken = thorToken
-                    bestThorQuote = this.thorQuote
-                }
-            } catch (e: any) {
-                if (e.code === ErrorCode.MIN_THORCHAIN_AMOUNT_IN) {
-                    throw e
-                }
-                console.error(e)
-            }
-        }
-        if (!bestResult || !bestThorToken || !bestThorPool) {
-            throw new Error(`Can't build route upto the THORChain`)
-        }
-        // console.log('Routing via', { bestThorPool })
+        const result = await this.doExactIn({
+            tokenAmountIn,
+            tokenOut: thorTokenIn,
+            from,
+            to: from,
+            slippage,
+            deadline,
+        })
 
         // >> for display route purposes only
-        bestResult.route.push(new Token({ ...bestThorToken, chainId: ChainId.BTC_MAINNET }))
-        bestResult.route.push(BTC)
-        // << for display route purposes only
+        result.route.push(new Token({ ...thorTokenIn, chainId: ChainId.BTC_MAINNET }))
+        result.route.push(BTC)
 
         return {
-            ...bestResult,
+            ...result,
             tokenAmountOut: this.thorQuote.amountOut,
-            tokenAmountOutMin: this.thorQuote.amountOut,
+            tokenAmountOutMin: this.thorQuote.amountOutMin,
             outTradeType: 'thor-chain',
             extraFee: new TokenAmount(BTC, this.thorQuote.fees.total),
         }
@@ -243,9 +195,9 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('amount', toThorAmount(amount).toString())
         url.searchParams.set('destination', this.bitcoinAddress)
         url.searchParams.set('streaming_interval', '1')
+        url.searchParams.set('streaming_quantity', '0')
         url.searchParams.set('affiliate', 'sy')
         url.searchParams.set('affiliate_bps', '20')
-        // url.searchParams.set('tolerance_bps', '300') // 3% FIXME
 
         const response = await fetch(url.toString(), {
             headers: {
@@ -258,11 +210,16 @@ export class ZappingThor extends BaseSwapping {
         if (json.error) {
             throw new Error(json.error)
         }
-        const { memo, expected_amount_out, router, expiry, fees } = json
+        const { memo, expected_amount_out: expectedAmountOut, router, expiry, fees } = json
+
+        const defaultSlippage = 300 // 3%
+        const expectedAmountOutWithSlippage = getMinAmount(defaultSlippage, expectedAmountOut)
+        const patchedMemo = memo.replace('0/1/0', `${expectedAmountOutWithSlippage.toString()}/1/0`)
 
         return {
-            memo,
-            amountOut: new TokenAmount(BTC, expected_amount_out),
+            memo: patchedMemo,
+            amountOut: new TokenAmount(BTC, expectedAmountOut),
+            amountOutMin: new TokenAmount(BTC, expectedAmountOutWithSlippage),
             router,
             expiry,
             fees,
