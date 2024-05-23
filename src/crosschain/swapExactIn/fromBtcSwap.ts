@@ -22,9 +22,9 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { evmAccount, inTokenAmount, outToken, symbiosis } = context
+    const { inTokenAmount, outToken, symbiosis, toAddress } = context
 
-    if (!evmAccount || (evmAccount && !isAddress(evmAccount))) {
+    if (!isAddress(toAddress)) {
         throw new Error('fromBtcSwap: No EVM address was provided')
     }
 
@@ -43,22 +43,22 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
     if (!isBtcBridging) {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(evmAccount, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(toAddress, tail))
         const { tail: tail1 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail1
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(evmAccount, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(toAddress, tail))
         const { tokenAmountOut: ta, tail: tail2 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail2
         tokenAmountOut = ta
     } else {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(evmAccount, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(toAddress, tail))
         tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
     }
 
-    const { validUntil, revealAddress } = await _getDepositAddresses(evmAccount, btcForwarderFee.raw.toString(), tail)
+    const { validUntil, revealAddress } = await _getDepositAddresses(toAddress, btcForwarderFee.raw.toString(), tail)
 
     return {
         kind: 'from-btc-swap',

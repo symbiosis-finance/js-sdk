@@ -13,7 +13,6 @@ export interface SwapExactInParams {
     outToken: Token
     slippage: number
     deadline: number
-    evmAccount?: string
     oneInchProtocols?: OneInchProtocols
 }
 
