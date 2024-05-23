@@ -12,7 +12,6 @@ export type ChainConfig = {
     id: ChainId
     rpc: string
     spareRpcs?: string[]
-    type?: 'bitcoin'
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]

@@ -111,7 +111,6 @@ export const config: Config = {
         },
         {
             id: ChainId.BTC_TESTNET,
-            type: 'bitcoin',
             rpc: '',
             filterBlockOffset: 2000,
             stables: [
