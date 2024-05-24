@@ -87,10 +87,15 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
         const method = utils.id(result.transactionRequest.function_selector).slice(0, 10)
         callData = method + result.transactionRequest.raw_parameter
         routerAddress = tronAddressToEvm(result.transactionRequest.contract_address)
-    } else {
+    } else if (result.transactionType === 'evm') {
         value = result.transactionRequest.value?.toString() as string
         callData = result.transactionRequest.data as BytesLike
         routerAddress = result.transactionRequest.to as string
+    } else {
+        // BTC
+        value = ''
+        callData = ''
+        routerAddress = ''
     }
 
     if (inTokenAmount.token.isNative) {

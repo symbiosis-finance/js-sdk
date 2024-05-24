@@ -41,7 +41,7 @@ export async function statelessWaitForComplete<T>({
             break
         case WaitOperation.WRAP_BTC:
             if (btcAddress) {
-                result = waitWrapBtcTxToComplete(btcAddress) as Promise<T>
+                result = waitWrapBtcTxToComplete(symbiosis.config.btc.forwarderUrl, btcAddress) as Promise<T>
             }
             break
         case WaitOperation.CREATE_SYNTH_BTC:
@@ -56,7 +56,7 @@ export async function statelessWaitForComplete<T>({
             break
         case WaitOperation.UNWRAP_BTC:
             if (btcId) {
-                result = waitUnwrapBtcTxComplete(btcId) as Promise<T>
+                result = waitUnwrapBtcTxComplete(symbiosis.config.btc.forwarderUrl, btcId) as Promise<T>
             }
             break
     }

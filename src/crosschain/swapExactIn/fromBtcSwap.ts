@@ -2,18 +2,13 @@ import { SwapExactInParams, SwapExactInResult } from './types'
 import { TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { Error } from '../error'
+import { Error, ErrorCode } from '../error'
 import { isBtc } from '../utils'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '../../constants'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-
-export const BTC_FORWARDER_API = {
-    testnet: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
-    mainnet: 'https://relayers.symbiosis.finance/forwarder/api/v1',
-}
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount } = context
@@ -40,25 +35,50 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     let tokenAmountOut: TokenAmount
     let btcForwarderFee: TokenAmount
 
+    const forwarderUrl = symbiosis.config.btc.forwarderUrl
+
     const sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
     if (!isBtcBridging) {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(toAddress, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))
+        if (btcForwarderFee.greaterThan(sBtcAmount)) {
+            throw new Error(
+                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
         const { tail: tail1 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail1
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(toAddress, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))
+        if (btcForwarderFee.greaterThan(sBtcAmount)) {
+            throw new Error(
+                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
         const { tokenAmountOut: ta, tail: tail2 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail2
         tokenAmountOut = ta
     } else {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(toAddress, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))
+        if (btcForwarderFee.greaterThan(sBtcAmount)) {
+            throw new Error(
+                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
         tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
     }
 
-    const { validUntil, revealAddress } = await _getDepositAddresses(toAddress, btcForwarderFee.raw.toString(), tail)
+    const { validUntil, revealAddress } = await _getDepositAddresses(
+        forwarderUrl,
+        toAddress,
+        btcForwarderFee.raw.toString(),
+        tail
+    )
 
     return {
         kind: 'from-btc-swap',
@@ -121,11 +141,12 @@ interface DepositAddressResult {
 }
 
 async function _getDepositAddresses(
+    forwarderUrl: string,
     evmReceiverAddress: string,
     feeLimit: string,
     tail: string
 ): Promise<DepositAddressResult> {
-    const minBtcFee = await _getMinBtcFee()
+    const minBtcFee = await _getMinBtcFee(forwarderUrl)
 
     const raw = JSON.stringify({
         info: {
@@ -138,7 +159,7 @@ async function _getDepositAddresses(
         feeLimit: Number(feeLimit), // FIXME
     })
 
-    const wrapApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/wrap`)
+    const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
         'Content-Type': 'application/json',
@@ -167,8 +188,8 @@ async function _getDepositAddresses(
     }
 }
 
-async function _getBtcForwarderFee(evmReceiverAddress: string, tail: string): Promise<string> {
-    const estimateWrapApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/estimate-wrap`)
+async function _getBtcForwarderFee(forwarderUrl: string, evmReceiverAddress: string, tail: string): Promise<string> {
+    const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
         'Content-Type': 'application/json',
@@ -200,9 +221,9 @@ async function _getBtcForwarderFee(evmReceiverAddress: string, tail: string): Pr
     return feeLimit
 }
 
-async function _getMinBtcFee(): Promise<string> {
+async function _getMinBtcFee(forwarderUrl: string): Promise<string> {
     // kind of the state: 0=finalized 1=pending 2=best
-    const portalApiUrl = new URL(`${BTC_FORWARDER_API.testnet}/portal?kind=0`)
+    const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=0`)
 
     const response = await fetch(portalApiUrl)
     if (!response.ok) {

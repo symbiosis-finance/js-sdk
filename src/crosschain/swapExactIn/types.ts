@@ -16,6 +16,12 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
+export type BtcTransactionData = {
+    depositAddress: string
+    validUntil: string
+    tokenAmountOut: TokenAmount
+}
+
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -27,7 +33,7 @@ export type SwapExactInTransactionPayload =
       }
     | {
           transactionType: 'btc'
-          transactionRequest: any //[TODO]: specific type
+          transactionRequest: BtcTransactionData
       }
 
 export type SwapExactInResult = {

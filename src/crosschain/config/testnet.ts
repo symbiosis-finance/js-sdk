@@ -2,6 +2,9 @@ import { ChainId } from '../../constants'
 import { Config } from '../types'
 
 export const config: Config = {
+    btc: {
+        forwarderUrl: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
+    },
     advisor: {
         url: 'https://api.testnet.symbiosis.finance/calculations',
     },

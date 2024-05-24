@@ -1,4 +1,3 @@
-import { BTC_FORWARDER_API } from './constants'
 import { fetchData, longPolling } from './utils'
 
 export class WaitUnwrapBtcTxComplete extends Error {
@@ -17,14 +16,15 @@ interface UnwrapSerialBTCResponse {
 }
 
 /**
+ * @param forwarderUrl
  * @param burnSerialBTC - id from smart contract event BurnRequestBTC
  * @returns Transaction hash from portal contract in bitcoin network to user's wallet
  */
-export async function waitUnwrapBtcTxComplete(burnSerialBTC: string): Promise<string | null> {
+export async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBTC: string): Promise<string | null> {
     if (!burnSerialBTC) {
         throw new Error('You have to pass btc tracking id')
     }
-    const unwrapInfoUrl = new URL(`${BTC_FORWARDER_API.testnet}/unwrap?serial=${burnSerialBTC}`)
+    const unwrapInfoUrl = new URL(`${forwarderUrl}/unwrap?serial=${burnSerialBTC}`)
 
     const resut = await longPolling<UnwrapSerialBTCResponse>({
         pollingFunction: async () => {

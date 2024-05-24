@@ -1,4 +1,3 @@
-import { BTC_FORWARDER_API } from './constants'
 import { fetchData, longPolling } from './utils'
 
 interface WrapTx {
@@ -62,22 +61,30 @@ export class WaitWrapBtcTxToCompleteError extends Error {
 }
 
 /**
+ * @param forwarderUrl
  * @param btcAddress - btc wallet address which receive user's btc
  * @param blockConfirmations - how many blocks should we wait after transaction were mined
  * @returns Transaction hash
  */
-export async function waitWrapBtcTxToComplete(btcAddress: string, blockConfirmations = 1): Promise<string | null> {
-    const addressInfoUrl = new URL(`${BTC_FORWARDER_API.testnet}/address?address=${btcAddress}`)
-    const txInfoUrl = new URL(`${BTC_FORWARDER_API.testnet}/tx`)
+export async function waitWrapBtcTxToComplete(
+    forwarderUrl: string,
+    btcAddress: string,
+    blockConfirmations = 1
+): Promise<string | null> {
+    const addressInfoUrl = new URL(`${forwarderUrl}/address?address=${btcAddress}`)
+    const txInfoUrl = new URL(`${forwarderUrl}/tx`)
 
-    let addressResponse: BtcAddressResponse | undefined
     let txResponse: TxResponse | undefined
+    let revealTx: string | undefined
 
     const result = await longPolling<TxResponse>({
         pollingFunction: async () => {
-            if (!addressResponse?.transactions[0]?.revealTx) {
-                addressResponse = await fetchData(addressInfoUrl)
-                txInfoUrl.searchParams.append('txid', addressResponse!.transactions[0].revealTx)
+            if (!revealTx) {
+                const addressResponse: BtcAddressResponse = await fetchData(addressInfoUrl)
+                revealTx = addressResponse.transactions[0]?.revealTx
+                if (revealTx) {
+                    txInfoUrl.searchParams.append('txid', revealTx)
+                }
             } else {
                 txResponse = await fetchData(txInfoUrl)
             }
