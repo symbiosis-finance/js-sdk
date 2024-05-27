@@ -40,6 +40,12 @@ const _abi = [
                 name: 'bridgingFee',
                 type: 'uint256',
             },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'token',
+                type: 'address',
+            },
         ],
         name: 'BTCSynthesizeCompleted',
         type: 'event',
@@ -125,6 +131,12 @@ const _abi = [
                 internalType: 'uint256',
                 name: 'stableBridgingFee',
                 type: 'uint256',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'stoken',
+                type: 'address',
             },
         ],
         name: 'BurnRequestBTC',
@@ -765,33 +777,18 @@ const _abi = [
                         type: 'address',
                     },
                     {
-                        internalType: 'address[]',
-                        name: 'swapTokens',
-                        type: 'address[]',
-                    },
-                    {
                         internalType: 'address',
-                        name: 'secondDexRouter',
+                        name: 'receiveSide',
                         type: 'address',
                     },
                     {
                         internalType: 'bytes',
-                        name: 'secondSwapCalldata',
-                        type: 'bytes',
-                    },
-                    {
-                        internalType: 'address',
-                        name: 'finalReceiveSide',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'bytes',
-                        name: 'finalCalldata',
+                        name: 'receiveSideCalldata',
                         type: 'bytes',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'finalOffset',
+                        name: 'receiveSideOffset',
                         type: 'uint256',
                     },
                 ],
@@ -1193,12 +1190,27 @@ const _abi = [
     {
         inputs: [
             {
+                internalType: 'address',
+                name: '_synt',
+                type: 'address',
+            },
+            {
+                internalType: 'BtcSerial',
+                name: '_mintSerial',
+                type: 'uint64',
+            },
+            {
+                internalType: 'BtcSerial',
+                name: '_burnSerial',
+                type: 'uint64',
+            },
+            {
                 internalType: 'uint256',
                 name: '_minFee',
                 type: 'uint256',
             },
         ],
-        name: 'setMinFeeBTC',
+        name: 'setSyntParameters',
         outputs: [],
         stateMutability: 'nonpayable',
         type: 'function',
@@ -1219,6 +1231,44 @@ const _abi = [
         name: 'setTokenThreshold',
         outputs: [],
         stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        name: 'syntToMinFeeBTC',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        name: 'syntToMintSerialBTC',
+        outputs: [
+            {
+                internalType: 'BtcSerial',
+                name: '',
+                type: 'uint64',
+            },
+        ],
+        stateMutability: 'view',
         type: 'function',
     },
     {

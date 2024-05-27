@@ -3,10 +3,11 @@ import { CrosschainSwapExactInResult } from '../baseSwapping'
 import { Error } from '../error'
 import { Token } from '../../entities'
 
+// FIXME
 const sBtc = new Token({
-    name: 'Synthetic BTC',
-    address: '0x4d0EF82dfE2896eE3222bE5a9e9188ae1DCcd05F',
-    symbol: 'sBTC',
+    name: 't4SymBtc',
+    address: '0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb',
+    symbol: 't4SymBtc',
     decimals: 8,
     chainId: 11155111,
     icons: {
@@ -36,8 +37,10 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
     const results = await Promise.allSettled(promises)
 
     let bestResult: CrosschainSwapExactInResult | undefined
+    let error: string | undefined
     for (const item of results) {
         if (item.status !== 'fulfilled') {
+            error = item.reason.message
             continue
         }
 
@@ -51,7 +54,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
     }
 
     if (!bestResult) {
-        throw new Error(`Can't build route upto the Native BTC`)
+        throw new Error(`Can't build route upto the Native BTC: ${error}`)
     }
 
     const payload = {

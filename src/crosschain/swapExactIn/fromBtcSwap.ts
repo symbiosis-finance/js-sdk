@@ -16,18 +16,25 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     return isBtc(inTokenAmount.token.chainId)
 }
 
+const BTC_SYNTH_MAP: Partial<Record<ChainId, ChainId>> = {
+    [ChainId.BTC_TESTNET]: ChainId.SEPOLIA_TESTNET,
+}
+
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, toAddress } = context
 
-    if (!isAddress(toAddress)) {
-        throw new Error('fromBtcSwap: No EVM address was provided')
+    const sBtcChainId = BTC_SYNTH_MAP[inTokenAmount.token.chainId]
+    if (!sBtcChainId) {
+        throw new Error(`Synthetic BTC chainId wasn't found`)
     }
-
-    const sBtc = symbiosis.getRepresentation(inTokenAmount.token, ChainId.SEPOLIA_TESTNET)
+    const sBtc = symbiosis.getRepresentation(inTokenAmount.token, sBtcChainId)
     if (!sBtc) {
-        throw new Error('fromBtcSwap: No sBtc token found')
+        throw new Error(`Synthetic BTC wasn't found`)
     }
 
+    if (!isAddress(toAddress)) {
+        throw new Error(`Destination address wasn't provided`)
+    }
     // destination of swap is not Bitcoin sBtc
     const isBtcBridging = outToken.equals(sBtc)
 
@@ -102,13 +109,13 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
 async function buildTail(
     context: SwapExactInParams,
-    tokenAmountIn: TokenAmount
+    sBtcAmount: TokenAmount
 ): Promise<{ tokenAmountOut: TokenAmount; tail: string }> {
     const { fromAddress, toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
     const { transactionRequest, tokenAmountOut } = await bestPoolSwapping.exactIn({
-        tokenAmountIn,
+        tokenAmountIn: sBtcAmount,
         tokenOut: outToken,
         from: fromAddress,
         to: toAddress,
@@ -121,7 +128,7 @@ async function buildTail(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const symBtcContract = symbiosis.symBtc(ChainId.SEPOLIA_TESTNET) // FIXME chainId hardcoded
+    const symBtcContract = symbiosis.symBtc(sBtcAmount.token.chainId)
     const tail = await symBtcContract.callStatic.packBTCTransactionTail({
         receiveSide: tx.relayRecipient,
         receiveSideCalldata: tx.otherSideCalldata,

@@ -122,12 +122,9 @@ export declare namespace MetaRouteStructs {
         tokenReal: string
         chainID: BigNumberish
         to: string
-        swapTokens: string[]
-        secondDexRouter: string
-        secondSwapCalldata: BytesLike
-        finalReceiveSide: string
-        finalCalldata: BytesLike
-        finalOffset: BigNumberish
+        receiveSide: string
+        receiveSideCalldata: BytesLike
+        receiveSideOffset: BigNumberish
     }
 
     export type MetaMintTransactionBTCStructOutput = [
@@ -138,9 +135,6 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         BigNumber,
-        string,
-        string[],
-        string,
         string,
         string,
         string,
@@ -154,12 +148,9 @@ export declare namespace MetaRouteStructs {
         tokenReal: string
         chainID: BigNumber
         to: string
-        swapTokens: string[]
-        secondDexRouter: string
-        secondSwapCalldata: string
-        finalReceiveSide: string
-        finalCalldata: string
-        finalOffset: BigNumber
+        receiveSide: string
+        receiveSideCalldata: string
+        receiveSideOffset: BigNumber
     }
 }
 
@@ -175,7 +166,7 @@ export interface SynthesisInterface extends utils.Interface {
         'isTrustedForwarder(address)': FunctionFragment
         'metaBurnSyntheticToken((uint256,uint256,bytes32,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))': FunctionFragment
         'metaMintSyntheticToken((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
-        'metaMintSyntheticTokenBTC((uint256,uint256,uint64,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'metaMintSyntheticTokenBTC((uint256,uint256,uint64,bytes32,bytes32,address,uint256,address,address,bytes,uint256))': FunctionFragment
         'metaRouter()': FunctionFragment
         'minFeeBTC()': FunctionFragment
         'mintSerialBTC()': FunctionFragment
@@ -193,8 +184,10 @@ export interface SynthesisInterface extends utils.Interface {
         'revertSynthesizeRequestByBridge(uint256,bytes32,address,address,uint256,address,bytes32)': FunctionFragment
         'setFabric(address)': FunctionFragment
         'setMetaRouter(address)': FunctionFragment
-        'setMinFeeBTC(uint256)': FunctionFragment
+        'setSyntParameters(address,uint64,uint64,uint256)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
+        'syntToMinFeeBTC(address)': FunctionFragment
+        'syntToMintSerialBTC(address)': FunctionFragment
         'synthesizeStates(bytes32)': FunctionFragment
         'tokenThreshold(address)': FunctionFragment
         'transferOwnership(address)': FunctionFragment
@@ -259,8 +252,13 @@ export interface SynthesisInterface extends utils.Interface {
     ): string
     encodeFunctionData(functionFragment: 'setFabric', values: [string]): string
     encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
-    encodeFunctionData(functionFragment: 'setMinFeeBTC', values: [BigNumberish]): string
+    encodeFunctionData(
+        functionFragment: 'setSyntParameters',
+        values: [string, BigNumberish, BigNumberish, BigNumberish]
+    ): string
     encodeFunctionData(functionFragment: 'setTokenThreshold', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'syntToMinFeeBTC', values: [string]): string
+    encodeFunctionData(functionFragment: 'syntToMintSerialBTC', values: [string]): string
     encodeFunctionData(functionFragment: 'synthesizeStates', values: [BytesLike]): string
     encodeFunctionData(functionFragment: 'tokenThreshold', values: [string]): string
     encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
@@ -294,8 +292,10 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'revertSynthesizeRequestByBridge', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setFabric', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setMetaRouter', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setMinFeeBTC', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setSyntParameters', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'syntToMinFeeBTC', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'syntToMintSerialBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'synthesizeStates', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'tokenThreshold', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
@@ -303,9 +303,9 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'versionRecipient', data: BytesLike): Result
 
     events: {
-        'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256)': EventFragment
+        'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)': EventFragment
         'BurnRequest(bytes32,address,uint256,address,address,uint256,address)': EventFragment
-        'BurnRequestBTC(uint64,address,bytes,uint256,uint256)': EventFragment
+        'BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)': EventFragment
         'ClientIdLog(bytes32,bytes32)': EventFragment
         'ClientIdLogBTC(uint64,bytes32)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
@@ -338,13 +338,14 @@ export interface SynthesisInterface extends utils.Interface {
 }
 
 export type BTCSynthesizeCompletedEvent = TypedEvent<
-    [string, string, BigNumber, BigNumber, BigNumber],
+    [string, string, BigNumber, BigNumber, BigNumber, string],
     {
         id: string
         to: string
         amount: BigNumber
         serial: BigNumber
         bridgingFee: BigNumber
+        token: string
     }
 >
 
@@ -366,13 +367,14 @@ export type BurnRequestEvent = TypedEvent<
 export type BurnRequestEventFilter = TypedEventFilter<BurnRequestEvent>
 
 export type BurnRequestBTCEvent = TypedEvent<
-    [BigNumber, string, string, BigNumber, BigNumber],
+    [BigNumber, string, string, BigNumber, BigNumber, string],
     {
         burnSerial: BigNumber
         from: string
         to: string
         amount: BigNumber
         stableBridgingFee: BigNumber
+        stoken: string
     }
 >
 
@@ -620,7 +622,10 @@ export interface Synthesis extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
-        setMinFeeBTC(
+        setSyntParameters(
+            _synt: string,
+            _mintSerial: BigNumberish,
+            _burnSerial: BigNumberish,
             _minFee: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
@@ -630,6 +635,10 @@ export interface Synthesis extends BaseContract {
             _threshold: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
+
+        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<[number]>
 
@@ -796,7 +805,10 @@ export interface Synthesis extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
-    setMinFeeBTC(
+    setSyntParameters(
+        _synt: string,
+        _mintSerial: BigNumberish,
+        _burnSerial: BigNumberish,
         _minFee: BigNumberish,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
@@ -806,6 +818,10 @@ export interface Synthesis extends BaseContract {
         _threshold: BigNumberish,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
+
+    syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+    syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
     synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
 
@@ -962,9 +978,19 @@ export interface Synthesis extends BaseContract {
 
         setMetaRouter(_metaRouter: string, overrides?: CallOverrides): Promise<void>
 
-        setMinFeeBTC(_minFee: BigNumberish, overrides?: CallOverrides): Promise<void>
+        setSyntParameters(
+            _synt: string,
+            _mintSerial: BigNumberish,
+            _burnSerial: BigNumberish,
+            _minFee: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
         setTokenThreshold(_token: string, _threshold: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
 
@@ -978,19 +1004,21 @@ export interface Synthesis extends BaseContract {
     }
 
     filters: {
-        'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256)'(
+        'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)'(
             id?: BytesLike | null,
             to?: string | null,
             amount?: null,
             serial?: null,
-            bridgingFee?: null
+            bridgingFee?: null,
+            token?: string | null
         ): BTCSynthesizeCompletedEventFilter
         BTCSynthesizeCompleted(
             id?: BytesLike | null,
             to?: string | null,
             amount?: null,
             serial?: null,
-            bridgingFee?: null
+            bridgingFee?: null,
+            token?: string | null
         ): BTCSynthesizeCompletedEventFilter
 
         'BurnRequest(bytes32,address,uint256,address,address,uint256,address)'(
@@ -1012,19 +1040,21 @@ export interface Synthesis extends BaseContract {
             token?: null
         ): BurnRequestEventFilter
 
-        'BurnRequestBTC(uint64,address,bytes,uint256,uint256)'(
+        'BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)'(
             burnSerial?: null,
             from?: string | null,
             to?: null,
             amount?: null,
-            stableBridgingFee?: null
+            stableBridgingFee?: null,
+            stoken?: string | null
         ): BurnRequestBTCEventFilter
         BurnRequestBTC(
             burnSerial?: null,
             from?: string | null,
             to?: null,
             amount?: null,
-            stableBridgingFee?: null
+            stableBridgingFee?: null,
+            stoken?: string | null
         ): BurnRequestBTCEventFilter
 
         'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
@@ -1233,7 +1263,10 @@ export interface Synthesis extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
-        setMinFeeBTC(
+        setSyntParameters(
+            _synt: string,
+            _mintSerial: BigNumberish,
+            _burnSerial: BigNumberish,
             _minFee: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
@@ -1243,6 +1276,10 @@ export interface Synthesis extends BaseContract {
             _threshold: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
+
+        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
@@ -1398,7 +1435,10 @@ export interface Synthesis extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
-        setMinFeeBTC(
+        setSyntParameters(
+            _synt: string,
+            _mintSerial: BigNumberish,
+            _burnSerial: BigNumberish,
             _minFee: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
@@ -1408,6 +1448,10 @@ export interface Synthesis extends BaseContract {
             _threshold: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
+
+        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
