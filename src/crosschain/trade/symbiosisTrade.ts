@@ -1,15 +1,10 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 
-export type SymbiosisTradeType =
-    | 'dex'
-    | '1inch'
-    | 'open-ocean'
-    | 'wrap'
-    | 'izumi'
-    | 'okx'
-    | 'thor-chain'
-    | 'uni-v3'
-    | 'ton-bridge'
+export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge'
+
+export type SymbiosisTradeType = 'dex' | '1inch' | 'open-ocean' | 'wrap' | 'izumi' | 'okx' | 'uni-v3'
+
+export type ZapType = 'ton-bridge' | 'thor-chain'
 
 export interface SymbiosisTrade {
     init(): Promise<this>

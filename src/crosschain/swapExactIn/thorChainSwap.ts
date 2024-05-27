@@ -86,5 +86,6 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
+        zapType: 'thor-chain',
     }
 }

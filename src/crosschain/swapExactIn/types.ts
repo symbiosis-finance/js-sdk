@@ -1,7 +1,7 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
-import { SymbiosisTradeType } from '../trade'
+import { SymbiosisTradeType, ZapType, SymbiosisKind } from '../trade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { TronTransactionData } from '../tron'
 
@@ -27,7 +27,7 @@ export type SwapExactInTransactionPayload =
       }
 
 export type SwapExactInResult = {
-    kind: 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge'
+    kind: SymbiosisKind
     route: Token[]
     tokenAmountOut: TokenAmount
     tokenAmountOutMin?: TokenAmount
@@ -39,4 +39,5 @@ export type SwapExactInResult = {
     fee?: TokenAmount
     save?: TokenAmount
     extraFee?: TokenAmount
+    zapType?: ZapType
 } & SwapExactInTransactionPayload

@@ -129,5 +129,6 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
         kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
+        zapType: 'ton-bridge',
     }
 }
