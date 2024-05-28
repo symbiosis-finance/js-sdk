@@ -566,6 +566,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
         },
     }),
+    new Chain({
+        id: ChainId.TAIKO_MAINNET,
+        name: 'Taiko',
+        disabled: false,
+        explorer: 'https://taikoscan.io',
+        icons: {
+            small: 'https://taikoscan.io/assets/taiko/images/svg/logos/chain-light.svg?v=24.5.4.0',
+            large: 'https://taikoscan.io/assets/taiko/images/svg/logos/chain-light.svg?v=24.5.4.0',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

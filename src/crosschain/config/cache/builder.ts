@@ -4,6 +4,8 @@ import { getMulticall } from '../../multicall'
 
 import { ChainConfig, Config, OmniPoolConfig } from '../../types'
 import {
+    Bridge,
+    Bridge__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -85,6 +87,8 @@ export class Builder {
     }
 
     public async build() {
+        await this.checkPortalTokensWhitelisted()
+        await this.checkTransmitters()
         await this.checkMetarouters()
         const tokens = await this.buildTokensList()
         const omniPools = await this.buildOmniPools(tokens)
@@ -103,6 +107,46 @@ export class Builder {
     }
 
     // === private ===
+
+    private async checkTransmitters() {
+        console.log('checkTransmitters')
+        const chains = this.config.chains
+        for (let i = 0; i < chains.length; i++) {
+            const chain = chains[i]
+            const bridge = this.bridge(chain.id)
+
+            if (chain.portal !== AddressZero) {
+                const ok = await bridge.isTransmitter(chain.portal)
+                if (!ok) {
+                    throw new Error(`${chain.id} Portal is not transmitter`)
+                }
+            }
+            if (chain.synthesis !== AddressZero) {
+                const ok = await bridge.isTransmitter(chain.synthesis)
+                if (!ok) {
+                    throw new Error(`${chain.id} Synthesis is not transmitter`)
+                }
+            }
+        }
+    }
+    private async checkPortalTokensWhitelisted() {
+        console.log('checkPortalTokensWhitelisted')
+        const chains = this.config.chains
+        for (let i = 0; i < chains.length; i++) {
+            const chain = chains[i]
+
+            const portal = this.portal(chain.id)
+            if (portal.address !== AddressZero) {
+                for (let j = 0; j < chain.stables.length; j++) {
+                    const token = chain.stables[j]
+                    const ok = await portal.tokenWhitelist(token.address)
+                    if (!ok) {
+                        throw new Error(`${chain.id} Token ${token.address} is not whitelisted on portal`)
+                    }
+                }
+            }
+        }
+    }
 
     private async checkMetarouters() {
         const chains = this.config.chains
@@ -370,6 +414,12 @@ export class Builder {
         const address = this.chainConfig(chainId).portal
 
         return Portal__factory.connect(address, this.getProvider(chainId))
+    }
+
+    private bridge(chainId: ChainId): Bridge {
+        const address = this.chainConfig(chainId).bridge
+
+        return Bridge__factory.connect(address, this.getProvider(chainId))
     }
 
     private metaRouter(chainId: ChainId): MetaRouter {
