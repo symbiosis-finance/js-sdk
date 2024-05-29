@@ -249,8 +249,7 @@ async function findTonOracleRequest(receipt: TransactionReceipt) {
 
     const decoded = Bridge__factory.createInterface().decodeEventLog('OracleRequest', log.data)
 
-    const tonChainIds = ['7777777771', '7777777772']
-    return tonChainIds.includes(decoded.chainId.toString())
+    return decoded.chainId.toString() === ChainId.TON_MAINNET.toString()
 }
 
 export async function findThorChainDeposit(receipt: TransactionReceipt) {
