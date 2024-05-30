@@ -1405,7 +1405,7 @@ export const config: Config = {
                 },
             ],
             router: '0xa4cF2F53D1195aDDdE9e4D3aCa54f556895712f2',
-            dexFee: 0,
+            dexFee: 30,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
