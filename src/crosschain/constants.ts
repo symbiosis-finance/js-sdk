@@ -58,6 +58,7 @@ export const CHAINS_PRIORITY = [
     ChainId.CORE_MAINNET,
     ChainId.SEPOLIA_TESTNET,
     ChainId.TAIKO_MAINNET,
+    ChainId.SEI_EVM_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -140,6 +141,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.CORE_MAINNET]: [WETH[ChainId.CORE_MAINNET]],
     [ChainId.SEPOLIA_TESTNET]: [WETH[ChainId.SEPOLIA_TESTNET]],
     [ChainId.TAIKO_MAINNET]: [WETH[ChainId.TAIKO_MAINNET]],
+    [ChainId.SEI_EVM_MAINNET]: [WETH[ChainId.SEI_EVM_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -487,6 +489,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.ZKLINK_MAINNET]: [],
     [ChainId.CORE_MAINNET]: [],
     [ChainId.TAIKO_MAINNET]: [],
+    [ChainId.SEI_EVM_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -545,6 +548,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
     [ChainId.TAIKO_MAINNET]: [
         WETH[ChainId.TAIKO_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.TAIKO_MAINNET],
+    ],
+    [ChainId.SEI_EVM_MAINNET]: [
+        WETH[ChainId.SEI_EVM_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.SEI_EVM_MAINNET],
     ],
 }
 
@@ -616,4 +623,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.SEPOLIA_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.CORE_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.TAIKO_MAINNET]: '0x076f5925112b13a4D4c70fc83d9019f1854e4415',
+    [ChainId.SEI_EVM_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
 }

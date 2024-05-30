@@ -576,6 +576,16 @@ export const chains: Chain[] = [
             large: 'https://taikoscan.io/assets/taiko/images/svg/logos/chain-light.svg?v=24.5.4.0',
         },
     }),
+    new Chain({
+        id: ChainId.SEI_EVM_MAINNET,
+        name: 'Sei',
+        disabled: false,
+        explorer: 'https://seitrace.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
