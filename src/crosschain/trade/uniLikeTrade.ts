@@ -4,7 +4,15 @@ import { ChainId } from '../../constants'
 import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
 import { Router } from '../../router'
 import { BIPS_BASE } from '../constants'
-import { AdaRouter, AvaxRouter, KavaRouter, KimRouter, Pair__factory, UniLikeRouter } from '../contracts'
+import {
+    AdaRouter,
+    AvaxRouter,
+    DragonswapRouter,
+    KavaRouter,
+    KimRouter,
+    Pair__factory,
+    UniLikeRouter,
+} from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../utils'
@@ -33,7 +41,7 @@ export class UniLikeTrade implements SymbiosisTrade {
     private readonly to: string
     private readonly deadline: number
     private readonly slippage: number
-    private readonly router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter
+    private readonly router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
     private readonly dexFee: number
 
     public constructor(
@@ -42,7 +50,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         to: string,
         slippage: number,
         deadline: number,
-        router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter,
+        router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter,
         dexFee: number
     ) {
         this.tokenAmountIn = tokenAmountIn
@@ -117,6 +125,8 @@ export class UniLikeTrade implements SymbiosisTrade {
             method = methodName.replace('ETH', 'AVAX')
         } else if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(trade.inputAmount.token.chainId)) {
             method = methodName.replace('ETH', 'ADA')
+        } else if ([ChainId.SEI_EVM_MAINNET].includes(trade.inputAmount.token.chainId)) {
+            method = methodName.replace('ETH', 'SEI')
         }
 
         const functionAbi = this.router.interface.getFunction(method)

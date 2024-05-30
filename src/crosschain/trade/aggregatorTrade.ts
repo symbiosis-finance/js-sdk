@@ -7,7 +7,15 @@ import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { IzumiTrade } from './izumiTrade'
-import { AdaRouter, AvaxRouter, KavaRouter, KimRouter, UniLikeRouter } from '../contracts'
+import {
+    AdaRouter,
+    AvaxRouter,
+    DragonswapRouter,
+    DragonswapRouter__factory,
+    KavaRouter,
+    KimRouter,
+    UniLikeRouter,
+} from '../contracts'
 import { UniLikeTrade } from './uniLikeTrade'
 import { UniV3Trade } from './uniV3Trade'
 
@@ -172,23 +180,29 @@ export class AggregatorTrade implements SymbiosisTrade {
     private async buildUniLikeTrade(): Promise<UniLikeTrade> {
         const { symbiosis, tokenAmountIn, tokenOut, to, slippage, ttl } = this.params
         const { chainId } = tokenAmountIn.token
-        let routerA: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter = symbiosis.uniLikeRouter(chainId)
+        let router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter =
+            symbiosis.uniLikeRouter(chainId)
 
         if (chainId === ChainId.AVAX_MAINNET) {
-            routerA = symbiosis.avaxRouter(chainId)
+            router = symbiosis.avaxRouter(chainId)
         }
         if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
-            routerA = symbiosis.adaRouter(chainId)
+            router = symbiosis.adaRouter(chainId)
         }
         if ([ChainId.KAVA_MAINNET].includes(chainId)) {
-            routerA = symbiosis.kavaRouter(chainId)
+            router = symbiosis.kavaRouter(chainId)
         }
         if ([ChainId.MODE_MAINNET].includes(chainId)) {
-            routerA = symbiosis.kimRouter(chainId)
+            router = symbiosis.kimRouter(chainId)
+        }
+        if ([ChainId.SEI_EVM_MAINNET].includes(chainId)) {
+            const address = symbiosis.chainConfig(chainId).router
+            const provider = symbiosis.getProvider(chainId)
+            router = DragonswapRouter__factory.connect(address, provider)
         }
 
         const dexFee = symbiosis.dexFee(chainId)
-        const trade = new UniLikeTrade(tokenAmountIn, tokenOut, to, slippage, ttl, routerA, dexFee)
+        const trade = new UniLikeTrade(tokenAmountIn, tokenOut, to, slippage, ttl, router, dexFee)
 
         await trade.init()
 
