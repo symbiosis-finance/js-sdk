@@ -10,7 +10,7 @@ function isThorChainAvailable(chainId: ChainId) {
 }
 
 function isNativeAvailable(chainId: ChainId) {
-    return isBtc(chainId)
+    return isBtc(chainId) && chainId === ChainId.BTC_TESTNET // TODO rm last condition
 }
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -33,10 +33,10 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
     const results = await Promise.allSettled(promises)
 
     let bestResult: SwapExactInResult | undefined
-    let error: string | undefined
+    let error: Error | undefined
     for (const item of results) {
         if (item.status !== 'fulfilled') {
-            error = item.reason.message
+            error = item.reason
             continue
         }
 
@@ -50,7 +50,8 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
     }
 
     if (!bestResult) {
-        throw new Error(`Can't build route upto the BTC: ${error}`)
+        throw error
+        // throw new Error(`Can't build route upto the BTC: ${error}`)
     }
 
     return bestResult
