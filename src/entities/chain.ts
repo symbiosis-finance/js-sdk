@@ -47,7 +47,7 @@ export const chains: Chain[] = [
         id: ChainId.BTC_TESTNET,
         name: 'Bitcoin',
         disabled: false,
-        explorer: 'https://mempool.space/testnet',
+        explorer: 'https://mempool.space/testnet4',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',

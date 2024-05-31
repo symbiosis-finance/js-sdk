@@ -89,6 +89,7 @@ export function tokenEquals(tokenA: Token, tokenB: Token): boolean {
 }
 
 export const WETH = {
+    // >> FAKE
     [ChainId.TON_MAINNET]: new Token({
         chainId: ChainId.TON_MAINNET,
         address: '',
@@ -104,6 +105,7 @@ export const WETH = {
         address: '',
         decimals: 8,
     }),
+    // << FAKE
     [ChainId.TRON_MAINNET]: new Token({
         chainId: ChainId.TRON_MAINNET,
         address: '0x891CDB91D149F23B1A45D9C5CA78A88D0CB44C18',

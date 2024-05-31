@@ -47,6 +47,38 @@ export const config: Config = {
     limits: [],
     chains: [
         {
+            id: ChainId.BTC_MAINNET,
+            rpc: '',
+            filterBlockOffset: 0,
+            stables: [
+                {
+                    name: 'Bitcoin',
+                    symbol: 'BTC',
+                    address: '0x0000000000000000000000000000000000000000', // TODO is the btc portal genesis tx
+                    chainId: ChainId.BTC_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000',
+            bridge: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000',
+            aavePool: '0x0000000000000000000000000000000000000000',
+            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
+            creamComptroller: '0x0000000000000000000000000000000000000000',
+            creamCompoundLens: '0x0000000000000000000000000000000000000000',
+            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+        },
+        {
             id: ChainId.ETH_MAINNET,
             rpc: 'https://ethereum.publicnode.com',
             spareRpcs: [
