@@ -66,24 +66,16 @@ export class ZappingTon extends BaseSwapping {
 
         let tonAmountOut = new TokenAmount(TON, tokenAmountOut.raw.toString())
         if (BigNumber.from(tonAmountOut.raw.toString()).lt(MIN_WTON_AMOUNT.toString())) {
-            throw new Error(
-                `Amount ${tonAmountOut.toSignificant()} less than fee ${formatUnits(MIN_WTON_AMOUNT, 9)}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
+            throw new Error(`Min bridge amount is ${formatUnits(MIN_WTON_AMOUNT, 9)} TON`, ErrorCode.MIN_TON_AMOUNT_IN)
         }
         const bridgeFee = this.estimateBridgeFee(tokenAmountOut)
         tonAmountOut = tonAmountOut.subtract(bridgeFee)
 
-        // add artificial wTON on TON_MAINNET for display route purposes only
-        const displayToken = new Token({ ...option.wTon, chainId: ChainId.TON_MAINNET })
-
         return {
             ...rest,
-            route: [...rest.route, displayToken],
             tokenAmountOut: tonAmountOut,
             tokenAmountOutMin: tonAmountOut,
             extraFee: bridgeFee,
-            outTradeType: 'ton-bridge',
         }
     }
 

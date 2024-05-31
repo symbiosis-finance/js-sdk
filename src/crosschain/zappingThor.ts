@@ -128,15 +128,10 @@ export class ZappingThor extends BaseSwapping {
             deadline,
         })
 
-        // >> for display route purposes only
-        result.route.push(new Token({ ...thorTokenIn, chainId: ChainId.BTC_MAINNET }))
-        result.route.push(BTC)
-
         return {
             ...result,
             tokenAmountOut: this.thorQuote.amountOut,
             tokenAmountOutMin: this.thorQuote.amountOutMin,
-            outTradeType: 'thor-chain',
             extraFee: new TokenAmount(BTC, this.thorQuote.fees.total),
         }
     }

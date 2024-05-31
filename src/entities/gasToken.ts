@@ -81,4 +81,6 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.SEPOLIA_TESTNET]: GAS(ChainId.SEPOLIA_TESTNET, 'ETH', 1027),
     [ChainId.CORE_MAINNET]: GAS(ChainId.CORE_MAINNET, 'CORE', 23254),
     [ChainId.TON_MAINNET]: GAS(ChainId.TON_MAINNET, 'TON', 11419, 9),
+    [ChainId.TAIKO_MAINNET]: GAS(ChainId.TAIKO_MAINNET, 'ETH', 1027),
+    [ChainId.SEI_EVM_MAINNET]: GAS(ChainId.SEI_EVM_MAINNET, 'SEI', 23149),
 }

@@ -4,7 +4,7 @@ import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
 import { getExternalId, getLogWithTimeout } from '../utils'
 import { tronAddressToEvm } from '../tron'
-import { waitAndFindThorChainDeposit } from './waitAndFindThorChainDeposit'
+import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
 
 /**
  * @param symbiosis - context class
@@ -15,23 +15,29 @@ import { waitAndFindThorChainDeposit } from './waitAndFindThorChainDeposit'
 export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<string> {
     const txIdWithPrefix = txId.startsWith('0x') ? txId : `0x${txId}`
 
-    const aBridgeInfo = await _getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)
+    console.log('tx', txIdWithPrefix)
+    const aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)
     if (!aBridgeInfo) {
         throw new Error(`Transaction ${txId} is not a bridge request`)
     }
 
-    const bTxId = await _waitOtherSideTx(symbiosis, aBridgeInfo)
+    console.log('aBridgeInfo', aBridgeInfo)
 
-    const bBridgeInfo = await _getTxBridgeInfo(symbiosis, aBridgeInfo.externalChainId, bTxId)
+    const bTxId = await waitOtherSideTx(symbiosis, aBridgeInfo)
+    console.log('bTxId', bTxId)
+
+    const bBridgeInfo = await getTxBridgeInfo(symbiosis, aBridgeInfo.externalChainId, bTxId)
+    console.log('bBridgeInfo', bBridgeInfo)
 
     // if b-chain is final destination
     if (!bBridgeInfo) {
-        return waitAndFindThorChainDeposit(symbiosis, aBridgeInfo.externalChainId, bTxId)
+        return tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
     }
 
-    const cTxId = await _waitOtherSideTx(symbiosis, bBridgeInfo)
+    const cTxId = await waitOtherSideTx(symbiosis, bBridgeInfo)
+    console.log('cTxId', cTxId)
 
-    return waitAndFindThorChainDeposit(symbiosis, bBridgeInfo.externalChainId, cTxId)
+    return tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
 }
 
 type BridgeRequestType =
@@ -48,7 +54,7 @@ interface BridgeTxInfo {
     requestType: BridgeRequestType
 }
 
-async function _getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<BridgeTxInfo | null> {
+async function getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<BridgeTxInfo | null> {
     const provider = symbiosis.getProvider(chainId)
 
     const receipt = await provider.getTransactionReceipt(txId)
@@ -168,7 +174,7 @@ async function _getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: st
     return { internalId, externalId, externalChainId, requestType }
 }
 
-async function _waitOtherSideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): Promise<string> {
+async function waitOtherSideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): Promise<string> {
     const { requestType, externalChainId, externalId, internalId } = bridgeInfo
 
     let filter: EventFilter

@@ -7,6 +7,7 @@ export enum ErrorCode {
     'ADVISOR_ERROR',
     'AMOUNT_TOO_HIGH',
     'AMOUNT_TOO_LOW',
+    'MIN_TON_AMOUNT_IN',
 }
 
 export class Error {

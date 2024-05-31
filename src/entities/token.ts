@@ -718,4 +718,28 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
         },
     }),
+    [ChainId.TAIKO_MAINNET]: new Token({
+        chainId: ChainId.TAIKO_MAINNET,
+        address: '0xA51894664A773981C6C112C43ce576f315d5b1B6',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.SEI_EVM_MAINNET]: new Token({
+        chainId: ChainId.SEI_EVM_MAINNET,
+        address: '0xE30feDd158A2e3b13e9badaeABaFc5516e95e8C7',
+        decimals: 18,
+        symbol: 'WSEI',
+        isNative: false,
+        name: 'Wrapped SEI',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
+        },
+    }),
 }
