@@ -2,6 +2,7 @@ import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } f
 import { CrosschainSwapExactInResult } from '../baseSwapping'
 import { Error } from '../error'
 import { Token } from '../../entities'
+import { ChainId } from '../../constants'
 
 // FIXME
 const sBtc = new Token({
@@ -9,7 +10,8 @@ const sBtc = new Token({
     address: '0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb',
     symbol: 't4SymBtc',
     decimals: 8,
-    chainId: 11155111,
+    chainId: ChainId.SEPOLIA_TESTNET,
+    chainFromId: ChainId.BTC_TESTNET,
     icons: {
         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
@@ -63,7 +65,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
     } as SwapExactInTransactionPayload
 
     return {
-        kind: 'to-btc-swap',
+        kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
     }

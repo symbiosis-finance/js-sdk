@@ -15,11 +15,7 @@ export interface ZappingThorExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
-const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
-
-type BtcChainId = ChainId.BTC_MAINNET | ChainId.BTC_TESTNET
-
-export const BTC_NETWORKS: Record<BtcChainId, Network> = {
+export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
     [ChainId.BTC_MAINNET]: networks.bitcoin,
     [ChainId.BTC_TESTNET]: networks.testnet,
 }
@@ -31,7 +27,6 @@ export function getPkScript(addr: string, btcChain: Network): Buffer {
 export function getAddress(pkScript: string, btcChain: Network): string {
     return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
 }
-// --- end  BTC utility functions ---
 
 export class ZappingNativeBtc extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -51,8 +46,16 @@ export class ZappingNativeBtc extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
-        const chainIdOut = ChainId.BTC_TESTNET // FIXME
-        this.bitcoinAddress = getPkScript(to, BTC_NETWORKS[chainIdOut as BtcChainId])
+        if (!sBtc.chainFromId) {
+            throw new Error('sBtc is not synthesic')
+        }
+        const network = BTC_NETWORKS[sBtc.chainFromId]
+        if (!network) {
+            throw new Error('Unknown BTC network')
+        }
+        const btc = GAS_TOKEN[sBtc.chainFromId]
+
+        this.bitcoinAddress = getPkScript(to, network)
         this.sBtc = sBtc
 
         this.multicallRouter = this.symbiosis.multicallRouter(sBtc.chainId)
@@ -71,16 +74,16 @@ export class ZappingNativeBtc extends BaseSwapping {
         })
 
         const tokenAmountOut = result.tokenAmountOut.subtract(this.minBtcFee)
-
-        // >> for display route purposes only
-        result.route.push(new Token({ ...sBtc, chainId: ChainId.BTC_MAINNET }))
-        result.route.push(BTC)
+        const taBtc = new TokenAmount(btc, tokenAmountOut.raw)
+        //
+        // // >> for display route purposes only
+        // result.route.push(new Token({ ...sBtc, chainId: ChainId.BTC_MAINNET }))
+        result.route.push(btc)
 
         return {
             ...result,
-            tokenAmountOut,
-            tokenAmountOutMin: tokenAmountOut,
-            // outTradeType: 'thor-chain',
+            tokenAmountOut: taBtc,
+            tokenAmountOutMin: taBtc,
             extraFee: this.minBtcFee,
         }
     }
@@ -126,7 +129,7 @@ export class ZappingNativeBtc extends BaseSwapping {
         callDatas.push(burnCalldata)
         receiveSides.push(this.synthesis.address)
         path.push(this.sBtc.address)
-        offsets.push(100)
+        offsets.push(68)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
             amount.raw.toString(),

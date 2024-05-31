@@ -3,7 +3,8 @@ import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
 import { fetchData, longPolling } from './utils'
 import { TransactionReceipt } from '@ethersproject/providers'
-import { Bridge__factory } from '../contracts'
+import { Bridge__factory, Synthesis__factory } from '../contracts'
+import { BigNumber } from 'ethers'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -25,6 +26,12 @@ export async function tryToFindExtraStepsAndWait(symbiosis: Symbiosis, chainId: 
     const isThorChainDeposit = await findThorChainDeposit(receipt)
     if (isThorChainDeposit) {
         return waitForThorChainTx(txHash)
+    }
+
+    const burnSerialBtc = await findBurnRequestBtc(receipt)
+    if (burnSerialBtc) {
+        const forwarderUrl = symbiosis.config.btc.forwarderUrl
+        return waitUnwrapBtcTxComplete(forwarderUrl, burnSerialBtc)
     }
 
     const isTonDeposit = await findTonOracleRequest(receipt)
@@ -67,16 +74,53 @@ export async function waitForThorChainTx(txHash: string): Promise<string> {
     })
 }
 
-async function findTonOracleRequest(receipt: TransactionReceipt) {
-    const oracleRequestToTonTopic0 = '0x532dbb6d061eee97ab4370060f60ede10b3dc361cc1214c07ae5e34dd86e6aaf'
+async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<BigNumber | undefined> {
+    const synthesisInterface = Synthesis__factory.createInterface()
+    const topic0 = synthesisInterface.getEventTopic('BurnRequestBTC')
     const log = receipt.logs.find((log) => {
-        return log.topics[0] === oracleRequestToTonTopic0
+        return log.topics[0] === topic0
+    })
+    if (!log) {
+        return
+    }
+    const [burnSerialBTC] = synthesisInterface.parseLog(log).args
+
+    return burnSerialBTC
+}
+
+interface UnwrapSerialBTCResponse {
+    serial: number
+    to: string
+    tx: string
+    value: number
+    outputIdx: string
+}
+async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigNumber): Promise<string> {
+    const unwrapInfoUrl = new URL(`${forwarderUrl}/unwrap?serial=${burnSerialBtc.toString()}`)
+
+    const result = await longPolling<UnwrapSerialBTCResponse>({
+        pollingFunction: async (): Promise<UnwrapSerialBTCResponse> => {
+            return fetchData(unwrapInfoUrl)
+        },
+        successCondition: (result) => !!result.outputIdx,
+        error: new TxNotFound(burnSerialBtc.toString()),
+        exceedDelay: 3_600_000, // 1 hour
+        pollingInterval: 60_000, // 1 minute
+    })
+
+    return result.tx
+}
+async function findTonOracleRequest(receipt: TransactionReceipt) {
+    const bridgeInterface = Bridge__factory.createInterface()
+    const topic0 = bridgeInterface.getEventTopic('OracleRequest')
+    const log = receipt.logs.find((log) => {
+        return log.topics[0] === topic0
     })
     if (!log) {
         return false
     }
 
-    const decoded = Bridge__factory.createInterface().decodeEventLog('OracleRequest', log.data)
+    const decoded = bridgeInterface.decodeEventLog('OracleRequest', log.data)
 
     return decoded.chainId.toString() === ChainId.TON_MAINNET.toString()
 }
