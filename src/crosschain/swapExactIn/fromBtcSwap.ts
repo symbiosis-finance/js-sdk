@@ -18,6 +18,7 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 
 const BTC_SYNTH_MAP: Partial<Record<ChainId, ChainId>> = {
     [ChainId.BTC_TESTNET]: ChainId.SEPOLIA_TESTNET,
+    [ChainId.BTC_MAINNET]: ChainId.ZKSYNC_MAINNET, // TODO check
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
@@ -44,7 +45,13 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     const forwarderUrl = symbiosis.config.btc.forwarderUrl
 
-    const sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
+    let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
+
+    const synthesis = symbiosis.synthesis(sBtc.chainId)
+    const minBtcFeeRaw = await synthesis.minFeeBTC()
+    const minBtcFee = new TokenAmount(sBtc, minBtcFeeRaw.toString())
+    sBtcAmount = sBtcAmount.subtract(minBtcFee)
+
     if (!isBtcBridging) {
         tail = ''
         btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))

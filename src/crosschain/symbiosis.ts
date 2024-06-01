@@ -79,6 +79,7 @@ import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
 import { ZappingNativeBtc } from './zappingNativeBtc'
+import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -589,14 +590,25 @@ export class Symbiosis {
         return new TronWeb({ fullHost: config.rpc, eventNode: config.rpc, solidityNode: config.rpc })
     }
 
-    public async waitForComplete<T extends string>({
+    public async waitForComplete({
         chainId,
-        operation,
         txId,
-        btcAddress,
-        btcId,
-    }: Omit<StatelessWaitForCompleteParams, 'symbiosis'>): Promise<T | string | undefined> {
-        return statelessWaitForComplete<T>({ symbiosis: this, chainId, txId, operation, btcAddress, btcId })
+    }: Omit<StatelessWaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
+        return statelessWaitForComplete({ symbiosis: this, chainId, txId })
+    }
+
+    public async waitForBtcDepositAccepted(depositAddress: string) {
+        const forwarderUrl = this.config.btc.forwarderUrl
+        return waitForBtcDepositAccepted(forwarderUrl, depositAddress)
+    }
+
+    public async waitForBtcRevealTxMined(revealTx: string) {
+        const forwarderUrl = this.config.btc.forwarderUrl
+        return waitForBtcRevealTxMined(forwarderUrl, revealTx)
+    }
+
+    public async waitForBtcEvmTxIssued(revealTx: string, chainId: ChainId) {
+        return waitForBtcEvmTxIssued(this, revealTx, chainId)
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {
