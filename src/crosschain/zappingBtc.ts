@@ -28,7 +28,7 @@ export function getAddress(pkScript: string, btcChain: Network): string {
     return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
 }
 
-export class ZappingNativeBtc extends BaseSwapping {
+export class ZappingBtc extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected bitcoinAddress!: Buffer
 
@@ -47,7 +47,7 @@ export class ZappingNativeBtc extends BaseSwapping {
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
         if (!sBtc.chainFromId) {
-            throw new Error('sBtc is not synthesic')
+            throw new Error('sBtc is not synthetic')
         }
         const network = BTC_NETWORKS[sBtc.chainFromId]
         if (!network) {
@@ -73,17 +73,15 @@ export class ZappingNativeBtc extends BaseSwapping {
             deadline,
         })
 
-        const tokenAmountOut = result.tokenAmountOut.subtract(this.minBtcFee)
-        const taBtc = new TokenAmount(btc, tokenAmountOut.raw)
-        //
+        const tokenAmountOut = new TokenAmount(btc, result.tokenAmountOut.subtract(this.minBtcFee).raw)
+
         // // >> for display route purposes only
-        // result.route.push(new Token({ ...sBtc, chainId: ChainId.BTC_MAINNET }))
-        result.route.push(btc)
+        result.route.push(new Token({ ...sBtc, chainFromId: undefined }))
 
         return {
             ...result,
-            tokenAmountOut: taBtc,
-            tokenAmountOutMin: taBtc,
+            tokenAmountOut,
+            tokenAmountOutMin: tokenAmountOut,
             extraFee: this.minBtcFee,
         }
     }

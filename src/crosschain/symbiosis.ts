@@ -78,7 +78,7 @@ import { swapExactIn, SwapExactInParams, SwapExactInResult } from './swapExactIn
 import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
-import { ZappingNativeBtc } from './zappingNativeBtc'
+import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
@@ -237,8 +237,8 @@ export class Symbiosis {
         return new ZappingThor(this, omniPoolConfig)
     }
 
-    public newZappingNativeBtc(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingNativeBtc(this, omniPoolConfig)
+    public newZappingBtc(omniPoolConfig: OmniPoolConfig) {
+        return new ZappingBtc(this, omniPoolConfig)
     }
 
     public newZappingCream(omniPoolConfig: OmniPoolConfig) {
@@ -513,7 +513,7 @@ export class Symbiosis {
         })
     }
 
-    public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig, preferableToken?: Token): Token {
+    public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId
         })
@@ -530,27 +530,11 @@ export class Symbiosis {
             return tokens[0]
         }
 
-        let transitToken: Token | undefined
-
-        if (preferableToken) {
-            const preferableTokenFound = this.configCache.tokens().find((i) => {
-                return i.equals(preferableToken)
-            })
-            if (preferableTokenFound && !preferableTokenFound.deprecated) {
-                const preferablePool = this.getOmniPoolByToken(preferableTokenFound)
-                if (preferablePool?.id === omniPool.id) {
-                    transitToken = preferableTokenFound
-                }
-            }
-        }
-
-        if (!transitToken) {
-            // find the FIRST suitable token from the tokens list
-            // e.g. the first token has priority
-            transitToken = tokens.find((token) => {
-                return this.getOmniPoolByToken(token)?.id === omniPool.id
-            })
-        }
+        // find the FIRST suitable token from the tokens list
+        // e.g. the first token has priority
+        const transitToken = tokens.find((token) => {
+            return this.getOmniPoolByToken(token)?.id === omniPool.id
+        })
 
         if (!transitToken) {
             throw new Error(

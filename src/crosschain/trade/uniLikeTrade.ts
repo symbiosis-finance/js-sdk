@@ -120,7 +120,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         })
 
         let method = methodName
-        // TODO replace if condition to method mapping
+        // TODO replace the condition to method mapping
         if (trade.inputAmount.token.chainId === ChainId.AVAX_MAINNET) {
             method = methodName.replace('ETH', 'AVAX')
         } else if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(trade.inputAmount.token.chainId)) {

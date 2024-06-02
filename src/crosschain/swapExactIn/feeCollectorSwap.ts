@@ -61,9 +61,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     const provider = symbiosis.getProvider(inChainId)
     const contract = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    // TODO: Multicall
-    const fee: BigNumber = await contract.callStatic.fee()
-    const approveAddress: string = await contract.callStatic.onchainGateway()
+    const [fee, approveAddress] = await Promise.all([contract.callStatic.fee(), contract.callStatic.onchainGateway()])
 
     let inTokenAmount = params.inTokenAmount
     if (inTokenAmount.token.isNative) {

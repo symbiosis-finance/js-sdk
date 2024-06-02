@@ -1,48 +1,39 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { CrosschainSwapExactInResult } from '../baseSwapping'
 import { Error } from '../error'
-import { Token } from '../../entities'
-import { ChainId } from '../../constants'
-
-// FIXME
-const sBtc = new Token({
-    name: 't4SymBtc',
-    address: '0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb',
-    symbol: 't4SymBtc',
-    decimals: 8,
-    chainId: ChainId.SEPOLIA_TESTNET,
-    chainFromId: ChainId.BTC_TESTNET,
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-    },
-})
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount } = context
+    const { inTokenAmount, outToken, symbiosis, fromAddress, toAddress, slippage, deadline } = context
 
-    const omniPool = context.symbiosis.config.omniPools[0] // FIXME
+    const promises: Promise<CrosschainSwapExactInResult>[] = []
 
-    const promises = [sBtc].map(() => {
-        const zappingThor = context.symbiosis.newZappingNativeBtc(omniPool)
+    symbiosis.config.chains.forEach((chain) => {
+        const sBtc = symbiosis.getRepresentation(outToken, chain.id)
+        if (!sBtc) {
+            return
+        }
+        symbiosis.config.omniPools.forEach((poolConfig) => {
+            const zappingBtc = symbiosis.newZappingBtc(poolConfig)
 
-        return zappingThor.exactIn({
-            tokenAmountIn: inTokenAmount,
-            sBtc,
-            from: context.fromAddress,
-            to: context.toAddress,
-            slippage: context.slippage,
-            deadline: context.deadline,
+            const promise = zappingBtc.exactIn({
+                tokenAmountIn: inTokenAmount,
+                sBtc,
+                from: fromAddress,
+                to: toAddress,
+                slippage,
+                deadline,
+            })
+            promises.push(promise)
         })
     })
 
     const results = await Promise.allSettled(promises)
 
     let bestResult: CrosschainSwapExactInResult | undefined
-    let error: string | undefined
+    let error: Error | undefined
     for (const item of results) {
         if (item.status !== 'fulfilled') {
-            error = item.reason.message
+            error = item.reason
             continue
         }
 
@@ -56,7 +47,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
     }
 
     if (!bestResult) {
-        throw new Error(`Can't build route upto the Native BTC: ${error}`)
+        throw error
     }
 
     const payload = {
@@ -68,5 +59,6 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
+        zapType: 'btc-bridge',
     }
 }

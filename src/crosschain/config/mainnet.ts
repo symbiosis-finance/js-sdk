@@ -48,7 +48,7 @@ export const config: Config = {
     chains: [
         {
             id: ChainId.BTC_MAINNET,
-            rpc: '',
+            rpc: 'https://btc.rpc',
             filterBlockOffset: 0,
             stables: [
                 {

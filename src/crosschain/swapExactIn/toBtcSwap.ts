@@ -51,7 +51,6 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
 
     if (!bestResult) {
         throw error
-        // throw new Error(`Can't build route upto the BTC: ${error}`)
     }
 
     return bestResult

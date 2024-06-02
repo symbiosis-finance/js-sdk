@@ -105,7 +105,7 @@ async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigN
         successCondition: (result) => !!result.outputIdx,
         error: new TxNotFound(burnSerialBtc.toString()),
         exceedDelay: 3_600_000, // 1 hour
-        pollingInterval: 60_000, // 1 minute
+        pollingInterval: 10_000, // 10 seconds
     })
 
     return result.tx
