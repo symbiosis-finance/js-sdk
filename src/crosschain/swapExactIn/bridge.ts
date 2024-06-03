@@ -1,5 +1,6 @@
 import { wrappedToken } from '../../entities'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import {AddressZero} from "@ethersproject/constants/lib/addresses";
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount, outToken, symbiosis } = context
@@ -39,8 +40,11 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
     let approveTo: string
     if (payload.transactionType === 'tron') {
         approveTo = payload.transactionRequest.contract_address
-    } else {
+    } else if (payload.transactionType === 'evm') {
         approveTo = payload.transactionRequest.to as string
+    } else {
+        // BTC
+        approveTo = AddressZero
     }
     return {
         kind: 'bridge',

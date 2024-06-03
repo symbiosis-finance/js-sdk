@@ -3,6 +3,7 @@ import { Weth__factory } from '../contracts'
 import { getFunctionSelector } from '../tron'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from './types'
+import {AddressZero} from "@ethersproject/constants/lib/addresses";
 
 export function isUnwrapSupported(params: SwapExactInParams): boolean {
     const { inTokenAmount, outToken, fromAddress, toAddress } = params
@@ -39,8 +40,11 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResu
     let approveTo: string
     if (payload.transactionType === 'tron') {
         approveTo = payload.transactionRequest.contract_address
-    } else {
+    } else if (payload.transactionType === 'evm') {
         approveTo = payload.transactionRequest.to as string
+    } else {
+        // BTC
+        approveTo = AddressZero
     }
     return {
         kind: 'unwrap',
