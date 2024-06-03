@@ -213,7 +213,6 @@ export class Builder {
         type: 'Portal' | 'Synthesis',
         chain: ChainConfig
     ): Promise<TokenThreshold[]> {
-        console.log('getThresholds')
         const multicall = await getMulticall(this.getProvider(chain.id))
         const chainTokens = tokens.filter((token) => token.chainId === chain.id)
         const calls = chainTokens.map((token) => ({
