@@ -1227,9 +1227,9 @@ export const config: Config = {
         },
         {
             id: ChainId.BLAST_MAINNET,
-            rpc: 'https://rpc.ankr.com/blast',
+            rpc: 'https://rpc.blast.io',
             spareRpcs: [
-                'https://rpc.blast.io',
+                'https://rpc.ankr.com/blast',
                 'https://blastl2-mainnet.public.blastapi.io',
                 'https://blast.blockpi.network/v1/rpc/public',
             ],
@@ -1362,8 +1362,12 @@ export const config: Config = {
         },
         {
             id: ChainId.TAIKO_MAINNET,
-            rpc: 'https://rpc.taiko.xyz',
-            spareRpcs: [],
+            rpc: 'https://rpc.ankr.com/taiko',
+            spareRpcs: [
+                'https://rpc.mainnet.taiko.xyz',
+                'https://rpc.taiko.xyz',
+                'https://taiko.blockpi.network/v1/rpc/public',
+            ],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1408,6 +1412,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'USDT',
+                    symbol: 'USDT',
+                    address: '0xB75D0B03c06A926e488e2659DF1A861F860bD3d1',
+                    chainId: ChainId.SEI_EVM_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
                     },
                 },
             ],

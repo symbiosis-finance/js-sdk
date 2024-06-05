@@ -7,32 +7,33 @@
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 64 },
-                { "index": 1, "tokenId": 70 },
-                { "index": 2, "tokenId": 75 },
-                { "index": 3, "tokenId": 76 },
+                { "index": 0, "tokenId": 65 },
+                { "index": 1, "tokenId": 71 },
+                { "index": 2, "tokenId": 76 },
+                { "index": 3, "tokenId": 77 },
                 { "index": 4, "tokenId": 19 },
-                { "index": 5, "tokenId": 80 },
-                { "index": 10, "tokenId": 69 },
-                { "index": 11, "tokenId": 81 },
-                { "index": 12, "tokenId": 87 },
-                { "index": 13, "tokenId": 91 },
-                { "index": 14, "tokenId": 93 },
-                { "index": 15, "tokenId": 95 },
-                { "index": 16, "tokenId": 86 },
-                { "index": 17, "tokenId": 74 },
-                { "index": 18, "tokenId": 100 },
-                { "index": 19, "tokenId": 79 },
-                { "index": 20, "tokenId": 103 },
-                { "index": 21, "tokenId": 98 },
-                { "index": 22, "tokenId": 78 },
-                { "index": 23, "tokenId": 104 },
-                { "index": 24, "tokenId": 106 },
-                { "index": 25, "tokenId": 109 },
-                { "index": 27, "tokenId": 113 },
-                { "index": 28, "tokenId": 111 },
-                { "index": 29, "tokenId": 82 },
-                { "index": 30, "tokenId": 120 }
+                { "index": 5, "tokenId": 81 },
+                { "index": 10, "tokenId": 70 },
+                { "index": 11, "tokenId": 82 },
+                { "index": 12, "tokenId": 88 },
+                { "index": 13, "tokenId": 92 },
+                { "index": 14, "tokenId": 94 },
+                { "index": 15, "tokenId": 96 },
+                { "index": 16, "tokenId": 87 },
+                { "index": 17, "tokenId": 75 },
+                { "index": 18, "tokenId": 101 },
+                { "index": 19, "tokenId": 80 },
+                { "index": 20, "tokenId": 104 },
+                { "index": 21, "tokenId": 99 },
+                { "index": 22, "tokenId": 79 },
+                { "index": 23, "tokenId": 105 },
+                { "index": 24, "tokenId": 107 },
+                { "index": 25, "tokenId": 110 },
+                { "index": 27, "tokenId": 114 },
+                { "index": 28, "tokenId": 112 },
+                { "index": 29, "tokenId": 83 },
+                { "index": 30, "tokenId": 121 },
+                { "index": 31, "tokenId": 122 }
             ]
         },
         {
@@ -42,24 +43,24 @@
             "generalPurpose": true,
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 83 },
-                { "index": 2, "tokenId": 96 },
-                { "index": 3, "tokenId": 88 },
-                { "index": 5, "tokenId": 77 },
-                { "index": 6, "tokenId": 71 },
-                { "index": 7, "tokenId": 92 },
-                { "index": 8, "tokenId": 94 },
-                { "index": 9, "tokenId": 66 },
-                { "index": 10, "tokenId": 97 },
-                { "index": 11, "tokenId": 101 },
-                { "index": 12, "tokenId": 102 },
-                { "index": 13, "tokenId": 105 },
-                { "index": 14, "tokenId": 108 },
-                { "index": 15, "tokenId": 110 },
-                { "index": 16, "tokenId": 112 },
-                { "index": 17, "tokenId": 115 },
-                { "index": 18, "tokenId": 117 },
-                { "index": 19, "tokenId": 119 }
+                { "index": 1, "tokenId": 84 },
+                { "index": 2, "tokenId": 97 },
+                { "index": 3, "tokenId": 89 },
+                { "index": 5, "tokenId": 78 },
+                { "index": 6, "tokenId": 72 },
+                { "index": 7, "tokenId": 93 },
+                { "index": 8, "tokenId": 95 },
+                { "index": 9, "tokenId": 67 },
+                { "index": 10, "tokenId": 98 },
+                { "index": 11, "tokenId": 102 },
+                { "index": 12, "tokenId": 103 },
+                { "index": 13, "tokenId": 106 },
+                { "index": 14, "tokenId": 109 },
+                { "index": 15, "tokenId": 111 },
+                { "index": 16, "tokenId": 113 },
+                { "index": 17, "tokenId": 116 },
+                { "index": 18, "tokenId": 118 },
+                { "index": 19, "tokenId": 120 }
             ]
         },
         {
@@ -69,12 +70,12 @@
             "generalPurpose": true,
             "id": 2,
             "tokens": [
-                { "index": 0, "tokenId": 67 },
-                { "index": 1, "tokenId": 72 },
-                { "index": 2, "tokenId": 84 },
-                { "index": 3, "tokenId": 114 },
-                { "index": 4, "tokenId": 116 },
-                { "index": 5, "tokenId": 118 }
+                { "index": 0, "tokenId": 68 },
+                { "index": 1, "tokenId": 73 },
+                { "index": 2, "tokenId": 85 },
+                { "index": 3, "tokenId": 115 },
+                { "index": 4, "tokenId": 117 },
+                { "index": 5, "tokenId": 119 }
             ]
         },
         {
@@ -84,8 +85,8 @@
             "generalPurpose": false,
             "id": 3,
             "tokens": [
-                { "index": 0, "tokenId": 68 },
-                { "index": 1, "tokenId": 90 }
+                { "index": 0, "tokenId": 69 },
+                { "index": 1, "tokenId": 91 }
             ]
         },
         {
@@ -95,12 +96,12 @@
             "generalPurpose": false,
             "id": 4,
             "tokens": [
-                { "index": 0, "tokenId": 65 },
-                { "index": 1, "tokenId": 89 },
-                { "index": 2, "tokenId": 73 },
-                { "index": 3, "tokenId": 85 },
-                { "index": 4, "tokenId": 99 },
-                { "index": 5, "tokenId": 107 }
+                { "index": 0, "tokenId": 66 },
+                { "index": 1, "tokenId": 90 },
+                { "index": 2, "tokenId": 74 },
+                { "index": 3, "tokenId": 86 },
+                { "index": 4, "tokenId": 100 },
+                { "index": 5, "tokenId": 108 }
             ]
         }
     ],
@@ -946,6 +947,20 @@
             "id": 59
         },
         {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "USDT",
+            "chainId": 1329,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/825.png"
+            },
+            "deprecated": false,
+            "address": "0xB75D0B03c06A926e488e2659DF1A861F860bD3d1",
+            "id": 60
+        },
+        {
             "decimals": 18,
             "symbol": "SIS",
             "name": "Symbiosis",
@@ -958,7 +973,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
-            "id": 60,
+            "id": 61,
             "originalId": 2
         },
         {
@@ -974,7 +989,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xe6E5f3d264117E030C21920356641DbD5B3d660c",
-            "id": 61,
+            "id": 62,
             "originalId": 1
         },
         {
@@ -990,7 +1005,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x63d71E79AdF0886c989A23b04a0E86F1489b6BC3",
-            "id": 62,
+            "id": 63,
             "originalId": 3
         },
         {
@@ -1006,7 +1021,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7bD3ffe9f0C9CF08FD60e102FEa455A6EA580276",
-            "id": 63,
+            "id": 64,
             "originalId": 4
         },
         {
@@ -1022,7 +1037,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7d6EC42b5d9566931560411a8652Cea00b90d982",
-            "id": 64,
+            "id": 65,
             "originalId": 1
         },
         {
@@ -1038,7 +1053,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4E985A18B4Ac70a1C3d986a5f55CB4c5BC8f65AE",
-            "id": 65,
+            "id": 66,
             "originalId": 2
         },
         {
@@ -1054,7 +1069,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1CE4E75E2Bd6bbbACDE1E10D6813228138337E86",
-            "id": 66,
+            "id": 67,
             "originalId": 3
         },
         {
@@ -1070,7 +1085,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE6Bb73E4dACD20653Bb8BdC427C9b4766fC159f5",
-            "id": 67,
+            "id": 68,
             "originalId": 5
         },
         {
@@ -1086,7 +1101,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7405b3cf567003317800114511474e52937e1a5e",
-            "id": 68,
+            "id": 69,
             "originalId": 6
         },
         {
@@ -1102,7 +1117,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB",
-            "id": 69,
+            "id": 70,
             "originalId": 7
         },
         {
@@ -1118,7 +1133,7 @@
             "chainFromId": 56,
             "deprecated": true,
             "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
-            "id": 70,
+            "id": 71,
             "originalId": 8
         },
         {
@@ -1134,7 +1149,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x424190072b7Db5352bB91cC70DabD82F547AE003",
-            "id": 71,
+            "id": 72,
             "originalId": 9
         },
         {
@@ -1150,7 +1165,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x814f76A3f2FF408ad6BCEB5412B60D9fC3B6C0EA",
-            "id": 72,
+            "id": 73,
             "originalId": 10
         },
         {
@@ -1166,7 +1181,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 73,
+            "id": 74,
             "originalId": 11
         },
         {
@@ -1182,7 +1197,7 @@
             "chainFromId": 43114,
             "deprecated": false,
             "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0",
-            "id": 74,
+            "id": 75,
             "originalId": 12
         },
         {
@@ -1198,7 +1213,7 @@
             "chainFromId": 43114,
             "deprecated": true,
             "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
-            "id": 75,
+            "id": 76,
             "originalId": 13
         },
         {
@@ -1214,7 +1229,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x59AA2e5F628659918A4890A2a732E6C8bD334E7A",
-            "id": 76,
+            "id": 77,
             "originalId": 14
         },
         {
@@ -1230,7 +1245,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x93A973297E492d4E7a2b4aBaB3bFB4f140D1E3Bb",
-            "id": 77,
+            "id": 78,
             "originalId": 15
         },
         {
@@ -1246,7 +1261,7 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 78,
+            "id": 79,
             "originalId": 16
         },
         {
@@ -1262,7 +1277,7 @@
             "chainFromId": 2222,
             "deprecated": false,
             "address": "0xCdc9C3e0fc1909205aC96EC98795aCAa29a6A1E3",
-            "id": 79,
+            "id": 80,
             "originalId": 17
         },
         {
@@ -1278,7 +1293,7 @@
             "chainFromId": 288,
             "deprecated": false,
             "address": "0x1a3d48492Cd334AD140587091AC382E5695a4934",
-            "id": 80,
+            "id": 81,
             "originalId": 18
         },
         {
@@ -1294,7 +1309,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xC6CC7E50A0F20268DB1BAb041ff18b2c7E97a9d3",
-            "id": 81,
+            "id": 82,
             "originalId": 20
         },
         {
@@ -1310,7 +1325,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x3a2213CaEbcf1727D7b3422B8Ef8Dd5654877f42",
-            "id": 82,
+            "id": 83,
             "originalId": 21
         },
         {
@@ -1326,7 +1341,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xE3dB9aD5A3c6387beCe39fAfc26Dbb2b594fb7ff",
-            "id": 83,
+            "id": 84,
             "originalId": 22
         },
         {
@@ -1342,7 +1357,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x83a9e719C9b6d0108D64073DC35aCFD40FC9C672",
-            "id": 84,
+            "id": 85,
             "originalId": 23
         },
         {
@@ -1358,7 +1373,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x2E752d64cCc7B1e8F3F8b58F8218C3e0F21A9F3C",
-            "id": 85,
+            "id": 86,
             "originalId": 24
         },
         {
@@ -1374,7 +1389,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f",
-            "id": 86,
+            "id": 87,
             "originalId": 25
         },
         {
@@ -1390,7 +1405,7 @@
             "chainFromId": 42161,
             "deprecated": true,
             "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462",
-            "id": 87,
+            "id": 88,
             "originalId": 26
         },
         {
@@ -1406,7 +1421,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x4994b8bb0b58708Cc6A66079d22db35c95650B4b",
-            "id": 88,
+            "id": 89,
             "originalId": 27
         },
         {
@@ -1422,7 +1437,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x94F3F6C21e7D2D63d4ea484713B110e64A722fD7",
-            "id": 89,
+            "id": 90,
             "originalId": 28
         },
         {
@@ -1438,7 +1453,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x355b105634AD4184fd6Cc264C594615F861BE5AA",
-            "id": 90,
+            "id": 91,
             "originalId": 29
         },
         {
@@ -1454,7 +1469,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C",
-            "id": 91,
+            "id": 92,
             "originalId": 30
         },
         {
@@ -1470,7 +1485,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084",
-            "id": 92,
+            "id": 93,
             "originalId": 31
         },
         {
@@ -1486,7 +1501,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677",
-            "id": 93,
+            "id": 94,
             "originalId": 32
         },
         {
@@ -1502,7 +1517,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C",
-            "id": 94,
+            "id": 95,
             "originalId": 33
         },
         {
@@ -1518,7 +1533,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012",
-            "id": 95,
+            "id": 96,
             "originalId": 34
         },
         {
@@ -1534,7 +1549,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6",
-            "id": 96,
+            "id": 97,
             "originalId": 35
         },
         {
@@ -1550,7 +1565,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x6ca6FCbD2fe65F0CB7671f5F0638867fdC991462",
-            "id": 97,
+            "id": 98,
             "originalId": 36
         },
         {
@@ -1566,7 +1581,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0xD2f5B8525758857aF3553142F59e2b35CbFa0aBE",
-            "id": 98,
+            "id": 99,
             "originalId": 37
         },
         {
@@ -1582,7 +1597,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x32478a5EE4F9854A26aC4606aa107CfD3E5F8775",
-            "id": 99,
+            "id": 100,
             "originalId": 38
         },
         {
@@ -1598,7 +1613,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
-            "id": 100,
+            "id": 101,
             "originalId": 39
         },
         {
@@ -1614,7 +1629,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0xA6e6c78746F873dB8545B7571DD1C5d87cC95763",
-            "id": 101,
+            "id": 102,
             "originalId": 40
         },
         {
@@ -1630,7 +1645,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0x8eFFD39D090C756Db49A8154Db7BD05f59A62193",
-            "id": 102,
+            "id": 103,
             "originalId": 41
         },
         {
@@ -1646,7 +1661,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0xDD1a897f92c14cDA3aB7023b094615A7068d01fA",
-            "id": 103,
+            "id": 104,
             "originalId": 42
         },
         {
@@ -1662,7 +1677,7 @@
             "chainFromId": 728126428,
             "deprecated": false,
             "address": "0x2dF311E049a839E1011507ccE20Afb6f871a81a1",
-            "id": 104,
+            "id": 105,
             "originalId": 43
         },
         {
@@ -1678,7 +1693,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0xC66d177BDa9ef1d9278948FcD86C2C4420ca708C",
-            "id": 105,
+            "id": 106,
             "originalId": 44
         },
         {
@@ -1694,7 +1709,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x616152a28eAb796789050407DF0f566307bFffDA",
-            "id": 106,
+            "id": 107,
             "originalId": 45
         },
         {
@@ -1710,7 +1725,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x1adD5ac0E2b68f020dC8a3bC0BaE1A1bFc873F49",
-            "id": 107,
+            "id": 108,
             "originalId": 46
         },
         {
@@ -1726,7 +1741,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x3e54f3F0C9FA63282B92C84a3b710FD2968F177E",
-            "id": 108,
+            "id": 109,
             "originalId": 47
         },
         {
@@ -1742,7 +1757,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x60F58f1AbD788eaEFa00838d9a69639F62cC16B8",
-            "id": 109,
+            "id": 110,
             "originalId": 48
         },
         {
@@ -1758,7 +1773,7 @@
             "chainFromId": 1088,
             "deprecated": false,
             "address": "0x04E7379CdF5b3427E5B3A557B0E98DD92E70584f",
-            "id": 110,
+            "id": 111,
             "originalId": 49
         },
         {
@@ -1774,7 +1789,7 @@
             "chainFromId": 5165,
             "deprecated": false,
             "address": "0xf2CF7f859FE187BAa9b2F197Cd6C1698A4BC0905",
-            "id": 111,
+            "id": 112,
             "originalId": 50
         },
         {
@@ -1790,7 +1805,7 @@
             "chainFromId": 34443,
             "deprecated": false,
             "address": "0x467fAC56cB149D06A8b268A5Cb8638Fc7B2d8F73",
-            "id": 112,
+            "id": 113,
             "originalId": 51
         },
         {
@@ -1806,7 +1821,7 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0xA5De76FEda5bC1c824Ee1FfcCE82c8BbAe1f558F",
-            "id": 113,
+            "id": 114,
             "originalId": 52
         },
         {
@@ -1822,7 +1837,7 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0x4A95D151d5b16B90481F98432Cf3D3B62deef1Fe",
-            "id": 114,
+            "id": 115,
             "originalId": 53
         },
         {
@@ -1838,7 +1853,7 @@
             "chainFromId": 81457,
             "deprecated": false,
             "address": "0xB4A492d5d61d4539a70AE3E7BF564250159d1c57",
-            "id": 115,
+            "id": 116,
             "originalId": 54
         },
         {
@@ -1854,7 +1869,7 @@
             "chainFromId": 4200,
             "deprecated": false,
             "address": "0xc1Aca13EE7Ee4F9211BBC7bb0Da0fCA58405993B",
-            "id": 116,
+            "id": 117,
             "originalId": 55
         },
         {
@@ -1870,7 +1885,7 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x997D45FFC15bC54A52EBDeeFa0E6fc856fC97a55",
-            "id": 117,
+            "id": 118,
             "originalId": 56
         },
         {
@@ -1886,7 +1901,7 @@
             "chainFromId": 1116,
             "deprecated": false,
             "address": "0x5dC2326bb71725a5bBC18Fb39A2582C5560B67f0",
-            "id": 118,
+            "id": 119,
             "originalId": 57
         },
         {
@@ -1902,7 +1917,7 @@
             "chainFromId": 167000,
             "deprecated": false,
             "address": "0x3C717a1F4a8e79D93635E812648253A38Bb27557",
-            "id": 119,
+            "id": 120,
             "originalId": 58
         },
         {
@@ -1918,8 +1933,24 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
-            "id": 120,
+            "id": 121,
             "originalId": 59
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "Synthetic USDT From Sei",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/825.png"
+            },
+            "chainFromId": 1329,
+            "deprecated": false,
+            "address": "0x6d13035F5F1ae26a22CBB25A3f7666e0C335E6bC",
+            "id": 122,
+            "originalId": 60
         },
         {
             "decimals": 18,
@@ -1934,8 +1965,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 121,
-            "originalId": 60
+            "id": 123,
+            "originalId": 61
         },
         {
             "decimals": 6,
@@ -1950,8 +1981,8 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 122,
-            "originalId": 61
+            "id": 124,
+            "originalId": 62
         },
         {
             "decimals": 6,
@@ -1966,7 +1997,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 123,
+            "id": 125,
             "originalId": 1
         },
         {
@@ -1982,7 +2013,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5b3562A0fa9eC3e718C96FfE349e1280D2Be591",
-            "id": 124,
+            "id": 126,
             "originalId": 3
         },
         {
@@ -1998,7 +2029,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xDeF886C55a79830C47108eeb9c37e78a49684e41",
-            "id": 125,
+            "id": 127,
             "originalId": 4
         }
     ],
@@ -2014,29 +2045,28 @@
         { "tokenId": 9, "type": "Portal", "value": "0" },
         { "tokenId": 10, "type": "Portal", "value": "0" },
         { "tokenId": 11, "type": "Portal", "value": "0" },
-        { "tokenId": 60, "type": "Portal", "value": "0" },
+        { "tokenId": 61, "type": "Portal", "value": "0" },
         { "tokenId": 7, "type": "Synthesis", "value": "0" },
         { "tokenId": 8, "type": "Synthesis", "value": "0" },
         { "tokenId": 9, "type": "Synthesis", "value": "0" },
         { "tokenId": 10, "type": "Synthesis", "value": "0" },
         { "tokenId": 11, "type": "Synthesis", "value": "0" },
-        { "tokenId": 60, "type": "Synthesis", "value": "0" },
+        { "tokenId": 61, "type": "Synthesis", "value": "0" },
         { "tokenId": 12, "type": "Portal", "value": "0" },
         { "tokenId": 13, "type": "Portal", "value": "0" },
         { "tokenId": 14, "type": "Portal", "value": "0" },
         { "tokenId": 15, "type": "Portal", "value": "0" },
         { "tokenId": 16, "type": "Portal", "value": "0" },
-        { "tokenId": 61, "type": "Portal", "value": "0" },
         { "tokenId": 62, "type": "Portal", "value": "0" },
         { "tokenId": 63, "type": "Portal", "value": "0" },
+        { "tokenId": 64, "type": "Portal", "value": "0" },
         { "tokenId": 16, "type": "Synthesis", "value": "0" },
-        { "tokenId": 61, "type": "Synthesis", "value": "0" },
         { "tokenId": 62, "type": "Synthesis", "value": "0" },
         { "tokenId": 63, "type": "Synthesis", "value": "0" },
+        { "tokenId": 64, "type": "Synthesis", "value": "0" },
         { "tokenId": 17, "type": "Portal", "value": "0" },
         { "tokenId": 18, "type": "Portal", "value": "0" },
         { "tokenId": 19, "type": "Synthesis", "value": "0" },
-        { "tokenId": 64, "type": "Synthesis", "value": "0" },
         { "tokenId": 65, "type": "Synthesis", "value": "0" },
         { "tokenId": 66, "type": "Synthesis", "value": "0" },
         { "tokenId": 67, "type": "Synthesis", "value": "0" },
@@ -2095,6 +2125,8 @@
         { "tokenId": 120, "type": "Synthesis", "value": "0" },
         { "tokenId": 121, "type": "Synthesis", "value": "0" },
         { "tokenId": 122, "type": "Synthesis", "value": "0" },
+        { "tokenId": 123, "type": "Synthesis", "value": "0" },
+        { "tokenId": 124, "type": "Synthesis", "value": "0" },
         { "tokenId": 20, "type": "Portal", "value": "0" },
         { "tokenId": 21, "type": "Portal", "value": "0" },
         { "tokenId": 22, "type": "Portal", "value": "0" },
@@ -2126,13 +2158,13 @@
         { "tokenId": 48, "type": "Portal", "value": "0" },
         { "tokenId": 49, "type": "Portal", "value": "0" },
         { "tokenId": 50, "type": "Portal", "value": "0" },
-        { "tokenId": 123, "type": "Portal", "value": "0" },
-        { "tokenId": 124, "type": "Portal", "value": "0" },
         { "tokenId": 125, "type": "Portal", "value": "0" },
+        { "tokenId": 126, "type": "Portal", "value": "0" },
+        { "tokenId": 127, "type": "Portal", "value": "0" },
         { "tokenId": 50, "type": "Synthesis", "value": "0" },
-        { "tokenId": 123, "type": "Synthesis", "value": "0" },
-        { "tokenId": 124, "type": "Synthesis", "value": "0" },
         { "tokenId": 125, "type": "Synthesis", "value": "0" },
+        { "tokenId": 126, "type": "Synthesis", "value": "0" },
+        { "tokenId": 127, "type": "Synthesis", "value": "0" },
         { "tokenId": 51, "type": "Portal", "value": "0" },
         { "tokenId": 52, "type": "Portal", "value": "0" },
         { "tokenId": 53, "type": "Portal", "value": "0" },
@@ -2141,6 +2173,7 @@
         { "tokenId": 56, "type": "Portal", "value": "0" },
         { "tokenId": 57, "type": "Portal", "value": "0" },
         { "tokenId": 58, "type": "Portal", "value": "0" },
-        { "tokenId": 59, "type": "Portal", "value": "0" }
+        { "tokenId": 59, "type": "Portal", "value": "0" },
+        { "tokenId": 60, "type": "Portal", "value": "0" }
     ]
 }

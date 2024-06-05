@@ -23,7 +23,7 @@ export class Chain {
 export const chains: Chain[] = [
     new Chain({
         id: ChainId.TON_MAINNET,
-        name: 'Ton',
+        name: 'TON',
         disabled: false,
         explorer: 'https://tonscan.org',
         icons: {
