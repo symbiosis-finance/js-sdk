@@ -586,6 +586,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
         },
     }),
+    new Chain({
+        id: ChainId.ZETACHAIN_MAINNET,
+        name: 'ZetaChain',
+        disabled: false,
+        explorer: 'https://zetachain.blockscout.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

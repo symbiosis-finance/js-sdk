@@ -136,6 +136,7 @@ export class Builder {
     private async checkPortalTokensWhitelisted() {
         console.log('checkPortalTokensWhitelisted')
         const chains = this.config.chains
+        const promises = []
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
@@ -143,13 +144,28 @@ export class Builder {
             if (portal.address !== AddressZero) {
                 for (let j = 0; j < chain.stables.length; j++) {
                     const token = chain.stables[j]
-                    const ok = await portal.tokenWhitelist(token.address)
-                    if (!ok) {
-                        throw new Error(`${chain.id} Token ${token.address} is not whitelisted on portal`)
-                    }
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const promise = new Promise((resolve, _reject) => {
+                        ;(async () => {
+                            resolve({
+                                chainId: chain.id,
+                                token: token.address,
+                                ok: await portal.tokenWhitelist(token.address),
+                            })
+                        })()
+                    })
+                    promises.push(promise)
                 }
             }
         }
+        const results = (await Promise.all(promises)) as { chainId: ChainId; token: string; ok: boolean }[]
+        results.forEach((result) => {
+            if (!result.ok) {
+                const errorMessage = `${result.chainId} Token ${result.token} is not whitelisted on portal`
+                // console.error(errorMessage)
+                throw new Error(errorMessage)
+            }
+        })
     }
 
     private async checkMetarouters() {

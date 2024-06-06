@@ -744,4 +744,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
         },
     }),
+    [ChainId.ZETACHAIN_MAINNET]: new Token({
+        chainId: ChainId.ZETACHAIN_MAINNET,
+        address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+        decimals: 18,
+        symbol: 'WZETA',
+        isNative: false,
+        name: 'Wrapped ZETA',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29464.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29464.png',
+        },
+    }),
 }
