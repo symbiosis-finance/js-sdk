@@ -47,14 +47,13 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
 
-    const synthesis = symbiosis.synthesis(sBtc.chainId)
-    const minBtcFeeRaw = await synthesis.minFeeBTC()
+    const minBtcFeeRaw = await _getMinBtcFee(forwarderUrl)
     const minBtcFee = new TokenAmount(sBtc, minBtcFeeRaw.toString())
     sBtcAmount = sBtcAmount.subtract(minBtcFee)
 
     if (!isBtcBridging) {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, minBtcFeeRaw, toAddress, tail))
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
                 `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
@@ -64,7 +63,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         const { tail: tail1 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail1
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, minBtcFeeRaw, toAddress, tail))
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
                 `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
@@ -77,7 +76,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         tokenAmountOut = ta
     } else {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, toAddress, tail))
+        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, minBtcFeeRaw, toAddress, tail))
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
                 `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
@@ -89,6 +88,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     const { validUntil, revealAddress } = await _getDepositAddresses(
         forwarderUrl,
+        minBtcFeeRaw,
         toAddress,
         btcForwarderFee.raw.toString(),
         tail
@@ -156,16 +156,15 @@ interface DepositAddressResult {
 
 async function _getDepositAddresses(
     forwarderUrl: string,
+    minBtcFeeRaw: string,
     evmReceiverAddress: string,
     feeLimit: string,
     tail: string
 ): Promise<DepositAddressResult> {
-    const minBtcFee = await _getMinBtcFee(forwarderUrl)
-
     const raw = JSON.stringify({
         info: {
             to: evmReceiverAddress,
-            fee: minBtcFee,
+            fee: minBtcFeeRaw,
             op: 0, // 0 - is wrap operation
             sbfee: 0, // stable bridging fee for tail execution in satoshi
             tail: Buffer.from(tail.slice(2), 'hex').toString('base64'), // calldata for next swap from contract SymBtc.FromBTCTransactionTail
@@ -202,7 +201,12 @@ async function _getDepositAddresses(
     }
 }
 
-async function _getBtcForwarderFee(forwarderUrl: string, evmReceiverAddress: string, tail: string): Promise<string> {
+async function _getBtcForwarderFee(
+    forwarderUrl: string,
+    minBtcFeeRaw: string,
+    evmReceiverAddress: string,
+    tail: string
+): Promise<string> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
@@ -211,6 +215,7 @@ async function _getBtcForwarderFee(forwarderUrl: string, evmReceiverAddress: str
 
     const raw = JSON.stringify({
         info: {
+            fee: minBtcFeeRaw,
             op: 0, // 0 - wrap operation
             to: evmReceiverAddress,
             tail: Buffer.from(tail.slice(2), 'hex').toString('base64'),
