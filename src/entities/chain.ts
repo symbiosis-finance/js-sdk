@@ -23,7 +23,7 @@ export class Chain {
 export const chains: Chain[] = [
     new Chain({
         id: ChainId.TON_MAINNET,
-        name: 'Ton',
+        name: 'TON',
         disabled: false,
         explorer: 'https://tonscan.org',
         icons: {
@@ -512,8 +512,8 @@ export const chains: Chain[] = [
         disabled: false,
         explorer: 'https://rootstock.blockscout.com',
         icons: {
-            small: 'https://rootstock.blockscout.com/favicon/favicon-32x32.png',
-            large: 'https://rootstock.blockscout.com/favicon/favicon-32x32.png',
+            small: 'https://rootstock.blockscout.com/assets/favicon/favicon-32x32.png',
+            large: 'https://rootstock.blockscout.com/assets/favicon/favicon-32x32.png',
         },
     }),
     new Chain({
