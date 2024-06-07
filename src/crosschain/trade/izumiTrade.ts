@@ -199,6 +199,34 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
             }),
         ],
     },
+    [ChainId.ZETACHAIN_MAINNET]: {
+        swap: '0x34bc1b87f60e0a30c0e24FD7Abada70436c71406',
+        factory: '0x8c7d3063579BdB0b90997e18A770eaE32E1eBb08',
+        quoter: '0x3F559139C2Fc7B97Ad6FE9B4d1f75149F551DB18',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.ZETACHAIN_MAINNET,
+                name: 'Wrapped ZETA',
+                symbol: 'WZETA',
+                address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
+                decimals: 18,
+            }),
+            new Token({
+                chainId: ChainId.ZETACHAIN_MAINNET,
+                name: 'Tether USD (Ethereum)',
+                symbol: 'USDT.Eth',
+                address: '0x7c8dDa80bbBE1254a7aACf3219EBe1481c6E01d7',
+                decimals: 6,
+            }),
+            new Token({
+                chainId: ChainId.ZETACHAIN_MAINNET,
+                name: 'USD Coin (Ethereum)',
+                symbol: 'USDC.Eth',
+                address: '0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a',
+                decimals: 6,
+            }),
+        ],
+    },
 }
 
 export class IzumiTrade implements SymbiosisTrade {
