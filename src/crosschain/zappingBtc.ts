@@ -61,7 +61,7 @@ export class ZappingBtc extends BaseSwapping {
         this.multicallRouter = this.symbiosis.multicallRouter(sBtc.chainId)
 
         this.synthesis = this.symbiosis.synthesis(sBtc.chainId)
-        const minBtcFeeRaw = await this.synthesis.minFeeBTC()
+        const minBtcFeeRaw = await this.synthesis.syntToMinFeeBTC(sBtc.address)
         this.minBtcFee = new TokenAmount(sBtc, minBtcFeeRaw.toString())
 
         const result = await this.doExactIn({

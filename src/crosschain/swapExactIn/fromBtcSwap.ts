@@ -18,7 +18,7 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 
 const BTC_SYNTH_MAP: Partial<Record<ChainId, ChainId>> = {
     [ChainId.BTC_TESTNET]: ChainId.SEPOLIA_TESTNET,
-    [ChainId.BTC_MAINNET]: ChainId.ZKSYNC_MAINNET, // TODO check
+    [ChainId.BTC_MAINNET]: ChainId.ZKSYNC_MAINNET, // TODO choose production chain
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
@@ -39,21 +39,34 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     // destination of swap is not Bitcoin sBtc
     const isBtcBridging = outToken.equals(sBtc)
 
-    let tail: string
-    let tokenAmountOut: TokenAmount
-    let btcForwarderFee: TokenAmount
-
     const forwarderUrl = symbiosis.config.btc.forwarderUrl
 
     let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
 
-    const minBtcFeeRaw = await _getMinBtcFee(forwarderUrl)
-    const minBtcFee = new TokenAmount(sBtc, minBtcFeeRaw.toString())
-    sBtcAmount = sBtcAmount.subtract(minBtcFee)
+    const btcFeeRaw = await getBtcFee(forwarderUrl)
+    const btcFee = new TokenAmount(sBtc, btcFeeRaw.toString())
+    sBtcAmount = sBtcAmount.subtract(btcFee)
 
+    const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO estimate with advisor
+    const sbfee = new TokenAmount(sBtc, sbfeeRaw.toString())
+    sBtcAmount = sBtcAmount.subtract(sbfee)
+
+    let tokenAmountOut: TokenAmount
+    let btcForwarderFee: TokenAmount
+    let tail: string
+    let tailSbFee = new TokenAmount(sBtc, '0')
     if (!isBtcBridging) {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, minBtcFeeRaw, toAddress, tail))
+        btcForwarderFee = new TokenAmount(
+            sBtc,
+            await estimateWrap({
+                forwarderUrl,
+                fee: btcFeeRaw,
+                sbfee: sbfeeRaw,
+                tail,
+                to: toAddress,
+            })
+        )
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
                 `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
@@ -63,20 +76,39 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         const { tail: tail1 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail1
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, minBtcFeeRaw, toAddress, tail))
+        btcForwarderFee = new TokenAmount(
+            sBtc,
+            await estimateWrap({
+                forwarderUrl,
+                fee: btcFeeRaw,
+                sbfee: sbfeeRaw,
+                tail,
+                to: toAddress,
+            })
+        )
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
                 `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
-        const { tokenAmountOut: ta, tail: tail2 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
+        const { tokenAmountOut: ta, tail: tail2, fee } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail2
+        tailSbFee = fee
         tokenAmountOut = ta
     } else {
         tail = ''
-        btcForwarderFee = new TokenAmount(sBtc, await _getBtcForwarderFee(forwarderUrl, minBtcFeeRaw, toAddress, tail))
+        btcForwarderFee = new TokenAmount(
+            sBtc,
+            await estimateWrap({
+                forwarderUrl,
+                fee: btcFeeRaw,
+                sbfee: sbfeeRaw,
+                tail,
+                to: toAddress,
+            })
+        )
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
                 `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
@@ -86,13 +118,14 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
     }
 
-    const { validUntil, revealAddress } = await _getDepositAddresses(
+    const { validUntil, revealAddress } = await wrap({
         forwarderUrl,
-        minBtcFeeRaw,
-        toAddress,
-        btcForwarderFee.raw.toString(),
-        tail
-    )
+        fee: btcFeeRaw,
+        sbfee: sbfeeRaw,
+        tail,
+        to: toAddress,
+        feeLimit: btcForwarderFee.raw.toString(),
+    })
 
     return {
         kind: 'from-btc-swap',
@@ -108,20 +141,20 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         inTradeType: undefined,
         outTradeType: undefined,
         amountInUsd: undefined,
-        fee: btcForwarderFee,
+        fee: sbfee.add(new TokenAmount(sbfee.token, tailSbFee.raw)), // FIXME different tokens/decimals
         save: undefined,
-        extraFee: undefined,
+        extraFee: btcFee.add(btcForwarderFee),
     }
 }
 
 async function buildTail(
     context: SwapExactInParams,
     sBtcAmount: TokenAmount
-): Promise<{ tokenAmountOut: TokenAmount; tail: string }> {
+): Promise<{ tokenAmountOut: TokenAmount; tail: string; fee: TokenAmount }> {
     const { fromAddress, toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
-    const { transactionRequest, tokenAmountOut } = await bestPoolSwapping.exactIn({
+    const { transactionRequest, tokenAmountOut, fee } = await bestPoolSwapping.exactIn({
         tokenAmountIn: sBtcAmount,
         tokenOut: outToken,
         from: fromAddress,
@@ -145,6 +178,7 @@ async function buildTail(
     return {
         tokenAmountOut,
         tail,
+        fee,
     }
 }
 
@@ -154,22 +188,62 @@ interface DepositAddressResult {
     legacyAddress: string
 }
 
-async function _getDepositAddresses(
-    forwarderUrl: string,
-    minBtcFeeRaw: string,
-    evmReceiverAddress: string,
-    feeLimit: string,
+type EstimateWrapParams = {
+    forwarderUrl: string
+    fee: string
+    sbfee: string
     tail: string
-): Promise<DepositAddressResult> {
+    to: string
+}
+
+async function estimateWrap({ forwarderUrl, fee, sbfee, tail, to }: EstimateWrapParams): Promise<string> {
+    const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
+    const myHeaders = new Headers({
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+    })
+
     const raw = JSON.stringify({
         info: {
-            to: evmReceiverAddress,
-            fee: minBtcFeeRaw,
-            op: 0, // 0 - is wrap operation
-            sbfee: 0, // stable bridging fee for tail execution in satoshi
-            tail: Buffer.from(tail.slice(2), 'hex').toString('base64'), // calldata for next swap from contract SymBtc.FromBTCTransactionTail
+            fee,
+            op: 0, // 0 - wrap operation
+            sbfee: Number(sbfee), // FIXME should accept string,
+            tail: encodeTail(tail),
+            to,
         },
-        feeLimit: Number(feeLimit), // FIXME
+    })
+
+    const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+    }
+
+    const response = await fetch(`${estimateWrapApiUrl}`, requestOptions)
+    if (!response.ok) {
+        const text = await response.text()
+        const json = JSON.parse(text)
+        throw new Error(json.message ?? text)
+    }
+
+    const { feeLimit } = await response.json()
+
+    return feeLimit
+}
+
+type WrapParams = EstimateWrapParams & {
+    feeLimit: string
+}
+async function wrap({ forwarderUrl, fee, sbfee, tail, to, feeLimit }: WrapParams): Promise<DepositAddressResult> {
+    const raw = JSON.stringify({
+        info: {
+            fee,
+            op: 0, // 0 - is wrap operation
+            sbfee: Number(sbfee), // FIXME should accept string
+            tail: encodeTail(tail),
+            to,
+        },
+        feeLimit: Number(feeLimit), // FIXME should accept string
     })
 
     const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)
@@ -201,46 +275,11 @@ async function _getDepositAddresses(
     }
 }
 
-async function _getBtcForwarderFee(
-    forwarderUrl: string,
-    minBtcFeeRaw: string,
-    evmReceiverAddress: string,
-    tail: string
-): Promise<string> {
-    const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
-    const myHeaders = new Headers({
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-    })
-
-    const raw = JSON.stringify({
-        info: {
-            fee: minBtcFeeRaw,
-            op: 0, // 0 - wrap operation
-            to: evmReceiverAddress,
-            tail: Buffer.from(tail.slice(2), 'hex').toString('base64'),
-        },
-    })
-
-    const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-    }
-
-    const response = await fetch(`${estimateWrapApiUrl}`, requestOptions)
-    if (!response.ok) {
-        const text = await response.text()
-        const json = JSON.parse(text)
-        throw new Error(json.message ?? text)
-    }
-
-    const { feeLimit } = await response.json()
-
-    return feeLimit
+function encodeTail(tail: string): string {
+    return Buffer.from(tail.slice(2), 'hex').toString('base64')
 }
 
-async function _getMinBtcFee(forwarderUrl: string): Promise<string> {
+async function getBtcFee(forwarderUrl: string): Promise<string> {
     // kind of the state: 0=finalized 1=pending 2=best
     const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=0`)
 
