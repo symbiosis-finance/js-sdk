@@ -77,12 +77,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x0000000000000000000000000000000000000000',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000'
         },
         {
             id: ChainId.ETH_MAINNET,
@@ -180,12 +175,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
-            aavePool: '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2',
-            aavePoolDataProvider: '0x7B4EB56E7CD4b454BA8ff71E4518426369a138a3',
-            creamComptroller: '0x3d5BC3c8d13dcB8bF317092d84783c2697AE9258',
-            creamCompoundLens: '0xd400e22dcA840CC7E342DF1d9945684bBd587659',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A'
         },
         {
             id: ChainId.BSC_MAINNET,
@@ -258,12 +248,7 @@ export const config: Config = {
             synthesis: '0x6B1bbd301782FF636601fC594Cd7Bfe74871bfaA',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0xc17d768Bf4FdC6f20a4A0d8Be8767840D106D077',
-            multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x589de0f0ccf905477646599bb3e5c622c84cc0ba',
-            creamCompoundLens: '0x06fd4e17Dd35d0dE9FE17eeAE4e94fBA57fEF154',
-            renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
+            multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB'
         },
         {
             id: ChainId.AVAX_MAINNET,
@@ -303,12 +288,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
-            aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            aavePoolDataProvider: '0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654',
-            creamComptroller: '0x486Af39519B4Dc9a7fCcd318217352830E8AD9b4',
-            creamCompoundLens: '0x5b4058A9000e86fe136Ac896352C4DFD539E32a1',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a'
         },
         {
             id: ChainId.MATIC_MAINNET,
@@ -351,12 +331,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xc5B61b9abC3C6229065cAD0e961aF585C5E0135c',
-            aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            aavePoolDataProvider: '0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654',
-            creamComptroller: '0x20CA53E2395FA571798623F1cFBD11Fe2C114c24',
-            creamCompoundLens: '0xa7B0C2e904d597b89b4bf91927A3B90459f8bb9E',
-            renGatewayRegistry: '0xf36666C230Fa12333579b9Bd6196CB634D6BC506',
+            multicallRouter: '0xc5B61b9abC3C6229065cAD0e961aF585C5E0135c'
         },
         {
             id: ChainId.TELOS_MAINNET,
@@ -388,12 +363,7 @@ export const config: Config = {
             synthesis: '0x1a039cE63AE35a67Bf0E9F6DbFaE969639D59eC8',
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             fabric: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
-            multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4'
         },
         {
             id: ChainId.KAVA_MAINNET,
@@ -425,12 +395,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.BOBA_MAINNET,
@@ -458,12 +423,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3'
         },
         {
             id: 56288,
@@ -491,12 +451,7 @@ export const config: Config = {
             synthesis: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
-            multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4'
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
@@ -568,12 +523,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x4f5456d4d0764473DfCA1ffBB8524C151c4F19b9',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xe004DE550074856bD64Cc1A89A8B3b56bD3eAf31',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xe004DE550074856bD64Cc1A89A8B3b56bD3eAf31'
         },
         {
             id: ChainId.ARBITRUM_MAINNET,
@@ -650,12 +600,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
-            aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            aavePoolDataProvider: '0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB'
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
@@ -694,12 +639,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x794a61358D6845594F94dc1DB02A252b5b4814aD',
-            aavePoolDataProvider: '0x69FA688f1Dc47d4B5d8029D5a35FB7a548310654',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.ARBITRUM_NOVA,
@@ -742,12 +682,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.POLYGON_ZK,
@@ -802,12 +737,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.LINEA_MAINNET,
@@ -857,12 +787,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.MANTLE_MAINNET,
@@ -905,12 +830,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.BASE_MAINNET,
@@ -953,12 +873,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xEE981B2459331AD268cc63CE6167b446AF4161f8',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
-            aavePool: '0xA238Dd80C259a72e81d7e4664a9801593F98d1c5',
-            aavePoolDataProvider: '0x2d8A3C5677189723C4cB8873CfC9C8976FDF38Ac',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9'
         },
         {
             id: ChainId.TRON_MAINNET,
@@ -985,12 +900,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xd83b5752b42856a08087748de6095af0be52d299',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x354ed0e8616678f2829feb2e2e9a0e0869fa82fb',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x354ed0e8616678f2829feb2e2e9a0e0869fa82fb'
         },
         {
             id: ChainId.SCROLL_MAINNET,
@@ -1055,12 +965,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9'
         },
         {
             id: ChainId.MANTA_MAINNET,
@@ -1110,12 +1015,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2'
         },
         {
             id: ChainId.METIS_MAINNET,
@@ -1147,12 +1047,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4'
         },
         {
             id: ChainId.BAHAMUT_MAINNET,
@@ -1180,12 +1075,7 @@ export const config: Config = {
             synthesis: '0xB79A4F5828eb55c10D7abF4bFe9a9f5d11aA84e0',
             portal: '0x318C2B9a03C37702742C3d40C72e4056e430135A',
             fabric: '0xA257F3FE4E4032291516DC355eDF90664e9eB932',
-            multicallRouter: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778'
         },
         {
             id: ChainId.MODE_MAINNET,
@@ -1213,12 +1103,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.RSK_MAINNET,
@@ -1257,12 +1142,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x5aa5f7f84ed0e5db0a4a85c3947ea16b53352fd4',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9'
         },
         {
             id: ChainId.BLAST_MAINNET,
@@ -1294,12 +1174,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9'
         },
         {
             id: ChainId.MERLIN_MAINNET,
@@ -1327,12 +1202,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.ZKLINK_MAINNET,
@@ -1370,12 +1240,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x8Dc71561414CDcA6DcA7C1dED1ABd04AF474D189',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E'
         },
         {
             id: ChainId.CORE_MAINNET,
@@ -1403,12 +1268,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8'
         },
         {
             id: ChainId.TAIKO_MAINNET,
@@ -1440,12 +1300,7 @@ export const config: Config = {
             synthesis: '0x0000000000000000000000000000000000000000',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9'
         },
         {
             id: ChainId.SEI_EVM_MAINNET,
@@ -1485,11 +1340,6 @@ export const config: Config = {
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
         },
         {
             id: ChainId.ZETACHAIN_MAINNET,
@@ -1517,12 +1367,7 @@ export const config: Config = {
             synthesis: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
             portal: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
             fabric: '0x1a039cE63AE35a67Bf0E9F6DbFaE969639D59eC8',
-            multicallRouter: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
-            aavePool: '0x0000000000000000000000000000000000000000',
-            aavePoolDataProvider: '0x0000000000000000000000000000000000000000',
-            creamComptroller: '0x0000000000000000000000000000000000000000',
-            creamCompoundLens: '0x0000000000000000000000000000000000000000',
-            renGatewayRegistry: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160'
         },
     ],
 }
