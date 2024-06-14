@@ -2,1884 +2,1392 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface BenqiQiErc20Interface extends utils.Interface {
-  contractName: "BenqiQiErc20";
-  functions: {
-    "_acceptAdmin()": FunctionFragment;
-    "_addReserves(uint256)": FunctionFragment;
-    "_reduceReserves(uint256)": FunctionFragment;
-    "_setComptroller(address)": FunctionFragment;
-    "_setImplementation(address,bool,bytes)": FunctionFragment;
-    "_setInterestRateModel(address)": FunctionFragment;
-    "_setPendingAdmin(address)": FunctionFragment;
-    "_setProtocolSeizeShare(uint256)": FunctionFragment;
-    "_setReserveFactor(uint256)": FunctionFragment;
-    "accrualBlockTimestamp()": FunctionFragment;
-    "accrueInterest()": FunctionFragment;
-    "admin()": FunctionFragment;
-    "allowance(address,address)": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
-    "balanceOfUnderlying(address)": FunctionFragment;
-    "borrow(uint256)": FunctionFragment;
-    "borrowBalanceCurrent(address)": FunctionFragment;
-    "borrowBalanceStored(address)": FunctionFragment;
-    "borrowIndex()": FunctionFragment;
-    "borrowRatePerTimestamp()": FunctionFragment;
-    "comptroller()": FunctionFragment;
-    "decimals()": FunctionFragment;
-    "delegateToImplementation(bytes)": FunctionFragment;
-    "delegateToViewImplementation(bytes)": FunctionFragment;
-    "exchangeRateCurrent()": FunctionFragment;
-    "exchangeRateStored()": FunctionFragment;
-    "getAccountSnapshot(address)": FunctionFragment;
-    "getCash()": FunctionFragment;
-    "implementation()": FunctionFragment;
-    "interestRateModel()": FunctionFragment;
-    "isQiToken()": FunctionFragment;
-    "liquidateBorrow(address,uint256,address)": FunctionFragment;
-    "mint(uint256)": FunctionFragment;
-    "name()": FunctionFragment;
-    "pendingAdmin()": FunctionFragment;
-    "protocolSeizeShareMantissa()": FunctionFragment;
-    "redeem(uint256)": FunctionFragment;
-    "redeemUnderlying(uint256)": FunctionFragment;
-    "repayBorrow(uint256)": FunctionFragment;
-    "repayBorrowBehalf(address,uint256)": FunctionFragment;
-    "reserveFactorMantissa()": FunctionFragment;
-    "seize(address,address,uint256)": FunctionFragment;
-    "supplyRatePerTimestamp()": FunctionFragment;
-    "sweepToken(address)": FunctionFragment;
-    "symbol()": FunctionFragment;
-    "totalBorrows()": FunctionFragment;
-    "totalBorrowsCurrent()": FunctionFragment;
-    "totalReserves()": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "transfer(address,uint256)": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
-    "underlying()": FunctionFragment;
-  };
+    contractName: 'BenqiQiErc20'
+    functions: {
+        '_acceptAdmin()': FunctionFragment
+        '_addReserves(uint256)': FunctionFragment
+        '_reduceReserves(uint256)': FunctionFragment
+        '_setComptroller(address)': FunctionFragment
+        '_setImplementation(address,bool,bytes)': FunctionFragment
+        '_setInterestRateModel(address)': FunctionFragment
+        '_setPendingAdmin(address)': FunctionFragment
+        '_setProtocolSeizeShare(uint256)': FunctionFragment
+        '_setReserveFactor(uint256)': FunctionFragment
+        'accrualBlockTimestamp()': FunctionFragment
+        'accrueInterest()': FunctionFragment
+        'admin()': FunctionFragment
+        'allowance(address,address)': FunctionFragment
+        'approve(address,uint256)': FunctionFragment
+        'balanceOf(address)': FunctionFragment
+        'balanceOfUnderlying(address)': FunctionFragment
+        'borrow(uint256)': FunctionFragment
+        'borrowBalanceCurrent(address)': FunctionFragment
+        'borrowBalanceStored(address)': FunctionFragment
+        'borrowIndex()': FunctionFragment
+        'borrowRatePerTimestamp()': FunctionFragment
+        'comptroller()': FunctionFragment
+        'decimals()': FunctionFragment
+        'delegateToImplementation(bytes)': FunctionFragment
+        'delegateToViewImplementation(bytes)': FunctionFragment
+        'exchangeRateCurrent()': FunctionFragment
+        'exchangeRateStored()': FunctionFragment
+        'getAccountSnapshot(address)': FunctionFragment
+        'getCash()': FunctionFragment
+        'implementation()': FunctionFragment
+        'interestRateModel()': FunctionFragment
+        'isQiToken()': FunctionFragment
+        'liquidateBorrow(address,uint256,address)': FunctionFragment
+        'mint(uint256)': FunctionFragment
+        'name()': FunctionFragment
+        'pendingAdmin()': FunctionFragment
+        'protocolSeizeShareMantissa()': FunctionFragment
+        'redeem(uint256)': FunctionFragment
+        'redeemUnderlying(uint256)': FunctionFragment
+        'repayBorrow(uint256)': FunctionFragment
+        'repayBorrowBehalf(address,uint256)': FunctionFragment
+        'reserveFactorMantissa()': FunctionFragment
+        'seize(address,address,uint256)': FunctionFragment
+        'supplyRatePerTimestamp()': FunctionFragment
+        'sweepToken(address)': FunctionFragment
+        'symbol()': FunctionFragment
+        'totalBorrows()': FunctionFragment
+        'totalBorrowsCurrent()': FunctionFragment
+        'totalReserves()': FunctionFragment
+        'totalSupply()': FunctionFragment
+        'transfer(address,uint256)': FunctionFragment
+        'transferFrom(address,address,uint256)': FunctionFragment
+        'underlying()': FunctionFragment
+    }
 
-  encodeFunctionData(
-    functionFragment: "_acceptAdmin",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_addReserves",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_reduceReserves",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setComptroller",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setImplementation",
-    values: [string, boolean, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setInterestRateModel",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setPendingAdmin",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setProtocolSeizeShare",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setReserveFactor",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "accrualBlockTimestamp",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "accrueInterest",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "allowance",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "balanceOfUnderlying",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "borrow",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "borrowBalanceCurrent",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "borrowBalanceStored",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "borrowIndex",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "borrowRatePerTimestamp",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "comptroller",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "delegateToImplementation",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delegateToViewImplementation",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeRateCurrent",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "exchangeRateStored",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAccountSnapshot",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "getCash", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "implementation",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "interestRateModel",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "isQiToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "liquidateBorrow",
-    values: [string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(functionFragment: "mint", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "pendingAdmin",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "protocolSeizeShareMantissa",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "redeem",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "redeemUnderlying",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "repayBorrow",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "repayBorrowBehalf",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "reserveFactorMantissa",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "seize",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supplyRatePerTimestamp",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "sweepToken", values: [string]): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "totalBorrows",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalBorrowsCurrent",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalReserves",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transfer",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "underlying",
-    values?: undefined
-  ): string;
+    encodeFunctionData(functionFragment: '_acceptAdmin', values?: undefined): string
+    encodeFunctionData(functionFragment: '_addReserves', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: '_reduceReserves', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: '_setComptroller', values: [string]): string
+    encodeFunctionData(functionFragment: '_setImplementation', values: [string, boolean, BytesLike]): string
+    encodeFunctionData(functionFragment: '_setInterestRateModel', values: [string]): string
+    encodeFunctionData(functionFragment: '_setPendingAdmin', values: [string]): string
+    encodeFunctionData(functionFragment: '_setProtocolSeizeShare', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: '_setReserveFactor', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'accrualBlockTimestamp', values?: undefined): string
+    encodeFunctionData(functionFragment: 'accrueInterest', values?: undefined): string
+    encodeFunctionData(functionFragment: 'admin', values?: undefined): string
+    encodeFunctionData(functionFragment: 'allowance', values: [string, string]): string
+    encodeFunctionData(functionFragment: 'approve', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string
+    encodeFunctionData(functionFragment: 'balanceOfUnderlying', values: [string]): string
+    encodeFunctionData(functionFragment: 'borrow', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'borrowBalanceCurrent', values: [string]): string
+    encodeFunctionData(functionFragment: 'borrowBalanceStored', values: [string]): string
+    encodeFunctionData(functionFragment: 'borrowIndex', values?: undefined): string
+    encodeFunctionData(functionFragment: 'borrowRatePerTimestamp', values?: undefined): string
+    encodeFunctionData(functionFragment: 'comptroller', values?: undefined): string
+    encodeFunctionData(functionFragment: 'decimals', values?: undefined): string
+    encodeFunctionData(functionFragment: 'delegateToImplementation', values: [BytesLike]): string
+    encodeFunctionData(functionFragment: 'delegateToViewImplementation', values: [BytesLike]): string
+    encodeFunctionData(functionFragment: 'exchangeRateCurrent', values?: undefined): string
+    encodeFunctionData(functionFragment: 'exchangeRateStored', values?: undefined): string
+    encodeFunctionData(functionFragment: 'getAccountSnapshot', values: [string]): string
+    encodeFunctionData(functionFragment: 'getCash', values?: undefined): string
+    encodeFunctionData(functionFragment: 'implementation', values?: undefined): string
+    encodeFunctionData(functionFragment: 'interestRateModel', values?: undefined): string
+    encodeFunctionData(functionFragment: 'isQiToken', values?: undefined): string
+    encodeFunctionData(functionFragment: 'liquidateBorrow', values: [string, BigNumberish, string]): string
+    encodeFunctionData(functionFragment: 'mint', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'name', values?: undefined): string
+    encodeFunctionData(functionFragment: 'pendingAdmin', values?: undefined): string
+    encodeFunctionData(functionFragment: 'protocolSeizeShareMantissa', values?: undefined): string
+    encodeFunctionData(functionFragment: 'redeem', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'redeemUnderlying', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'repayBorrow', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'repayBorrowBehalf', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'reserveFactorMantissa', values?: undefined): string
+    encodeFunctionData(functionFragment: 'seize', values: [string, string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'supplyRatePerTimestamp', values?: undefined): string
+    encodeFunctionData(functionFragment: 'sweepToken', values: [string]): string
+    encodeFunctionData(functionFragment: 'symbol', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalBorrows', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalBorrowsCurrent', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalReserves', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string
+    encodeFunctionData(functionFragment: 'transfer', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'transferFrom', values: [string, string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'underlying', values?: undefined): string
 
-  decodeFunctionResult(
-    functionFragment: "_acceptAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_addReserves",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_reduceReserves",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setComptroller",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setImplementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setInterestRateModel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setPendingAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setProtocolSeizeShare",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setReserveFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "accrualBlockTimestamp",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "accrueInterest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOfUnderlying",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "borrowBalanceCurrent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "borrowBalanceStored",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "borrowIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "borrowRatePerTimestamp",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "comptroller",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "delegateToImplementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delegateToViewImplementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeRateCurrent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "exchangeRateStored",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAccountSnapshot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getCash", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "implementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "interestRateModel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isQiToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidateBorrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "pendingAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolSeizeShareMantissa",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "redeemUnderlying",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "repayBorrow",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "repayBorrowBehalf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "reserveFactorMantissa",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "seize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "supplyRatePerTimestamp",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "sweepToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalBorrows",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalBorrowsCurrent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalReserves",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "underlying", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: '_acceptAdmin', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_addReserves', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_reduceReserves', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_setComptroller', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_setImplementation', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_setInterestRateModel', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_setPendingAdmin', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_setProtocolSeizeShare', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: '_setReserveFactor', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'accrualBlockTimestamp', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'accrueInterest', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'admin', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'allowance', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'balanceOfUnderlying', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'borrow', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'borrowBalanceCurrent', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'borrowBalanceStored', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'borrowIndex', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'borrowRatePerTimestamp', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'comptroller', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'decimals', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'delegateToImplementation', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'delegateToViewImplementation', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'exchangeRateCurrent', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'exchangeRateStored', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getAccountSnapshot', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getCash', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'implementation', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'interestRateModel', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'isQiToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'liquidateBorrow', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'mint', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pendingAdmin', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'protocolSeizeShareMantissa', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'redeem', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'redeemUnderlying', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'repayBorrow', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'repayBorrowBehalf', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'reserveFactorMantissa', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'seize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'supplyRatePerTimestamp', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'sweepToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalBorrows', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalBorrowsCurrent', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalReserves', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'underlying', data: BytesLike): Result
 
-  events: {
-    "AccrueInterest(uint256,uint256,uint256,uint256)": EventFragment;
-    "Approval(address,address,uint256)": EventFragment;
-    "Borrow(address,uint256,uint256,uint256)": EventFragment;
-    "Failure(uint256,uint256,uint256)": EventFragment;
-    "LiquidateBorrow(address,address,uint256,address,uint256)": EventFragment;
-    "Mint(address,uint256,uint256)": EventFragment;
-    "NewAdmin(address,address)": EventFragment;
-    "NewComptroller(address,address)": EventFragment;
-    "NewImplementation(address,address)": EventFragment;
-    "NewMarketInterestRateModel(address,address)": EventFragment;
-    "NewPendingAdmin(address,address)": EventFragment;
-    "NewProtocolSeizeShare(uint256,uint256)": EventFragment;
-    "NewReserveFactor(uint256,uint256)": EventFragment;
-    "Redeem(address,uint256,uint256)": EventFragment;
-    "RepayBorrow(address,address,uint256,uint256,uint256)": EventFragment;
-    "ReservesAdded(address,uint256,uint256)": EventFragment;
-    "ReservesReduced(address,uint256,uint256)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
-  };
+    events: {
+        'AccrueInterest(uint256,uint256,uint256,uint256)': EventFragment
+        'Approval(address,address,uint256)': EventFragment
+        'Borrow(address,uint256,uint256,uint256)': EventFragment
+        'Failure(uint256,uint256,uint256)': EventFragment
+        'LiquidateBorrow(address,address,uint256,address,uint256)': EventFragment
+        'Mint(address,uint256,uint256)': EventFragment
+        'NewAdmin(address,address)': EventFragment
+        'NewComptroller(address,address)': EventFragment
+        'NewImplementation(address,address)': EventFragment
+        'NewMarketInterestRateModel(address,address)': EventFragment
+        'NewPendingAdmin(address,address)': EventFragment
+        'NewProtocolSeizeShare(uint256,uint256)': EventFragment
+        'NewReserveFactor(uint256,uint256)': EventFragment
+        'Redeem(address,uint256,uint256)': EventFragment
+        'RepayBorrow(address,address,uint256,uint256,uint256)': EventFragment
+        'ReservesAdded(address,uint256,uint256)': EventFragment
+        'ReservesReduced(address,uint256,uint256)': EventFragment
+        'Transfer(address,address,uint256)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "AccrueInterest"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Borrow"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Failure"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidateBorrow"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewAdmin"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewComptroller"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewImplementation"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewMarketInterestRateModel"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewPendingAdmin"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewProtocolSeizeShare"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewReserveFactor"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Redeem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RepayBorrow"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ReservesAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ReservesReduced"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'AccrueInterest'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Approval'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Borrow'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Failure'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'LiquidateBorrow'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Mint'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewAdmin'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewComptroller'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewImplementation'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewMarketInterestRateModel'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewPendingAdmin'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewProtocolSeizeShare'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewReserveFactor'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Redeem'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'RepayBorrow'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'ReservesAdded'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'ReservesReduced'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Transfer'): EventFragment
 }
 
 export type AccrueInterestEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber],
-  {
-    cashPrior: BigNumber;
-    interestAccumulated: BigNumber;
-    borrowIndex: BigNumber;
-    totalBorrows: BigNumber;
-  }
->;
+    [BigNumber, BigNumber, BigNumber, BigNumber],
+    {
+        cashPrior: BigNumber
+        interestAccumulated: BigNumber
+        borrowIndex: BigNumber
+        totalBorrows: BigNumber
+    }
+>
 
-export type AccrueInterestEventFilter = TypedEventFilter<AccrueInterestEvent>;
+export type AccrueInterestEventFilter = TypedEventFilter<AccrueInterestEvent>
 
 export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber],
-  { owner: string; spender: string; amount: BigNumber }
->;
+    [string, string, BigNumber],
+    { owner: string; spender: string; amount: BigNumber }
+>
 
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>
 
 export type BorrowEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  {
-    borrower: string;
-    borrowAmount: BigNumber;
-    accountBorrows: BigNumber;
-    totalBorrows: BigNumber;
-  }
->;
+    [string, BigNumber, BigNumber, BigNumber],
+    {
+        borrower: string
+        borrowAmount: BigNumber
+        accountBorrows: BigNumber
+        totalBorrows: BigNumber
+    }
+>
 
-export type BorrowEventFilter = TypedEventFilter<BorrowEvent>;
+export type BorrowEventFilter = TypedEventFilter<BorrowEvent>
 
 export type FailureEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber],
-  { error: BigNumber; info: BigNumber; detail: BigNumber }
->;
+    [BigNumber, BigNumber, BigNumber],
+    { error: BigNumber; info: BigNumber; detail: BigNumber }
+>
 
-export type FailureEventFilter = TypedEventFilter<FailureEvent>;
+export type FailureEventFilter = TypedEventFilter<FailureEvent>
 
 export type LiquidateBorrowEvent = TypedEvent<
-  [string, string, BigNumber, string, BigNumber],
-  {
-    liquidator: string;
-    borrower: string;
-    repayAmount: BigNumber;
-    qiTokenCollateral: string;
-    seizeTokens: BigNumber;
-  }
->;
+    [string, string, BigNumber, string, BigNumber],
+    {
+        liquidator: string
+        borrower: string
+        repayAmount: BigNumber
+        qiTokenCollateral: string
+        seizeTokens: BigNumber
+    }
+>
 
-export type LiquidateBorrowEventFilter = TypedEventFilter<LiquidateBorrowEvent>;
+export type LiquidateBorrowEventFilter = TypedEventFilter<LiquidateBorrowEvent>
 
 export type MintEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { minter: string; mintAmount: BigNumber; mintTokens: BigNumber }
->;
+    [string, BigNumber, BigNumber],
+    { minter: string; mintAmount: BigNumber; mintTokens: BigNumber }
+>
 
-export type MintEventFilter = TypedEventFilter<MintEvent>;
+export type MintEventFilter = TypedEventFilter<MintEvent>
 
-export type NewAdminEvent = TypedEvent<
-  [string, string],
-  { oldAdmin: string; newAdmin: string }
->;
+export type NewAdminEvent = TypedEvent<[string, string], { oldAdmin: string; newAdmin: string }>
 
-export type NewAdminEventFilter = TypedEventFilter<NewAdminEvent>;
+export type NewAdminEventFilter = TypedEventFilter<NewAdminEvent>
 
-export type NewComptrollerEvent = TypedEvent<
-  [string, string],
-  { oldComptroller: string; newComptroller: string }
->;
+export type NewComptrollerEvent = TypedEvent<[string, string], { oldComptroller: string; newComptroller: string }>
 
-export type NewComptrollerEventFilter = TypedEventFilter<NewComptrollerEvent>;
+export type NewComptrollerEventFilter = TypedEventFilter<NewComptrollerEvent>
 
 export type NewImplementationEvent = TypedEvent<
-  [string, string],
-  { oldImplementation: string; newImplementation: string }
->;
+    [string, string],
+    { oldImplementation: string; newImplementation: string }
+>
 
-export type NewImplementationEventFilter =
-  TypedEventFilter<NewImplementationEvent>;
+export type NewImplementationEventFilter = TypedEventFilter<NewImplementationEvent>
 
 export type NewMarketInterestRateModelEvent = TypedEvent<
-  [string, string],
-  { oldInterestRateModel: string; newInterestRateModel: string }
->;
+    [string, string],
+    { oldInterestRateModel: string; newInterestRateModel: string }
+>
 
-export type NewMarketInterestRateModelEventFilter =
-  TypedEventFilter<NewMarketInterestRateModelEvent>;
+export type NewMarketInterestRateModelEventFilter = TypedEventFilter<NewMarketInterestRateModelEvent>
 
-export type NewPendingAdminEvent = TypedEvent<
-  [string, string],
-  { oldPendingAdmin: string; newPendingAdmin: string }
->;
+export type NewPendingAdminEvent = TypedEvent<[string, string], { oldPendingAdmin: string; newPendingAdmin: string }>
 
-export type NewPendingAdminEventFilter = TypedEventFilter<NewPendingAdminEvent>;
+export type NewPendingAdminEventFilter = TypedEventFilter<NewPendingAdminEvent>
 
 export type NewProtocolSeizeShareEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  {
-    oldProtocolSeizeShareMantissa: BigNumber;
-    newProtocolSeizeShareMantissa: BigNumber;
-  }
->;
+    [BigNumber, BigNumber],
+    {
+        oldProtocolSeizeShareMantissa: BigNumber
+        newProtocolSeizeShareMantissa: BigNumber
+    }
+>
 
-export type NewProtocolSeizeShareEventFilter =
-  TypedEventFilter<NewProtocolSeizeShareEvent>;
+export type NewProtocolSeizeShareEventFilter = TypedEventFilter<NewProtocolSeizeShareEvent>
 
 export type NewReserveFactorEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  { oldReserveFactorMantissa: BigNumber; newReserveFactorMantissa: BigNumber }
->;
+    [BigNumber, BigNumber],
+    { oldReserveFactorMantissa: BigNumber; newReserveFactorMantissa: BigNumber }
+>
 
-export type NewReserveFactorEventFilter =
-  TypedEventFilter<NewReserveFactorEvent>;
+export type NewReserveFactorEventFilter = TypedEventFilter<NewReserveFactorEvent>
 
 export type RedeemEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { redeemer: string; redeemAmount: BigNumber; redeemTokens: BigNumber }
->;
+    [string, BigNumber, BigNumber],
+    { redeemer: string; redeemAmount: BigNumber; redeemTokens: BigNumber }
+>
 
-export type RedeemEventFilter = TypedEventFilter<RedeemEvent>;
+export type RedeemEventFilter = TypedEventFilter<RedeemEvent>
 
 export type RepayBorrowEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, BigNumber],
-  {
-    payer: string;
-    borrower: string;
-    repayAmount: BigNumber;
-    accountBorrows: BigNumber;
-    totalBorrows: BigNumber;
-  }
->;
+    [string, string, BigNumber, BigNumber, BigNumber],
+    {
+        payer: string
+        borrower: string
+        repayAmount: BigNumber
+        accountBorrows: BigNumber
+        totalBorrows: BigNumber
+    }
+>
 
-export type RepayBorrowEventFilter = TypedEventFilter<RepayBorrowEvent>;
+export type RepayBorrowEventFilter = TypedEventFilter<RepayBorrowEvent>
 
 export type ReservesAddedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { benefactor: string; addAmount: BigNumber; newTotalReserves: BigNumber }
->;
+    [string, BigNumber, BigNumber],
+    { benefactor: string; addAmount: BigNumber; newTotalReserves: BigNumber }
+>
 
-export type ReservesAddedEventFilter = TypedEventFilter<ReservesAddedEvent>;
+export type ReservesAddedEventFilter = TypedEventFilter<ReservesAddedEvent>
 
 export type ReservesReducedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { admin: string; reduceAmount: BigNumber; newTotalReserves: BigNumber }
->;
+    [string, BigNumber, BigNumber],
+    { admin: string; reduceAmount: BigNumber; newTotalReserves: BigNumber }
+>
 
-export type ReservesReducedEventFilter = TypedEventFilter<ReservesReducedEvent>;
+export type ReservesReducedEventFilter = TypedEventFilter<ReservesReducedEvent>
 
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber],
-  { from: string; to: string; amount: BigNumber }
->;
+export type TransferEvent = TypedEvent<[string, string, BigNumber], { from: string; to: string; amount: BigNumber }>
 
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export type TransferEventFilter = TypedEventFilter<TransferEvent>
 
 export interface BenqiQiErc20 extends BaseContract {
-  contractName: "BenqiQiErc20";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'BenqiQiErc20'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: BenqiQiErc20Interface;
+    interface: BenqiQiErc20Interface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    _acceptAdmin(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    functions: {
+        _acceptAdmin(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        _addReserves(
+            addAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _reduceReserves(
+            reduceAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _setComptroller(
+            newComptroller: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _setImplementation(
+            implementation_: string,
+            allowResign: boolean,
+            becomeImplementationData: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _setInterestRateModel(
+            newInterestRateModel: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _setPendingAdmin(
+            newPendingAdmin: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _setProtocolSeizeShare(
+            newProtocolSeizeShareMantissa: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        _setReserveFactor(
+            newReserveFactorMantissa: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        accrualBlockTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        accrueInterest(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        admin(overrides?: CallOverrides): Promise<[string]>
+
+        allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        balanceOfUnderlying(
+            owner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        borrow(
+            borrowAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        borrowBalanceCurrent(
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        borrowBalanceStored(account: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        borrowIndex(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        borrowRatePerTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        comptroller(overrides?: CallOverrides): Promise<[string]>
+
+        decimals(overrides?: CallOverrides): Promise<[number]>
+
+        delegateToImplementation(
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        delegateToViewImplementation(data: BytesLike, overrides?: CallOverrides): Promise<[string]>
+
+        exchangeRateCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        exchangeRateStored(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        getAccountSnapshot(
+            account: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>
+
+        getCash(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        implementation(overrides?: CallOverrides): Promise<[string]>
+
+        interestRateModel(overrides?: CallOverrides): Promise<[string]>
+
+        isQiToken(overrides?: CallOverrides): Promise<[boolean]>
+
+        liquidateBorrow(
+            borrower: string,
+            repayAmount: BigNumberish,
+            qiTokenCollateral: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        mint(
+            mintAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        name(overrides?: CallOverrides): Promise<[string]>
+
+        pendingAdmin(overrides?: CallOverrides): Promise<[string]>
+
+        protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        redeem(
+            redeemTokens: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        redeemUnderlying(
+            redeemAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        repayBorrow(
+            repayAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        repayBorrowBehalf(
+            borrower: string,
+            repayAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        reserveFactorMantissa(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        seize(
+            liquidator: string,
+            borrower: string,
+            seizeTokens: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        supplyRatePerTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        sweepToken(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        symbol(overrides?: CallOverrides): Promise<[string]>
+
+        totalBorrows(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        totalBorrowsCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        totalReserves(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        transfer(
+            dst: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        transferFrom(
+            src: string,
+            dst: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        underlying(overrides?: CallOverrides): Promise<[string]>
+    }
+
+    _acceptAdmin(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     _addReserves(
-      addAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        addAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _reduceReserves(
-      reduceAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        reduceAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _setComptroller(
-      newComptroller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newComptroller: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _setImplementation(
-      implementation_: string,
-      allowResign: boolean,
-      becomeImplementationData: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        implementation_: string,
+        allowResign: boolean,
+        becomeImplementationData: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _setInterestRateModel(
-      newInterestRateModel: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newInterestRateModel: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _setPendingAdmin(
-      newPendingAdmin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newPendingAdmin: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _setProtocolSeizeShare(
-      newProtocolSeizeShareMantissa: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newProtocolSeizeShareMantissa: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     _setReserveFactor(
-      newReserveFactorMantissa: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newReserveFactorMantissa: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    accrualBlockTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+    accrualBlockTimestamp(overrides?: CallOverrides): Promise<BigNumber>
 
-    accrueInterest(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    accrueInterest(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    admin(overrides?: CallOverrides): Promise<[string]>;
+    admin(overrides?: CallOverrides): Promise<string>
 
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<BigNumber>
 
     approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        spender: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>
 
     balanceOfUnderlying(
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        owner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     borrow(
-      borrowAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        borrowAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     borrowBalanceCurrent(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        account: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    borrowBalanceStored(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    borrowBalanceStored(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    borrowIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
+    borrowIndex(overrides?: CallOverrides): Promise<BigNumber>
 
-    borrowRatePerTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+    borrowRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>
 
-    comptroller(overrides?: CallOverrides): Promise<[string]>;
+    comptroller(overrides?: CallOverrides): Promise<string>
 
-    decimals(overrides?: CallOverrides): Promise<[number]>;
+    decimals(overrides?: CallOverrides): Promise<number>
 
     delegateToImplementation(
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    delegateToViewImplementation(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    delegateToViewImplementation(data: BytesLike, overrides?: CallOverrides): Promise<string>
 
-    exchangeRateCurrent(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    exchangeRateCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    exchangeRateStored(overrides?: CallOverrides): Promise<[BigNumber]>;
+    exchangeRateStored(overrides?: CallOverrides): Promise<BigNumber>
 
     getAccountSnapshot(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>;
+        account: string,
+        overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>
 
-    getCash(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getCash(overrides?: CallOverrides): Promise<BigNumber>
 
-    implementation(overrides?: CallOverrides): Promise<[string]>;
+    implementation(overrides?: CallOverrides): Promise<string>
 
-    interestRateModel(overrides?: CallOverrides): Promise<[string]>;
+    interestRateModel(overrides?: CallOverrides): Promise<string>
 
-    isQiToken(overrides?: CallOverrides): Promise<[boolean]>;
+    isQiToken(overrides?: CallOverrides): Promise<boolean>
 
     liquidateBorrow(
-      borrower: string,
-      repayAmount: BigNumberish,
-      qiTokenCollateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        borrower: string,
+        repayAmount: BigNumberish,
+        qiTokenCollateral: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     mint(
-      mintAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        mintAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    name(overrides?: CallOverrides): Promise<string>
 
-    pendingAdmin(overrides?: CallOverrides): Promise<[string]>;
+    pendingAdmin(overrides?: CallOverrides): Promise<string>
 
-    protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<[BigNumber]>;
+    protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<BigNumber>
 
     redeem(
-      redeemTokens: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        redeemTokens: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     redeemUnderlying(
-      redeemAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        redeemAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     repayBorrow(
-      repayAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        repayAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     repayBorrowBehalf(
-      borrower: string,
-      repayAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        borrower: string,
+        repayAmount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    reserveFactorMantissa(overrides?: CallOverrides): Promise<[BigNumber]>;
+    reserveFactorMantissa(overrides?: CallOverrides): Promise<BigNumber>
 
     seize(
-      liquidator: string,
-      borrower: string,
-      seizeTokens: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        liquidator: string,
+        borrower: string,
+        seizeTokens: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    supplyRatePerTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+    supplyRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>
 
-    sweepToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    sweepToken(token: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
+    symbol(overrides?: CallOverrides): Promise<string>
 
-    totalBorrows(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalBorrows(overrides?: CallOverrides): Promise<BigNumber>
 
-    totalBorrowsCurrent(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    totalBorrowsCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    totalReserves(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalReserves(overrides?: CallOverrides): Promise<BigNumber>
 
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>
 
     transfer(
-      dst: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        dst: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferFrom(
-      src: string,
-      dst: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    underlying(overrides?: CallOverrides): Promise<[string]>;
-  };
-
-  _acceptAdmin(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _addReserves(
-    addAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _reduceReserves(
-    reduceAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _setComptroller(
-    newComptroller: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _setImplementation(
-    implementation_: string,
-    allowResign: boolean,
-    becomeImplementationData: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        src: string,
+        dst: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  _setInterestRateModel(
-    newInterestRateModel: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _setPendingAdmin(
-    newPendingAdmin: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _setProtocolSeizeShare(
-    newProtocolSeizeShareMantissa: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _setReserveFactor(
-    newReserveFactorMantissa: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    underlying(overrides?: CallOverrides): Promise<string>
 
-  accrualBlockTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+    callStatic: {
+        _acceptAdmin(overrides?: CallOverrides): Promise<BigNumber>
 
-  accrueInterest(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        _addReserves(addAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  admin(overrides?: CallOverrides): Promise<string>;
+        _reduceReserves(reduceAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  allowance(
-    owner: string,
-    spender: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        _setComptroller(newComptroller: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  approve(
-    spender: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+        _setImplementation(
+            implementation_: string,
+            allowResign: boolean,
+            becomeImplementationData: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-  balanceOfUnderlying(
-    owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  borrow(
-    borrowAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  borrowBalanceCurrent(
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        _setInterestRateModel(newInterestRateModel: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  borrowBalanceStored(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        _setPendingAdmin(newPendingAdmin: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  borrowIndex(overrides?: CallOverrides): Promise<BigNumber>;
+        _setProtocolSeizeShare(
+            newProtocolSeizeShareMantissa: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-  borrowRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+        _setReserveFactor(newReserveFactorMantissa: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  comptroller(overrides?: CallOverrides): Promise<string>;
+        accrualBlockTimestamp(overrides?: CallOverrides): Promise<BigNumber>
 
-  decimals(overrides?: CallOverrides): Promise<number>;
+        accrueInterest(overrides?: CallOverrides): Promise<BigNumber>
 
-  delegateToImplementation(
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        admin(overrides?: CallOverrides): Promise<string>
 
-  delegateToViewImplementation(
-    data: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>;
+        allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  exchangeRateCurrent(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        approve(spender: string, amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>
 
-  exchangeRateStored(overrides?: CallOverrides): Promise<BigNumber>;
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  getAccountSnapshot(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>;
+        balanceOfUnderlying(owner: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  getCash(overrides?: CallOverrides): Promise<BigNumber>;
+        borrow(borrowAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  implementation(overrides?: CallOverrides): Promise<string>;
+        borrowBalanceCurrent(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  interestRateModel(overrides?: CallOverrides): Promise<string>;
+        borrowBalanceStored(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  isQiToken(overrides?: CallOverrides): Promise<boolean>;
+        borrowIndex(overrides?: CallOverrides): Promise<BigNumber>
 
-  liquidateBorrow(
-    borrower: string,
-    repayAmount: BigNumberish,
-    qiTokenCollateral: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        borrowRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>
 
-  mint(
-    mintAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        comptroller(overrides?: CallOverrides): Promise<string>
 
-  name(overrides?: CallOverrides): Promise<string>;
+        decimals(overrides?: CallOverrides): Promise<number>
 
-  pendingAdmin(overrides?: CallOverrides): Promise<string>;
+        delegateToImplementation(data: BytesLike, overrides?: CallOverrides): Promise<string>
 
-  protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<BigNumber>;
+        delegateToViewImplementation(data: BytesLike, overrides?: CallOverrides): Promise<string>
 
-  redeem(
-    redeemTokens: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exchangeRateCurrent(overrides?: CallOverrides): Promise<BigNumber>
 
-  redeemUnderlying(
-    redeemAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        exchangeRateStored(overrides?: CallOverrides): Promise<BigNumber>
 
-  repayBorrow(
-    repayAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        getAccountSnapshot(
+            account: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>
 
-  repayBorrowBehalf(
-    borrower: string,
-    repayAmount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        getCash(overrides?: CallOverrides): Promise<BigNumber>
 
-  reserveFactorMantissa(overrides?: CallOverrides): Promise<BigNumber>;
+        implementation(overrides?: CallOverrides): Promise<string>
 
-  seize(
-    liquidator: string,
-    borrower: string,
-    seizeTokens: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        interestRateModel(overrides?: CallOverrides): Promise<string>
 
-  supplyRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+        isQiToken(overrides?: CallOverrides): Promise<boolean>
 
-  sweepToken(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        liquidateBorrow(
+            borrower: string,
+            repayAmount: BigNumberish,
+            qiTokenCollateral: string,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-  symbol(overrides?: CallOverrides): Promise<string>;
+        mint(mintAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  totalBorrows(overrides?: CallOverrides): Promise<BigNumber>;
+        name(overrides?: CallOverrides): Promise<string>
 
-  totalBorrowsCurrent(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        pendingAdmin(overrides?: CallOverrides): Promise<string>
 
-  totalReserves(overrides?: CallOverrides): Promise<BigNumber>;
+        protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<BigNumber>
 
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+        redeem(redeemTokens: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  transfer(
-    dst: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        redeemUnderlying(redeemAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        repayBorrow(repayAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        repayBorrowBehalf(borrower: string, repayAmount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        reserveFactorMantissa(overrides?: CallOverrides): Promise<BigNumber>
+
+        seize(
+            liquidator: string,
+            borrower: string,
+            seizeTokens: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
+        supplyRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>
+
+        sweepToken(token: string, overrides?: CallOverrides): Promise<void>
+
+        symbol(overrides?: CallOverrides): Promise<string>
+
+        totalBorrows(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalBorrowsCurrent(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalReserves(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+
+        transfer(dst: string, amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>
+
+        transferFrom(src: string, dst: string, amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>
+
+        underlying(overrides?: CallOverrides): Promise<string>
+    }
+
+    filters: {
+        'AccrueInterest(uint256,uint256,uint256,uint256)'(
+            cashPrior?: null,
+            interestAccumulated?: null,
+            borrowIndex?: null,
+            totalBorrows?: null
+        ): AccrueInterestEventFilter
+        AccrueInterest(
+            cashPrior?: null,
+            interestAccumulated?: null,
+            borrowIndex?: null,
+            totalBorrows?: null
+        ): AccrueInterestEventFilter
+
+        'Approval(address,address,uint256)'(
+            owner?: string | null,
+            spender?: string | null,
+            amount?: null
+        ): ApprovalEventFilter
+        Approval(owner?: string | null, spender?: string | null, amount?: null): ApprovalEventFilter
+
+        'Borrow(address,uint256,uint256,uint256)'(
+            borrower?: null,
+            borrowAmount?: null,
+            accountBorrows?: null,
+            totalBorrows?: null
+        ): BorrowEventFilter
+        Borrow(borrower?: null, borrowAmount?: null, accountBorrows?: null, totalBorrows?: null): BorrowEventFilter
+
+        'Failure(uint256,uint256,uint256)'(error?: null, info?: null, detail?: null): FailureEventFilter
+        Failure(error?: null, info?: null, detail?: null): FailureEventFilter
+
+        'LiquidateBorrow(address,address,uint256,address,uint256)'(
+            liquidator?: null,
+            borrower?: null,
+            repayAmount?: null,
+            qiTokenCollateral?: null,
+            seizeTokens?: null
+        ): LiquidateBorrowEventFilter
+        LiquidateBorrow(
+            liquidator?: null,
+            borrower?: null,
+            repayAmount?: null,
+            qiTokenCollateral?: null,
+            seizeTokens?: null
+        ): LiquidateBorrowEventFilter
+
+        'Mint(address,uint256,uint256)'(minter?: null, mintAmount?: null, mintTokens?: null): MintEventFilter
+        Mint(minter?: null, mintAmount?: null, mintTokens?: null): MintEventFilter
+
+        'NewAdmin(address,address)'(oldAdmin?: null, newAdmin?: null): NewAdminEventFilter
+        NewAdmin(oldAdmin?: null, newAdmin?: null): NewAdminEventFilter
+
+        'NewComptroller(address,address)'(oldComptroller?: null, newComptroller?: null): NewComptrollerEventFilter
+        NewComptroller(oldComptroller?: null, newComptroller?: null): NewComptrollerEventFilter
+
+        'NewImplementation(address,address)'(
+            oldImplementation?: null,
+            newImplementation?: null
+        ): NewImplementationEventFilter
+        NewImplementation(oldImplementation?: null, newImplementation?: null): NewImplementationEventFilter
+
+        'NewMarketInterestRateModel(address,address)'(
+            oldInterestRateModel?: null,
+            newInterestRateModel?: null
+        ): NewMarketInterestRateModelEventFilter
+        NewMarketInterestRateModel(
+            oldInterestRateModel?: null,
+            newInterestRateModel?: null
+        ): NewMarketInterestRateModelEventFilter
+
+        'NewPendingAdmin(address,address)'(oldPendingAdmin?: null, newPendingAdmin?: null): NewPendingAdminEventFilter
+        NewPendingAdmin(oldPendingAdmin?: null, newPendingAdmin?: null): NewPendingAdminEventFilter
+
+        'NewProtocolSeizeShare(uint256,uint256)'(
+            oldProtocolSeizeShareMantissa?: null,
+            newProtocolSeizeShareMantissa?: null
+        ): NewProtocolSeizeShareEventFilter
+        NewProtocolSeizeShare(
+            oldProtocolSeizeShareMantissa?: null,
+            newProtocolSeizeShareMantissa?: null
+        ): NewProtocolSeizeShareEventFilter
+
+        'NewReserveFactor(uint256,uint256)'(
+            oldReserveFactorMantissa?: null,
+            newReserveFactorMantissa?: null
+        ): NewReserveFactorEventFilter
+        NewReserveFactor(oldReserveFactorMantissa?: null, newReserveFactorMantissa?: null): NewReserveFactorEventFilter
+
+        'Redeem(address,uint256,uint256)'(redeemer?: null, redeemAmount?: null, redeemTokens?: null): RedeemEventFilter
+        Redeem(redeemer?: null, redeemAmount?: null, redeemTokens?: null): RedeemEventFilter
+
+        'RepayBorrow(address,address,uint256,uint256,uint256)'(
+            payer?: null,
+            borrower?: null,
+            repayAmount?: null,
+            accountBorrows?: null,
+            totalBorrows?: null
+        ): RepayBorrowEventFilter
+        RepayBorrow(
+            payer?: null,
+            borrower?: null,
+            repayAmount?: null,
+            accountBorrows?: null,
+            totalBorrows?: null
+        ): RepayBorrowEventFilter
+
+        'ReservesAdded(address,uint256,uint256)'(
+            benefactor?: null,
+            addAmount?: null,
+            newTotalReserves?: null
+        ): ReservesAddedEventFilter
+        ReservesAdded(benefactor?: null, addAmount?: null, newTotalReserves?: null): ReservesAddedEventFilter
+
+        'ReservesReduced(address,uint256,uint256)'(
+            admin?: null,
+            reduceAmount?: null,
+            newTotalReserves?: null
+        ): ReservesReducedEventFilter
+        ReservesReduced(admin?: null, reduceAmount?: null, newTotalReserves?: null): ReservesReducedEventFilter
+
+        'Transfer(address,address,uint256)'(
+            from?: string | null,
+            to?: string | null,
+            amount?: null
+        ): TransferEventFilter
+        Transfer(from?: string | null, to?: string | null, amount?: null): TransferEventFilter
+    }
+
+    estimateGas: {
+        _acceptAdmin(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        _addReserves(
+            addAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _reduceReserves(
+            reduceAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _setComptroller(
+            newComptroller: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _setImplementation(
+            implementation_: string,
+            allowResign: boolean,
+            becomeImplementationData: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _setInterestRateModel(
+            newInterestRateModel: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _setPendingAdmin(
+            newPendingAdmin: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _setProtocolSeizeShare(
+            newProtocolSeizeShareMantissa: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        _setReserveFactor(
+            newReserveFactorMantissa: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        accrualBlockTimestamp(overrides?: CallOverrides): Promise<BigNumber>
+
+        accrueInterest(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        admin(overrides?: CallOverrides): Promise<BigNumber>
+
+        allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        balanceOfUnderlying(
+            owner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-  transferFrom(
-    src: string,
-    dst: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        borrow(
+            borrowAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-  underlying(overrides?: CallOverrides): Promise<string>;
+        borrowBalanceCurrent(
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        borrowBalanceStored(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        borrowIndex(overrides?: CallOverrides): Promise<BigNumber>
+
+        borrowRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>
+
+        comptroller(overrides?: CallOverrides): Promise<BigNumber>
+
+        decimals(overrides?: CallOverrides): Promise<BigNumber>
 
-  callStatic: {
-    _acceptAdmin(overrides?: CallOverrides): Promise<BigNumber>;
+        delegateToImplementation(
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    _addReserves(
-      addAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        delegateToViewImplementation(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+        exchangeRateCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        exchangeRateStored(overrides?: CallOverrides): Promise<BigNumber>
+
+        getAccountSnapshot(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        getCash(overrides?: CallOverrides): Promise<BigNumber>
+
+        implementation(overrides?: CallOverrides): Promise<BigNumber>
+
+        interestRateModel(overrides?: CallOverrides): Promise<BigNumber>
+
+        isQiToken(overrides?: CallOverrides): Promise<BigNumber>
+
+        liquidateBorrow(
+            borrower: string,
+            repayAmount: BigNumberish,
+            qiTokenCollateral: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        mint(mintAmount: BigNumberish, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        name(overrides?: CallOverrides): Promise<BigNumber>
+
+        pendingAdmin(overrides?: CallOverrides): Promise<BigNumber>
+
+        protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<BigNumber>
+
+        redeem(
+            redeemTokens: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        redeemUnderlying(
+            redeemAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        repayBorrow(
+            repayAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        repayBorrowBehalf(
+            borrower: string,
+            repayAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        reserveFactorMantissa(overrides?: CallOverrides): Promise<BigNumber>
+
+        seize(
+            liquidator: string,
+            borrower: string,
+            seizeTokens: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        supplyRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>
+
+        sweepToken(token: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        symbol(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalBorrows(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalBorrowsCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        totalReserves(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>
 
-    _reduceReserves(
-      reduceAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        transfer(
+            dst: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    _setComptroller(
-      newComptroller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        transferFrom(
+            src: string,
+            dst: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    _setImplementation(
-      implementation_: string,
-      allowResign: boolean,
-      becomeImplementationData: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        underlying(overrides?: CallOverrides): Promise<BigNumber>
+    }
 
-    _setInterestRateModel(
-      newInterestRateModel: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    populateTransaction: {
+        _acceptAdmin(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
-    _setPendingAdmin(
-      newPendingAdmin: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        _addReserves(
+            addAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    _setProtocolSeizeShare(
-      newProtocolSeizeShareMantissa: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        _reduceReserves(
+            reduceAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    _setReserveFactor(
-      newReserveFactorMantissa: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        _setComptroller(
+            newComptroller: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    accrualBlockTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+        _setImplementation(
+            implementation_: string,
+            allowResign: boolean,
+            becomeImplementationData: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    accrueInterest(overrides?: CallOverrides): Promise<BigNumber>;
+        _setInterestRateModel(
+            newInterestRateModel: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    admin(overrides?: CallOverrides): Promise<string>;
+        _setPendingAdmin(
+            newPendingAdmin: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        _setProtocolSeizeShare(
+            newProtocolSeizeShareMantissa: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+        _setReserveFactor(
+            newReserveFactorMantissa: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+        accrualBlockTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    balanceOfUnderlying(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        accrueInterest(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
-    borrow(
-      borrowAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        admin(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    borrowBalanceCurrent(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    borrowBalanceStored(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        approve(
+            spender: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    borrowIndex(overrides?: CallOverrides): Promise<BigNumber>;
+        balanceOf(owner: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    borrowRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+        balanceOfUnderlying(
+            owner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    comptroller(overrides?: CallOverrides): Promise<string>;
+        borrow(
+            borrowAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    decimals(overrides?: CallOverrides): Promise<number>;
+        borrowBalanceCurrent(
+            account: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    delegateToImplementation(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        borrowBalanceStored(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    delegateToViewImplementation(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        borrowIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    exchangeRateCurrent(overrides?: CallOverrides): Promise<BigNumber>;
+        borrowRatePerTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    exchangeRateStored(overrides?: CallOverrides): Promise<BigNumber>;
+        comptroller(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    getAccountSnapshot(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber]>;
+        decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    getCash(overrides?: CallOverrides): Promise<BigNumber>;
+        delegateToImplementation(
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    implementation(overrides?: CallOverrides): Promise<string>;
+        delegateToViewImplementation(data: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    interestRateModel(overrides?: CallOverrides): Promise<string>;
+        exchangeRateCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
-    isQiToken(overrides?: CallOverrides): Promise<boolean>;
+        exchangeRateStored(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    liquidateBorrow(
-      borrower: string,
-      repayAmount: BigNumberish,
-      qiTokenCollateral: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getAccountSnapshot(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    mint(
-      mintAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getCash(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    name(overrides?: CallOverrides): Promise<string>;
+        implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    pendingAdmin(overrides?: CallOverrides): Promise<string>;
+        interestRateModel(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<BigNumber>;
+        isQiToken(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    redeem(
-      redeemTokens: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    redeemUnderlying(
-      redeemAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    repayBorrow(
-      repayAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    repayBorrowBehalf(
-      borrower: string,
-      repayAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    reserveFactorMantissa(overrides?: CallOverrides): Promise<BigNumber>;
-
-    seize(
-      liquidator: string,
-      borrower: string,
-      seizeTokens: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    supplyRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sweepToken(token: string, overrides?: CallOverrides): Promise<void>;
-
-    symbol(overrides?: CallOverrides): Promise<string>;
-
-    totalBorrows(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalBorrowsCurrent(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalReserves(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transfer(
-      dst: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    transferFrom(
-      src: string,
-      dst: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    underlying(overrides?: CallOverrides): Promise<string>;
-  };
-
-  filters: {
-    "AccrueInterest(uint256,uint256,uint256,uint256)"(
-      cashPrior?: null,
-      interestAccumulated?: null,
-      borrowIndex?: null,
-      totalBorrows?: null
-    ): AccrueInterestEventFilter;
-    AccrueInterest(
-      cashPrior?: null,
-      interestAccumulated?: null,
-      borrowIndex?: null,
-      totalBorrows?: null
-    ): AccrueInterestEventFilter;
-
-    "Approval(address,address,uint256)"(
-      owner?: string | null,
-      spender?: string | null,
-      amount?: null
-    ): ApprovalEventFilter;
-    Approval(
-      owner?: string | null,
-      spender?: string | null,
-      amount?: null
-    ): ApprovalEventFilter;
-
-    "Borrow(address,uint256,uint256,uint256)"(
-      borrower?: null,
-      borrowAmount?: null,
-      accountBorrows?: null,
-      totalBorrows?: null
-    ): BorrowEventFilter;
-    Borrow(
-      borrower?: null,
-      borrowAmount?: null,
-      accountBorrows?: null,
-      totalBorrows?: null
-    ): BorrowEventFilter;
-
-    "Failure(uint256,uint256,uint256)"(
-      error?: null,
-      info?: null,
-      detail?: null
-    ): FailureEventFilter;
-    Failure(error?: null, info?: null, detail?: null): FailureEventFilter;
-
-    "LiquidateBorrow(address,address,uint256,address,uint256)"(
-      liquidator?: null,
-      borrower?: null,
-      repayAmount?: null,
-      qiTokenCollateral?: null,
-      seizeTokens?: null
-    ): LiquidateBorrowEventFilter;
-    LiquidateBorrow(
-      liquidator?: null,
-      borrower?: null,
-      repayAmount?: null,
-      qiTokenCollateral?: null,
-      seizeTokens?: null
-    ): LiquidateBorrowEventFilter;
-
-    "Mint(address,uint256,uint256)"(
-      minter?: null,
-      mintAmount?: null,
-      mintTokens?: null
-    ): MintEventFilter;
-    Mint(minter?: null, mintAmount?: null, mintTokens?: null): MintEventFilter;
-
-    "NewAdmin(address,address)"(
-      oldAdmin?: null,
-      newAdmin?: null
-    ): NewAdminEventFilter;
-    NewAdmin(oldAdmin?: null, newAdmin?: null): NewAdminEventFilter;
-
-    "NewComptroller(address,address)"(
-      oldComptroller?: null,
-      newComptroller?: null
-    ): NewComptrollerEventFilter;
-    NewComptroller(
-      oldComptroller?: null,
-      newComptroller?: null
-    ): NewComptrollerEventFilter;
-
-    "NewImplementation(address,address)"(
-      oldImplementation?: null,
-      newImplementation?: null
-    ): NewImplementationEventFilter;
-    NewImplementation(
-      oldImplementation?: null,
-      newImplementation?: null
-    ): NewImplementationEventFilter;
-
-    "NewMarketInterestRateModel(address,address)"(
-      oldInterestRateModel?: null,
-      newInterestRateModel?: null
-    ): NewMarketInterestRateModelEventFilter;
-    NewMarketInterestRateModel(
-      oldInterestRateModel?: null,
-      newInterestRateModel?: null
-    ): NewMarketInterestRateModelEventFilter;
-
-    "NewPendingAdmin(address,address)"(
-      oldPendingAdmin?: null,
-      newPendingAdmin?: null
-    ): NewPendingAdminEventFilter;
-    NewPendingAdmin(
-      oldPendingAdmin?: null,
-      newPendingAdmin?: null
-    ): NewPendingAdminEventFilter;
-
-    "NewProtocolSeizeShare(uint256,uint256)"(
-      oldProtocolSeizeShareMantissa?: null,
-      newProtocolSeizeShareMantissa?: null
-    ): NewProtocolSeizeShareEventFilter;
-    NewProtocolSeizeShare(
-      oldProtocolSeizeShareMantissa?: null,
-      newProtocolSeizeShareMantissa?: null
-    ): NewProtocolSeizeShareEventFilter;
-
-    "NewReserveFactor(uint256,uint256)"(
-      oldReserveFactorMantissa?: null,
-      newReserveFactorMantissa?: null
-    ): NewReserveFactorEventFilter;
-    NewReserveFactor(
-      oldReserveFactorMantissa?: null,
-      newReserveFactorMantissa?: null
-    ): NewReserveFactorEventFilter;
-
-    "Redeem(address,uint256,uint256)"(
-      redeemer?: null,
-      redeemAmount?: null,
-      redeemTokens?: null
-    ): RedeemEventFilter;
-    Redeem(
-      redeemer?: null,
-      redeemAmount?: null,
-      redeemTokens?: null
-    ): RedeemEventFilter;
-
-    "RepayBorrow(address,address,uint256,uint256,uint256)"(
-      payer?: null,
-      borrower?: null,
-      repayAmount?: null,
-      accountBorrows?: null,
-      totalBorrows?: null
-    ): RepayBorrowEventFilter;
-    RepayBorrow(
-      payer?: null,
-      borrower?: null,
-      repayAmount?: null,
-      accountBorrows?: null,
-      totalBorrows?: null
-    ): RepayBorrowEventFilter;
-
-    "ReservesAdded(address,uint256,uint256)"(
-      benefactor?: null,
-      addAmount?: null,
-      newTotalReserves?: null
-    ): ReservesAddedEventFilter;
-    ReservesAdded(
-      benefactor?: null,
-      addAmount?: null,
-      newTotalReserves?: null
-    ): ReservesAddedEventFilter;
-
-    "ReservesReduced(address,uint256,uint256)"(
-      admin?: null,
-      reduceAmount?: null,
-      newTotalReserves?: null
-    ): ReservesReducedEventFilter;
-    ReservesReduced(
-      admin?: null,
-      reduceAmount?: null,
-      newTotalReserves?: null
-    ): ReservesReducedEventFilter;
-
-    "Transfer(address,address,uint256)"(
-      from?: string | null,
-      to?: string | null,
-      amount?: null
-    ): TransferEventFilter;
-    Transfer(
-      from?: string | null,
-      to?: string | null,
-      amount?: null
-    ): TransferEventFilter;
-  };
-
-  estimateGas: {
-    _acceptAdmin(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _addReserves(
-      addAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _reduceReserves(
-      reduceAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _setComptroller(
-      newComptroller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _setImplementation(
-      implementation_: string,
-      allowResign: boolean,
-      becomeImplementationData: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _setInterestRateModel(
-      newInterestRateModel: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _setPendingAdmin(
-      newPendingAdmin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _setProtocolSeizeShare(
-      newProtocolSeizeShareMantissa: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _setReserveFactor(
-      newReserveFactorMantissa: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    accrualBlockTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    accrueInterest(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    balanceOfUnderlying(
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    borrow(
-      borrowAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    borrowBalanceCurrent(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    borrowBalanceStored(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    borrowIndex(overrides?: CallOverrides): Promise<BigNumber>;
-
-    borrowRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    comptroller(overrides?: CallOverrides): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delegateToImplementation(
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    delegateToViewImplementation(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    exchangeRateCurrent(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    exchangeRateStored(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getAccountSnapshot(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCash(overrides?: CallOverrides): Promise<BigNumber>;
-
-    implementation(overrides?: CallOverrides): Promise<BigNumber>;
-
-    interestRateModel(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isQiToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquidateBorrow(
-      borrower: string,
-      repayAmount: BigNumberish,
-      qiTokenCollateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    mint(
-      mintAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pendingAdmin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<BigNumber>;
-
-    redeem(
-      redeemTokens: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    redeemUnderlying(
-      redeemAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    repayBorrow(
-      repayAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    repayBorrowBehalf(
-      borrower: string,
-      repayAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    reserveFactorMantissa(overrides?: CallOverrides): Promise<BigNumber>;
-
-    seize(
-      liquidator: string,
-      borrower: string,
-      seizeTokens: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    supplyRatePerTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sweepToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalBorrows(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalBorrowsCurrent(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    totalReserves(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transfer(
-      dst: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferFrom(
-      src: string,
-      dst: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    underlying(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    _acceptAdmin(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _addReserves(
-      addAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _reduceReserves(
-      reduceAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _setComptroller(
-      newComptroller: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _setImplementation(
-      implementation_: string,
-      allowResign: boolean,
-      becomeImplementationData: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _setInterestRateModel(
-      newInterestRateModel: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _setPendingAdmin(
-      newPendingAdmin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _setProtocolSeizeShare(
-      newProtocolSeizeShareMantissa: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _setReserveFactor(
-      newReserveFactorMantissa: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    accrualBlockTimestamp(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    accrueInterest(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    allowance(
-      owner: string,
-      spender: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    approve(
-      spender: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOfUnderlying(
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    borrow(
-      borrowAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    borrowBalanceCurrent(
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    borrowBalanceStored(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    borrowIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    borrowRatePerTimestamp(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    comptroller(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    delegateToImplementation(
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    delegateToViewImplementation(
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    exchangeRateCurrent(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    exchangeRateStored(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getAccountSnapshot(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    interestRateModel(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isQiToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    liquidateBorrow(
-      borrower: string,
-      repayAmount: BigNumberish,
-      qiTokenCollateral: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mint(
-      mintAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pendingAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    protocolSeizeShareMantissa(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    redeem(
-      redeemTokens: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    redeemUnderlying(
-      redeemAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    repayBorrow(
-      repayAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    repayBorrowBehalf(
-      borrower: string,
-      repayAmount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    reserveFactorMantissa(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    seize(
-      liquidator: string,
-      borrower: string,
-      seizeTokens: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    supplyRatePerTimestamp(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    sweepToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalBorrows(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalBorrowsCurrent(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    totalReserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transfer(
-      dst: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      src: string,
-      dst: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    underlying(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
+        liquidateBorrow(
+            borrower: string,
+            repayAmount: BigNumberish,
+            qiTokenCollateral: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        mint(
+            mintAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        name(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        pendingAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        protocolSeizeShareMantissa(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        redeem(
+            redeemTokens: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        redeemUnderlying(
+            redeemAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        repayBorrow(
+            repayAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        repayBorrowBehalf(
+            borrower: string,
+            repayAmount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        reserveFactorMantissa(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        seize(
+            liquidator: string,
+            borrower: string,
+            seizeTokens: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        supplyRatePerTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        sweepToken(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        totalBorrows(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        totalBorrowsCurrent(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        totalReserves(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        transfer(
+            dst: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferFrom(
+            src: string,
+            dst: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        underlying(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    }
 }

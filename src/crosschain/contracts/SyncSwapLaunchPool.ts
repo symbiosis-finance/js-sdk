@@ -2,1620 +2,1216 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PayableOverrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace ILaunchPool {
-  export type SnapshotStruct = { time: BigNumberish; amount: BigNumberish };
+    export type SnapshotStruct = { time: BigNumberish; amount: BigNumberish }
 
-  export type SnapshotStructOutput = [BigNumber, BigNumber] & {
-    time: BigNumber;
-    amount: BigNumber;
-  };
+    export type SnapshotStructOutput = [BigNumber, BigNumber] & {
+        time: BigNumber
+        amount: BigNumber
+    }
 
-  export type UserDataStruct = {
-    paymentAmount: BigNumberish;
-    saleAmount: BigNumberish;
-  };
+    export type UserDataStruct = {
+        paymentAmount: BigNumberish
+        saleAmount: BigNumberish
+    }
 
-  export type UserDataStructOutput = [BigNumber, BigNumber] & {
-    paymentAmount: BigNumber;
-    saleAmount: BigNumber;
-  };
+    export type UserDataStructOutput = [BigNumber, BigNumber] & {
+        paymentAmount: BigNumber
+        saleAmount: BigNumber
+    }
 }
 
 export interface SyncSwapLaunchPoolInterface extends utils.Interface {
-  contractName: "SyncSwapLaunchPool";
-  functions: {
-    "acceptOwnership()": FunctionFragment;
-    "claim(address)": FunctionFragment;
-    "claimEnabled()": FunctionFragment;
-    "contribute(uint256,address)": FunctionFragment;
-    "contributeWithPermit(uint256,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "contributeWithPermitAllowed(uint256,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "endTime()": FunctionFragment;
-    "isLaunchActive()": FunctionFragment;
-    "isLaunchEnded()": FunctionFragment;
-    "isUser(address)": FunctionFragment;
-    "lastSnapshotTime()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "paymentToken()": FunctionFragment;
-    "paymentTokenCap()": FunctionFragment;
-    "pendingOwner()": FunctionFragment;
-    "refund(address)": FunctionFragment;
-    "refundEnabled()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "saleAmount()": FunctionFragment;
-    "saleToken()": FunctionFragment;
-    "setClaimEnabled(bool)": FunctionFragment;
-    "setEndTime(uint256)": FunctionFragment;
-    "setEnded()": FunctionFragment;
-    "setLaunchEnded(bool)": FunctionFragment;
-    "setLaunchStarted(bool)": FunctionFragment;
-    "setLaunchTime(uint256,uint256)": FunctionFragment;
-    "setPaymentToken(address)": FunctionFragment;
-    "setPaymentTokenCap(uint256)": FunctionFragment;
-    "setRefundEnabled(bool)": FunctionFragment;
-    "setSaleAmount(uint256)": FunctionFragment;
-    "setSaleToken(address)": FunctionFragment;
-    "setStartTime(uint256)": FunctionFragment;
-    "setStarted()": FunctionFragment;
-    "setWithdrawEnabled(bool)": FunctionFragment;
-    "snapshotTimes(uint256)": FunctionFragment;
-    "snapshotTimesLength()": FunctionFragment;
-    "snapshots(uint256)": FunctionFragment;
-    "startTime()": FunctionFragment;
-    "totalPaymentAmount()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "userData(address)": FunctionFragment;
-    "users(uint256)": FunctionFragment;
-    "usersLength()": FunctionFragment;
-    "withdraw(uint256,address)": FunctionFragment;
-    "withdrawERC20(address,address,uint256)": FunctionFragment;
-    "withdrawETH(address,uint256)": FunctionFragment;
-    "withdrawEnabled()": FunctionFragment;
-  };
+    contractName: 'SyncSwapLaunchPool'
+    functions: {
+        'acceptOwnership()': FunctionFragment
+        'claim(address)': FunctionFragment
+        'claimEnabled()': FunctionFragment
+        'contribute(uint256,address)': FunctionFragment
+        'contributeWithPermit(uint256,address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment
+        'contributeWithPermitAllowed(uint256,address,uint256,uint256,uint8,bytes32,bytes32)': FunctionFragment
+        'endTime()': FunctionFragment
+        'isLaunchActive()': FunctionFragment
+        'isLaunchEnded()': FunctionFragment
+        'isUser(address)': FunctionFragment
+        'lastSnapshotTime()': FunctionFragment
+        'owner()': FunctionFragment
+        'paymentToken()': FunctionFragment
+        'paymentTokenCap()': FunctionFragment
+        'pendingOwner()': FunctionFragment
+        'refund(address)': FunctionFragment
+        'refundEnabled()': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'saleAmount()': FunctionFragment
+        'saleToken()': FunctionFragment
+        'setClaimEnabled(bool)': FunctionFragment
+        'setEndTime(uint256)': FunctionFragment
+        'setEnded()': FunctionFragment
+        'setLaunchEnded(bool)': FunctionFragment
+        'setLaunchStarted(bool)': FunctionFragment
+        'setLaunchTime(uint256,uint256)': FunctionFragment
+        'setPaymentToken(address)': FunctionFragment
+        'setPaymentTokenCap(uint256)': FunctionFragment
+        'setRefundEnabled(bool)': FunctionFragment
+        'setSaleAmount(uint256)': FunctionFragment
+        'setSaleToken(address)': FunctionFragment
+        'setStartTime(uint256)': FunctionFragment
+        'setStarted()': FunctionFragment
+        'setWithdrawEnabled(bool)': FunctionFragment
+        'snapshotTimes(uint256)': FunctionFragment
+        'snapshotTimesLength()': FunctionFragment
+        'snapshots(uint256)': FunctionFragment
+        'startTime()': FunctionFragment
+        'totalPaymentAmount()': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+        'userData(address)': FunctionFragment
+        'users(uint256)': FunctionFragment
+        'usersLength()': FunctionFragment
+        'withdraw(uint256,address)': FunctionFragment
+        'withdrawERC20(address,address,uint256)': FunctionFragment
+        'withdrawETH(address,uint256)': FunctionFragment
+        'withdrawEnabled()': FunctionFragment
+    }
 
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "claim", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "claimEnabled",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "contribute",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "contributeWithPermit",
-    values: [
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "contributeWithPermitAllowed",
-    values: [
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(functionFragment: "endTime", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isLaunchActive",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isLaunchEnded",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "isUser", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "lastSnapshotTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "paymentToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "paymentTokenCap",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pendingOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "refund", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "refundEnabled",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "saleAmount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "saleToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "setClaimEnabled",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setEndTime",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "setEnded", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "setLaunchEnded",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLaunchStarted",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLaunchTime",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPaymentToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPaymentTokenCap",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRefundEnabled",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSaleAmount",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSaleToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStartTime",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStarted",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setWithdrawEnabled",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "snapshotTimes",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "snapshotTimesLength",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "snapshots",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "startTime", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "totalPaymentAmount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "userData", values: [string]): string;
-  encodeFunctionData(functionFragment: "users", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "usersLength",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawERC20",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawETH",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawEnabled",
-    values?: undefined
-  ): string;
+    encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'claim', values: [string]): string
+    encodeFunctionData(functionFragment: 'claimEnabled', values?: undefined): string
+    encodeFunctionData(functionFragment: 'contribute', values: [BigNumberish, string]): string
+    encodeFunctionData(
+        functionFragment: 'contributeWithPermit',
+        values: [BigNumberish, string, BigNumberish, BigNumberish, BigNumberish, BytesLike, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'contributeWithPermitAllowed',
+        values: [BigNumberish, string, BigNumberish, BigNumberish, BigNumberish, BytesLike, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'endTime', values?: undefined): string
+    encodeFunctionData(functionFragment: 'isLaunchActive', values?: undefined): string
+    encodeFunctionData(functionFragment: 'isLaunchEnded', values?: undefined): string
+    encodeFunctionData(functionFragment: 'isUser', values: [string]): string
+    encodeFunctionData(functionFragment: 'lastSnapshotTime', values?: undefined): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'paymentToken', values?: undefined): string
+    encodeFunctionData(functionFragment: 'paymentTokenCap', values?: undefined): string
+    encodeFunctionData(functionFragment: 'pendingOwner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'refund', values: [string]): string
+    encodeFunctionData(functionFragment: 'refundEnabled', values?: undefined): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'saleAmount', values?: undefined): string
+    encodeFunctionData(functionFragment: 'saleToken', values?: undefined): string
+    encodeFunctionData(functionFragment: 'setClaimEnabled', values: [boolean]): string
+    encodeFunctionData(functionFragment: 'setEndTime', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setEnded', values?: undefined): string
+    encodeFunctionData(functionFragment: 'setLaunchEnded', values: [boolean]): string
+    encodeFunctionData(functionFragment: 'setLaunchStarted', values: [boolean]): string
+    encodeFunctionData(functionFragment: 'setLaunchTime', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setPaymentToken', values: [string]): string
+    encodeFunctionData(functionFragment: 'setPaymentTokenCap', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setRefundEnabled', values: [boolean]): string
+    encodeFunctionData(functionFragment: 'setSaleAmount', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setSaleToken', values: [string]): string
+    encodeFunctionData(functionFragment: 'setStartTime', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setStarted', values?: undefined): string
+    encodeFunctionData(functionFragment: 'setWithdrawEnabled', values: [boolean]): string
+    encodeFunctionData(functionFragment: 'snapshotTimes', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'snapshotTimesLength', values?: undefined): string
+    encodeFunctionData(functionFragment: 'snapshots', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'startTime', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalPaymentAmount', values?: undefined): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+    encodeFunctionData(functionFragment: 'userData', values: [string]): string
+    encodeFunctionData(functionFragment: 'users', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'usersLength', values?: undefined): string
+    encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, string]): string
+    encodeFunctionData(functionFragment: 'withdrawERC20', values: [string, string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'withdrawETH', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'withdrawEnabled', values?: undefined): string
 
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "claimEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "contribute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "contributeWithPermit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "contributeWithPermitAllowed",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "endTime", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isLaunchActive",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isLaunchEnded",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "isUser", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lastSnapshotTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentTokenCap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "pendingOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "refund", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "refundEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "saleAmount", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "saleToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setClaimEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setEndTime", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setEnded", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setLaunchEnded",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLaunchStarted",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLaunchTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPaymentToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPaymentTokenCap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setRefundEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSaleAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSaleToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStartTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setStarted", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setWithdrawEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "snapshotTimes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "snapshotTimesLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "snapshots", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalPaymentAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "userData", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "users", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "usersLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawERC20",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawEnabled",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'claim', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'claimEnabled', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'contribute', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'contributeWithPermit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'contributeWithPermitAllowed', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'endTime', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'isLaunchActive', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'isLaunchEnded', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'isUser', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lastSnapshotTime', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'paymentToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'paymentTokenCap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pendingOwner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'refund', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'refundEnabled', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'saleAmount', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'saleToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setClaimEnabled', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setEndTime', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setEnded', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setLaunchEnded', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setLaunchStarted', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setLaunchTime', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setPaymentToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setPaymentTokenCap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setRefundEnabled', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setSaleAmount', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setSaleToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setStartTime', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setStarted', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setWithdrawEnabled', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'snapshotTimes', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'snapshotTimesLength', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'snapshots', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'startTime', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalPaymentAmount', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'userData', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'users', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'usersLength', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'withdrawERC20', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'withdrawETH', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'withdrawEnabled', data: BytesLike): Result
 
-  events: {
-    "Claim(address,uint256,uint256,uint256,address)": EventFragment;
-    "Contribute(address,uint256,address)": EventFragment;
-    "OwnershipTransferStarted(address,address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Refund(address,uint256,address)": EventFragment;
-    "SetClaimEnabled(bool)": EventFragment;
-    "SetEndTime(uint256)": EventFragment;
-    "SetEnded(bool)": EventFragment;
-    "SetPaymentToken(address)": EventFragment;
-    "SetPaymentTokenCap(uint256)": EventFragment;
-    "SetRefundEnabled(bool)": EventFragment;
-    "SetSaleAmount(uint256)": EventFragment;
-    "SetSaleToken(address)": EventFragment;
-    "SetStartTime(uint256)": EventFragment;
-    "SetStarted(bool)": EventFragment;
-    "SetWithdrawEnabled(bool)": EventFragment;
-    "Withdraw(address,uint256,address)": EventFragment;
-  };
+    events: {
+        'Claim(address,uint256,uint256,uint256,address)': EventFragment
+        'Contribute(address,uint256,address)': EventFragment
+        'OwnershipTransferStarted(address,address)': EventFragment
+        'OwnershipTransferred(address,address)': EventFragment
+        'Refund(address,uint256,address)': EventFragment
+        'SetClaimEnabled(bool)': EventFragment
+        'SetEndTime(uint256)': EventFragment
+        'SetEnded(bool)': EventFragment
+        'SetPaymentToken(address)': EventFragment
+        'SetPaymentTokenCap(uint256)': EventFragment
+        'SetRefundEnabled(bool)': EventFragment
+        'SetSaleAmount(uint256)': EventFragment
+        'SetSaleToken(address)': EventFragment
+        'SetStartTime(uint256)': EventFragment
+        'SetStarted(bool)': EventFragment
+        'SetWithdrawEnabled(bool)': EventFragment
+        'Withdraw(address,uint256,address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Contribute"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Refund"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetClaimEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetEndTime"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetEnded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetPaymentToken"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetPaymentTokenCap"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetRefundEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetSaleAmount"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetSaleToken"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetStartTime"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetWithdrawEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'Claim'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Contribute'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferStarted'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Refund'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetClaimEnabled'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetEndTime'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetEnded'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetPaymentToken'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetPaymentTokenCap'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetRefundEnabled'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetSaleAmount'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetSaleToken'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetStartTime'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetStarted'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetWithdrawEnabled'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Withdraw'): EventFragment
 }
 
 export type ClaimEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber, string],
-  {
-    user: string;
-    userSaleAmount: BigNumber;
-    totalPaymentAmount: BigNumber;
-    userPaymentAmount: BigNumber;
-    to: string;
-  }
->;
+    [string, BigNumber, BigNumber, BigNumber, string],
+    {
+        user: string
+        userSaleAmount: BigNumber
+        totalPaymentAmount: BigNumber
+        userPaymentAmount: BigNumber
+        to: string
+    }
+>
 
-export type ClaimEventFilter = TypedEventFilter<ClaimEvent>;
+export type ClaimEventFilter = TypedEventFilter<ClaimEvent>
 
 export type ContributeEvent = TypedEvent<
-  [string, BigNumber, string],
-  { user: string; paymentTmount: BigNumber; to: string }
->;
+    [string, BigNumber, string],
+    { user: string; paymentTmount: BigNumber; to: string }
+>
 
-export type ContributeEventFilter = TypedEventFilter<ContributeEvent>;
+export type ContributeEventFilter = TypedEventFilter<ContributeEvent>
 
-export type OwnershipTransferStartedEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferStartedEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferStartedEventFilter =
-  TypedEventFilter<OwnershipTransferStartedEvent>;
+export type OwnershipTransferStartedEventFilter = TypedEventFilter<OwnershipTransferStartedEvent>
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
 export type RefundEvent = TypedEvent<
-  [string, BigNumber, string],
-  { user: string; paymentTmount: BigNumber; to: string }
->;
+    [string, BigNumber, string],
+    { user: string; paymentTmount: BigNumber; to: string }
+>
 
-export type RefundEventFilter = TypedEventFilter<RefundEvent>;
+export type RefundEventFilter = TypedEventFilter<RefundEvent>
 
-export type SetClaimEnabledEvent = TypedEvent<[boolean], { status: boolean }>;
+export type SetClaimEnabledEvent = TypedEvent<[boolean], { status: boolean }>
 
-export type SetClaimEnabledEventFilter = TypedEventFilter<SetClaimEnabledEvent>;
+export type SetClaimEnabledEventFilter = TypedEventFilter<SetClaimEnabledEvent>
 
-export type SetEndTimeEvent = TypedEvent<[BigNumber], { endTime: BigNumber }>;
+export type SetEndTimeEvent = TypedEvent<[BigNumber], { endTime: BigNumber }>
 
-export type SetEndTimeEventFilter = TypedEventFilter<SetEndTimeEvent>;
+export type SetEndTimeEventFilter = TypedEventFilter<SetEndTimeEvent>
 
-export type SetEndedEvent = TypedEvent<[boolean], { status: boolean }>;
+export type SetEndedEvent = TypedEvent<[boolean], { status: boolean }>
 
-export type SetEndedEventFilter = TypedEventFilter<SetEndedEvent>;
+export type SetEndedEventFilter = TypedEventFilter<SetEndedEvent>
 
-export type SetPaymentTokenEvent = TypedEvent<[string], { token: string }>;
+export type SetPaymentTokenEvent = TypedEvent<[string], { token: string }>
 
-export type SetPaymentTokenEventFilter = TypedEventFilter<SetPaymentTokenEvent>;
+export type SetPaymentTokenEventFilter = TypedEventFilter<SetPaymentTokenEvent>
 
-export type SetPaymentTokenCapEvent = TypedEvent<
-  [BigNumber],
-  { cap: BigNumber }
->;
+export type SetPaymentTokenCapEvent = TypedEvent<[BigNumber], { cap: BigNumber }>
 
-export type SetPaymentTokenCapEventFilter =
-  TypedEventFilter<SetPaymentTokenCapEvent>;
+export type SetPaymentTokenCapEventFilter = TypedEventFilter<SetPaymentTokenCapEvent>
 
-export type SetRefundEnabledEvent = TypedEvent<[boolean], { status: boolean }>;
+export type SetRefundEnabledEvent = TypedEvent<[boolean], { status: boolean }>
 
-export type SetRefundEnabledEventFilter =
-  TypedEventFilter<SetRefundEnabledEvent>;
+export type SetRefundEnabledEventFilter = TypedEventFilter<SetRefundEnabledEvent>
 
-export type SetSaleAmountEvent = TypedEvent<[BigNumber], { amount: BigNumber }>;
+export type SetSaleAmountEvent = TypedEvent<[BigNumber], { amount: BigNumber }>
 
-export type SetSaleAmountEventFilter = TypedEventFilter<SetSaleAmountEvent>;
+export type SetSaleAmountEventFilter = TypedEventFilter<SetSaleAmountEvent>
 
-export type SetSaleTokenEvent = TypedEvent<[string], { token: string }>;
+export type SetSaleTokenEvent = TypedEvent<[string], { token: string }>
 
-export type SetSaleTokenEventFilter = TypedEventFilter<SetSaleTokenEvent>;
+export type SetSaleTokenEventFilter = TypedEventFilter<SetSaleTokenEvent>
 
-export type SetStartTimeEvent = TypedEvent<
-  [BigNumber],
-  { startTime: BigNumber }
->;
+export type SetStartTimeEvent = TypedEvent<[BigNumber], { startTime: BigNumber }>
 
-export type SetStartTimeEventFilter = TypedEventFilter<SetStartTimeEvent>;
+export type SetStartTimeEventFilter = TypedEventFilter<SetStartTimeEvent>
 
-export type SetStartedEvent = TypedEvent<[boolean], { status: boolean }>;
+export type SetStartedEvent = TypedEvent<[boolean], { status: boolean }>
 
-export type SetStartedEventFilter = TypedEventFilter<SetStartedEvent>;
+export type SetStartedEventFilter = TypedEventFilter<SetStartedEvent>
 
-export type SetWithdrawEnabledEvent = TypedEvent<
-  [boolean],
-  { status: boolean }
->;
+export type SetWithdrawEnabledEvent = TypedEvent<[boolean], { status: boolean }>
 
-export type SetWithdrawEnabledEventFilter =
-  TypedEventFilter<SetWithdrawEnabledEvent>;
+export type SetWithdrawEnabledEventFilter = TypedEventFilter<SetWithdrawEnabledEvent>
 
 export type WithdrawEvent = TypedEvent<
-  [string, BigNumber, string],
-  { user: string; paymentTmount: BigNumber; to: string }
->;
+    [string, BigNumber, string],
+    { user: string; paymentTmount: BigNumber; to: string }
+>
 
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
+export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>
 
 export interface SyncSwapLaunchPool extends BaseContract {
-  contractName: "SyncSwapLaunchPool";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'SyncSwapLaunchPool'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: SyncSwapLaunchPoolInterface;
+    interface: SyncSwapLaunchPoolInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    functions: {
+        acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    claim(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        claim(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    claimEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+        claimEnabled(overrides?: CallOverrides): Promise<[boolean]>
+
+        contribute(
+            amount: BigNumberish,
+            to: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        contributeWithPermit(
+            amount: BigNumberish,
+            to: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        contributeWithPermitAllowed(
+            amount: BigNumberish,
+            to: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        endTime(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        isLaunchActive(overrides?: CallOverrides): Promise<[boolean]>
+
+        isLaunchEnded(overrides?: CallOverrides): Promise<[boolean]>
+
+        isUser(arg0: string, overrides?: CallOverrides): Promise<[boolean]>
+
+        lastSnapshotTime(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        owner(overrides?: CallOverrides): Promise<[string]>
+
+        paymentToken(overrides?: CallOverrides): Promise<[string]>
+
+        paymentTokenCap(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        pendingOwner(overrides?: CallOverrides): Promise<[string]>
+
+        refund(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        refundEnabled(overrides?: CallOverrides): Promise<[boolean]>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        saleAmount(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        saleToken(overrides?: CallOverrides): Promise<[string]>
+
+        setClaimEnabled(
+            _claimEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setEndTime(
+            _endTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setEnded(overrides?: CallOverrides): Promise<[boolean]>
+
+        setLaunchEnded(
+            _setEnded: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setLaunchStarted(
+            _setStarted: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setLaunchTime(
+            _startTime: BigNumberish,
+            _endTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setPaymentToken(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setPaymentTokenCap(
+            _paymentTokenCap: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setRefundEnabled(
+            _refundEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setSaleAmount(
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setSaleToken(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setStartTime(
+            _startTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setStarted(overrides?: CallOverrides): Promise<[boolean]>
+
+        setWithdrawEnabled(
+            _withdrawEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        snapshotTimes(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        snapshotTimesLength(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        snapshots(time: BigNumberish, overrides?: CallOverrides): Promise<[ILaunchPool.SnapshotStructOutput]>
+
+        startTime(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        totalPaymentAmount(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        userData(user: string, overrides?: CallOverrides): Promise<[ILaunchPool.UserDataStructOutput]>
+
+        users(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+
+        usersLength(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        withdraw(
+            amount: BigNumberish,
+            to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        withdrawERC20(
+            token: string,
+            to: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        withdrawETH(
+            to: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        withdrawEnabled(overrides?: CallOverrides): Promise<[boolean]>
+    }
+
+    acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+    claim(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+    claimEnabled(overrides?: CallOverrides): Promise<boolean>
 
     contribute(
-      amount: BigNumberish,
-      to: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        amount: BigNumberish,
+        to: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     contributeWithPermit(
-      amount: BigNumberish,
-      to: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        amount: BigNumberish,
+        to: string,
+        value: BigNumberish,
+        deadline: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     contributeWithPermitAllowed(
-      amount: BigNumberish,
-      to: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        amount: BigNumberish,
+        to: string,
+        nonce: BigNumberish,
+        expiry: BigNumberish,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    endTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+    endTime(overrides?: CallOverrides): Promise<BigNumber>
 
-    isLaunchActive(overrides?: CallOverrides): Promise<[boolean]>;
+    isLaunchActive(overrides?: CallOverrides): Promise<boolean>
 
-    isLaunchEnded(overrides?: CallOverrides): Promise<[boolean]>;
+    isLaunchEnded(overrides?: CallOverrides): Promise<boolean>
 
-    isUser(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+    isUser(arg0: string, overrides?: CallOverrides): Promise<boolean>
 
-    lastSnapshotTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+    lastSnapshotTime(overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    owner(overrides?: CallOverrides): Promise<string>
 
-    paymentToken(overrides?: CallOverrides): Promise<[string]>;
+    paymentToken(overrides?: CallOverrides): Promise<string>
 
-    paymentTokenCap(overrides?: CallOverrides): Promise<[BigNumber]>;
+    paymentTokenCap(overrides?: CallOverrides): Promise<BigNumber>
 
-    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
+    pendingOwner(overrides?: CallOverrides): Promise<string>
 
-    refund(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    refund(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    refundEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    refundEnabled(overrides?: CallOverrides): Promise<boolean>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    saleAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    saleAmount(overrides?: CallOverrides): Promise<BigNumber>
 
-    saleToken(overrides?: CallOverrides): Promise<[string]>;
+    saleToken(overrides?: CallOverrides): Promise<string>
 
     setClaimEnabled(
-      _claimEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _claimEnabled: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setEndTime(
-      _endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _endTime: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    setEnded(overrides?: CallOverrides): Promise<[boolean]>;
+    setEnded(overrides?: CallOverrides): Promise<boolean>
 
     setLaunchEnded(
-      _setEnded: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _setEnded: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setLaunchStarted(
-      _setStarted: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _setStarted: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setLaunchTime(
-      _startTime: BigNumberish,
-      _endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _startTime: BigNumberish,
+        _endTime: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setPaymentToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        token: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setPaymentTokenCap(
-      _paymentTokenCap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _paymentTokenCap: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setRefundEnabled(
-      _refundEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _refundEnabled: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setSaleAmount(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setSaleToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        token: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setStartTime(
-      _startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _startTime: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    setStarted(overrides?: CallOverrides): Promise<[boolean]>;
+    setStarted(overrides?: CallOverrides): Promise<boolean>
 
     setWithdrawEnabled(
-      _withdrawEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _withdrawEnabled: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    snapshotTimes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    snapshotTimes(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    snapshotTimesLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+    snapshotTimesLength(overrides?: CallOverrides): Promise<BigNumber>
 
-    snapshots(
-      time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[ILaunchPool.SnapshotStructOutput]>;
+    snapshots(time: BigNumberish, overrides?: CallOverrides): Promise<ILaunchPool.SnapshotStructOutput>
 
-    startTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+    startTime(overrides?: CallOverrides): Promise<BigNumber>
 
-    totalPaymentAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalPaymentAmount(overrides?: CallOverrides): Promise<BigNumber>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    userData(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<[ILaunchPool.UserDataStructOutput]>;
+    userData(user: string, overrides?: CallOverrides): Promise<ILaunchPool.UserDataStructOutput>
 
-    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-    usersLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+    usersLength(overrides?: CallOverrides): Promise<BigNumber>
 
     withdraw(
-      amount: BigNumberish,
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        amount: BigNumberish,
+        to: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     withdrawERC20(
-      token: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        token: string,
+        to: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     withdrawETH(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        to: string,
+        amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    withdrawEnabled(overrides?: CallOverrides): Promise<[boolean]>;
-  };
+    withdrawEnabled(overrides?: CallOverrides): Promise<boolean>
 
-  acceptOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    callStatic: {
+        acceptOwnership(overrides?: CallOverrides): Promise<void>
 
-  claim(
-    to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        claim(to: string, overrides?: CallOverrides): Promise<void>
 
-  claimEnabled(overrides?: CallOverrides): Promise<boolean>;
+        claimEnabled(overrides?: CallOverrides): Promise<boolean>
 
-  contribute(
-    amount: BigNumberish,
-    to: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        contribute(amount: BigNumberish, to: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  contributeWithPermit(
-    amount: BigNumberish,
-    to: string,
-    value: BigNumberish,
-    deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  contributeWithPermitAllowed(
-    amount: BigNumberish,
-    to: string,
-    nonce: BigNumberish,
-    expiry: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  endTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  isLaunchActive(overrides?: CallOverrides): Promise<boolean>;
-
-  isLaunchEnded(overrides?: CallOverrides): Promise<boolean>;
+        contributeWithPermit(
+            amount: BigNumberish,
+            to: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-  isUser(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
-  lastSnapshotTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  paymentToken(overrides?: CallOverrides): Promise<string>;
+        contributeWithPermitAllowed(
+            amount: BigNumberish,
+            to: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-  paymentTokenCap(overrides?: CallOverrides): Promise<BigNumber>;
+        endTime(overrides?: CallOverrides): Promise<BigNumber>
 
-  pendingOwner(overrides?: CallOverrides): Promise<string>;
+        isLaunchActive(overrides?: CallOverrides): Promise<boolean>
 
-  refund(
-    to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  refundEnabled(overrides?: CallOverrides): Promise<boolean>;
+        isLaunchEnded(overrides?: CallOverrides): Promise<boolean>
 
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        isUser(arg0: string, overrides?: CallOverrides): Promise<boolean>
 
-  saleAmount(overrides?: CallOverrides): Promise<BigNumber>;
+        lastSnapshotTime(overrides?: CallOverrides): Promise<BigNumber>
 
-  saleToken(overrides?: CallOverrides): Promise<string>;
+        owner(overrides?: CallOverrides): Promise<string>
 
-  setClaimEnabled(
-    _claimEnabled: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        paymentToken(overrides?: CallOverrides): Promise<string>
 
-  setEndTime(
-    _endTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setEnded(overrides?: CallOverrides): Promise<boolean>;
-
-  setLaunchEnded(
-    _setEnded: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        paymentTokenCap(overrides?: CallOverrides): Promise<BigNumber>
 
-  setLaunchStarted(
-    _setStarted: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setLaunchTime(
-    _startTime: BigNumberish,
-    _endTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setPaymentToken(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setPaymentTokenCap(
-    _paymentTokenCap: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setRefundEnabled(
-    _refundEnabled: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setSaleAmount(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setSaleToken(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setStartTime(
-    _startTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setStarted(overrides?: CallOverrides): Promise<boolean>;
-
-  setWithdrawEnabled(
-    _withdrawEnabled: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  snapshotTimes(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        pendingOwner(overrides?: CallOverrides): Promise<string>
 
-  snapshotTimesLength(overrides?: CallOverrides): Promise<BigNumber>;
+        refund(to: string, overrides?: CallOverrides): Promise<void>
 
-  snapshots(
-    time: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<ILaunchPool.SnapshotStructOutput>;
+        refundEnabled(overrides?: CallOverrides): Promise<boolean>
 
-  startTime(overrides?: CallOverrides): Promise<BigNumber>;
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
 
-  totalPaymentAmount(overrides?: CallOverrides): Promise<BigNumber>;
+        saleAmount(overrides?: CallOverrides): Promise<BigNumber>
 
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        saleToken(overrides?: CallOverrides): Promise<string>
 
-  userData(
-    user: string,
-    overrides?: CallOverrides
-  ): Promise<ILaunchPool.UserDataStructOutput>;
+        setClaimEnabled(_claimEnabled: boolean, overrides?: CallOverrides): Promise<void>
 
-  users(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+        setEndTime(_endTime: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-  usersLength(overrides?: CallOverrides): Promise<BigNumber>;
+        setEnded(overrides?: CallOverrides): Promise<boolean>
 
-  withdraw(
-    amount: BigNumberish,
-    to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        setLaunchEnded(_setEnded: boolean, overrides?: CallOverrides): Promise<void>
 
-  withdrawERC20(
-    token: string,
-    to: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        setLaunchStarted(_setStarted: boolean, overrides?: CallOverrides): Promise<void>
 
-  withdrawETH(
-    to: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        setLaunchTime(_startTime: BigNumberish, _endTime: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-  withdrawEnabled(overrides?: CallOverrides): Promise<boolean>;
+        setPaymentToken(token: string, overrides?: CallOverrides): Promise<void>
 
-  callStatic: {
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+        setPaymentTokenCap(_paymentTokenCap: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    claim(to: string, overrides?: CallOverrides): Promise<void>;
+        setRefundEnabled(_refundEnabled: boolean, overrides?: CallOverrides): Promise<void>
 
-    claimEnabled(overrides?: CallOverrides): Promise<boolean>;
+        setSaleAmount(amount: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    contribute(
-      amount: BigNumberish,
-      to: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        setSaleToken(token: string, overrides?: CallOverrides): Promise<void>
 
-    contributeWithPermit(
-      amount: BigNumberish,
-      to: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        setStartTime(_startTime: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    contributeWithPermitAllowed(
-      amount: BigNumberish,
-      to: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        setStarted(overrides?: CallOverrides): Promise<boolean>
 
-    endTime(overrides?: CallOverrides): Promise<BigNumber>;
+        setWithdrawEnabled(_withdrawEnabled: boolean, overrides?: CallOverrides): Promise<void>
 
-    isLaunchActive(overrides?: CallOverrides): Promise<boolean>;
+        snapshotTimes(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    isLaunchEnded(overrides?: CallOverrides): Promise<boolean>;
+        snapshotTimesLength(overrides?: CallOverrides): Promise<BigNumber>
 
-    isUser(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+        snapshots(time: BigNumberish, overrides?: CallOverrides): Promise<ILaunchPool.SnapshotStructOutput>
 
-    lastSnapshotTime(overrides?: CallOverrides): Promise<BigNumber>;
+        startTime(overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+        totalPaymentAmount(overrides?: CallOverrides): Promise<BigNumber>
 
-    paymentToken(overrides?: CallOverrides): Promise<string>;
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+
+        userData(user: string, overrides?: CallOverrides): Promise<ILaunchPool.UserDataStructOutput>
 
-    paymentTokenCap(overrides?: CallOverrides): Promise<BigNumber>;
+        users(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
+
+        usersLength(overrides?: CallOverrides): Promise<BigNumber>
 
-    pendingOwner(overrides?: CallOverrides): Promise<string>;
+        withdraw(amount: BigNumberish, to: string, overrides?: CallOverrides): Promise<void>
 
-    refund(to: string, overrides?: CallOverrides): Promise<void>;
+        withdrawERC20(token: string, to: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    refundEnabled(overrides?: CallOverrides): Promise<boolean>;
+        withdrawETH(to: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+        withdrawEnabled(overrides?: CallOverrides): Promise<boolean>
+    }
 
-    saleAmount(overrides?: CallOverrides): Promise<BigNumber>;
+    filters: {
+        'Claim(address,uint256,uint256,uint256,address)'(
+            user?: string | null,
+            userSaleAmount?: null,
+            totalPaymentAmount?: null,
+            userPaymentAmount?: null,
+            to?: string | null
+        ): ClaimEventFilter
+        Claim(
+            user?: string | null,
+            userSaleAmount?: null,
+            totalPaymentAmount?: null,
+            userPaymentAmount?: null,
+            to?: string | null
+        ): ClaimEventFilter
+
+        'Contribute(address,uint256,address)'(
+            user?: string | null,
+            paymentTmount?: null,
+            to?: string | null
+        ): ContributeEventFilter
+        Contribute(user?: string | null, paymentTmount?: null, to?: string | null): ContributeEventFilter
+
+        'OwnershipTransferStarted(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferStartedEventFilter
+        OwnershipTransferStarted(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferStartedEventFilter
 
-    saleToken(overrides?: CallOverrides): Promise<string>;
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
 
-    setClaimEnabled(
-      _claimEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        'Refund(address,uint256,address)'(
+            user?: string | null,
+            paymentTmount?: null,
+            to?: string | null
+        ): RefundEventFilter
+        Refund(user?: string | null, paymentTmount?: null, to?: string | null): RefundEventFilter
 
-    setEndTime(
-      _endTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        'SetClaimEnabled(bool)'(status?: null): SetClaimEnabledEventFilter
+        SetClaimEnabled(status?: null): SetClaimEnabledEventFilter
 
-    setEnded(overrides?: CallOverrides): Promise<boolean>;
+        'SetEndTime(uint256)'(endTime?: null): SetEndTimeEventFilter
+        SetEndTime(endTime?: null): SetEndTimeEventFilter
 
-    setLaunchEnded(
-      _setEnded: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        'SetEnded(bool)'(status?: null): SetEndedEventFilter
+        SetEnded(status?: null): SetEndedEventFilter
 
-    setLaunchStarted(
-      _setStarted: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        'SetPaymentToken(address)'(token?: string | null): SetPaymentTokenEventFilter
+        SetPaymentToken(token?: string | null): SetPaymentTokenEventFilter
 
-    setLaunchTime(
-      _startTime: BigNumberish,
-      _endTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPaymentToken(token: string, overrides?: CallOverrides): Promise<void>;
-
-    setPaymentTokenCap(
-      _paymentTokenCap: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRefundEnabled(
-      _refundEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSaleAmount(
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSaleToken(token: string, overrides?: CallOverrides): Promise<void>;
-
-    setStartTime(
-      _startTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setStarted(overrides?: CallOverrides): Promise<boolean>;
-
-    setWithdrawEnabled(
-      _withdrawEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    snapshotTimes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    snapshotTimesLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    snapshots(
-      time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<ILaunchPool.SnapshotStructOutput>;
-
-    startTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalPaymentAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    userData(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<ILaunchPool.UserDataStructOutput>;
-
-    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    usersLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdraw(
-      amount: BigNumberish,
-      to: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawERC20(
-      token: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawETH(
-      to: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawEnabled(overrides?: CallOverrides): Promise<boolean>;
-  };
-
-  filters: {
-    "Claim(address,uint256,uint256,uint256,address)"(
-      user?: string | null,
-      userSaleAmount?: null,
-      totalPaymentAmount?: null,
-      userPaymentAmount?: null,
-      to?: string | null
-    ): ClaimEventFilter;
-    Claim(
-      user?: string | null,
-      userSaleAmount?: null,
-      totalPaymentAmount?: null,
-      userPaymentAmount?: null,
-      to?: string | null
-    ): ClaimEventFilter;
-
-    "Contribute(address,uint256,address)"(
-      user?: string | null,
-      paymentTmount?: null,
-      to?: string | null
-    ): ContributeEventFilter;
-    Contribute(
-      user?: string | null,
-      paymentTmount?: null,
-      to?: string | null
-    ): ContributeEventFilter;
-
-    "OwnershipTransferStarted(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferStartedEventFilter;
-    OwnershipTransferStarted(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferStartedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
-    "Refund(address,uint256,address)"(
-      user?: string | null,
-      paymentTmount?: null,
-      to?: string | null
-    ): RefundEventFilter;
-    Refund(
-      user?: string | null,
-      paymentTmount?: null,
-      to?: string | null
-    ): RefundEventFilter;
-
-    "SetClaimEnabled(bool)"(status?: null): SetClaimEnabledEventFilter;
-    SetClaimEnabled(status?: null): SetClaimEnabledEventFilter;
-
-    "SetEndTime(uint256)"(endTime?: null): SetEndTimeEventFilter;
-    SetEndTime(endTime?: null): SetEndTimeEventFilter;
-
-    "SetEnded(bool)"(status?: null): SetEndedEventFilter;
-    SetEnded(status?: null): SetEndedEventFilter;
-
-    "SetPaymentToken(address)"(
-      token?: string | null
-    ): SetPaymentTokenEventFilter;
-    SetPaymentToken(token?: string | null): SetPaymentTokenEventFilter;
-
-    "SetPaymentTokenCap(uint256)"(cap?: null): SetPaymentTokenCapEventFilter;
-    SetPaymentTokenCap(cap?: null): SetPaymentTokenCapEventFilter;
-
-    "SetRefundEnabled(bool)"(status?: null): SetRefundEnabledEventFilter;
-    SetRefundEnabled(status?: null): SetRefundEnabledEventFilter;
-
-    "SetSaleAmount(uint256)"(amount?: null): SetSaleAmountEventFilter;
-    SetSaleAmount(amount?: null): SetSaleAmountEventFilter;
-
-    "SetSaleToken(address)"(token?: string | null): SetSaleTokenEventFilter;
-    SetSaleToken(token?: string | null): SetSaleTokenEventFilter;
-
-    "SetStartTime(uint256)"(startTime?: null): SetStartTimeEventFilter;
-    SetStartTime(startTime?: null): SetStartTimeEventFilter;
-
-    "SetStarted(bool)"(status?: null): SetStartedEventFilter;
-    SetStarted(status?: null): SetStartedEventFilter;
-
-    "SetWithdrawEnabled(bool)"(status?: null): SetWithdrawEnabledEventFilter;
-    SetWithdrawEnabled(status?: null): SetWithdrawEnabledEventFilter;
-
-    "Withdraw(address,uint256,address)"(
-      user?: string | null,
-      paymentTmount?: null,
-      to?: string | null
-    ): WithdrawEventFilter;
-    Withdraw(
-      user?: string | null,
-      paymentTmount?: null,
-      to?: string | null
-    ): WithdrawEventFilter;
-  };
-
-  estimateGas: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    claim(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    claimEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    contribute(
-      amount: BigNumberish,
-      to: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    contributeWithPermit(
-      amount: BigNumberish,
-      to: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    contributeWithPermitAllowed(
-      amount: BigNumberish,
-      to: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    endTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isLaunchActive(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isLaunchEnded(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isUser(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    lastSnapshotTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    paymentToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    paymentTokenCap(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    refund(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    refundEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    saleAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    saleToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setClaimEnabled(
-      _claimEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setEndTime(
-      _endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setEnded(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setLaunchEnded(
-      _setEnded: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setLaunchStarted(
-      _setStarted: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setLaunchTime(
-      _startTime: BigNumberish,
-      _endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setPaymentToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setPaymentTokenCap(
-      _paymentTokenCap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setRefundEnabled(
-      _refundEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setSaleAmount(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setSaleToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setStartTime(
-      _startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setStarted(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setWithdrawEnabled(
-      _withdrawEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    snapshotTimes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    snapshotTimesLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    snapshots(
-      time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    startTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalPaymentAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    userData(user: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    users(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    usersLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdraw(
-      amount: BigNumberish,
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    withdrawERC20(
-      token: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    withdrawETH(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    withdrawEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    claim(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    claimEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    contribute(
-      amount: BigNumberish,
-      to: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    contributeWithPermit(
-      amount: BigNumberish,
-      to: string,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    contributeWithPermitAllowed(
-      amount: BigNumberish,
-      to: string,
-      nonce: BigNumberish,
-      expiry: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    endTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isLaunchActive(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isLaunchEnded(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isUser(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    lastSnapshotTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    paymentToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    paymentTokenCap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    refund(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    refundEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    saleAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    saleToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setClaimEnabled(
-      _claimEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setEndTime(
-      _endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setEnded(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setLaunchEnded(
-      _setEnded: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLaunchStarted(
-      _setStarted: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLaunchTime(
-      _startTime: BigNumberish,
-      _endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPaymentToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPaymentTokenCap(
-      _paymentTokenCap: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRefundEnabled(
-      _refundEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setSaleAmount(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setSaleToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setStartTime(
-      _startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setStarted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setWithdrawEnabled(
-      _withdrawEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    snapshotTimes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    snapshotTimesLength(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    snapshots(
-      time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    startTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalPaymentAmount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    userData(
-      user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    users(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    usersLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    withdraw(
-      amount: BigNumberish,
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawERC20(
-      token: string,
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawETH(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
+        'SetPaymentTokenCap(uint256)'(cap?: null): SetPaymentTokenCapEventFilter
+        SetPaymentTokenCap(cap?: null): SetPaymentTokenCapEventFilter
+
+        'SetRefundEnabled(bool)'(status?: null): SetRefundEnabledEventFilter
+        SetRefundEnabled(status?: null): SetRefundEnabledEventFilter
+
+        'SetSaleAmount(uint256)'(amount?: null): SetSaleAmountEventFilter
+        SetSaleAmount(amount?: null): SetSaleAmountEventFilter
+
+        'SetSaleToken(address)'(token?: string | null): SetSaleTokenEventFilter
+        SetSaleToken(token?: string | null): SetSaleTokenEventFilter
+
+        'SetStartTime(uint256)'(startTime?: null): SetStartTimeEventFilter
+        SetStartTime(startTime?: null): SetStartTimeEventFilter
+
+        'SetStarted(bool)'(status?: null): SetStartedEventFilter
+        SetStarted(status?: null): SetStartedEventFilter
+
+        'SetWithdrawEnabled(bool)'(status?: null): SetWithdrawEnabledEventFilter
+        SetWithdrawEnabled(status?: null): SetWithdrawEnabledEventFilter
+
+        'Withdraw(address,uint256,address)'(
+            user?: string | null,
+            paymentTmount?: null,
+            to?: string | null
+        ): WithdrawEventFilter
+        Withdraw(user?: string | null, paymentTmount?: null, to?: string | null): WithdrawEventFilter
+    }
+
+    estimateGas: {
+        acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        claim(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        claimEnabled(overrides?: CallOverrides): Promise<BigNumber>
+
+        contribute(
+            amount: BigNumberish,
+            to: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        contributeWithPermit(
+            amount: BigNumberish,
+            to: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        contributeWithPermitAllowed(
+            amount: BigNumberish,
+            to: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        endTime(overrides?: CallOverrides): Promise<BigNumber>
+
+        isLaunchActive(overrides?: CallOverrides): Promise<BigNumber>
+
+        isLaunchEnded(overrides?: CallOverrides): Promise<BigNumber>
+
+        isUser(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        lastSnapshotTime(overrides?: CallOverrides): Promise<BigNumber>
+
+        owner(overrides?: CallOverrides): Promise<BigNumber>
+
+        paymentToken(overrides?: CallOverrides): Promise<BigNumber>
+
+        paymentTokenCap(overrides?: CallOverrides): Promise<BigNumber>
+
+        pendingOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+        refund(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        refundEnabled(overrides?: CallOverrides): Promise<BigNumber>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        saleAmount(overrides?: CallOverrides): Promise<BigNumber>
+
+        saleToken(overrides?: CallOverrides): Promise<BigNumber>
+
+        setClaimEnabled(
+            _claimEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setEndTime(
+            _endTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setEnded(overrides?: CallOverrides): Promise<BigNumber>
+
+        setLaunchEnded(
+            _setEnded: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setLaunchStarted(
+            _setStarted: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setLaunchTime(
+            _startTime: BigNumberish,
+            _endTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setPaymentToken(token: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        setPaymentTokenCap(
+            _paymentTokenCap: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setRefundEnabled(
+            _refundEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setSaleAmount(
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setSaleToken(token: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        setStartTime(
+            _startTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setStarted(overrides?: CallOverrides): Promise<BigNumber>
+
+        setWithdrawEnabled(
+            _withdrawEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        snapshotTimes(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        snapshotTimesLength(overrides?: CallOverrides): Promise<BigNumber>
+
+        snapshots(time: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        startTime(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalPaymentAmount(overrides?: CallOverrides): Promise<BigNumber>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        userData(user: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        users(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        usersLength(overrides?: CallOverrides): Promise<BigNumber>
+
+        withdraw(
+            amount: BigNumberish,
+            to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        withdrawERC20(
+            token: string,
+            to: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        withdrawETH(
+            to: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        withdrawEnabled(overrides?: CallOverrides): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        claim(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        claimEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        contribute(
+            amount: BigNumberish,
+            to: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        contributeWithPermit(
+            amount: BigNumberish,
+            to: string,
+            value: BigNumberish,
+            deadline: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        contributeWithPermitAllowed(
+            amount: BigNumberish,
+            to: string,
+            nonce: BigNumberish,
+            expiry: BigNumberish,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        endTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        isLaunchActive(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        isLaunchEnded(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        isUser(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        lastSnapshotTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        paymentToken(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        paymentTokenCap(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        refund(to: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        refundEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        saleAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        saleToken(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        setClaimEnabled(
+            _claimEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setEndTime(
+            _endTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setEnded(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        setLaunchEnded(
+            _setEnded: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setLaunchStarted(
+            _setStarted: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setLaunchTime(
+            _startTime: BigNumberish,
+            _endTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setPaymentToken(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setPaymentTokenCap(
+            _paymentTokenCap: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setRefundEnabled(
+            _refundEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setSaleAmount(
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setSaleToken(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setStartTime(
+            _startTime: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setStarted(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        setWithdrawEnabled(
+            _withdrawEnabled: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        snapshotTimes(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        snapshotTimesLength(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        snapshots(time: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        startTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        totalPaymentAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        userData(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        users(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        usersLength(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        withdraw(
+            amount: BigNumberish,
+            to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        withdrawERC20(
+            token: string,
+            to: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        withdrawETH(
+            to: string,
+            amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        withdrawEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    }
 }

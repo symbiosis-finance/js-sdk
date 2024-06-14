@@ -2,128 +2,117 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface MulticallRouterInterface extends utils.Interface {
-  contractName: "MulticallRouter";
-  functions: {
-    "multicall(uint256,bytes[],address[],address[],uint256[],address)": FunctionFragment;
-  };
+    contractName: 'MulticallRouter'
+    functions: {
+        'multicall(uint256,bytes[],address[],address[],uint256[],address)': FunctionFragment
+    }
 
-  encodeFunctionData(
-    functionFragment: "multicall",
-    values: [
-      BigNumberish,
-      BytesLike[],
-      string[],
-      string[],
-      BigNumberish[],
-      string
-    ]
-  ): string;
+    encodeFunctionData(
+        functionFragment: 'multicall',
+        values: [BigNumberish, BytesLike[], string[], string[], BigNumberish[], string]
+    ): string
 
-  decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'multicall', data: BytesLike): Result
 
-  events: {};
+    events: {}
 }
 
 export interface MulticallRouter extends BaseContract {
-  contractName: "MulticallRouter";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'MulticallRouter'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: MulticallRouterInterface;
+    interface: MulticallRouterInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
+    functions: {
+        multicall(
+            _amountIn: BigNumberish,
+            _calldata: BytesLike[],
+            _receiveSides: string[],
+            _path: string[],
+            _offset: BigNumberish[],
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
+
     multicall(
-      _amountIn: BigNumberish,
-      _calldata: BytesLike[],
-      _receiveSides: string[],
-      _path: string[],
-      _offset: BigNumberish[],
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        _amountIn: BigNumberish,
+        _calldata: BytesLike[],
+        _receiveSides: string[],
+        _path: string[],
+        _offset: BigNumberish[],
+        _to: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  multicall(
-    _amountIn: BigNumberish,
-    _calldata: BytesLike[],
-    _receiveSides: string[],
-    _path: string[],
-    _offset: BigNumberish[],
-    _to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    callStatic: {
+        multicall(
+            _amountIn: BigNumberish,
+            _calldata: BytesLike[],
+            _receiveSides: string[],
+            _path: string[],
+            _offset: BigNumberish[],
+            _to: string,
+            overrides?: CallOverrides
+        ): Promise<void>
+    }
 
-  callStatic: {
-    multicall(
-      _amountIn: BigNumberish,
-      _calldata: BytesLike[],
-      _receiveSides: string[],
-      _path: string[],
-      _offset: BigNumberish[],
-      _to: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+    filters: {}
 
-  filters: {};
+    estimateGas: {
+        multicall(
+            _amountIn: BigNumberish,
+            _calldata: BytesLike[],
+            _receiveSides: string[],
+            _path: string[],
+            _offset: BigNumberish[],
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
 
-  estimateGas: {
-    multicall(
-      _amountIn: BigNumberish,
-      _calldata: BytesLike[],
-      _receiveSides: string[],
-      _path: string[],
-      _offset: BigNumberish[],
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    multicall(
-      _amountIn: BigNumberish,
-      _calldata: BytesLike[],
-      _receiveSides: string[],
-      _path: string[],
-      _offset: BigNumberish[],
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+    populateTransaction: {
+        multicall(
+            _amountIn: BigNumberish,
+            _calldata: BytesLike[],
+            _receiveSides: string[],
+            _path: string[],
+            _offset: BigNumberish[],
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }

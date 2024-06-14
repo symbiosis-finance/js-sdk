@@ -366,12 +366,6 @@ export class Symbiosis {
         return OneInchOracle__factory.connect(address, signerOrProvider)
     }
 
-    public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
-    }
-
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
         return this.configCache.getRepresentation(token, chainId)
     }

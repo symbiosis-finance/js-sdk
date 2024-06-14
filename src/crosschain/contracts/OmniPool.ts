@@ -2,1683 +2,1340 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface OmniPoolInterface extends utils.Interface {
-  contractName: "OmniPool";
-  functions: {
-    "a()": FunctionFragment;
-    "addAssetOcto(address,uint256,uint8)": FunctionFragment;
-    "assetToIndex(address)": FunctionFragment;
-    "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "changeMaxSupply(uint256,uint256)": FunctionFragment;
-    "deposit(uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "devaddr()": FunctionFragment;
-    "feeTo()": FunctionFragment;
-    "globalEquilCovRatio()": FunctionFragment;
-    "indexToAsset(uint256)": FunctionFragment;
-    "initialize(uint256,uint256)": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "lastIndex()": FunctionFragment;
-    "lpDividendRatio()": FunctionFragment;
-    "lpFee()": FunctionFragment;
-    "mintFee(uint256)": FunctionFragment;
-    "mintFeeThreshold()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setA(uint256)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
-    "setAssetStatus(uint256,bool)": FunctionFragment;
-    "setFeeRatio(uint256)": FunctionFragment;
-    "setFeeTo(address)": FunctionFragment;
-    "setLPFee(uint256)": FunctionFragment;
-    "setMintFeeThreshold(uint256)": FunctionFragment;
-    "setVeSISAddress(address)": FunctionFragment;
-    "spreadAccumulatedError(uint256,uint256)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "swap(uint256,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
-    "uri(uint256)": FunctionFragment;
-    "veSIS()": FunctionFragment;
-    "withdraw(uint256,uint256,uint256,address,uint256)": FunctionFragment;
-  };
+    contractName: 'OmniPool'
+    functions: {
+        'a()': FunctionFragment
+        'addAssetOcto(address,uint256,uint8)': FunctionFragment
+        'assetToIndex(address)': FunctionFragment
+        'balanceOf(address,uint256)': FunctionFragment
+        'balanceOfBatch(address[],uint256[])': FunctionFragment
+        'changeMaxSupply(uint256,uint256)': FunctionFragment
+        'deposit(uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'devaddr()': FunctionFragment
+        'feeTo()': FunctionFragment
+        'globalEquilCovRatio()': FunctionFragment
+        'indexToAsset(uint256)': FunctionFragment
+        'initialize(uint256,uint256)': FunctionFragment
+        'isApprovedForAll(address,address)': FunctionFragment
+        'lastIndex()': FunctionFragment
+        'lpDividendRatio()': FunctionFragment
+        'lpFee()': FunctionFragment
+        'mintFee(uint256)': FunctionFragment
+        'mintFeeThreshold()': FunctionFragment
+        'owner()': FunctionFragment
+        'pause()': FunctionFragment
+        'paused()': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)': FunctionFragment
+        'safeTransferFrom(address,address,uint256,uint256,bytes)': FunctionFragment
+        'setA(uint256)': FunctionFragment
+        'setApprovalForAll(address,bool)': FunctionFragment
+        'setAssetStatus(uint256,bool)': FunctionFragment
+        'setFeeRatio(uint256)': FunctionFragment
+        'setFeeTo(address)': FunctionFragment
+        'setLPFee(uint256)': FunctionFragment
+        'setMintFeeThreshold(uint256)': FunctionFragment
+        'setVeSISAddress(address)': FunctionFragment
+        'spreadAccumulatedError(uint256,uint256)': FunctionFragment
+        'supportsInterface(bytes4)': FunctionFragment
+        'swap(uint256,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+        'unpause()': FunctionFragment
+        'uri(uint256)': FunctionFragment
+        'veSIS()': FunctionFragment
+        'withdraw(uint256,uint256,uint256,address,uint256)': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "a", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "addAssetOcto",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assetToIndex",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "balanceOfBatch",
-    values: [string[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeMaxSupply",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deposit",
-    values: [BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "devaddr", values?: undefined): string;
-  encodeFunctionData(functionFragment: "feeTo", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "globalEquilCovRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "indexToAsset",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isApprovedForAll",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(functionFragment: "lastIndex", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "lpDividendRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "lpFee", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "mintFee",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintFeeThreshold",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeBatchTransferFrom",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "safeTransferFrom",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "setA", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "setApprovalForAll",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAssetStatus",
-    values: [BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFeeRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "setFeeTo", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "setLPFee",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMintFeeThreshold",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setVeSISAddress",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "spreadAccumulatedError",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swap",
-    values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
-  encodeFunctionData(functionFragment: "veSIS", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
-  ): string;
+    encodeFunctionData(functionFragment: 'a', values?: undefined): string
+    encodeFunctionData(functionFragment: 'addAssetOcto', values: [string, BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'assetToIndex', values: [string]): string
+    encodeFunctionData(functionFragment: 'balanceOf', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'balanceOfBatch', values: [string[], BigNumberish[]]): string
+    encodeFunctionData(functionFragment: 'changeMaxSupply', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(
+        functionFragment: 'deposit',
+        values: [BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'devaddr', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeTo', values?: undefined): string
+    encodeFunctionData(functionFragment: 'globalEquilCovRatio', values?: undefined): string
+    encodeFunctionData(functionFragment: 'indexToAsset', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'initialize', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'isApprovedForAll', values: [string, string]): string
+    encodeFunctionData(functionFragment: 'lastIndex', values?: undefined): string
+    encodeFunctionData(functionFragment: 'lpDividendRatio', values?: undefined): string
+    encodeFunctionData(functionFragment: 'lpFee', values?: undefined): string
+    encodeFunctionData(functionFragment: 'mintFee', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'mintFeeThreshold', values?: undefined): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'pause', values?: undefined): string
+    encodeFunctionData(functionFragment: 'paused', values?: undefined): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'safeBatchTransferFrom',
+        values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'safeTransferFrom',
+        values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'setA', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setApprovalForAll', values: [string, boolean]): string
+    encodeFunctionData(functionFragment: 'setAssetStatus', values: [BigNumberish, boolean]): string
+    encodeFunctionData(functionFragment: 'setFeeRatio', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setFeeTo', values: [string]): string
+    encodeFunctionData(functionFragment: 'setLPFee', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setMintFeeThreshold', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setVeSISAddress', values: [string]): string
+    encodeFunctionData(functionFragment: 'spreadAccumulatedError', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string
+    encodeFunctionData(
+        functionFragment: 'swap',
+        values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+    encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
+    encodeFunctionData(functionFragment: 'uri', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'veSIS', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'withdraw',
+        values: [BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
 
-  decodeFunctionResult(functionFragment: "a", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addAssetOcto",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "assetToIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "balanceOfBatch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeMaxSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "devaddr", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "feeTo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "globalEquilCovRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "indexToAsset",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isApprovedForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "lastIndex", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lpDividendRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "lpFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "mintFeeThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeBatchTransferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "safeTransferFrom",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setA", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAssetStatus",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setFeeRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setFeeTo", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setLPFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setMintFeeThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setVeSISAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "spreadAccumulatedError",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "veSIS", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'a', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'addAssetOcto', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'assetToIndex', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'balanceOfBatch', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'changeMaxSupply', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'devaddr', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeTo', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'globalEquilCovRatio', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'indexToAsset', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'isApprovedForAll', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lastIndex', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lpDividendRatio', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lpFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'mintFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'mintFeeThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'safeBatchTransferFrom', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'safeTransferFrom', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setA', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setApprovalForAll', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setAssetStatus', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFeeRatio', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFeeTo', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setLPFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setMintFeeThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setVeSISAddress', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'spreadAccumulatedError', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'uri', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'veSIS', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result
 
-  events: {
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "AssetAdded(address)": EventFragment;
-    "AssetStatusChanged(address,bool)": EventFragment;
-    "Deposit(address,address,uint256,uint256,address)": EventFragment;
-    "FillPool(address,uint256)": EventFragment;
-    "Initialized(uint8)": EventFragment;
-    "NewA(uint256)": EventFragment;
-    "NewFee(uint256)": EventFragment;
-    "NewFeeTo(address)": EventFragment;
-    "NewLPFee(uint256)": EventFragment;
-    "NewMaxSupply(address,uint256)": EventFragment;
-    "NewMintFeeThreshold(uint256)": EventFragment;
-    "NewVeSIS(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "Swap(address,address,address,uint256,uint256,address)": EventFragment;
-    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
-    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
-    "URI(string,uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
-    "Withdraw(address,address,uint256,uint256,address)": EventFragment;
-  };
+    events: {
+        'ApprovalForAll(address,address,bool)': EventFragment
+        'AssetAdded(address)': EventFragment
+        'AssetStatusChanged(address,bool)': EventFragment
+        'Deposit(address,address,uint256,uint256,address)': EventFragment
+        'FillPool(address,uint256)': EventFragment
+        'Initialized(uint8)': EventFragment
+        'NewA(uint256)': EventFragment
+        'NewFee(uint256)': EventFragment
+        'NewFeeTo(address)': EventFragment
+        'NewLPFee(uint256)': EventFragment
+        'NewMaxSupply(address,uint256)': EventFragment
+        'NewMintFeeThreshold(uint256)': EventFragment
+        'NewVeSIS(address)': EventFragment
+        'OwnershipTransferred(address,address)': EventFragment
+        'Paused(address)': EventFragment
+        'Swap(address,address,address,uint256,uint256,address)': EventFragment
+        'TransferBatch(address,address,address,uint256[],uint256[])': EventFragment
+        'TransferSingle(address,address,address,uint256,uint256)': EventFragment
+        'URI(string,uint256)': EventFragment
+        'Unpaused(address)': EventFragment
+        'Withdraw(address,address,uint256,uint256,address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AssetAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AssetStatusChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FillPool"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewA"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewFee"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewFeeTo"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewLPFee"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewMaxSupply"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewMintFeeThreshold"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewVeSIS"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Swap"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'ApprovalForAll'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'AssetAdded'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'AssetStatusChanged'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Deposit'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'FillPool'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewA'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewFee'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewFeeTo'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewLPFee'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewMaxSupply'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewMintFeeThreshold'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewVeSIS'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Swap'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'TransferBatch'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'TransferSingle'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'URI'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Withdraw'): EventFragment
 }
 
 export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean],
-  { account: string; operator: string; approved: boolean }
->;
+    [string, string, boolean],
+    { account: string; operator: string; approved: boolean }
+>
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>
 
-export type AssetAddedEvent = TypedEvent<[string], { token: string }>;
+export type AssetAddedEvent = TypedEvent<[string], { token: string }>
 
-export type AssetAddedEventFilter = TypedEventFilter<AssetAddedEvent>;
+export type AssetAddedEventFilter = TypedEventFilter<AssetAddedEvent>
 
-export type AssetStatusChangedEvent = TypedEvent<
-  [string, boolean],
-  { token: string; status: boolean }
->;
+export type AssetStatusChangedEvent = TypedEvent<[string, boolean], { token: string; status: boolean }>
 
-export type AssetStatusChangedEventFilter =
-  TypedEventFilter<AssetStatusChangedEvent>;
+export type AssetStatusChangedEventFilter = TypedEventFilter<AssetStatusChangedEvent>
 
 export type DepositEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, string],
-  {
-    sender: string;
-    token: string;
-    amount: BigNumber;
-    liquidity: BigNumber;
-    to: string;
-  }
->;
+    [string, string, BigNumber, BigNumber, string],
+    {
+        sender: string
+        token: string
+        amount: BigNumber
+        liquidity: BigNumber
+        to: string
+    }
+>
 
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export type DepositEventFilter = TypedEventFilter<DepositEvent>
 
-export type FillPoolEvent = TypedEvent<
-  [string, BigNumber],
-  { token: string; amount: BigNumber }
->;
+export type FillPoolEvent = TypedEvent<[string, BigNumber], { token: string; amount: BigNumber }>
 
-export type FillPoolEventFilter = TypedEventFilter<FillPoolEvent>;
+export type FillPoolEventFilter = TypedEventFilter<FillPoolEvent>
 
-export type InitializedEvent = TypedEvent<[number], { version: number }>;
+export type InitializedEvent = TypedEvent<[number], { version: number }>
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>
 
-export type NewAEvent = TypedEvent<[BigNumber], { value: BigNumber }>;
+export type NewAEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
-export type NewAEventFilter = TypedEventFilter<NewAEvent>;
+export type NewAEventFilter = TypedEventFilter<NewAEvent>
 
-export type NewFeeEvent = TypedEvent<
-  [BigNumber],
-  { lpDividendRatio: BigNumber }
->;
+export type NewFeeEvent = TypedEvent<[BigNumber], { lpDividendRatio: BigNumber }>
 
-export type NewFeeEventFilter = TypedEventFilter<NewFeeEvent>;
+export type NewFeeEventFilter = TypedEventFilter<NewFeeEvent>
 
-export type NewFeeToEvent = TypedEvent<[string], { addr: string }>;
+export type NewFeeToEvent = TypedEvent<[string], { addr: string }>
 
-export type NewFeeToEventFilter = TypedEventFilter<NewFeeToEvent>;
+export type NewFeeToEventFilter = TypedEventFilter<NewFeeToEvent>
 
-export type NewLPFeeEvent = TypedEvent<[BigNumber], { value: BigNumber }>;
+export type NewLPFeeEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
-export type NewLPFeeEventFilter = TypedEventFilter<NewLPFeeEvent>;
+export type NewLPFeeEventFilter = TypedEventFilter<NewLPFeeEvent>
 
-export type NewMaxSupplyEvent = TypedEvent<
-  [string, BigNumber],
-  { token: string; newMaxSupply: BigNumber }
->;
+export type NewMaxSupplyEvent = TypedEvent<[string, BigNumber], { token: string; newMaxSupply: BigNumber }>
 
-export type NewMaxSupplyEventFilter = TypedEventFilter<NewMaxSupplyEvent>;
+export type NewMaxSupplyEventFilter = TypedEventFilter<NewMaxSupplyEvent>
 
-export type NewMintFeeThresholdEvent = TypedEvent<
-  [BigNumber],
-  { value: BigNumber }
->;
+export type NewMintFeeThresholdEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
-export type NewMintFeeThresholdEventFilter =
-  TypedEventFilter<NewMintFeeThresholdEvent>;
+export type NewMintFeeThresholdEventFilter = TypedEventFilter<NewMintFeeThresholdEvent>
 
-export type NewVeSISEvent = TypedEvent<[string], { newVeSIS: string }>;
+export type NewVeSISEvent = TypedEvent<[string], { newVeSIS: string }>
 
-export type NewVeSISEventFilter = TypedEventFilter<NewVeSISEvent>;
+export type NewVeSISEventFilter = TypedEventFilter<NewVeSISEvent>
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
-export type PausedEvent = TypedEvent<[string], { account: string }>;
+export type PausedEvent = TypedEvent<[string], { account: string }>
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
 export type SwapEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber, string],
-  {
-    sender: string;
-    fromToken: string;
-    toToken: string;
-    fromAmount: BigNumber;
-    toAmount: BigNumber;
-    to: string;
-  }
->;
+    [string, string, string, BigNumber, BigNumber, string],
+    {
+        sender: string
+        fromToken: string
+        toToken: string
+        fromAmount: BigNumber
+        toAmount: BigNumber
+        to: string
+    }
+>
 
-export type SwapEventFilter = TypedEventFilter<SwapEvent>;
+export type SwapEventFilter = TypedEventFilter<SwapEvent>
 
 export type TransferBatchEvent = TypedEvent<
-  [string, string, string, BigNumber[], BigNumber[]],
-  {
-    operator: string;
-    from: string;
-    to: string;
-    ids: BigNumber[];
-    values: BigNumber[];
-  }
->;
+    [string, string, string, BigNumber[], BigNumber[]],
+    {
+        operator: string
+        from: string
+        to: string
+        ids: BigNumber[]
+        values: BigNumber[]
+    }
+>
 
-export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
+export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>
 
 export type TransferSingleEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber],
-  {
-    operator: string;
-    from: string;
-    to: string;
-    id: BigNumber;
-    value: BigNumber;
-  }
->;
+    [string, string, string, BigNumber, BigNumber],
+    {
+        operator: string
+        from: string
+        to: string
+        id: BigNumber
+        value: BigNumber
+    }
+>
 
-export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
+export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>
 
-export type URIEvent = TypedEvent<
-  [string, BigNumber],
-  { value: string; id: BigNumber }
->;
+export type URIEvent = TypedEvent<[string, BigNumber], { value: string; id: BigNumber }>
 
-export type URIEventFilter = TypedEventFilter<URIEvent>;
+export type URIEventFilter = TypedEventFilter<URIEvent>
 
-export type UnpausedEvent = TypedEvent<[string], { account: string }>;
+export type UnpausedEvent = TypedEvent<[string], { account: string }>
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
 
 export type WithdrawEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, string],
-  {
-    sender: string;
-    token: string;
-    amount: BigNumber;
-    liquidity: BigNumber;
-    to: string;
-  }
->;
+    [string, string, BigNumber, BigNumber, string],
+    {
+        sender: string
+        token: string
+        amount: BigNumber
+        liquidity: BigNumber
+        to: string
+    }
+>
 
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
+export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>
 
 export interface OmniPool extends BaseContract {
-  contractName: "OmniPool";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'OmniPool'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: OmniPoolInterface;
+    interface: OmniPoolInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    a(overrides?: CallOverrides): Promise<[BigNumber]>;
+    functions: {
+        a(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    addAssetOcto(
-      _token: string,
-      _maxSupply: BigNumberish,
-      _decimals: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        addAssetOcto(
+            _token: string,
+            _maxSupply: BigNumberish,
+            _decimals: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    assetToIndex(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+        assetToIndex(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
+        balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<[BigNumber[]]>
 
-    changeMaxSupply(
-      _tokenID: BigNumberish,
-      _newMaxSupply: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        changeMaxSupply(
+            _tokenID: BigNumberish,
+            _newMaxSupply: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    deposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _minimumLiquidity: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        deposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            _minimumLiquidity: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    devaddr(overrides?: CallOverrides): Promise<[string]>;
+        devaddr(overrides?: CallOverrides): Promise<[string]>
 
-    feeTo(overrides?: CallOverrides): Promise<[string]>;
+        feeTo(overrides?: CallOverrides): Promise<[string]>
 
-    globalEquilCovRatio(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        equilCovRatio: BigNumber;
-        invariant: BigNumber;
-      }
-    >;
+        globalEquilCovRatio(overrides?: CallOverrides): Promise<
+            [BigNumber, BigNumber] & {
+                equilCovRatio: BigNumber
+                invariant: BigNumber
+            }
+        >
 
-    indexToAsset(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, number, string, boolean] & {
-        cash: BigNumber;
-        liability: BigNumber;
-        maxSupply: BigNumber;
-        totalSupply: BigNumber;
-        decimals: number;
-        token: string;
-        active: boolean;
-      }
-    >;
+        indexToAsset(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, number, string, boolean] & {
+                cash: BigNumber
+                liability: BigNumber
+                maxSupply: BigNumber
+                totalSupply: BigNumber
+                decimals: number
+                token: string
+                active: boolean
+            }
+        >
 
-    initialize(
-      _a: BigNumberish,
-      _lpFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        initialize(
+            _a: BigNumberish,
+            _lpFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+        isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<[boolean]>
 
-    lastIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
+        lastIndex(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    lpDividendRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
+        lpDividendRatio(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    lpFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+        lpFee(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    mintFee(
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        mintFee(
+            _id: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    mintFeeThreshold(overrides?: CallOverrides): Promise<[BigNumber]>;
+        mintFeeThreshold(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+        owner(overrides?: CallOverrides): Promise<[string]>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
+        paused(overrides?: CallOverrides): Promise<[boolean]>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        safeBatchTransferFrom(
+            from: string,
+            to: string,
+            ids: BigNumberish[],
+            amounts: BigNumberish[],
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        safeTransferFrom(
+            from: string,
+            to: string,
+            id: BigNumberish,
+            amount: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setA(
-      _newA: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setA(
+            _newA: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setAssetStatus(
-      _id: BigNumberish,
-      _active: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setAssetStatus(
+            _id: BigNumberish,
+            _active: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setFeeRatio(
-      _newLpDividendRatio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setFeeRatio(
+            _newLpDividendRatio: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setFeeTo(
-      _newFeeTo: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setFeeTo(
+            _newFeeTo: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setLPFee(
-      _newLpFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setLPFee(
+            _newLpFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setMintFeeThreshold(
-      _newMintFeeThreshold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setMintFeeThreshold(
+            _newMintFeeThreshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setVeSISAddress(
-      _newVeSIS: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setVeSISAddress(
+            _newVeSIS: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    spreadAccumulatedError(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        spreadAccumulatedError(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
 
-    swap(
-      _fromID: BigNumberish,
-      _toID: BigNumberish,
-      _fromAmount: BigNumberish,
-      _minToAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swap(
+            _fromID: BigNumberish,
+            _toID: BigNumberish,
+            _fromAmount: BigNumberish,
+            _minToAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+        uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>
 
-    veSIS(overrides?: CallOverrides): Promise<[string]>;
+        veSIS(overrides?: CallOverrides): Promise<[string]>
 
-    withdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      _minAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  a(overrides?: CallOverrides): Promise<BigNumber>;
-
-  addAssetOcto(
-    _token: string,
-    _maxSupply: BigNumberish,
-    _decimals: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  assetToIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  balanceOf(
-    account: string,
-    id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOfBatch(
-    accounts: string[],
-    ids: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  changeMaxSupply(
-    _tokenID: BigNumberish,
-    _newMaxSupply: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  deposit(
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    _minimumLiquidity: BigNumberish,
-    _to: string,
-    _deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  devaddr(overrides?: CallOverrides): Promise<string>;
-
-  feeTo(overrides?: CallOverrides): Promise<string>;
-
-  globalEquilCovRatio(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { equilCovRatio: BigNumber; invariant: BigNumber }
-  >;
-
-  indexToAsset(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, number, string, boolean] & {
-      cash: BigNumber;
-      liability: BigNumber;
-      maxSupply: BigNumber;
-      totalSupply: BigNumber;
-      decimals: number;
-      token: string;
-      active: boolean;
+        withdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            _minAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
     }
-  >;
 
-  initialize(
-    _a: BigNumberish,
-    _lpFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  isApprovedForAll(
-    account: string,
-    operator: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  lastIndex(overrides?: CallOverrides): Promise<BigNumber>;
-
-  lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  lpFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  mintFee(
-    _id: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  mintFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  safeBatchTransferFrom(
-    from: string,
-    to: string,
-    ids: BigNumberish[],
-    amounts: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  safeTransferFrom(
-    from: string,
-    to: string,
-    id: BigNumberish,
-    amount: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setA(
-    _newA: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setApprovalForAll(
-    operator: string,
-    approved: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setAssetStatus(
-    _id: BigNumberish,
-    _active: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setFeeRatio(
-    _newLpDividendRatio: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setFeeTo(
-    _newFeeTo: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setLPFee(
-    _newLpFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMintFeeThreshold(
-    _newMintFeeThreshold: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setVeSISAddress(
-    _newVeSIS: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  spreadAccumulatedError(
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  swap(
-    _fromID: BigNumberish,
-    _toID: BigNumberish,
-    _fromAmount: BigNumberish,
-    _minToAmount: BigNumberish,
-    _to: string,
-    _deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  veSIS(overrides?: CallOverrides): Promise<string>;
-
-  withdraw(
-    _id: BigNumberish,
-    _liquidity: BigNumberish,
-    _minAmount: BigNumberish,
-    _to: string,
-    _deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    a(overrides?: CallOverrides): Promise<BigNumber>;
+    a(overrides?: CallOverrides): Promise<BigNumber>
 
     addAssetOcto(
-      _token: string,
-      _maxSupply: BigNumberish,
-      _decimals: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _token: string,
+        _maxSupply: BigNumberish,
+        _decimals: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    assetToIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    assetToIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]>
 
     changeMaxSupply(
-      _tokenID: BigNumberish,
-      _newMaxSupply: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _tokenID: BigNumberish,
+        _newMaxSupply: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     deposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _minimumLiquidity: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { liquidity: BigNumber; fee: BigNumber }
-    >;
+        _id: BigNumberish,
+        _amount: BigNumberish,
+        _minimumLiquidity: BigNumberish,
+        _to: string,
+        _deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    devaddr(overrides?: CallOverrides): Promise<string>;
+    devaddr(overrides?: CallOverrides): Promise<string>
 
-    feeTo(overrides?: CallOverrides): Promise<string>;
+    feeTo(overrides?: CallOverrides): Promise<string>
 
     globalEquilCovRatio(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        equilCovRatio: BigNumber;
-        invariant: BigNumber;
-      }
-    >;
+        overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { equilCovRatio: BigNumber; invariant: BigNumber }>
 
     indexToAsset(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+        arg0: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, number, string, boolean] & {
-        cash: BigNumber;
-        liability: BigNumber;
-        maxSupply: BigNumber;
-        totalSupply: BigNumber;
-        decimals: number;
-        token: string;
-        active: boolean;
-      }
-    >;
+        [BigNumber, BigNumber, BigNumber, BigNumber, number, string, boolean] & {
+            cash: BigNumber
+            liability: BigNumber
+            maxSupply: BigNumber
+            totalSupply: BigNumber
+            decimals: number
+            token: string
+            active: boolean
+        }
+    >
 
     initialize(
-      _a: BigNumberish,
-      _lpFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _a: BigNumberish,
+        _lpFee: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<boolean>
 
-    lastIndex(overrides?: CallOverrides): Promise<BigNumber>;
+    lastIndex(overrides?: CallOverrides): Promise<BigNumber>
 
-    lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>;
+    lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>
 
-    lpFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mintFee(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    mintFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setA(_newA: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setAssetStatus(
-      _id: BigNumberish,
-      _active: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setFeeRatio(
-      _newLpDividendRatio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setFeeTo(_newFeeTo: string, overrides?: CallOverrides): Promise<void>;
-
-    setLPFee(_newLpFee: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    setMintFeeThreshold(
-      _newMintFeeThreshold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setVeSISAddress(
-      _newVeSIS: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    spreadAccumulatedError(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    swap(
-      _fromID: BigNumberish,
-      _toID: BigNumberish,
-      _fromAmount: BigNumberish,
-      _minToAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        actualToAmount: BigNumber;
-        lpFeeAmount: BigNumber;
-      }
-    >;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
-
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    veSIS(overrides?: CallOverrides): Promise<string>;
-
-    withdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      _minAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { amount: BigNumber; fee: BigNumber }>;
-  };
-
-  filters: {
-    "ApprovalForAll(address,address,bool)"(
-      account?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
-      account?: string | null,
-      operator?: string | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-
-    "AssetAdded(address)"(token?: string | null): AssetAddedEventFilter;
-    AssetAdded(token?: string | null): AssetAddedEventFilter;
-
-    "AssetStatusChanged(address,bool)"(
-      token?: string | null,
-      status?: boolean | null
-    ): AssetStatusChangedEventFilter;
-    AssetStatusChanged(
-      token?: string | null,
-      status?: boolean | null
-    ): AssetStatusChangedEventFilter;
-
-    "Deposit(address,address,uint256,uint256,address)"(
-      sender?: string | null,
-      token?: string | null,
-      amount?: null,
-      liquidity?: null,
-      to?: string | null
-    ): DepositEventFilter;
-    Deposit(
-      sender?: string | null,
-      token?: string | null,
-      amount?: null,
-      liquidity?: null,
-      to?: string | null
-    ): DepositEventFilter;
-
-    "FillPool(address,uint256)"(
-      token?: string | null,
-      amount?: null
-    ): FillPoolEventFilter;
-    FillPool(token?: string | null, amount?: null): FillPoolEventFilter;
-
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
-    "NewA(uint256)"(value?: null): NewAEventFilter;
-    NewA(value?: null): NewAEventFilter;
-
-    "NewFee(uint256)"(lpDividendRatio?: null): NewFeeEventFilter;
-    NewFee(lpDividendRatio?: null): NewFeeEventFilter;
-
-    "NewFeeTo(address)"(addr?: string | null): NewFeeToEventFilter;
-    NewFeeTo(addr?: string | null): NewFeeToEventFilter;
-
-    "NewLPFee(uint256)"(value?: null): NewLPFeeEventFilter;
-    NewLPFee(value?: null): NewLPFeeEventFilter;
-
-    "NewMaxSupply(address,uint256)"(
-      token?: string | null,
-      newMaxSupply?: BigNumberish | null
-    ): NewMaxSupplyEventFilter;
-    NewMaxSupply(
-      token?: string | null,
-      newMaxSupply?: BigNumberish | null
-    ): NewMaxSupplyEventFilter;
-
-    "NewMintFeeThreshold(uint256)"(
-      value?: null
-    ): NewMintFeeThresholdEventFilter;
-    NewMintFeeThreshold(value?: null): NewMintFeeThresholdEventFilter;
-
-    "NewVeSIS(address)"(newVeSIS?: string | null): NewVeSISEventFilter;
-    NewVeSIS(newVeSIS?: string | null): NewVeSISEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "Swap(address,address,address,uint256,uint256,address)"(
-      sender?: string | null,
-      fromToken?: null,
-      toToken?: null,
-      fromAmount?: null,
-      toAmount?: null,
-      to?: string | null
-    ): SwapEventFilter;
-    Swap(
-      sender?: string | null,
-      fromToken?: null,
-      toToken?: null,
-      fromAmount?: null,
-      toAmount?: null,
-      to?: string | null
-    ): SwapEventFilter;
-
-    "TransferBatch(address,address,address,uint256[],uint256[])"(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      ids?: null,
-      values?: null
-    ): TransferBatchEventFilter;
-    TransferBatch(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      ids?: null,
-      values?: null
-    ): TransferBatchEventFilter;
-
-    "TransferSingle(address,address,address,uint256,uint256)"(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      id?: null,
-      value?: null
-    ): TransferSingleEventFilter;
-    TransferSingle(
-      operator?: string | null,
-      from?: string | null,
-      to?: string | null,
-      id?: null,
-      value?: null
-    ): TransferSingleEventFilter;
-
-    "URI(string,uint256)"(
-      value?: null,
-      id?: BigNumberish | null
-    ): URIEventFilter;
-    URI(value?: null, id?: BigNumberish | null): URIEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
-    "Withdraw(address,address,uint256,uint256,address)"(
-      sender?: string | null,
-      token?: string | null,
-      amount?: null,
-      liquidity?: null,
-      to?: string | null
-    ): WithdrawEventFilter;
-    Withdraw(
-      sender?: string | null,
-      token?: string | null,
-      amount?: null,
-      liquidity?: null,
-      to?: string | null
-    ): WithdrawEventFilter;
-  };
-
-  estimateGas: {
-    a(overrides?: CallOverrides): Promise<BigNumber>;
-
-    addAssetOcto(
-      _token: string,
-      _maxSupply: BigNumberish,
-      _decimals: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    assetToIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    changeMaxSupply(
-      _tokenID: BigNumberish,
-      _newMaxSupply: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    deposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _minimumLiquidity: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    devaddr(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeTo(overrides?: CallOverrides): Promise<BigNumber>;
-
-    globalEquilCovRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    indexToAsset(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(
-      _a: BigNumberish,
-      _lpFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    lastIndex(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    lpFee(overrides?: CallOverrides): Promise<BigNumber>;
+    lpFee(overrides?: CallOverrides): Promise<BigNumber>
 
     mintFee(
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _id: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    mintFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>;
+    mintFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    owner(overrides?: CallOverrides): Promise<string>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
+    paused(overrides?: CallOverrides): Promise<boolean>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        from: string,
+        to: string,
+        ids: BigNumberish[],
+        amounts: BigNumberish[],
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        from: string,
+        to: string,
+        id: BigNumberish,
+        amount: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    setA(
-      _newA: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setA(_newA: BigNumberish, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        operator: string,
+        approved: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setAssetStatus(
-      _id: BigNumberish,
-      _active: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _id: BigNumberish,
+        _active: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setFeeRatio(
-      _newLpDividendRatio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _newLpDividendRatio: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setFeeTo(
-      _newFeeTo: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _newFeeTo: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setLPFee(
-      _newLpFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _newLpFee: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setMintFeeThreshold(
-      _newMintFeeThreshold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _newMintFeeThreshold: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setVeSISAddress(
-      _newVeSIS: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _newVeSIS: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     spreadAccumulatedError(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _id: BigNumberish,
+        _amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>
 
     swap(
-      _fromID: BigNumberish,
-      _toID: BigNumberish,
-      _fromAmount: BigNumberish,
-      _minToAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _fromID: BigNumberish,
+        _toID: BigNumberish,
+        _fromAmount: BigNumberish,
+        _minToAmount: BigNumberish,
+        _to: string,
+        _deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-    veSIS(overrides?: CallOverrides): Promise<BigNumber>;
+    veSIS(overrides?: CallOverrides): Promise<string>
 
     withdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      _minAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+        _id: BigNumberish,
+        _liquidity: BigNumberish,
+        _minAmount: BigNumberish,
+        _to: string,
+        _deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  populateTransaction: {
-    a(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    callStatic: {
+        a(overrides?: CallOverrides): Promise<BigNumber>
 
-    addAssetOcto(
-      _token: string,
-      _maxSupply: BigNumberish,
-      _decimals: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        addAssetOcto(
+            _token: string,
+            _maxSupply: BigNumberish,
+            _decimals: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    assetToIndex(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        assetToIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    changeMaxSupply(
-      _tokenID: BigNumberish,
-      _newMaxSupply: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        changeMaxSupply(_tokenID: BigNumberish, _newMaxSupply: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    deposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      _minimumLiquidity: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        deposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            _minimumLiquidity: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { liquidity: BigNumber; fee: BigNumber }>
 
-    devaddr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        devaddr(overrides?: CallOverrides): Promise<string>
 
-    feeTo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        feeTo(overrides?: CallOverrides): Promise<string>
 
-    globalEquilCovRatio(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        globalEquilCovRatio(overrides?: CallOverrides): Promise<
+            [BigNumber, BigNumber] & {
+                equilCovRatio: BigNumber
+                invariant: BigNumber
+            }
+        >
 
-    indexToAsset(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        indexToAsset(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, number, string, boolean] & {
+                cash: BigNumber
+                liability: BigNumber
+                maxSupply: BigNumber
+                totalSupply: BigNumber
+                decimals: number
+                token: string
+                active: boolean
+            }
+        >
 
-    initialize(
-      _a: BigNumberish,
-      _lpFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        initialize(_a: BigNumberish, _lpFee: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    isApprovedForAll(
-      account: string,
-      operator: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<boolean>
 
-    lastIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        lastIndex(overrides?: CallOverrides): Promise<BigNumber>
 
-    lpDividendRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>
 
-    lpFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        lpFee(overrides?: CallOverrides): Promise<BigNumber>
 
-    mintFee(
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        mintFee(_id: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    mintFeeThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        mintFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        owner(overrides?: CallOverrides): Promise<string>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        pause(overrides?: CallOverrides): Promise<void>
 
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        paused(overrides?: CallOverrides): Promise<boolean>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
 
-    safeBatchTransferFrom(
-      from: string,
-      to: string,
-      ids: BigNumberish[],
-      amounts: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        safeBatchTransferFrom(
+            from: string,
+            to: string,
+            ids: BigNumberish[],
+            amounts: BigNumberish[],
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    safeTransferFrom(
-      from: string,
-      to: string,
-      id: BigNumberish,
-      amount: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        safeTransferFrom(
+            from: string,
+            to: string,
+            id: BigNumberish,
+            amount: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    setA(
-      _newA: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setA(_newA: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setApprovalForAll(operator: string, approved: boolean, overrides?: CallOverrides): Promise<void>
 
-    setAssetStatus(
-      _id: BigNumberish,
-      _active: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setAssetStatus(_id: BigNumberish, _active: boolean, overrides?: CallOverrides): Promise<void>
 
-    setFeeRatio(
-      _newLpDividendRatio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setFeeRatio(_newLpDividendRatio: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    setFeeTo(
-      _newFeeTo: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setFeeTo(_newFeeTo: string, overrides?: CallOverrides): Promise<void>
 
-    setLPFee(
-      _newLpFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setLPFee(_newLpFee: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    setMintFeeThreshold(
-      _newMintFeeThreshold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setMintFeeThreshold(_newMintFeeThreshold: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    setVeSISAddress(
-      _newVeSIS: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setVeSISAddress(_newVeSIS: string, overrides?: CallOverrides): Promise<void>
 
-    spreadAccumulatedError(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        spreadAccumulatedError(_id: BigNumberish, _amount: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>
 
-    swap(
-      _fromID: BigNumberish,
-      _toID: BigNumberish,
-      _fromAmount: BigNumberish,
-      _minToAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swap(
+            _fromID: BigNumberish,
+            _toID: BigNumberish,
+            _fromAmount: BigNumberish,
+            _minToAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber] & {
+                actualToAmount: BigNumber
+                lpFeeAmount: BigNumber
+            }
+        >
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        unpause(overrides?: CallOverrides): Promise<void>
 
-    uri(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-    veSIS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        veSIS(overrides?: CallOverrides): Promise<string>
 
-    withdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      _minAmount: BigNumberish,
-      _to: string,
-      _deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        withdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            _minAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amount: BigNumber; fee: BigNumber }>
+    }
+
+    filters: {
+        'ApprovalForAll(address,address,bool)'(
+            account?: string | null,
+            operator?: string | null,
+            approved?: null
+        ): ApprovalForAllEventFilter
+        ApprovalForAll(account?: string | null, operator?: string | null, approved?: null): ApprovalForAllEventFilter
+
+        'AssetAdded(address)'(token?: string | null): AssetAddedEventFilter
+        AssetAdded(token?: string | null): AssetAddedEventFilter
+
+        'AssetStatusChanged(address,bool)'(
+            token?: string | null,
+            status?: boolean | null
+        ): AssetStatusChangedEventFilter
+        AssetStatusChanged(token?: string | null, status?: boolean | null): AssetStatusChangedEventFilter
+
+        'Deposit(address,address,uint256,uint256,address)'(
+            sender?: string | null,
+            token?: string | null,
+            amount?: null,
+            liquidity?: null,
+            to?: string | null
+        ): DepositEventFilter
+        Deposit(
+            sender?: string | null,
+            token?: string | null,
+            amount?: null,
+            liquidity?: null,
+            to?: string | null
+        ): DepositEventFilter
+
+        'FillPool(address,uint256)'(token?: string | null, amount?: null): FillPoolEventFilter
+        FillPool(token?: string | null, amount?: null): FillPoolEventFilter
+
+        'Initialized(uint8)'(version?: null): InitializedEventFilter
+        Initialized(version?: null): InitializedEventFilter
+
+        'NewA(uint256)'(value?: null): NewAEventFilter
+        NewA(value?: null): NewAEventFilter
+
+        'NewFee(uint256)'(lpDividendRatio?: null): NewFeeEventFilter
+        NewFee(lpDividendRatio?: null): NewFeeEventFilter
+
+        'NewFeeTo(address)'(addr?: string | null): NewFeeToEventFilter
+        NewFeeTo(addr?: string | null): NewFeeToEventFilter
+
+        'NewLPFee(uint256)'(value?: null): NewLPFeeEventFilter
+        NewLPFee(value?: null): NewLPFeeEventFilter
+
+        'NewMaxSupply(address,uint256)'(
+            token?: string | null,
+            newMaxSupply?: BigNumberish | null
+        ): NewMaxSupplyEventFilter
+        NewMaxSupply(token?: string | null, newMaxSupply?: BigNumberish | null): NewMaxSupplyEventFilter
+
+        'NewMintFeeThreshold(uint256)'(value?: null): NewMintFeeThresholdEventFilter
+        NewMintFeeThreshold(value?: null): NewMintFeeThresholdEventFilter
+
+        'NewVeSIS(address)'(newVeSIS?: string | null): NewVeSISEventFilter
+        NewVeSIS(newVeSIS?: string | null): NewVeSISEventFilter
+
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+
+        'Paused(address)'(account?: null): PausedEventFilter
+        Paused(account?: null): PausedEventFilter
+
+        'Swap(address,address,address,uint256,uint256,address)'(
+            sender?: string | null,
+            fromToken?: null,
+            toToken?: null,
+            fromAmount?: null,
+            toAmount?: null,
+            to?: string | null
+        ): SwapEventFilter
+        Swap(
+            sender?: string | null,
+            fromToken?: null,
+            toToken?: null,
+            fromAmount?: null,
+            toAmount?: null,
+            to?: string | null
+        ): SwapEventFilter
+
+        'TransferBatch(address,address,address,uint256[],uint256[])'(
+            operator?: string | null,
+            from?: string | null,
+            to?: string | null,
+            ids?: null,
+            values?: null
+        ): TransferBatchEventFilter
+        TransferBatch(
+            operator?: string | null,
+            from?: string | null,
+            to?: string | null,
+            ids?: null,
+            values?: null
+        ): TransferBatchEventFilter
+
+        'TransferSingle(address,address,address,uint256,uint256)'(
+            operator?: string | null,
+            from?: string | null,
+            to?: string | null,
+            id?: null,
+            value?: null
+        ): TransferSingleEventFilter
+        TransferSingle(
+            operator?: string | null,
+            from?: string | null,
+            to?: string | null,
+            id?: null,
+            value?: null
+        ): TransferSingleEventFilter
+
+        'URI(string,uint256)'(value?: null, id?: BigNumberish | null): URIEventFilter
+        URI(value?: null, id?: BigNumberish | null): URIEventFilter
+
+        'Unpaused(address)'(account?: null): UnpausedEventFilter
+        Unpaused(account?: null): UnpausedEventFilter
+
+        'Withdraw(address,address,uint256,uint256,address)'(
+            sender?: string | null,
+            token?: string | null,
+            amount?: null,
+            liquidity?: null,
+            to?: string | null
+        ): WithdrawEventFilter
+        Withdraw(
+            sender?: string | null,
+            token?: string | null,
+            amount?: null,
+            liquidity?: null,
+            to?: string | null
+        ): WithdrawEventFilter
+    }
+
+    estimateGas: {
+        a(overrides?: CallOverrides): Promise<BigNumber>
+
+        addAssetOcto(
+            _token: string,
+            _maxSupply: BigNumberish,
+            _decimals: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        assetToIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>
+
+        changeMaxSupply(
+            _tokenID: BigNumberish,
+            _newMaxSupply: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        deposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            _minimumLiquidity: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        devaddr(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeTo(overrides?: CallOverrides): Promise<BigNumber>
+
+        globalEquilCovRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+        indexToAsset(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        initialize(
+            _a: BigNumberish,
+            _lpFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        lastIndex(overrides?: CallOverrides): Promise<BigNumber>
+
+        lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+        lpFee(overrides?: CallOverrides): Promise<BigNumber>
+
+        mintFee(_id: BigNumberish, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        mintFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+        owner(overrides?: CallOverrides): Promise<BigNumber>
+
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        paused(overrides?: CallOverrides): Promise<BigNumber>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        safeBatchTransferFrom(
+            from: string,
+            to: string,
+            ids: BigNumberish[],
+            amounts: BigNumberish[],
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        safeTransferFrom(
+            from: string,
+            to: string,
+            id: BigNumberish,
+            amount: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setA(_newA: BigNumberish, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setAssetStatus(
+            _id: BigNumberish,
+            _active: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setFeeRatio(
+            _newLpDividendRatio: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setFeeTo(_newFeeTo: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        setLPFee(
+            _newLpFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setMintFeeThreshold(
+            _newMintFeeThreshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setVeSISAddress(
+            _newVeSIS: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        spreadAccumulatedError(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+        swap(
+            _fromID: BigNumberish,
+            _toID: BigNumberish,
+            _fromAmount: BigNumberish,
+            _minToAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        veSIS(overrides?: CallOverrides): Promise<BigNumber>
+
+        withdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            _minAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        a(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        addAssetOcto(
+            _token: string,
+            _maxSupply: BigNumberish,
+            _decimals: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        assetToIndex(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        balanceOfBatch(
+            accounts: string[],
+            ids: BigNumberish[],
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        changeMaxSupply(
+            _tokenID: BigNumberish,
+            _newMaxSupply: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        deposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            _minimumLiquidity: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        devaddr(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeTo(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        globalEquilCovRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        indexToAsset(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        initialize(
+            _a: BigNumberish,
+            _lpFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        lastIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        lpDividendRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        lpFee(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        mintFee(
+            _id: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        mintFeeThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        safeBatchTransferFrom(
+            from: string,
+            to: string,
+            ids: BigNumberish[],
+            amounts: BigNumberish[],
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        safeTransferFrom(
+            from: string,
+            to: string,
+            id: BigNumberish,
+            amount: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setA(
+            _newA: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setApprovalForAll(
+            operator: string,
+            approved: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setAssetStatus(
+            _id: BigNumberish,
+            _active: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setFeeRatio(
+            _newLpDividendRatio: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setFeeTo(
+            _newFeeTo: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setLPFee(
+            _newLpFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setMintFeeThreshold(
+            _newMintFeeThreshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setVeSISAddress(
+            _newVeSIS: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        spreadAccumulatedError(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        swap(
+            _fromID: BigNumberish,
+            _toID: BigNumberish,
+            _fromAmount: BigNumberish,
+            _minToAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        veSIS(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        withdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            _minAmount: BigNumberish,
+            _to: string,
+            _deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }

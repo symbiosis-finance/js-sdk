@@ -123,7 +123,7 @@ export const config: Config = {
             symBtc: '0x0000000000000000000000000000000000000000',
             portal: '0x78Bb4D4872121f162BB3e938F0d10cf34E999648',
             fabric: '0x0000000000000000000000000000000000000000',
-            multicallRouter: '0x8C9D3CE1D59d73259018dBC9859F6eBe62Bbf862'
+            multicallRouter: '0x8C9D3CE1D59d73259018dBC9859F6eBe62Bbf862',
         },
     ],
 }

@@ -2,465 +2,345 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface FabricInterface extends utils.Interface {
-  contractName: "Fabric";
-  functions: {
-    "createRepresentationByAdmin(address,uint256,string,string,uint8)": FunctionFragment;
-    "getRealRepresentation(address)": FunctionFragment;
-    "getSyntRepresentation(address,uint256)": FunctionFragment;
-    "getSyntRepresentationByKey(bytes32)": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "synthesis()": FunctionFragment;
-    "synthesize(address,uint256,address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unsynthesize(address,uint256,address)": FunctionFragment;
-  };
+    contractName: 'Fabric'
+    functions: {
+        'createRepresentationByAdmin(address,uint256,string,string,uint8)': FunctionFragment
+        'getRealRepresentation(address)': FunctionFragment
+        'getSyntRepresentation(address,uint256)': FunctionFragment
+        'getSyntRepresentationByKey(bytes32)': FunctionFragment
+        'initialize(address)': FunctionFragment
+        'owner()': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'synthesis()': FunctionFragment
+        'synthesize(address,uint256,address)': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+        'unsynthesize(address,uint256,address)': FunctionFragment
+    }
 
-  encodeFunctionData(
-    functionFragment: "createRepresentationByAdmin",
-    values: [string, BigNumberish, string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRealRepresentation",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSyntRepresentation",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSyntRepresentationByKey",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "synthesis", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "synthesize",
-    values: [string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unsynthesize",
-    values: [string, BigNumberish, string]
-  ): string;
+    encodeFunctionData(
+        functionFragment: 'createRepresentationByAdmin',
+        values: [string, BigNumberish, string, string, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'getRealRepresentation', values: [string]): string
+    encodeFunctionData(functionFragment: 'getSyntRepresentation', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'getSyntRepresentationByKey', values: [BytesLike]): string
+    encodeFunctionData(functionFragment: 'initialize', values: [string]): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'synthesis', values?: undefined): string
+    encodeFunctionData(functionFragment: 'synthesize', values: [string, BigNumberish, string]): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+    encodeFunctionData(functionFragment: 'unsynthesize', values: [string, BigNumberish, string]): string
 
-  decodeFunctionResult(
-    functionFragment: "createRepresentationByAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRealRepresentation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSyntRepresentation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSyntRepresentationByKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "synthesis", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "synthesize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unsynthesize",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'createRepresentationByAdmin', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getRealRepresentation', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getSyntRepresentation', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getSyntRepresentationByKey', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'synthesis', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'synthesize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'unsynthesize', data: BytesLike): Result
 
-  events: {
-    "OwnershipTransferred(address,address)": EventFragment;
-    "RepresentationCreated(address,uint256,address)": EventFragment;
-  };
+    events: {
+        'OwnershipTransferred(address,address)': EventFragment
+        'RepresentationCreated(address,uint256,address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RepresentationCreated"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'RepresentationCreated'): EventFragment
 }
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
 export type RepresentationCreatedEvent = TypedEvent<
-  [string, BigNumber, string],
-  { rToken: string; chainID: BigNumber; sToken: string }
->;
+    [string, BigNumber, string],
+    { rToken: string; chainID: BigNumber; sToken: string }
+>
 
-export type RepresentationCreatedEventFilter =
-  TypedEventFilter<RepresentationCreatedEvent>;
+export type RepresentationCreatedEventFilter = TypedEventFilter<RepresentationCreatedEvent>
 
 export interface Fabric extends BaseContract {
-  contractName: "Fabric";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'Fabric'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: FabricInterface;
+    interface: FabricInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
+    functions: {
+        createRepresentationByAdmin(
+            _rtoken: string,
+            _chainID: BigNumberish,
+            _stokenName: string,
+            _stokenSymbol: string,
+            _decimals: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<[string]>
+
+        getSyntRepresentation(
+            _realTokenAdr: string,
+            _chainID: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[string]>
+
+        getSyntRepresentationByKey(_key: BytesLike, overrides?: CallOverrides): Promise<[string]>
+
+        initialize(
+            _synthesis: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        owner(overrides?: CallOverrides): Promise<[string]>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        synthesis(overrides?: CallOverrides): Promise<[string]>
+
+        synthesize(
+            _to: string,
+            _amount: BigNumberish,
+            _stoken: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        unsynthesize(
+            _to: string,
+            _amount: BigNumberish,
+            _stoken: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
+
     createRepresentationByAdmin(
-      _rtoken: string,
-      _chainID: BigNumberish,
-      _stokenName: string,
-      _stokenSymbol: string,
-      _decimals: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _rtoken: string,
+        _chainID: BigNumberish,
+        _stokenName: string,
+        _stokenSymbol: string,
+        _decimals: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    getRealRepresentation(
-      _syntTokenAdr: string,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<string>
 
-    getSyntRepresentation(
-      _realTokenAdr: string,
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    getSyntRepresentation(_realTokenAdr: string, _chainID: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-    getSyntRepresentationByKey(
-      _key: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    getSyntRepresentationByKey(_key: BytesLike, overrides?: CallOverrides): Promise<string>
 
     initialize(
-      _synthesis: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _synthesis: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    owner(overrides?: CallOverrides): Promise<string>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    synthesis(overrides?: CallOverrides): Promise<[string]>;
+    synthesis(overrides?: CallOverrides): Promise<string>
 
     synthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _to: string,
+        _amount: BigNumberish,
+        _stoken: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     unsynthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        _to: string,
+        _amount: BigNumberish,
+        _stoken: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  createRepresentationByAdmin(
-    _rtoken: string,
-    _chainID: BigNumberish,
-    _stokenName: string,
-    _stokenSymbol: string,
-    _decimals: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    callStatic: {
+        createRepresentationByAdmin(
+            _rtoken: string,
+            _chainID: BigNumberish,
+            _stokenName: string,
+            _stokenSymbol: string,
+            _decimals: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-  getRealRepresentation(
-    _syntTokenAdr: string,
-    overrides?: CallOverrides
-  ): Promise<string>;
+        getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<string>
 
-  getSyntRepresentation(
-    _realTokenAdr: string,
-    _chainID: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+        getSyntRepresentation(_realTokenAdr: string, _chainID: BigNumberish, overrides?: CallOverrides): Promise<string>
 
-  getSyntRepresentationByKey(
-    _key: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>;
+        getSyntRepresentationByKey(_key: BytesLike, overrides?: CallOverrides): Promise<string>
 
-  initialize(
-    _synthesis: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        initialize(_synthesis: string, overrides?: CallOverrides): Promise<void>
 
-  owner(overrides?: CallOverrides): Promise<string>;
+        owner(overrides?: CallOverrides): Promise<string>
 
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
 
-  synthesis(overrides?: CallOverrides): Promise<string>;
+        synthesis(overrides?: CallOverrides): Promise<string>
 
-  synthesize(
-    _to: string,
-    _amount: BigNumberish,
-    _stoken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        synthesize(_to: string, _amount: BigNumberish, _stoken: string, overrides?: CallOverrides): Promise<void>
 
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
 
-  unsynthesize(
-    _to: string,
-    _amount: BigNumberish,
-    _stoken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        unsynthesize(_to: string, _amount: BigNumberish, _stoken: string, overrides?: CallOverrides): Promise<void>
+    }
 
-  callStatic: {
-    createRepresentationByAdmin(
-      _rtoken: string,
-      _chainID: BigNumberish,
-      _stokenName: string,
-      _stokenSymbol: string,
-      _decimals: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    filters: {
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
 
-    getRealRepresentation(
-      _syntTokenAdr: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        'RepresentationCreated(address,uint256,address)'(
+            rToken?: null,
+            chainID?: null,
+            sToken?: null
+        ): RepresentationCreatedEventFilter
+        RepresentationCreated(rToken?: null, chainID?: null, sToken?: null): RepresentationCreatedEventFilter
+    }
 
-    getSyntRepresentation(
-      _realTokenAdr: string,
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    estimateGas: {
+        createRepresentationByAdmin(
+            _rtoken: string,
+            _chainID: BigNumberish,
+            _stokenName: string,
+            _stokenSymbol: string,
+            _decimals: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    getSyntRepresentationByKey(
-      _key: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    initialize(_synthesis: string, overrides?: CallOverrides): Promise<void>;
+        getSyntRepresentation(
+            _realTokenAdr: string,
+            _chainID: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+        getSyntRepresentationByKey(_key: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+        initialize(_synthesis: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
-    synthesis(overrides?: CallOverrides): Promise<string>;
+        owner(overrides?: CallOverrides): Promise<BigNumber>
 
-    synthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        synthesis(overrides?: CallOverrides): Promise<BigNumber>
 
-    unsynthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+        synthesize(
+            _to: string,
+            _amount: BigNumberish,
+            _stoken: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-  filters: {
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    "RepresentationCreated(address,uint256,address)"(
-      rToken?: null,
-      chainID?: null,
-      sToken?: null
-    ): RepresentationCreatedEventFilter;
-    RepresentationCreated(
-      rToken?: null,
-      chainID?: null,
-      sToken?: null
-    ): RepresentationCreatedEventFilter;
-  };
+        unsynthesize(
+            _to: string,
+            _amount: BigNumberish,
+            _stoken: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
 
-  estimateGas: {
-    createRepresentationByAdmin(
-      _rtoken: string,
-      _chainID: BigNumberish,
-      _stokenName: string,
-      _stokenSymbol: string,
-      _decimals: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    populateTransaction: {
+        createRepresentationByAdmin(
+            _rtoken: string,
+            _chainID: BigNumberish,
+            _stokenName: string,
+            _stokenSymbol: string,
+            _decimals: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    getRealRepresentation(
-      _syntTokenAdr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getRealRepresentation(_syntTokenAdr: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    getSyntRepresentation(
-      _realTokenAdr: string,
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getSyntRepresentation(
+            _realTokenAdr: string,
+            _chainID: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
 
-    getSyntRepresentationByKey(
-      _key: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getSyntRepresentationByKey(_key: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    initialize(
-      _synthesis: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        initialize(
+            _synthesis: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
-    synthesis(overrides?: CallOverrides): Promise<BigNumber>;
+        synthesis(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    synthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        synthesize(
+            _to: string,
+            _amount: BigNumberish,
+            _stoken: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    unsynthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    createRepresentationByAdmin(
-      _rtoken: string,
-      _chainID: BigNumberish,
-      _stokenName: string,
-      _stokenSymbol: string,
-      _decimals: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getRealRepresentation(
-      _syntTokenAdr: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSyntRepresentation(
-      _realTokenAdr: string,
-      _chainID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSyntRepresentationByKey(
-      _key: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      _synthesis: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    synthesis(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    synthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unsynthesize(
-      _to: string,
-      _amount: BigNumberish,
-      _stoken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        unsynthesize(
+            _to: string,
+            _amount: BigNumberish,
+            _stoken: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }

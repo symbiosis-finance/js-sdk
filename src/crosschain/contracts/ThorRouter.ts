@@ -2,576 +2,522 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PayableOverrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace THORChainRouter {
-  export type CoinStruct = { asset: string; amount: BigNumberish };
+    export type CoinStruct = { asset: string; amount: BigNumberish }
 
-  export type CoinStructOutput = [string, BigNumber] & {
-    asset: string;
-    amount: BigNumber;
-  };
+    export type CoinStructOutput = [string, BigNumber] & {
+        asset: string
+        amount: BigNumber
+    }
 }
 
 export interface ThorRouterInterface extends utils.Interface {
-  contractName: "ThorRouter";
-  functions: {
-    "RUNE()": FunctionFragment;
-    "deposit(address,address,uint256,string)": FunctionFragment;
-    "depositWithExpiry(address,address,uint256,string,uint256)": FunctionFragment;
-    "returnVaultAssets(address,address,(address,uint256)[],string)": FunctionFragment;
-    "transferAllowance(address,address,address,uint256,string)": FunctionFragment;
-    "transferOut(address,address,uint256,string)": FunctionFragment;
-    "transferOutAndCall(address,address,address,uint256,string)": FunctionFragment;
-    "vaultAllowance(address,address)": FunctionFragment;
-  };
+    contractName: 'ThorRouter'
+    functions: {
+        'RUNE()': FunctionFragment
+        'deposit(address,address,uint256,string)': FunctionFragment
+        'depositWithExpiry(address,address,uint256,string,uint256)': FunctionFragment
+        'returnVaultAssets(address,address,(address,uint256)[],string)': FunctionFragment
+        'transferAllowance(address,address,address,uint256,string)': FunctionFragment
+        'transferOut(address,address,uint256,string)': FunctionFragment
+        'transferOutAndCall(address,address,address,uint256,string)': FunctionFragment
+        'vaultAllowance(address,address)': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "RUNE", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "deposit",
-    values: [string, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "depositWithExpiry",
-    values: [string, string, BigNumberish, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "returnVaultAssets",
-    values: [string, string, THORChainRouter.CoinStruct[], string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferAllowance",
-    values: [string, string, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOut",
-    values: [string, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOutAndCall",
-    values: [string, string, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "vaultAllowance",
-    values: [string, string]
-  ): string;
+    encodeFunctionData(functionFragment: 'RUNE', values?: undefined): string
+    encodeFunctionData(functionFragment: 'deposit', values: [string, string, BigNumberish, string]): string
+    encodeFunctionData(
+        functionFragment: 'depositWithExpiry',
+        values: [string, string, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'returnVaultAssets',
+        values: [string, string, THORChainRouter.CoinStruct[], string]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'transferAllowance',
+        values: [string, string, string, BigNumberish, string]
+    ): string
+    encodeFunctionData(functionFragment: 'transferOut', values: [string, string, BigNumberish, string]): string
+    encodeFunctionData(
+        functionFragment: 'transferOutAndCall',
+        values: [string, string, string, BigNumberish, string]
+    ): string
+    encodeFunctionData(functionFragment: 'vaultAllowance', values: [string, string]): string
 
-  decodeFunctionResult(functionFragment: "RUNE", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "depositWithExpiry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "returnVaultAssets",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOut",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOutAndCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "vaultAllowance",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'RUNE', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'depositWithExpiry', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'returnVaultAssets', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferAllowance', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOut', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOutAndCall', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'vaultAllowance', data: BytesLike): Result
 
-  events: {
-    "Deposit(address,address,uint256,string)": EventFragment;
-    "TransferAllowance(address,address,address,uint256,string)": EventFragment;
-    "TransferOut(address,address,address,uint256,string)": EventFragment;
-    "TransferOutAndCall(address,address,uint256,address,address,uint256,string)": EventFragment;
-    "VaultTransfer(address,address,tuple[],string)": EventFragment;
-  };
+    events: {
+        'Deposit(address,address,uint256,string)': EventFragment
+        'TransferAllowance(address,address,address,uint256,string)': EventFragment
+        'TransferOut(address,address,address,uint256,string)': EventFragment
+        'TransferOutAndCall(address,address,uint256,address,address,uint256,string)': EventFragment
+        'VaultTransfer(address,address,tuple[],string)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferAllowance"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferOut"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferOutAndCall"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "VaultTransfer"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'Deposit'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'TransferAllowance'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'TransferOut'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'TransferOutAndCall'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'VaultTransfer'): EventFragment
 }
 
 export type DepositEvent = TypedEvent<
-  [string, string, BigNumber, string],
-  { to: string; asset: string; amount: BigNumber; memo: string }
->;
+    [string, string, BigNumber, string],
+    { to: string; asset: string; amount: BigNumber; memo: string }
+>
 
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export type DepositEventFilter = TypedEventFilter<DepositEvent>
 
 export type TransferAllowanceEvent = TypedEvent<
-  [string, string, string, BigNumber, string],
-  {
-    oldVault: string;
-    newVault: string;
-    asset: string;
-    amount: BigNumber;
-    memo: string;
-  }
->;
+    [string, string, string, BigNumber, string],
+    {
+        oldVault: string
+        newVault: string
+        asset: string
+        amount: BigNumber
+        memo: string
+    }
+>
 
-export type TransferAllowanceEventFilter =
-  TypedEventFilter<TransferAllowanceEvent>;
+export type TransferAllowanceEventFilter = TypedEventFilter<TransferAllowanceEvent>
 
 export type TransferOutEvent = TypedEvent<
-  [string, string, string, BigNumber, string],
-  { vault: string; to: string; asset: string; amount: BigNumber; memo: string }
->;
+    [string, string, string, BigNumber, string],
+    { vault: string; to: string; asset: string; amount: BigNumber; memo: string }
+>
 
-export type TransferOutEventFilter = TypedEventFilter<TransferOutEvent>;
+export type TransferOutEventFilter = TypedEventFilter<TransferOutEvent>
 
 export type TransferOutAndCallEvent = TypedEvent<
-  [string, string, BigNumber, string, string, BigNumber, string],
-  {
-    vault: string;
-    target: string;
-    amount: BigNumber;
-    finalAsset: string;
-    to: string;
-    amountOutMin: BigNumber;
-    memo: string;
-  }
->;
+    [string, string, BigNumber, string, string, BigNumber, string],
+    {
+        vault: string
+        target: string
+        amount: BigNumber
+        finalAsset: string
+        to: string
+        amountOutMin: BigNumber
+        memo: string
+    }
+>
 
-export type TransferOutAndCallEventFilter =
-  TypedEventFilter<TransferOutAndCallEvent>;
+export type TransferOutAndCallEventFilter = TypedEventFilter<TransferOutAndCallEvent>
 
 export type VaultTransferEvent = TypedEvent<
-  [string, string, THORChainRouter.CoinStructOutput[], string],
-  {
-    oldVault: string;
-    newVault: string;
-    coins: THORChainRouter.CoinStructOutput[];
-    memo: string;
-  }
->;
+    [string, string, THORChainRouter.CoinStructOutput[], string],
+    {
+        oldVault: string
+        newVault: string
+        coins: THORChainRouter.CoinStructOutput[]
+        memo: string
+    }
+>
 
-export type VaultTransferEventFilter = TypedEventFilter<VaultTransferEvent>;
+export type VaultTransferEventFilter = TypedEventFilter<VaultTransferEvent>
 
 export interface ThorRouter extends BaseContract {
-  contractName: "ThorRouter";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'ThorRouter'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: ThorRouterInterface;
+    interface: ThorRouterInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    RUNE(overrides?: CallOverrides): Promise<[string]>;
+    functions: {
+        RUNE(overrides?: CallOverrides): Promise<[string]>
 
-    deposit(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        deposit(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    depositWithExpiry(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      expiration: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        depositWithExpiry(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            expiration: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    returnVaultAssets(
-      router: string,
-      asgard: string,
-      coins: THORChainRouter.CoinStruct[],
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        returnVaultAssets(
+            router: string,
+            asgard: string,
+            coins: THORChainRouter.CoinStruct[],
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    transferAllowance(
-      router: string,
-      newVault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferAllowance(
+            router: string,
+            newVault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    transferOut(
-      to: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferOut(
+            to: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    transferOutAndCall(
-      aggregator: string,
-      finalToken: string,
-      to: string,
-      amountOutMin: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferOutAndCall(
+            aggregator: string,
+            finalToken: string,
+            to: string,
+            amountOutMin: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    vaultAllowance(
-      vault: string,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount: BigNumber }>;
-  };
+        vaultAllowance(
+            vault: string,
+            token: string,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { amount: BigNumber }>
+    }
 
-  RUNE(overrides?: CallOverrides): Promise<string>;
-
-  deposit(
-    vault: string,
-    asset: string,
-    amount: BigNumberish,
-    memo: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  depositWithExpiry(
-    vault: string,
-    asset: string,
-    amount: BigNumberish,
-    memo: string,
-    expiration: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  returnVaultAssets(
-    router: string,
-    asgard: string,
-    coins: THORChainRouter.CoinStruct[],
-    memo: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferAllowance(
-    router: string,
-    newVault: string,
-    asset: string,
-    amount: BigNumberish,
-    memo: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOut(
-    to: string,
-    asset: string,
-    amount: BigNumberish,
-    memo: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOutAndCall(
-    aggregator: string,
-    finalToken: string,
-    to: string,
-    amountOutMin: BigNumberish,
-    memo: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  vaultAllowance(
-    vault: string,
-    token: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  callStatic: {
-    RUNE(overrides?: CallOverrides): Promise<string>;
+    RUNE(overrides?: CallOverrides): Promise<string>
 
     deposit(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        vault: string,
+        asset: string,
+        amount: BigNumberish,
+        memo: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     depositWithExpiry(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      expiration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        vault: string,
+        asset: string,
+        amount: BigNumberish,
+        memo: string,
+        expiration: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     returnVaultAssets(
-      router: string,
-      asgard: string,
-      coins: THORChainRouter.CoinStruct[],
-      memo: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        router: string,
+        asgard: string,
+        coins: THORChainRouter.CoinStruct[],
+        memo: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferAllowance(
-      router: string,
-      newVault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        router: string,
+        newVault: string,
+        asset: string,
+        amount: BigNumberish,
+        memo: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOut(
-      to: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        to: string,
+        asset: string,
+        amount: BigNumberish,
+        memo: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOutAndCall(
-      aggregator: string,
-      finalToken: string,
-      to: string,
-      amountOutMin: BigNumberish,
-      memo: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        aggregator: string,
+        finalToken: string,
+        to: string,
+        amountOutMin: BigNumberish,
+        memo: string,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    vaultAllowance(
-      vault: string,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+    vaultAllowance(vault: string, token: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  filters: {
-    "Deposit(address,address,uint256,string)"(
-      to?: string | null,
-      asset?: string | null,
-      amount?: null,
-      memo?: null
-    ): DepositEventFilter;
-    Deposit(
-      to?: string | null,
-      asset?: string | null,
-      amount?: null,
-      memo?: null
-    ): DepositEventFilter;
+    callStatic: {
+        RUNE(overrides?: CallOverrides): Promise<string>
 
-    "TransferAllowance(address,address,address,uint256,string)"(
-      oldVault?: string | null,
-      newVault?: string | null,
-      asset?: null,
-      amount?: null,
-      memo?: null
-    ): TransferAllowanceEventFilter;
-    TransferAllowance(
-      oldVault?: string | null,
-      newVault?: string | null,
-      asset?: null,
-      amount?: null,
-      memo?: null
-    ): TransferAllowanceEventFilter;
+        deposit(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    "TransferOut(address,address,address,uint256,string)"(
-      vault?: string | null,
-      to?: string | null,
-      asset?: null,
-      amount?: null,
-      memo?: null
-    ): TransferOutEventFilter;
-    TransferOut(
-      vault?: string | null,
-      to?: string | null,
-      asset?: null,
-      amount?: null,
-      memo?: null
-    ): TransferOutEventFilter;
+        depositWithExpiry(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            expiration: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    "TransferOutAndCall(address,address,uint256,address,address,uint256,string)"(
-      vault?: string | null,
-      target?: null,
-      amount?: null,
-      finalAsset?: null,
-      to?: null,
-      amountOutMin?: null,
-      memo?: null
-    ): TransferOutAndCallEventFilter;
-    TransferOutAndCall(
-      vault?: string | null,
-      target?: null,
-      amount?: null,
-      finalAsset?: null,
-      to?: null,
-      amountOutMin?: null,
-      memo?: null
-    ): TransferOutAndCallEventFilter;
+        returnVaultAssets(
+            router: string,
+            asgard: string,
+            coins: THORChainRouter.CoinStruct[],
+            memo: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    "VaultTransfer(address,address,tuple[],string)"(
-      oldVault?: string | null,
-      newVault?: string | null,
-      coins?: null,
-      memo?: null
-    ): VaultTransferEventFilter;
-    VaultTransfer(
-      oldVault?: string | null,
-      newVault?: string | null,
-      coins?: null,
-      memo?: null
-    ): VaultTransferEventFilter;
-  };
+        transferAllowance(
+            router: string,
+            newVault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-  estimateGas: {
-    RUNE(overrides?: CallOverrides): Promise<BigNumber>;
+        transferOut(
+            to: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    deposit(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        transferOutAndCall(
+            aggregator: string,
+            finalToken: string,
+            to: string,
+            amountOutMin: BigNumberish,
+            memo: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    depositWithExpiry(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      expiration: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        vaultAllowance(vault: string, token: string, overrides?: CallOverrides): Promise<BigNumber>
+    }
 
-    returnVaultAssets(
-      router: string,
-      asgard: string,
-      coins: THORChainRouter.CoinStruct[],
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    filters: {
+        'Deposit(address,address,uint256,string)'(
+            to?: string | null,
+            asset?: string | null,
+            amount?: null,
+            memo?: null
+        ): DepositEventFilter
+        Deposit(to?: string | null, asset?: string | null, amount?: null, memo?: null): DepositEventFilter
 
-    transferAllowance(
-      router: string,
-      newVault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        'TransferAllowance(address,address,address,uint256,string)'(
+            oldVault?: string | null,
+            newVault?: string | null,
+            asset?: null,
+            amount?: null,
+            memo?: null
+        ): TransferAllowanceEventFilter
+        TransferAllowance(
+            oldVault?: string | null,
+            newVault?: string | null,
+            asset?: null,
+            amount?: null,
+            memo?: null
+        ): TransferAllowanceEventFilter
 
-    transferOut(
-      to: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        'TransferOut(address,address,address,uint256,string)'(
+            vault?: string | null,
+            to?: string | null,
+            asset?: null,
+            amount?: null,
+            memo?: null
+        ): TransferOutEventFilter
+        TransferOut(
+            vault?: string | null,
+            to?: string | null,
+            asset?: null,
+            amount?: null,
+            memo?: null
+        ): TransferOutEventFilter
 
-    transferOutAndCall(
-      aggregator: string,
-      finalToken: string,
-      to: string,
-      amountOutMin: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        'TransferOutAndCall(address,address,uint256,address,address,uint256,string)'(
+            vault?: string | null,
+            target?: null,
+            amount?: null,
+            finalAsset?: null,
+            to?: null,
+            amountOutMin?: null,
+            memo?: null
+        ): TransferOutAndCallEventFilter
+        TransferOutAndCall(
+            vault?: string | null,
+            target?: null,
+            amount?: null,
+            finalAsset?: null,
+            to?: null,
+            amountOutMin?: null,
+            memo?: null
+        ): TransferOutAndCallEventFilter
 
-    vaultAllowance(
-      vault: string,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+        'VaultTransfer(address,address,tuple[],string)'(
+            oldVault?: string | null,
+            newVault?: string | null,
+            coins?: null,
+            memo?: null
+        ): VaultTransferEventFilter
+        VaultTransfer(
+            oldVault?: string | null,
+            newVault?: string | null,
+            coins?: null,
+            memo?: null
+        ): VaultTransferEventFilter
+    }
 
-  populateTransaction: {
-    RUNE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    estimateGas: {
+        RUNE(overrides?: CallOverrides): Promise<BigNumber>
 
-    deposit(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        deposit(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    depositWithExpiry(
-      vault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      expiration: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        depositWithExpiry(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            expiration: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    returnVaultAssets(
-      router: string,
-      asgard: string,
-      coins: THORChainRouter.CoinStruct[],
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        returnVaultAssets(
+            router: string,
+            asgard: string,
+            coins: THORChainRouter.CoinStruct[],
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    transferAllowance(
-      router: string,
-      newVault: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        transferAllowance(
+            router: string,
+            newVault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    transferOut(
-      to: string,
-      asset: string,
-      amount: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        transferOut(
+            to: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    transferOutAndCall(
-      aggregator: string,
-      finalToken: string,
-      to: string,
-      amountOutMin: BigNumberish,
-      memo: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        transferOutAndCall(
+            aggregator: string,
+            finalToken: string,
+            to: string,
+            amountOutMin: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    vaultAllowance(
-      vault: string,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+        vaultAllowance(vault: string, token: string, overrides?: CallOverrides): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        RUNE(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        deposit(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        depositWithExpiry(
+            vault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            expiration: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        returnVaultAssets(
+            router: string,
+            asgard: string,
+            coins: THORChainRouter.CoinStruct[],
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferAllowance(
+            router: string,
+            newVault: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferOut(
+            to: string,
+            asset: string,
+            amount: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferOutAndCall(
+            aggregator: string,
+            finalToken: string,
+            to: string,
+            amountOutMin: BigNumberish,
+            memo: string,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        vaultAllowance(vault: string, token: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    }
 }

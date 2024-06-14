@@ -34,7 +34,7 @@ export const config: Config = {
             synthesis: '0xD67940D8414E09F84eBEa85cd021dbc011A94Bc8',
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x167C52B035D7cfA2D8199A2Af450B3493C51576C',
-            multicallRouter: '0xF77c766DEB09f424228Be0b679E3F8326b9d7741'
+            multicallRouter: '0xF77c766DEB09f424228Be0b679E3F8326b9d7741',
         },
     ],
 }

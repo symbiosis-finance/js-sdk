@@ -2,1191 +2,1028 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PayableOverrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface KimRouterInterface extends utils.Interface {
-  contractName: "KimRouter";
-  functions: {
-    "WETH()": FunctionFragment;
-    "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "assign(address,uint256)": FunctionFragment;
-    "factory()": FunctionFragment;
-    "getAmountsOut(uint256,address[])": FunctionFragment;
-    "getPair(address,address)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "quote(uint256,uint256,uint256)": FunctionFragment;
-    "register(address,address)": FunctionFragment;
-    "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "removeLiquidityETHSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "removeLiquidityETHWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
-    "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
-    "removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "swapExactETHForTokensSupportingFeeOnTransferTokens(uint256,address[],address,address,uint256)": FunctionFragment;
-    "swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,address,uint256)": FunctionFragment;
-    "swapExactTokensForTokensSupportingFeeOnTransferTokens(uint256,uint256,address[],address,address,uint256)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-  };
+    contractName: 'KimRouter'
+    functions: {
+        'WETH()': FunctionFragment
+        'addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'addLiquidityETH(address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'assign(address,uint256)': FunctionFragment
+        'factory()': FunctionFragment
+        'getAmountsOut(uint256,address[])': FunctionFragment
+        'getPair(address,address)': FunctionFragment
+        'owner()': FunctionFragment
+        'quote(uint256,uint256,uint256)': FunctionFragment
+        'register(address,address)': FunctionFragment
+        'removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'removeLiquidityETHSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'removeLiquidityETHWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)': FunctionFragment
+        'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)': FunctionFragment
+        'removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'swapExactETHForTokensSupportingFeeOnTransferTokens(uint256,address[],address,address,uint256)': FunctionFragment
+        'swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,address,uint256)': FunctionFragment
+        'swapExactTokensForTokensSupportingFeeOnTransferTokens(uint256,uint256,address[],address,address,uint256)': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "WETH", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "addLiquidity",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addLiquidityETH",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assign",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getAmountsOut",
-    values: [BigNumberish, string[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPair",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "quote",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "register",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidity",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityETH",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityETHSupportingFeeOnTransferTokens",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityETHWithPermit",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityWithPermit",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactETHForTokensSupportingFeeOnTransferTokens",
-    values: [BigNumberish, string[], string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactTokensForETHSupportingFeeOnTransferTokens",
-    values: [BigNumberish, BigNumberish, string[], string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-    values: [BigNumberish, BigNumberish, string[], string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
+    encodeFunctionData(functionFragment: 'WETH', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'addLiquidity',
+        values: [string, string, BigNumberish, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'addLiquidityETH',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'assign', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'factory', values?: undefined): string
+    encodeFunctionData(functionFragment: 'getAmountsOut', values: [BigNumberish, string[]]): string
+    encodeFunctionData(functionFragment: 'getPair', values: [string, string]): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'quote', values: [BigNumberish, BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'register', values: [string, string]): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidity',
+        values: [string, string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityETH',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityETHSupportingFeeOnTransferTokens',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityETHWithPermit',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            string,
+            BigNumberish,
+            boolean,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            string,
+            BigNumberish,
+            boolean,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityWithPermit',
+        values: [
+            string,
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            string,
+            BigNumberish,
+            boolean,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'swapExactETHForTokensSupportingFeeOnTransferTokens',
+        values: [BigNumberish, string[], string, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactTokensForETHSupportingFeeOnTransferTokens',
+        values: [BigNumberish, BigNumberish, string[], string, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactTokensForTokensSupportingFeeOnTransferTokens',
+        values: [BigNumberish, BigNumberish, string[], string, string, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
 
-  decodeFunctionResult(functionFragment: "WETH", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addLiquidityETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "assign", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountsOut",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getPair", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "quote", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityETHSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityETHWithPermit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityWithPermit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactETHForTokensSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactTokensForETHSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'WETH', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'addLiquidity', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'addLiquidityETH', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'assign', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'factory', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getAmountsOut', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getPair', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'quote', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'register', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidity', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityETH', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityETHSupportingFeeOnTransferTokens', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityETHWithPermit', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityWithPermit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'swapExactETHForTokensSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(
+        functionFragment: 'swapExactTokensForETHSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(
+        functionFragment: 'swapExactTokensForTokensSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
 
-  events: {
-    "OwnershipTransferred(address,address)": EventFragment;
-  };
+    events: {
+        'OwnershipTransferred(address,address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
 }
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
 export interface KimRouter extends BaseContract {
-  contractName: "KimRouter";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'KimRouter'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: KimRouterInterface;
+    interface: KimRouterInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    WETH(overrides?: CallOverrides): Promise<[string]>;
+    functions: {
+        WETH(overrides?: CallOverrides): Promise<[string]>
 
-    addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    addLiquidityETH(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        addLiquidityETH(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    assign(
-      feeSharingContract: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        assign(
+            feeSharingContract: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    factory(overrides?: CallOverrides): Promise<[string]>;
+        factory(overrides?: CallOverrides): Promise<[string]>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
+        getAmountsOut(
+            amountIn: BigNumberish,
+            path: string[],
+            overrides?: CallOverrides
+        ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>
 
-    getPair(
-      token1: string,
-      token2: string,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+        getPair(token1: string, token2: string, overrides?: CallOverrides): Promise<[string]>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+        owner(overrides?: CallOverrides): Promise<[string]>
 
-    quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amountB: BigNumber }>;
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { amountB: BigNumber }>
 
-    register(
-      feeSharingContract: string,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        register(
+            feeSharingContract: string,
+            recipient: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityETH(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityETH(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityETHSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityETHSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityETHWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityETHWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    swapExactETHForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactETHForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactTokensForETHSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactTokensForETHSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
 
-  WETH(overrides?: CallOverrides): Promise<string>;
-
-  addLiquidity(
-    tokenA: string,
-    tokenB: string,
-    amountADesired: BigNumberish,
-    amountBDesired: BigNumberish,
-    amountAMin: BigNumberish,
-    amountBMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  addLiquidityETH(
-    token: string,
-    amountTokenDesired: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountETHMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  assign(
-    feeSharingContract: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  factory(overrides?: CallOverrides): Promise<string>;
-
-  getAmountsOut(
-    amountIn: BigNumberish,
-    path: string[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  getPair(
-    token1: string,
-    token2: string,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  quote(
-    amountA: BigNumberish,
-    reserveA: BigNumberish,
-    reserveB: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  register(
-    feeSharingContract: string,
-    recipient: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidity(
-    tokenA: string,
-    tokenB: string,
-    liquidity: BigNumberish,
-    amountAMin: BigNumberish,
-    amountBMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityETH(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountETHMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityETHSupportingFeeOnTransferTokens(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountETHMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityETHWithPermit(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountETHMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    approveMax: boolean,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountETHMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    approveMax: boolean,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityWithPermit(
-    tokenA: string,
-    tokenB: string,
-    liquidity: BigNumberish,
-    amountAMin: BigNumberish,
-    amountBMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    approveMax: boolean,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactETHForTokensSupportingFeeOnTransferTokens(
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    referrer: string,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactTokensForETHSupportingFeeOnTransferTokens(
-    amountIn: BigNumberish,
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    referrer: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactTokensForTokensSupportingFeeOnTransferTokens(
-    amountIn: BigNumberish,
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    referrer: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    WETH(overrides?: CallOverrides): Promise<string>;
+    WETH(overrides?: CallOverrides): Promise<string>
 
     addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amountA: BigNumber;
-        amountB: BigNumber;
-        liquidity: BigNumber;
-      }
-    >;
+        tokenA: string,
+        tokenB: string,
+        amountADesired: BigNumberish,
+        amountBDesired: BigNumberish,
+        amountAMin: BigNumberish,
+        amountBMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     addLiquidityETH(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amountToken: BigNumber;
-        amountETH: BigNumber;
-        liquidity: BigNumber;
-      }
-    >;
+        token: string,
+        amountTokenDesired: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountETHMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     assign(
-      feeSharingContract: string,
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        feeSharingContract: string,
+        tokenId: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    factory(overrides?: CallOverrides): Promise<string>;
+    factory(overrides?: CallOverrides): Promise<string>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    getPair(
-      token1: string,
-      token2: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    getPair(token1: string, token2: string, overrides?: CallOverrides): Promise<string>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    owner(overrides?: CallOverrides): Promise<string>
 
     quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        amountA: BigNumberish,
+        reserveA: BigNumberish,
+        reserveB: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
     register(
-      feeSharingContract: string,
-      recipient: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        feeSharingContract: string,
+        recipient: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
-    >;
+        tokenA: string,
+        tokenB: string,
+        liquidity: BigNumberish,
+        amountAMin: BigNumberish,
+        amountBMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityETH(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }
-    >;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountETHMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityETHSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountETHMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityETHWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }
-    >;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountETHMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        approveMax: boolean,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountETHMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        approveMax: boolean,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
-    >;
+        tokenA: string,
+        tokenB: string,
+        liquidity: BigNumberish,
+        amountAMin: BigNumberish,
+        amountBMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        approveMax: boolean,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     swapExactETHForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        referrer: string,
+        deadline: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactTokensForETHSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amountIn: BigNumberish,
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        referrer: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amountIn: BigNumberish,
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        referrer: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  filters: {
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-  };
+    callStatic: {
+        WETH(overrides?: CallOverrides): Promise<string>
 
-  estimateGas: {
-    WETH(overrides?: CallOverrides): Promise<BigNumber>;
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                amountA: BigNumber
+                amountB: BigNumber
+                liquidity: BigNumber
+            }
+        >
 
-    addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        addLiquidityETH(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                amountToken: BigNumber
+                amountETH: BigNumber
+                liquidity: BigNumber
+            }
+        >
 
-    addLiquidityETH(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        assign(feeSharingContract: string, tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    assign(
-      feeSharingContract: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        factory(overrides?: CallOverrides): Promise<string>
 
-    factory(overrides?: CallOverrides): Promise<BigNumber>;
+        getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getPair(token1: string, token2: string, overrides?: CallOverrides): Promise<string>
 
-    getPair(
-      token1: string,
-      token2: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        owner(overrides?: CallOverrides): Promise<string>
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        register(feeSharingContract: string, recipient: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    register(
-      feeSharingContract: string,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }>
 
-    removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityETH(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }>
 
-    removeLiquidityETH(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityETHSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    removeLiquidityETHSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityETHWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }>
 
-    removeLiquidityETHWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }>
 
-    removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactETHForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    swapExactETHForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactTokensForETHSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    swapExactTokensForETHSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+    }
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+    filters: {
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+    }
 
-  populateTransaction: {
-    WETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    estimateGas: {
+        WETH(overrides?: CallOverrides): Promise<BigNumber>
 
-    addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    addLiquidityETH(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        addLiquidityETH(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    assign(
-      feeSharingContract: string,
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        assign(
+            feeSharingContract: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        factory(overrides?: CallOverrides): Promise<BigNumber>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber>
 
-    getPair(
-      token1: string,
-      token2: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getPair(token1: string, token2: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        owner(overrides?: CallOverrides): Promise<BigNumber>
 
-    quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    register(
-      feeSharingContract: string,
-      recipient: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        register(
+            feeSharingContract: string,
+            recipient: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityETH(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityETH(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityETHSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityETHSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityETHWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityETHWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountETHMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
-    swapExactETHForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactETHForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactTokensForETHSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactTokensForETHSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      referrer: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        WETH(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        addLiquidityETH(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        assign(
+            feeSharingContract: string,
+            tokenId: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        factory(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        getPair(token1: string, token2: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        register(
+            feeSharingContract: string,
+            recipient: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityETH(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityETHSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityETHWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountETHMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        swapExactETHForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactTokensForETHSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            referrer: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }
