@@ -396,19 +396,6 @@ const _abi = [
         type: 'function',
     },
     {
-        inputs: [],
-        name: 'burnSerialBTC',
-        outputs: [
-            {
-                internalType: 'BtcSerial',
-                name: '',
-                type: 'uint64',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
         inputs: [
             {
                 internalType: 'uint256',
@@ -816,32 +803,6 @@ const _abi = [
         type: 'function',
     },
     {
-        inputs: [],
-        name: 'minFeeBTC',
-        outputs: [
-            {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
-        inputs: [],
-        name: 'mintSerialBTC',
-        outputs: [
-            {
-                internalType: 'BtcSerial',
-                name: '',
-                type: 'uint64',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
         inputs: [
             {
                 internalType: 'uint256',
@@ -1195,22 +1156,12 @@ const _abi = [
                 type: 'address',
             },
             {
-                internalType: 'BtcSerial',
-                name: '_mintSerial',
-                type: 'uint64',
-            },
-            {
-                internalType: 'BtcSerial',
-                name: '_burnSerial',
-                type: 'uint64',
-            },
-            {
                 internalType: 'uint256',
                 name: '_minFee',
                 type: 'uint256',
             },
         ],
-        name: 'setSyntParameters',
+        name: 'setMinFeeBTC',
         outputs: [],
         stateMutability: 'nonpayable',
         type: 'function',

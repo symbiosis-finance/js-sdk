@@ -3,7 +3,7 @@ import { Weth__factory } from '../contracts'
 import { getFunctionSelector } from '../tron'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from './types'
-import {AddressZero} from "@ethersproject/constants/lib/addresses";
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export function isWrapSupported(params: SwapExactInParams): boolean {
     const { inTokenAmount, outToken, fromAddress, toAddress } = params
