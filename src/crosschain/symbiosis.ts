@@ -12,8 +12,6 @@ import {
     AdaRouter__factory,
     AvaxRouter,
     AvaxRouter__factory,
-    BenqiQiErc20,
-    BenqiQiErc20__factory,
     Bridge,
     Bridge__factory,
     Fabric,
@@ -36,8 +34,6 @@ import {
     Portal__factory,
     SymBtc,
     SymBtc__factory,
-    SyncSwapLaunchPool,
-    SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
     TonBridge,
@@ -320,12 +316,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return KimRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public benqiQiErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): BenqiQiErc20 {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return BenqiQiErc20__factory.connect(address, signerOrProvider)
     }
 
     public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {
