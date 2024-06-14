@@ -604,8 +604,8 @@ export const config: Config = {
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
-            rpc: 'https://optimism.publicnode.com',
-            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://1rpc.io/op', 'https://rpc.ankr.com/optimism'],
+            rpc: 'https://mainnet.optimism.io',
+            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1368,6 +1368,34 @@ export const config: Config = {
             portal: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
             fabric: '0x1a039cE63AE35a67Bf0E9F6DbFaE969639D59eC8',
             multicallRouter: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+        },
+        {
+            id: ChainId.CRONOS_MAINNET,
+            rpc: 'https://evm.cronos.org',
+            spareRpcs: ['https://cronos-evm-rpc.publicnode.com'],
+            filterBlockOffset: 2000,
+            stables: [
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xc21223249ca28397b4b6541dffaecc539bff0c59',
+                    chainId: ChainId.CRONOS_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
         },
     ],
 }

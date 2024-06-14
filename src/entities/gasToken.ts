@@ -84,4 +84,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.TAIKO_MAINNET]: GAS(ChainId.TAIKO_MAINNET, 'ETH', 1027),
     [ChainId.SEI_EVM_MAINNET]: GAS(ChainId.SEI_EVM_MAINNET, 'SEI', 23149),
     [ChainId.ZETACHAIN_MAINNET]: GAS(ChainId.ZETACHAIN_MAINNET, 'ZETA', 21259),
+    [ChainId.CRONOS_MAINNET]: GAS(ChainId.CRONOS_MAINNET, 'CRO', 3635),
 }
