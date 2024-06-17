@@ -3,7 +3,7 @@ import { Config } from '../types'
 
 export const config: Config = {
     btc: {
-        forwarderUrl: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
+        forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mutinynet/forwarder/api/v1',
     },
     advisor: {
         url: 'https://api.testnet.symbiosis.finance/calculations',
@@ -45,7 +45,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5', // is the btc portal genesis tx
+                    address: '0xB42f52bB8490b9C0031467Fea2F6309f0004fC1C', // is the btc portal genesis tx
                     chainId: ChainId.BTC_TESTNET,
                     decimals: 8,
                     icons: {
@@ -71,9 +71,9 @@ export const config: Config = {
             filterBlockOffset: 2000,
             stables: [
                 {
-                    name: 't4SymBtc',
-                    address: '0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb',
-                    symbol: 't4SymBtc',
+                    name: 'mutSymBtc',
+                    address: '0x41540e95B10383408cfE201974c88E6C3ef9323A',
+                    symbol: 'mutSymBtc',
                     decimals: 8,
                     chainId: 11155111,
                     icons: {
@@ -88,7 +88,7 @@ export const config: Config = {
             metaRouterGateway: '0xc3b59B4a7961EF8FD24C9838731D1f598884F53d',
             bridge: '0x7dc13B605508F91Fcd3bf7803C2b96B43941B4E8',
             synthesis: '0x3e6235b91c6734821b4037E6459f861E465D4192',
-            symBtc: '0x2ff5940024af75e15b810d64ae2c89f632e7f45f',
+            symBtc: '0xE7E1DdD34E453e4312CfaB78018f25387D6bdC04',
             portal: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38',
             fabric: '0xb4ADe33Bba3512c8c0B489cbd03aAd3557EC49Ca',
             multicallRouter: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210',

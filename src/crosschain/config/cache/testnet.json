@@ -8,7 +8,7 @@
             "id": 0,
             "tokens": [
                 { "index": 1, "tokenId": 4 },
-                { "index": 2, "tokenId": 3 }
+                { "index": 3, "tokenId": 3 }
             ]
         }
     ],
@@ -17,20 +17,20 @@
             "decimals": 8,
             "symbol": "BTC",
             "name": "Bitcoin",
-            "chainId": 675223068,
+            "chainId": 2782866891,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5",
+            "address": "0xB42f52bB8490b9C0031467Fea2F6309f0004fC1C",
             "id": 0
         },
         {
             "decimals": 8,
-            "symbol": "t4SymBtc",
-            "name": "t4SymBtc",
+            "symbol": "mutSymBtc",
+            "name": "mutSymBtc",
             "chainId": 11155111,
             "isNative": false,
             "icons": {
@@ -38,7 +38,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb",
+            "address": "0x41540e95B10383408cfE201974c88E6C3ef9323A",
             "id": 1
         },
         {
@@ -57,8 +57,8 @@
         },
         {
             "decimals": 8,
-            "symbol": "st4SymBtc",
-            "name": "st4SymBtc from Sepolia",
+            "symbol": "sMutSymBtc",
+            "name": "synthetic sBTC from Sepolia Mutinynet",
             "chainId": 97,
             "isNative": false,
             "icons": {
@@ -67,7 +67,7 @@
             },
             "chainFromId": 11155111,
             "deprecated": false,
-            "address": "0xD8D16bab99BDA6c0aE108Def47a47048fa49F427",
+            "address": "0x742175079E67dAD92CA5a315f5C37CF26e207615",
             "id": 3,
             "originalId": 1
         },
@@ -89,17 +89,17 @@
         },
         {
             "decimals": 8,
-            "symbol": "t4SymBtc",
-            "name": "t4SymBtc",
+            "symbol": "mutSymBtc",
+            "name": "mutSymBtc",
             "chainId": 11155111,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
-            "chainFromId": 675223068,
+            "chainFromId": 2782866891,
             "deprecated": false,
-            "address": "0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb",
+            "address": "0x41540e95B10383408cfE201974c88E6C3ef9323A",
             "id": 5,
             "originalId": 0
         },

@@ -3,7 +3,8 @@ import { GAS_TOKEN, Token, TokenAmount } from '../entities'
 import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
 import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { address, Network, networks } from 'bitcoinjs-lib'
+import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
+import * as ecc from 'tiny-secp256k1'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
@@ -21,10 +22,14 @@ export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
 }
 
 export function getPkScript(addr: string, btcChain: Network): Buffer {
+    initEccLib(ecc)
+
     return address.toOutputScript(addr, btcChain)
 }
 
 export function getAddress(pkScript: string, btcChain: Network): string {
+    initEccLib(ecc)
+
     return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
 }
 
