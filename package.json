@@ -26,6 +26,7 @@
         "test": "vitest test/crosschain"
     },
     "dependencies": {
+        "@bitcoinerlab/secp256k1": "^1.1.1",
         "@uniswap/sdk-core": "3.1.0",
         "@uniswap/v3-sdk": "3.9.0",
         "big.js": "^5.2.2",
@@ -36,7 +37,6 @@
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
         "tiny-invariant": "^1.1.0",
-        "tiny-secp256k1": "^2.2.3",
         "tiny-warning": "^1.0.3",
         "toformat": "^2.0.0",
         "tonweb": "^0.0.66",
