@@ -7,6 +7,7 @@ import { OneInchProtocols } from './trade/oneInchTrade'
 import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
 import { getMinAmount } from './utils'
+import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
@@ -110,6 +111,14 @@ export class ZappingThor extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
+        const isAddressValid = validate(to)
+        if (!isAddressValid) {
+            throw new Error('Bitcoin address is not valid')
+        }
+        const addressInfo = getAddressInfo(to)
+        if (addressInfo.type === AddressType.p2tr) {
+            throw new Error(`ThorChain doesn't support taproot addresses`, ErrorCode.THORCHAIN_NOT_SUPPORTED_ADDRESS)
+        }
         this.bitcoinAddress = to
         this.thorTokenIn = thorTokenIn
 

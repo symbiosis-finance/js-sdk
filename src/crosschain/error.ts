@@ -8,6 +8,7 @@ export enum ErrorCode {
     'AMOUNT_TOO_HIGH',
     'AMOUNT_TOO_LOW',
     'MIN_TON_AMOUNT_IN',
+    'THORCHAIN_NOT_SUPPORTED_ADDRESS',
 }
 
 export class Error {

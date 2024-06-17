@@ -72,6 +72,9 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
             if (error.code === ErrorCode.MIN_THORCHAIN_AMOUNT_IN) {
                 throw error
             }
+            if (error.code === ErrorCode.THORCHAIN_NOT_SUPPORTED_ADDRESS) {
+                throw error
+            }
         }
 
         throw new Error(`Can't build route upto the THORChain`)
