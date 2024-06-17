@@ -1372,8 +1372,8 @@ export const config: Config = {
         {
             id: ChainId.CRONOS_MAINNET,
             rpc: 'https://evm.cronos.org',
-            spareRpcs: ['https://cronos-evm-rpc.publicnode.com'],
-            filterBlockOffset: 2000,
+            spareRpcs: ['https://rpc.nebkas.ro', 'https://cronos-evm-rpc.publicnode.com'],
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
