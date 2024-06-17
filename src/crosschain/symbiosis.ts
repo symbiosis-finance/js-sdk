@@ -8,22 +8,12 @@ import { Chain, chains, Token, TokenAmount } from '../entities'
 import { Bridging } from './bridging'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
-    Aave,
-    Aave__factory,
     AdaRouter,
     AdaRouter__factory,
     AvaxRouter,
     AvaxRouter__factory,
-    BeefyVault,
-    BeefyVault__factory,
-    BenqiQiErc20,
-    BenqiQiErc20__factory,
     Bridge,
     Bridge__factory,
-    CreamCErc20,
-    CreamCErc20__factory,
-    CreamComptroller,
-    CreamComptroller__factory,
     Fabric,
     Fabric__factory,
     KavaRouter,
@@ -44,8 +34,6 @@ import {
     Portal__factory,
     SymBtc,
     SymBtc__factory,
-    SyncSwapLaunchPool,
-    SyncSwapLaunchPool__factory,
     Synthesis,
     Synthesis__factory,
     TonBridge,
@@ -63,9 +51,6 @@ import { Swapping } from './swapping'
 import { getTransactionInfoById, isTronChainId } from './tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
 import { Zapping } from './zapping'
-import { ZappingAave } from './zappingAave'
-import { ZappingBeefy } from './zappingBeefy'
-import { ZappingCream } from './zappingCream'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
@@ -229,24 +214,12 @@ export class Symbiosis {
         return new Zapping(this, omniPoolConfig)
     }
 
-    public newZappingAave(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingAave(this, omniPoolConfig)
-    }
-
     public newZappingThor(omniPoolConfig: OmniPoolConfig) {
         return new ZappingThor(this, omniPoolConfig)
     }
 
     public newZappingBtc(omniPoolConfig: OmniPoolConfig) {
         return new ZappingBtc(this, omniPoolConfig)
-    }
-
-    public newZappingCream(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingCream(this, omniPoolConfig)
-    }
-
-    public newZappingBeefy(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingBeefy(this, omniPoolConfig)
     }
 
     public newZappingTon(omniPoolConfig: OmniPoolConfig) {
@@ -345,32 +318,6 @@ export class Symbiosis {
         return KimRouter__factory.connect(address, signerOrProvider)
     }
 
-    public creamCErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): CreamCErc20 {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return CreamCErc20__factory.connect(address, signerOrProvider)
-    }
-
-    public benqiQiErc20ByAddress(address: string, chainId: ChainId, signer?: Signer): BenqiQiErc20 {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return BenqiQiErc20__factory.connect(address, signerOrProvider)
-    }
-
-    public creamComptroller(chainId: ChainId, signer?: Signer): CreamComptroller {
-        const address = this.chainConfig(chainId).creamComptroller
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return CreamComptroller__factory.connect(address, signerOrProvider)
-    }
-
-    public aavePool(chainId: ChainId, signer?: Signer): Aave {
-        const address = this.chainConfig(chainId).aavePool
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return Aave__factory.connect(address, signerOrProvider)
-    }
-
     public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {
         const address = this.chainConfig(chainId).multicallRouter
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -407,18 +354,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OneInchOracle__factory.connect(address, signerOrProvider)
-    }
-
-    public beefyVault(address: string, chainId: ChainId, signer?: Signer): BeefyVault {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return BeefyVault__factory.connect(address, signerOrProvider)
-    }
-
-    public syncSwapLaunchPool(address: string, chainId: ChainId, signer?: Signer): SyncSwapLaunchPool {
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return SyncSwapLaunchPool__factory.connect(address, signerOrProvider)
     }
 
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {

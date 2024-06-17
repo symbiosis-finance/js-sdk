@@ -1,6 +1,6 @@
 import { wrappedToken } from '../../entities'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import {AddressZero} from "@ethersproject/constants/lib/addresses";
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount, outToken, symbiosis } = context

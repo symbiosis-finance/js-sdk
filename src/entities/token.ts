@@ -756,4 +756,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29464.png',
         },
     }),
+    [ChainId.CRONOS_MAINNET]: new Token({
+        chainId: ChainId.CRONOS_MAINNET,
+        address: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
+        decimals: 18,
+        symbol: 'WCRO',
+        isNative: false,
+        name: 'Wrapped CRO',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14532.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14532.png',
+        },
+    }),
 }

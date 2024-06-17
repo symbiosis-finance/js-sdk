@@ -18,11 +18,6 @@ export type ChainConfig = {
     metaRouter: string
     metaRouterGateway: string
     multicallRouter: string
-    aavePool: string
-    aavePoolDataProvider: string
-    creamComptroller: string
-    creamCompoundLens: string
-    renGatewayRegistry: string
     router: string
     bridge: string
     synthesis: string
