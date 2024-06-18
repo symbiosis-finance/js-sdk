@@ -5,7 +5,7 @@ import { fetchData, longPolling } from './utils'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { Bridge__factory, Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
-import { LogDescription } from '@ethersproject/abi/src.ts/interface'
+import { LogDescription } from '@ethersproject/abi'
 
 interface ThorStatusResponse {
     observed_tx: {
