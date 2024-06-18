@@ -68,7 +68,7 @@ export class ConfigCache {
         return this.data.omniPools.find((i) => i.id === id)
     }
 
-    // FIXME
+    // FIXME @allush
     // It works correctly if the `token` in ONE pool ONLY
     // If there are more than one pool then FIRST pool will be selected
     public getOmniPoolByToken(token: Token): OmniPoolInfo | undefined {

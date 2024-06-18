@@ -65,6 +65,7 @@ import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
+import { isBtc } from './utils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -274,14 +275,23 @@ export class Symbiosis {
         return Fabric__factory.connect(address, signerOrProvider)
     }
 
-    public symBtc(chainId: ChainId, signer?: Signer): SymBtc {
-        const address = this.chainConfig(chainId).symBtc
-        if (!address) {
-            throw new Error(`This chain ${chainId} doesn't have symBtc contract`)
+    public symBtcConfigFor(btcChainId: ChainId) {
+        if (!isBtc(btcChainId)) {
+            throw new Error(`This chain ${btcChainId} is not BTC chain`)
         }
-        const signerOrProvider = signer || this.getProvider(chainId)
+        const symBtcConfig = this.chainConfig(btcChainId).symBtc
+        if (!symBtcConfig) {
+            throw new Error(`This chain ${btcChainId} doesn't have symBtc contract`)
+        }
+        return symBtcConfig
+    }
 
-        return SymBtc__factory.connect(address, signerOrProvider)
+    public symBtcFor(btcChainId: ChainId, signer?: Signer): SymBtc {
+        const symBtcConfig = this.symBtcConfigFor(btcChainId)
+
+        const signerOrProvider = signer || this.getProvider(symBtcConfig.chainId)
+
+        return SymBtc__factory.connect(symBtcConfig.address, signerOrProvider)
     }
 
     public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {
@@ -516,18 +526,29 @@ export class Symbiosis {
         return statelessWaitForComplete({ symbiosis: this, chainId, txId })
     }
 
-    public async waitForBtcDepositAccepted(depositAddress: string) {
-        const forwarderUrl = this.config.btc.forwarderUrl
+    public getForwarderUrl(btcChainId: ChainId): string {
+        if (!isBtc(btcChainId)) {
+            throw new Error(`This chain ${btcChainId} is not BTC chain`)
+        }
+        const forwarderUrl = this.chainConfig(btcChainId).forwarderUrl
+        if (!forwarderUrl) {
+            throw new Error(`This chain ${btcChainId} doesn't have forwardsUrl`)
+        }
+        return forwarderUrl
+    }
+
+    public async waitForBtcDepositAccepted(btcChainId: ChainId, depositAddress: string) {
+        const forwarderUrl = this.getForwarderUrl(btcChainId)
         return waitForBtcDepositAccepted(forwarderUrl, depositAddress)
     }
 
-    public async waitForBtcRevealTxMined(revealTx: string) {
-        const forwarderUrl = this.config.btc.forwarderUrl
+    public async waitForBtcRevealTxMined(btcChainId: ChainId, revealTx: string) {
+        const forwarderUrl = this.getForwarderUrl(btcChainId)
         return waitForBtcRevealTxMined(forwarderUrl, revealTx)
     }
 
-    public async waitForBtcEvmTxIssued(revealTx: string, chainId: ChainId) {
-        return waitForBtcEvmTxIssued(this, revealTx, chainId)
+    public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {
+        return waitForBtcEvmTxIssued(this, revealTx, btcChainId)
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {

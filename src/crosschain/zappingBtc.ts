@@ -20,7 +20,8 @@ export interface ZappingThorExactInParams {
 
 export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
     [ChainId.BTC_MAINNET]: networks.bitcoin,
-    [ChainId.BTC_TESTNET]: networks.testnet,
+    [ChainId.BTC_MUTINY]: networks.testnet,
+    [ChainId.BTC_TESTNET4]: networks.testnet,
 }
 
 export function getPkScript(addr: string, btcChain: Network): Buffer {

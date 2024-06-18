@@ -2,9 +2,6 @@ import { ChainId } from '../../constants'
 import { Config } from '../types'
 
 export const config: Config = {
-    btc: {
-        forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mutinynet/forwarder/api/v1',
-    },
     advisor: {
         url: 'https://api.testnet.symbiosis.finance/calculations',
     },
@@ -38,7 +35,7 @@ export const config: Config = {
             multicallRouter: '0x086D8d30822086941729DF294f0e52E42EdC17F9',
         },
         {
-            id: ChainId.BTC_TESTNET,
+            id: ChainId.BTC_MUTINY,
             rpc: 'https://btc.rpc',
             filterBlockOffset: 2000,
             stables: [
@@ -46,7 +43,7 @@ export const config: Config = {
                     name: 'Bitcoin',
                     symbol: 'BTC',
                     address: '0xB42f52bB8490b9C0031467Fea2F6309f0004fC1C', // is the btc portal genesis tx
-                    chainId: ChainId.BTC_TESTNET,
+                    chainId: ChainId.BTC_MUTINY,
                     decimals: 8,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
@@ -63,6 +60,43 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
+            symBtc: {
+                address: '0xE7E1DdD34E453e4312CfaB78018f25387D6bdC04',
+                chainId: ChainId.SEPOLIA_TESTNET,
+            },
+            forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mutinynet/forwarder/api/v1',
+        },
+        {
+            id: ChainId.BTC_TESTNET4,
+            rpc: 'https://btc.rpc',
+            filterBlockOffset: 2000,
+            stables: [
+                {
+                    name: 'Bitcoin',
+                    symbol: 'BTC',
+                    address: '0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5', // is the btc portal genesis tx
+                    chainId: ChainId.BTC_TESTNET4,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000',
+            bridge: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000',
+            symBtc: {
+                address: '0x2ff5940024af75e15b810d64ae2c89f632e7f45f',
+                chainId: ChainId.SEPOLIA_TESTNET,
+            },
+            forwarderUrl: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
         },
         {
             id: ChainId.SEPOLIA_TESTNET,
@@ -81,6 +115,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
                     },
                 },
+                {
+                    name: 't4SymBtc',
+                    address: '0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb',
+                    symbol: 't4SymBtc',
+                    decimals: 8,
+                    chainId: 11155111,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
             ],
             router: '0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008',
             dexFee: 30,
@@ -88,7 +133,6 @@ export const config: Config = {
             metaRouterGateway: '0xc3b59B4a7961EF8FD24C9838731D1f598884F53d',
             bridge: '0x7dc13B605508F91Fcd3bf7803C2b96B43941B4E8',
             synthesis: '0x3e6235b91c6734821b4037E6459f861E465D4192',
-            symBtc: '0xE7E1DdD34E453e4312CfaB78018f25387D6bdC04',
             portal: '0xBC4454Ee01EC5B6517333bD716f5135042ca1e38',
             fabric: '0xb4ADe33Bba3512c8c0B489cbd03aAd3557EC49Ca',
             multicallRouter: '0xF3Cfa393be621097669BcD2bD4923CEC347E1210',
@@ -120,7 +164,6 @@ export const config: Config = {
             metaRouterGateway: '0xbA2269b1E4b2eb62FdaA2c7D7bbaC052d4FD05cE',
             bridge: '0xcC0DB081360Eb259bdf6911976c51cAF1B72e845',
             synthesis: '0x0000000000000000000000000000000000000000',
-            symBtc: '0x0000000000000000000000000000000000000000',
             portal: '0x78Bb4D4872121f162BB3e938F0d10cf34E999648',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x8C9D3CE1D59d73259018dBC9859F6eBe62Bbf862',

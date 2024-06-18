@@ -5,6 +5,7 @@ import { fetchData, longPolling } from './utils'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { Bridge__factory, Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
+import { LogDescription } from '@ethersproject/abi/src.ts/interface'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -28,10 +29,23 @@ export async function tryToFindExtraStepsAndWait(symbiosis: Symbiosis, chainId: 
         return waitForThorChainTx(txHash)
     }
 
-    const burnSerialBtc = await findBurnRequestBtc(receipt)
-    if (burnSerialBtc) {
-        const forwarderUrl = symbiosis.config.btc.forwarderUrl
-        return waitUnwrapBtcTxComplete(forwarderUrl, burnSerialBtc)
+    const burnRequestBtc = await findBurnRequestBtc(receipt)
+    if (burnRequestBtc) {
+        const { burnSerial, stoken } = burnRequestBtc
+        const synth = symbiosis
+            .tokens()
+            .find(
+                (t) =>
+                    t.chainId === chainId &&
+                    t.address.toLowerCase() === stoken.toLowerCase() &&
+                    t.chainFromId !== undefined
+            )
+
+        if (!synth || !synth.chainFromId) {
+            throw new Error('Token not found or the token is not synthetic')
+        }
+        const forwarderUrl = symbiosis.getForwarderUrl(synth.chainFromId)
+        return waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
     }
 
     const isTonDeposit = await findTonOracleRequest(receipt)
@@ -74,7 +88,13 @@ export async function waitForThorChainTx(txHash: string): Promise<string> {
     })
 }
 
-async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<BigNumber | undefined> {
+async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
+    | {
+          burnSerial: BigNumber
+          stoken: string
+      }
+    | undefined
+> {
     const synthesisInterface = Synthesis__factory.createInterface()
     const topic0 = synthesisInterface.getEventTopic('BurnRequestBTC')
     const log = receipt.logs.find((log) => {
@@ -83,9 +103,11 @@ async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<BigNumbe
     if (!log) {
         return
     }
-    const [burnSerialBTC] = synthesisInterface.parseLog(log).args
+    const data: LogDescription = synthesisInterface.parseLog(log)
 
-    return burnSerialBTC
+    const { burnSerial, stoken } = data.args
+
+    return { burnSerial, stoken }
 }
 
 interface UnwrapSerialBTCResponse {

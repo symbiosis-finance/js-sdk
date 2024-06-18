@@ -100,8 +100,13 @@ export const WETH = {
         address: '',
         decimals: 8,
     }),
-    [ChainId.BTC_TESTNET]: new Token({
-        chainId: ChainId.BTC_TESTNET,
+    [ChainId.BTC_MUTINY]: new Token({
+        chainId: ChainId.BTC_MUTINY,
+        address: '',
+        decimals: 8,
+    }),
+    [ChainId.BTC_TESTNET4]: new Token({
+        chainId: ChainId.BTC_TESTNET4,
         address: '',
         decimals: 8,
     }),

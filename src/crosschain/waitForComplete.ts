@@ -180,8 +180,8 @@ export class WaitForComplete {
             to,
             transactionHash: receipt.transactionHash,
             type,
-            revertChainId: chainId, // FIXME depends of type
-            originalFromTokenAmount: fromTokenAmount, // FIXME depends of type
+            revertChainId: chainId, // FIXME ?? depends of type
+            originalFromTokenAmount: fromTokenAmount, // FIXME ?? depends of type
         }
     }
 }

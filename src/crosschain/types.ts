@@ -21,9 +21,13 @@ export type ChainConfig = {
     router: string
     bridge: string
     synthesis: string
-    symBtc?: string
     portal: string
     fabric: string
+    symBtc?: {
+        address: string
+        chainId: ChainId
+    }
+    forwarderUrl?: string
 }
 
 export type AdvisorConfig = {
@@ -44,11 +48,7 @@ export type SwapLimit = {
     max: string
 }
 
-export type BtcConfig = {
-    forwarderUrl: string
-}
 export type Config = {
-    btc: BtcConfig
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }

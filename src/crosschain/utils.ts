@@ -342,5 +342,5 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
 
 export function isBtc(chainId: ChainId | undefined) {
     if (!chainId) return false
-    return [ChainId.BTC_TESTNET, ChainId.BTC_MAINNET].includes(chainId)
+    return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
 }

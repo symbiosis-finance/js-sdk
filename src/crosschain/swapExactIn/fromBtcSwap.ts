@@ -7,7 +7,6 @@ import { isBtc } from '../utils'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
-import { ChainId } from '../../constants'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -16,15 +15,13 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     return isBtc(inTokenAmount.token.chainId)
 }
 
-const BTC_SYNTH_MAP: Partial<Record<ChainId, ChainId>> = {
-    [ChainId.BTC_TESTNET]: ChainId.SEPOLIA_TESTNET,
-    [ChainId.BTC_MAINNET]: ChainId.ZKSYNC_MAINNET, // TODO choose production chain
-}
-
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, toAddress } = context
 
-    const sBtcChainId = BTC_SYNTH_MAP[inTokenAmount.token.chainId]
+    const btcChainId = inTokenAmount.token.chainId
+    const symBtcConfig = symbiosis.symBtcConfigFor(btcChainId)
+
+    const sBtcChainId = symBtcConfig.chainId
     if (!sBtcChainId) {
         throw new Error(`Synthetic BTC chainId wasn't found`)
     }
@@ -39,8 +36,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     // destination of swap is not Bitcoin sBtc
     const isBtcBridging = outToken.equals(sBtc)
 
-    const forwarderUrl = symbiosis.config.btc.forwarderUrl
-
+    const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
     let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
 
     const btcFeeRaw = await getBtcFee(forwarderUrl)
@@ -141,7 +137,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         inTradeType: undefined,
         outTradeType: undefined,
         amountInUsd: undefined,
-        fee: sbfee.add(new TokenAmount(sbfee.token, tailSbFee.raw)), // FIXME different tokens/decimals
+        fee: sbfee.add(new TokenAmount(sbfee.token, tailSbFee.raw)), // FIXME @allush different tokens/decimals
         save: undefined,
         extraFee: btcFee.add(btcForwarderFee),
     }
@@ -168,7 +164,7 @@ async function buildTail(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const symBtcContract = symbiosis.symBtc(sBtcAmount.token.chainId)
+    const symBtcContract = symbiosis.symBtcFor(sBtcAmount.token.chainFromId!)
     const tail = await symBtcContract.callStatic.packBTCTransactionTail({
         receiveSide: tx.relayRecipient,
         receiveSideCalldata: tx.otherSideCalldata,
@@ -207,7 +203,7 @@ async function estimateWrap({ forwarderUrl, fee, sbfee, tail, to }: EstimateWrap
         info: {
             fee,
             op: 0, // 0 - wrap operation
-            sbfee: Number(sbfee), // FIXME should accept string,
+            sbfee: Number(sbfee), // FIXME @nick should accept string,
             tail: encodeTail(tail),
             to,
         },
@@ -239,11 +235,11 @@ async function wrap({ forwarderUrl, fee, sbfee, tail, to, feeLimit }: WrapParams
         info: {
             fee,
             op: 0, // 0 - is wrap operation
-            sbfee: Number(sbfee), // FIXME should accept string
+            sbfee: Number(sbfee), // FIXME @nick should accept string
             tail: encodeTail(tail),
             to,
         },
-        feeLimit: Number(feeLimit), // FIXME should accept string
+        feeLimit: Number(feeLimit), // FIXME @nick should accept string
     })
 
     const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)

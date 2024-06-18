@@ -44,10 +44,21 @@ export const chains: Chain[] = [
         evm: false,
     }),
     new Chain({
-        id: ChainId.BTC_TESTNET,
-        name: 'Bitcoin',
+        id: ChainId.BTC_MUTINY,
+        name: 'Bitcoin Mutiny',
         disabled: false,
         explorer: 'https://mutinynet.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.BTC_TESTNET4,
+        name: 'Bitcoin Testnet4',
+        disabled: false,
+        explorer: 'https://mempool.space/testnet4',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',

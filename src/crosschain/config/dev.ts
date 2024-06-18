@@ -2,9 +2,6 @@ import { ChainId } from '../../constants'
 import { Config } from '../types'
 
 export const config: Config = {
-    btc: {
-        forwarderUrl: '',
-    },
     advisor: {
         url: 'https://api.dev.symbiosis.finance/calculations',
     },

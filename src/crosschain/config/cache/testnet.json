@@ -7,8 +7,9 @@
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 1, "tokenId": 4 },
-                { "index": 3, "tokenId": 3 }
+                { "index": 1, "tokenId": 7 },
+                { "index": 2, "tokenId": 6 },
+                { "index": 3, "tokenId": 5 }
             ]
         }
     ],
@@ -29,6 +30,20 @@
         },
         {
             "decimals": 8,
+            "symbol": "BTC",
+            "name": "Bitcoin",
+            "chainId": 675223068,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "deprecated": false,
+            "address": "0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5",
+            "id": 1
+        },
+        {
+            "decimals": 8,
             "symbol": "mutSymBtc",
             "name": "mutSymBtc",
             "chainId": 11155111,
@@ -39,7 +54,21 @@
             },
             "deprecated": false,
             "address": "0x41540e95B10383408cfE201974c88E6C3ef9323A",
-            "id": 1
+            "id": 2
+        },
+        {
+            "decimals": 8,
+            "symbol": "t4SymBtc",
+            "name": "t4SymBtc",
+            "chainId": 11155111,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "deprecated": false,
+            "address": "0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb",
+            "id": 3
         },
         {
             "decimals": 8,
@@ -53,7 +82,7 @@
             },
             "deprecated": false,
             "address": "0x9374Ea7A11c5B185A6631effF22c015E71c67581",
-            "id": 2
+            "id": 4
         },
         {
             "decimals": 8,
@@ -68,8 +97,24 @@
             "chainFromId": 11155111,
             "deprecated": false,
             "address": "0x742175079E67dAD92CA5a315f5C37CF26e207615",
-            "id": 3,
-            "originalId": 1
+            "id": 5,
+            "originalId": 2
+        },
+        {
+            "decimals": 8,
+            "symbol": "st4SymBtc",
+            "name": "st4SymBtc from Sepolia",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 11155111,
+            "deprecated": false,
+            "address": "0xD8D16bab99BDA6c0aE108Def47a47048fa49F427",
+            "id": 6,
+            "originalId": 3
         },
         {
             "decimals": 8,
@@ -84,8 +129,8 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0xD2347db16c570495Af15a859800e86541D046c2e",
-            "id": 4,
-            "originalId": 2
+            "id": 7,
+            "originalId": 4
         },
         {
             "decimals": 8,
@@ -100,8 +145,24 @@
             "chainFromId": 2782866891,
             "deprecated": false,
             "address": "0x41540e95B10383408cfE201974c88E6C3ef9323A",
-            "id": 5,
+            "id": 8,
             "originalId": 0
+        },
+        {
+            "decimals": 8,
+            "symbol": "t4SymBtc",
+            "name": "t4SymBtc",
+            "chainId": 11155111,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 675223068,
+            "deprecated": false,
+            "address": "0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb",
+            "id": 9,
+            "originalId": 1
         },
         {
             "decimals": 8,
@@ -116,19 +177,24 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0xD058A1425301a400C4e901E78006655CB07F325A",
-            "id": 6,
-            "originalId": 2
+            "id": 10,
+            "originalId": 4
         }
     ],
     "thresholds": [
-        { "tokenId": 3, "type": "Synthesis", "value": "0" },
-        { "tokenId": 4, "type": "Synthesis", "value": "0" },
-        { "tokenId": 1, "type": "Portal", "value": "0" },
-        { "tokenId": 5, "type": "Portal", "value": "0" },
-        { "tokenId": 6, "type": "Portal", "value": "0" },
-        { "tokenId": 1, "type": "Synthesis", "value": "0" },
         { "tokenId": 5, "type": "Synthesis", "value": "0" },
         { "tokenId": 6, "type": "Synthesis", "value": "0" },
-        { "tokenId": 2, "type": "Portal", "value": "0" }
+        { "tokenId": 7, "type": "Synthesis", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "0" },
+        { "tokenId": 3, "type": "Portal", "value": "0" },
+        { "tokenId": 8, "type": "Portal", "value": "0" },
+        { "tokenId": 9, "type": "Portal", "value": "0" },
+        { "tokenId": 10, "type": "Portal", "value": "0" },
+        { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 3, "type": "Synthesis", "value": "0" },
+        { "tokenId": 8, "type": "Synthesis", "value": "0" },
+        { "tokenId": 9, "type": "Synthesis", "value": "0" },
+        { "tokenId": 10, "type": "Synthesis", "value": "0" },
+        { "tokenId": 4, "type": "Portal", "value": "0" }
     ]
 }
