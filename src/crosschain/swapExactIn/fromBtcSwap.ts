@@ -147,13 +147,13 @@ async function buildTail(
     context: SwapExactInParams,
     sBtcAmount: TokenAmount
 ): Promise<{ tokenAmountOut: TokenAmount; tail: string; fee: TokenAmount }> {
-    const { fromAddress, toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
+    const { toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
     const { transactionRequest, tokenAmountOut, fee } = await bestPoolSwapping.exactIn({
         tokenAmountIn: sBtcAmount,
         tokenOut: outToken,
-        from: fromAddress,
+        from: toAddress, // to be able to revert a tx
         to: toAddress,
         slippage,
         deadline,
