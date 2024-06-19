@@ -51,7 +51,7 @@ export const config: Config = {
     chains: [
         {
             id: ChainId.BTC_MAINNET,
-            rpc: 'https://btc.rpc',
+            rpc: 'https://mempool.space/api',
             filterBlockOffset: 0,
             stables: [
                 {
