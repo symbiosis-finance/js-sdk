@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { CrosschainSwapExactInResult } from './baseSwappingImplementation'
+import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
 import { MulticallRouter, ThorRouter__factory } from './contracts'
 import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
@@ -8,7 +8,6 @@ import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
 import { getMinAmount } from './utils'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
-import { BaseSwapping } from './baseSwapping'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount

@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { CrosschainSwapExactInResult } from '../baseSwappingImplementation'
+import { CrosschainSwapExactInResult } from '../baseSwapping'
 import { Error } from '../error'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
@@ -13,17 +13,26 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
         symbiosis.config.omniPools.forEach((poolConfig) => {
-            const zappingBtc = symbiosis.newZappingBtc(poolConfig)
+            const transitTokensIn = symbiosis.transitTokens(inTokenAmount.token.chainId, poolConfig)
+            const transitTokensOut = symbiosis.transitTokens(sBtc.chainId, poolConfig)
 
-            const promise = zappingBtc.exactIn({
-                tokenAmountIn: inTokenAmount,
-                sBtc,
-                from: fromAddress,
-                to: toAddress,
-                slippage,
-                deadline,
+            transitTokensIn.forEach((transitTokenIn) => {
+                transitTokensOut.forEach((transitTokenOut) => {
+                    const zappingBtc = symbiosis.newZappingBtc(poolConfig)
+
+                    const promise = zappingBtc.exactIn({
+                        tokenAmountIn: inTokenAmount,
+                        sBtc,
+                        from: fromAddress,
+                        to: toAddress,
+                        slippage,
+                        deadline,
+                        transitTokenIn,
+                        transitTokenOut,
+                    })
+                    promises.push(promise)
+                })
             })
-            promises.push(promise)
         })
     })
 

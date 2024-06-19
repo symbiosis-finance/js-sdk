@@ -1,9 +1,10 @@
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwappingImplementation'
+import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
 import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
 import { Error, ErrorCode } from './error'
+import { BestTokenSwapping } from './bestTokenSwapping'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
@@ -11,7 +12,7 @@ type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 export class BestPoolSwapping {
     constructor(private symbiosis: Symbiosis) {}
 
-    public swapping?: Swapping
+    public swapping?: BestTokenSwapping
 
     async exactIn({
         tokenAmountIn,
@@ -35,7 +36,7 @@ export class BestPoolSwapping {
         const optimalOmniPool = this.getOptimalOmniPool(tokenAmountIn.token, tokenOut)
         if (optimalOmniPool) {
             try {
-                const action = this.symbiosis.newSwapping(optimalOmniPool)
+                const action = this.symbiosis.bestTokenSwapping(optimalOmniPool)
                 const actionResult = await action.exactIn(exactInParams)
 
                 if (!this.symbiosis.isDirectRouteClient) {
@@ -57,7 +58,7 @@ export class BestPoolSwapping {
         const promises = omniPools
             .filter((omniPoolConfig) => omniPoolConfig.generalPurpose)
             .map(async (omniPoolConfig) => {
-                const action = this.symbiosis.newSwapping(omniPoolConfig)
+                const action = this.symbiosis.bestTokenSwapping(omniPoolConfig)
 
                 const actionResult = await action.exactIn(exactInParams)
 
@@ -66,7 +67,7 @@ export class BestPoolSwapping {
 
         const results = await Promise.allSettled(promises)
 
-        let swapping: Swapping | undefined
+        let swapping: BestTokenSwapping | undefined
         let actionResult: CrosschainSwapExactInResult | undefined
         const errors: Error[] = []
 

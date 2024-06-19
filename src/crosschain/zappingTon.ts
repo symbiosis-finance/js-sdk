@@ -1,13 +1,12 @@
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import TonWeb from 'tonweb'
-import { CrosschainSwapExactInResult } from './baseSwappingImplementation'
+import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { MulticallRouter, TonBridge } from './contracts'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { BaseSwapping } from './baseSwapping'
 
 export const TON_TOKEN_DECIMALS = 9
 const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)

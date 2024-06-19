@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { CrosschainSwapExactInResult } from '../baseSwappingImplementation'
+import { CrosschainSwapExactInResult } from '../baseSwapping'
 import { Error, ErrorCode } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'

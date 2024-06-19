@@ -1,11 +1,10 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { CrosschainSwapExactInResult } from './baseSwappingImplementation'
+import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
 import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { BaseSwapping } from './baseSwapping'
 
 initEccLib(ecc)
 
@@ -17,6 +16,8 @@ export interface ZappingThorExactInParams {
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
+    transitTokenIn?: Token
+    transitTokenOut?: Token
 }
 
 export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
@@ -50,6 +51,8 @@ export class ZappingBtc extends BaseSwapping {
         to,
         slippage,
         deadline,
+        transitTokenIn,
+        transitTokenOut,
     }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
         if (!sBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
@@ -76,11 +79,13 @@ export class ZappingBtc extends BaseSwapping {
             to: from,
             slippage,
             deadline,
+            transitTokenIn,
+            transitTokenOut,
         })
 
         const tokenAmountOut = new TokenAmount(btc, result.tokenAmountOut.subtract(this.minBtcFee).raw)
 
-        // // >> for display route purposes only
+        // >> for display route purposes only
         result.route.push(new Token({ ...sBtc, chainFromId: undefined }))
 
         return {

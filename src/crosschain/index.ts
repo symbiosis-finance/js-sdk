@@ -15,8 +15,8 @@ export * from './omniLiquidity'
 export * from './dataProvider'
 export { SymbiosisTradeType, getTradePriceImpact, IzumiTrade, ZapType } from './trade'
 export * from './bestPoolSwapping'
+export * from './bestTokenSwapping'
 export * from './baseSwapping'
-export * from './baseSwappingImplementation'
 export * from './statelessWaitForComplete'
 export {
     prepareTronTransaction,

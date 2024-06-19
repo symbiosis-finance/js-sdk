@@ -66,6 +66,7 @@ import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
 import { isBtc } from './utils'
+import { BestTokenSwapping } from './bestTokenSwapping'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -205,6 +206,10 @@ export class Symbiosis {
 
     public bestPoolSwapping() {
         return new BestPoolSwapping(this)
+    }
+
+    public bestTokenSwapping(omniPoolConfig: OmniPoolConfig) {
+        return new BestTokenSwapping(this, omniPoolConfig)
     }
 
     public newRevertPending(request: PendingRequest) {
