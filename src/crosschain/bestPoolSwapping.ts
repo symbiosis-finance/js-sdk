@@ -1,5 +1,5 @@
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
+import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwappingImplementation'
 import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'

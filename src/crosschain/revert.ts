@@ -56,8 +56,8 @@ export class RevertPending {
         this.slippage = slippage
         this.deadline = deadline
 
-        this.transitTokenFrom = await this.symbiosis.transitToken(this.request.chainIdFrom, this.omniPoolConfig)
-        this.transitTokenTo = await this.symbiosis.transitToken(this.request.chainIdTo, this.omniPoolConfig)
+        this.transitTokenFrom = this.symbiosis.transitToken(this.request.chainIdFrom, this.omniPoolConfig)
+        this.transitTokenTo = this.symbiosis.transitToken(this.request.chainIdTo, this.omniPoolConfig)
 
         const fee = await this.getFee()
 

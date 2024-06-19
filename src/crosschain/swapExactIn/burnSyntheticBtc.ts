@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { CrosschainSwapExactInResult } from '../baseSwapping'
+import { CrosschainSwapExactInResult } from '../baseSwappingImplementation'
 import { Error } from '../error'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {

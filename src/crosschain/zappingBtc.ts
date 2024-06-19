@@ -1,10 +1,11 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
+import { CrosschainSwapExactInResult } from './baseSwappingImplementation'
 import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
+import { BaseSwapping } from './baseSwapping'
 
 initEccLib(ecc)
 

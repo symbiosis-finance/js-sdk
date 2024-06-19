@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
-import { CrosschainSwapExactInResult } from '../baseSwapping'
+import { CrosschainSwapExactInResult } from '../baseSwappingImplementation'
 import { Error, ErrorCode } from '../error'
 
 const ETH_USDC = new Token({

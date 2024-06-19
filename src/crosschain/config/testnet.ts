@@ -36,7 +36,7 @@ export const config: Config = {
         },
         {
             id: ChainId.BTC_MUTINY,
-            rpc: 'https://btc.rpc',
+            rpc: 'https://mutinynet.com/api',
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -68,7 +68,7 @@ export const config: Config = {
         },
         {
             id: ChainId.BTC_TESTNET4,
-            rpc: 'https://btc.rpc',
+            rpc: 'https://mempool.space/testnet4/api',
             filterBlockOffset: 2000,
             stables: [
                 {

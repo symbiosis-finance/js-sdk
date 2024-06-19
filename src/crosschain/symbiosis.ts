@@ -458,6 +458,17 @@ export class Symbiosis {
         })
     }
 
+    public transitTokens(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token[] {
+        const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
+        if (!pool) {
+            throw new Error(`Cannot find omniPool ${pool}`)
+        }
+        return this.configCache.tokens().filter((token) => {
+            const tokenPool = this.getOmniPoolByToken(token)
+            return token.chainId === chainId && pool.id === tokenPool?.id && !token.deprecated
+        })
+    }
+
     public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId

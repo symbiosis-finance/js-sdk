@@ -468,6 +468,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4',
@@ -691,22 +692,22 @@ export const config: Config = {
             ],
             filterBlockOffset: 2000,
             stables: [
-                // {
-                //     name: 'USD Coin',
-                //     symbol: 'USDC.e',
-                //     address: '0x37eAA0eF3549a5Bb7D431be78a3D99BD360d19e5',
-                //     chainId: 1101,
-                //     decimals: 6,
-                //     icons: {
-                //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                //         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                //     },
-                // },
                 {
-                    // deprecated: true,
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035',
+                    chainId: 1101,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                    },
+                },
+                {
+                    deprecated: true,
+                    name: 'USD Coin',
+                    symbol: 'USDC.e',
+                    address: '0x37eAA0eF3549a5Bb7D431be78a3D99BD360d19e5',
                     chainId: 1101,
                     decimals: 6,
                     icons: {
