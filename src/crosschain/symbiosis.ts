@@ -468,38 +468,48 @@ export class Symbiosis {
         if (!pool) {
             throw new Error(`Cannot find omniPool ${pool}`)
         }
-        return this.configCache.tokens().filter((token) => {
+
+        const tokens = this.configCache.tokens().filter((token) => {
+            return token.chainId === chainId
+        })
+
+        // if token is from manager chain (token's chainIs equals to pool chainId)
+        if (chainId === pool.chainId) {
+            return tokens
+        }
+
+        return tokens.filter((token) => {
             const tokenPool = this.getOmniPoolByToken(token)
-            return token.chainId === chainId && pool.id === tokenPool?.id && !token.deprecated
+            return pool.id === tokenPool?.id
         })
     }
 
     public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
+        const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
+        if (!pool) {
+            throw new Error(`Cannot find omniPool ${pool}`)
+        }
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId
         })
         if (tokens.length === 0) {
             throw new Error(`Cannot find token for chain ${chainId}`)
         }
-        const omniPool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
-        if (!omniPool) {
-            throw new Error(`Cannot find omniPool ${omniPool}`)
-        }
 
         // if token is from manager chain (token's chainIs equals to pool chainId)
-        if (chainId === omniPoolConfig.chainId) {
+        if (chainId === pool.chainId) {
             return tokens[0]
         }
 
         // find the FIRST suitable token from the tokens list
         // e.g. the first token has priority
         const transitToken = tokens.find((token) => {
-            return this.getOmniPoolByToken(token)?.id === omniPool.id
+            return this.getOmniPoolByToken(token)?.id === pool.id
         })
 
         if (!transitToken) {
             throw new Error(
-                `Cannot find transitToken for chain ${chainId}. Pool: ${omniPool.id}`,
+                `Cannot find transitToken for chain ${chainId}. Pool: ${pool.id}`,
                 ErrorCode.NO_TRANSIT_TOKEN
             )
         }
