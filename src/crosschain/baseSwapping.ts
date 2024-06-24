@@ -794,14 +794,12 @@ export abstract class BaseSwapping {
     }
 
     protected secondSwapCalldata(): string | [] {
-        if (!this.transit.trade) {
+        const calls = this.transit.calls()
+        if (!calls) {
             return []
         }
 
-        const calldatas = [this.transit.trade.callData]
-        const receiveSides = [this.transit.trade.pool.address]
-        const paths = [this.transit.trade.tokenAmountIn.token.address, this.transit.trade.amountOut.token.address]
-        const offsets = [this.transit.trade.callDataOffset]
+        const { calldatas, receiveSides, paths, offsets } = calls
 
         if (this.transit.direction === 'mint' && this.tradeC) {
             calldatas.push(this.finalCalldata() as string)

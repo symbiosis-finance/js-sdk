@@ -191,4 +191,43 @@ export class Transit {
 
         return trade
     }
+
+    public calls() {
+        if (!this.trade) {
+            return undefined
+        }
+
+        const calldatas = []
+        const receiveSides = []
+        const paths = []
+        const offsets = []
+
+        const preCall = OmniTrade.buildFeeCall(this.trade.tokenAmountIn)
+        if (preCall) {
+            calldatas.push(preCall.calldata)
+            receiveSides.push(preCall.receiveSide)
+            paths.push(preCall.path)
+            offsets.push(preCall.offset)
+        }
+
+        calldatas.push(this.trade.callData)
+        receiveSides.push(this.trade.pool.address)
+        paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
+        offsets.push(this.trade.callDataOffset)
+
+        const postCall = OmniTrade.buildFeeCall(this.trade.amountOut)
+        if (postCall) {
+            calldatas.push(postCall.calldata)
+            receiveSides.push(postCall.receiveSide)
+            paths.push(postCall.path)
+            offsets.push(postCall.offset)
+        }
+
+        return {
+            calldatas,
+            receiveSides,
+            paths,
+            offsets,
+        }
+    }
 }

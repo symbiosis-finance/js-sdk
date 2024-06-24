@@ -1,8 +1,17 @@
 import { Percent, Token, TokenAmount } from '../../entities'
-import { OmniPool, OmniPoolOracle } from '../contracts'
+import { OctoPoolFeeCollector, OctoPoolFeeCollector__factory, OmniPool, OmniPoolOracle } from '../contracts'
 import { calculatePriceImpact, getMinAmount } from '../utils'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
+import { ChainId } from '../../constants'
+import { BigNumber } from 'ethers'
+
+const EXTRA_FEE_CHAINS = [ChainId.TRON_MAINNET]
+
+const OCTO_POOL_FEE_COLLECTOR = {
+    chainId: ChainId.BOBA_BNB,
+    address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
+}
 
 export class OmniTrade {
     public route!: Token[]
@@ -14,6 +23,7 @@ export class OmniTrade {
 
     public readonly pool: OmniPool
     public readonly poolOracle: OmniPoolOracle
+    public readonly feeCollector: OctoPoolFeeCollector
 
     public constructor(
         public readonly tokenAmountIn: TokenAmount,
@@ -28,6 +38,9 @@ export class OmniTrade {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
         this.callDataOffset = 100
+
+        const provider = this.symbiosis.getProvider(OCTO_POOL_FEE_COLLECTOR.chainId)
+        this.feeCollector = OctoPoolFeeCollector__factory.connect(OCTO_POOL_FEE_COLLECTOR.address, provider)
     }
 
     public async init() {
@@ -36,16 +49,39 @@ export class OmniTrade {
         const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenAmountIn.token)
         const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenOut)
 
-        const quote = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountIn.raw.toString())
+        let amountIn = BigNumber.from(this.tokenAmountIn.raw.toString())
+        let amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
 
-        let quoteMin = quote
-        if (!this.tokenAmountIn.equalTo(this.tokenAmountInMin)) {
-            quoteMin = await this.poolOracle.quoteFrom(indexIn, indexOut, this.tokenAmountInMin.raw.toString())
+        const preCallRequired = OmniTrade.isFeeCallRequired(this.tokenAmountIn.token)
+        const postCallRequired = OmniTrade.isFeeCallRequired(this.tokenOut)
+
+        const feeRateBase = BigNumber.from(10).pow(18)
+        let feeRate = BigNumber.from(0)
+        if (preCallRequired || postCallRequired) {
+            feeRate = await this.feeCollector.feeRate()
         }
 
-        this.amountOut = new TokenAmount(this.tokenOut, quote.actualToAmount.toString())
+        if (preCallRequired) {
+            amountIn = amountIn.sub(amountIn.mul(feeRate).div(feeRateBase))
+            amountInMin = amountInMin.sub(amountInMin.mul(feeRate).div(feeRateBase))
+        }
 
-        const amountOutMinRaw = getMinAmount(this.slippage, quoteMin.actualToAmount.toString())
+        let { actualToAmount: quote } = await this.poolOracle.quoteFrom(indexIn, indexOut, amountIn)
+
+        let quoteMin = quote
+        if (!amountIn.eq(amountInMin)) {
+            const response = await this.poolOracle.quoteFrom(indexIn, indexOut, amountInMin)
+            quoteMin = response.actualToAmount
+        }
+
+        if (postCallRequired) {
+            quote = quote.sub(quote.mul(feeRate).div(feeRateBase))
+            quoteMin = quoteMin.sub(quoteMin.mul(feeRate).div(feeRateBase))
+        }
+
+        this.amountOut = new TokenAmount(this.tokenOut, quote.toString())
+
+        const amountOutMinRaw = getMinAmount(this.slippage, quoteMin.toString())
         this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
         this.callData = this.pool.interface.encodeFunctionData('swap', [
@@ -64,5 +100,33 @@ export class OmniTrade {
         this.priceImpact = priceImpact
 
         return this
+    }
+
+    public static isFeeCallRequired(token: Token) {
+        if (!token.chainFromId) {
+            return false
+        }
+        return EXTRA_FEE_CHAINS.includes(token.chainFromId)
+    }
+
+    public static buildFeeCall(tokenAmount: TokenAmount) {
+        if (!this.isFeeCallRequired(tokenAmount.token)) {
+            return
+        }
+
+        if (OCTO_POOL_FEE_COLLECTOR.chainId !== tokenAmount.token.chainId) {
+            return
+        }
+
+        const calldata = OctoPoolFeeCollector__factory.createInterface().encodeFunctionData('collectFee', [
+            tokenAmount.raw.toString(),
+            tokenAmount.token.address,
+        ])
+        return {
+            calldata,
+            receiveSide: OCTO_POOL_FEE_COLLECTOR.address,
+            path: tokenAmount.token.address,
+            offset: 36,
+        }
     }
 }
