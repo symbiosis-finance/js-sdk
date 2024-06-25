@@ -617,6 +617,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3635.png',
         },
     }),
+    new Chain({
+        id: ChainId.FRAXTAL_MAINNET,
+        name: 'Fraxtal',
+        disabled: false,
+        explorer: 'https://fraxscan.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

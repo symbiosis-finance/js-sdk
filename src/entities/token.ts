@@ -773,4 +773,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14532.png',
         },
     }),
+    [ChainId.FRAXTAL_MAINNET]: new Token({
+        chainId: ChainId.FRAXTAL_MAINNET,
+        address: '0xfc00000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'wfrxETH',
+        isNative: false,
+        name: 'Wrapped frxETH',
+        icons: {
+            small: 'https://fraxscan.com/token/images/wfrxeth_32.png',
+            large: 'https://fraxscan.com/token/images/wfrxeth_32.png',
+        },
+    }),
 }

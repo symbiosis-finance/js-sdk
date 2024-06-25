@@ -227,6 +227,27 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
             }),
         ],
     },
+    [ChainId.TAIKO_MAINNET]: {
+        swap: '0x04830cfCED9772b8ACbAF76Cfc7A630Ad82c9148',
+        factory: '0x8c7d3063579BdB0b90997e18A770eaE32E1eBb08',
+        quoter: '0x2C6Df0fDbCE9D2Ded2B52A117126F2Dc991f770f',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.TAIKO_MAINNET,
+                name: 'USD Coin',
+                symbol: 'USDC',
+                address: '0x07d83526730c7438048D55A4fc0b850e2aaB6f0b',
+                decimals: 6,
+            }),
+            new Token({
+                chainId: ChainId.TAIKO_MAINNET,
+                name: 'TAIKO',
+                symbol: 'TAIKO',
+                address: '0xa9d23408b9ba935c230493c40c73824df71a0975',
+                decimals: 18,
+            }),
+        ],
+    },
 }
 
 export class IzumiTrade implements SymbiosisTrade {
