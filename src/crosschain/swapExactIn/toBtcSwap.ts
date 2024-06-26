@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult } from './types'
 import { thorChainSwap } from './thorChainSwap'
 import { burnSyntheticBtc } from './burnSyntheticBtc'
-import { isBtc } from '../utils'
+import { isBtc, selectError } from '../utils'
 import { Error } from '../error'
 import { ChainId } from '../../constants'
 
@@ -33,10 +33,10 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
     const results = await Promise.allSettled(promises)
 
     let bestResult: SwapExactInResult | undefined
-    let error: Error | undefined
+    const errors: Error[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {
-            error = item.reason
+            errors.push(item.reason)
             continue
         }
 
@@ -50,7 +50,7 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
     }
 
     if (!bestResult) {
-        throw error
+        throw selectError(errors)
     }
 
     return bestResult

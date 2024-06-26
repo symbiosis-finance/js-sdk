@@ -8,7 +8,7 @@ import ecc from '@bitcoinerlab/secp256k1'
 
 initEccLib(ecc)
 
-export interface ZappingThorExactInParams {
+interface ZappingBtcExactInParams {
     tokenAmountIn: TokenAmount
     sBtc: Token
     from: string
@@ -53,7 +53,7 @@ export class ZappingBtc extends BaseSwapping {
         deadline,
         transitTokenIn,
         transitTokenOut,
-    }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
+    }: ZappingBtcExactInParams): Promise<CrosschainSwapExactInResult> {
         if (!sBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
         }

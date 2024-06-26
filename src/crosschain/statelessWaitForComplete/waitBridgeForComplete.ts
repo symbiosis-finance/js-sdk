@@ -18,7 +18,12 @@ export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: Chain
     console.log('tx', txIdWithPrefix)
     const aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)
     if (!aBridgeInfo) {
-        throw new Error(`Transaction ${txId} is not a bridge request`)
+        const { outHash, extraStep } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
+        if (!extraStep) {
+            throw new Error(`Transaction ${txId} is not a bridge request and `)
+        }
+
+        return outHash
     }
 
     console.log('aBridgeInfo', aBridgeInfo)
@@ -31,13 +36,15 @@ export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: Chain
 
     // if b-chain is final destination
     if (!bBridgeInfo) {
-        return tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
+        const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
+        return outHash
     }
 
     const cTxId = await waitOtherSideTx(symbiosis, bBridgeInfo)
     console.log('cTxId', cTxId)
 
-    return tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
+    const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
+    return outHash
 }
 
 type BridgeRequestType =

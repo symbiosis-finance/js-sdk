@@ -17,7 +17,11 @@ interface ThorStatusResponse {
     }
 }
 
-export async function tryToFindExtraStepsAndWait(symbiosis: Symbiosis, chainId: ChainId, txHash: string) {
+export async function tryToFindExtraStepsAndWait(
+    symbiosis: Symbiosis,
+    chainId: ChainId,
+    txHash: string
+): Promise<{ extraStep?: 'thorChain' | 'burnRequestBtc'; outHash: string }> {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
@@ -26,7 +30,11 @@ export async function tryToFindExtraStepsAndWait(symbiosis: Symbiosis, chainId: 
 
     const isThorChainDeposit = await findThorChainDeposit(receipt)
     if (isThorChainDeposit) {
-        return waitForThorChainTx(txHash)
+        const outHash = await waitForThorChainTx(txHash)
+        return {
+            extraStep: 'thorChain',
+            outHash,
+        }
     }
 
     const burnRequestBtc = await findBurnRequestBtc(receipt)
@@ -45,14 +53,21 @@ export async function tryToFindExtraStepsAndWait(symbiosis: Symbiosis, chainId: 
             throw new Error('Token not found or the token is not synthetic')
         }
         const forwarderUrl = symbiosis.getForwarderUrl(synth.chainFromId)
-        return waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
+        const outHash = await waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
+
+        return {
+            extraStep: 'burnRequestBtc',
+            outHash,
+        }
     }
 
     const isTonDeposit = await findTonOracleRequest(receipt)
     if (isTonDeposit) {
         console.log('This is TON deposit. TON tracking have to be implemented')
     }
-    return txHash
+    return {
+        outHash: txHash,
+    }
 }
 
 export async function findThorChainDeposit(receipt: TransactionReceipt) {

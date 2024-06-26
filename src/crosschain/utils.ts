@@ -349,8 +349,12 @@ export function selectError(errors: Error[]): Error {
     if (errors.length === 0) {
         throw new Error('Errors array is empty')
     }
+    const filteredErrors = errors.filter((i) => i instanceof Error)
+    if (filteredErrors.length === 0) {
+        throw errors[0]
+    }
 
-    const uniqueCodes = errors
+    const uniqueCodes = filteredErrors
         .map((i) => i.code)
         .reduce((acc, i) => {
             if (!acc.includes(i)) {
@@ -358,18 +362,19 @@ export function selectError(errors: Error[]): Error {
             }
             return acc
         }, [] as ErrorCode[])
+        .filter((i) => i !== undefined)
 
     // if all errors are same return first of them
     if (uniqueCodes.length === 1) {
-        return errors[0]
+        return filteredErrors[0]
     }
     // skip no transit token error (no chains pair)
-    const otherErrors = errors.filter((e) => {
+    const otherErrors = filteredErrors.filter((e) => {
         return e.code !== ErrorCode.NO_TRANSIT_TOKEN
     })
 
     if (otherErrors.length > 0) {
         return otherErrors[0]
     }
-    return errors[0]
+    return filteredErrors[0]
 }

@@ -2,6 +2,8 @@ import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } f
 import { CrosschainSwapExactInResult } from '../baseSwapping'
 import { Error, ErrorCode } from '../error'
 import { selectError } from '../utils'
+import { UnwrapBtc } from '../unwrapBtc'
+import { TokenAmount } from '../../entities'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, fromAddress, toAddress, slippage, deadline } = context
@@ -15,7 +17,13 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         }
 
         if (inTokenAmount.token.equals(sBtc)) {
-            // TODO @allush implement burning
+            const burn = new UnwrapBtc(symbiosis)
+            promises.push(
+                burn.exactIn({
+                    tokenAmountIn: new TokenAmount(sBtc, inTokenAmount.raw),
+                    to: toAddress,
+                })
+            )
             return
         }
 
