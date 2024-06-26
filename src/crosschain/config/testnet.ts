@@ -12,6 +12,12 @@ export const config: Config = {
             oracle: '0xfdF3dBF16a7Dc8078FE4E9D0c1ac391dfb8B19aF',
             generalPurpose: true,
         },
+        {
+            chainId: ChainId.BSC_TESTNET,
+            address: '0x3E524E5dbcEc08C3712D7Ac877Ad83cb8dAfCe8D', // BTC mainnet octopool
+            oracle: '0x7a62416f10cd039cb538953953f94316FE1c32FA',
+            generalPurpose: true,
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_TESTNET]: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
@@ -99,9 +105,45 @@ export const config: Config = {
             forwarderUrl: 'https://relayers.testnet.symbiosis.finance/forwarder/api/v1',
         },
         {
+            id: ChainId.BTC_MAINNET,
+            rpc: 'https://mempool.space/api',
+            filterBlockOffset: 2000,
+            stables: [
+                {
+                    name: 'Bitcoin',
+                    symbol: 'BTC',
+                    address: '0x76866364B9bc7639A01A79E28C0ee04AEb7C95E2', // is the btc portal genesis tx
+                    chainId: ChainId.BTC_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000',
+            bridge: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000',
+            symBtc: {
+                address: '0x088B8C14d27E6390343EfaEb9389C29D62435a12',
+                chainId: ChainId.SEPOLIA_TESTNET,
+            },
+            forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mainnet/forwarder/api/v1',
+        },
+        {
             id: ChainId.SEPOLIA_TESTNET,
-            rpc: 'https://sepolia.gateway.tenderly.co',
-            spareRpcs: ['https://sepolia.drpc.org', 'https://rpc-sepolia.rockx.com'],
+            rpc: 'https://rpc.sepolia.org',
+            spareRpcs: [
+                'https://sepolia.gateway.tenderly.co',
+                'https://sepolia.drpc.org',
+                'https://rpc-sepolia.rockx.com',
+            ],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -119,6 +161,17 @@ export const config: Config = {
                     name: 't4SymBtc',
                     address: '0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb',
                     symbol: 't4SymBtc',
+                    decimals: 8,
+                    chainId: 11155111,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+                {
+                    name: 'mSymBtc',
+                    address: '0xeD86914A9478a066d82b2bE3E5B99A38BAaE23ce',
+                    symbol: 'mSymBtc',
                     decimals: 8,
                     chainId: 11155111,
                     icons: {
@@ -150,6 +203,17 @@ export const config: Config = {
                     name: 'Wrapped BTC',
                     address: '0x9374Ea7A11c5B185A6631effF22c015E71c67581',
                     symbol: 'WBTC',
+                    decimals: 8,
+                    chainId: ChainId.AVAX_TESTNET,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    },
+                },
+                {
+                    name: 'Wrapped BTC',
+                    address: '0xE34EBC0DE48F2947510cFf88a13F1c0B11FD1109',
+                    symbol: 'WBTC(Mainnet)',
                     decimals: 8,
                     chainId: ChainId.AVAX_TESTNET,
                     icons: {

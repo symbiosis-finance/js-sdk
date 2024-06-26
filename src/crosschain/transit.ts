@@ -202,7 +202,7 @@ export class Transit {
         const paths = []
         const offsets = []
 
-        const preCall = OmniTrade.buildFeeCall(this.trade.tokenAmountIn)
+        const preCall = this.trade.buildFeePreCall()
         if (preCall) {
             calldatas.push(preCall.calldata)
             receiveSides.push(preCall.receiveSide)
@@ -215,7 +215,7 @@ export class Transit {
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
         offsets.push(this.trade.callDataOffset)
 
-        const postCall = OmniTrade.buildFeeCall(this.trade.amountOut)
+        const postCall = this.trade.buildFeePostCall()
         if (postCall) {
             calldatas.push(postCall.calldata)
             receiveSides.push(postCall.receiveSide)

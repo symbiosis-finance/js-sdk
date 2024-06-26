@@ -1,5 +1,5 @@
 import { Percent, Token, TokenAmount } from '../../entities'
-import { OctoPoolFeeCollector, OctoPoolFeeCollector__factory, OmniPool, OmniPoolOracle } from '../contracts'
+import { OctoPoolFeeCollector__factory, OmniPool, OmniPoolOracle } from '../contracts'
 import { calculatePriceImpact, getMinAmount } from '../utils'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
@@ -23,7 +23,6 @@ export class OmniTrade {
 
     public readonly pool: OmniPool
     public readonly poolOracle: OmniPoolOracle
-    public readonly feeCollector: OctoPoolFeeCollector
 
     public constructor(
         public readonly tokenAmountIn: TokenAmount,
@@ -38,9 +37,6 @@ export class OmniTrade {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
         this.callDataOffset = 100
-
-        const provider = this.symbiosis.getProvider(OCTO_POOL_FEE_COLLECTOR.chainId)
-        this.feeCollector = OctoPoolFeeCollector__factory.connect(OCTO_POOL_FEE_COLLECTOR.address, provider)
     }
 
     public async init() {
@@ -52,16 +48,16 @@ export class OmniTrade {
         let amountIn = BigNumber.from(this.tokenAmountIn.raw.toString())
         let amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
 
-        const preCallRequired = OmniTrade.isFeeCallRequired(this.tokenAmountIn.token)
-        const postCallRequired = OmniTrade.isFeeCallRequired(this.tokenOut)
+        const preCallPossible = this.isFeeCallPossible(this.tokenAmountIn.token)
+        const postCallPossible = this.isFeeCallPossible(this.tokenOut)
 
         const feeRateBase = BigNumber.from(10).pow(18)
         let feeRate = BigNumber.from(0)
-        if (preCallRequired || postCallRequired) {
-            feeRate = await this.feeCollector.feeRate()
+        if (preCallPossible || postCallPossible) {
+            feeRate = await this.getFeeRate()
         }
 
-        if (preCallRequired) {
+        if (preCallPossible) {
             amountIn = amountIn.sub(amountIn.mul(feeRate).div(feeRateBase))
             amountInMin = amountInMin.sub(amountInMin.mul(feeRate).div(feeRateBase))
         }
@@ -74,7 +70,7 @@ export class OmniTrade {
             quoteMin = response.actualToAmount
         }
 
-        if (postCallRequired) {
+        if (postCallPossible) {
             quote = quote.sub(quote.mul(feeRate).div(feeRateBase))
             quoteMin = quoteMin.sub(quoteMin.mul(feeRate).div(feeRateBase))
         }
@@ -102,19 +98,31 @@ export class OmniTrade {
         return this
     }
 
-    public static isFeeCallRequired(token: Token) {
-        if (!token.chainFromId) {
+    public buildFeePreCall() {
+        return this.buildFeeCall(this.tokenAmountIn)
+    }
+
+    public buildFeePostCall() {
+        return this.buildFeeCall(this.amountOut)
+    }
+
+    // private
+    private async getFeeRate() {
+        const provider = this.symbiosis.getProvider(OCTO_POOL_FEE_COLLECTOR.chainId)
+        const feeCollector = OctoPoolFeeCollector__factory.connect(OCTO_POOL_FEE_COLLECTOR.address, provider)
+        return feeCollector.feeRate()
+    }
+
+    private isFeeCallPossible(token: Token) {
+        const hasFeeCollector = OCTO_POOL_FEE_COLLECTOR.chainId === this.omniPoolConfig.chainId
+        if (!token.chainFromId || !hasFeeCollector) {
             return false
         }
         return EXTRA_FEE_CHAINS.includes(token.chainFromId)
     }
 
-    public static buildFeeCall(tokenAmount: TokenAmount) {
-        if (!this.isFeeCallRequired(tokenAmount.token)) {
-            return
-        }
-
-        if (OCTO_POOL_FEE_COLLECTOR.chainId !== tokenAmount.token.chainId) {
+    private buildFeeCall(tokenAmount: TokenAmount) {
+        if (!this.isFeeCallPossible(tokenAmount.token)) {
             return
         }
 

@@ -23,6 +23,9 @@ export class BestTokenSwapping {
 
         transitTokensIn.forEach((transitTokenIn) => {
             transitTokensOut.forEach((transitTokenOut) => {
+                if (transitTokenIn.equals(transitTokenOut)) {
+                    return
+                }
                 combinations.push({ transitTokenIn, transitTokenOut })
             })
         })

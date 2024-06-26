@@ -241,7 +241,7 @@ export class Symbiosis {
 
         const provider = this.providers.get(chainId)
         if (!provider) {
-            throw new Error('No provider for given chainId')
+            throw new Error(`No provider for given chainId: ${chainId}`)
         }
         return provider
     }

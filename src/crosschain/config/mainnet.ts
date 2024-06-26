@@ -57,7 +57,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5', // TODO replace to the mainnet btc portal genesis tx
+                    address: '0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5', // TODO @allush replace to the mainnet btc portal genesis tx
                     chainId: ChainId.BTC_MAINNET,
                     decimals: 8,
                     icons: {

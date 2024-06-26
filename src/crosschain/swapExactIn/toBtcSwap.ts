@@ -10,7 +10,7 @@ function isThorChainAvailable(chainId: ChainId) {
 }
 
 function isNativeAvailable(chainId: ChainId) {
-    return isBtc(chainId) && (chainId === ChainId.BTC_MUTINY || chainId === ChainId.BTC_TESTNET4) // TODO rm last condition
+    return isBtc(chainId)
 }
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {

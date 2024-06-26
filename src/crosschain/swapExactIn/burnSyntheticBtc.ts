@@ -1,6 +1,7 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { CrosschainSwapExactInResult } from '../baseSwapping'
-import { Error } from '../error'
+import { Error, ErrorCode } from '../error'
+import { selectError } from '../utils'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, fromAddress, toAddress, slippage, deadline } = context
@@ -12,12 +13,21 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         if (!sBtc) {
             return
         }
+
+        if (inTokenAmount.token.equals(sBtc)) {
+            // TODO @allush implement burning
+            return
+        }
+
         symbiosis.config.omniPools.forEach((poolConfig) => {
             const transitTokensIn = symbiosis.transitTokens(inTokenAmount.token.chainId, poolConfig)
             const transitTokensOut = symbiosis.transitTokens(sBtc.chainId, poolConfig)
 
             transitTokensIn.forEach((transitTokenIn) => {
                 transitTokensOut.forEach((transitTokenOut) => {
+                    if (transitTokenIn.equals(transitTokenOut)) {
+                        return
+                    }
                     const zappingBtc = symbiosis.newZappingBtc(poolConfig)
 
                     const promise = zappingBtc.exactIn({
@@ -36,13 +46,17 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         })
     })
 
+    if (promises.length === 0) {
+        throw new Error(`No route`, ErrorCode.NO_TRANSIT_TOKEN)
+    }
+
     const results = await Promise.allSettled(promises)
 
     let bestResult: CrosschainSwapExactInResult | undefined
-    let error: Error | undefined
+    const errors: Error[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {
-            error = item.reason
+            errors.push(item.reason)
             continue
         }
 
@@ -56,7 +70,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
     }
 
     if (!bestResult) {
-        throw error
+        throw selectError(errors)
     }
 
     const payload = {

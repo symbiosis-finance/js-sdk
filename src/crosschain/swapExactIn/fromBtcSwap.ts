@@ -43,7 +43,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const btcFee = new TokenAmount(sBtc, btcFeeRaw.toString())
     sBtcAmount = sBtcAmount.subtract(btcFee)
 
-    const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO estimate with advisor
+    const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO @allush estimate with advisor
     const sbfee = new TokenAmount(sBtc, sbfeeRaw.toString())
     sBtcAmount = sBtcAmount.subtract(sbfee)
 
