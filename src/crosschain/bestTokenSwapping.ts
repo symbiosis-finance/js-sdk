@@ -3,7 +3,8 @@ import { Symbiosis } from './symbiosis'
 import { OmniPoolConfig } from './types'
 import { Swapping } from './swapping'
 import { Token, TokenAmount } from '../entities'
-import { Error } from './error'
+import { Error, ErrorCode } from './error'
+import { selectError } from './utils'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
@@ -25,6 +26,12 @@ export class BestTokenSwapping {
                 combinations.push({ transitTokenIn, transitTokenOut })
             })
         })
+        if (combinations.length === 0) {
+            throw new Error(
+                `There is no token ${tokenAmountIn.token.address} in omniPool ${this.omniPoolConfig.address}`,
+                ErrorCode.NO_TRANSIT_TOKEN
+            )
+        }
 
         const promises = combinations.map(async ({ transitTokenIn, transitTokenOut }) => {
             const action = new Swapping(this.symbiosis, this.omniPoolConfig)
@@ -39,9 +46,10 @@ export class BestTokenSwapping {
 
         let swapping: Swapping | undefined
         let result: CrosschainSwapExactInResult | undefined
-
+        const errors: Error[] = []
         for (const item of results) {
             if (item.status !== 'fulfilled') {
+                errors.push(item.reason)
                 continue
             }
 
@@ -56,7 +64,7 @@ export class BestTokenSwapping {
         }
 
         if (!result) {
-            throw new Error(`BaseSwapping: can't get the best implementation`)
+            throw selectError(errors)
         }
 
         this.swapping = swapping

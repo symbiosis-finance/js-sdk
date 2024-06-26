@@ -3,8 +3,9 @@ import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapp
 import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
-import { Error, ErrorCode } from './error'
+import { Error } from './error'
 import { BestTokenSwapping } from './bestTokenSwapping'
+import { selectError } from './utils'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
@@ -89,28 +90,7 @@ export class BestPoolSwapping {
         }
 
         if (!actionResult || !swapping) {
-            const uniqueCodes = errors
-                .map((i) => i.code)
-                .reduce((acc, i) => {
-                    if (!acc.includes(i)) {
-                        acc.push(i)
-                    }
-                    return acc
-                }, [] as ErrorCode[])
-
-            // if all errors are same return first of them
-            if (uniqueCodes.length === 1) {
-                throw errors[0]
-            }
-            // skip no transit token error (no chains pair)
-            const otherErrors = errors.filter((e) => {
-                return e.code !== ErrorCode.NO_TRANSIT_TOKEN
-            })
-
-            if (otherErrors.length > 0) {
-                throw otherErrors[0]
-            }
-            throw errors[0]
+            throw selectError(errors)
         }
 
         this.swapping = swapping

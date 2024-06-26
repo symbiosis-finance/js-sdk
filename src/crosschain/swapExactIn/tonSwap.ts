@@ -1,9 +1,10 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { CrosschainSwapExactInResult } from '../baseSwapping'
-import { Error, ErrorCode } from '../error'
+import { Error } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
 import { Option, TON_TOKEN_DECIMALS } from '../zappingTon'
+import { selectError } from '../utils'
 
 const wTonAttributes = {
     decimals: TON_TOKEN_DECIMALS,
@@ -94,30 +95,8 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
         bestResult = result
     }
 
-    // TODO remove duplicate code
     if (!bestResult) {
-        const uniqueCodes = errors
-            .map((i) => i.code)
-            .reduce((acc, i) => {
-                if (!acc.includes(i)) {
-                    acc.push(i)
-                }
-                return acc
-            }, [] as ErrorCode[])
-
-        // if all errors are same return first of them
-        if (uniqueCodes.length === 1) {
-            throw errors[0]
-        }
-        // skip no transit token error (no chains pair)
-        const otherErrors = errors.filter((e) => {
-            return e.code !== ErrorCode.NO_TRANSIT_TOKEN
-        })
-
-        if (otherErrors.length > 0) {
-            throw otherErrors[0]
-        }
-        throw errors[0]
+        throw selectError(errors)
     }
 
     const payload = {
