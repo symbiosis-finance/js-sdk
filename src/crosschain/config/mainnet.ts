@@ -1270,12 +1270,8 @@ export const config: Config = {
         },
         {
             id: ChainId.TAIKO_MAINNET,
-            rpc: 'https://rpc.ankr.com/taiko',
-            spareRpcs: [
-                'https://rpc.mainnet.taiko.xyz',
-                'https://rpc.taiko.xyz',
-                'https://taiko.blockpi.network/v1/rpc/public',
-            ],
+            rpc: 'https://rpc.taiko.xyz',
+            spareRpcs: ['https://rpc.mainnet.taiko.xyz', 'https://taiko.blockpi.network/v1/rpc/public'],
             filterBlockOffset: 2000,
             stables: [
                 {
