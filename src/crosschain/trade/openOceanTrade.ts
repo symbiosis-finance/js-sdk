@@ -1,10 +1,11 @@
-import { ChainId, getNativeTokenAddress } from '../../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { getMinAmount } from '../utils'
 import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 interface OpenOceanTradeParams {
     symbiosis: Symbiosis
@@ -22,32 +23,98 @@ interface OpenOceanQuote {
     price_impact: string
 }
 
-const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
+interface OpenOceanChain {
+    slug: string
+    nativeTokenAddress: string
+}
+
+const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     // ---  1inch supported chains
-    [ChainId.ETH_MAINNET]: 'eth',
-    [ChainId.BSC_MAINNET]: 'bsc',
-    [ChainId.ZKSYNC_MAINNET]: 'zksync',
-    [ChainId.MATIC_MAINNET]: 'polygon',
-    [ChainId.BASE_MAINNET]: 'base',
-    [ChainId.AVAX_MAINNET]: 'avax',
-    [ChainId.ARBITRUM_MAINNET]: 'arbitrum',
-    [ChainId.OPTIMISM_MAINNET]: 'optimism',
+    [ChainId.ETH_MAINNET]: {
+        slug: 'eth',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.BSC_MAINNET]: {
+        slug: 'bsc',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.ZKSYNC_MAINNET]: {
+        slug: 'zksync',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.MATIC_MAINNET]: {
+        slug: 'polygon',
+        nativeTokenAddress: '0x0000000000000000000000000000000000001010',
+    },
+    [ChainId.BASE_MAINNET]: {
+        slug: 'base',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.AVAX_MAINNET]: {
+        slug: 'avax',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.ARBITRUM_MAINNET]: {
+        slug: 'arbitrum',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.OPTIMISM_MAINNET]: {
+        slug: 'optimism',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
     // --- OpenOcean supported only chains
-    [ChainId.AURORA_MAINNET]: 'aurora',
-    [ChainId.HECO_MAINNET]: 'heco',
-    [ChainId.KAVA_MAINNET]: 'kava',
-    [ChainId.POLYGON_ZK]: 'polygon_zkevm',
-    [ChainId.LINEA_MAINNET]: 'linea',
-    [ChainId.SCROLL_MAINNET]: 'scroll',
-    [ChainId.MANTLE_MAINNET]: 'mantle',
-    [ChainId.MANTA_MAINNET]: 'manta',
-    [ChainId.METIS_MAINNET]: 'metis',
-    [ChainId.BLAST_MAINNET]: 'blast',
-    [ChainId.MODE_MAINNET]: 'mode',
-    [ChainId.RSK_MAINNET]: 'rootstock',
-    [ChainId.CRONOS_MAINNET]: 'cronos',
-    [ChainId.SEI_EVM_MAINNET]: 'sei',
-    [ChainId.TELOS_MAINNET]: 'telos',
+    [ChainId.KAVA_MAINNET]: {
+        slug: 'kava',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.POLYGON_ZK]: {
+        slug: 'polygon_zkevm',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.LINEA_MAINNET]: {
+        slug: 'linea',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.SCROLL_MAINNET]: {
+        slug: 'scroll',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.MANTLE_MAINNET]: {
+        slug: 'mantle',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.MANTA_MAINNET]: {
+        slug: 'manta',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.METIS_MAINNET]: {
+        slug: 'metis',
+        nativeTokenAddress: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
+    },
+    [ChainId.BLAST_MAINNET]: {
+        slug: 'blast',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.MODE_MAINNET]: {
+        slug: 'mode',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.RSK_MAINNET]: {
+        slug: 'rootstock',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.CRONOS_MAINNET]: {
+        slug: 'cronos',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.SEI_EVM_MAINNET]: {
+        slug: 'sei',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.TELOS_MAINNET]: {
+        slug: 'telos',
+        nativeTokenAddress: AddressZero,
+    },
 }
 
 const BASE_URL = 'https://open-api.openocean.finance/v3'
@@ -64,7 +131,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
     public priceImpact!: Percent
     public routerAddress!: string
 
-    private chain?: string
+    private chain?: OpenOceanChain
     private endpoint: string
 
     private readonly symbiosis: Symbiosis
@@ -92,16 +159,16 @@ export class OpenOceanTrade implements SymbiosisTrade {
         if (!this.chain) {
             throw new Error('Unsupported chain')
         }
-        this.endpoint = `${BASE_URL}/${this.chain}`
+        this.endpoint = `${BASE_URL}/${this.chain.slug}`
 
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
-            fromTokenAddress = getNativeTokenAddress(this.tokenAmountIn.token.chainId)
+            fromTokenAddress = this.chain.nativeTokenAddress
         }
 
         let toTokenAddress = this.tokenOut.address
         if (this.tokenOut.isNative) {
-            toTokenAddress = getNativeTokenAddress(this.tokenOut.chainId)
+            toTokenAddress = this.chain.nativeTokenAddress
         }
 
         const url = new URL(`${this.endpoint}/swap_quote`)

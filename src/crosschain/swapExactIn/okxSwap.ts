@@ -1,11 +1,9 @@
 import BigNumber from 'bignumber.js'
-import TronWeb from 'tronweb'
 import CryptoJS from 'crypto-js'
-import { ChainId, getNativeTokenAddress } from '../../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Token, TokenAmount } from '../../entities'
 import { DataProvider } from '../dataProvider'
 import { OneInchTrade, getTradePriceImpact } from '../trade'
-import { isTronChainId } from '../tron'
 import { SwapExactInParams, SwapExactInResult } from './types'
 
 const OKX_CHAINS = new Set([
@@ -44,11 +42,7 @@ function okxSecurityHeaders(url: URL): Record<string, string> {
 
 function getTokenAddress(token: Token): string {
     if (token.isNative) {
-        return getNativeTokenAddress(token.chainId)
-    }
-
-    if (isTronChainId(token.chainId)) {
-        return TronWeb.address.fromHex(token.address)
+        return NATIVE_TOKEN_ADDRESS
     }
 
     return token.address

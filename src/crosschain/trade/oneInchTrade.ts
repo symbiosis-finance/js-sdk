@@ -1,4 +1,4 @@
-import { ChainId, getNativeTokenAddress } from '../../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
@@ -66,12 +66,12 @@ export class OneInchTrade implements SymbiosisTrade {
     public async init() {
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
-            fromTokenAddress = getNativeTokenAddress(this.tokenAmountIn.token.chainId)
+            fromTokenAddress = NATIVE_TOKEN_ADDRESS
         }
 
         let toTokenAddress = this.tokenOut.address
         if (this.tokenOut.isNative) {
-            toTokenAddress = getNativeTokenAddress(this.tokenOut.chainId)
+            toTokenAddress = NATIVE_TOKEN_ADDRESS
         }
 
         const protocolsOrigin = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
