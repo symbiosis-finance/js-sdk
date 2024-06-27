@@ -1,4 +1,5 @@
 import JSBI from 'jsbi'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 // exports for external consumption
 export type BigintIsh = JSBI | bigint | string
@@ -257,6 +258,13 @@ export const NATIVE_TOKEN_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 export const NATIVE_TOKEN_ADDRESS_MAP: Partial<Record<ChainId, string>> = {
     [ChainId.TRON_MAINNET]: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
     [ChainId.METIS_MAINNET]: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
+    [ChainId.SEI_EVM_MAINNET]: AddressZero,
+    [ChainId.MANTLE_MAINNET]: AddressZero,
+    [ChainId.TELOS_MAINNET]: AddressZero,
+    [ChainId.KAVA_MAINNET]: AddressZero,
+    [ChainId.CRONOS_MAINNET]: AddressZero,
+    [ChainId.AVAX_MAINNET]: AddressZero,
+    [ChainId.MATIC_MAINNET]: '0x0000000000000000000000000000000000001010',
 } as const
 
 export function getNativeTokenAddress(chainId: ChainId) {

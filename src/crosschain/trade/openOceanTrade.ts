@@ -47,6 +47,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, string>> = {
     [ChainId.RSK_MAINNET]: 'rootstock',
     [ChainId.CRONOS_MAINNET]: 'cronos',
     [ChainId.SEI_EVM_MAINNET]: 'sei',
+    [ChainId.TELOS_MAINNET]: 'telos',
 }
 
 const BASE_URL = 'https://open-api.openocean.finance/v3'
