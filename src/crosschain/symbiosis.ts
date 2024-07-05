@@ -470,7 +470,7 @@ export class Symbiosis {
         }
 
         const tokens = this.configCache.tokens().filter((token) => {
-            return token.chainId === chainId
+            return token.chainId === chainId && !token.deprecated && !token.isSynthetic
         })
 
         // if token is from manager chain (token's chainIs equals to pool chainId)
