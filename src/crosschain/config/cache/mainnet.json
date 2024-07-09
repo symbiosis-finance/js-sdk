@@ -106,20 +106,6 @@
                 { "index": 4, "tokenId": 110 },
                 { "index": 5, "tokenId": 118 }
             ]
-        },
-        {
-            "chainId": 56288,
-            "address": "0x50DF155DAab4548F4512F6568deD8d42dbf3EE96",
-            "oracle": "0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9",
-            "generalPurpose": false,
-            "id": 5,
-            "tokens": [
-                { "index": 0, "tokenId": 131 },
-                { "index": 1, "tokenId": 122 },
-                { "index": 2, "tokenId": 78 },
-                { "index": 3, "tokenId": 119 },
-                { "index": 4, "tokenId": 136 }
-            ]
         }
     ],
     "tokens": [

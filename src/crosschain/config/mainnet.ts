@@ -36,12 +36,12 @@ export const config: Config = {
             oracle: '0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E',
             generalPurpose: false,
         },
-        {
-            chainId: 56288,
-            address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
-            oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
-            generalPurpose: false,
-        },
+        // {
+        //     chainId: 56288,
+        //     address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
+        //     oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
+        //     generalPurpose: false,
+        // },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
