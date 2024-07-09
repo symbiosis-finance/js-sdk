@@ -7,41 +7,47 @@ export const config: Config = {
     },
     omniPools: [
         {
-            chainId: 56288,
+            chainId: 56288, // usd
             address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
             oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
             generalPurpose: true,
         },
         {
-            chainId: 56288,
+            chainId: 56288, // eth
             address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
             oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
             generalPurpose: true,
         },
         {
-            chainId: 56288,
+            chainId: 56288, // btc
             address: '0xA267C428b16728831Be52b144F78b8F054411f55',
             oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
             generalPurpose: true,
         },
         {
-            chainId: 56288,
+            chainId: 56288, // ladys
             address: '0x7b905059Bdd00844280EBf54E00A087006B2D242',
             oracle: '0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5',
             generalPurpose: false,
         },
         {
-            chainId: 56288,
+            chainId: 56288, // sis
             address: '0xB5D99bE6089720d1aD3DB2a5a16D5765605704df',
             oracle: '0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E',
             generalPurpose: false,
         },
         // {
-        //     chainId: 56288,
+        //     chainId: 56288, // puf
         //     address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
         //     oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
         //     generalPurpose: false,
         // },
+        {
+            chainId: 56288, // frax
+            address: '0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E',
+            oracle: '0x4CD678FF53538E6b084464da0020422738B46038',
+            generalPurpose: false,
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -161,6 +167,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png',
+                    },
+                },
+                {
+                    name: 'Frax',
+                    symbol: 'FRAX',
+                    address: '0x853d955aCEf822Db058eb8505911ED77F175b99e',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
             ],
@@ -302,7 +319,7 @@ export const config: Config = {
                     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
                     symbol: 'USDC.e',
                     decimals: 6,
-                    chainId: 137,
+                    chainId: ChainId.MATIC_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -312,11 +329,22 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-                    chainId: 137,
+                    chainId: ChainId.MATIC_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Frax',
+                    symbol: 'FRAX',
+                    address: '0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89',
+                    chainId: ChainId.MATIC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
             ],
@@ -587,6 +615,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
+                    },
+                },
+                {
+                    name: 'Frax',
+                    symbol: 'FRAX',
+                    address: '0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
             ],
@@ -1406,6 +1445,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Frax',
+                    symbol: 'FRAX',
+                    address: '0xfc00000000000000000000000000000000000001',
+                    chainId: ChainId.FRAXTAL_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
             ],
