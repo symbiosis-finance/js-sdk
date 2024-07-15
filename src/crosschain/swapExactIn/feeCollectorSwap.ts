@@ -42,6 +42,7 @@ export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ZETACHAIN_MAINNET]: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
     [ChainId.CRONOS_MAINNET]: '0x1a039cE63AE35a67Bf0E9F6DbFaE969639D59eC8',
     [ChainId.FRAXTAL_MAINNET]: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
+    [ChainId.GRAVITY_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
 }
 
 export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {

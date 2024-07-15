@@ -785,4 +785,16 @@ export const WETH = {
             large: 'https://fraxscan.com/token/images/wfrxeth_32.png',
         },
     }),
+    [ChainId.GRAVITY_MAINNET]: new Token({
+        chainId: ChainId.GRAVITY_MAINNET,
+        address: '0xBB859E225ac8Fb6BE1C7e38D87b767e95Fef0EbD',
+        decimals: 18,
+        symbol: 'wG',
+        isNative: false,
+        name: 'Wrapped G',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+        },
+    }),
 }

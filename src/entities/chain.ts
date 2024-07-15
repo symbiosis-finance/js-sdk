@@ -627,6 +627,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
         },
     }),
+    new Chain({
+        id: ChainId.GRAVITY_MAINNET,
+        name: 'Gravity',
+        disabled: false,
+        explorer: 'https://rpc.gravity.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

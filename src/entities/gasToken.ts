@@ -87,4 +87,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ZETACHAIN_MAINNET]: GAS(ChainId.ZETACHAIN_MAINNET, 'ZETA', 21259),
     [ChainId.CRONOS_MAINNET]: GAS(ChainId.CRONOS_MAINNET, 'CRO', 3635),
     [ChainId.FRAXTAL_MAINNET]: GAS(ChainId.FRAXTAL_MAINNET, 'frxETH', 23225),
+    [ChainId.GRAVITY_MAINNET]: GAS(ChainId.GRAVITY_MAINNET, 'G.', 32120),
 }

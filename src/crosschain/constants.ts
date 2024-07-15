@@ -62,6 +62,7 @@ export const CHAINS_PRIORITY = [
     ChainId.ZETACHAIN_MAINNET,
     ChainId.CRONOS_MAINNET,
     ChainId.FRAXTAL_MAINNET,
+    ChainId.GRAVITY_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -148,6 +149,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.ZETACHAIN_MAINNET]: [WETH[ChainId.ZETACHAIN_MAINNET]],
     [ChainId.CRONOS_MAINNET]: [WETH[ChainId.CRONOS_MAINNET]],
     [ChainId.FRAXTAL_MAINNET]: [WETH[ChainId.FRAXTAL_MAINNET]],
+    [ChainId.GRAVITY_MAINNET]: [WETH[ChainId.GRAVITY_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -499,6 +501,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.ZETACHAIN_MAINNET]: [],
     [ChainId.CRONOS_MAINNET]: [],
     [ChainId.FRAXTAL_MAINNET]: [],
+    [ChainId.GRAVITY_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -574,6 +577,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.FRAXTAL_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.FRAXTAL_MAINNET],
     ],
+    [ChainId.GRAVITY_MAINNET]: [
+        WETH[ChainId.GRAVITY_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.GRAVITY_MAINNET],
+    ],
 }
 
 /**
@@ -648,4 +655,5 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.ZETACHAIN_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.CRONOS_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.FRAXTAL_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.GRAVITY_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
 }
