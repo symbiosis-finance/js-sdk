@@ -48,7 +48,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xB42f52bB8490b9C0031467Fea2F6309f0004fC1C', // is the btc portal genesis tx
+                    address: '0xEa46baF0c59d7A22E14F7ae30cb51086FFDe55C3', // is the btc portal genesis tx
                     chainId: ChainId.BTC_MUTINY,
                     decimals: 8,
                     icons: {
@@ -67,7 +67,7 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
             symBtc: {
-                address: '0xE7E1DdD34E453e4312CfaB78018f25387D6bdC04',
+                address: '0xEa3f6885Ef517EcaBB2888b0ef9c6873c97f24d4',
                 chainId: ChainId.SEPOLIA_TESTNET,
             },
             forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mutinynet/forwarder/api/v1',
