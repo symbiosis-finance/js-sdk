@@ -64,7 +64,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0x76866364B9bc7639A01A79E28C0ee04AEb7C95E2",
+            "address": "0x5a01380F0236A9cf36C07F3aeb6faA81bF506BD2",
             "id": 2
         },
         {
@@ -235,6 +235,22 @@
         },
         {
             "decimals": 8,
+            "symbol": "mSymBtc",
+            "name": "mSymBtc",
+            "chainId": 11155111,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 3652501241,
+            "deprecated": false,
+            "address": "0xeD86914A9478a066d82b2bE3E5B99A38BAaE23ce",
+            "id": 14,
+            "originalId": 2
+        },
+        {
+            "decimals": 8,
             "symbol": "sBTC",
             "name": "Synthetic BTC",
             "chainId": 11155111,
@@ -246,7 +262,7 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0xD058A1425301a400C4e901E78006655CB07F325A",
-            "id": 14,
+            "id": 15,
             "originalId": 6
         }
     ],
@@ -261,11 +277,13 @@
         { "tokenId": 5, "type": "Portal", "value": "0" },
         { "tokenId": 13, "type": "Portal", "value": "0" },
         { "tokenId": 14, "type": "Portal", "value": "0" },
+        { "tokenId": 15, "type": "Portal", "value": "0" },
         { "tokenId": 3, "type": "Synthesis", "value": "0" },
         { "tokenId": 4, "type": "Synthesis", "value": "0" },
         { "tokenId": 5, "type": "Synthesis", "value": "0" },
         { "tokenId": 13, "type": "Synthesis", "value": "0" },
         { "tokenId": 14, "type": "Synthesis", "value": "0" },
+        { "tokenId": 15, "type": "Synthesis", "value": "0" },
         { "tokenId": 6, "type": "Portal", "value": "0" },
         { "tokenId": 7, "type": "Portal", "value": "0" }
     ]

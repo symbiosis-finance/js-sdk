@@ -112,7 +112,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0x76866364B9bc7639A01A79E28C0ee04AEb7C95E2', // is the btc portal genesis tx
+                    address: '0x5a01380F0236A9cf36C07F3aeb6faA81bF506BD2', // is the btc portal genesis tx
                     chainId: ChainId.BTC_MAINNET,
                     decimals: 8,
                     icons: {
@@ -131,7 +131,7 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
             symBtc: {
-                address: '0x088B8C14d27E6390343EfaEb9389C29D62435a12',
+                address: '0x12708f73252953A90840d76F064C7b9fCF2EE0CA',
                 chainId: ChainId.SEPOLIA_TESTNET,
             },
             forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mainnet/forwarder/api/v1',
