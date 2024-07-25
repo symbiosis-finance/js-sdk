@@ -134,7 +134,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5",
+            "address": "0xdDe266151B007EddF2E29393bc5b8b519c01A08B",
             "id": 0
         },
         {
@@ -2577,6 +2577,12 @@
         { "tokenId": 31, "type": "Portal", "value": "0" },
         { "tokenId": 32, "type": "Portal", "value": "0" },
         { "tokenId": 33, "type": "Portal", "value": "0" },
+        { "tokenId": 28, "type": "Synthesis", "value": "0" },
+        { "tokenId": 29, "type": "Synthesis", "value": "0" },
+        { "tokenId": 30, "type": "Synthesis", "value": "0" },
+        { "tokenId": 31, "type": "Synthesis", "value": "0" },
+        { "tokenId": 32, "type": "Synthesis", "value": "0" },
+        { "tokenId": 33, "type": "Synthesis", "value": "0" },
         { "tokenId": 34, "type": "Portal", "value": "0" },
         { "tokenId": 35, "type": "Portal", "value": "0" },
         { "tokenId": 36, "type": "Portal", "value": "0" },
