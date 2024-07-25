@@ -63,7 +63,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xAdBdcB71a1BD1911C18B583705CB096d3A3cE9a5', // TODO @allush replace to the mainnet btc portal genesis tx
+                    address: '0xdde266151b007eddf2e29393bc5b8b51',
                     chainId: ChainId.BTC_MAINNET,
                     decimals: 8,
                     icons: {
@@ -81,6 +81,11 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
+            symBtc: {
+                address: '0x3ef3f0E0F2e9e0b59EfeB74f8C03538190A4763E',
+                chainId: ChainId.ARBITRUM_MAINNET,
+            },
+            forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mutinynet/forwarder/api/v1',
         },
         {
             id: ChainId.ETH_MAINNET,
@@ -628,13 +633,24 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
+                {
+                    name: 'SymBTC',
+                    symbol: 'SymBTC',
+                    address: '0x7a73a0bA4919778C5442f026bd01795b4f2A4cB8',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                    },
+                },
             ],
             router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
             dexFee: 30,
             metaRouter: '0xf7e96217347667064DEE8f20DB747B1C7df45DDe',
             metaRouterGateway: '0x80ddDDa846e779cceE463bDC0BCc2Ae296feDaF9',
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
-            synthesis: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x326adbE46D7E6C1B3927e9309B96DF478bda6D16',
             portal: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
