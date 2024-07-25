@@ -63,7 +63,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xdde266151b007eddf2e29393bc5b8b51',
+                    address: '0xdDe266151B007EddF2E29393bc5b8b519c01A08B',
                     chainId: ChainId.BTC_MAINNET,
                     decimals: 8,
                     icons: {
