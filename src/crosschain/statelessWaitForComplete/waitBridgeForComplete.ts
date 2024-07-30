@@ -20,7 +20,7 @@ export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: Chain
     if (!aBridgeInfo) {
         const { outHash, extraStep } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
         if (!extraStep) {
-            throw new Error(`Transaction ${txId} is not a bridge request and `)
+            throw new Error(`Transaction ${txId} is not a bridge request`)
         }
 
         return outHash

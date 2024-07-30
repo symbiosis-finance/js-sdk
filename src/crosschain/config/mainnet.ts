@@ -85,7 +85,7 @@ export const config: Config = {
                 address: '0x3ef3f0E0F2e9e0b59EfeB74f8C03538190A4763E',
                 chainId: ChainId.ARBITRUM_MAINNET,
             },
-            forwarderUrl: 'https://relayers.testnet.symbiosis.finance/mutinynet/forwarder/api/v1',
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/forwarder/api/v1',
         },
         {
             id: ChainId.ETH_MAINNET,
@@ -365,12 +365,8 @@ export const config: Config = {
         },
         {
             id: ChainId.TELOS_MAINNET,
-            rpc: 'https://mainnet.telos.net/evm',
-            spareRpcs: [
-                'https://mainnet15.telos.net/evm',
-                'https://rpc3.us.telos.net/evm',
-                'https://evm.telos.detroitledger.tech/evm',
-            ],
+            rpc: 'https://mainnet15.telos.net/evm',
+            spareRpcs: ['https://rpc3.telos.net/evm'],
             filterBlockOffset: 3000,
             stables: [
                 {
@@ -633,17 +629,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
-                // {
-                //     name: 'SymBTC',
-                //     symbol: 'SymBTC',
-                //     address: '0x7a73a0bA4919778C5442f026bd01795b4f2A4cB8',
-                //     chainId: ChainId.ARBITRUM_MAINNET,
-                //     decimals: 8,
-                //     icons: {
-                //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                //         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
-                //     },
-                // },
+                {
+                    name: 'SymBTC',
+                    symbol: 'SymBTC',
+                    address: '0x7a73a0bA4919778C5442f026bd01795b4f2A4cB8',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                    },
+                },
             ],
             router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
             dexFee: 30,
@@ -652,7 +648,7 @@ export const config: Config = {
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
             synthesis: '0x326adbE46D7E6C1B3927e9309B96DF478bda6D16',
             portal: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
-            fabric: '0x0000000000000000000000000000000000000000',
+            fabric: '0x2eE9559387b806E88fd46b9DA160D64A29CE7Da0',
             multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
         },
         {
@@ -696,11 +692,11 @@ export const config: Config = {
         },
         {
             id: ChainId.ARBITRUM_NOVA,
-            rpc: 'https://nova.arbitrum.io/rpc',
+            rpc: 'https://arbitrum-nova.publicnode.com',
             spareRpcs: [
+                'https://nova.arbitrum.io/rpc',
                 'https://arbitrum-nova.drpc.org',
                 'https://arbitrum-nova.public.blastapi.io',
-                'https://arbitrum-nova-rpc.publicnode.com',
             ],
             filterBlockOffset: 2000,
             stables: [
@@ -887,7 +883,7 @@ export const config: Config = {
         },
         {
             id: ChainId.BASE_MAINNET,
-            rpc: 'https://base.publicnode.com',
+            rpc: 'https://base-rpc.publicnode.com',
             spareRpcs: [
                 'https://mainnet.base.org',
                 'https://base.llamarpc.com',
@@ -957,10 +953,10 @@ export const config: Config = {
         },
         {
             id: ChainId.SCROLL_MAINNET,
-            rpc: 'https://scroll.blockpi.network/v1/rpc/public',
+            rpc: 'https://rpc.scroll.io',
             spareRpcs: [
-                'https://rpc.scroll.io',
                 'https://rpc.ankr.com/scroll',
+                'https://scroll.blockpi.network/v1/rpc/public',
                 'https://scroll-mainnet.public.blastapi.io',
             ],
             filterBlockOffset: 2000,
@@ -1104,8 +1100,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BAHAMUT_MAINNET,
-            rpc: 'https://rpc1.bahamut.io',
-            spareRpcs: ['https://bahamut-rpc.publicnode.com', 'https://rpc2.bahamut.iox'],
+            rpc: 'https://bahamut-rpc.publicnode.com',
+            spareRpcs: ['https://rpc1.bahamut.io', 'https://rpc2.bahamut.io'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1199,11 +1195,11 @@ export const config: Config = {
         },
         {
             id: ChainId.BLAST_MAINNET,
-            rpc: 'https://rpc.blast.io',
+            rpc: 'https://blast-rpc.publicnode.com',
             spareRpcs: [
+                'https://rpc.blast.io',
                 'https://rpc.ankr.com/blast',
                 'https://blastl2-mainnet.public.blastapi.io',
-                'https://blast.blockpi.network/v1/rpc/public',
             ],
             filterBlockOffset: 2000,
             stables: [

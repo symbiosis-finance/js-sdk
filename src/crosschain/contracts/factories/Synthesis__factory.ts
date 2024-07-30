@@ -135,7 +135,7 @@ const _abi = [
             {
                 indexed: true,
                 internalType: 'address',
-                name: 'stoken',
+                name: 'rtoken',
                 type: 'address',
             },
         ],
@@ -879,6 +879,44 @@ const _abi = [
         type: 'function',
     },
     {
+        inputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        name: 'realToBurnSerialBTC',
+        outputs: [
+            {
+                internalType: 'BtcSerial',
+                name: '',
+                type: 'uint64',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        name: 'realToMintSerialBTC',
+        outputs: [
+            {
+                internalType: 'BtcSerial',
+                name: '',
+                type: 'uint64',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
         inputs: [],
         name: 'renounceOwnership',
         outputs: [],
@@ -1198,25 +1236,6 @@ const _abi = [
                 internalType: 'uint256',
                 name: '',
                 type: 'uint256',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
-        inputs: [
-            {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-            },
-        ],
-        name: 'syntToMintSerialBTC',
-        outputs: [
-            {
-                internalType: 'BtcSerial',
-                name: '',
-                type: 'uint64',
             },
         ],
         stateMutability: 'view',

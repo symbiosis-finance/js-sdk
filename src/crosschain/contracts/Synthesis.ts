@@ -171,6 +171,8 @@ export interface SynthesisInterface extends utils.Interface {
         'owner()': FunctionFragment
         'pause()': FunctionFragment
         'paused()': FunctionFragment
+        'realToBurnSerialBTC(address)': FunctionFragment
+        'realToMintSerialBTC(address)': FunctionFragment
         'renounceOwnership()': FunctionFragment
         'requestCount()': FunctionFragment
         'requests(bytes32)': FunctionFragment
@@ -184,7 +186,6 @@ export interface SynthesisInterface extends utils.Interface {
         'setMinFeeBTC(address,uint256)': FunctionFragment
         'setTokenThreshold(address,uint256)': FunctionFragment
         'syntToMinFeeBTC(address)': FunctionFragment
-        'syntToMintSerialBTC(address)': FunctionFragment
         'synthesizeStates(bytes32)': FunctionFragment
         'tokenThreshold(address)': FunctionFragment
         'transferOwnership(address)': FunctionFragment
@@ -224,6 +225,8 @@ export interface SynthesisInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'owner', values?: undefined): string
     encodeFunctionData(functionFragment: 'pause', values?: undefined): string
     encodeFunctionData(functionFragment: 'paused', values?: undefined): string
+    encodeFunctionData(functionFragment: 'realToBurnSerialBTC', values: [string]): string
+    encodeFunctionData(functionFragment: 'realToMintSerialBTC', values: [string]): string
     encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
     encodeFunctionData(functionFragment: 'requestCount', values?: undefined): string
     encodeFunctionData(functionFragment: 'requests', values: [BytesLike]): string
@@ -249,7 +252,6 @@ export interface SynthesisInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'setMinFeeBTC', values: [string, BigNumberish]): string
     encodeFunctionData(functionFragment: 'setTokenThreshold', values: [string, BigNumberish]): string
     encodeFunctionData(functionFragment: 'syntToMinFeeBTC', values: [string]): string
-    encodeFunctionData(functionFragment: 'syntToMintSerialBTC', values: [string]): string
     encodeFunctionData(functionFragment: 'synthesizeStates', values: [BytesLike]): string
     encodeFunctionData(functionFragment: 'tokenThreshold', values: [string]): string
     encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
@@ -270,6 +272,8 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'realToBurnSerialBTC', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'realToMintSerialBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'requestCount', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'requests', data: BytesLike): Result
@@ -283,7 +287,6 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'setMinFeeBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'syntToMinFeeBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'syntToMintSerialBTC', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'synthesizeStates', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'tokenThreshold', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
@@ -362,7 +365,7 @@ export type BurnRequestBTCEvent = TypedEvent<
         to: string
         amount: BigNumber
         stableBridgingFee: BigNumber
-        stoken: string
+        rtoken: string
     }
 >
 
@@ -528,6 +531,10 @@ export interface Synthesis extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<[boolean]>
 
+        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
         requestCount(overrides?: CallOverrides): Promise<[BigNumber]>
@@ -618,8 +625,6 @@ export interface Synthesis extends BaseContract {
 
         syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
-
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<[number]>
 
         tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
@@ -702,6 +707,10 @@ export interface Synthesis extends BaseContract {
     pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     paused(overrides?: CallOverrides): Promise<boolean>
+
+    realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+    realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
     renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
@@ -793,8 +802,6 @@ export interface Synthesis extends BaseContract {
 
     syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
     synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
 
     tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
@@ -878,6 +885,10 @@ export interface Synthesis extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<boolean>
 
+        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
         renounceOwnership(overrides?: CallOverrides): Promise<void>
 
         requestCount(overrides?: CallOverrides): Promise<BigNumber>
@@ -950,8 +961,6 @@ export interface Synthesis extends BaseContract {
 
         syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
 
         tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
@@ -1006,7 +1015,7 @@ export interface Synthesis extends BaseContract {
             to?: null,
             amount?: null,
             stableBridgingFee?: null,
-            stoken?: string | null
+            rtoken?: string | null
         ): BurnRequestBTCEventFilter
         BurnRequestBTC(
             burnSerial?: null,
@@ -1014,7 +1023,7 @@ export interface Synthesis extends BaseContract {
             to?: null,
             amount?: null,
             stableBridgingFee?: null,
-            stoken?: string | null
+            rtoken?: string | null
         ): BurnRequestBTCEventFilter
 
         'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
@@ -1156,6 +1165,10 @@ export interface Synthesis extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<BigNumber>
 
+        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
         requestCount(overrides?: CallOverrides): Promise<BigNumber>
@@ -1230,8 +1243,6 @@ export interface Synthesis extends BaseContract {
         ): Promise<BigNumber>
 
         syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
@@ -1317,6 +1328,10 @@ export interface Synthesis extends BaseContract {
 
         paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
+        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
         requestCount(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -1394,8 +1409,6 @@ export interface Synthesis extends BaseContract {
         ): Promise<PopulatedTransaction>
 
         syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        syntToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
 

@@ -39,20 +39,12 @@ export async function tryToFindExtraStepsAndWait(
 
     const burnRequestBtc = await findBurnRequestBtc(receipt)
     if (burnRequestBtc) {
-        const { burnSerial, stoken } = burnRequestBtc
-        const synth = symbiosis
-            .tokens()
-            .find(
-                (t) =>
-                    t.chainId === chainId &&
-                    t.address.toLowerCase() === stoken.toLowerCase() &&
-                    t.chainFromId !== undefined
-            )
-
-        if (!synth || !synth.chainFromId) {
-            throw new Error('Token not found or the token is not synthetic')
+        const { burnSerial, rtoken } = burnRequestBtc
+        const btc = symbiosis.tokens().find((t) => t.address.toLowerCase() === rtoken.toLowerCase())
+        if (!btc) {
+            throw new Error('BTC token not found')
         }
-        const forwarderUrl = symbiosis.getForwarderUrl(synth.chainFromId)
+        const forwarderUrl = symbiosis.getForwarderUrl(btc.chainId)
         const outHash = await waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
 
         return {
@@ -106,7 +98,7 @@ export async function waitForThorChainTx(txHash: string): Promise<string> {
 async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
     | {
           burnSerial: BigNumber
-          stoken: string
+          rtoken: string
       }
     | undefined
 > {
@@ -120,9 +112,9 @@ async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
     }
     const data: LogDescription = synthesisInterface.parseLog(log)
 
-    const { burnSerial, stoken } = data.args
+    const { burnSerial, rtoken } = data.args
 
-    return { burnSerial, stoken }
+    return { burnSerial, rtoken }
 }
 
 interface UnwrapSerialBTCResponse {

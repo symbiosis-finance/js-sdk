@@ -1,8 +1,8 @@
-import {AddressZero} from '@ethersproject/constants/lib/addresses'
-import {ChainId, TokenConstructor} from '../../../constants'
-import {getMulticall} from '../../multicall'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { ChainId, TokenConstructor } from '../../../constants'
+import { getMulticall } from '../../multicall'
 
-import {ChainConfig, Config, OmniPoolConfig} from '../../types'
+import { ChainConfig, Config, OmniPoolConfig } from '../../types'
 import {
     Bridge,
     Bridge__factory,
@@ -17,18 +17,18 @@ import {
     Synthesis,
     Synthesis__factory,
 } from '../../contracts'
-import {StaticJsonRpcProvider} from '@ethersproject/providers'
-import {Token} from '../../../entities'
-import {config as mainnet} from '../mainnet'
-import {config as testnet} from '../testnet'
-import {config as dev} from '../dev'
-import type {ConfigName} from '../../symbiosis'
-import {BigNumberish} from 'ethers'
-import {BigNumber} from '@ethersproject/bignumber'
-import {Contract} from '@ethersproject/contracts'
+import { StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Token } from '../../../entities'
+import { config as mainnet } from '../mainnet'
+import { config as testnet } from '../testnet'
+import { config as dev } from '../dev'
+import type { ConfigName } from '../../symbiosis'
+import { BigNumberish } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../../abis/ERC20.json'
-import {isTronChainId} from '../../tron'
-import {isBtc} from '../../utils'
+import { isTronChainId } from '../../tron'
+import { isBtc } from '../../utils'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
