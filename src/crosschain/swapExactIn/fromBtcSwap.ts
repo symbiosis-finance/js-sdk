@@ -57,7 +57,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             sBtc,
             await estimateWrap({
                 forwarderUrl,
-                fee: btcFeeRaw,
+                portalFee: btcFeeRaw,
                 sbfee: sbfeeRaw,
                 tail,
                 to: toAddress,
@@ -76,7 +76,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             sBtc,
             await estimateWrap({
                 forwarderUrl,
-                fee: btcFeeRaw,
+                portalFee: btcFeeRaw,
                 sbfee: sbfeeRaw,
                 tail,
                 to: toAddress,
@@ -99,7 +99,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             sBtc,
             await estimateWrap({
                 forwarderUrl,
-                fee: btcFeeRaw,
+                portalFee: btcFeeRaw,
                 sbfee: sbfeeRaw,
                 tail,
                 to: toAddress,
@@ -116,7 +116,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     const { validUntil, revealAddress } = await wrap({
         forwarderUrl,
-        fee: btcFeeRaw,
+        portalFee: btcFeeRaw,
         sbfee: sbfeeRaw,
         tail,
         to: toAddress,
@@ -186,13 +186,13 @@ interface DepositAddressResult {
 
 type EstimateWrapParams = {
     forwarderUrl: string
-    fee: string
+    portalFee: string
     sbfee: string
     tail: string
     to: string
 }
 
-async function estimateWrap({ forwarderUrl, fee, sbfee, tail, to }: EstimateWrapParams): Promise<string> {
+async function estimateWrap({ forwarderUrl, portalFee, sbfee, tail, to }: EstimateWrapParams): Promise<string> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
@@ -201,7 +201,7 @@ async function estimateWrap({ forwarderUrl, fee, sbfee, tail, to }: EstimateWrap
 
     const raw = JSON.stringify({
         info: {
-            fee,
+            portalFee,
             op: 0, // 0 - wrap operation
             sbfee: Number(sbfee), // FIXME @nick should accept string,
             tail: encodeTail(tail),
@@ -230,10 +230,10 @@ async function estimateWrap({ forwarderUrl, fee, sbfee, tail, to }: EstimateWrap
 type WrapParams = EstimateWrapParams & {
     feeLimit: string
 }
-async function wrap({ forwarderUrl, fee, sbfee, tail, to, feeLimit }: WrapParams): Promise<DepositAddressResult> {
+async function wrap({ forwarderUrl, portalFee, sbfee, tail, to, feeLimit }: WrapParams): Promise<DepositAddressResult> {
     const raw = JSON.stringify({
         info: {
-            fee,
+            portalFee,
             op: 0, // 0 - is wrap operation
             sbfee: Number(sbfee), // FIXME @nick should accept string
             tail: encodeTail(tail),
@@ -277,7 +277,7 @@ function encodeTail(tail: string): string {
 
 async function getBtcFee(forwarderUrl: string): Promise<string> {
     // kind of the state: 0=finalized 1=pending 2=best
-    const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=0`)
+    const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=1`)
 
     const response = await fetch(portalApiUrl)
     if (!response.ok) {
