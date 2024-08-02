@@ -67,6 +67,7 @@ import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
 import { isBtc } from './utils'
 import { BestTokenSwapping } from './bestTokenSwapping'
+import { DataProvider } from './dataProvider'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -82,6 +83,7 @@ const defaultFetch: typeof fetch = (url, init) => {
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
+    public readonly dataProvider: DataProvider
     public readonly config: Config
     public readonly clientId: string
     public readonly isDirectRouteClient: boolean
@@ -154,6 +156,7 @@ export class Symbiosis {
         } else {
             throw new Error('Unknown config name')
         }
+        this.dataProvider = new DataProvider(this)
 
         if (overrideConfig?.chains) {
             const { chains } = overrideConfig

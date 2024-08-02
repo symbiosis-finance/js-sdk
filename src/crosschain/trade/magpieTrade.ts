@@ -3,6 +3,9 @@ import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { getMinAmount } from '../utils'
 import type { Symbiosis } from '../symbiosis'
+import { getTokenAmountUsd } from '../coingecko'
+import JSBI from 'jsbi'
+import { BIPS_BASE } from '../constants'
 
 interface MagpieTradeParams {
     symbiosis: Symbiosis
@@ -154,7 +157,11 @@ export class MagpieTrade implements SymbiosisTrade {
 
         this.route = [this.tokenAmountIn.token, this.tokenOut]
 
-        this.priceImpact = new Percent('0', '100')
+        try {
+            this.priceImpact = await this.getPriceImpact(this.tokenAmountIn, this.amountOut)
+        } catch (e) {
+            this.priceImpact = new Percent('0', '100')
+        }
 
         return this
     }
@@ -196,5 +203,17 @@ export class MagpieTrade implements SymbiosisTrade {
         }
 
         return response.json()
+    }
+    private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
+        const [tokenInPrice, tokenOutPrice] = await Promise.all([
+            this.symbiosis.dataProvider.getTokenPrice(tokenAmountIn.token),
+            this.symbiosis.dataProvider.getTokenPrice(tokenAmountOut.token),
+        ])
+        const tokenAmountInUsd = getTokenAmountUsd(this.tokenAmountIn, tokenInPrice)
+        const tokenAmountOutUsd = getTokenAmountUsd(this.amountOut, tokenOutPrice)
+
+        const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
+
+        return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
     }
 }

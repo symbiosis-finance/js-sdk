@@ -18,6 +18,7 @@ export * from './bestPoolSwapping'
 export * from './bestTokenSwapping'
 export * from './baseSwapping'
 export * from './statelessWaitForComplete'
+export * from './coingecko'
 export {
     prepareTronTransaction,
     isTronToken,

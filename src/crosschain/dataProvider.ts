@@ -3,6 +3,7 @@ import { Token } from '../entities'
 import { OneInchOracle } from './contracts'
 import { Symbiosis } from './symbiosis'
 import { OneInchTrade, UniLikeTrade, getRateToEth } from './trade'
+import { getTokenPriceUsd } from './coingecko'
 
 export class DataProvider {
     private cache = new Map<string, any>()
@@ -26,6 +27,12 @@ export class DataProvider {
     async getOneInchRateToEth(tokens: Token[], oracle: OneInchOracle) {
         return this.fromCache(['getOneInchRateToEth', ...tokens.map((i) => i.address)], () => {
             return getRateToEth(tokens, oracle)
+        })
+    }
+
+    async getTokenPrice(token: Token) {
+        return this.fromCache(['getTokenPriceUsd', token.address], () => {
+            return getTokenPriceUsd(token)
         })
     }
 
