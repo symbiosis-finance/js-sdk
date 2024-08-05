@@ -43,6 +43,7 @@ export interface CrossChainSwapInfo {
     approveTo: string
     inTradeType?: SymbiosisTradeType
     outTradeType?: SymbiosisTradeType
+    timeLog?: (string | number)[][]
 }
 
 export type EthSwapExactIn = CrossChainSwapInfo & {
@@ -105,6 +106,10 @@ export abstract class BaseSwapping {
         transitTokenIn,
         transitTokenOut,
     }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
+        const start = Date.now()
+        let prev = start
+        const timeLog = []
+
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -134,38 +139,53 @@ export abstract class BaseSwapping {
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
+            timeLog.push(['A', Date.now() - start])
+            prev = Date.now()
         }
 
         this.transit = this.buildTransit()
         await this.transit.init()
+        timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
+        prev = Date.now()
 
         await this.doPostTransitAction()
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
-
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
+            timeLog.push(['C1', Date.now() - start, Date.now() - prev])
+            prev = Date.now()
         }
 
         this.route = this.getRoute()
-
-        const [{ fee, save }, feeV2Raw] = await Promise.all([
+        const [feeV1Raw, feeV2Raw] = await Promise.all([
             this.getFee(this.transit.feeToken),
             this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
+        timeLog.push(['ADVISOR', Date.now() - start, Date.now() - prev])
+        prev = Date.now()
 
         const feeV2 = feeV2Raw?.fee
         this.feeV2 = feeV2
 
         // >>> NOTE create trades with calculated fee
-        this.transit = this.buildTransit(fee)
-        await this.transit.init()
+        let fee = this.transit.fee!
+        let save = new TokenAmount(this.transit.feeToken, '0')
+
+        if (!this.transit.fee) {
+            fee = feeV1Raw.fee
+            save = feeV1Raw.save
+            this.transit = this.buildTransit(fee)
+            await this.transit.init()
+        }
 
         await this.doPostTransitAction()
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
+
+            timeLog.push(['C2', Date.now() - start, Date.now() - prev])
         }
         // <<< NOTE create trades with calculated fee
 
@@ -221,11 +241,13 @@ export abstract class BaseSwapping {
         }
 
         const transactionRequest = this.getEvmTransactionRequest(fee, feeV2)
+        timeLog.push(['F', Date.now() - start])
 
         return {
             ...swapInfo,
             type: 'evm',
             transactionRequest,
+            timeLog,
         }
     }
 
