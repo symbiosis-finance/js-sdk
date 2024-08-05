@@ -113,6 +113,7 @@
             "address": "0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E",
             "oracle": "0x4CD678FF53538E6b084464da0020422738B46038",
             "generalPurpose": false,
+            "chainExceptions": [252],
             "id": 5,
             "tokens": [
                 { "index": 0, "tokenId": 85 },

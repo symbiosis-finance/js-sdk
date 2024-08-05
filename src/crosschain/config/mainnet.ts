@@ -7,46 +7,54 @@ export const config: Config = {
     },
     omniPools: [
         {
-            chainId: 56288, // usd
+            // usd
+            chainId: ChainId.BOBA_BNB,
             address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
             oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
             generalPurpose: true,
         },
         {
-            chainId: 56288, // eth
+            // eth
+            chainId: ChainId.BOBA_BNB,
             address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
             oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
             generalPurpose: true,
         },
         {
-            chainId: 56288, // btc
+            // btc
+            chainId: ChainId.BOBA_BNB,
             address: '0xA267C428b16728831Be52b144F78b8F054411f55',
             oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
             generalPurpose: true,
         },
         {
-            chainId: 56288, // ladys
+            // ladys
+            chainId: ChainId.BOBA_BNB,
             address: '0x7b905059Bdd00844280EBf54E00A087006B2D242',
             oracle: '0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5',
             generalPurpose: false,
         },
         {
-            chainId: 56288, // sis
+            // sis
+            chainId: ChainId.BOBA_BNB,
             address: '0xB5D99bE6089720d1aD3DB2a5a16D5765605704df',
             oracle: '0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E',
             generalPurpose: false,
         },
         // {
-        //     chainId: 56288, // puf
+        //     // puf
+        //     chainId: ChainId.BOBA_BNB,
         //     address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
         //     oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
         //     generalPurpose: false,
         // },
         {
-            chainId: 56288, // frax
+            // frax
+            chainId: ChainId.BOBA_BNB,
             address: '0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E',
             oracle: '0x4CD678FF53538E6b084464da0020422738B46038',
             generalPurpose: false,
+            chainExceptions: [ChainId.FRAXTAL_MAINNET],
         },
     ],
     revertableAddress: {

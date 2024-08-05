@@ -39,6 +39,7 @@ export type OmniPoolConfig = {
     address: string
     oracle: string
     generalPurpose: boolean
+    chainExceptions?: ChainId[]
 }
 
 export type SwapLimit = {

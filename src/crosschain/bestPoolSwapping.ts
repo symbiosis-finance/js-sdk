@@ -57,7 +57,10 @@ export class BestPoolSwapping {
         const { omniPools } = this.symbiosis.config
 
         const promises = omniPools
-            .filter((omniPoolConfig) => omniPoolConfig.generalPurpose)
+            .filter(
+                (omniPoolConfig) =>
+                    omniPoolConfig.generalPurpose || omniPoolConfig.chainExceptions?.includes(tokenOut.chainId)
+            )
             .map(async (omniPoolConfig) => {
                 const action = this.symbiosis.bestTokenSwapping(omniPoolConfig)
 
