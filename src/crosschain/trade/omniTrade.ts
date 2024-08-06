@@ -6,12 +6,19 @@ import { OmniPoolConfig } from '../types'
 import { ChainId } from '../../constants'
 import { BigNumber } from 'ethers'
 
-const EXTRA_FEE_CHAINS = [ChainId.TRON_MAINNET]
-
-const OCTO_POOL_FEE_COLLECTOR = {
-    chainId: ChainId.BOBA_BNB,
-    address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
+interface ExtraFeeCollector {
+    chainId: ChainId
+    address: string
+    eligibleChains: ChainId[]
 }
+
+const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
+        eligibleChains: [ChainId.TRON_MAINNET, ChainId.SEI_EVM_MAINNET],
+    },
+]
 
 export class OmniTrade {
     public route!: Token[]
@@ -48,18 +55,19 @@ export class OmniTrade {
         let amountIn = BigNumber.from(this.tokenAmountIn.raw.toString())
         let amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
 
-        const preCallPossible = this.isFeeCallPossible(this.tokenAmountIn.token)
-        const postCallPossible = this.isFeeCallPossible(this.tokenOut)
+        const preFeeCollector = this.getExtraFeeCollector(this.tokenAmountIn.token)
+        const postFeeCollector = this.getExtraFeeCollector(this.tokenOut)
 
         const feeRateBase = BigNumber.from(10).pow(18)
-        let feeRate = BigNumber.from(0)
-        if (preCallPossible || postCallPossible) {
-            feeRate = await this.getFeeRate()
-        }
 
-        if (preCallPossible) {
-            amountIn = amountIn.sub(amountIn.mul(feeRate).div(feeRateBase))
-            amountInMin = amountInMin.sub(amountInMin.mul(feeRate).div(feeRateBase))
+        const [preFeeRate, postFeeRate] = await Promise.all([
+            preFeeCollector ? this.getFeeRate(preFeeCollector) : BigNumber.from(0),
+            postFeeCollector ? this.getFeeRate(postFeeCollector) : BigNumber.from(0),
+        ])
+
+        if (preFeeCollector) {
+            amountIn = amountIn.sub(amountIn.mul(preFeeRate).div(feeRateBase))
+            amountInMin = amountInMin.sub(amountInMin.mul(preFeeRate).div(feeRateBase))
         }
 
         let { actualToAmount: quote } = await this.poolOracle.quoteFrom(indexIn, indexOut, amountIn)
@@ -70,9 +78,9 @@ export class OmniTrade {
             quoteMin = response.actualToAmount
         }
 
-        if (postCallPossible) {
-            quote = quote.sub(quote.mul(feeRate).div(feeRateBase))
-            quoteMin = quoteMin.sub(quoteMin.mul(feeRate).div(feeRateBase))
+        if (postFeeCollector) {
+            quote = quote.sub(quote.mul(postFeeRate).div(feeRateBase))
+            quoteMin = quoteMin.sub(quoteMin.mul(postFeeRate).div(feeRateBase))
         }
 
         this.amountOut = new TokenAmount(this.tokenOut, quote.toString())
@@ -107,22 +115,25 @@ export class OmniTrade {
     }
 
     // private
-    private async getFeeRate() {
-        const provider = this.symbiosis.getProvider(OCTO_POOL_FEE_COLLECTOR.chainId)
-        const feeCollector = OctoPoolFeeCollector__factory.connect(OCTO_POOL_FEE_COLLECTOR.address, provider)
+    private async getFeeRate(extraFeeCollector: ExtraFeeCollector) {
+        const { chainId, address } = extraFeeCollector
+        const provider = this.symbiosis.getProvider(chainId)
+        const feeCollector = OctoPoolFeeCollector__factory.connect(address, provider)
         return feeCollector.feeRate()
     }
 
-    private isFeeCallPossible(token: Token) {
-        const hasFeeCollector = OCTO_POOL_FEE_COLLECTOR.chainId === this.omniPoolConfig.chainId
-        if (!token.chainFromId || !hasFeeCollector) {
-            return false
+    private getExtraFeeCollector(token: Token): ExtraFeeCollector | undefined {
+        if (!token.chainFromId) {
+            return undefined
         }
-        return EXTRA_FEE_CHAINS.includes(token.chainFromId)
+        return EXTRA_FEE_COLLECTORS.find((i) => {
+            return i.chainId === this.omniPoolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
+        })
     }
 
     private buildFeeCall(tokenAmount: TokenAmount) {
-        if (!this.isFeeCallPossible(tokenAmount.token)) {
+        const extraFeeCollector = this.getExtraFeeCollector(tokenAmount.token)
+        if (!extraFeeCollector) {
             return
         }
 
@@ -132,7 +143,7 @@ export class OmniTrade {
         ])
         return {
             calldata,
-            receiveSide: OCTO_POOL_FEE_COLLECTOR.address,
+            receiveSide: extraFeeCollector.address,
             path: tokenAmount.token.address,
             offset: 36,
         }
