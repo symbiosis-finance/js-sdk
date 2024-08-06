@@ -16,26 +16,26 @@
                 { "index": 10, "tokenId": 86 },
                 { "index": 11, "tokenId": 99 },
                 { "index": 12, "tokenId": 105 },
-                { "index": 13, "tokenId": 110 },
-                { "index": 14, "tokenId": 112 },
-                { "index": 15, "tokenId": 114 },
+                { "index": 13, "tokenId": 111 },
+                { "index": 14, "tokenId": 113 },
+                { "index": 15, "tokenId": 115 },
                 { "index": 16, "tokenId": 104 },
                 { "index": 17, "tokenId": 91 },
-                { "index": 18, "tokenId": 120 },
+                { "index": 18, "tokenId": 121 },
                 { "index": 19, "tokenId": 97 },
-                { "index": 20, "tokenId": 123 },
-                { "index": 21, "tokenId": 118 },
+                { "index": 20, "tokenId": 124 },
+                { "index": 21, "tokenId": 119 },
                 { "index": 22, "tokenId": 96 },
-                { "index": 23, "tokenId": 124 },
-                { "index": 24, "tokenId": 126 },
-                { "index": 25, "tokenId": 130 },
-                { "index": 26, "tokenId": 115 },
-                { "index": 27, "tokenId": 135 },
-                { "index": 28, "tokenId": 133 },
+                { "index": 23, "tokenId": 125 },
+                { "index": 24, "tokenId": 127 },
+                { "index": 25, "tokenId": 131 },
+                { "index": 26, "tokenId": 116 },
+                { "index": 27, "tokenId": 136 },
+                { "index": 28, "tokenId": 134 },
                 { "index": 29, "tokenId": 100 },
-                { "index": 30, "tokenId": 143 },
-                { "index": 31, "tokenId": 144 },
-                { "index": 32, "tokenId": 146 }
+                { "index": 30, "tokenId": 144 },
+                { "index": 31, "tokenId": 145 },
+                { "index": 32, "tokenId": 147 }
             ]
         },
         {
@@ -46,25 +46,25 @@
             "id": 1,
             "tokens": [
                 { "index": 1, "tokenId": 101 },
-                { "index": 2, "tokenId": 116 },
+                { "index": 2, "tokenId": 117 },
                 { "index": 3, "tokenId": 106 },
                 { "index": 5, "tokenId": 94 },
                 { "index": 6, "tokenId": 88 },
-                { "index": 7, "tokenId": 111 },
-                { "index": 8, "tokenId": 113 },
+                { "index": 7, "tokenId": 112 },
+                { "index": 8, "tokenId": 114 },
                 { "index": 9, "tokenId": 81 },
-                { "index": 10, "tokenId": 117 },
-                { "index": 11, "tokenId": 121 },
-                { "index": 12, "tokenId": 122 },
-                { "index": 13, "tokenId": 125 },
-                { "index": 14, "tokenId": 129 },
-                { "index": 15, "tokenId": 132 },
-                { "index": 16, "tokenId": 134 },
-                { "index": 17, "tokenId": 137 },
-                { "index": 18, "tokenId": 139 },
-                { "index": 19, "tokenId": 142 },
-                { "index": 20, "tokenId": 147 },
-                { "index": 21, "tokenId": 149 }
+                { "index": 10, "tokenId": 118 },
+                { "index": 11, "tokenId": 122 },
+                { "index": 12, "tokenId": 123 },
+                { "index": 13, "tokenId": 126 },
+                { "index": 14, "tokenId": 130 },
+                { "index": 15, "tokenId": 133 },
+                { "index": 16, "tokenId": 135 },
+                { "index": 17, "tokenId": 138 },
+                { "index": 18, "tokenId": 140 },
+                { "index": 19, "tokenId": 143 },
+                { "index": 20, "tokenId": 148 },
+                { "index": 21, "tokenId": 150 }
             ]
         },
         {
@@ -77,9 +77,10 @@
                 { "index": 0, "tokenId": 82 },
                 { "index": 1, "tokenId": 89 },
                 { "index": 2, "tokenId": 102 },
-                { "index": 3, "tokenId": 136 },
-                { "index": 4, "tokenId": 138 },
-                { "index": 5, "tokenId": 141 }
+                { "index": 3, "tokenId": 137 },
+                { "index": 4, "tokenId": 139 },
+                { "index": 5, "tokenId": 142 },
+                { "index": 6, "tokenId": 110 }
             ]
         },
         {
@@ -104,8 +105,8 @@
                 { "index": 1, "tokenId": 107 },
                 { "index": 2, "tokenId": 90 },
                 { "index": 3, "tokenId": 103 },
-                { "index": 4, "tokenId": 119 },
-                { "index": 5, "tokenId": 127 }
+                { "index": 4, "tokenId": 120 },
+                { "index": 5, "tokenId": 128 }
             ]
         },
         {
@@ -119,7 +120,7 @@
                 { "index": 0, "tokenId": 85 },
                 { "index": 1, "tokenId": 95 },
                 { "index": 2, "tokenId": 109 },
-                { "index": 3, "tokenId": 148 }
+                { "index": 3, "tokenId": 149 }
             ]
         }
     ],
@@ -1735,6 +1736,22 @@
             "originalId": 33
         },
         {
+            "decimals": 8,
+            "symbol": "ssymBTC",
+            "name": "Synthetic symBTC (Arbitrum)",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1.png"
+            },
+            "chainFromId": 42161,
+            "deprecated": false,
+            "address": "0xb6C7Eea691eB8109b0745bA952F782163043EBf1",
+            "id": 110,
+            "originalId": 34
+        },
+        {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Optimism",
@@ -1747,7 +1764,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C",
-            "id": 110,
+            "id": 111,
             "originalId": 35
         },
         {
@@ -1763,7 +1780,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084",
-            "id": 111,
+            "id": 112,
             "originalId": 36
         },
         {
@@ -1779,7 +1796,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677",
-            "id": 112,
+            "id": 113,
             "originalId": 37
         },
         {
@@ -1795,7 +1812,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C",
-            "id": 113,
+            "id": 114,
             "originalId": 38
         },
         {
@@ -1811,7 +1828,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012",
-            "id": 114,
+            "id": 115,
             "originalId": 39
         },
         {
@@ -1827,7 +1844,7 @@
             "chainFromId": 1101,
             "deprecated": true,
             "address": "0xC28C38B2Af831b222b6933E52637B5145a6774Ad",
-            "id": 115,
+            "id": 116,
             "originalId": 40
         },
         {
@@ -1843,7 +1860,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6",
-            "id": 116,
+            "id": 117,
             "originalId": 41
         },
         {
@@ -1859,7 +1876,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x6ca6FCbD2fe65F0CB7671f5F0638867fdC991462",
-            "id": 117,
+            "id": 118,
             "originalId": 42
         },
         {
@@ -1875,7 +1892,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0xD2f5B8525758857aF3553142F59e2b35CbFa0aBE",
-            "id": 118,
+            "id": 119,
             "originalId": 43
         },
         {
@@ -1891,7 +1908,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x32478a5EE4F9854A26aC4606aa107CfD3E5F8775",
-            "id": 119,
+            "id": 120,
             "originalId": 44
         },
         {
@@ -1907,7 +1924,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
-            "id": 120,
+            "id": 121,
             "originalId": 45
         },
         {
@@ -1923,7 +1940,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0xA6e6c78746F873dB8545B7571DD1C5d87cC95763",
-            "id": 121,
+            "id": 122,
             "originalId": 46
         },
         {
@@ -1939,7 +1956,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0x8eFFD39D090C756Db49A8154Db7BD05f59A62193",
-            "id": 122,
+            "id": 123,
             "originalId": 47
         },
         {
@@ -1955,7 +1972,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0xDD1a897f92c14cDA3aB7023b094615A7068d01fA",
-            "id": 123,
+            "id": 124,
             "originalId": 48
         },
         {
@@ -1971,7 +1988,7 @@
             "chainFromId": 728126428,
             "deprecated": false,
             "address": "0x2dF311E049a839E1011507ccE20Afb6f871a81a1",
-            "id": 124,
+            "id": 125,
             "originalId": 49
         },
         {
@@ -1987,7 +2004,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0xC66d177BDa9ef1d9278948FcD86C2C4420ca708C",
-            "id": 125,
+            "id": 126,
             "originalId": 50
         },
         {
@@ -2003,7 +2020,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x616152a28eAb796789050407DF0f566307bFffDA",
-            "id": 126,
+            "id": 127,
             "originalId": 51
         },
         {
@@ -2019,7 +2036,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x1adD5ac0E2b68f020dC8a3bC0BaE1A1bFc873F49",
-            "id": 127,
+            "id": 128,
             "originalId": 52
         },
         {
@@ -2035,7 +2052,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x32699d39c059dc61F2D26B9778830f49c5d200Ca",
-            "id": 128,
+            "id": 129,
             "originalId": 53
         },
         {
@@ -2051,7 +2068,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x3e54f3F0C9FA63282B92C84a3b710FD2968F177E",
-            "id": 129,
+            "id": 130,
             "originalId": 54
         },
         {
@@ -2067,7 +2084,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x60F58f1AbD788eaEFa00838d9a69639F62cC16B8",
-            "id": 130,
+            "id": 131,
             "originalId": 55
         },
         {
@@ -2083,7 +2100,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0xeC4f77C7EfCf5A1Ff26eA8e19d4236A375b3Dfe4",
-            "id": 131,
+            "id": 132,
             "originalId": 56
         },
         {
@@ -2099,7 +2116,7 @@
             "chainFromId": 1088,
             "deprecated": false,
             "address": "0x04E7379CdF5b3427E5B3A557B0E98DD92E70584f",
-            "id": 132,
+            "id": 133,
             "originalId": 57
         },
         {
@@ -2115,7 +2132,7 @@
             "chainFromId": 5165,
             "deprecated": false,
             "address": "0xf2CF7f859FE187BAa9b2F197Cd6C1698A4BC0905",
-            "id": 133,
+            "id": 134,
             "originalId": 58
         },
         {
@@ -2131,7 +2148,7 @@
             "chainFromId": 34443,
             "deprecated": false,
             "address": "0x467fAC56cB149D06A8b268A5Cb8638Fc7B2d8F73",
-            "id": 134,
+            "id": 135,
             "originalId": 59
         },
         {
@@ -2147,7 +2164,7 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0xA5De76FEda5bC1c824Ee1FfcCE82c8BbAe1f558F",
-            "id": 135,
+            "id": 136,
             "originalId": 60
         },
         {
@@ -2163,7 +2180,7 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0x4A95D151d5b16B90481F98432Cf3D3B62deef1Fe",
-            "id": 136,
+            "id": 137,
             "originalId": 61
         },
         {
@@ -2179,7 +2196,7 @@
             "chainFromId": 81457,
             "deprecated": false,
             "address": "0xB4A492d5d61d4539a70AE3E7BF564250159d1c57",
-            "id": 137,
+            "id": 138,
             "originalId": 62
         },
         {
@@ -2195,7 +2212,7 @@
             "chainFromId": 4200,
             "deprecated": false,
             "address": "0xc1Aca13EE7Ee4F9211BBC7bb0Da0fCA58405993B",
-            "id": 138,
+            "id": 139,
             "originalId": 63
         },
         {
@@ -2211,7 +2228,7 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x997D45FFC15bC54A52EBDeeFa0E6fc856fC97a55",
-            "id": 139,
+            "id": 140,
             "originalId": 64
         },
         {
@@ -2227,7 +2244,7 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x42481B8ccE6947178B54D80BFD82B38F6E5b0F61",
-            "id": 140,
+            "id": 141,
             "originalId": 65
         },
         {
@@ -2243,7 +2260,7 @@
             "chainFromId": 1116,
             "deprecated": false,
             "address": "0x5dC2326bb71725a5bBC18Fb39A2582C5560B67f0",
-            "id": 141,
+            "id": 142,
             "originalId": 66
         },
         {
@@ -2259,7 +2276,7 @@
             "chainFromId": 167000,
             "deprecated": false,
             "address": "0x3C717a1F4a8e79D93635E812648253A38Bb27557",
-            "id": 142,
+            "id": 143,
             "originalId": 67
         },
         {
@@ -2275,7 +2292,7 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
-            "id": 143,
+            "id": 144,
             "originalId": 68
         },
         {
@@ -2291,7 +2308,7 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0x6d13035F5F1ae26a22CBB25A3f7666e0C335E6bC",
-            "id": 144,
+            "id": 145,
             "originalId": 69
         },
         {
@@ -2307,7 +2324,7 @@
             "chainFromId": 7000,
             "deprecated": false,
             "address": "0x1F39B97acAd7e3C46010c608ea300ceC1FD51EcA",
-            "id": 145,
+            "id": 146,
             "originalId": 70
         },
         {
@@ -2323,7 +2340,7 @@
             "chainFromId": 25,
             "deprecated": false,
             "address": "0xBF73aF83aE56Ce393737faFcC4778Aa5751d1552",
-            "id": 146,
+            "id": 147,
             "originalId": 71
         },
         {
@@ -2339,7 +2356,7 @@
             "chainFromId": 252,
             "deprecated": false,
             "address": "0xe51753e4ceee1496aEe26AEFfCa97494C41Fc10E",
-            "id": 147,
+            "id": 148,
             "originalId": 72
         },
         {
@@ -2355,7 +2372,7 @@
             "chainFromId": 252,
             "deprecated": false,
             "address": "0x8B6b4b3c037622a81233027c47a733535d0f080B",
-            "id": 148,
+            "id": 149,
             "originalId": 73
         },
         {
@@ -2371,7 +2388,7 @@
             "chainFromId": 1625,
             "deprecated": false,
             "address": "0xD55a0850F6FE278a6e0B370400A3F7781A5DC418",
-            "id": 149,
+            "id": 150,
             "originalId": 74
         },
         {
@@ -2387,7 +2404,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 150,
+            "id": 151,
             "originalId": 75
         },
         {
@@ -2403,7 +2420,7 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 151,
+            "id": 152,
             "originalId": 76
         },
         {
@@ -2419,7 +2436,7 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0x7a73a0bA4919778C5442f026bd01795b4f2A4cB8",
-            "id": 152,
+            "id": 153,
             "originalId": 0
         },
         {
@@ -2435,7 +2452,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 153,
+            "id": 154,
             "originalId": 1
         },
         {
@@ -2451,7 +2468,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5b3562A0fa9eC3e718C96FfE349e1280D2Be591",
-            "id": 154,
+            "id": 155,
             "originalId": 3
         },
         {
@@ -2467,7 +2484,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xDeF886C55a79830C47108eeb9c37e78a49684e41",
-            "id": 155,
+            "id": 156,
             "originalId": 4
         },
         {
@@ -2483,7 +2500,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 156,
+            "id": 157,
             "originalId": 7
         }
     ],
@@ -2597,6 +2614,7 @@
         { "tokenId": 149, "type": "Synthesis", "value": "0" },
         { "tokenId": 150, "type": "Synthesis", "value": "0" },
         { "tokenId": 151, "type": "Synthesis", "value": "0" },
+        { "tokenId": 152, "type": "Synthesis", "value": "0" },
         { "tokenId": 23, "type": "Portal", "value": "0" },
         { "tokenId": 24, "type": "Portal", "value": "0" },
         { "tokenId": 25, "type": "Portal", "value": "0" },
@@ -2609,7 +2627,7 @@
         { "tokenId": 32, "type": "Portal", "value": "0" },
         { "tokenId": 33, "type": "Portal", "value": "0" },
         { "tokenId": 34, "type": "Portal", "value": "0" },
-        { "tokenId": 152, "type": "Portal", "value": "0" },
+        { "tokenId": 153, "type": "Portal", "value": "0" },
         { "tokenId": 28, "type": "Synthesis", "value": "0" },
         { "tokenId": 29, "type": "Synthesis", "value": "0" },
         { "tokenId": 30, "type": "Synthesis", "value": "0" },
@@ -2617,7 +2635,7 @@
         { "tokenId": 32, "type": "Synthesis", "value": "0" },
         { "tokenId": 33, "type": "Synthesis", "value": "0" },
         { "tokenId": 34, "type": "Synthesis", "value": "0" },
-        { "tokenId": 152, "type": "Synthesis", "value": "0" },
+        { "tokenId": 153, "type": "Synthesis", "value": "0" },
         { "tokenId": 35, "type": "Portal", "value": "0" },
         { "tokenId": 36, "type": "Portal", "value": "0" },
         { "tokenId": 37, "type": "Portal", "value": "0" },
@@ -2642,13 +2660,13 @@
         { "tokenId": 56, "type": "Portal", "value": "0" },
         { "tokenId": 57, "type": "Portal", "value": "0" },
         { "tokenId": 58, "type": "Portal", "value": "0" },
-        { "tokenId": 153, "type": "Portal", "value": "0" },
         { "tokenId": 154, "type": "Portal", "value": "0" },
         { "tokenId": 155, "type": "Portal", "value": "0" },
+        { "tokenId": 156, "type": "Portal", "value": "0" },
         { "tokenId": 58, "type": "Synthesis", "value": "0" },
-        { "tokenId": 153, "type": "Synthesis", "value": "0" },
         { "tokenId": 154, "type": "Synthesis", "value": "0" },
         { "tokenId": 155, "type": "Synthesis", "value": "0" },
+        { "tokenId": 156, "type": "Synthesis", "value": "0" },
         { "tokenId": 59, "type": "Portal", "value": "0" },
         { "tokenId": 60, "type": "Portal", "value": "0" },
         { "tokenId": 61, "type": "Portal", "value": "0" },
@@ -2661,9 +2679,9 @@
         { "tokenId": 68, "type": "Portal", "value": "0" },
         { "tokenId": 69, "type": "Portal", "value": "0" },
         { "tokenId": 70, "type": "Portal", "value": "0" },
-        { "tokenId": 156, "type": "Portal", "value": "0" },
+        { "tokenId": 157, "type": "Portal", "value": "0" },
         { "tokenId": 70, "type": "Synthesis", "value": "0" },
-        { "tokenId": 156, "type": "Synthesis", "value": "0" },
+        { "tokenId": 157, "type": "Synthesis", "value": "0" },
         { "tokenId": 71, "type": "Portal", "value": "0" },
         { "tokenId": 72, "type": "Portal", "value": "0" },
         { "tokenId": 73, "type": "Portal", "value": "0" },
