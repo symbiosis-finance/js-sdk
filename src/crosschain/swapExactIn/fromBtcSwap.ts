@@ -45,6 +45,14 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO @allush estimate with advisor
     const sbfee = new TokenAmount(sBtc, sbfeeRaw.toString())
+    if (sBtcAmount.lessThan(sbfee)) {
+        throw new Error(
+            `Amount ${sBtcAmount.toSignificant()} ${sBtcAmount.token.symbol} less than fee ${sbfee.toSignificant()} ${
+                sbfee.token.symbol
+            }`,
+            ErrorCode.AMOUNT_LESS_THAN_FEE
+        )
+    }
     sBtcAmount = sBtcAmount.subtract(sbfee)
 
     let tokenAmountOut: TokenAmount
