@@ -1411,6 +1411,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png',
                     },
                 },
+                {
+                    name: 'ZetaChain ZRC20 USDC on ETH',
+                    symbol: 'USDC.ETH',
+                    address: '0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a',
+                    chainId: ChainId.ZETACHAIN_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
