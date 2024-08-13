@@ -589,7 +589,7 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.SEI_EVM_MAINNET,
-        name: 'Sei',
+        name: 'Sei v2',
         disabled: false,
         explorer: 'https://seitrace.com',
         icons: {
