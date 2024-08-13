@@ -9,11 +9,16 @@ import { selectError } from './utils'
 
 type WaitForCompleteArgs = Parameters<typeof Swapping.prototype.waitForComplete>
 
+interface OptimalRoute {
+    pool: OmniPoolConfig
+    transitTokenIn: Token
+    transitTokenOut: Token
+}
 // Swapping wrapper what select best omni pool for swapping
 export class BestPoolSwapping {
     constructor(private symbiosis: Symbiosis) {}
 
-    public swapping?: BestTokenSwapping
+    public swapping?: BestTokenSwapping | Swapping
 
     async exactIn({
         tokenAmountIn,
@@ -34,11 +39,15 @@ export class BestPoolSwapping {
             oneInchProtocols,
         }
 
-        const optimalOmniPool = this.getOptimalOmniPool(tokenAmountIn.token, tokenOut)
-        if (optimalOmniPool) {
+        const optimalRoute = this.getOptimalRoute(tokenAmountIn.token, tokenOut)
+        if (optimalRoute) {
             try {
-                const action = this.symbiosis.bestTokenSwapping(optimalOmniPool)
-                const actionResult = await action.exactIn(exactInParams)
+                const action = this.symbiosis.newSwapping(optimalRoute.pool)
+                const actionResult = await action.exactIn({
+                    ...exactInParams,
+                    transitTokenIn: optimalRoute.transitTokenIn,
+                    transitTokenOut: optimalRoute.transitTokenOut,
+                })
 
                 if (!this.symbiosis.isDirectRouteClient) {
                     const priceImpactThreshold = new Percent('-5', '1000') // -0.5%
@@ -118,35 +127,53 @@ export class BestPoolSwapping {
         return this.swapping.waitForComplete(...args)
     }
 
-    private getOptimalOmniPool(tokenIn: Token, tokenOut: Token): OmniPoolConfig | undefined {
+    private getOptimalRoute(tokenIn: Token, tokenOut: Token): OptimalRoute | undefined {
         const { omniPools } = this.symbiosis.config
 
-        const swapWithoutTrades = omniPools.find((omniPoolConfig) => {
-            try {
-                const transitTokenIn = this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
-                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
+        let optimal: OptimalRoute | undefined
+        for (let i = 0; i < omniPools.length; i++) {
+            const pool = omniPools[i]
+            const transitTokenIn = this.symbiosis.transitTokens(tokenIn.chainId, pool).find((transitToken) => {
+                return transitToken.equals(wrappedToken(tokenIn))
+            })
+            const transitTokenOut = this.symbiosis.transitTokens(tokenOut.chainId, pool).find((transitToken) => {
+                return transitToken.equals(wrappedToken(tokenOut))
+            })
 
-                return transitTokenIn.equals(wrappedToken(tokenIn)) && transitTokenOut.equals(wrappedToken(tokenOut))
-            } catch {
-                return false
+            if (transitTokenIn && transitTokenOut) {
+                optimal = {
+                    transitTokenIn,
+                    transitTokenOut,
+                    pool,
+                }
+                break
             }
-        })
-
-        if (swapWithoutTrades) {
-            return swapWithoutTrades
         }
 
-        return omniPools.find((omniPoolConfig) => {
+        if (optimal) {
+            return optimal
+        }
+
+        for (let i = 0; i < omniPools.length; i++) {
             try {
-                // error will be thrown if there is no transit token
-                this.symbiosis.transitToken(tokenIn.chainId, omniPoolConfig)
+                const pool = omniPools[i]
+                const transitTokenIn = this.symbiosis.transitToken(tokenIn.chainId, pool)
+                const transitTokenOut = this.symbiosis.transitTokens(tokenOut.chainId, pool).find((transitToken) => {
+                    return transitToken.equals(wrappedToken(tokenOut))
+                })
 
-                const transitTokenOut = this.symbiosis.transitToken(tokenOut.chainId, omniPoolConfig)
-
-                return transitTokenOut.equals(wrappedToken(tokenOut))
+                if (transitTokenOut) {
+                    optimal = {
+                        transitTokenIn,
+                        transitTokenOut,
+                        pool,
+                    }
+                    break
+                }
             } catch {
-                return false
+                // next
             }
-        })
+        }
+        return optimal
     }
 }
