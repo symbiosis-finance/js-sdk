@@ -17,13 +17,13 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
         // 0.5%
         chainId: ChainId.BOBA_BNB,
         address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
-        eligibleChains: [ChainId.TRON_MAINNET],
+        eligibleChains: [],
     },
     {
         // 0.2%
         chainId: ChainId.BOBA_BNB,
         address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
-        eligibleChains: [ChainId.SEI_EVM_MAINNET],
+        eligibleChains: [ChainId.TRON_MAINNET, ChainId.SEI_EVM_MAINNET],
     },
 ]
 
