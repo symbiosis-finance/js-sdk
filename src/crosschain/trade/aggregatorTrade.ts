@@ -127,11 +127,7 @@ export class AggregatorTrade implements SymbiosisTrade {
             aggregators.push(uniV3Trade.init())
         }
 
-        if (aggregators.length === 0) {
-            // If no trade found, fallback to Uniswap like trade
-            this.trade = await this.buildUniLikeTrade()
-            return this
-        }
+        aggregators.push(this.buildUniLikeTrade())
 
         const tradesResults = await Promise.allSettled(aggregators)
 
@@ -151,17 +147,6 @@ export class AggregatorTrade implements SymbiosisTrade {
             if (trade.value.amountOut.greaterThan(bestTrade.amountOut)) {
                 bestTrade = trade.value
             }
-        }
-
-        if (!bestTrade) {
-            const inToken = tokenAmountIn.token
-
-            console.error(
-                `AggregatorTrade fallback: ${inToken.chainId}/${inToken.address} -> ${tokenOut.chainId}/${tokenOut.address}`
-            )
-
-            this.trade = await this.buildUniLikeTrade()
-            return this
         }
 
         this.trade = bestTrade
