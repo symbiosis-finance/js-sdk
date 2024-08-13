@@ -1423,7 +1423,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x0000000000000000000000000000000000000000',
+            router: '0xDE3167958Ad6251E8D6fF1791648b322Fc6B51bD',
             dexFee: 0,
             metaRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             metaRouterGateway: '0xcB341279c0A071bfC14e69450Add47c568c4ddAC',
