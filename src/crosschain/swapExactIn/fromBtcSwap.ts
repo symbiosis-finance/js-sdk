@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult } from './types'
-import { TokenAmount } from '../../entities'
+import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
@@ -56,6 +56,9 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     sBtcAmount = sBtcAmount.subtract(sbfee)
 
     let tokenAmountOut: TokenAmount
+    let tokenAmountOutMin: TokenAmount
+    let save: TokenAmount | undefined
+    let priceImpact: Percent | undefined
     let btcForwarderFee: TokenAmount
     let tail: string
     let tailSbFee = new TokenAmount(sBtc, '0')
@@ -96,11 +99,21 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
-        const { tokenAmountOut: ta, tail: tail2, fee } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
+        const {
+            tokenAmountOut: ta,
+            tokenAmountOutMin: taMin,
+            tail: tail2,
+            fee,
+            save: saveFee,
+            priceImpact: pi,
+        } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
         tail = tail2
         tailSbFee = fee
         tokenAmountOut = ta
+        tokenAmountOutMin = taMin
+        priceImpact = pi
+        save = saveFee
     } else {
         tail = ''
         btcForwarderFee = new TokenAmount(
@@ -120,6 +133,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             )
         }
         tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
+        tokenAmountOutMin = tokenAmountOut
     }
 
     const { validUntil, revealAddress } = await wrap({
@@ -141,12 +155,14 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         },
         route: [inTokenAmount.token, outToken],
         tokenAmountOut,
+        tokenAmountOutMin,
+        priceImpact,
         approveTo: AddressZero,
         inTradeType: undefined,
         outTradeType: undefined,
         amountInUsd: undefined,
         fee: sbfee.add(new TokenAmount(sbfee.token, tailSbFee.raw)), // FIXME @allush different tokens/decimals
-        save: undefined,
+        save,
         extraFee: btcFee.add(btcForwarderFee),
     }
 }
@@ -154,19 +170,27 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 async function buildTail(
     context: SwapExactInParams,
     sBtcAmount: TokenAmount
-): Promise<{ tokenAmountOut: TokenAmount; tail: string; fee: TokenAmount }> {
+): Promise<{
+    tokenAmountOut: TokenAmount
+    tokenAmountOutMin: TokenAmount
+    priceImpact: Percent
+    tail: string
+    fee: TokenAmount
+    save: TokenAmount
+}> {
     const { toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
-    const { transactionRequest, tokenAmountOut, fee } = await bestPoolSwapping.exactIn({
-        tokenAmountIn: sBtcAmount,
-        tokenOut: outToken,
-        from: toAddress, // to be able to revert a tx
-        to: toAddress,
-        slippage,
-        deadline,
-        oneInchProtocols,
-    })
+    const { transactionRequest, tokenAmountOut, tokenAmountOutMin, fee, save, priceImpact } =
+        await bestPoolSwapping.exactIn({
+            tokenAmountIn: sBtcAmount,
+            tokenOut: outToken,
+            from: toAddress, // to be able to revert a tx
+            to: toAddress,
+            slippage,
+            deadline,
+            oneInchProtocols,
+        })
 
     const data = (transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
@@ -181,8 +205,11 @@ async function buildTail(
 
     return {
         tokenAmountOut,
+        tokenAmountOutMin,
         tail,
         fee,
+        save,
+        priceImpact,
     }
 }
 
