@@ -75,10 +75,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'linea',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
-    [ChainId.SCROLL_MAINNET]: {
-        slug: 'scroll',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
+    // [ChainId.SCROLL_MAINNET]: {
+    //     slug: 'scroll',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
     [ChainId.MANTLE_MAINNET]: {
         slug: 'mantle',
         nativeTokenAddress: AddressZero,
