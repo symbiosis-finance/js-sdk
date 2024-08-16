@@ -189,8 +189,12 @@ export class Builder {
 
             const synthesis = this.synthesis(chain.id)
             let synthesisMetaRouter
-            // TODO @allush remove ARBITRUM_MAINNET condition
-            if (synthesis.address !== AddressZero && chain.id !== ChainId.ARBITRUM_MAINNET) {
+            // TODO @allush remove ARBITRUM_MAINNET and ZKSYNC_MAINNET condition
+            if (
+                synthesis.address !== AddressZero &&
+                chain.id !== ChainId.ARBITRUM_MAINNET &&
+                chain.id !== ChainId.ZKSYNC_MAINNET
+            ) {
                 synthesisMetaRouter = (await synthesis.callStatic.metaRouter()).toLowerCase()
             }
 
