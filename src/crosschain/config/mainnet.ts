@@ -555,9 +555,9 @@ export const config: Config = {
             metaRouter: '0x38307CB291Af47Af9847c134a34E9477c939Ca28',
             metaRouterGateway: '0x8cA239448AdD34b057D1CB5934F12AC899DB66e1',
             bridge: '0x51eE73BEC8521E88042b426F31864f456f2a866e',
-            synthesis: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x07bffC25011901CB01a00127518A154b47eB6e80',
             portal: '0x4f5456d4d0764473DfCA1ffBB8524C151c4F19b9',
-            fabric: '0x0000000000000000000000000000000000000000',
+            fabric: '0xa43772bC9EA21625A2B0070B7bf006324B7A7FAE',
             multicallRouter: '0xe004DE550074856bD64Cc1A89A8B3b56bD3eAf31',
         },
         {
