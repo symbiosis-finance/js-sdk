@@ -1507,6 +1507,17 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'Bridged USDC (Stargate)',
+                    symbol: 'USDC.e',
+                    address: '0xFbDa5F676cB37624f28265A144A48B0d6e87d3b6',
+                    chainId: ChainId.GRAVITY_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
                     name: 'Wrapped ETH',
                     symbol: 'WETH',
                     address: '0xe2913E5d24E42303E7D4B2a5BF3f9D2Ccd399424',
