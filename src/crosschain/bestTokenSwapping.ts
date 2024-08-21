@@ -1,4 +1,4 @@
-import { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
+import { BaseSwappingExactInResult, BaseSwappingExactInParams } from './baseSwapping'
 import { Symbiosis } from './symbiosis'
 import { OmniPoolConfig } from './types'
 import { Swapping } from './swapping'
@@ -13,7 +13,7 @@ export class BestTokenSwapping {
 
     public swapping?: Swapping
 
-    public async exactIn(params: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
+    public async exactIn(params: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
         const { tokenAmountIn, tokenOut } = params
 
         const transitTokensIn = this.symbiosis.transitTokens(tokenAmountIn.token.chainId, this.omniPoolConfig)
@@ -37,7 +37,7 @@ export class BestTokenSwapping {
         }
 
         const promises = combinations.map(async ({ transitTokenIn, transitTokenOut }) => {
-            const action = new Swapping(this.symbiosis, this.omniPoolConfig)
+            const action = this.symbiosis.newSwapping(this.omniPoolConfig)
             const actionResult = await action.exactIn({ ...params, transitTokenIn, transitTokenOut })
             return {
                 action,
@@ -48,7 +48,7 @@ export class BestTokenSwapping {
         const results = await Promise.allSettled(promises)
 
         let swapping: Swapping | undefined
-        let result: CrosschainSwapExactInResult | undefined
+        let result: BaseSwappingExactInResult | undefined
         const errors: Error[] = []
         for (const item of results) {
             if (item.status !== 'fulfilled') {

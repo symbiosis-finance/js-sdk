@@ -1,7 +1,7 @@
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import TonWeb from 'tonweb'
-import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
+import { BaseSwapping, BaseSwappingExactInResult } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { MulticallRouter, TonBridge } from './contracts'
 import { ChainId } from '../constants'
@@ -47,7 +47,7 @@ export class ZappingTon extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: ZappingTonExactInParams): Promise<CrosschainSwapExactInResult> {
+    }: ZappingTonExactInParams): Promise<BaseSwappingExactInResult> {
         this.from = from
         this.userAddress = to
         this.multicallRouter = this.symbiosis.multicallRouter(option.chainId)

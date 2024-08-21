@@ -30,38 +30,38 @@ interface OpenOceanChain {
 
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     // ---  1inch supported chains
-    [ChainId.ETH_MAINNET]: {
-        slug: 'eth',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.BSC_MAINNET]: {
-        slug: 'bsc',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.ZKSYNC_MAINNET]: {
-        slug: 'zksync',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.MATIC_MAINNET]: {
-        slug: 'polygon',
-        nativeTokenAddress: '0x0000000000000000000000000000000000001010',
-    },
-    [ChainId.BASE_MAINNET]: {
-        slug: 'base',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.AVAX_MAINNET]: {
-        slug: 'avax',
-        nativeTokenAddress: AddressZero,
-    },
-    [ChainId.ARBITRUM_MAINNET]: {
-        slug: 'arbitrum',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.OPTIMISM_MAINNET]: {
-        slug: 'optimism',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
+    // [ChainId.ETH_MAINNET]: {
+    //     slug: 'eth',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.BSC_MAINNET]: {
+    //     slug: 'bsc',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.ZKSYNC_MAINNET]: {
+    //     slug: 'zksync',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.MATIC_MAINNET]: {
+    //     slug: 'polygon',
+    //     nativeTokenAddress: '0x0000000000000000000000000000000000001010',
+    // },
+    // [ChainId.BASE_MAINNET]: {
+    //     slug: 'base',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.AVAX_MAINNET]: {
+    //     slug: 'avax',
+    //     nativeTokenAddress: AddressZero,
+    // },
+    // [ChainId.ARBITRUM_MAINNET]: {
+    //     slug: 'arbitrum',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.OPTIMISM_MAINNET]: {
+    //     slug: 'optimism',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
     // --- OpenOcean supported only chains
     [ChainId.KAVA_MAINNET]: {
         slug: 'kava',

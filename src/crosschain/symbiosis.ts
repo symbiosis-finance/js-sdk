@@ -68,6 +68,7 @@ import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMin
 import { isBtc } from './utils'
 import { BestTokenSwapping } from './bestTokenSwapping'
 import { DataProvider } from './dataProvider'
+import { SwappingMiddleware } from './swappingMiddleware'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -204,6 +205,9 @@ export class Symbiosis {
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {
+        if (this.clientId === utils.formatBytes32String('rango')) {
+            return new SwappingMiddleware(this, omniPoolConfig)
+        }
         return new Swapping(this, omniPoolConfig)
     }
 

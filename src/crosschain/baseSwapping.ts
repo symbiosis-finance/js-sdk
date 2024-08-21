@@ -19,7 +19,13 @@ import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressTo
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig } from './types'
 
-export interface SwapExactInParams {
+export interface MiddlewareCall {
+    address: string
+    data: string
+    offset: number
+}
+
+export interface BaseSwappingExactInParams {
     tokenAmountIn: TokenAmount
     tokenOut: Token
     from: string
@@ -29,9 +35,10 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
     transitTokenIn?: Token
     transitTokenOut?: Token
+    middlewareCall?: MiddlewareCall
 }
 
-export interface CrossChainSwapInfo {
+export interface BaseSwappingExactInInfo {
     save: TokenAmount
     fee: TokenAmount
     extraFee?: TokenAmount
@@ -46,17 +53,17 @@ export interface CrossChainSwapInfo {
     timeLog?: (string | number)[][]
 }
 
-export type EthSwapExactIn = CrossChainSwapInfo & {
+type EthSwapExactIn = BaseSwappingExactInInfo & {
     type: 'evm'
     transactionRequest: TransactionRequest
 }
 
-export type TronSwapExactIn = CrossChainSwapInfo & {
+type TronSwapExactIn = BaseSwappingExactInInfo & {
     type: 'tron'
     transactionRequest: TronTransactionData
 }
 
-export type CrosschainSwapExactInResult = TronSwapExactIn | EthSwapExactIn
+export type BaseSwappingExactInResult = TronSwapExactIn | EthSwapExactIn
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -105,7 +112,7 @@ export abstract class BaseSwapping {
         oneInchProtocols,
         transitTokenIn,
         transitTokenOut,
-    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
+    }: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
         const start = Date.now()
         let prev = start
         const timeLog = []
@@ -217,7 +224,7 @@ export abstract class BaseSwapping {
             JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
         )
 
-        const swapInfo: CrossChainSwapInfo = {
+        const swapInfo: BaseSwappingExactInInfo = {
             save: crossChainSave,
             fee: crossChainFee,
             tokenAmountOut,

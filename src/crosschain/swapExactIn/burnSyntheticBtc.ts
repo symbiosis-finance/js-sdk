@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { CrosschainSwapExactInResult } from '../baseSwapping'
+import { BaseSwappingExactInResult } from '../baseSwapping'
 import { Error, ErrorCode } from '../error'
 import { selectError } from '../utils'
 import { UnwrapBtc } from '../unwrapBtc'
@@ -8,7 +8,7 @@ import { TokenAmount } from '../../entities'
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, fromAddress, toAddress, slippage, deadline } = context
 
-    const promises: Promise<CrosschainSwapExactInResult>[] = []
+    const promises: Promise<BaseSwappingExactInResult>[] = []
 
     symbiosis.config.chains.forEach((chain) => {
         const sBtc = symbiosis.getRepresentation(outToken, chain.id)
@@ -60,7 +60,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
 
     const results = await Promise.allSettled(promises)
 
-    let bestResult: CrosschainSwapExactInResult | undefined
+    let bestResult: BaseSwappingExactInResult | undefined
     const errors: Error[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {

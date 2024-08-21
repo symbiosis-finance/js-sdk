@@ -4,6 +4,7 @@ import { Symbiosis } from '../symbiosis'
 import { SymbiosisTradeType, ZapType, SymbiosisKind } from '../trade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { TronTransactionData } from '../tron'
+import { MiddlewareCall } from '../baseSwapping'
 
 export interface SwapExactInParams {
     symbiosis: Symbiosis
@@ -14,6 +15,7 @@ export interface SwapExactInParams {
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
+    middlewareCall?: MiddlewareCall
 }
 
 export type BtcTransactionData = {

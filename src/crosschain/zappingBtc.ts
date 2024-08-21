@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
+import { BaseSwapping, BaseSwappingExactInResult } from './baseSwapping'
 import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
@@ -53,7 +53,7 @@ export class ZappingBtc extends BaseSwapping {
         deadline,
         transitTokenIn,
         transitTokenOut,
-    }: ZappingBtcExactInParams): Promise<CrosschainSwapExactInResult> {
+    }: ZappingBtcExactInParams): Promise<BaseSwappingExactInResult> {
         if (!sBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
         }

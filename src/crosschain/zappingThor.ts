@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { BaseSwapping, CrosschainSwapExactInResult } from './baseSwapping'
+import { BaseSwapping, BaseSwappingExactInResult } from './baseSwapping'
 import { MulticallRouter, ThorRouter__factory } from './contracts'
 import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
@@ -110,7 +110,7 @@ export class ZappingThor extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: ZappingThorExactInParams): Promise<CrosschainSwapExactInResult> {
+    }: ZappingThorExactInParams): Promise<BaseSwappingExactInResult> {
         const isAddressValid = validate(to)
         if (!isAddressValid) {
             throw new Error('Bitcoin address is not valid')

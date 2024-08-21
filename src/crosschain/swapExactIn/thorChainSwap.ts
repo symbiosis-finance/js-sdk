@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
-import { CrosschainSwapExactInResult } from '../baseSwapping'
+import { BaseSwappingExactInResult } from '../baseSwapping'
 import { Error, ErrorCode } from '../error'
 
 const ETH_USDC = new Token({
@@ -50,7 +50,7 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
 
     const results = await Promise.allSettled(promises)
 
-    let bestResult: CrosschainSwapExactInResult | undefined
+    let bestResult: BaseSwappingExactInResult | undefined
     const errors: Error[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {

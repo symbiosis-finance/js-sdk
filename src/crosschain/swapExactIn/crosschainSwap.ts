@@ -9,6 +9,7 @@ export async function crosschainSwap({
     inTokenAmount,
     outToken,
     oneInchProtocols,
+    middlewareCall,
 }: SwapExactInParams): Promise<SwapExactInResult> {
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
@@ -24,6 +25,7 @@ export async function crosschainSwap({
         tokenAmountIn: inTokenAmount,
         tokenOut: outToken,
         oneInchProtocols,
+        middlewareCall,
     })
 
     const payload = { transactionType, transactionRequest } as SwapExactInTransactionPayload

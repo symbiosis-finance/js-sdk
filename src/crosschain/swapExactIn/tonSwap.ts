@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { CrosschainSwapExactInResult } from '../baseSwapping'
+import { BaseSwappingExactInResult } from '../baseSwapping'
 import { Error } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
@@ -57,7 +57,7 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
         throw new Error(`There are no suitable option options`)
     }
 
-    const promises: Promise<CrosschainSwapExactInResult>[] = []
+    const promises: Promise<BaseSwappingExactInResult>[] = []
     symbiosis.config.omniPools
         .filter((pool) => pool.generalPurpose)
         .forEach((pool) => {
@@ -77,7 +77,7 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
 
     const results = await Promise.allSettled(promises)
 
-    let bestResult: CrosschainSwapExactInResult | undefined
+    let bestResult: BaseSwappingExactInResult | undefined
     const errors: Error[] = []
 
     for (const item of results) {

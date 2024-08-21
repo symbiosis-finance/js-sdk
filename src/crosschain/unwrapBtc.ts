@@ -1,5 +1,5 @@
 import { GAS_TOKEN, Percent, TokenAmount } from '../entities'
-import { CrosschainSwapExactInResult, EthSwapExactIn } from './baseSwapping'
+import { BaseSwappingExactInResult } from './baseSwapping'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { Symbiosis } from './symbiosis'
@@ -15,7 +15,7 @@ interface BurnBtcParams {
 export class UnwrapBtc {
     constructor(private symbiosis: Symbiosis) {}
 
-    public async exactIn({ tokenAmountIn, to }: BurnBtcParams): Promise<CrosschainSwapExactInResult> {
+    public async exactIn({ tokenAmountIn, to }: BurnBtcParams): Promise<BaseSwappingExactInResult> {
         const { token: sBtc } = tokenAmountIn
         if (!sBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
@@ -58,6 +58,6 @@ export class UnwrapBtc {
                 to: synthesis.address,
                 data,
             },
-        } as EthSwapExactIn
+        }
     }
 }

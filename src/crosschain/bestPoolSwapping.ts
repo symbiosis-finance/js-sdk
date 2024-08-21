@@ -1,5 +1,5 @@
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import type { CrosschainSwapExactInResult, SwapExactInParams } from './baseSwapping'
+import type { BaseSwappingExactInResult, BaseSwappingExactInParams } from './baseSwapping'
 import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
 import type { OmniPoolConfig } from './types'
@@ -28,8 +28,9 @@ export class BestPoolSwapping {
         slippage,
         deadline,
         oneInchProtocols,
-    }: SwapExactInParams): Promise<CrosschainSwapExactInResult> {
-        const exactInParams: SwapExactInParams = {
+        middlewareCall,
+    }: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
+        const exactInParams: BaseSwappingExactInParams = {
             tokenAmountIn,
             tokenOut,
             from,
@@ -37,6 +38,7 @@ export class BestPoolSwapping {
             slippage,
             deadline,
             oneInchProtocols,
+            middlewareCall,
         }
 
         const optimalRoute = this.getOptimalRoute(tokenAmountIn.token, tokenOut)
@@ -81,7 +83,7 @@ export class BestPoolSwapping {
         const results = await Promise.allSettled(promises)
 
         let swapping: BestTokenSwapping | undefined
-        let actionResult: CrosschainSwapExactInResult | undefined
+        let actionResult: BaseSwappingExactInResult | undefined
         const errors: Error[] = []
 
         for (const item of results) {

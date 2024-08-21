@@ -1517,17 +1517,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
                     },
                 },
-                {
-                    name: 'Wrapped ETH',
-                    symbol: 'WETH',
-                    address: '0xe2913E5d24E42303E7D4B2a5BF3f9D2Ccd399424',
-                    chainId: ChainId.GRAVITY_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
-                    },
-                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
