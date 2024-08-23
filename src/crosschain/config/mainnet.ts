@@ -71,7 +71,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xdDe266151B007EddF2E29393bc5b8b519c01A08B',
+                    address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
                     chainId: ChainId.BTC_MAINNET,
                     decimals: 8,
                     icons: {
@@ -90,19 +90,15 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
             symBtc: {
-                address: '0x3ef3f0E0F2e9e0b59EfeB74f8C03538190A4763E',
-                chainId: ChainId.ARBITRUM_MAINNET,
+                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
+                chainId: ChainId.ZKSYNC_MAINNET,
             },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/forwarder/api/v1',
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
         },
         {
             id: ChainId.ETH_MAINNET,
-            rpc: 'https://ethereum.publicnode.com',
-            spareRpcs: [
-                'https://eth.llamarpc.com',
-                'https://ethereum-rpc.publicnode.com',
-                'https://eth-pokt.nodies.app',
-            ],
+            rpc: 'https://ethereum-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.ankr.com/eth', 'https://eth.llamarpc.com', 'https://eth-pokt.nodies.app'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -206,8 +202,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BSC_MAINNET,
-            rpc: 'https://bsc.publicnode.com',
-            spareRpcs: ['https://bsc-rpc.publicnode.com', 'https://rpc.ankr.com/bsc', 'https://binance.llamarpc.com'],
+            rpc: 'https://bsc-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.ankr.com/bsc', 'https://binance.llamarpc.com'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -279,8 +275,8 @@ export const config: Config = {
         },
         {
             id: ChainId.AVAX_MAINNET,
-            rpc: 'https://avalanche-c-chain.publicnode.com',
-            spareRpcs: ['https://avalanche.drpc.org', 'https://avax.meowrpc.com', 'https://rpc.ankr.com/avalanche'],
+            rpc: 'https://avalanche-c-chain-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.ankr.com/avalanche', 'https://avalanche.drpc.org', 'https://avax.meowrpc.com'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -319,12 +315,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MATIC_MAINNET,
-            rpc: 'https://polygon-bor.publicnode.com',
-            spareRpcs: [
-                'https://polygon.llamarpc.com',
-                'https://rpc-mainnet.maticvigil.com',
-                'https://polygon.meowrpc.com',
-            ],
+            rpc: 'https://polygon-bor-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.ankr.com/polygon', 'https://polygon.llamarpc.com', 'https://polygon.meowrpc.com'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -374,7 +366,7 @@ export const config: Config = {
         {
             id: ChainId.TELOS_MAINNET,
             rpc: 'https://mainnet15.telos.net/evm',
-            spareRpcs: ['https://rpc3.telos.net/evm'],
+            spareRpcs: ['https://rpc3.telos.net/evm', 'https://rpc.ankr.com/telos'],
             filterBlockOffset: 3000,
             stables: [
                 {
@@ -490,7 +482,7 @@ export const config: Config = {
         {
             id: ChainId.ZKSYNC_MAINNET,
             rpc: 'https://mainnet.era.zksync.io',
-            spareRpcs: ['https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
+            spareRpcs: ['https://rpc.ankr.com/zksync_era', 'https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -549,6 +541,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0xED0c95EBe5a3E687cB2224687024FeC6518E683e',
+                    chainId: ChainId.ZKSYNC_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                    },
+                },
             ],
             router: '0x8B791913eB07C32779a16750e3868aA8495F5964',
             dexFee: 30,
@@ -563,11 +566,7 @@ export const config: Config = {
         {
             id: ChainId.ARBITRUM_MAINNET,
             rpc: 'https://arb1.arbitrum.io/rpc',
-            spareRpcs: [
-                'https://arbitrum.llamarpc.com',
-                'https://arbitrum-one.public.blastapi.io',
-                'https://1rpc.io/arb',
-            ],
+            spareRpcs: ['https://rpc.ankr.com/arbitrum', 'https://arbitrum.llamarpc.com', 'https://1rpc.io/arb'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -700,11 +699,11 @@ export const config: Config = {
         },
         {
             id: ChainId.ARBITRUM_NOVA,
-            rpc: 'https://arbitrum-nova.publicnode.com',
+            rpc: 'https://arbitrum-nova-rpc.publicnode.com',
             spareRpcs: [
                 'https://nova.arbitrum.io/rpc',
+                'https://rpc.ankr.com/arbitrumnova',
                 'https://arbitrum-nova.drpc.org',
-                'https://arbitrum-nova.public.blastapi.io',
             ],
             filterBlockOffset: 2000,
             stables: [
@@ -892,11 +891,7 @@ export const config: Config = {
         {
             id: ChainId.BASE_MAINNET,
             rpc: 'https://base-rpc.publicnode.com',
-            spareRpcs: [
-                'https://mainnet.base.org',
-                'https://base.llamarpc.com',
-                'https://base.blockpi.network/v1/rpc/public',
-            ],
+            spareRpcs: ['https://mainnet.base.org', 'https://base.llamarpc.com', 'https://rpc.ankr.com/base'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1109,7 +1104,7 @@ export const config: Config = {
         {
             id: ChainId.BAHAMUT_MAINNET,
             rpc: 'https://bahamut-rpc.publicnode.com',
-            spareRpcs: ['https://rpc1.bahamut.io', 'https://rpc2.bahamut.io'],
+            spareRpcs: ['https://rpc.ankr.com/bahamut', 'https://rpc1.bahamut.io', 'https://rpc2.bahamut.io'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1329,8 +1324,8 @@ export const config: Config = {
         },
         {
             id: ChainId.TAIKO_MAINNET,
-            rpc: 'https://rpc.taiko.xyz',
-            spareRpcs: ['https://rpc.mainnet.taiko.xyz', 'https://taiko.blockpi.network/v1/rpc/public'],
+            rpc: 'https://rpc.mainnet.taiko.xyz',
+            spareRpcs: ['https://rpc.ankr.com/taiko', 'https://taiko.blockpi.network/v1/rpc/public'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1503,7 +1498,7 @@ export const config: Config = {
         {
             id: ChainId.GRAVITY_MAINNET,
             rpc: 'https://rpc.gravity.xyz',
-            spareRpcs: [],
+            spareRpcs: ['https://rpc.ankr.com/gravity'],
             filterBlockOffset: 1000,
             stables: [
                 {
