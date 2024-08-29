@@ -14,10 +14,28 @@ interface ExtraFeeCollector {
 
 const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
     {
+        // 0.6%
+        chainId: ChainId.BOBA_BNB,
+        address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
+        eligibleChains: [],
+    },
+    {
         // 0.5%
         chainId: ChainId.BOBA_BNB,
         address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
         eligibleChains: [],
+    },
+    {
+        // 0.4%
+        chainId: ChainId.BOBA_BNB,
+        address: '0x5f5829F7CDca871b16ed76E498EeE35D4250738A',
+        eligibleChains: [],
+    },
+    {
+        // 0.3%
+        chainId: ChainId.BOBA_BNB,
+        address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
+        eligibleChains: [ChainId.CRONOS_MAINNET],
     },
     {
         // 0.2%
