@@ -47,7 +47,6 @@ import {
     statelessWaitForComplete,
     StatelessWaitForCompleteParams,
 } from './statelessWaitForComplete/statelessWaitForComplete'
-import { Swapping } from './swapping'
 import { getTransactionInfoById, isTronChainId } from './tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig } from './types'
 import { Zapping } from './zapping'
@@ -205,10 +204,7 @@ export class Symbiosis {
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {
-        if (this.clientId === utils.formatBytes32String('rango')) {
-            return new SwappingMiddleware(this, omniPoolConfig)
-        }
-        return new Swapping(this, omniPoolConfig)
+        return new SwappingMiddleware(this, omniPoolConfig)
     }
 
     public bestPoolSwapping() {

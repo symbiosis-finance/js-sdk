@@ -1,4 +1,5 @@
 import { BaseSwapping, BaseSwappingExactInResult, BaseSwappingExactInParams } from './baseSwapping'
+import { Swapping } from './swapping'
 
 export class SwappingMiddleware extends BaseSwapping {
     protected middlewareAddress!: string
@@ -8,7 +9,9 @@ export class SwappingMiddleware extends BaseSwapping {
     public async exactIn(params: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
         const { middlewareCall } = params
         if (!middlewareCall) {
-            throw new Error(`middlewareCall is required`)
+            const { symbiosis, omniPoolConfig } = this
+            const swapping = new Swapping(symbiosis, omniPoolConfig)
+            return swapping.doExactIn(params)
         }
 
         const { address, data, offset } = middlewareCall
