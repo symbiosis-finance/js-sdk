@@ -86,7 +86,13 @@ export class ZappingBtc extends BaseSwapping {
         const tokenAmountOut = new TokenAmount(btc, result.tokenAmountOut.subtract(this.minBtcFee).raw)
 
         // >> for display route purposes only
-        result.route.push(new Token({ ...sBtc, chainFromId: undefined }))
+        if (result.route.length > 0) {
+            result.route[result.route.length - 1] = new Token({
+                ...sBtc,
+                chainId: sBtc.chainFromId,
+                chainFromId: undefined,
+            })
+        }
 
         return {
             ...result,

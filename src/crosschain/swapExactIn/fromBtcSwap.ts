@@ -39,9 +39,9 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
     let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
 
-    const btcFeeRaw = await getBtcFee(forwarderUrl)
-    const btcFee = new TokenAmount(sBtc, btcFeeRaw.toString())
-    sBtcAmount = sBtcAmount.subtract(btcFee)
+    const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl)
+    const btcPortalFee = new TokenAmount(sBtc, btcPortalFeeRaw.toString())
+    sBtcAmount = sBtcAmount.subtract(btcPortalFee)
 
     const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO @allush estimate with advisor
     const sbfee = new TokenAmount(sBtc, sbfeeRaw.toString())
@@ -68,7 +68,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             sBtc,
             await estimateWrap({
                 forwarderUrl,
-                portalFee: btcFeeRaw,
+                portalFee: btcPortalFeeRaw,
                 sbfee: sbfeeRaw,
                 tail,
                 to: toAddress,
@@ -87,7 +87,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             sBtc,
             await estimateWrap({
                 forwarderUrl,
-                portalFee: btcFeeRaw,
+                portalFee: btcPortalFeeRaw,
                 sbfee: sbfeeRaw,
                 tail,
                 to: toAddress,
@@ -120,7 +120,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             sBtc,
             await estimateWrap({
                 forwarderUrl,
-                portalFee: btcFeeRaw,
+                portalFee: btcPortalFeeRaw,
                 sbfee: sbfeeRaw,
                 tail,
                 to: toAddress,
@@ -138,7 +138,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     const { validUntil, revealAddress } = await wrap({
         forwarderUrl,
-        portalFee: btcFeeRaw,
+        portalFee: btcPortalFeeRaw,
         sbfee: sbfeeRaw,
         tail,
         to: toAddress,
@@ -162,8 +162,8 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         outTradeType: undefined,
         amountInUsd: undefined,
         fee: sbfee.add(new TokenAmount(sbfee.token, tailSbFee.raw)), // FIXME @allush different tokens/decimals
-        save,
-        extraFee: btcFee.add(btcForwarderFee),
+        save: save ? new TokenAmount(sbfee.token, save.raw) : undefined,
+        extraFee: btcPortalFee.add(btcForwarderFee),
     }
 }
 
@@ -310,7 +310,7 @@ function encodeTail(tail: string): string {
     return Buffer.from(tail.slice(2), 'hex').toString('base64')
 }
 
-async function getBtcFee(forwarderUrl: string): Promise<string> {
+async function getBtcPortalFee(forwarderUrl: string): Promise<string> {
     // kind of the state: 0=finalized 1=pending 2=best
     const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=1`)
 
