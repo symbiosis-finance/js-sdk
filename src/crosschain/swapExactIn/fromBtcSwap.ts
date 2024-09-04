@@ -8,6 +8,7 @@ import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
+import { parseUnits } from '@ethersproject/units'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount } = context
@@ -145,6 +146,9 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         feeLimit: btcForwarderFee.raw.toString(),
     })
 
+    const parsedValue = parseUnits(tailSbFee.toExact(), sbfee.token.decimals).toString()
+    const tailFee = new TokenAmount(sbfee.token, parsedValue)
+
     return {
         kind: 'from-btc-swap',
         transactionType: 'btc',
@@ -161,7 +165,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         inTradeType: undefined,
         outTradeType: undefined,
         amountInUsd: undefined,
-        fee: sbfee.add(new TokenAmount(sbfee.token, tailSbFee.raw)), // FIXME @allush different tokens/decimals
+        fee: sbfee.add(tailFee),
         save: save ? new TokenAmount(sbfee.token, save.raw) : undefined,
         extraFee: btcPortalFee.add(btcForwarderFee),
     }
