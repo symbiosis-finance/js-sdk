@@ -1,5 +1,5 @@
 import { SwapExactInParams, SwapExactInResult } from './types'
-import { Percent, TokenAmount } from '../../entities'
+import { TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
@@ -9,12 +9,15 @@ import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { parseUnits } from '@ethersproject/units'
+import { BaseSwappingExactInResult } from '../baseSwapping'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount } = context
 
     return isBtc(inTokenAmount.token.chainId)
 }
+
+type BuildTailResult = BaseSwappingExactInResult & { tail: string }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, toAddress } = context
@@ -58,13 +61,11 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
     let tokenAmountOut: TokenAmount
     let tokenAmountOutMin: TokenAmount
-    let save: TokenAmount | undefined
-    let priceImpact: Percent | undefined
     let btcForwarderFee: TokenAmount
-    let tail: string
+    let tail: string = ''
     let tailSbFee = new TokenAmount(sBtc, '0')
+    let tailResult: BuildTailResult | undefined
     if (!isBtcBridging) {
-        tail = ''
         btcForwarderFee = new TokenAmount(
             sBtc,
             await estimateWrap({
@@ -100,30 +101,20 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
-        const {
-            tokenAmountOut: ta,
-            tokenAmountOutMin: taMin,
-            tail: tail2,
-            fee,
-            save: saveFee,
-            priceImpact: pi,
-        } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
+        tailResult = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
 
-        tail = tail2
-        tailSbFee = fee
-        tokenAmountOut = ta
-        tokenAmountOutMin = taMin
-        priceImpact = pi
-        save = saveFee
+        tail = tailResult.tail
+        tailSbFee = tailResult.fee
+        tokenAmountOut = tailResult.tokenAmountOut
+        tokenAmountOutMin = tailResult.tokenAmountOutMin
     } else {
-        tail = ''
         btcForwarderFee = new TokenAmount(
             sBtc,
             await estimateWrap({
                 forwarderUrl,
                 portalFee: btcPortalFeeRaw,
                 sbfee: sbfeeRaw,
-                tail,
+                tail: '',
                 to: toAddress,
             })
         )
@@ -157,46 +148,35 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             validUntil,
             tokenAmountOut,
         },
-        route: [inTokenAmount.token, outToken],
+        route: [inTokenAmount.token, ...(tailResult ? tailResult.route : [])],
         tokenAmountOut,
         tokenAmountOutMin,
-        priceImpact,
+        priceImpact: tailResult?.priceImpact,
         approveTo: AddressZero,
-        inTradeType: undefined,
-        outTradeType: undefined,
-        amountInUsd: undefined,
+        inTradeType: tailResult?.inTradeType,
+        outTradeType: tailResult?.outTradeType,
+        amountInUsd: tailResult?.amountInUsd,
         fee: sbfee.add(tailFee),
-        save: save ? new TokenAmount(sbfee.token, save.raw) : undefined,
+        save: tailResult && tailResult?.save ? new TokenAmount(sbfee.token, tailResult.save.raw) : undefined,
         extraFee: btcPortalFee.add(btcForwarderFee),
     }
 }
 
-async function buildTail(
-    context: SwapExactInParams,
-    sBtcAmount: TokenAmount
-): Promise<{
-    tokenAmountOut: TokenAmount
-    tokenAmountOutMin: TokenAmount
-    priceImpact: Percent
-    tail: string
-    fee: TokenAmount
-    save: TokenAmount
-}> {
+async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
     const { toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
-    const { transactionRequest, tokenAmountOut, tokenAmountOutMin, fee, save, priceImpact } =
-        await bestPoolSwapping.exactIn({
-            tokenAmountIn: sBtcAmount,
-            tokenOut: outToken,
-            from: toAddress, // to be able to revert a tx
-            to: toAddress,
-            slippage,
-            deadline,
-            oneInchProtocols,
-        })
+    const swapExactInResult = await bestPoolSwapping.exactIn({
+        tokenAmountIn: sBtcAmount,
+        tokenOut: outToken,
+        from: toAddress, // to be able to revert a tx
+        to: toAddress,
+        slippage,
+        deadline,
+        oneInchProtocols,
+    })
 
-    const data = (transactionRequest as TransactionRequest).data!
+    const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
@@ -208,12 +188,8 @@ async function buildTail(
     })
 
     return {
-        tokenAmountOut,
-        tokenAmountOutMin,
+        ...swapExactInResult,
         tail,
-        fee,
-        save,
-        priceImpact,
     }
 }
 

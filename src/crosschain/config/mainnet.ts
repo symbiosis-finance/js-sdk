@@ -636,17 +636,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
-                {
-                    name: 'SymBTC',
-                    symbol: 'SymBTC',
-                    address: '0x7a73a0bA4919778C5442f026bd01795b4f2A4cB8',
-                    chainId: ChainId.ARBITRUM_MAINNET,
-                    decimals: 8,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
-                    },
-                },
             ],
             router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
             dexFee: 30,
