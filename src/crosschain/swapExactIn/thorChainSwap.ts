@@ -27,7 +27,7 @@ const AVAX_USDC = new Token({
     },
 })
 
-const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
+export const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount } = context
