@@ -7,14 +7,6 @@ import { BridgeDirection, OmniPoolConfig } from './types'
 import { OmniTrade } from './trade'
 import { parseUnits } from '@ethersproject/units'
 
-const TRANSIT_FEE_MAP: Record<string, string> = {
-    ETH: '0.0003',
-    USD: '0.3',
-    SIS: '1',
-    BTC: '0.00001',
-    LADYS: '3000000',
-    FRAX: '0.3',
-}
 export class Transit {
     public direction: BridgeDirection
 
@@ -44,9 +36,11 @@ export class Transit {
         this.feeToken = this.getFeeToken()
 
         if (!this.fee && this.feeToken.chainId === ChainId.BOBA_BNB) {
-            const feeKey = Object.keys(TRANSIT_FEE_MAP).find((key) => this.feeToken.symbol?.includes(key))
+            const feeKey = Object.keys(symbiosis.config.transitFeeMap).find((key) =>
+                this.feeToken.symbol?.includes(key)
+            )
             if (feeKey) {
-                const fee = TRANSIT_FEE_MAP[feeKey]
+                const fee = symbiosis.config.transitFeeMap[feeKey]
                 const feeRaw = parseUnits(fee, this.feeToken.decimals)
 
                 this.fee = new TokenAmount(this.feeToken, feeRaw.toString())

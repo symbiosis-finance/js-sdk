@@ -171,6 +171,12 @@ export class Symbiosis {
         if (overrideConfig?.limits) {
             this.config.limits = overrideConfig.limits
         }
+        if (overrideConfig?.advisor) {
+            this.config.advisor = overrideConfig.advisor
+        }
+        if (overrideConfig?.transitFeeMap) {
+            this.config.transitFeeMap = overrideConfig.transitFeeMap
+        }
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 

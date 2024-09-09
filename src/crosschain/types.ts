@@ -53,8 +53,9 @@ export type Config = {
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
-    limits?: SwapLimit[]
+    limits: SwapLimit[]
     chains: ChainConfig[]
+    transitFeeMap: Record<string, string>
 }
 
 export type OverrideChainConfig = {
@@ -67,4 +68,6 @@ export type OverrideConfig = {
     makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
     directRouteClients?: string[]
+    advisor?: AdvisorConfig
+    transitFeeMap?: Record<string, string>
 }

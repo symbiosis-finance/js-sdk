@@ -5,6 +5,15 @@ export const config: Config = {
     advisor: {
         url: 'https://api-v2.symbiosis.finance/calculations',
     },
+    limits: [],
+    transitFeeMap: {
+        ETH: '0.0003',
+        USD: '0.3',
+        SIS: '1',
+        BTC: '0.00001',
+        LADYS: '3000000',
+        FRAX: '0.3',
+    },
     omniPools: [
         {
             // usd
@@ -61,7 +70,6 @@ export const config: Config = {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
         default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     },
-    limits: [],
     chains: [
         {
             id: ChainId.BTC_MAINNET,
