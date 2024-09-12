@@ -107,10 +107,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'cronos',
         nativeTokenAddress: AddressZero,
     },
-    // [ChainId.SEI_EVM_MAINNET]: {
-    //     slug: 'sei',
-    //     nativeTokenAddress: AddressZero,
-    // },
+    [ChainId.SEI_EVM_MAINNET]: {
+        slug: 'sei',
+        nativeTokenAddress: AddressZero,
+    },
     [ChainId.TELOS_MAINNET]: {
         slug: 'telos',
         nativeTokenAddress: AddressZero,
