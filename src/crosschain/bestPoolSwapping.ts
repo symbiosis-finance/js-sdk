@@ -89,7 +89,7 @@ export class BestPoolSwapping {
         for (const item of results) {
             if (item.status !== 'fulfilled') {
                 errors.push(item.reason)
-                // console.error('error: ', item)
+                console.error('Best pool swapping error: ', item)
                 continue
             }
 
