@@ -31,7 +31,7 @@ export class BestTokenSwapping {
         })
         if (combinations.length === 0) {
             throw new Error(
-                `There is no token ${tokenAmountIn.token.address} in omniPool ${this.omniPoolConfig.address}`,
+                `BestTokenSwapping: There is no token ${tokenAmountIn.token.address} in omniPool ${this.omniPoolConfig.address}`,
                 ErrorCode.NO_TRANSIT_TOKEN
             )
         }

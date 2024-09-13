@@ -103,7 +103,7 @@ export class ConfigCache {
 
         if (found === undefined) {
             throw new Error(
-                `There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`,
+                `getOmniPoolTokenIndex: There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`,
                 ErrorCode.NO_TRANSIT_TOKEN
             )
         }
