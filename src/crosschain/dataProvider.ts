@@ -25,29 +25,53 @@ export class DataProvider {
     }
 
     async getOneInchRateToEth(tokens: Token[], oracle: OneInchOracle) {
-        return this.fromCache(['getOneInchRateToEth', ...tokens.map((i) => i.address)], () => {
-            return getRateToEth(tokens, oracle)
-        })
+        return this.fromCache(
+            ['getOneInchRateToEth', ...tokens.map((i) => i.address)],
+            () => {
+                return getRateToEth(tokens, oracle)
+            },
+            60 // 1 minute
+        )
     }
 
     async getTokenPrice(token: Token) {
-        return this.fromCache(['getTokenPriceUsd', token.address], () => {
-            return getTokenPriceUsd(token)
-        })
+        return this.fromCache(
+            ['getTokenPriceUsd', token.address],
+            () => {
+                return getTokenPriceUsd(token)
+            },
+            600 // 10 minutes
+        )
     }
 
-    private async fromCache<T>(key: (number | string)[], func: () => Promise<T>): Promise<T> {
-        const stringKey = key.join('-')
+    async get<T>(key: string[], func: () => Promise<T>, ttl?: number): Promise<T> {
+        return this.fromCache(
+            key,
+            () => {
+                return func()
+            },
+            ttl
+        )
+    }
 
-        let value = this.cache.get(stringKey)
-        if (value) {
-            return value
+    private async fromCache<T>(key: (number | string)[], func: () => Promise<T>, ttl?: number): Promise<T> {
+        const stringKey = key.join('-')
+        const now = Math.floor(Date.now() / 1000)
+        const cached = this.cache.get(stringKey)
+        if (cached) {
+            const { value, expiresAt } = cached
+            if (expiresAt === null || now < expiresAt) {
+                return value
+            }
         }
 
-        value = await func()
+        const newValue = await func()
 
-        this.cache.set(stringKey, value)
+        this.cache.set(stringKey, {
+            value: newValue,
+            expiresAt: ttl ? now + ttl : null,
+        })
 
-        return value
+        return newValue
     }
 }

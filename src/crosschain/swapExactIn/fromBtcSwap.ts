@@ -10,6 +10,9 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { parseUnits } from '@ethersproject/units'
 import { BaseSwappingExactInResult } from '../baseSwapping'
+import { BigNumber } from 'ethers'
+import { DataProvider } from '../dataProvider'
+import { getFastestFee } from '../mempool'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount } = context
@@ -43,8 +46,8 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
     let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
 
-    const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl)
-    const btcPortalFee = new TokenAmount(sBtc, btcPortalFeeRaw.toString())
+    const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.dataProvider)
+    const btcPortalFee = new TokenAmount(sBtc, btcPortalFeeRaw)
     sBtcAmount = sBtcAmount.subtract(btcPortalFee)
 
     const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO @allush estimate with advisor
@@ -107,6 +110,10 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         tailSbFee = tailResult.fee
         tokenAmountOut = tailResult.tokenAmountOut
         tokenAmountOutMin = tailResult.tokenAmountOutMin
+        btcForwarderFee = new TokenAmount(
+            btcForwarderFee.token,
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(110).div(100).toString() // +10% of fee
+        )
     } else {
         btcForwarderFee = new TokenAmount(
             sBtc,
@@ -125,7 +132,13 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             )
         }
         tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
-        tokenAmountOutMin = tokenAmountOut
+
+        const btcForwarderFeeMax = new TokenAmount(
+            btcForwarderFee.token,
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(110).div(100).toString() // +10% of fee
+        )
+        tokenAmountOutMin = sBtcAmount.subtract(btcForwarderFeeMax)
+        btcForwarderFee = btcForwarderFeeMax
     }
 
     const { validUntil, revealAddress } = await wrap({
@@ -216,9 +229,9 @@ async function estimateWrap({ forwarderUrl, portalFee, sbfee, tail, to }: Estima
 
     const raw = JSON.stringify({
         info: {
-            portalFee,
+            portalFee: Number(portalFee),
             op: 0, // 0 - wrap operation
-            sbfee: Number(sbfee), // FIXME @nick should accept string,
+            stableBridgingFee: Number(sbfee),
             tail: encodeTail(tail),
             to,
         },
@@ -248,13 +261,13 @@ type WrapParams = EstimateWrapParams & {
 async function wrap({ forwarderUrl, portalFee, sbfee, tail, to, feeLimit }: WrapParams): Promise<DepositAddressResult> {
     const raw = JSON.stringify({
         info: {
-            portalFee,
+            portalFee: Number(portalFee),
             op: 0, // 0 - is wrap operation
-            sbfee: Number(sbfee), // FIXME @nick should accept string
+            stableBridgingFee: Number(sbfee),
             tail: encodeTail(tail),
             to,
         },
-        feeLimit: Number(feeLimit), // FIXME @nick should accept string
+        feeLimit: Number(feeLimit),
     })
 
     const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)
@@ -290,20 +303,43 @@ function encodeTail(tail: string): string {
     return Buffer.from(tail.slice(2), 'hex').toString('base64')
 }
 
-async function getBtcPortalFee(forwarderUrl: string): Promise<string> {
-    // kind of the state: 0=finalized 1=pending 2=best
-    const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=1`)
+async function getBtcPortalFee(forwarderUrl: string, dataProvider: DataProvider): Promise<string> {
+    let fee = await dataProvider.get(
+        ['getMinBtcFee'],
+        async () => {
+            // kind of the state: 0=finalized 1=pending 2=best
+            const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=2`)
 
-    const response = await fetch(portalApiUrl)
-    if (!response.ok) {
-        const text = await response.text()
-        const json = JSON.parse(text)
-        throw new Error(json.message ?? text)
+            const response = await fetch(portalApiUrl)
+            if (!response.ok) {
+                const text = await response.text()
+                const json = JSON.parse(text)
+                throw new Error(json.message ?? text)
+            }
+
+            const {
+                state: { minBtcFee },
+            } = await response.json()
+
+            return Number(minBtcFee)
+        },
+        600 // 10 minutes
+    )
+
+    try {
+        const recommendedFee: number = await dataProvider.get(
+            ['getFastestFee'],
+            async () => {
+                const fastestFee = await getFastestFee()
+                return fastestFee * 200
+            },
+            60 // 1 minute
+        )
+        if (recommendedFee > fee) {
+            fee = recommendedFee
+        }
+    } catch {
+        /* nothing */
     }
-
-    const {
-        state: { minBtcFee },
-    } = await response.json()
-
-    return minBtcFee
+    return fee.toString()
 }

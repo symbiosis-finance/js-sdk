@@ -103,7 +103,7 @@ export class BestPoolSwapping {
         }
 
         if (!actionResult || !swapping) {
-            console.error('Best pool swapping errors: ', errors)
+            // console.error('Best pool swapping errors: ', errors)
             throw selectError(errors)
         }
 
