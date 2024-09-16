@@ -3,7 +3,7 @@ import { TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
-import { isBtc } from '../utils'
+import { isBtc, isValidTonAddress } from '../utils'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
@@ -37,7 +37,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         throw new Error(`Synthetic BTC wasn't found`)
     }
 
-    if (!isAddress(toAddress)) {
+    if (!isAddress(toAddress) && !isValidTonAddress(toAddress)) {
         throw new Error(`Destination address wasn't provided`)
     }
     // destination of swap is not Bitcoin sBtc

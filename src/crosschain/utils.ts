@@ -9,6 +9,7 @@ import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 import flatMap from 'lodash.flatmap'
 import { Error, ErrorCode } from './error'
+import TonWeb from 'tonweb'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -377,4 +378,13 @@ export function selectError(errors: Error[]): Error {
         return otherErrors[0]
     }
     return filteredErrors[0]
+}
+
+export function isValidTonAddress(address: string): boolean {
+    try {
+        new TonWeb.utils.Address(address)
+        return true
+    } catch (error) {
+        return false
+    }
 }
