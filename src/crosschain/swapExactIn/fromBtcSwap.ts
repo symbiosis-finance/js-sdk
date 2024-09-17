@@ -65,6 +65,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     let tokenAmountOut: TokenAmount
     let tokenAmountOutMin: TokenAmount
     let btcForwarderFee: TokenAmount
+    let btcForwarderFeeMax: TokenAmount
     let tail: string = ''
     let tailSbFee = new TokenAmount(sBtc, '0')
     let tailResult: BuildTailResult | undefined
@@ -110,9 +111,9 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         tailSbFee = tailResult.fee
         tokenAmountOut = tailResult.tokenAmountOut
         tokenAmountOutMin = tailResult.tokenAmountOutMin
-        btcForwarderFee = new TokenAmount(
+        btcForwarderFeeMax = new TokenAmount(
             btcForwarderFee.token,
-            BigNumber.from(btcForwarderFee.raw.toString()).mul(110).div(100).toString() // +10% of fee
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
         )
     } else {
         btcForwarderFee = new TokenAmount(
@@ -133,12 +134,11 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         }
         tokenAmountOut = sBtcAmount.subtract(btcForwarderFee)
 
-        const btcForwarderFeeMax = new TokenAmount(
+        btcForwarderFeeMax = new TokenAmount(
             btcForwarderFee.token,
-            BigNumber.from(btcForwarderFee.raw.toString()).mul(110).div(100).toString() // +10% of fee
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
         )
         tokenAmountOutMin = sBtcAmount.subtract(btcForwarderFeeMax)
-        btcForwarderFee = btcForwarderFeeMax
     }
 
     const { validUntil, revealAddress } = await wrap({
@@ -147,7 +147,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         sbfee: sbfeeRaw,
         tail,
         to: toAddress,
-        feeLimit: btcForwarderFee.raw.toString(),
+        feeLimit: btcForwarderFeeMax.raw.toString(),
     })
 
     const parsedValue = parseUnits(tailSbFee.toExact(), sbfee.token.decimals).toString()
@@ -250,9 +250,9 @@ async function estimateWrap({ forwarderUrl, portalFee, sbfee, tail, to }: Estima
         throw new Error(json.message ?? text)
     }
 
-    const { feeLimit } = await response.json()
+    const { revealTxFee } = await response.json()
 
-    return feeLimit
+    return revealTxFee
 }
 
 type WrapParams = EstimateWrapParams & {
