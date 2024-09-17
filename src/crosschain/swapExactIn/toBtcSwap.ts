@@ -10,6 +10,7 @@ function isThorChainAvailable(chainId: ChainId) {
 }
 
 function isNativeAvailable(chainId: ChainId) {
+    return false
     return isBtc(chainId)
 }
 

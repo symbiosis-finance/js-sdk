@@ -15,6 +15,8 @@ import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
+    return false
+
     const { inTokenAmount } = context
 
     return isBtc(inTokenAmount.token.chainId)
