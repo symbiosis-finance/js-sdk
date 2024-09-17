@@ -60,11 +60,11 @@ export async function waitForBtcRevealTxMined(
     forwarderUrl: string,
     revealTx: string,
     blockConfirmations = 1
-): Promise<string | undefined> {
+): Promise<{ promise: Promise<string | undefined>; cancelPoll: () => void }> {
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
     txInfoUrl.searchParams.append('txid', revealTx)
 
-    const txResponse = await longPolling<TxResponse>({
+    const { promise, cancelPoll } = await longPolling<TxResponse>({
         pollingFunction: async () => {
             return fetchData(txInfoUrl)
         },
@@ -72,9 +72,13 @@ export async function waitForBtcRevealTxMined(
         error: new WaitForRevealBtcTxError('getting TxResponse timeout exceed'),
     })
 
-    if (!txResponse || !txResponse.txInfo) {
-        return
-    }
+    const wrapPromise = promise.then((data) => {
+        if (!data || !data.txInfo) {
+            return
+        }
 
-    return txResponse.txInfo.revealTx
+        return data.txInfo.revealTx
+    })
+
+    return { promise: wrapPromise, cancelPoll }
 }

@@ -27,8 +27,12 @@ export async function longPolling<T>({
     pollingFunction,
     successCondition,
     error,
-}: LongPollingParams<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
+}: LongPollingParams<T>): Promise<{ promise: Promise<T>; cancelPoll: () => void }> {
+    let interval: NodeJS.Timeout
+
+    const cancelPoll = () => clearInterval(interval)
+
+    const promise: Promise<T> = new Promise((resolve, reject) => {
         let pastTime = 0
         let result: T | undefined
 
@@ -54,6 +58,8 @@ export async function longPolling<T>({
         }
 
         func()
-        const interval = setInterval(func, pollingInterval)
+        interval = setInterval(func, pollingInterval)
     })
+
+    return { promise, cancelPoll }
 }

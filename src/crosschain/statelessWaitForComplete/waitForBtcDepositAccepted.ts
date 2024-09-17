@@ -40,9 +40,9 @@ export class WaitWrapBtcTxToCompleteError extends Error {
 export async function waitForBtcDepositAccepted(
     forwarderUrl: string,
     btcAddress: string
-): Promise<{ commitTx: string; revealTx: string } | undefined> {
+): Promise<{ commitTx: string; revealTx: string; cancelPoll: () => void } | undefined> {
     const addressInfoUrl = new URL(`${forwarderUrl}/address?address=${btcAddress}`)
-    const addressInfo = await longPolling<TransactionBtcInfo>({
+    const { promise, cancelPoll } = await longPolling<TransactionBtcInfo>({
         pollingFunction: async () => {
             const addressResponse: BtcAddressResponse = await fetchData(addressInfoUrl)
             if (addressResponse.transactions.length === 0) {
@@ -54,7 +54,7 @@ export async function waitForBtcDepositAccepted(
         error: new WaitWrapBtcTxToCompleteError('getting TransactionBtcInfo timeout exceed'),
     })
 
-    const { commitTx, revealTx } = addressInfo
+    const { commitTx, revealTx } = await promise
 
-    return { commitTx, revealTx }
+    return { commitTx, revealTx, cancelPoll }
 }

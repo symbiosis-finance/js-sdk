@@ -23,7 +23,7 @@ export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: Chain
             throw new Error(`Transaction ${txId} is not a bridge request`)
         }
 
-        return outHash
+        return outHash.then((data) => data || '')
     }
 
     console.log('aBridgeInfo', aBridgeInfo)

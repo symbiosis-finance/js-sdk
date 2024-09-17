@@ -21,7 +21,11 @@ export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
     chainId: ChainId,
     txHash: string
-): Promise<{ extraStep?: 'thorChain' | 'burnRequestBtc'; outHash: string }> {
+): Promise<{
+    extraStep?: 'thorChain' | 'burnRequestBtc'
+    outHash: Promise<string | undefined>
+    cancelPoll?: () => void
+}> {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
@@ -30,10 +34,11 @@ export async function tryToFindExtraStepsAndWait(
 
     const isThorChainDeposit = await findThorChainDeposit(receipt)
     if (isThorChainDeposit) {
-        const outHash = await waitForThorChainTx(txHash)
+        const { promise, cancelPoll } = await waitForThorChainTx(txHash)
         return {
             extraStep: 'thorChain',
-            outHash,
+            outHash: promise,
+            cancelPoll,
         }
     }
 
@@ -45,11 +50,12 @@ export async function tryToFindExtraStepsAndWait(
             throw new Error('BTC token not found')
         }
         const forwarderUrl = symbiosis.getForwarderUrl(btc.chainId)
-        const outHash = await waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
+        const { promise, cancelPoll } = await waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
 
         return {
             extraStep: 'burnRequestBtc',
-            outHash,
+            outHash: promise,
+            cancelPoll,
         }
     }
 
@@ -58,7 +64,7 @@ export async function tryToFindExtraStepsAndWait(
         console.log('This is TON deposit. TON tracking have to be implemented')
     }
     return {
-        outHash: txHash,
+        outHash: Promise.resolve(txHash),
     }
 }
 
@@ -71,11 +77,13 @@ export async function findThorChainDeposit(receipt: TransactionReceipt) {
     return !!log
 }
 
-export async function waitForThorChainTx(txHash: string): Promise<string> {
+export async function waitForThorChainTx(
+    txHash: string
+): Promise<{ promise: Promise<string>; cancelPoll: () => void }> {
     const txHashCleaned = txHash.startsWith('0x') ? txHash.slice(2) : txHash
     const thorUrl = new URL(`https://thornode.ninerealms.com/thorchain/tx/${txHashCleaned}`)
 
-    return longPolling({
+    const { promise, cancelPoll } = await longPolling({
         pollingFunction: async () => {
             const result: ThorStatusResponse = await fetchData(thorUrl)
 
@@ -93,6 +101,8 @@ export async function waitForThorChainTx(txHash: string): Promise<string> {
         exceedDelay: 3_600_000, // 1 hour
         pollingInterval: 60_000, // 1 minute
     })
+
+    return { promise, cancelPoll }
 }
 
 async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
@@ -124,10 +134,13 @@ interface UnwrapSerialBTCResponse {
     value: number
     outputIdx: string
 }
-async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigNumber): Promise<string> {
+async function waitUnwrapBtcTxComplete(
+    forwarderUrl: string,
+    burnSerialBtc: BigNumber
+): Promise<{ promise: Promise<string | undefined>; cancelPoll: () => void }> {
     const unwrapInfoUrl = new URL(`${forwarderUrl}/unwrap?serial=${burnSerialBtc.toString()}`)
 
-    const result = await longPolling<UnwrapSerialBTCResponse>({
+    const { promise, cancelPoll } = await longPolling<UnwrapSerialBTCResponse>({
         pollingFunction: async (): Promise<UnwrapSerialBTCResponse> => {
             return fetchData(unwrapInfoUrl)
         },
@@ -137,7 +150,9 @@ async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigN
         pollingInterval: 10_000, // 10 seconds
     })
 
-    return result.tx
+    const unwrapSerialBtcPromise = promise.then((data) => data?.tx)
+
+    return { promise: unwrapSerialBtcPromise, cancelPoll }
 }
 async function findTonOracleRequest(receipt: TransactionReceipt) {
     const bridgeInterface = Bridge__factory.createInterface()
