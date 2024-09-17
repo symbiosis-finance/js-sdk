@@ -34,7 +34,15 @@ const getGasTokenPrice = async (token: Token): Promise<number> => {
     return parseFloat(json[tokenId][vs])
 }
 
-const getTokenPrice = async (token: Token): Promise<number> => {
+const getTokenPrice = async (token: Token, map?: Map<string, string>): Promise<number> => {
+    const newAddress = map?.get(token.address)
+    if (newAddress) {
+        token = new Token({
+            address: newAddress,
+            chainId: token.chainId,
+            decimals: token.decimals,
+        })
+    }
     const platform = COINGECKO_PLATFORMS[token.chainId]
     if (!platform) {
         console.error('CoinGecko: cannot find asset platform')
@@ -69,13 +77,13 @@ const getTokenPrice = async (token: Token): Promise<number> => {
     return parseFloat(json[address][vs])
 }
 
-export const getTokenPriceUsd = async (token: Token) => {
+export const getTokenPriceUsd = async (token: Token, map?: Map<string, string>) => {
     let price = 0
 
     if (token.isNative || isBtc(token.chainId)) {
         price = await getGasTokenPrice(token)
     } else {
-        price = await getTokenPrice(token)
+        price = await getTokenPrice(token, map)
     }
 
     return price

@@ -86,6 +86,7 @@ export class ZappingBtc extends BaseSwapping {
         })
 
         const tokenAmountOut = new TokenAmount(btc, result.tokenAmountOut.subtract(this.minBtcFee).raw)
+        const tokenAmountOutMin = new TokenAmount(btc, result.tokenAmountOutMin.subtract(this.minBtcFee).raw)
 
         // >> for display route purposes only
         if (result.route.length > 0) {
@@ -99,7 +100,7 @@ export class ZappingBtc extends BaseSwapping {
         return {
             ...result,
             tokenAmountOut,
-            tokenAmountOutMin: tokenAmountOut,
+            tokenAmountOutMin,
             extraFee: this.minBtcFee,
         }
     }
