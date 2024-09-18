@@ -527,17 +527,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
-                {
-                    name: 'Wrapped BTC',
-                    symbol: 'WBTC',
-                    address: '0xBBeB516fb02a01611cBBE0453Fe3c580D7281011',
-                    chainId: ChainId.ZKSYNC_MAINNET,
-                    decimals: 8,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
-                    },
-                },
+                // {
+                //     name: 'Wrapped BTC',
+                //     symbol: 'WBTC',
+                //     address: '0xBBeB516fb02a01611cBBE0453Fe3c580D7281011',
+                //     chainId: ChainId.ZKSYNC_MAINNET,
+                //     decimals: 8,
+                //     icons: {
+                //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                //         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                //     },
+                // },
                 {
                     name: 'Symbiosis',
                     symbol: 'SIS',
