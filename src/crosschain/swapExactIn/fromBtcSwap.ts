@@ -15,9 +15,15 @@ import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { inTokenAmount } = context
+    const { inTokenAmount, symbiosis } = context
 
-    return isBtc(inTokenAmount.token.chainId)
+    if (!isBtc(inTokenAmount.token.chainId)) {
+        return false
+    }
+
+    symbiosis.validateLimits(inTokenAmount)
+
+    return true
 }
 
 type BuildTailResult = BaseSwappingExactInResult & { tail: string }

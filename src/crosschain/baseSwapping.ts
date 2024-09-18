@@ -1,5 +1,4 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { parseUnits } from '@ethersproject/units'
 import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
@@ -447,45 +446,11 @@ export abstract class BaseSwapping {
         })
     }
 
-    protected validateLimits(amount: TokenAmount): void {
-        const { token } = amount
-        const limit = this.symbiosis.config.limits.find((limit) => {
-            return limit.address.toLowerCase() === token.address.toLowerCase() && limit.chainId === token.chainId
-        })
-        if (!limit) {
-            return
-        }
-        const maxAmountRaw = parseUnits(limit.max, token.decimals).toString()
-        if (maxAmountRaw !== '0') {
-            const maxLimitTokenAmount = new TokenAmount(token, maxAmountRaw)
-            if (amount.greaterThan(maxLimitTokenAmount)) {
-                throw new Error(
-                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${
-                        maxLimitTokenAmount.token.symbol
-                    }`,
-                    ErrorCode.AMOUNT_TOO_HIGH
-                )
-            }
-        }
-        const minAmountRaw = parseUnits(limit.min, token.decimals).toString()
-        if (minAmountRaw !== '0') {
-            const minLimitTokenAmount = new TokenAmount(token, minAmountRaw)
-            if (amount.lessThan(minLimitTokenAmount)) {
-                throw new Error(
-                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${
-                        minLimitTokenAmount.token.symbol
-                    }`,
-                    ErrorCode.AMOUNT_TOO_LOW
-                )
-            }
-        }
-    }
-
     protected buildTransit(fee?: TokenAmount): Transit {
         const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
 
-        this.validateLimits(amountIn)
+        this.symbiosis.validateLimits(amountIn)
 
         return new Transit(
             this.symbiosis,

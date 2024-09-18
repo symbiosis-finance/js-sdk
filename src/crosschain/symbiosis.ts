@@ -68,6 +68,7 @@ import { isBtc } from './utils'
 import { BestTokenSwapping } from './bestTokenSwapping'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
+import { parseUnits } from '@ethersproject/units'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -649,5 +650,39 @@ export class Symbiosis {
         }
 
         return this.config.revertableAddress.default
+    }
+
+    validateLimits(amount: TokenAmount): void {
+        const { token } = amount
+        const limit = this.config.limits.find((limit) => {
+            return limit.address.toLowerCase() === token.address.toLowerCase() && limit.chainId === token.chainId
+        })
+        if (!limit) {
+            return
+        }
+        const maxAmountRaw = parseUnits(limit.max, token.decimals).toString()
+        if (maxAmountRaw !== '0') {
+            const maxLimitTokenAmount = new TokenAmount(token, maxAmountRaw)
+            if (amount.greaterThan(maxLimitTokenAmount)) {
+                throw new Error(
+                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${
+                        maxLimitTokenAmount.token.symbol
+                    }`,
+                    ErrorCode.AMOUNT_TOO_HIGH
+                )
+            }
+        }
+        const minAmountRaw = parseUnits(limit.min, token.decimals).toString()
+        if (minAmountRaw !== '0') {
+            const minLimitTokenAmount = new TokenAmount(token, minAmountRaw)
+            if (amount.lessThan(minLimitTokenAmount)) {
+                throw new Error(
+                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${
+                        minLimitTokenAmount.token.symbol
+                    }`,
+                    ErrorCode.AMOUNT_TOO_LOW
+                )
+            }
+        }
     }
 }
