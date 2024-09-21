@@ -45,10 +45,13 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
     const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
     const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const [fee, approveAddress] = await Promise.all([
-        feeCollector.callStatic.fee(),
-        feeCollector.callStatic.onchainGateway(),
-    ])
+    const [fee, approveAddress] = await symbiosis.dataProvider.get(
+        ['feeCollector.fee', 'feeCollector.onchainGateway'],
+        () => {
+            return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
+        },
+        60 * 60 // 1 hour
+    )
 
     let inTokenAmount = params.inTokenAmount
     if (inTokenAmount.token.isNative) {
@@ -85,7 +88,10 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         inTokenAmount.raw.toString(),
         [swapCall.data, burnCall.data],
         [swapCall.to, burnCall.to],
-        [swapCall.amountIn.token.address, burnCall.amountIn.token.address],
+        [
+            swapCall.amountIn.token.isNative ? AddressZero : swapCall.amountIn.token.address,
+            burnCall.amountIn.token.address,
+        ],
         [swapCall.offset, burnCall.offset],
         [swapCall.amountIn.token.isNative, burnCall.amountIn.token.isNative],
         fromAddress,
