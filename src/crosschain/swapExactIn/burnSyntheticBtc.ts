@@ -4,6 +4,7 @@ import { Error, ErrorCode } from '../error'
 import { selectError } from '../utils'
 import { UnwrapBtc } from '../unwrapBtc'
 import { TokenAmount } from '../../entities'
+import { zappingBtcOnChain } from '../zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { inTokenAmount, outToken, symbiosis, fromAddress, toAddress, slippage, deadline } = context
@@ -24,6 +25,11 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                     to: toAddress,
                 })
             )
+            return
+        }
+
+        if (inTokenAmount.token.chainId === sBtc.chainId) {
+            promises.push(zappingBtcOnChain(context))
             return
         }
 

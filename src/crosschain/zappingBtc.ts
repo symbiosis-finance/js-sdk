@@ -5,9 +5,7 @@ import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { DataProvider } from './dataProvider'
-import { getFastestFee } from './mempool'
-import { BigNumber } from 'ethers'
+import { getToBtcFee } from './btc'
 
 initEccLib(ecc)
 
@@ -72,7 +70,7 @@ export class ZappingBtc extends BaseSwapping {
         this.multicallRouter = this.symbiosis.multicallRouter(sBtc.chainId)
 
         this.synthesis = this.symbiosis.synthesis(sBtc.chainId)
-        this.minBtcFee = await this.getBtcFee(sBtc, this.symbiosis.dataProvider)
+        this.minBtcFee = await getToBtcFee(sBtc, this.synthesis, this.symbiosis.dataProvider)
 
         const result = await this.doExactIn({
             tokenAmountIn,
@@ -103,33 +101,6 @@ export class ZappingBtc extends BaseSwapping {
             tokenAmountOutMin,
             extraFee: this.minBtcFee,
         }
-    }
-
-    protected async getBtcFee(sBtc: Token, dataProvider: DataProvider) {
-        let fee = await dataProvider.get(
-            ['syntToMinFeeBTC', this.synthesis.address, sBtc.address],
-            async () => {
-                return this.synthesis.syntToMinFeeBTC(sBtc.address)
-            },
-            600 // 10 minutes
-        )
-
-        try {
-            const recommendedFee = await dataProvider.get(
-                ['getFastestFee'],
-                async () => {
-                    const fastestFee = await getFastestFee()
-                    return BigNumber.from(fastestFee * 100)
-                },
-                60 // 1 minute
-            )
-            if (recommendedFee.gt(fee)) {
-                fee = recommendedFee
-            }
-        } catch {
-            /* nothing */
-        }
-        return new TokenAmount(sBtc, fee.toString())
     }
 
     protected tradeCTo(): string {
