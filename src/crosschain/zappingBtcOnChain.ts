@@ -1,6 +1,6 @@
 import { BigNumber, BytesLike, utils } from 'ethers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { FEE_COLLECTOR_ADDRESSES, SwapExactInParams } from './swapExactIn'
+import { FEE_COLLECTOR_ADDRESSES, SwapExactInParams, SwapExactInResult } from './swapExactIn'
 import { Percent, TokenAmount } from '../entities'
 import { BaseSwappingExactInResult } from './baseSwapping'
 import { onchainSwap } from './swapExactIn/onchainSwap'
@@ -10,38 +10,39 @@ import { Error, ErrorCode } from './error'
 import { FeeCollector__factory, MulticallRouterV2__factory } from './contracts'
 import { BTC_NETWORKS, getPkScript } from './zappingBtc'
 import { MULTICALL_ROUTER_V2 } from './constants'
+import { Symbiosis } from './symbiosis'
 
+// TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams): Promise<BaseSwappingExactInResult> {
-    const { symbiosis, toAddress, fromAddress } = params
+    const { symbiosis, outToken, toAddress, fromAddress } = params
 
-    const chainId = params.inTokenAmount.token.chainId
-
-    const outToken = symbiosis.getRepresentation(params.outToken, chainId)
-    if (!outToken) {
-        throw new Error(`No representation ${chainId}`)
-    }
-    if (!outToken.chainFromId) {
-        throw new Error('outToken is not synthetic')
-    }
-    const network = BTC_NETWORKS[outToken.chainFromId]
+    const network = BTC_NETWORKS[outToken.chainId]
     if (!network) {
-        throw new Error('Unknown BTC network')
+        throw new Error(`Unknown BTC network ${outToken.chainId}`)
     }
     const bitcoinAddress = getPkScript(toAddress, network)
 
-    const provider = symbiosis.getProvider(chainId)
+    const chainId = params.inTokenAmount.token.chainId
 
-    const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
-    if (!multicallRouterAddress) {
-        throw new Error(`Multicall router v2 not found for chain ${chainId}`)
+    const syBTC = symbiosis.getRepresentation(params.outToken, chainId)
+    if (!syBTC) {
+        throw new Error(`No syBTC found on chain ${chainId}`)
     }
-    const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
+    if (!syBTC.chainFromId) {
+        throw new Error('syBTC is not synthetic')
+    }
 
     const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
     if (!feeCollectorAddress) {
         throw new Error(`Fee collector not found for chain ${chainId}`)
     }
+    const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
+    if (!multicallRouterAddress) {
+        throw new Error(`MulticallRouterV2 not found for chain ${chainId}`)
+    }
 
+    const provider = symbiosis.getProvider(chainId)
+    const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
     const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
     const [fee, approveAddress] = await Promise.all([
@@ -62,60 +63,31 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
     }
 
-    // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap({
+    const swapCall = await getSwapCall({
         ...params,
-        outToken,
+        outToken: syBTC,
         fromAddress: multicallRouterAddress,
         toAddress: multicallRouterAddress,
     })
 
-    let value: string
-    let swapCallData: BytesLike
-    let routerAddress: string
-    if (result.transactionType === 'tron') {
-        value = result.transactionRequest.call_value.toString()
-        const method = utils.id(result.transactionRequest.function_selector).slice(0, 10)
-        swapCallData = method + result.transactionRequest.raw_parameter
-        routerAddress = tronAddressToEvm(result.transactionRequest.contract_address)
-    } else if (result.transactionType === 'evm') {
-        value = result.transactionRequest.value?.toString() as string
-        swapCallData = result.transactionRequest.data as BytesLike
-        routerAddress = result.transactionRequest.to as string
-    } else {
-        // BTC
-        value = ''
-        swapCallData = ''
-        routerAddress = ''
-    }
-
-    if (inTokenAmount.token.isNative) {
+    let value = fee.toString()
+    if (swapCall.amountIn.token.isNative) {
         /**
          * To maintain consistency with any potential fees charged by the aggregator,
          * we calculate the total value by adding the fee to the value obtained from the aggregator.
          */
-        value = BigNumber.from(value).add(fee).toString()
-    } else {
-        value = fee.toString()
+        value = BigNumber.from(swapCall.value).add(fee).toString()
     }
 
-    const synthesis = symbiosis.synthesis(chainId)
-    const btcFee = await getToBtcFee(outToken, synthesis, symbiosis.dataProvider)
-    const burnCallData = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
-        btcFee.raw.toString(), // _stableBridgingFee must be >= minBtcFee
-        '0', // _amount will be patched
-        bitcoinAddress, // _to
-        outToken.address, // _stoken
-        symbiosis.clientId, // _clientID
-    ])
+    const burnCall = await getBurnCall(symbiosis, new TokenAmount(syBTC, swapCall.amountOut.raw), bitcoinAddress)
 
     const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
         inTokenAmount.raw.toString(),
-        [swapCallData, burnCallData],
-        [routerAddress, synthesis.address],
-        [inTokenAmount.token.address, outToken.address],
-        [0, 68],
-        [inTokenAmount.token.isNative, outToken.isNative],
+        [swapCall.data, burnCall.data],
+        [swapCall.to, burnCall.to],
+        [swapCall.amountIn.token.address, burnCall.amountIn.token.address],
+        [swapCall.offset, burnCall.offset],
+        [swapCall.amountIn.token.isNative, burnCall.amountIn.token.isNative],
         fromAddress,
     ])
 
@@ -127,15 +99,18 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         multicallCalldata,
     ])
 
-    const tokenAmountOut = new TokenAmount(params.outToken, result.tokenAmountOut.subtract(btcFee).raw)
+    const tokenAmountOut = new TokenAmount(outToken, burnCall.amountOut.raw)
     return {
-        save: new TokenAmount(btcFee.token, '0'),
-        fee: btcFee,
+        save: new TokenAmount(swapCall.fee.token, '0'),
+        fee: swapCall.fee,
+        extraFee: burnCall.fee,
         tokenAmountOut,
         tokenAmountOutMin: tokenAmountOut,
-        route: result.route,
-        priceImpact: result.priceImpact || new Percent('0', '0'),
-        amountInUsd: result.amountInUsd || inTokenAmount,
+        route: [syBTC], // TODO build detailed route
+        priceImpact: swapCall.priceImpact!,
+        amountInUsd: swapCall.amountInUsd!,
+        inTradeType: swapCall.inTradeType,
+        outTradeType: swapCall.outTradeType,
         approveTo: approveAddress,
         type: 'evm',
         transactionRequest: {
@@ -144,5 +119,77 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
             data,
             value,
         },
+    }
+}
+
+type Call = {
+    amountIn: TokenAmount
+    amountOut: TokenAmount
+    to: string
+    data: BytesLike
+    value: string
+    offset: number
+    fee: TokenAmount
+}
+
+type SwapCall = Call & SwapExactInResult
+
+async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
+    // Get onchain swap transaction what will be executed by fee collector
+    const result = await onchainSwap(params)
+
+    let value: string
+    let data: BytesLike
+    let routerAddress: string
+    if (result.transactionType === 'tron') {
+        value = result.transactionRequest.call_value.toString()
+        const method = utils.id(result.transactionRequest.function_selector).slice(0, 10)
+        data = method + result.transactionRequest.raw_parameter
+        routerAddress = tronAddressToEvm(result.transactionRequest.contract_address)
+    } else if (result.transactionType === 'evm') {
+        value = result.transactionRequest.value?.toString() as string
+        data = result.transactionRequest.data as BytesLike
+        routerAddress = result.transactionRequest.to as string
+    } else {
+        // BTC
+        value = ''
+        data = ''
+        routerAddress = ''
+    }
+
+    return {
+        ...result,
+        fee: result.fee || new TokenAmount(params.outToken, '0'),
+        priceImpact: result.priceImpact || new Percent('0', '0'),
+        amountInUsd: result.amountInUsd || params.inTokenAmount,
+        // Call type params
+        amountIn: params.inTokenAmount,
+        amountOut: result.tokenAmountOut,
+        to: routerAddress,
+        data,
+        value,
+        offset: 0,
+    }
+}
+
+async function getBurnCall(symbiosis: Symbiosis, amountIn: TokenAmount, bitcoinAddress: Buffer): Promise<Call> {
+    const synthesis = symbiosis.synthesis(amountIn.token.chainId)
+    const fee = await getToBtcFee(amountIn.token, synthesis, symbiosis.dataProvider)
+    const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
+        fee.raw.toString(), // _stableBridgingFee must be >= minBtcFee
+        '0', // _amount will be patched
+        bitcoinAddress, // _to
+        amountIn.token.address, // _stoken
+        symbiosis.clientId, // _clientID
+    ])
+
+    return {
+        amountIn,
+        amountOut: amountIn.subtract(fee),
+        to: synthesis.address,
+        data,
+        value: '0',
+        offset: 68,
+        fee,
     }
 }
