@@ -13,7 +13,7 @@ import { BaseSwappingExactInResult } from '../baseSwapping'
 import { BigNumber } from 'ethers'
 import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
-import { SymbiosisTradeType } from '../trade'
+import { AggregatorTrade, SymbiosisTradeType } from '../trade'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { inTokenAmount, symbiosis } = context
@@ -47,8 +47,6 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     if (!isAddress(toAddress)) {
         throw new Error(`Destination address wasn't provided`)
     }
-    // destination of swap is not Bitcoin sBtc
-    const isBtcBridging = outToken.equals(sBtc)
 
     const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
     let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
@@ -82,42 +80,8 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     let route: Token[] = []
     let save: TokenAmount | undefined
 
-    if (!isBtcBridging) {
-        const { tail: initialTail } = await buildTail(context, sBtcAmount)
-        btcForwarderFee = new TokenAmount(
-            sBtc,
-            await estimateWrap({
-                forwarderUrl,
-                portalFee: btcPortalFeeRaw,
-                stableBridgingFee: mintFeeRaw,
-                tail: initialTail,
-                to: toAddress,
-            })
-        )
-        btcForwarderFeeMax = new TokenAmount(
-            btcForwarderFee.token,
-            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
-        )
-        if (btcForwarderFee.greaterThan(sBtcAmount)) {
-            throw new Error(
-                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
-        }
-        const tailResult = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
-        tail = tailResult.tail
-        tailFee = tailResult.fee
-        tokenAmountOut = tailResult.tokenAmountOut
-        tokenAmountOutMin = tailResult.tokenAmountOutMin
-        priceImpact = tailResult.priceImpact
-        inTradeType = tailResult.inTradeType
-        outTradeType = tailResult.outTradeType
-        amountInUsd = tailResult.amountInUsd
-        route = tailResult.route
-        if (tailResult.save) {
-            save = new TokenAmount(mintFee.token, tailResult.save.raw)
-        }
-    } else {
+    if (outToken.equals(sBtc)) {
+        // bridging BTC -> syBTC
         tail = ''
         btcForwarderFee = new TokenAmount(
             sBtc,
@@ -142,6 +106,44 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
         )
         tokenAmountOutMin = sBtcAmount.subtract(btcForwarderFeeMax)
+    } else {
+        const sameChain = outToken.chainId === sBtc.chainId
+        const buildTailFunc = sameChain ? buildOnchainTail : buildTail
+
+        const { tail: initialTail } = await buildTailFunc(context, sBtcAmount)
+        btcForwarderFee = new TokenAmount(
+            sBtc,
+            await estimateWrap({
+                forwarderUrl,
+                portalFee: btcPortalFeeRaw,
+                stableBridgingFee: mintFeeRaw,
+                tail: initialTail,
+                to: toAddress,
+            })
+        )
+        btcForwarderFeeMax = new TokenAmount(
+            btcForwarderFee.token,
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
+        )
+        if (btcForwarderFee.greaterThan(sBtcAmount)) {
+            throw new Error(
+                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
+        const tailResult = await buildTailFunc(context, sBtcAmount.subtract(btcForwarderFee))
+        tail = tailResult.tail
+        tailFee = tailResult.fee
+        tokenAmountOut = tailResult.tokenAmountOut
+        tokenAmountOutMin = tailResult.tokenAmountOutMin
+        priceImpact = tailResult.priceImpact
+        inTradeType = tailResult.inTradeType
+        outTradeType = tailResult.outTradeType
+        amountInUsd = tailResult.amountInUsd
+        route = tailResult.route
+        if (tailResult.save) {
+            save = new TokenAmount(mintFee.token, tailResult.save.raw)
+        }
     }
 
     const { validUntil, revealAddress } = await wrap({
@@ -175,6 +177,53 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         fee: mintFee.add(tailFeeInMintToken),
         save,
         extraFee: btcPortalFee.add(btcForwarderFee),
+    }
+}
+
+async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
+    const { toAddress, outToken, symbiosis, slippage, oneInchProtocols } = context
+    const ttl = context.deadline - Math.floor(Date.now() / 1000)
+    const aggregatorTrade = new AggregatorTrade({
+        symbiosis,
+        to: toAddress,
+        from: toAddress, // there is not from address, set user's address
+        clientId: symbiosis.clientId,
+        dataProvider: symbiosis.dataProvider,
+        slippage,
+        tokenAmountIn: sBtcAmount,
+        tokenOut: outToken,
+        ttl,
+        oneInchProtocols,
+    })
+    await aggregatorTrade.init()
+
+    const symBtcContract = symbiosis.symBtcFor(sBtcAmount.token.chainFromId!)
+    const tail = await symBtcContract.callStatic.packBTCTransactionTail({
+        receiveSide: aggregatorTrade.routerAddress,
+        receiveSideCalldata: aggregatorTrade.callData,
+        receiveSideOffset: aggregatorTrade.callDataOffset,
+    })
+
+    const { amountOut, amountOutMin, callData, priceImpact, routerAddress } = aggregatorTrade
+
+    return {
+        type: 'evm',
+        transactionRequest: {
+            chainId: sBtcAmount.token.chainId,
+            from: toAddress, // there is not from address, set user's address
+            to: toAddress,
+            value: '0',
+            data: callData,
+        },
+        save: new TokenAmount(sBtcAmount.token, '0'),
+        fee: new TokenAmount(sBtcAmount.token, '0'),
+        tokenAmountOut: amountOut,
+        tokenAmountOutMin: amountOutMin,
+        route: [sBtcAmount.token],
+        priceImpact,
+        amountInUsd: sBtcAmount,
+        approveTo: routerAddress,
+        tail,
     }
 }
 
