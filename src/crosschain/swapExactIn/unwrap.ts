@@ -52,5 +52,7 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResu
         tokenAmountOut: amountOut,
         approveTo,
         ...payload,
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

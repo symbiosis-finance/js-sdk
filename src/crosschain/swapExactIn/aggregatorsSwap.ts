@@ -53,5 +53,7 @@ export async function aggregatorsSwap({
         route,
         inTradeType: tradeType,
         ...payload,
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

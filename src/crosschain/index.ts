@@ -28,6 +28,6 @@ export {
     type TronTransactionData,
 } from './tron'
 export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
-export type { SwapExactInParams, SwapExactInResult, BtcTransactionData } from './swapExactIn'
+export type { SwapExactInParams, SwapExactInResult, BtcTransactionData, Fee } from './swapExactIn'
 export type { Multicall, MulticallRouter } from './contracts'
 export { FEE_COLLECTOR_ADDRESSES, THOR_TOKENS } from './swapExactIn'

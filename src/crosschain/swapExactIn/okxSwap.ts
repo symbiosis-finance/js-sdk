@@ -128,5 +128,7 @@ export async function okxSwap({
             data: tx.data,
             value: inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : undefined,
         },
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

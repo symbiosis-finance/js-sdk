@@ -63,5 +63,7 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
         tokenAmountOut: amountOut,
         approveTo,
         ...payload,
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

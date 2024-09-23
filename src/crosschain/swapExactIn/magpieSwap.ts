@@ -33,5 +33,7 @@ export async function magpieSwap({
             data: trade.callData,
             value: inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : undefined,
         },
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

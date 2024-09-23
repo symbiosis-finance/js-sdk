@@ -34,5 +34,7 @@ export async function crosschainSwap({
         kind: 'crosschain-swap',
         ...result,
         ...payload,
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

@@ -8,7 +8,6 @@ import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { parseUnits } from '@ethersproject/units'
 import { BaseSwappingExactInResult } from '../baseSwapping'
 import { BigNumber } from 'ethers'
 import { DataProvider } from '../dataProvider'
@@ -155,9 +154,6 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         feeLimit: btcForwarderFeeMax.raw.toString(),
     })
 
-    const parsedValue = parseUnits(tailFee.toExact(), mintFee.token.decimals).toString()
-    const tailFeeInMintToken = new TokenAmount(mintFee.token, parsedValue)
-
     return {
         kind: 'from-btc-swap',
         transactionType: 'btc',
@@ -174,9 +170,28 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         inTradeType,
         outTradeType,
         amountInUsd,
-        fee: mintFee.add(tailFeeInMintToken),
+        fee: mintFee,
         save,
         extraFee: btcPortalFee.add(btcForwarderFee),
+        routes: [],
+        fees: [
+            {
+                description: 'Mint fee',
+                value: mintFee,
+            },
+            {
+                description: 'Tail fee',
+                value: tailFee,
+            },
+            {
+                description: 'BTC Portal fee',
+                value: btcPortalFee,
+            },
+            {
+                description: 'BTC Forwarder fee',
+                value: btcForwarderFee,
+            },
+        ],
     }
 }
 

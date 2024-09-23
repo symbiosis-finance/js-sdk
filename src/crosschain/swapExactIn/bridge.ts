@@ -53,5 +53,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
         tokenAmountOut: result.tokenAmountOut,
         approveTo,
         ...payload,
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }

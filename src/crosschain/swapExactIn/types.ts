@@ -38,6 +38,16 @@ export type SwapExactInTransactionPayload =
           transactionRequest: BtcTransactionData
       }
 
+export type Route = {
+    provider: SymbiosisTradeType
+    tokens: Token[]
+}
+
+export type Fee = {
+    value: TokenAmount
+    description?: string
+}
+
 export type SwapExactInResult = {
     kind: SymbiosisKind
     route: Token[]
@@ -52,4 +62,6 @@ export type SwapExactInResult = {
     save?: TokenAmount
     extraFee?: TokenAmount
     zapType?: ZapType
+    fees: Fee[]
+    routes: Route[]
 } & SwapExactInTransactionPayload

@@ -109,5 +109,7 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
         ...bestResult,
         ...payload,
         zapType: 'ton-bridge',
+        fees: [], // TODO
+        routes: [], // TODO
     }
 }
