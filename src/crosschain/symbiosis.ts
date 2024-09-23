@@ -69,6 +69,7 @@ import { BestTokenSwapping } from './bestTokenSwapping'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
+import { SwappingToTon } from './swappingToTon'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -208,6 +209,10 @@ export class Symbiosis {
 
     public newBridging() {
         return new Bridging(this)
+    }
+
+    public newSwappingToTon(omniPoolConfig: OmniPoolConfig) {
+        return new SwappingToTon(this, omniPoolConfig)
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {

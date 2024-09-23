@@ -7,7 +7,7 @@ import { SwapExactInParams, SwapExactInResult } from './types'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
 import { ChainId } from '../../constants'
-import { tonSwap } from './tonSwap'
+import { tonSwap, toTonSwap } from './toTonSwap'
 import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 
@@ -55,7 +55,7 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
     }
 
     if (outToken.chainId === ChainId.TON_MAINNET) {
-        return tonSwap(params)
+        return toTonSwap(params)
     }
 
     return crosschainSwap(params)

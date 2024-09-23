@@ -46,10 +46,10 @@ const OPTIONS: Option[] = [
     },
 ]
 
-export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+// bridge through native ton bridge
+function nativeTonBridgeToTon(context: SwapExactInParams): Promise<BaseSwappingExactInResult>[] {
     const { inTokenAmount, symbiosis } = context
 
-    // find suitable option for current env
     const options = OPTIONS.filter((i) => {
         return symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
     })
@@ -58,6 +58,7 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
     }
 
     const promises: Promise<BaseSwappingExactInResult>[] = []
+
     symbiosis.config.omniPools
         .filter((pool) => pool.generalPurpose)
         .forEach((pool) => {
@@ -75,7 +76,42 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
             })
         })
 
-    const results = await Promise.allSettled(promises)
+    return promises
+}
+
+function symbiosisTonBridgeToTon(context: SwapExactInParams): Promise<BaseSwappingExactInResult>[] {
+    const { inTokenAmount, symbiosis } = context
+
+    const options = OPTIONS.filter((i) => {
+        return symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
+    })
+
+    const promises: Promise<BaseSwappingExactInResult>[] = []
+
+    symbiosis.config.omniPools
+        .filter((pool) => pool.generalPurpose)
+        .forEach((pool) => {
+            options.forEach((option) => {
+                const swappingToTon = symbiosis.newSwappingToTon(pool)
+                const promise = swappingToTon.doExactIn({
+                    tokenAmountIn: inTokenAmount,
+                    from: context.fromAddress,
+                    to: context.toAddress,
+                    slippage: context.slippage,
+                    deadline: context.deadline,
+                })
+                promises.push(promise)
+            })
+        })
+
+    return promises
+}
+
+export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+    const nativeTonBridgePromises = nativeTonBridgeToTon(context)
+    const symbiosisTonBridgePromises = symbiosisTonBridgeToTon(context)
+
+    const results = await Promise.allSettled([...nativeTonBridgePromises, ...symbiosisTonBridgePromises])
 
     let bestResult: BaseSwappingExactInResult | undefined
     const errors: Error[] = []
