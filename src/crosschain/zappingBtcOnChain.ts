@@ -1,6 +1,6 @@
 import { BigNumber, BytesLike, utils } from 'ethers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { FEE_COLLECTOR_ADDRESSES, SwapExactInParams, SwapExactInResult } from './swapExactIn'
+import { SwapExactInParams, SwapExactInResult, ZERO_FEE_COLLECTOR_ADDRESSES } from './swapExactIn'
 import { Percent, TokenAmount } from '../entities'
 import { BaseSwappingExactInResult } from './baseSwapping'
 import { onchainSwap } from './swapExactIn/onchainSwap'
@@ -32,7 +32,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         throw new Error('syBTC is not synthetic')
     }
 
-    const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
+    const feeCollectorAddress = ZERO_FEE_COLLECTOR_ADDRESSES[chainId]
     if (!feeCollectorAddress) {
         throw new Error(`Fee collector not found for chain ${chainId}`)
     }

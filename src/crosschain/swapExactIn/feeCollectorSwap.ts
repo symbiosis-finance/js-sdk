@@ -9,6 +9,10 @@ import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../tron'
 import { Error, ErrorCode } from '../error'
 
+export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
+    [ChainId.ZKSYNC_MAINNET]: '0x35e3dc1f3383bD348EC651EdD73fE1d7a7dA5AAa',
+}
+
 export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0xff9b21c3bfa4bce9b20b55fed56d102ced48b0f6',
     [ChainId.BSC_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
