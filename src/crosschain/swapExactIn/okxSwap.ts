@@ -117,18 +117,29 @@ export async function okxSwap({
 
     return {
         kind: 'onchain-swap',
-        route: [tokenAmountIn.token, tokenOut],
         tokenAmountOut: amountOut,
+        tokenAmountOutMin: amountOut,
         approveTo,
         priceImpact,
         transactionType: 'evm',
-        inTradeType: 'okx',
         transactionRequest: {
             to: tx.to,
             data: tx.data,
             value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
         },
-        fees: [], // TODO
-        routes: [], // TODO
+        fees: [
+            {
+                description: 'OKX fee',
+                value: new TokenAmount(tokenOut, '0'),
+            },
+        ],
+        routes: [
+            {
+                provider: 'okx',
+                tokens: [tokenAmountIn.token, tokenOut],
+            },
+        ],
+        inTradeType: 'okx', // TODO remove
+        route: [tokenAmountIn.token, tokenOut], // TODO remove
     }
 }

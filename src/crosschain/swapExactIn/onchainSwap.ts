@@ -41,5 +41,8 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         throw new AggregateError(errors, 'No aggregator found')
     }
 
-    return bestResult
+    return {
+        ...bestResult,
+        kind: 'onchain-swap',
+    }
 }

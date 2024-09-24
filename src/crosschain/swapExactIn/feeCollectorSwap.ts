@@ -87,9 +87,9 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     // Get onchain swap transaction what will be executed by fee collector
     const result = await onchainSwap({ ...params, tokenAmountIn: inTokenAmount, from: feeCollectorAddress })
 
-    let value: string
-    let callData: BytesLike
-    let routerAddress: string
+    let value: string = ''
+    let callData: BytesLike = ''
+    let routerAddress: string = ''
     if (result.transactionType === 'tron') {
         value = result.transactionRequest.call_value.toString()
         const method = utils.id(result.transactionRequest.function_selector).slice(0, 10)
@@ -99,11 +99,6 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
         value = result.transactionRequest.value?.toString() as string
         callData = result.transactionRequest.data as BytesLike
         routerAddress = result.transactionRequest.to as string
-    } else {
-        // BTC
-        value = ''
-        callData = ''
-        routerAddress = ''
     }
 
     if (inTokenAmount.token.isNative) {

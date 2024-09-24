@@ -2,6 +2,7 @@ import { DataProvider } from '../dataProvider'
 import { AggregatorTrade } from '../trade'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from '../types'
+import { TokenAmount } from '../../entities'
 
 export async function aggregatorsSwap({
     symbiosis,
@@ -45,15 +46,25 @@ export async function aggregatorsSwap({
     })
 
     return {
+        ...payload,
         kind: 'onchain-swap',
         approveTo: routerAddress,
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOutMin,
         priceImpact,
-        route,
-        inTradeType: tradeType,
-        ...payload,
-        fees: [], // TODO
-        routes: [], // TODO
+        fees: [
+            {
+                description: 'Aggregator fee',
+                value: new TokenAmount(tokenOut, '0'),
+            },
+        ],
+        routes: [
+            {
+                provider: tradeType,
+                tokens: route,
+            },
+        ],
+        route, // TODO remove
+        inTradeType: tradeType, // TODO remove
     }
 }
