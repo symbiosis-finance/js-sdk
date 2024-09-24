@@ -52,17 +52,24 @@ export class UnwrapBtc {
             },
         }
         return {
-            save: new TokenAmount(sBtc, '0'),
-            fee: minBtcFee,
+            ...payload,
             tokenAmountOut,
             tokenAmountOutMin: tokenAmountOut,
-            route: [sBtc, btc],
             priceImpact: new Percent('0', '0'),
             amountInUsd: tokenAmountIn,
             approveTo: synthesis.address,
-            ...payload,
-            routes: [],
-            fees: [],
+            routes: [
+                {
+                    provider: 'symbiosis',
+                    tokens: [sBtc, btc],
+                },
+            ],
+            fees: [
+                {
+                    value: minBtcFee,
+                    description: 'Unwrap BTC fee',
+                },
+            ],
             kind: 'crosschain-swap',
         }
     }

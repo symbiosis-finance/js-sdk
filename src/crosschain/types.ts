@@ -2,7 +2,7 @@ import { ChainId, TokenConstructor } from '../constants'
 import { MakeOneInchRequestFn } from './oneInchRequest'
 import { Percent, Token, TokenAmount } from '../entities'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { SymbiosisKind, SymbiosisTradeType, ZapType } from './trade'
+import { SymbiosisKind, SymbiosisTradeType } from './trade'
 import { TransactionRequest } from '@ethersproject/providers'
 import { TronTransactionData } from './tron'
 import { Symbiosis } from './symbiosis'
@@ -125,6 +125,7 @@ export type RouteItem = {
 
 export type FeeItem = {
     value: TokenAmount
+    save?: TokenAmount
     description?: string
 }
 
@@ -134,16 +135,9 @@ export type SwapExactInResult = {
     tokenAmountOutMin: TokenAmount
     priceImpact: Percent
     approveTo: string
-    route: Token[]
     routes: RouteItem[]
     fees: FeeItem[]
 
-    fee?: TokenAmount
-    extraFee?: TokenAmount
-    save?: TokenAmount
-    inTradeType?: SymbiosisTradeType
-    outTradeType?: SymbiosisTradeType
-    zapType?: ZapType
     amountInUsd?: TokenAmount
     timeLog?: (string | number)[][]
 } & SwapExactInTransactionPayload

@@ -45,7 +45,5 @@ export async function magpieSwap({
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],
-        route: [tokenAmountIn.token, tokenOut], // TODO remove
-        inTradeType: 'magpie', // TODO remove
     }
 }

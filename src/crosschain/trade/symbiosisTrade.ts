@@ -12,8 +12,8 @@ export type SymbiosisTradeType =
     | 'uni-v3'
     | 'magpie'
     | 'symbiosis'
-
-export type ZapType = 'ton-bridge' | 'thor-chain' | 'btc-bridge'
+    | 'ton-bridge'
+    | 'thorchain-bridge'
 
 export interface SymbiosisTrade {
     init(): Promise<this>

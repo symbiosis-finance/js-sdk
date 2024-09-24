@@ -10,7 +10,7 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from './contracts'
 import { BTC_NETWORKS, getPkScript } from './zappingBtc'
 import { MULTICALL_ROUTER_V2 } from './constants'
 import { Symbiosis } from './symbiosis'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { FeeItem, SwapExactInParams, SwapExactInResult } from './types'
 
 // TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -107,19 +107,19 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
 
     const tokenAmountOut = new TokenAmount(tokenOut, burnCall.amountOut.raw)
     return {
-        save: new TokenAmount(swapCall.fee.token, '0'),
-        fee: swapCall.fee,
-        extraFee: burnCall.fee,
         tokenAmountOut,
         tokenAmountOutMin: tokenAmountOut,
-        route: [syBTC], // TODO build detailed route
         priceImpact: swapCall.priceImpact!,
         amountInUsd: swapCall.amountInUsd!,
-        inTradeType: swapCall.inTradeType,
-        outTradeType: swapCall.outTradeType,
         approveTo: approveAddress,
-        routes: [],
-        fees: [],
+        routes: [
+            ...swapCall.routes,
+            {
+                provider: 'symbiosis',
+                tokens: [burnCall.amountIn.token, burnCall.amountOut.token],
+            },
+        ],
+        fees: [...swapCall.fees, ...burnCall.fees],
         kind: 'crosschain-swap',
         transactionType: 'evm',
         transactionRequest: {
@@ -138,7 +138,7 @@ type Call = {
     data: BytesLike
     value: string
     offset: number
-    fee: TokenAmount
+    fees: FeeItem[]
 }
 
 type SwapCall = Call & SwapExactInResult
@@ -168,7 +168,6 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
 
     return {
         ...result,
-        fee: result.fee || new TokenAmount(params.tokenOut, '0'),
         priceImpact: result.priceImpact || new Percent('0', '0'),
         amountInUsd: result.amountInUsd || params.tokenAmountIn,
         // Call type params
@@ -199,6 +198,11 @@ async function getBurnCall(symbiosis: Symbiosis, amountIn: TokenAmount, bitcoinA
         data,
         value: '0',
         offset: 68,
-        fee,
+        fees: [
+            {
+                description: 'Burn fee',
+                value: fee,
+            },
+        ],
     }
 }

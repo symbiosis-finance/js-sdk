@@ -95,8 +95,5 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         ...bestResult,
         ...payload,
         kind: 'crosschain-swap',
-        zapType: 'btc-bridge',
-        fees: [], // TODO
-        routes: [], // TODO
     }
 }

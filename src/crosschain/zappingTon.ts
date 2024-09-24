@@ -76,7 +76,20 @@ export class ZappingTon extends BaseSwapping {
             ...rest,
             tokenAmountOut: tonAmountOut,
             tokenAmountOutMin: tonAmountOut,
-            extraFee: bridgeFee,
+            routes: [
+                ...rest.routes,
+                {
+                    provider: 'ton-bridge',
+                    tokens: [option.wTon, TON],
+                },
+            ],
+            fees: [
+                ...rest.fees,
+                {
+                    description: 'TON bridge fee',
+                    value: bridgeFee,
+                },
+            ],
         }
     }
 

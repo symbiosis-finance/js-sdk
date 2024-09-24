@@ -1,4 +1,4 @@
-import { wrappedToken } from '../../entities'
+import { Percent, wrappedToken } from '../../entities'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
@@ -37,23 +37,30 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
         transactionRequest: result.transactionRequest,
     } as SwapExactInTransactionPayload
 
-    let approveTo: string
+    let approveTo: string = AddressZero
     if (payload.transactionType === 'tron') {
         approveTo = payload.transactionRequest.contract_address
     } else if (payload.transactionType === 'evm') {
         approveTo = payload.transactionRequest.to as string
-    } else {
-        // BTC
-        approveTo = AddressZero
     }
     return {
-        kind: 'bridge',
-        route: [tokenAmountIn.token, tokenOut],
-        fee: result.fee,
-        tokenAmountOut: result.tokenAmountOut,
-        approveTo,
         ...payload,
-        fees: [], // TODO
-        routes: [], // TODO
+        kind: 'bridge',
+        tokenAmountOut: result.tokenAmountOut,
+        tokenAmountOutMin: result.tokenAmountOut,
+        priceImpact: new Percent('0', '0'),
+        approveTo,
+        fees: [
+            {
+                description: 'Bridge fee',
+                value: result.fee,
+            },
+        ],
+        routes: [
+            {
+                provider: 'symbiosis',
+                tokens: [tokenAmountIn.token, tokenOut],
+            },
+        ],
     }
 }

@@ -139,7 +139,5 @@ export async function okxSwap({
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],
-        inTradeType: 'okx', // TODO remove
-        route: [tokenAmountIn.token, tokenOut], // TODO remove
     }
 }

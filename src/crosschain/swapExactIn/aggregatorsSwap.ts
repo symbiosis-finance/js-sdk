@@ -64,7 +64,5 @@ export async function aggregatorsSwap({
                 tokens: route,
             },
         ],
-        route, // TODO remove
-        inTradeType: tradeType, // TODO remove
     }
 }

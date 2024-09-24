@@ -122,7 +122,7 @@ export abstract class BaseSwapping {
 
         routes.push({
             provider: 'symbiosis',
-            tokens: [this.transit.amountIn.token, this.transit.amountOut.token],
+            tokens: [this.transitTokenIn, this.transitTokenOut],
         })
 
         await this.doPostTransitAction()
@@ -170,28 +170,6 @@ export abstract class BaseSwapping {
         }
         // <<< NOTE create trades with calculated fee
 
-        let crossChainFee = fee
-        if (feeV2) {
-            const pow = BigNumber.from(10).pow(fee.token.decimals)
-            const powV2 = BigNumber.from(10).pow(feeV2.token.decimals)
-
-            const feeBase = BigNumber.from(fee.raw.toString()).mul(powV2)
-            const feeV2Base = BigNumber.from(feeV2.raw.toString()).mul(pow)
-
-            crossChainFee = new TokenAmount(feeV2.token, feeBase.add(feeV2Base).div(pow).toString())
-        }
-
-        let crossChainSave = save
-        if (feeV2Raw?.save) {
-            const pow = BigNumber.from(10).pow(save.token.decimals)
-            const powV2 = BigNumber.from(10).pow(feeV2Raw.save.token.decimals)
-
-            const feeBase = BigNumber.from(save.raw.toString()).mul(powV2)
-            const feeV2Base = BigNumber.from(feeV2Raw.save.raw.toString()).mul(pow)
-
-            crossChainSave = new TokenAmount(feeV2Raw.save.token, feeBase.add(feeV2Base).div(pow).toString())
-        }
-
         const tokenAmountOut = this.tokenAmountOut(feeV2)
         const tokenAmountOutMin = new TokenAmount(
             tokenAmountOut.token,
@@ -218,32 +196,29 @@ export abstract class BaseSwapping {
         const fees: FeeItem[] = [
             {
                 value: fee,
-                description: 'Fee1',
+                description: 'Symbiosis fee',
+                save,
             },
         ]
-        if (feeV2) {
+        if (feeV2Raw) {
             fees.push({
-                value: feeV2,
-                description: 'Fee2',
+                value: feeV2Raw.fee,
+                description: 'Symbiosis fee',
+                save: feeV2Raw.save,
             })
         }
 
         return {
+            ...payload,
             kind: 'crosschain-swap',
             tokenAmountOut,
             tokenAmountOutMin,
             priceImpact: this.calculatePriceImpact(),
             approveTo: this.approveTo(),
-            inTradeType: this.tradeA?.tradeType,
-            outTradeType: this.tradeC?.tradeType,
-            save: crossChainSave,
-            fee: crossChainFee,
-            route: this.route,
             routes,
             fees,
             amountInUsd: this.amountInUsd,
             timeLog,
-            ...payload,
         }
     }
 
