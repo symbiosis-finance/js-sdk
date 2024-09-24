@@ -1,40 +1,8 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 
-export async function crosschainSwap({
-    symbiosis,
-    deadline,
-    fromAddress,
-    slippage,
-    toAddress,
-    inTokenAmount,
-    outToken,
-    oneInchProtocols,
-    middlewareCall,
-}: SwapExactInParams): Promise<SwapExactInResult> {
+export async function crosschainSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    const { symbiosis } = params
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
-    const {
-        type: transactionType,
-        transactionRequest,
-        ...result
-    } = await bestPoolSwapping.exactIn({
-        deadline,
-        from: fromAddress,
-        slippage,
-        to: toAddress,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: outToken,
-        oneInchProtocols,
-        middlewareCall,
-    })
-
-    const payload = { transactionType, transactionRequest } as SwapExactInTransactionPayload
-
-    return {
-        kind: 'crosschain-swap',
-        ...result,
-        ...payload,
-        fees: [], // TODO
-        routes: [], // TODO
-    }
+    return bestPoolSwapping.exactIn(params)
 }

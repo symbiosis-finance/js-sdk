@@ -1,5 +1,11 @@
 import { ChainId, TokenConstructor } from '../constants'
 import { MakeOneInchRequestFn } from './oneInchRequest'
+import { Percent, Token, TokenAmount } from '../entities'
+import { OneInchProtocols } from './trade/oneInchTrade'
+import { SymbiosisKind, SymbiosisTradeType, ZapType } from './trade'
+import { TransactionRequest } from '@ethersproject/providers'
+import { TronTransactionData } from './tron'
+import { Symbiosis } from './symbiosis'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -71,3 +77,73 @@ export type OverrideConfig = {
     advisor?: AdvisorConfig
     transitFeeMap?: Record<string, string>
 }
+
+export interface MiddlewareCall {
+    address: string
+    data: string
+    offset: number
+}
+
+export interface SwapExactInParams {
+    symbiosis: Symbiosis
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    from: string
+    to: string
+    slippage: number
+    deadline: number
+    oneInchProtocols?: OneInchProtocols
+    transitTokenIn?: Token
+    transitTokenOut?: Token
+    middlewareCall?: MiddlewareCall
+}
+
+export type BtcTransactionData = {
+    depositAddress: string
+    validUntil: string
+    tokenAmountOut: TokenAmount
+}
+
+export type SwapExactInTransactionPayload =
+    | {
+          transactionType: 'evm'
+          transactionRequest: TransactionRequest
+      }
+    | {
+          transactionType: 'tron'
+          transactionRequest: TronTransactionData
+      }
+    | {
+          transactionType: 'btc'
+          transactionRequest: BtcTransactionData
+      }
+
+export type RouteItem = {
+    provider: SymbiosisTradeType
+    tokens: Token[]
+}
+
+export type FeeItem = {
+    value: TokenAmount
+    description?: string
+}
+
+export type SwapExactInResult = {
+    kind: SymbiosisKind
+    tokenAmountOut: TokenAmount
+    tokenAmountOutMin: TokenAmount
+    priceImpact: Percent
+    approveTo: string
+    route: Token[]
+    routes: RouteItem[]
+    fees: FeeItem[]
+
+    fee?: TokenAmount
+    extraFee?: TokenAmount
+    save?: TokenAmount
+    inTradeType?: SymbiosisTradeType
+    outTradeType?: SymbiosisTradeType
+    zapType?: ZapType
+    amountInUsd?: TokenAmount
+    timeLog?: (string | number)[][]
+} & SwapExactInTransactionPayload

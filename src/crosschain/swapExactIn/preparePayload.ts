@@ -1,12 +1,12 @@
 import TronWeb from 'tronweb'
 import { ChainId } from '../../constants'
 import { isTronChainId } from '../tron'
-import { SwapExactInTransactionPayload } from './types'
+import { SwapExactInTransactionPayload } from '../types'
 
 interface PreparePayloadParams {
     chainId: ChainId
-    fromAddress: string
-    toAddress: string
+    from: string
+    to: string
     value?: string
     callData: string
     functionSelector?: string
@@ -15,8 +15,8 @@ interface PreparePayloadParams {
 // Prepare payload for evm or tron transaction
 export function preparePayload({
     chainId,
-    fromAddress,
-    toAddress,
+    from,
+    to,
     callData,
     value = '0',
     functionSelector,
@@ -34,8 +34,8 @@ export function preparePayload({
                 function_selector: functionSelector,
                 call_value: value,
                 chain_id: chainId,
-                contract_address: TronWeb.address.fromHex(toAddress),
-                owner_address: TronWeb.address.fromHex(fromAddress),
+                contract_address: TronWeb.address.fromHex(to),
+                owner_address: TronWeb.address.fromHex(from),
                 raw_parameter: rawParameter,
                 fee_limit: 150000000, // Default fee limit - 150 TRX
             },
@@ -46,8 +46,8 @@ export function preparePayload({
         transactionType: 'evm',
         transactionRequest: {
             chainId,
-            from: fromAddress,
-            to: toAddress,
+            from,
+            to,
             value,
             data: callData,
         },

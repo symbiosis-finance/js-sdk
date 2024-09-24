@@ -1,8 +1,7 @@
 import { BigNumber, BytesLike, utils } from 'ethers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { SwapExactInParams, SwapExactInResult, ZERO_FEE_COLLECTOR_ADDRESSES } from './swapExactIn'
+import { ZERO_FEE_COLLECTOR_ADDRESSES } from './swapExactIn'
 import { Percent, TokenAmount } from '../entities'
-import { BaseSwappingExactInResult } from './baseSwapping'
 import { onchainSwap } from './swapExactIn/onchainSwap'
 import { tronAddressToEvm } from './tron'
 import { getToBtcFee } from './btc'
@@ -11,20 +10,21 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from './contracts'
 import { BTC_NETWORKS, getPkScript } from './zappingBtc'
 import { MULTICALL_ROUTER_V2 } from './constants'
 import { Symbiosis } from './symbiosis'
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 // TODO extract base function for making multicall swap inside onchain fee collector
-export async function zappingBtcOnChain(params: SwapExactInParams): Promise<BaseSwappingExactInResult> {
-    const { symbiosis, outToken, toAddress, fromAddress } = params
+export async function zappingBtcOnChain(params: SwapExactInParams): Promise<SwapExactInResult> {
+    const { symbiosis, tokenOut, to, from } = params
 
-    const network = BTC_NETWORKS[outToken.chainId]
+    const network = BTC_NETWORKS[tokenOut.chainId]
     if (!network) {
-        throw new Error(`Unknown BTC network ${outToken.chainId}`)
+        throw new Error(`Unknown BTC network ${tokenOut.chainId}`)
     }
-    const bitcoinAddress = getPkScript(toAddress, network)
+    const bitcoinAddress = getPkScript(to, network)
 
-    const chainId = params.inTokenAmount.token.chainId
+    const chainId = params.tokenAmountIn.token.chainId
 
-    const syBTC = symbiosis.getRepresentation(params.outToken, chainId)
+    const syBTC = symbiosis.getRepresentation(params.tokenOut, chainId)
     if (!syBTC) {
         throw new Error(`No syBTC found on chain ${chainId}`)
     }
@@ -53,7 +53,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         60 * 60 // 1 hour
     )
 
-    let inTokenAmount = params.inTokenAmount
+    let inTokenAmount = params.tokenAmountIn
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
@@ -68,9 +68,9 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
 
     const swapCall = await getSwapCall({
         ...params,
-        outToken: syBTC,
-        fromAddress: multicallRouterAddress,
-        toAddress: multicallRouterAddress,
+        tokenOut: syBTC,
+        from: multicallRouterAddress,
+        to: multicallRouterAddress,
     })
 
     let value = fee.toString()
@@ -94,7 +94,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         ],
         [swapCall.offset, burnCall.offset],
         [swapCall.amountIn.token.isNative, burnCall.amountIn.token.isNative],
-        fromAddress,
+        from,
     ])
 
     const data = feeCollector.interface.encodeFunctionData('onswap', [
@@ -105,7 +105,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         multicallCalldata,
     ])
 
-    const tokenAmountOut = new TokenAmount(outToken, burnCall.amountOut.raw)
+    const tokenAmountOut = new TokenAmount(tokenOut, burnCall.amountOut.raw)
     return {
         save: new TokenAmount(swapCall.fee.token, '0'),
         fee: swapCall.fee,
@@ -118,7 +118,10 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Base
         inTradeType: swapCall.inTradeType,
         outTradeType: swapCall.outTradeType,
         approveTo: approveAddress,
-        type: 'evm',
+        routes: [],
+        fees: [],
+        kind: 'crosschain-swap',
+        transactionType: 'evm',
         transactionRequest: {
             chainId,
             to: feeCollectorAddress,
@@ -165,11 +168,11 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
 
     return {
         ...result,
-        fee: result.fee || new TokenAmount(params.outToken, '0'),
+        fee: result.fee || new TokenAmount(params.tokenOut, '0'),
         priceImpact: result.priceImpact || new Percent('0', '0'),
-        amountInUsd: result.amountInUsd || params.inTokenAmount,
+        amountInUsd: result.amountInUsd || params.tokenAmountIn,
         // Call type params
-        amountIn: params.inTokenAmount,
+        amountIn: params.tokenAmountIn,
         amountOut: result.tokenAmountOut,
         to: routerAddress,
         data,

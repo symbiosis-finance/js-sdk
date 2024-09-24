@@ -1,6 +1,6 @@
 import { aggregatorsSwap } from './aggregatorsSwap'
 import { isOKXSwapSupported, okxSwap } from './okxSwap'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { MagpieTrade } from '../trade/magpieTrade'
 import { magpieSwap } from './magpieSwap'
 
@@ -10,7 +10,7 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
     if (isOKXSwapSupported(params)) {
         requests.push(okxSwap(params))
     }
-    if (MagpieTrade.isAvailable(params.inTokenAmount.token.chainId)) {
+    if (MagpieTrade.isAvailable(params.tokenAmountIn.token.chainId)) {
         requests.push(magpieSwap(params))
     }
 

@@ -3,7 +3,7 @@ import { BigNumber, BytesLike, utils } from 'ethers'
 import { ChainId } from '../../constants'
 import { TokenAmount } from '../../entities'
 import { onchainSwap } from './onchainSwap'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../tron'
@@ -50,8 +50,8 @@ export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
 }
 
 export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {
-    const inChainId = params.inTokenAmount.token.chainId
-    const outChainId = params.outToken.chainId
+    const inChainId = params.tokenAmountIn.token.chainId
+    const outChainId = params.tokenOut.chainId
 
     return inChainId === outChainId && FEE_COLLECTOR_ADDRESSES[inChainId] !== undefined
 }
@@ -59,7 +59,7 @@ export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean 
 export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis } = params
 
-    const inChainId = params.inTokenAmount.token.chainId
+    const inChainId = params.tokenAmountIn.token.chainId
 
     const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[inChainId]
     if (!feeCollectorAddress) {
@@ -71,7 +71,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
 
     const [fee, approveAddress] = await Promise.all([contract.callStatic.fee(), contract.callStatic.onchainGateway()])
 
-    let inTokenAmount = params.inTokenAmount
+    let inTokenAmount = params.tokenAmountIn
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
@@ -85,7 +85,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     }
 
     // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap({ ...params, inTokenAmount, fromAddress: feeCollectorAddress })
+    const result = await onchainSwap({ ...params, tokenAmountIn: inTokenAmount, from: feeCollectorAddress })
 
     let value: string
     let callData: BytesLike
@@ -129,8 +129,8 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     const payload = preparePayload({
         functionSelector,
         chainId: inChainId,
-        fromAddress: params.fromAddress,
-        toAddress: feeCollectorAddress,
+        from: params.from,
+        to: feeCollectorAddress,
         value,
         callData,
     })

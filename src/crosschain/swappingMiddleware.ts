@@ -1,12 +1,13 @@
-import { BaseSwapping, BaseSwappingExactInResult, BaseSwappingExactInParams } from './baseSwapping'
+import { BaseSwapping } from './baseSwapping'
 import { Swapping } from './swapping'
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 export class SwappingMiddleware extends BaseSwapping {
     protected middlewareAddress!: string
     protected middlewareData!: string
     protected middlewareOffset!: number
 
-    public async exactIn(params: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
+    public async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const { middlewareCall } = params
         if (!middlewareCall) {
             const { symbiosis, omniPoolConfig } = this

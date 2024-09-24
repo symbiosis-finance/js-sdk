@@ -1,4 +1,4 @@
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { Percent, Token, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
@@ -8,47 +8,46 @@ import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { BaseSwappingExactInResult } from '../baseSwapping'
 import { BigNumber } from 'ethers'
 import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade, SymbiosisTradeType } from '../trade'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { inTokenAmount, symbiosis } = context
+    const { tokenAmountIn, symbiosis } = context
 
-    if (!isBtc(inTokenAmount.token.chainId)) {
+    if (!isBtc(tokenAmountIn.token.chainId)) {
         return false
     }
 
-    symbiosis.validateLimits(inTokenAmount)
+    symbiosis.validateLimits(tokenAmountIn)
 
     return true
 }
 
-type BuildTailResult = BaseSwappingExactInResult & { tail: string }
+type BuildTailResult = SwapExactInResult & { tail: string }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, outToken, symbiosis, toAddress } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to } = context
 
-    const btcChainId = inTokenAmount.token.chainId
+    const btcChainId = tokenAmountIn.token.chainId
     const symBtcConfig = symbiosis.symBtcConfigFor(btcChainId)
 
     const sBtcChainId = symBtcConfig.chainId
     if (!sBtcChainId) {
         throw new Error(`Synthetic BTC chainId wasn't found`)
     }
-    const sBtc = symbiosis.getRepresentation(inTokenAmount.token, sBtcChainId)
+    const sBtc = symbiosis.getRepresentation(tokenAmountIn.token, sBtcChainId)
     if (!sBtc) {
         throw new Error(`Synthetic BTC wasn't found`)
     }
 
-    if (!isAddress(toAddress)) {
+    if (!isAddress(to)) {
         throw new Error(`Destination address wasn't provided`)
     }
 
     const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
-    let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
+    let sBtcAmount = new TokenAmount(sBtc, tokenAmountIn.raw)
 
     const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.dataProvider)
     const btcPortalFee = new TokenAmount(sBtc, btcPortalFeeRaw)
@@ -72,14 +71,14 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     let btcForwarderFeeMax: TokenAmount
     let tail: string
     let tailFee = new TokenAmount(sBtc, '0')
-    let priceImpact: Percent | undefined
+    let priceImpact: Percent = new Percent('0', '0')
     let inTradeType: SymbiosisTradeType | undefined
     let outTradeType: SymbiosisTradeType | undefined
     let amountInUsd: TokenAmount | undefined
     let route: Token[] = []
     let save: TokenAmount | undefined
 
-    if (outToken.equals(sBtc)) {
+    if (tokenOut.equals(sBtc)) {
         // bridging BTC -> syBTC
         tail = ''
         btcForwarderFee = new TokenAmount(
@@ -89,7 +88,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
                 portalFee: btcPortalFeeRaw,
                 stableBridgingFee: mintFeeRaw,
                 tail,
-                to: toAddress,
+                to,
             })
         )
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
@@ -106,7 +105,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         )
         tokenAmountOutMin = sBtcAmount.subtract(btcForwarderFeeMax)
     } else {
-        const sameChain = outToken.chainId === sBtc.chainId
+        const sameChain = tokenOut.chainId === sBtc.chainId
         const buildTailFunc = sameChain ? buildOnchainTail : buildTail
 
         const { tail: initialTail } = await buildTailFunc(context, sBtcAmount)
@@ -117,7 +116,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
                 portalFee: btcPortalFeeRaw,
                 stableBridgingFee: mintFeeRaw,
                 tail: initialTail,
-                to: toAddress,
+                to,
             })
         )
         btcForwarderFeeMax = new TokenAmount(
@@ -132,7 +131,9 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         }
         const tailResult = await buildTailFunc(context, sBtcAmount.subtract(btcForwarderFee))
         tail = tailResult.tail
-        tailFee = tailResult.fee
+        if (tailResult.fee) {
+            tailFee = tailResult.fee
+        }
         tokenAmountOut = tailResult.tokenAmountOut
         tokenAmountOutMin = tailResult.tokenAmountOutMin
         priceImpact = tailResult.priceImpact
@@ -150,7 +151,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         portalFee: btcPortalFeeRaw,
         stableBridgingFee: mintFeeRaw,
         tail,
-        to: toAddress,
+        to,
         feeLimit: btcForwarderFeeMax.raw.toString(),
     })
 
@@ -162,7 +163,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             validUntil,
             tokenAmountOut,
         },
-        route: [inTokenAmount.token, ...route],
+        route: [tokenAmountIn.token, ...route],
         tokenAmountOut,
         tokenAmountOutMin,
         priceImpact,
@@ -196,17 +197,17 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 }
 
 async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
-    const { toAddress, outToken, symbiosis, slippage, oneInchProtocols } = context
+    const { to, tokenOut, symbiosis, slippage, oneInchProtocols } = context
     const ttl = context.deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
         symbiosis,
-        to: toAddress,
-        from: toAddress, // there is not from address, set user's address
+        to,
+        from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
         dataProvider: symbiosis.dataProvider,
         slippage,
         tokenAmountIn: sBtcAmount,
-        tokenOut: outToken,
+        tokenOut,
         ttl,
         oneInchProtocols,
     })
@@ -221,15 +222,18 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
 
     const { amountOut, amountOutMin, callData, priceImpact, routerAddress } = aggregatorTrade
 
-    return {
-        type: 'evm',
+    const payload: SwapExactInTransactionPayload = {
+        transactionType: 'evm',
         transactionRequest: {
             chainId: sBtcAmount.token.chainId,
-            from: toAddress, // there is not from address, set user's address
-            to: toAddress,
+            from: to, // there is not from address, set user's address
+            to,
             value: '0',
             data: callData,
         },
+    }
+    return {
+        kind: 'onchain-swap',
         save: new TokenAmount(sBtcAmount.token, '0'),
         fee: new TokenAmount(sBtcAmount.token, '0'),
         tokenAmountOut: amountOut,
@@ -238,22 +242,20 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
         priceImpact,
         amountInUsd: sBtcAmount,
         approveTo: routerAddress,
+        routes: [],
+        fees: [],
+        ...payload,
         tail,
     }
 }
 
 async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
-    const { toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
+    const { to, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
     const swapExactInResult = await bestPoolSwapping.exactIn({
-        tokenAmountIn: sBtcAmount,
-        tokenOut: outToken,
-        from: toAddress, // to be able to revert a tx
-        to: toAddress,
-        slippage,
-        deadline,
-        oneInchProtocols,
+        ...context,
+        from: to, // to be able to revert a tx
     })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!

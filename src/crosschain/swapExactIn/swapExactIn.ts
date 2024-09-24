@@ -3,7 +3,7 @@ import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { onchainSwap } from './onchainSwap'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
 import { ChainId } from '../../constants'
@@ -13,16 +13,16 @@ import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, outToken } = params
+    const { tokenAmountIn, tokenOut } = params
 
-    if (isTronChainId(inTokenAmount.token.chainId)) {
-        params.fromAddress = tronAddressToEvm(params.fromAddress)
+    if (isTronChainId(tokenAmountIn.token.chainId)) {
+        params.from = tronAddressToEvm(params.from)
     }
-    if (isTronChainId(outToken.chainId)) {
-        params.toAddress = tronAddressToEvm(params.toAddress)
+    if (isTronChainId(tokenOut.chainId)) {
+        params.to = tronAddressToEvm(params.to)
     }
 
-    if (inTokenAmount.token.equals(outToken)) {
+    if (tokenAmountIn.token.equals(tokenOut)) {
         throw new Error('Cannot swap same tokens')
     }
 
@@ -38,7 +38,7 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return feeCollectorSwap(params)
     }
 
-    if (inTokenAmount.token.chainId === outToken.chainId) {
+    if (tokenAmountIn.token.chainId === tokenOut.chainId) {
         return onchainSwap(params)
     }
 
@@ -54,7 +54,7 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return bridge(params)
     }
 
-    if (outToken.chainId === ChainId.TON_MAINNET) {
+    if (tokenOut.chainId === ChainId.TON_MAINNET) {
         return tonSwap(params)
     }
 

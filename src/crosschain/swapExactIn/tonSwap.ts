@@ -1,5 +1,4 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { BaseSwappingExactInResult } from '../baseSwapping'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { Error } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
@@ -47,7 +46,7 @@ const OPTIONS: Option[] = [
 ]
 
 export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, symbiosis } = context
+    const { tokenAmountIn, from, to, symbiosis } = context
 
     // find suitable option for current env
     const options = OPTIONS.filter((i) => {
@@ -57,17 +56,17 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
         throw new Error(`There are no suitable option options`)
     }
 
-    const promises: Promise<BaseSwappingExactInResult>[] = []
+    const promises: Promise<SwapExactInResult>[] = []
     symbiosis.config.omniPools
         .filter((pool) => pool.generalPurpose)
         .forEach((pool) => {
             options.forEach((option) => {
                 const zappingTon = symbiosis.newZappingTon(pool)
                 const promise = zappingTon.exactIn({
-                    tokenAmountIn: inTokenAmount,
+                    tokenAmountIn,
                     option,
-                    from: context.fromAddress,
-                    to: context.toAddress,
+                    from,
+                    to,
                     slippage: context.slippage,
                     deadline: context.deadline,
                 })
@@ -77,7 +76,7 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
 
     const results = await Promise.allSettled(promises)
 
-    let bestResult: BaseSwappingExactInResult | undefined
+    let bestResult: SwapExactInResult | undefined
     const errors: Error[] = []
 
     for (const item of results) {
@@ -100,14 +99,14 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
     }
 
     const payload = {
-        transactionType: bestResult.type,
+        transactionType: bestResult.transactionType,
         transactionRequest: bestResult.transactionRequest,
     } as SwapExactInTransactionPayload
 
     return {
-        kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
+        kind: 'crosschain-swap',
         zapType: 'ton-bridge',
         fees: [], // TODO
         routes: [], // TODO

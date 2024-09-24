@@ -4,7 +4,7 @@ import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Token, TokenAmount } from '../../entities'
 import { DataProvider } from '../dataProvider'
 import { OneInchTrade, getTradePriceImpact } from '../trade'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 
 const OKX_CHAINS = new Set([
     ChainId.ETH_MAINNET,
@@ -19,8 +19,8 @@ const OKX_CHAINS = new Set([
 ])
 
 export function isOKXSwapSupported(params: SwapExactInParams): boolean {
-    const inChainId = params.inTokenAmount.token.chainId
-    const outChainId = params.outToken.chainId
+    const inChainId = params.tokenAmountIn.token.chainId
+    const outChainId = params.tokenOut.chainId
 
     return inChainId === outChainId && OKX_CHAINS.has(inChainId) && OneInchTrade.isAvailable(inChainId)
 }
@@ -50,28 +50,28 @@ function getTokenAddress(token: Token): string {
 
 export async function okxSwap({
     symbiosis,
-    inTokenAmount,
-    outToken,
-    fromAddress,
-    toAddress,
+    tokenAmountIn,
+    tokenOut,
+    from,
+    to,
     slippage,
 }: SwapExactInParams): Promise<SwapExactInResult> {
-    if (fromAddress.toLowerCase() !== toAddress.toLowerCase()) {
+    if (from.toLowerCase() !== to.toLowerCase()) {
         throw new Error('Sender and receiver must be the same')
     }
 
-    const fromTokenAddress = getTokenAddress(inTokenAmount.token)
-    const toTokenAddress = getTokenAddress(outToken)
+    const fromTokenAddress = getTokenAddress(tokenAmountIn.token)
+    const toTokenAddress = getTokenAddress(tokenOut)
 
     const convertedSlippage = new BigNumber(slippage).div(10000).toString()
 
     const url = new URL('https://www.okx.com/api/v5/dex/aggregator/swap')
 
-    url.searchParams.set('chainId', inTokenAmount.token.chainId.toString())
+    url.searchParams.set('chainId', tokenAmountIn.token.chainId.toString())
     url.searchParams.set('fromTokenAddress', fromTokenAddress)
     url.searchParams.set('toTokenAddress', toTokenAddress)
-    url.searchParams.set('amount', inTokenAmount.raw.toString())
-    url.searchParams.set('userWalletAddress', fromAddress)
+    url.searchParams.set('amount', tokenAmountIn.raw.toString())
+    url.searchParams.set('userWalletAddress', from)
     url.searchParams.set('slippage', convertedSlippage)
 
     const response = await fetch(url.toString(), {
@@ -89,21 +89,21 @@ export async function okxSwap({
 
     const { routerResult, tx } = data[0]
 
-    const amountOut = new TokenAmount(outToken, routerResult.toTokenAmount)
+    const amountOut = new TokenAmount(tokenOut, routerResult.toTokenAmount)
 
-    const oracle = symbiosis.oneInchOracle(inTokenAmount.token.chainId)
+    const oracle = symbiosis.oneInchOracle(tokenAmountIn.token.chainId)
     const dataProvider = new DataProvider(symbiosis)
     const priceImpactPromise = getTradePriceImpact({
         dataProvider,
         oracle,
-        tokenAmountIn: inTokenAmount,
+        tokenAmountIn,
         tokenAmountOut: amountOut,
     })
 
     const approveUrl = new URL('https://www.okx.com/api/v5/dex/aggregator/approve-transaction')
-    approveUrl.searchParams.set('chainId', inTokenAmount.token.chainId.toString())
+    approveUrl.searchParams.set('chainId', tokenAmountIn.token.chainId.toString())
     approveUrl.searchParams.set('tokenContractAddress', fromTokenAddress)
-    approveUrl.searchParams.set('approveAmount', inTokenAmount.raw.toString())
+    approveUrl.searchParams.set('approveAmount', tokenAmountIn.raw.toString())
 
     const approveResponsePromise = fetch(approveUrl.toString(), {
         headers: { 'content-type': 'application/json', ...okxSecurityHeaders(approveUrl) },
@@ -117,7 +117,7 @@ export async function okxSwap({
 
     return {
         kind: 'onchain-swap',
-        route: [inTokenAmount.token, outToken],
+        route: [tokenAmountIn.token, tokenOut],
         tokenAmountOut: amountOut,
         approveTo,
         priceImpact,
@@ -126,7 +126,7 @@ export async function okxSwap({
         transactionRequest: {
             to: tx.to,
             data: tx.data,
-            value: inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : undefined,
+            value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
         },
         fees: [], // TODO
         routes: [], // TODO

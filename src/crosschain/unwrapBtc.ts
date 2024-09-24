@@ -1,9 +1,9 @@
 import { GAS_TOKEN, Percent, TokenAmount } from '../entities'
-import { BaseSwappingExactInResult } from './baseSwapping'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { Symbiosis } from './symbiosis'
 import { BTC_NETWORKS, getPkScript } from './zappingBtc'
+import { SwapExactInResult, SwapExactInTransactionPayload } from './types'
 
 initEccLib(ecc)
 
@@ -15,7 +15,7 @@ interface BurnBtcParams {
 export class UnwrapBtc {
     constructor(private symbiosis: Symbiosis) {}
 
-    public async exactIn({ tokenAmountIn, to }: BurnBtcParams): Promise<BaseSwappingExactInResult> {
+    public async exactIn({ tokenAmountIn, to }: BurnBtcParams): Promise<SwapExactInResult> {
         const { token: sBtc } = tokenAmountIn
         if (!sBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
@@ -43,6 +43,14 @@ export class UnwrapBtc {
 
         const tokenAmountOut = new TokenAmount(btc, tokenAmountIn.subtract(minBtcFee).raw)
 
+        const payload: SwapExactInTransactionPayload = {
+            transactionType: 'evm',
+            transactionRequest: {
+                chainId: sBtc.chainId,
+                to: synthesis.address,
+                data,
+            },
+        }
         return {
             save: new TokenAmount(sBtc, '0'),
             fee: minBtcFee,
@@ -52,12 +60,10 @@ export class UnwrapBtc {
             priceImpact: new Percent('0', '0'),
             amountInUsd: tokenAmountIn,
             approveTo: synthesis.address,
-            type: 'evm',
-            transactionRequest: {
-                chainId: sBtc.chainId,
-                to: synthesis.address,
-                data,
-            },
+            ...payload,
+            routes: [],
+            fees: [],
+            kind: 'crosschain-swap',
         }
     }
 }

@@ -1,29 +1,29 @@
-import { TokenAmount, WETH } from '../../entities'
+import { Percent, TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
 import { getFunctionSelector } from '../tron'
 import { preparePayload } from './preparePayload'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export function isWrapSupported(params: SwapExactInParams): boolean {
-    const { inTokenAmount, outToken, fromAddress, toAddress } = params
+    const { tokenAmountIn, tokenOut, from, to } = params
 
-    if (fromAddress.toLowerCase() !== toAddress.toLowerCase()) {
+    if (from.toLowerCase() !== to.toLowerCase()) {
         return false
     }
 
-    const inChainId = inTokenAmount.token.chainId
-    const outChainId = outToken.chainId
+    const chainIdIn = tokenAmountIn.token.chainId
+    const chainIdOut = tokenOut.chainId
 
-    const weth = WETH[inChainId]
+    const weth = WETH[chainIdIn]
 
-    return inChainId === outChainId && inTokenAmount.token.isNative && weth && weth.equals(outToken)
+    return chainIdIn === chainIdOut && tokenAmountIn.token.isNative && weth && weth.equals(tokenOut)
 }
 
 export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount } = params
+    const { tokenAmountIn } = params
 
-    const { chainId } = inTokenAmount.token
+    const { chainId } = tokenAmountIn.token
 
     const weth = WETH[chainId]
 
@@ -33,7 +33,7 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
 
     const wethInterface = Weth__factory.createInterface()
 
-    const amountOut = new TokenAmount(weth, inTokenAmount.raw)
+    const amountOut = new TokenAmount(weth, tokenAmountIn.raw)
 
     const callData = wethInterface.encodeFunctionData('deposit')
 
@@ -42,28 +42,37 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
     const payload = preparePayload({
         functionSelector,
         chainId,
-        fromAddress: params.fromAddress,
-        toAddress: weth.address,
-        value: inTokenAmount.raw.toString(),
+        from: params.from,
+        to: weth.address,
+        value: tokenAmountIn.raw.toString(),
         callData,
     })
 
-    let approveTo: string
+    let approveTo: string = AddressZero
     if (payload.transactionType === 'tron') {
         approveTo = payload.transactionRequest.contract_address
     } else if (payload.transactionType === 'evm') {
         approveTo = payload.transactionRequest.to as string
-    } else {
-        // BTC
-        approveTo = AddressZero
     }
     return {
-        kind: 'wrap',
-        route: [inTokenAmount.token, weth],
-        tokenAmountOut: amountOut,
-        approveTo,
         ...payload,
-        fees: [], // TODO
-        routes: [], // TODO
+        kind: 'wrap',
+        tokenAmountOut: amountOut,
+        tokenAmountOutMin: amountOut,
+        priceImpact: new Percent('0', '0'),
+        approveTo,
+        route: [tokenAmountIn.token, weth],
+        fees: [
+            {
+                description: 'Wrap fee',
+                value: new TokenAmount(weth, '0'),
+            },
+        ],
+        routes: [
+            {
+                provider: 'wrap',
+                tokens: [tokenAmountIn.token, weth],
+            },
+        ],
     }
 }

@@ -1,6 +1,5 @@
-import { BaseSwappingExactInResult, BaseSwappingExactInParams } from './baseSwapping'
 import { Symbiosis } from './symbiosis'
-import { OmniPoolConfig } from './types'
+import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from './types'
 import { Swapping } from './swapping'
 import { Token, TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
@@ -13,7 +12,7 @@ export class BestTokenSwapping {
 
     public swapping?: Swapping
 
-    public async exactIn(params: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
+    public async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const { tokenAmountIn, tokenOut } = params
 
         const transitTokensIn = this.symbiosis.transitTokens(tokenAmountIn.token.chainId, this.omniPoolConfig)
@@ -48,7 +47,7 @@ export class BestTokenSwapping {
         const results = await Promise.allSettled(promises)
 
         let swapping: Swapping | undefined
-        let result: BaseSwappingExactInResult | undefined
+        let result: SwapExactInResult | undefined
         const errors: Error[] = []
         for (const item of results) {
             if (item.status !== 'fulfilled') {

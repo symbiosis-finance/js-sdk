@@ -1,12 +1,12 @@
 import { wrappedToken } from '../../entities'
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
-    const { inTokenAmount, outToken, symbiosis } = context
+    const { tokenAmountIn, tokenOut, symbiosis } = context
 
-    const wrappedInToken = wrappedToken(inTokenAmount.token)
-    const wrappedOutToken = wrappedToken(outToken)
+    const wrappedInToken = wrappedToken(tokenAmountIn.token)
+    const wrappedOutToken = wrappedToken(tokenOut)
 
     if (wrappedInToken.chainId === wrappedOutToken.chainId) {
         return false
@@ -21,15 +21,15 @@ export function isBridgeSupported(context: SwapExactInParams): boolean {
 }
 
 export async function bridge(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, outToken } = context
+    const { tokenAmountIn, tokenOut, from, to } = context
 
-    const briging = context.symbiosis.newBridging()
+    const bridging = context.symbiosis.newBridging()
 
-    const result = await briging.exactIn({
-        from: context.fromAddress,
-        to: context.toAddress,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: outToken,
+    const result = await bridging.exactIn({
+        from: from,
+        to: to,
+        tokenAmountIn,
+        tokenOut,
     })
 
     const payload = {
@@ -48,7 +48,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
     }
     return {
         kind: 'bridge',
-        route: [inTokenAmount.token, outToken],
+        route: [tokenAmountIn.token, tokenOut],
         fee: result.fee,
         tokenAmountOut: result.tokenAmountOut,
         approveTo,
