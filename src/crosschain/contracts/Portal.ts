@@ -2,1499 +2,1227 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PayableOverrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace MetaRouteStructs {
-  export type MetaRevertTransactionStruct = {
-    stableBridgingFee: BigNumberish;
-    internalID: BytesLike;
-    receiveSide: string;
-    managerChainBridge: string;
-    sourceChainBridge: string;
-    managerChainId: BigNumberish;
-    sourceChainId: BigNumberish;
-    router: string;
-    swapCalldata: BytesLike;
-    sourceChainSynthesis: string;
-    burnToken: string;
-    burnCalldata: BytesLike;
-    clientID: BytesLike;
-  };
+    export type MetaRevertTransactionStruct = {
+        stableBridgingFee: BigNumberish
+        internalID: BytesLike
+        receiveSide: string
+        managerChainBridge: string
+        sourceChainBridge: string
+        managerChainId: BigNumberish
+        sourceChainId: BigNumberish
+        router: string
+        swapCalldata: BytesLike
+        sourceChainSynthesis: string
+        burnToken: string
+        burnCalldata: BytesLike
+        clientID: BytesLike
+    }
 
-  export type MetaRevertTransactionStructOutput = [
-    BigNumber,
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string
-  ] & {
-    stableBridgingFee: BigNumber;
-    internalID: string;
-    receiveSide: string;
-    managerChainBridge: string;
-    sourceChainBridge: string;
-    managerChainId: BigNumber;
-    sourceChainId: BigNumber;
-    router: string;
-    swapCalldata: string;
-    sourceChainSynthesis: string;
-    burnToken: string;
-    burnCalldata: string;
-    clientID: string;
-  };
+    export type MetaRevertTransactionStructOutput = [
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+    ] & {
+        stableBridgingFee: BigNumber
+        internalID: string
+        receiveSide: string
+        managerChainBridge: string
+        sourceChainBridge: string
+        managerChainId: BigNumber
+        sourceChainId: BigNumber
+        router: string
+        swapCalldata: string
+        sourceChainSynthesis: string
+        burnToken: string
+        burnCalldata: string
+        clientID: string
+    }
 
-  export type MetaSynthesizeTransactionStruct = {
-    stableBridgingFee: BigNumberish;
-    amount: BigNumberish;
-    rtoken: string;
-    chain2address: string;
-    receiveSide: string;
-    oppositeBridge: string;
-    syntCaller: string;
-    chainID: BigNumberish;
-    swapTokens: string[];
-    secondDexRouter: string;
-    secondSwapCalldata: BytesLike;
-    finalReceiveSide: string;
-    finalCalldata: BytesLike;
-    finalOffset: BigNumberish;
-    revertableAddress: string;
-    clientID: BytesLike;
-  };
+    export type MetaSynthesizeTransactionStruct = {
+        stableBridgingFee: BigNumberish
+        amount: BigNumberish
+        rtoken: string
+        chain2address: string
+        receiveSide: string
+        oppositeBridge: string
+        syntCaller: string
+        chainID: BigNumberish
+        swapTokens: string[]
+        secondDexRouter: string
+        secondSwapCalldata: BytesLike
+        finalReceiveSide: string
+        finalCalldata: BytesLike
+        finalOffset: BigNumberish
+        revertableAddress: string
+        clientID: BytesLike
+    }
 
-  export type MetaSynthesizeTransactionStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    string[],
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    string,
-    string
-  ] & {
-    stableBridgingFee: BigNumber;
-    amount: BigNumber;
-    rtoken: string;
-    chain2address: string;
-    receiveSide: string;
-    oppositeBridge: string;
-    syntCaller: string;
-    chainID: BigNumber;
-    swapTokens: string[];
-    secondDexRouter: string;
-    secondSwapCalldata: string;
-    finalReceiveSide: string;
-    finalCalldata: string;
-    finalOffset: BigNumber;
-    revertableAddress: string;
-    clientID: string;
-  };
+    export type MetaSynthesizeTransactionStructOutput = [
+        BigNumber,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        string[],
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        string,
+        string
+    ] & {
+        stableBridgingFee: BigNumber
+        amount: BigNumber
+        rtoken: string
+        chain2address: string
+        receiveSide: string
+        oppositeBridge: string
+        syntCaller: string
+        chainID: BigNumber
+        swapTokens: string[]
+        secondDexRouter: string
+        secondSwapCalldata: string
+        finalReceiveSide: string
+        finalCalldata: string
+        finalOffset: BigNumber
+        revertableAddress: string
+        clientID: string
+    }
 }
 
 export declare namespace Portal {
-  export type SynthesizeWithPermitTransactionStruct = {
-    stableBridgingFee: BigNumberish;
-    approvalData: BytesLike;
-    token: string;
-    amount: BigNumberish;
-    chain2address: string;
-    receiveSide: string;
-    oppositeBridge: string;
-    revertableAddress: string;
-    chainID: BigNumberish;
-    clientID: BytesLike;
-  };
+    export type SynthesizeWithPermitTransactionStruct = {
+        stableBridgingFee: BigNumberish
+        approvalData: BytesLike
+        token: string
+        amount: BigNumberish
+        chain2address: string
+        receiveSide: string
+        oppositeBridge: string
+        revertableAddress: string
+        chainID: BigNumberish
+        clientID: BytesLike
+    }
 
-  export type SynthesizeWithPermitTransactionStructOutput = [
-    BigNumber,
-    string,
-    string,
-    BigNumber,
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    string
-  ] & {
-    stableBridgingFee: BigNumber;
-    approvalData: string;
-    token: string;
-    amount: BigNumber;
-    chain2address: string;
-    receiveSide: string;
-    oppositeBridge: string;
-    revertableAddress: string;
-    chainID: BigNumber;
-    clientID: string;
-  };
+    export type SynthesizeWithPermitTransactionStructOutput = [
+        BigNumber,
+        string,
+        string,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        string
+    ] & {
+        stableBridgingFee: BigNumber
+        approvalData: string
+        token: string
+        amount: BigNumber
+        chain2address: string
+        receiveSide: string
+        oppositeBridge: string
+        revertableAddress: string
+        chainID: BigNumber
+        clientID: string
+    }
 }
 
 export interface PortalInterface extends utils.Interface {
-  contractName: "Portal";
-  functions: {
-    "balanceOf(address)": FunctionFragment;
-    "bridge()": FunctionFragment;
-    "initialize(address,address,address,address,address)": FunctionFragment;
-    "isTrustedForwarder(address)": FunctionFragment;
-    "metaRevertRequest((uint256,bytes32,address,address,address,uint256,uint256,address,bytes,address,address,bytes,bytes32))": FunctionFragment;
-    "metaRouter()": FunctionFragment;
-    "metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address,bytes32))": FunctionFragment;
-    "metaUnsynthesize(uint256,bytes32,bytes32,address,uint256,address,address,bytes,uint256)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "requestCount()": FunctionFragment;
-    "requests(bytes32)": FunctionFragment;
-    "revertBurnRequest(uint256,bytes32,address,address,uint256,bytes32)": FunctionFragment;
-    "revertSynthesize(uint256,bytes32)": FunctionFragment;
-    "setMetaRouter(address)": FunctionFragment;
-    "setTokenThreshold(address,uint256)": FunctionFragment;
-    "setWhitelistToken(address,bool)": FunctionFragment;
-    "synthesize(uint256,address,uint256,address,address,address,address,uint256,bytes32)": FunctionFragment;
-    "synthesizeNative(uint256,address,address,address,address,uint256,bytes32)": FunctionFragment;
-    "synthesizeWithPermit((uint256,bytes,address,uint256,address,address,address,address,uint256,bytes32))": FunctionFragment;
-    "tokenThreshold(address)": FunctionFragment;
-    "tokenWhitelist(address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
-    "unsynthesize(uint256,bytes32,bytes32,address,uint256,address)": FunctionFragment;
-    "unsynthesizeStates(bytes32)": FunctionFragment;
-    "versionRecipient()": FunctionFragment;
-    "wrapper()": FunctionFragment;
-  };
+    contractName: 'Portal'
+    functions: {
+        'balanceOf(address)': FunctionFragment
+        'bridge()': FunctionFragment
+        'initialize(address,address,address,address,address)': FunctionFragment
+        'isTrustedForwarder(address)': FunctionFragment
+        'metaRevertRequest((uint256,bytes32,address,address,address,uint256,uint256,address,bytes,address,address,bytes,bytes32))': FunctionFragment
+        'metaRouter()': FunctionFragment
+        'metaSynthesize((uint256,uint256,address,address,address,address,address,uint256,address[],address,bytes,address,bytes,uint256,address,bytes32))': FunctionFragment
+        'metaUnsynthesize(uint256,bytes32,bytes32,address,uint256,address,address,bytes,uint256)': FunctionFragment
+        'owner()': FunctionFragment
+        'pause()': FunctionFragment
+        'paused()': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'requestCount()': FunctionFragment
+        'requests(bytes32)': FunctionFragment
+        'revertBurnRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
+        'revertSynthesize(uint256,bytes32)': FunctionFragment
+        'setMetaRouter(address)': FunctionFragment
+        'setTokenThreshold(address,uint256)': FunctionFragment
+        'setWhitelistToken(address,bool)': FunctionFragment
+        'synthesize(uint256,address,uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
+        'synthesizeNative(uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
+        'synthesizeWithPermit((uint256,bytes,address,uint256,address,address,address,address,uint256,bytes32))': FunctionFragment
+        'tokenThreshold(address)': FunctionFragment
+        'tokenWhitelist(address)': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+        'unpause()': FunctionFragment
+        'unsynthesize(uint256,bytes32,bytes32,address,uint256,address)': FunctionFragment
+        'unsynthesizeStates(bytes32)': FunctionFragment
+        'versionRecipient()': FunctionFragment
+        'wrapper()': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(functionFragment: "bridge", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, string, string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isTrustedForwarder",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaRevertRequest",
-    values: [MetaRouteStructs.MetaRevertTransactionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaRouter",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaSynthesize",
-    values: [MetaRouteStructs.MetaSynthesizeTransactionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaUnsynthesize",
-    values: [
-      BigNumberish,
-      BytesLike,
-      BytesLike,
-      string,
-      BigNumberish,
-      string,
-      string,
-      BytesLike,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requestCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "requests", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "revertBurnRequest",
-    values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revertSynthesize",
-    values: [BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMetaRouter",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTokenThreshold",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setWhitelistToken",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "synthesize",
-    values: [
-      BigNumberish,
-      string,
-      BigNumberish,
-      string,
-      string,
-      string,
-      string,
-      BigNumberish,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "synthesizeNative",
-    values: [
-      BigNumberish,
-      string,
-      string,
-      string,
-      string,
-      BigNumberish,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "synthesizeWithPermit",
-    values: [Portal.SynthesizeWithPermitTransactionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenThreshold",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenWhitelist",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "unsynthesize",
-    values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unsynthesizeStates",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "versionRecipient",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "wrapper", values?: undefined): string;
+    encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string
+    encodeFunctionData(functionFragment: 'bridge', values?: undefined): string
+    encodeFunctionData(functionFragment: 'initialize', values: [string, string, string, string, string]): string
+    encodeFunctionData(functionFragment: 'isTrustedForwarder', values: [string]): string
+    encodeFunctionData(
+        functionFragment: 'metaRevertRequest',
+        values: [MetaRouteStructs.MetaRevertTransactionStruct]
+    ): string
+    encodeFunctionData(functionFragment: 'metaRouter', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'metaSynthesize',
+        values: [MetaRouteStructs.MetaSynthesizeTransactionStruct]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'metaUnsynthesize',
+        values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, string, string, BytesLike, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'pause', values?: undefined): string
+    encodeFunctionData(functionFragment: 'paused', values?: undefined): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'requestCount', values?: undefined): string
+    encodeFunctionData(functionFragment: 'requests', values: [BytesLike]): string
+    encodeFunctionData(
+        functionFragment: 'revertBurnRequest',
+        values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'revertSynthesize', values: [BigNumberish, BytesLike]): string
+    encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
+    encodeFunctionData(functionFragment: 'setTokenThreshold', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setWhitelistToken', values: [string, boolean]): string
+    encodeFunctionData(
+        functionFragment: 'synthesize',
+        values: [BigNumberish, string, BigNumberish, string, string, string, string, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'synthesizeNative',
+        values: [BigNumberish, string, string, string, string, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'synthesizeWithPermit',
+        values: [Portal.SynthesizeWithPermitTransactionStruct]
+    ): string
+    encodeFunctionData(functionFragment: 'tokenThreshold', values: [string]): string
+    encodeFunctionData(functionFragment: 'tokenWhitelist', values: [string]): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+    encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'unsynthesize',
+        values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, string]
+    ): string
+    encodeFunctionData(functionFragment: 'unsynthesizeStates', values: [BytesLike]): string
+    encodeFunctionData(functionFragment: 'versionRecipient', values?: undefined): string
+    encodeFunctionData(functionFragment: 'wrapper', values?: undefined): string
 
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "bridge", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isTrustedForwarder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "metaRevertRequest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "metaRouter", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "metaSynthesize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "metaUnsynthesize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "requests", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "revertBurnRequest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "revertSynthesize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMetaRouter",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setWhitelistToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "synthesize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "synthesizeNative",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "synthesizeWithPermit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenWhitelist",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "unsynthesize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unsynthesizeStates",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "versionRecipient",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "wrapper", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'isTrustedForwarder', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRevertRequest', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRouter', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaSynthesize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaUnsynthesize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'requestCount', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'requests', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'revertBurnRequest', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'revertSynthesize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setMetaRouter', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setWhitelistToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'synthesize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'synthesizeNative', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'synthesizeWithPermit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'tokenThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'tokenWhitelist', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'unsynthesize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'unsynthesizeStates', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'versionRecipient', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'wrapper', data: BytesLike): Result
 
-  events: {
-    "BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)": EventFragment;
-    "ClientIdLog(bytes32,bytes32)": EventFragment;
-    "MetaRevertRequest(bytes32,address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "RevertBurnRequest(bytes32,address)": EventFragment;
-    "RevertSynthesizeCompleted(bytes32,address,uint256,uint256,address)": EventFragment;
-    "SetMetaRouter(address)": EventFragment;
-    "SetTokenThreshold(address,uint256)": EventFragment;
-    "SetWhitelistToken(address,bool)": EventFragment;
-    "SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)": EventFragment;
-    "Unpaused(address)": EventFragment;
-  };
+    events: {
+        'BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)': EventFragment
+        'ClientIdLog(bytes32,bytes32)': EventFragment
+        'MetaRevertRequest(bytes32,address)': EventFragment
+        'OwnershipTransferred(address,address)': EventFragment
+        'Paused(address)': EventFragment
+        'RevertBurnRequest(bytes32,address)': EventFragment
+        'RevertSynthesizeCompleted(bytes32,address,uint256,uint256,address)': EventFragment
+        'SetMetaRouter(address)': EventFragment
+        'SetTokenThreshold(address,uint256)': EventFragment
+        'SetWhitelistToken(address,bool)': EventFragment
+        'SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)': EventFragment
+        'Unpaused(address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "BurnCompleted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ClientIdLog"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MetaRevertRequest"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RevertBurnRequest"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RevertSynthesizeCompleted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetMetaRouter"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetTokenThreshold"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetWhitelistToken"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SynthesizeRequest"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'BurnCompleted'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'MetaRevertRequest'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'RevertBurnRequest'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'RevertSynthesizeCompleted'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetMetaRouter'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetTokenThreshold'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetWhitelistToken'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SynthesizeRequest'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
 }
 
 export type BurnCompletedEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber, string],
-  {
-    id: string;
-    crossChainID: string;
-    to: string;
-    amount: BigNumber;
-    bridgingFee: BigNumber;
-    token: string;
-  }
->;
+    [string, string, string, BigNumber, BigNumber, string],
+    {
+        id: string
+        crossChainID: string
+        to: string
+        amount: BigNumber
+        bridgingFee: BigNumber
+        token: string
+    }
+>
 
-export type BurnCompletedEventFilter = TypedEventFilter<BurnCompletedEvent>;
+export type BurnCompletedEventFilter = TypedEventFilter<BurnCompletedEvent>
 
-export type ClientIdLogEvent = TypedEvent<
-  [string, string],
-  { requestId: string; clientId: string }
->;
+export type ClientIdLogEvent = TypedEvent<[string, string], { requestId: string; clientId: string }>
 
-export type ClientIdLogEventFilter = TypedEventFilter<ClientIdLogEvent>;
+export type ClientIdLogEventFilter = TypedEventFilter<ClientIdLogEvent>
 
-export type MetaRevertRequestEvent = TypedEvent<
-  [string, string],
-  { id: string; to: string }
->;
+export type MetaRevertRequestEvent = TypedEvent<[string, string], { id: string; to: string }>
 
-export type MetaRevertRequestEventFilter =
-  TypedEventFilter<MetaRevertRequestEvent>;
+export type MetaRevertRequestEventFilter = TypedEventFilter<MetaRevertRequestEvent>
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
-export type PausedEvent = TypedEvent<[string], { account: string }>;
+export type PausedEvent = TypedEvent<[string], { account: string }>
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
-export type RevertBurnRequestEvent = TypedEvent<
-  [string, string],
-  { id: string; to: string }
->;
+export type RevertBurnRequestEvent = TypedEvent<[string, string], { id: string; to: string }>
 
-export type RevertBurnRequestEventFilter =
-  TypedEventFilter<RevertBurnRequestEvent>;
+export type RevertBurnRequestEventFilter = TypedEventFilter<RevertBurnRequestEvent>
 
 export type RevertSynthesizeCompletedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, string],
-  {
-    id: string;
-    to: string;
-    amount: BigNumber;
-    bridgingFee: BigNumber;
-    token: string;
-  }
->;
+    [string, string, BigNumber, BigNumber, string],
+    {
+        id: string
+        to: string
+        amount: BigNumber
+        bridgingFee: BigNumber
+        token: string
+    }
+>
 
-export type RevertSynthesizeCompletedEventFilter =
-  TypedEventFilter<RevertSynthesizeCompletedEvent>;
+export type RevertSynthesizeCompletedEventFilter = TypedEventFilter<RevertSynthesizeCompletedEvent>
 
-export type SetMetaRouterEvent = TypedEvent<[string], { metaRouter: string }>;
+export type SetMetaRouterEvent = TypedEvent<[string], { metaRouter: string }>
 
-export type SetMetaRouterEventFilter = TypedEventFilter<SetMetaRouterEvent>;
+export type SetMetaRouterEventFilter = TypedEventFilter<SetMetaRouterEvent>
 
-export type SetTokenThresholdEvent = TypedEvent<
-  [string, BigNumber],
-  { token: string; threshold: BigNumber }
->;
+export type SetTokenThresholdEvent = TypedEvent<[string, BigNumber], { token: string; threshold: BigNumber }>
 
-export type SetTokenThresholdEventFilter =
-  TypedEventFilter<SetTokenThresholdEvent>;
+export type SetTokenThresholdEventFilter = TypedEventFilter<SetTokenThresholdEvent>
 
-export type SetWhitelistTokenEvent = TypedEvent<
-  [string, boolean],
-  { token: string; activate: boolean }
->;
+export type SetWhitelistTokenEvent = TypedEvent<[string, boolean], { token: string; activate: boolean }>
 
-export type SetWhitelistTokenEventFilter =
-  TypedEventFilter<SetWhitelistTokenEvent>;
+export type SetWhitelistTokenEventFilter = TypedEventFilter<SetWhitelistTokenEvent>
 
 export type SynthesizeRequestEvent = TypedEvent<
-  [string, string, BigNumber, string, string, BigNumber, string],
-  {
-    id: string;
-    from: string;
-    chainID: BigNumber;
-    revertableAddress: string;
-    to: string;
-    amount: BigNumber;
-    token: string;
-  }
->;
+    [string, string, BigNumber, string, string, BigNumber, string],
+    {
+        id: string
+        from: string
+        chainID: BigNumber
+        revertableAddress: string
+        to: string
+        amount: BigNumber
+        token: string
+    }
+>
 
-export type SynthesizeRequestEventFilter =
-  TypedEventFilter<SynthesizeRequestEvent>;
+export type SynthesizeRequestEventFilter = TypedEventFilter<SynthesizeRequestEvent>
 
-export type UnpausedEvent = TypedEvent<[string], { account: string }>;
+export type UnpausedEvent = TypedEvent<[string], { account: string }>
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
 
 export interface Portal extends BaseContract {
-  contractName: "Portal";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'Portal'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: PortalInterface;
+    interface: PortalInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    balanceOf(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    functions: {
+        balanceOf(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    bridge(overrides?: CallOverrides): Promise<[string]>;
+        bridge(overrides?: CallOverrides): Promise<[string]>
 
-    initialize(
-      _bridge: string,
-      _trustedForwarder: string,
-      _wrapper: string,
-      _whitelistedToken: string,
-      _metaRouter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        initialize(
+            _bridge: string,
+            _trustedForwarder: string,
+            _wrapper: string,
+            _whitelistedToken: string,
+            _metaRouter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    isTrustedForwarder(
-      forwarder: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<[boolean]>
 
-    metaRevertRequest(
-      _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    metaRouter(overrides?: CallOverrides): Promise<[string]>;
+        metaRouter(overrides?: CallOverrides): Promise<[string]>
 
-    metaSynthesize(
-      _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        metaSynthesize(
+            _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    metaUnsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _crossChainID: BytesLike,
-      _externalID: BytesLike,
-      _to: string,
-      _amount: BigNumberish,
-      _rToken: string,
-      _finalReceiveSide: string,
-      _finalCalldata: BytesLike,
-      _finalOffset: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        metaUnsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _crossChainID: BytesLike,
+            _externalID: BytesLike,
+            _to: string,
+            _amount: BigNumberish,
+            _rToken: string,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+        owner(overrides?: CallOverrides): Promise<[string]>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
+        paused(overrides?: CallOverrides): Promise<[boolean]>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    requestCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+        requestCount(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    requests(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, BigNumber, string, number] & {
-        recipient: string;
-        chain2address: string;
-        amount: BigNumber;
-        rtoken: string;
-        state: number;
-      }
-    >;
+        requests(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [string, string, BigNumber, string, number] & {
+                recipient: string
+                chain2address: string
+                amount: BigNumber
+                rtoken: string
+                state: number
+            }
+        >
 
-    revertBurnRequest(
-      _stableBridgingFee: BigNumberish,
-      _internalID: BytesLike,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _chainId: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        revertBurnRequest(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    revertSynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        revertSynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setMetaRouter(
-      _metaRouter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setMetaRouter(
+            _metaRouter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setTokenThreshold(
-      _token: string,
-      _threshold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setTokenThreshold(
+            _token: string,
+            _threshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    setWhitelistToken(
-      _token: string,
-      _activate: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setWhitelistToken(
+            _token: string,
+            _activate: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    synthesize(
-      _stableBridgingFee: BigNumberish,
-      _token: string,
-      _amount: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        synthesize(
+            _stableBridgingFee: BigNumberish,
+            _token: string,
+            _amount: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    synthesizeNative(
-      _stableBridgingFee: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        synthesizeNative(
+            _stableBridgingFee: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    synthesizeWithPermit(
-      _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        synthesizeWithPermit(
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    tokenThreshold(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+        tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<[boolean]>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    unsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      _crossChainID: BytesLike,
-      _token: string,
-      _amount: BigNumberish,
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        unsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _crossChainID: BytesLike,
+            _token: string,
+            _amount: BigNumberish,
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    unsynthesizeStates(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+        unsynthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<[number]>
 
-    versionRecipient(overrides?: CallOverrides): Promise<[string]>;
+        versionRecipient(overrides?: CallOverrides): Promise<[string]>
 
-    wrapper(overrides?: CallOverrides): Promise<[string]>;
-  };
-
-  balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  bridge(overrides?: CallOverrides): Promise<string>;
-
-  initialize(
-    _bridge: string,
-    _trustedForwarder: string,
-    _wrapper: string,
-    _whitelistedToken: string,
-    _metaRouter: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  isTrustedForwarder(
-    forwarder: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  metaRevertRequest(
-    _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  metaRouter(overrides?: CallOverrides): Promise<string>;
-
-  metaSynthesize(
-    _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  metaUnsynthesize(
-    _stableBridgingFee: BigNumberish,
-    _crossChainID: BytesLike,
-    _externalID: BytesLike,
-    _to: string,
-    _amount: BigNumberish,
-    _rToken: string,
-    _finalReceiveSide: string,
-    _finalCalldata: BytesLike,
-    _finalOffset: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  requestCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  requests(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, string, BigNumber, string, number] & {
-      recipient: string;
-      chain2address: string;
-      amount: BigNumber;
-      rtoken: string;
-      state: number;
+        wrapper(overrides?: CallOverrides): Promise<[string]>
     }
-  >;
 
-  revertBurnRequest(
-    _stableBridgingFee: BigNumberish,
-    _internalID: BytesLike,
-    _receiveSide: string,
-    _oppositeBridge: string,
-    _chainId: BigNumberish,
-    _clientID: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-  revertSynthesize(
-    _stableBridgingFee: BigNumberish,
-    _externalID: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMetaRouter(
-    _metaRouter: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setTokenThreshold(
-    _token: string,
-    _threshold: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setWhitelistToken(
-    _token: string,
-    _activate: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  synthesize(
-    _stableBridgingFee: BigNumberish,
-    _token: string,
-    _amount: BigNumberish,
-    _chain2address: string,
-    _receiveSide: string,
-    _oppositeBridge: string,
-    _revertableAddress: string,
-    _chainID: BigNumberish,
-    _clientID: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  synthesizeNative(
-    _stableBridgingFee: BigNumberish,
-    _chain2address: string,
-    _receiveSide: string,
-    _oppositeBridge: string,
-    _revertableAddress: string,
-    _chainID: BigNumberish,
-    _clientID: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  synthesizeWithPermit(
-    _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unsynthesize(
-    _stableBridgingFee: BigNumberish,
-    _externalID: BytesLike,
-    _crossChainID: BytesLike,
-    _token: string,
-    _amount: BigNumberish,
-    _to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unsynthesizeStates(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  versionRecipient(overrides?: CallOverrides): Promise<string>;
-
-  wrapper(overrides?: CallOverrides): Promise<string>;
-
-  callStatic: {
-    balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    bridge(overrides?: CallOverrides): Promise<string>;
+    bridge(overrides?: CallOverrides): Promise<string>
 
     initialize(
-      _bridge: string,
-      _trustedForwarder: string,
-      _wrapper: string,
-      _whitelistedToken: string,
-      _metaRouter: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _bridge: string,
+        _trustedForwarder: string,
+        _wrapper: string,
+        _whitelistedToken: string,
+        _metaRouter: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    isTrustedForwarder(
-      forwarder: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<boolean>
 
     metaRevertRequest(
-      _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    metaRouter(overrides?: CallOverrides): Promise<string>;
+    metaRouter(overrides?: CallOverrides): Promise<string>
 
     metaSynthesize(
-      _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     metaUnsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _crossChainID: BytesLike,
-      _externalID: BytesLike,
-      _to: string,
-      _amount: BigNumberish,
-      _rToken: string,
-      _finalReceiveSide: string,
-      _finalCalldata: BytesLike,
-      _finalOffset: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _stableBridgingFee: BigNumberish,
+        _crossChainID: BytesLike,
+        _externalID: BytesLike,
+        _to: string,
+        _amount: BigNumberish,
+        _rToken: string,
+        _finalReceiveSide: string,
+        _finalCalldata: BytesLike,
+        _finalOffset: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    owner(overrides?: CallOverrides): Promise<string>
 
-    pause(overrides?: CallOverrides): Promise<void>;
+    pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    paused(overrides?: CallOverrides): Promise<boolean>;
+    paused(overrides?: CallOverrides): Promise<boolean>
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    requestCount(overrides?: CallOverrides): Promise<BigNumber>;
+    requestCount(overrides?: CallOverrides): Promise<BigNumber>
 
     requests(
-      arg0: BytesLike,
-      overrides?: CallOverrides
+        arg0: BytesLike,
+        overrides?: CallOverrides
     ): Promise<
-      [string, string, BigNumber, string, number] & {
-        recipient: string;
-        chain2address: string;
-        amount: BigNumber;
-        rtoken: string;
-        state: number;
-      }
-    >;
+        [string, string, BigNumber, string, number] & {
+            recipient: string
+            chain2address: string
+            amount: BigNumber
+            rtoken: string
+            state: number
+        }
+    >
 
     revertBurnRequest(
-      _stableBridgingFee: BigNumberish,
-      _internalID: BytesLike,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _chainId: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _stableBridgingFee: BigNumberish,
+        _internalID: BytesLike,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _chainId: BigNumberish,
+        _clientID: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     revertSynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _stableBridgingFee: BigNumberish,
+        _externalID: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setMetaRouter(
-      _metaRouter: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _metaRouter: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setTokenThreshold(
-      _token: string,
-      _threshold: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _token: string,
+        _threshold: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     setWhitelistToken(
-      _token: string,
-      _activate: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _token: string,
+        _activate: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     synthesize(
-      _stableBridgingFee: BigNumberish,
-      _token: string,
-      _amount: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        _stableBridgingFee: BigNumberish,
+        _token: string,
+        _amount: BigNumberish,
+        _chain2address: string,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _revertableAddress: string,
+        _chainID: BigNumberish,
+        _clientID: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     synthesizeNative(
-      _stableBridgingFee: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        _stableBridgingFee: BigNumberish,
+        _chain2address: string,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _revertableAddress: string,
+        _chainID: BigNumberish,
+        _clientID: BytesLike,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     synthesizeWithPermit(
-      _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
-      overrides?: CallOverrides
-    ): Promise<string>;
+        _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
-
-    unsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      _crossChainID: BytesLike,
-      _token: string,
-      _amount: BigNumberish,
-      _to: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unsynthesizeStates(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    versionRecipient(overrides?: CallOverrides): Promise<string>;
-
-    wrapper(overrides?: CallOverrides): Promise<string>;
-  };
-
-  filters: {
-    "BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)"(
-      id?: BytesLike | null,
-      crossChainID?: BytesLike | null,
-      to?: string | null,
-      amount?: null,
-      bridgingFee?: null,
-      token?: null
-    ): BurnCompletedEventFilter;
-    BurnCompleted(
-      id?: BytesLike | null,
-      crossChainID?: BytesLike | null,
-      to?: string | null,
-      amount?: null,
-      bridgingFee?: null,
-      token?: null
-    ): BurnCompletedEventFilter;
-
-    "ClientIdLog(bytes32,bytes32)"(
-      requestId?: null,
-      clientId?: BytesLike | null
-    ): ClientIdLogEventFilter;
-    ClientIdLog(
-      requestId?: null,
-      clientId?: BytesLike | null
-    ): ClientIdLogEventFilter;
-
-    "MetaRevertRequest(bytes32,address)"(
-      id?: BytesLike | null,
-      to?: string | null
-    ): MetaRevertRequestEventFilter;
-    MetaRevertRequest(
-      id?: BytesLike | null,
-      to?: string | null
-    ): MetaRevertRequestEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
-    "RevertBurnRequest(bytes32,address)"(
-      id?: BytesLike | null,
-      to?: string | null
-    ): RevertBurnRequestEventFilter;
-    RevertBurnRequest(
-      id?: BytesLike | null,
-      to?: string | null
-    ): RevertBurnRequestEventFilter;
-
-    "RevertSynthesizeCompleted(bytes32,address,uint256,uint256,address)"(
-      id?: BytesLike | null,
-      to?: string | null,
-      amount?: null,
-      bridgingFee?: null,
-      token?: null
-    ): RevertSynthesizeCompletedEventFilter;
-    RevertSynthesizeCompleted(
-      id?: BytesLike | null,
-      to?: string | null,
-      amount?: null,
-      bridgingFee?: null,
-      token?: null
-    ): RevertSynthesizeCompletedEventFilter;
-
-    "SetMetaRouter(address)"(metaRouter?: null): SetMetaRouterEventFilter;
-    SetMetaRouter(metaRouter?: null): SetMetaRouterEventFilter;
-
-    "SetTokenThreshold(address,uint256)"(
-      token?: null,
-      threshold?: null
-    ): SetTokenThresholdEventFilter;
-    SetTokenThreshold(
-      token?: null,
-      threshold?: null
-    ): SetTokenThresholdEventFilter;
-
-    "SetWhitelistToken(address,bool)"(
-      token?: null,
-      activate?: null
-    ): SetWhitelistTokenEventFilter;
-    SetWhitelistToken(
-      token?: null,
-      activate?: null
-    ): SetWhitelistTokenEventFilter;
-
-    "SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)"(
-      id?: null,
-      from?: string | null,
-      chainID?: BigNumberish | null,
-      revertableAddress?: string | null,
-      to?: null,
-      amount?: null,
-      token?: null
-    ): SynthesizeRequestEventFilter;
-    SynthesizeRequest(
-      id?: null,
-      from?: string | null,
-      chainID?: BigNumberish | null,
-      revertableAddress?: string | null,
-      to?: null,
-      amount?: null,
-      token?: null
-    ): SynthesizeRequestEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-  };
-
-  estimateGas: {
-    balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    bridge(overrides?: CallOverrides): Promise<BigNumber>;
-
-    initialize(
-      _bridge: string,
-      _trustedForwarder: string,
-      _wrapper: string,
-      _whitelistedToken: string,
-      _metaRouter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    isTrustedForwarder(
-      forwarder: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    metaRevertRequest(
-      _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    metaRouter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    metaSynthesize(
-      _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    metaUnsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _crossChainID: BytesLike,
-      _externalID: BytesLike,
-      _to: string,
-      _amount: BigNumberish,
-      _rToken: string,
-      _finalReceiveSide: string,
-      _finalCalldata: BytesLike,
-      _finalOffset: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    requestCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    requests(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    revertBurnRequest(
-      _stableBridgingFee: BigNumberish,
-      _internalID: BytesLike,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _chainId: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    revertSynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMetaRouter(
-      _metaRouter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setTokenThreshold(
-      _token: string,
-      _threshold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setWhitelistToken(
-      _token: string,
-      _activate: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    synthesize(
-      _stableBridgingFee: BigNumberish,
-      _token: string,
-      _amount: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    synthesizeNative(
-      _stableBridgingFee: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    synthesizeWithPermit(
-      _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     unsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      _crossChainID: BytesLike,
-      _token: string,
-      _amount: BigNumberish,
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _stableBridgingFee: BigNumberish,
+        _externalID: BytesLike,
+        _crossChainID: BytesLike,
+        _token: string,
+        _amount: BigNumberish,
+        _to: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    unsynthesizeStates(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    unsynthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
 
-    versionRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+    versionRecipient(overrides?: CallOverrides): Promise<string>
 
-    wrapper(overrides?: CallOverrides): Promise<BigNumber>;
-  };
+    wrapper(overrides?: CallOverrides): Promise<string>
 
-  populateTransaction: {
-    balanceOf(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    callStatic: {
+        balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    bridge(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        bridge(overrides?: CallOverrides): Promise<string>
 
-    initialize(
-      _bridge: string,
-      _trustedForwarder: string,
-      _wrapper: string,
-      _whitelistedToken: string,
-      _metaRouter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        initialize(
+            _bridge: string,
+            _trustedForwarder: string,
+            _wrapper: string,
+            _whitelistedToken: string,
+            _metaRouter: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    isTrustedForwarder(
-      forwarder: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<boolean>
 
-    metaRevertRequest(
-      _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    metaRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        metaRouter(overrides?: CallOverrides): Promise<string>
 
-    metaSynthesize(
-      _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        metaSynthesize(
+            _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
+            overrides?: CallOverrides
+        ): Promise<string>
 
-    metaUnsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _crossChainID: BytesLike,
-      _externalID: BytesLike,
-      _to: string,
-      _amount: BigNumberish,
-      _rToken: string,
-      _finalReceiveSide: string,
-      _finalCalldata: BytesLike,
-      _finalOffset: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        metaUnsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _crossChainID: BytesLike,
+            _externalID: BytesLike,
+            _to: string,
+            _amount: BigNumberish,
+            _rToken: string,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        owner(overrides?: CallOverrides): Promise<string>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        pause(overrides?: CallOverrides): Promise<void>
 
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        paused(overrides?: CallOverrides): Promise<boolean>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
 
-    requestCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        requestCount(overrides?: CallOverrides): Promise<BigNumber>
 
-    requests(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        requests(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [string, string, BigNumber, string, number] & {
+                recipient: string
+                chain2address: string
+                amount: BigNumber
+                rtoken: string
+                state: number
+            }
+        >
 
-    revertBurnRequest(
-      _stableBridgingFee: BigNumberish,
-      _internalID: BytesLike,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _chainId: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        revertBurnRequest(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    revertSynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        revertSynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    setMetaRouter(
-      _metaRouter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setMetaRouter(_metaRouter: string, overrides?: CallOverrides): Promise<void>
 
-    setTokenThreshold(
-      _token: string,
-      _threshold: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setTokenThreshold(_token: string, _threshold: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    setWhitelistToken(
-      _token: string,
-      _activate: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setWhitelistToken(_token: string, _activate: boolean, overrides?: CallOverrides): Promise<void>
 
-    synthesize(
-      _stableBridgingFee: BigNumberish,
-      _token: string,
-      _amount: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        synthesize(
+            _stableBridgingFee: BigNumberish,
+            _token: string,
+            _amount: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<string>
 
-    synthesizeNative(
-      _stableBridgingFee: BigNumberish,
-      _chain2address: string,
-      _receiveSide: string,
-      _oppositeBridge: string,
-      _revertableAddress: string,
-      _chainID: BigNumberish,
-      _clientID: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        synthesizeNative(
+            _stableBridgingFee: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<string>
 
-    synthesizeWithPermit(
-      _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        synthesizeWithPermit(
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
+            overrides?: CallOverrides
+        ): Promise<string>
 
-    tokenThreshold(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    tokenWhitelist(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        unpause(overrides?: CallOverrides): Promise<void>
 
-    unsynthesize(
-      _stableBridgingFee: BigNumberish,
-      _externalID: BytesLike,
-      _crossChainID: BytesLike,
-      _token: string,
-      _amount: BigNumberish,
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        unsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _crossChainID: BytesLike,
+            _token: string,
+            _amount: BigNumberish,
+            _to: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    unsynthesizeStates(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        unsynthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
 
-    versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        versionRecipient(overrides?: CallOverrides): Promise<string>
 
-    wrapper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
+        wrapper(overrides?: CallOverrides): Promise<string>
+    }
+
+    filters: {
+        'BurnCompleted(bytes32,bytes32,address,uint256,uint256,address)'(
+            id?: BytesLike | null,
+            crossChainID?: BytesLike | null,
+            to?: string | null,
+            amount?: null,
+            bridgingFee?: null,
+            token?: null
+        ): BurnCompletedEventFilter
+        BurnCompleted(
+            id?: BytesLike | null,
+            crossChainID?: BytesLike | null,
+            to?: string | null,
+            amount?: null,
+            bridgingFee?: null,
+            token?: null
+        ): BurnCompletedEventFilter
+
+        'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
+        ClientIdLog(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
+
+        'MetaRevertRequest(bytes32,address)'(id?: BytesLike | null, to?: string | null): MetaRevertRequestEventFilter
+        MetaRevertRequest(id?: BytesLike | null, to?: string | null): MetaRevertRequestEventFilter
+
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+
+        'Paused(address)'(account?: null): PausedEventFilter
+        Paused(account?: null): PausedEventFilter
+
+        'RevertBurnRequest(bytes32,address)'(id?: BytesLike | null, to?: string | null): RevertBurnRequestEventFilter
+        RevertBurnRequest(id?: BytesLike | null, to?: string | null): RevertBurnRequestEventFilter
+
+        'RevertSynthesizeCompleted(bytes32,address,uint256,uint256,address)'(
+            id?: BytesLike | null,
+            to?: string | null,
+            amount?: null,
+            bridgingFee?: null,
+            token?: null
+        ): RevertSynthesizeCompletedEventFilter
+        RevertSynthesizeCompleted(
+            id?: BytesLike | null,
+            to?: string | null,
+            amount?: null,
+            bridgingFee?: null,
+            token?: null
+        ): RevertSynthesizeCompletedEventFilter
+
+        'SetMetaRouter(address)'(metaRouter?: null): SetMetaRouterEventFilter
+        SetMetaRouter(metaRouter?: null): SetMetaRouterEventFilter
+
+        'SetTokenThreshold(address,uint256)'(token?: null, threshold?: null): SetTokenThresholdEventFilter
+        SetTokenThreshold(token?: null, threshold?: null): SetTokenThresholdEventFilter
+
+        'SetWhitelistToken(address,bool)'(token?: null, activate?: null): SetWhitelistTokenEventFilter
+        SetWhitelistToken(token?: null, activate?: null): SetWhitelistTokenEventFilter
+
+        'SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)'(
+            id?: null,
+            from?: string | null,
+            chainID?: BigNumberish | null,
+            revertableAddress?: string | null,
+            to?: null,
+            amount?: null,
+            token?: null
+        ): SynthesizeRequestEventFilter
+        SynthesizeRequest(
+            id?: null,
+            from?: string | null,
+            chainID?: BigNumberish | null,
+            revertableAddress?: string | null,
+            to?: null,
+            amount?: null,
+            token?: null
+        ): SynthesizeRequestEventFilter
+
+        'Unpaused(address)'(account?: null): UnpausedEventFilter
+        Unpaused(account?: null): UnpausedEventFilter
+    }
+
+    estimateGas: {
+        balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        bridge(overrides?: CallOverrides): Promise<BigNumber>
+
+        initialize(
+            _bridge: string,
+            _trustedForwarder: string,
+            _wrapper: string,
+            _whitelistedToken: string,
+            _metaRouter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        metaRouter(overrides?: CallOverrides): Promise<BigNumber>
+
+        metaSynthesize(
+            _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        metaUnsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _crossChainID: BytesLike,
+            _externalID: BytesLike,
+            _to: string,
+            _amount: BigNumberish,
+            _rToken: string,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        owner(overrides?: CallOverrides): Promise<BigNumber>
+
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        paused(overrides?: CallOverrides): Promise<BigNumber>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        requestCount(overrides?: CallOverrides): Promise<BigNumber>
+
+        requests(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+        revertBurnRequest(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        revertSynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setMetaRouter(
+            _metaRouter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setTokenThreshold(
+            _token: string,
+            _threshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setWhitelistToken(
+            _token: string,
+            _activate: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        synthesize(
+            _stableBridgingFee: BigNumberish,
+            _token: string,
+            _amount: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        synthesizeNative(
+            _stableBridgingFee: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        synthesizeWithPermit(
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        unsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _crossChainID: BytesLike,
+            _token: string,
+            _amount: BigNumberish,
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        unsynthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+        versionRecipient(overrides?: CallOverrides): Promise<BigNumber>
+
+        wrapper(overrides?: CallOverrides): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        balanceOf(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        bridge(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        initialize(
+            _bridge: string,
+            _trustedForwarder: string,
+            _wrapper: string,
+            _whitelistedToken: string,
+            _metaRouter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        metaRevertRequest(
+            _metaRevertTransaction: MetaRouteStructs.MetaRevertTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        metaRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        metaSynthesize(
+            _metaSynthesizeTransaction: MetaRouteStructs.MetaSynthesizeTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        metaUnsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _crossChainID: BytesLike,
+            _externalID: BytesLike,
+            _to: string,
+            _amount: BigNumberish,
+            _rToken: string,
+            _finalReceiveSide: string,
+            _finalCalldata: BytesLike,
+            _finalOffset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        requestCount(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        requests(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        revertBurnRequest(
+            _stableBridgingFee: BigNumberish,
+            _internalID: BytesLike,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _chainId: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        revertSynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setMetaRouter(
+            _metaRouter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setTokenThreshold(
+            _token: string,
+            _threshold: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setWhitelistToken(
+            _token: string,
+            _activate: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        synthesize(
+            _stableBridgingFee: BigNumberish,
+            _token: string,
+            _amount: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        synthesizeNative(
+            _stableBridgingFee: BigNumberish,
+            _chain2address: string,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        synthesizeWithPermit(
+            _syntWithPermitTx: Portal.SynthesizeWithPermitTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        tokenWhitelist(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        unsynthesize(
+            _stableBridgingFee: BigNumberish,
+            _externalID: BytesLike,
+            _crossChainID: BytesLike,
+            _token: string,
+            _amount: BigNumberish,
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        unsynthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        wrapper(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    }
 }

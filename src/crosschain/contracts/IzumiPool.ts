@@ -2,1860 +2,1523 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace IiZiSwapPool {
-  export type LimitOrderStructStruct = {
-    sellingX: BigNumberish;
-    earnY: BigNumberish;
-    accEarnY: BigNumberish;
-    sellingY: BigNumberish;
-    earnX: BigNumberish;
-    accEarnX: BigNumberish;
-  };
+    export type LimitOrderStructStruct = {
+        sellingX: BigNumberish
+        earnY: BigNumberish
+        accEarnY: BigNumberish
+        sellingY: BigNumberish
+        earnX: BigNumberish
+        accEarnX: BigNumberish
+    }
 
-  export type LimitOrderStructStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    sellingX: BigNumber;
-    earnY: BigNumber;
-    accEarnY: BigNumber;
-    sellingY: BigNumber;
-    earnX: BigNumber;
-    accEarnX: BigNumber;
-  };
+    export type LimitOrderStructStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        sellingX: BigNumber
+        earnY: BigNumber
+        accEarnY: BigNumber
+        sellingY: BigNumber
+        earnX: BigNumber
+        accEarnX: BigNumber
+    }
 }
 
 export interface IzumiPoolInterface extends utils.Interface {
-  contractName: "IzumiPool";
-  functions: {
-    "addLimOrderWithX(address,int24,uint128,bytes)": FunctionFragment;
-    "addLimOrderWithY(address,int24,uint128,bytes)": FunctionFragment;
-    "assignLimOrderEarnX(int24,uint128)": FunctionFragment;
-    "assignLimOrderEarnY(int24,uint128)": FunctionFragment;
-    "burn(int24,int24,uint128)": FunctionFragment;
-    "collect(address,int24,int24,uint256,uint256)": FunctionFragment;
-    "collectFeeCharged()": FunctionFragment;
-    "collectLimOrder(address,int24,uint128,uint128,bool)": FunctionFragment;
-    "decLimOrderWithX(int24,uint128)": FunctionFragment;
-    "decLimOrderWithY(int24,uint128)": FunctionFragment;
-    "expandObservationQueue(uint16)": FunctionFragment;
-    "factory()": FunctionFragment;
-    "fee()": FunctionFragment;
-    "feeChargePercent()": FunctionFragment;
-    "feeScaleX_128()": FunctionFragment;
-    "feeScaleY_128()": FunctionFragment;
-    "flash(address,uint256,uint256,bytes)": FunctionFragment;
-    "leftMostPt()": FunctionFragment;
-    "limitOrderData(int24)": FunctionFragment;
-    "limitOrderSnapshot(int24,int24)": FunctionFragment;
-    "liquidity(bytes32)": FunctionFragment;
-    "liquiditySnapshot(int24,int24)": FunctionFragment;
-    "maxLiquidPt()": FunctionFragment;
-    "mint(address,int24,int24,uint128,bytes)": FunctionFragment;
-    "observations(uint256)": FunctionFragment;
-    "observe(uint32[])": FunctionFragment;
-    "orderOrEndpoint(int24)": FunctionFragment;
-    "pointBitmap(int16)": FunctionFragment;
-    "pointDelta()": FunctionFragment;
-    "points(int24)": FunctionFragment;
-    "rightMostPt()": FunctionFragment;
-    "sqrtRate_96()": FunctionFragment;
-    "state()": FunctionFragment;
-    "swapX2Y(address,uint128,int24,bytes)": FunctionFragment;
-    "swapX2YDesireY(address,uint128,int24,bytes)": FunctionFragment;
-    "swapY2X(address,uint128,int24,bytes)": FunctionFragment;
-    "swapY2XDesireX(address,uint128,int24,bytes)": FunctionFragment;
-    "tokenX()": FunctionFragment;
-    "tokenY()": FunctionFragment;
-    "totalFeeXCharged()": FunctionFragment;
-    "totalFeeYCharged()": FunctionFragment;
-    "userEarnX(bytes32)": FunctionFragment;
-    "userEarnY(bytes32)": FunctionFragment;
-  };
+    contractName: 'IzumiPool'
+    functions: {
+        'addLimOrderWithX(address,int24,uint128,bytes)': FunctionFragment
+        'addLimOrderWithY(address,int24,uint128,bytes)': FunctionFragment
+        'assignLimOrderEarnX(int24,uint128)': FunctionFragment
+        'assignLimOrderEarnY(int24,uint128)': FunctionFragment
+        'burn(int24,int24,uint128)': FunctionFragment
+        'collect(address,int24,int24,uint256,uint256)': FunctionFragment
+        'collectFeeCharged()': FunctionFragment
+        'collectLimOrder(address,int24,uint128,uint128,bool)': FunctionFragment
+        'decLimOrderWithX(int24,uint128)': FunctionFragment
+        'decLimOrderWithY(int24,uint128)': FunctionFragment
+        'expandObservationQueue(uint16)': FunctionFragment
+        'factory()': FunctionFragment
+        'fee()': FunctionFragment
+        'feeChargePercent()': FunctionFragment
+        'feeScaleX_128()': FunctionFragment
+        'feeScaleY_128()': FunctionFragment
+        'flash(address,uint256,uint256,bytes)': FunctionFragment
+        'leftMostPt()': FunctionFragment
+        'limitOrderData(int24)': FunctionFragment
+        'limitOrderSnapshot(int24,int24)': FunctionFragment
+        'liquidity(bytes32)': FunctionFragment
+        'liquiditySnapshot(int24,int24)': FunctionFragment
+        'maxLiquidPt()': FunctionFragment
+        'mint(address,int24,int24,uint128,bytes)': FunctionFragment
+        'observations(uint256)': FunctionFragment
+        'observe(uint32[])': FunctionFragment
+        'orderOrEndpoint(int24)': FunctionFragment
+        'pointBitmap(int16)': FunctionFragment
+        'pointDelta()': FunctionFragment
+        'points(int24)': FunctionFragment
+        'rightMostPt()': FunctionFragment
+        'sqrtRate_96()': FunctionFragment
+        'state()': FunctionFragment
+        'swapX2Y(address,uint128,int24,bytes)': FunctionFragment
+        'swapX2YDesireY(address,uint128,int24,bytes)': FunctionFragment
+        'swapY2X(address,uint128,int24,bytes)': FunctionFragment
+        'swapY2XDesireX(address,uint128,int24,bytes)': FunctionFragment
+        'tokenX()': FunctionFragment
+        'tokenY()': FunctionFragment
+        'totalFeeXCharged()': FunctionFragment
+        'totalFeeYCharged()': FunctionFragment
+        'userEarnX(bytes32)': FunctionFragment
+        'userEarnY(bytes32)': FunctionFragment
+    }
 
-  encodeFunctionData(
-    functionFragment: "addLimOrderWithX",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addLimOrderWithY",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assignLimOrderEarnX",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assignLimOrderEarnY",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "burn",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collect",
-    values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collectFeeCharged",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collectLimOrder",
-    values: [string, BigNumberish, BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "decLimOrderWithX",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "decLimOrderWithY",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "expandObservationQueue",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
-  encodeFunctionData(functionFragment: "fee", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "feeChargePercent",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "feeScaleX_128",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "feeScaleY_128",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "flash",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "leftMostPt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "limitOrderData",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "limitOrderSnapshot",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidity",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquiditySnapshot",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxLiquidPt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
-    values: [string, BigNumberish, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "observations",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "observe",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "orderOrEndpoint",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pointBitmap",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pointDelta",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "points",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rightMostPt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sqrtRate_96",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "state", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "swapX2Y",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapX2YDesireY",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapY2X",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapY2XDesireX",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "tokenX", values?: undefined): string;
-  encodeFunctionData(functionFragment: "tokenY", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "totalFeeXCharged",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalFeeYCharged",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userEarnX",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userEarnY",
-    values: [BytesLike]
-  ): string;
+    encodeFunctionData(
+        functionFragment: 'addLimOrderWithX',
+        values: [string, BigNumberish, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'addLimOrderWithY',
+        values: [string, BigNumberish, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'assignLimOrderEarnX', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'assignLimOrderEarnY', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'burn', values: [BigNumberish, BigNumberish, BigNumberish]): string
+    encodeFunctionData(
+        functionFragment: 'collect',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'collectFeeCharged', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'collectLimOrder',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, boolean]
+    ): string
+    encodeFunctionData(functionFragment: 'decLimOrderWithX', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'decLimOrderWithY', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'expandObservationQueue', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'factory', values?: undefined): string
+    encodeFunctionData(functionFragment: 'fee', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeChargePercent', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeScaleX_128', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeScaleY_128', values?: undefined): string
+    encodeFunctionData(functionFragment: 'flash', values: [string, BigNumberish, BigNumberish, BytesLike]): string
+    encodeFunctionData(functionFragment: 'leftMostPt', values?: undefined): string
+    encodeFunctionData(functionFragment: 'limitOrderData', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'limitOrderSnapshot', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'liquidity', values: [BytesLike]): string
+    encodeFunctionData(functionFragment: 'liquiditySnapshot', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'maxLiquidPt', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'mint',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'observations', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'observe', values: [BigNumberish[]]): string
+    encodeFunctionData(functionFragment: 'orderOrEndpoint', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'pointBitmap', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'pointDelta', values?: undefined): string
+    encodeFunctionData(functionFragment: 'points', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'rightMostPt', values?: undefined): string
+    encodeFunctionData(functionFragment: 'sqrtRate_96', values?: undefined): string
+    encodeFunctionData(functionFragment: 'state', values?: undefined): string
+    encodeFunctionData(functionFragment: 'swapX2Y', values: [string, BigNumberish, BigNumberish, BytesLike]): string
+    encodeFunctionData(
+        functionFragment: 'swapX2YDesireY',
+        values: [string, BigNumberish, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'swapY2X', values: [string, BigNumberish, BigNumberish, BytesLike]): string
+    encodeFunctionData(
+        functionFragment: 'swapY2XDesireX',
+        values: [string, BigNumberish, BigNumberish, BytesLike]
+    ): string
+    encodeFunctionData(functionFragment: 'tokenX', values?: undefined): string
+    encodeFunctionData(functionFragment: 'tokenY', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalFeeXCharged', values?: undefined): string
+    encodeFunctionData(functionFragment: 'totalFeeYCharged', values?: undefined): string
+    encodeFunctionData(functionFragment: 'userEarnX', values: [BytesLike]): string
+    encodeFunctionData(functionFragment: 'userEarnY', values: [BytesLike]): string
 
-  decodeFunctionResult(
-    functionFragment: "addLimOrderWithX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addLimOrderWithY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "assignLimOrderEarnX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "assignLimOrderEarnY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "collect", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "collectFeeCharged",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "collectLimOrder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "decLimOrderWithX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "decLimOrderWithY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "expandObservationQueue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "feeChargePercent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "feeScaleX_128",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "feeScaleY_128",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "flash", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "leftMostPt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "limitOrderData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "limitOrderSnapshot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "liquidity", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "liquiditySnapshot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxLiquidPt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "observations",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "observe", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "orderOrEndpoint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "pointBitmap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "pointDelta", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "points", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rightMostPt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "sqrtRate_96",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "state", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "swapX2Y", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "swapX2YDesireY",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "swapY2X", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "swapY2XDesireX",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "tokenX", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "tokenY", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalFeeXCharged",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalFeeYCharged",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "userEarnX", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "userEarnY", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'addLimOrderWithX', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'addLimOrderWithY', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'assignLimOrderEarnX', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'assignLimOrderEarnY', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'burn', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'collect', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'collectFeeCharged', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'collectLimOrder', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'decLimOrderWithX', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'decLimOrderWithY', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'expandObservationQueue', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'factory', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'fee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeChargePercent', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeScaleX_128', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeScaleY_128', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'flash', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'leftMostPt', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'limitOrderData', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'limitOrderSnapshot', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'liquidity', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'liquiditySnapshot', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'maxLiquidPt', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'mint', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'observations', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'observe', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'orderOrEndpoint', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pointBitmap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pointDelta', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'points', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'rightMostPt', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'sqrtRate_96', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'state', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapX2Y', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapX2YDesireY', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapY2X', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapY2XDesireX', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'tokenX', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'tokenY', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalFeeXCharged', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'totalFeeYCharged', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'userEarnX', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'userEarnY', data: BytesLike): Result
 
-  events: {
-    "AddLimitOrder(uint256,int24,bool)": EventFragment;
-    "Burn(address,int24,int24,uint128,uint256,uint256)": EventFragment;
-    "DecLimitOrder(uint256,int24,bool)": EventFragment;
-    "Flash(address,address,uint256,uint256,uint256,uint256)": EventFragment;
-    "Mint(address,address,int24,int24,uint128,uint256,uint256)": EventFragment;
-    "Swap(address,address,uint24,bool,uint256,uint256)": EventFragment;
-  };
+    events: {
+        'AddLimitOrder(uint256,int24,bool)': EventFragment
+        'Burn(address,int24,int24,uint128,uint256,uint256)': EventFragment
+        'DecLimitOrder(uint256,int24,bool)': EventFragment
+        'Flash(address,address,uint256,uint256,uint256,uint256)': EventFragment
+        'Mint(address,address,int24,int24,uint128,uint256,uint256)': EventFragment
+        'Swap(address,address,uint24,bool,uint256,uint256)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "AddLimitOrder"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Burn"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "DecLimitOrder"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Flash"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Swap"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'AddLimitOrder'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Burn'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'DecLimitOrder'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Flash'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Mint'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Swap'): EventFragment
 }
 
 export type AddLimitOrderEvent = TypedEvent<
-  [BigNumber, number, boolean],
-  { amount: BigNumber; point: number; sellXEarnY: boolean }
->;
+    [BigNumber, number, boolean],
+    { amount: BigNumber; point: number; sellXEarnY: boolean }
+>
 
-export type AddLimitOrderEventFilter = TypedEventFilter<AddLimitOrderEvent>;
+export type AddLimitOrderEventFilter = TypedEventFilter<AddLimitOrderEvent>
 
 export type BurnEvent = TypedEvent<
-  [string, number, number, BigNumber, BigNumber, BigNumber],
-  {
-    owner: string;
-    leftPoint: number;
-    rightPoint: number;
-    liquidity: BigNumber;
-    amountX: BigNumber;
-    amountY: BigNumber;
-  }
->;
+    [string, number, number, BigNumber, BigNumber, BigNumber],
+    {
+        owner: string
+        leftPoint: number
+        rightPoint: number
+        liquidity: BigNumber
+        amountX: BigNumber
+        amountY: BigNumber
+    }
+>
 
-export type BurnEventFilter = TypedEventFilter<BurnEvent>;
+export type BurnEventFilter = TypedEventFilter<BurnEvent>
 
 export type DecLimitOrderEvent = TypedEvent<
-  [BigNumber, number, boolean],
-  { amount: BigNumber; point: number; sellXEarnY: boolean }
->;
+    [BigNumber, number, boolean],
+    { amount: BigNumber; point: number; sellXEarnY: boolean }
+>
 
-export type DecLimitOrderEventFilter = TypedEventFilter<DecLimitOrderEvent>;
+export type DecLimitOrderEventFilter = TypedEventFilter<DecLimitOrderEvent>
 
 export type FlashEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, BigNumber, BigNumber],
-  {
-    sender: string;
-    recipient: string;
-    amountX: BigNumber;
-    amountY: BigNumber;
-    paidX: BigNumber;
-    paidY: BigNumber;
-  }
->;
+    [string, string, BigNumber, BigNumber, BigNumber, BigNumber],
+    {
+        sender: string
+        recipient: string
+        amountX: BigNumber
+        amountY: BigNumber
+        paidX: BigNumber
+        paidY: BigNumber
+    }
+>
 
-export type FlashEventFilter = TypedEventFilter<FlashEvent>;
+export type FlashEventFilter = TypedEventFilter<FlashEvent>
 
 export type MintEvent = TypedEvent<
-  [string, string, number, number, BigNumber, BigNumber, BigNumber],
-  {
-    sender: string;
-    owner: string;
-    leftPoint: number;
-    rightPoint: number;
-    liquidity: BigNumber;
-    amountX: BigNumber;
-    amountY: BigNumber;
-  }
->;
+    [string, string, number, number, BigNumber, BigNumber, BigNumber],
+    {
+        sender: string
+        owner: string
+        leftPoint: number
+        rightPoint: number
+        liquidity: BigNumber
+        amountX: BigNumber
+        amountY: BigNumber
+    }
+>
 
-export type MintEventFilter = TypedEventFilter<MintEvent>;
+export type MintEventFilter = TypedEventFilter<MintEvent>
 
 export type SwapEvent = TypedEvent<
-  [string, string, number, boolean, BigNumber, BigNumber],
-  {
-    tokenX: string;
-    tokenY: string;
-    fee: number;
-    sellXEarnY: boolean;
-    amountX: BigNumber;
-    amountY: BigNumber;
-  }
->;
+    [string, string, number, boolean, BigNumber, BigNumber],
+    {
+        tokenX: string
+        tokenY: string
+        fee: number
+        sellXEarnY: boolean
+        amountX: BigNumber
+        amountY: BigNumber
+    }
+>
 
-export type SwapEventFilter = TypedEventFilter<SwapEvent>;
+export type SwapEventFilter = TypedEventFilter<SwapEvent>
 
 export interface IzumiPool extends BaseContract {
-  contractName: "IzumiPool";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'IzumiPool'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: IzumiPoolInterface;
+    interface: IzumiPoolInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
+    functions: {
+        addLimOrderWithX(
+            recipient: string,
+            point: BigNumberish,
+            amountX: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        addLimOrderWithY(
+            recipient: string,
+            point: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        assignLimOrderEarnX(
+            point: BigNumberish,
+            assignX: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        assignLimOrderEarnY(
+            point: BigNumberish,
+            assignY: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        burn(
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        collect(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            amountXLim: BigNumberish,
+            amountYLim: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        collectFeeCharged(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        collectLimOrder(
+            recipient: string,
+            point: BigNumberish,
+            collectDec: BigNumberish,
+            collectEarn: BigNumberish,
+            isEarnY: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        decLimOrderWithX(
+            point: BigNumberish,
+            deltaX: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        decLimOrderWithY(
+            point: BigNumberish,
+            deltaY: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        expandObservationQueue(
+            newNextQueueLen: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        factory(overrides?: CallOverrides): Promise<[string]>
+
+        fee(overrides?: CallOverrides): Promise<[number]>
+
+        feeChargePercent(overrides?: CallOverrides): Promise<[number]>
+
+        feeScaleX_128(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        feeScaleY_128(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        flash(
+            recipient: string,
+            amountX: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        leftMostPt(overrides?: CallOverrides): Promise<[number]>
+
+        limitOrderData(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                sellingX: BigNumber
+                earnY: BigNumber
+                accEarnY: BigNumber
+                sellingY: BigNumber
+                earnX: BigNumber
+                accEarnX: BigNumber
+            }
+        >
+
+        limitOrderSnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [IiZiSwapPool.LimitOrderStructStructOutput[]] & {
+                limitOrders: IiZiSwapPool.LimitOrderStructStructOutput[]
+            }
+        >
+
+        liquidity(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                liquidity: BigNumber
+                lastFeeScaleX_128: BigNumber
+                lastFeeScaleY_128: BigNumber
+                tokenOwedX: BigNumber
+                tokenOwedY: BigNumber
+            }
+        >
+
+        liquiditySnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber[]] & { deltaLiquidities: BigNumber[] }>
+
+        maxLiquidPt(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        mint(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        observations(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [number, BigNumber, boolean] & {
+                timestamp: number
+                accPoint: BigNumber
+                init: boolean
+            }
+        >
+
+        observe(
+            secondsAgos: BigNumberish[],
+            overrides?: CallOverrides
+        ): Promise<[BigNumber[]] & { accPoints: BigNumber[] }>
+
+        orderOrEndpoint(arg0: BigNumberish, overrides?: CallOverrides): Promise<[number]>
+
+        pointBitmap(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        pointDelta(overrides?: CallOverrides): Promise<[number]>
+
+        points(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+                liquidSum: BigNumber
+                liquidDelta: BigNumber
+                accFeeXOut_128: BigNumber
+                accFeeYOut_128: BigNumber
+                isEndpt: boolean
+            }
+        >
+
+        rightMostPt(overrides?: CallOverrides): Promise<[number]>
+
+        sqrtRate_96(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        state(overrides?: CallOverrides): Promise<
+            [BigNumber, number, number, number, number, boolean, BigNumber, BigNumber] & {
+                sqrtPrice_96: BigNumber
+                currentPoint: number
+                observationCurrentIndex: number
+                observationQueueLen: number
+                observationNextQueueLen: number
+                locked: boolean
+                liquidity: BigNumber
+                liquidityX: BigNumber
+            }
+        >
+
+        swapX2Y(
+            recipient: string,
+            amount: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        swapX2YDesireY(
+            recipient: string,
+            desireY: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        swapY2X(
+            recipient: string,
+            amount: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        swapY2XDesireX(
+            recipient: string,
+            desireX: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        tokenX(overrides?: CallOverrides): Promise<[string]>
+
+        tokenY(overrides?: CallOverrides): Promise<[string]>
+
+        totalFeeXCharged(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        totalFeeYCharged(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        userEarnX(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                lastAccEarn: BigNumber
+                sellingRemain: BigNumber
+                sellingDec: BigNumber
+                earn: BigNumber
+                earnAssign: BigNumber
+            }
+        >
+
+        userEarnY(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                lastAccEarn: BigNumber
+                sellingRemain: BigNumber
+                sellingDec: BigNumber
+                earn: BigNumber
+                earnAssign: BigNumber
+            }
+        >
+    }
+
     addLimOrderWithX(
-      recipient: string,
-      point: BigNumberish,
-      amountX: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        point: BigNumberish,
+        amountX: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     addLimOrderWithY(
-      recipient: string,
-      point: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        point: BigNumberish,
+        amountY: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     assignLimOrderEarnX(
-      point: BigNumberish,
-      assignX: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        point: BigNumberish,
+        assignX: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     assignLimOrderEarnY(
-      point: BigNumberish,
-      assignY: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        point: BigNumberish,
+        assignY: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     burn(
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        leftPt: BigNumberish,
+        rightPt: BigNumberish,
+        liquidDelta: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     collect(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      amountXLim: BigNumberish,
-      amountYLim: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        leftPt: BigNumberish,
+        rightPt: BigNumberish,
+        amountXLim: BigNumberish,
+        amountYLim: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    collectFeeCharged(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    collectFeeCharged(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     collectLimOrder(
-      recipient: string,
-      point: BigNumberish,
-      collectDec: BigNumberish,
-      collectEarn: BigNumberish,
-      isEarnY: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        point: BigNumberish,
+        collectDec: BigNumberish,
+        collectEarn: BigNumberish,
+        isEarnY: boolean,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     decLimOrderWithX(
-      point: BigNumberish,
-      deltaX: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        point: BigNumberish,
+        deltaX: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     decLimOrderWithY(
-      point: BigNumberish,
-      deltaY: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        point: BigNumberish,
+        deltaY: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     expandObservationQueue(
-      newNextQueueLen: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        newNextQueueLen: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    factory(overrides?: CallOverrides): Promise<[string]>;
+    factory(overrides?: CallOverrides): Promise<string>
 
-    fee(overrides?: CallOverrides): Promise<[number]>;
+    fee(overrides?: CallOverrides): Promise<number>
 
-    feeChargePercent(overrides?: CallOverrides): Promise<[number]>;
+    feeChargePercent(overrides?: CallOverrides): Promise<number>
 
-    feeScaleX_128(overrides?: CallOverrides): Promise<[BigNumber]>;
+    feeScaleX_128(overrides?: CallOverrides): Promise<BigNumber>
 
-    feeScaleY_128(overrides?: CallOverrides): Promise<[BigNumber]>;
+    feeScaleY_128(overrides?: CallOverrides): Promise<BigNumber>
 
     flash(
-      recipient: string,
-      amountX: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        amountX: BigNumberish,
+        amountY: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    leftMostPt(overrides?: CallOverrides): Promise<[number]>;
+    leftMostPt(overrides?: CallOverrides): Promise<number>
 
     limitOrderData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+        arg0: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        sellingX: BigNumber;
-        earnY: BigNumber;
-        accEarnY: BigNumber;
-        sellingY: BigNumber;
-        earnX: BigNumber;
-        accEarnX: BigNumber;
-      }
-    >;
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+            sellingX: BigNumber
+            earnY: BigNumber
+            accEarnY: BigNumber
+            sellingY: BigNumber
+            earnX: BigNumber
+            accEarnX: BigNumber
+        }
+    >
 
     limitOrderSnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [IiZiSwapPool.LimitOrderStructStructOutput[]] & {
-        limitOrders: IiZiSwapPool.LimitOrderStructStructOutput[];
-      }
-    >;
+        leftPoint: BigNumberish,
+        rightPoint: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<IiZiSwapPool.LimitOrderStructStructOutput[]>
 
     liquidity(
-      arg0: BytesLike,
-      overrides?: CallOverrides
+        arg0: BytesLike,
+        overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        liquidity: BigNumber;
-        lastFeeScaleX_128: BigNumber;
-        lastFeeScaleY_128: BigNumber;
-        tokenOwedX: BigNumber;
-        tokenOwedY: BigNumber;
-      }
-    >;
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+            liquidity: BigNumber
+            lastFeeScaleX_128: BigNumber
+            lastFeeScaleY_128: BigNumber
+            tokenOwedX: BigNumber
+            tokenOwedY: BigNumber
+        }
+    >
 
     liquiditySnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { deltaLiquidities: BigNumber[] }>;
+        leftPoint: BigNumberish,
+        rightPoint: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<BigNumber[]>
 
-    maxLiquidPt(overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxLiquidPt(overrides?: CallOverrides): Promise<BigNumber>
 
     mint(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        leftPt: BigNumberish,
+        rightPt: BigNumberish,
+        liquidDelta: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     observations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+        arg0: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<
-      [number, BigNumber, boolean] & {
-        timestamp: number;
-        accPoint: BigNumber;
-        init: boolean;
-      }
-    >;
+        [number, BigNumber, boolean] & {
+            timestamp: number
+            accPoint: BigNumber
+            init: boolean
+        }
+    >
 
-    observe(
-      secondsAgos: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { accPoints: BigNumber[] }>;
+    observe(secondsAgos: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    orderOrEndpoint(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+    orderOrEndpoint(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>
 
-    pointBitmap(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    pointBitmap(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    pointDelta(overrides?: CallOverrides): Promise<[number]>;
+    pointDelta(overrides?: CallOverrides): Promise<number>
 
     points(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+        arg0: BigNumberish,
+        overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
-        liquidSum: BigNumber;
-        liquidDelta: BigNumber;
-        accFeeXOut_128: BigNumber;
-        accFeeYOut_128: BigNumber;
-        isEndpt: boolean;
-      }
-    >;
+        [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+            liquidSum: BigNumber
+            liquidDelta: BigNumber
+            accFeeXOut_128: BigNumber
+            accFeeYOut_128: BigNumber
+            isEndpt: boolean
+        }
+    >
 
-    rightMostPt(overrides?: CallOverrides): Promise<[number]>;
+    rightMostPt(overrides?: CallOverrides): Promise<number>
 
-    sqrtRate_96(overrides?: CallOverrides): Promise<[BigNumber]>;
+    sqrtRate_96(overrides?: CallOverrides): Promise<BigNumber>
 
-    state(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        number,
-        number,
-        number,
-        number,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        sqrtPrice_96: BigNumber;
-        currentPoint: number;
-        observationCurrentIndex: number;
-        observationQueueLen: number;
-        observationNextQueueLen: number;
-        locked: boolean;
-        liquidity: BigNumber;
-        liquidityX: BigNumber;
-      }
-    >;
+    state(overrides?: CallOverrides): Promise<
+        [BigNumber, number, number, number, number, boolean, BigNumber, BigNumber] & {
+            sqrtPrice_96: BigNumber
+            currentPoint: number
+            observationCurrentIndex: number
+            observationQueueLen: number
+            observationNextQueueLen: number
+            locked: boolean
+            liquidity: BigNumber
+            liquidityX: BigNumber
+        }
+    >
 
     swapX2Y(
-      recipient: string,
-      amount: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        amount: BigNumberish,
+        lowPt: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapX2YDesireY(
-      recipient: string,
-      desireY: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        desireY: BigNumberish,
+        lowPt: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapY2X(
-      recipient: string,
-      amount: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        amount: BigNumberish,
+        highPt: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapY2XDesireX(
-      recipient: string,
-      desireX: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        recipient: string,
+        desireX: BigNumberish,
+        highPt: BigNumberish,
+        data: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    tokenX(overrides?: CallOverrides): Promise<[string]>;
+    tokenX(overrides?: CallOverrides): Promise<string>
 
-    tokenY(overrides?: CallOverrides): Promise<[string]>;
+    tokenY(overrides?: CallOverrides): Promise<string>
 
-    totalFeeXCharged(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalFeeXCharged(overrides?: CallOverrides): Promise<BigNumber>
 
-    totalFeeYCharged(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalFeeYCharged(overrides?: CallOverrides): Promise<BigNumber>
 
     userEarnX(
-      arg0: BytesLike,
-      overrides?: CallOverrides
+        arg0: BytesLike,
+        overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lastAccEarn: BigNumber;
-        sellingRemain: BigNumber;
-        sellingDec: BigNumber;
-        earn: BigNumber;
-        earnAssign: BigNumber;
-      }
-    >;
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+            lastAccEarn: BigNumber
+            sellingRemain: BigNumber
+            sellingDec: BigNumber
+            earn: BigNumber
+            earnAssign: BigNumber
+        }
+    >
 
     userEarnY(
-      arg0: BytesLike,
-      overrides?: CallOverrides
+        arg0: BytesLike,
+        overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lastAccEarn: BigNumber;
-        sellingRemain: BigNumber;
-        sellingDec: BigNumber;
-        earn: BigNumber;
-        earnAssign: BigNumber;
-      }
-    >;
-  };
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+            lastAccEarn: BigNumber
+            sellingRemain: BigNumber
+            sellingDec: BigNumber
+            earn: BigNumber
+            earnAssign: BigNumber
+        }
+    >
 
-  addLimOrderWithX(
-    recipient: string,
-    point: BigNumberish,
-    amountX: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    callStatic: {
+        addLimOrderWithX(
+            recipient: string,
+            point: BigNumberish,
+            amountX: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { orderX: BigNumber; acquireY: BigNumber }>
 
-  addLimOrderWithY(
-    recipient: string,
-    point: BigNumberish,
-    amountY: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        addLimOrderWithY(
+            recipient: string,
+            point: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { orderY: BigNumber; acquireX: BigNumber }>
 
-  assignLimOrderEarnX(
-    point: BigNumberish,
-    assignX: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        assignLimOrderEarnX(point: BigNumberish, assignX: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  assignLimOrderEarnY(
-    point: BigNumberish,
-    assignY: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        assignLimOrderEarnY(point: BigNumberish, assignY: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  burn(
-    leftPt: BigNumberish,
-    rightPt: BigNumberish,
-    liquidDelta: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        burn(
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }>
 
-  collect(
-    recipient: string,
-    leftPt: BigNumberish,
-    rightPt: BigNumberish,
-    amountXLim: BigNumberish,
-    amountYLim: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        collect(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            amountXLim: BigNumberish,
+            amountYLim: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber] & {
+                actualAmountX: BigNumber
+                actualAmountY: BigNumber
+            }
+        >
 
-  collectFeeCharged(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        collectFeeCharged(overrides?: CallOverrides): Promise<void>
 
-  collectLimOrder(
-    recipient: string,
-    point: BigNumberish,
-    collectDec: BigNumberish,
-    collectEarn: BigNumberish,
-    isEarnY: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        collectLimOrder(
+            recipient: string,
+            point: BigNumberish,
+            collectDec: BigNumberish,
+            collectEarn: BigNumberish,
+            isEarnY: boolean,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber] & {
+                actualCollectDec: BigNumber
+                actualCollectEarn: BigNumber
+            }
+        >
 
-  decLimOrderWithX(
-    point: BigNumberish,
-    deltaX: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        decLimOrderWithX(point: BigNumberish, deltaX: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  decLimOrderWithY(
-    point: BigNumberish,
-    deltaY: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        decLimOrderWithY(point: BigNumberish, deltaY: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-  expandObservationQueue(
-    newNextQueueLen: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        expandObservationQueue(newNextQueueLen: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-  factory(overrides?: CallOverrides): Promise<string>;
+        factory(overrides?: CallOverrides): Promise<string>
 
-  fee(overrides?: CallOverrides): Promise<number>;
+        fee(overrides?: CallOverrides): Promise<number>
 
-  feeChargePercent(overrides?: CallOverrides): Promise<number>;
+        feeChargePercent(overrides?: CallOverrides): Promise<number>
 
-  feeScaleX_128(overrides?: CallOverrides): Promise<BigNumber>;
+        feeScaleX_128(overrides?: CallOverrides): Promise<BigNumber>
 
-  feeScaleY_128(overrides?: CallOverrides): Promise<BigNumber>;
+        feeScaleY_128(overrides?: CallOverrides): Promise<BigNumber>
 
-  flash(
-    recipient: string,
-    amountX: BigNumberish,
-    amountY: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        flash(
+            recipient: string,
+            amountX: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-  leftMostPt(overrides?: CallOverrides): Promise<number>;
+        leftMostPt(overrides?: CallOverrides): Promise<number>
 
-  limitOrderData(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      sellingX: BigNumber;
-      earnY: BigNumber;
-      accEarnY: BigNumber;
-      sellingY: BigNumber;
-      earnX: BigNumber;
-      accEarnX: BigNumber;
+        limitOrderData(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                sellingX: BigNumber
+                earnY: BigNumber
+                accEarnY: BigNumber
+                sellingY: BigNumber
+                earnX: BigNumber
+                accEarnX: BigNumber
+            }
+        >
+
+        limitOrderSnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<IiZiSwapPool.LimitOrderStructStructOutput[]>
+
+        liquidity(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                liquidity: BigNumber
+                lastFeeScaleX_128: BigNumber
+                lastFeeScaleY_128: BigNumber
+                tokenOwedX: BigNumber
+                tokenOwedY: BigNumber
+            }
+        >
+
+        liquiditySnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
+
+        maxLiquidPt(overrides?: CallOverrides): Promise<BigNumber>
+
+        mint(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }>
+
+        observations(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [number, BigNumber, boolean] & {
+                timestamp: number
+                accPoint: BigNumber
+                init: boolean
+            }
+        >
+
+        observe(secondsAgos: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]>
+
+        orderOrEndpoint(arg0: BigNumberish, overrides?: CallOverrides): Promise<number>
+
+        pointBitmap(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        pointDelta(overrides?: CallOverrides): Promise<number>
+
+        points(
+            arg0: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+                liquidSum: BigNumber
+                liquidDelta: BigNumber
+                accFeeXOut_128: BigNumber
+                accFeeYOut_128: BigNumber
+                isEndpt: boolean
+            }
+        >
+
+        rightMostPt(overrides?: CallOverrides): Promise<number>
+
+        sqrtRate_96(overrides?: CallOverrides): Promise<BigNumber>
+
+        state(overrides?: CallOverrides): Promise<
+            [BigNumber, number, number, number, number, boolean, BigNumber, BigNumber] & {
+                sqrtPrice_96: BigNumber
+                currentPoint: number
+                observationCurrentIndex: number
+                observationQueueLen: number
+                observationNextQueueLen: number
+                locked: boolean
+                liquidity: BigNumber
+                liquidityX: BigNumber
+            }
+        >
+
+        swapX2Y(
+            recipient: string,
+            amount: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }>
+
+        swapX2YDesireY(
+            recipient: string,
+            desireY: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }>
+
+        swapY2X(
+            recipient: string,
+            amount: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }>
+
+        swapY2XDesireX(
+            recipient: string,
+            desireX: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }>
+
+        tokenX(overrides?: CallOverrides): Promise<string>
+
+        tokenY(overrides?: CallOverrides): Promise<string>
+
+        totalFeeXCharged(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalFeeYCharged(overrides?: CallOverrides): Promise<BigNumber>
+
+        userEarnX(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                lastAccEarn: BigNumber
+                sellingRemain: BigNumber
+                sellingDec: BigNumber
+                earn: BigNumber
+                earnAssign: BigNumber
+            }
+        >
+
+        userEarnY(
+            arg0: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+                lastAccEarn: BigNumber
+                sellingRemain: BigNumber
+                sellingDec: BigNumber
+                earn: BigNumber
+                earnAssign: BigNumber
+            }
+        >
     }
-  >;
 
-  limitOrderSnapshot(
-    leftPoint: BigNumberish,
-    rightPoint: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<IiZiSwapPool.LimitOrderStructStructOutput[]>;
+    filters: {
+        'AddLimitOrder(uint256,int24,bool)'(amount?: null, point?: null, sellXEarnY?: null): AddLimitOrderEventFilter
+        AddLimitOrder(amount?: null, point?: null, sellXEarnY?: null): AddLimitOrderEventFilter
 
-  liquidity(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      liquidity: BigNumber;
-      lastFeeScaleX_128: BigNumber;
-      lastFeeScaleY_128: BigNumber;
-      tokenOwedX: BigNumber;
-      tokenOwedY: BigNumber;
+        'Burn(address,int24,int24,uint128,uint256,uint256)'(
+            owner?: string | null,
+            leftPoint?: BigNumberish | null,
+            rightPoint?: BigNumberish | null,
+            liquidity?: null,
+            amountX?: null,
+            amountY?: null
+        ): BurnEventFilter
+        Burn(
+            owner?: string | null,
+            leftPoint?: BigNumberish | null,
+            rightPoint?: BigNumberish | null,
+            liquidity?: null,
+            amountX?: null,
+            amountY?: null
+        ): BurnEventFilter
+
+        'DecLimitOrder(uint256,int24,bool)'(amount?: null, point?: null, sellXEarnY?: null): DecLimitOrderEventFilter
+        DecLimitOrder(amount?: null, point?: null, sellXEarnY?: null): DecLimitOrderEventFilter
+
+        'Flash(address,address,uint256,uint256,uint256,uint256)'(
+            sender?: string | null,
+            recipient?: string | null,
+            amountX?: null,
+            amountY?: null,
+            paidX?: null,
+            paidY?: null
+        ): FlashEventFilter
+        Flash(
+            sender?: string | null,
+            recipient?: string | null,
+            amountX?: null,
+            amountY?: null,
+            paidX?: null,
+            paidY?: null
+        ): FlashEventFilter
+
+        'Mint(address,address,int24,int24,uint128,uint256,uint256)'(
+            sender?: null,
+            owner?: string | null,
+            leftPoint?: BigNumberish | null,
+            rightPoint?: BigNumberish | null,
+            liquidity?: null,
+            amountX?: null,
+            amountY?: null
+        ): MintEventFilter
+        Mint(
+            sender?: null,
+            owner?: string | null,
+            leftPoint?: BigNumberish | null,
+            rightPoint?: BigNumberish | null,
+            liquidity?: null,
+            amountX?: null,
+            amountY?: null
+        ): MintEventFilter
+
+        'Swap(address,address,uint24,bool,uint256,uint256)'(
+            tokenX?: string | null,
+            tokenY?: string | null,
+            fee?: BigNumberish | null,
+            sellXEarnY?: null,
+            amountX?: null,
+            amountY?: null
+        ): SwapEventFilter
+        Swap(
+            tokenX?: string | null,
+            tokenY?: string | null,
+            fee?: BigNumberish | null,
+            sellXEarnY?: null,
+            amountX?: null,
+            amountY?: null
+        ): SwapEventFilter
     }
-  >;
 
-  liquiditySnapshot(
-    leftPoint: BigNumberish,
-    rightPoint: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+    estimateGas: {
+        addLimOrderWithX(
+            recipient: string,
+            point: BigNumberish,
+            amountX: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-  maxLiquidPt(overrides?: CallOverrides): Promise<BigNumber>;
+        addLimOrderWithY(
+            recipient: string,
+            point: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-  mint(
-    recipient: string,
-    leftPt: BigNumberish,
-    rightPt: BigNumberish,
-    liquidDelta: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        assignLimOrderEarnX(
+            point: BigNumberish,
+            assignX: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-  observations(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [number, BigNumber, boolean] & {
-      timestamp: number;
-      accPoint: BigNumber;
-      init: boolean;
+        assignLimOrderEarnY(
+            point: BigNumberish,
+            assignY: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        burn(
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        collect(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            amountXLim: BigNumberish,
+            amountYLim: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        collectFeeCharged(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        collectLimOrder(
+            recipient: string,
+            point: BigNumberish,
+            collectDec: BigNumberish,
+            collectEarn: BigNumberish,
+            isEarnY: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        decLimOrderWithX(
+            point: BigNumberish,
+            deltaX: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        decLimOrderWithY(
+            point: BigNumberish,
+            deltaY: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        expandObservationQueue(
+            newNextQueueLen: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        factory(overrides?: CallOverrides): Promise<BigNumber>
+
+        fee(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeChargePercent(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeScaleX_128(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeScaleY_128(overrides?: CallOverrides): Promise<BigNumber>
+
+        flash(
+            recipient: string,
+            amountX: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        leftMostPt(overrides?: CallOverrides): Promise<BigNumber>
+
+        limitOrderData(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        limitOrderSnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
+        liquidity(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+        liquiditySnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
+        maxLiquidPt(overrides?: CallOverrides): Promise<BigNumber>
+
+        mint(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        observations(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        observe(secondsAgos: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>
+
+        orderOrEndpoint(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        pointBitmap(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        pointDelta(overrides?: CallOverrides): Promise<BigNumber>
+
+        points(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+        rightMostPt(overrides?: CallOverrides): Promise<BigNumber>
+
+        sqrtRate_96(overrides?: CallOverrides): Promise<BigNumber>
+
+        state(overrides?: CallOverrides): Promise<BigNumber>
+
+        swapX2Y(
+            recipient: string,
+            amount: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        swapX2YDesireY(
+            recipient: string,
+            desireY: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        swapY2X(
+            recipient: string,
+            amount: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        swapY2XDesireX(
+            recipient: string,
+            desireX: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        tokenX(overrides?: CallOverrides): Promise<BigNumber>
+
+        tokenY(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalFeeXCharged(overrides?: CallOverrides): Promise<BigNumber>
+
+        totalFeeYCharged(overrides?: CallOverrides): Promise<BigNumber>
+
+        userEarnX(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
+        userEarnY(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
     }
-  >;
 
-  observe(
-    secondsAgos: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
+    populateTransaction: {
+        addLimOrderWithX(
+            recipient: string,
+            point: BigNumberish,
+            amountX: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-  orderOrEndpoint(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
+        addLimOrderWithY(
+            recipient: string,
+            point: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-  pointBitmap(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+        assignLimOrderEarnX(
+            point: BigNumberish,
+            assignX: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-  pointDelta(overrides?: CallOverrides): Promise<number>;
+        assignLimOrderEarnY(
+            point: BigNumberish,
+            assignY: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-  points(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
-      liquidSum: BigNumber;
-      liquidDelta: BigNumber;
-      accFeeXOut_128: BigNumber;
-      accFeeYOut_128: BigNumber;
-      isEndpt: boolean;
+        burn(
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        collect(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            amountXLim: BigNumberish,
+            amountYLim: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        collectFeeCharged(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        collectLimOrder(
+            recipient: string,
+            point: BigNumberish,
+            collectDec: BigNumberish,
+            collectEarn: BigNumberish,
+            isEarnY: boolean,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        decLimOrderWithX(
+            point: BigNumberish,
+            deltaX: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        decLimOrderWithY(
+            point: BigNumberish,
+            deltaY: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        expandObservationQueue(
+            newNextQueueLen: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        factory(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        fee(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeChargePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeScaleX_128(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeScaleY_128(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        flash(
+            recipient: string,
+            amountX: BigNumberish,
+            amountY: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        leftMostPt(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        limitOrderData(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        limitOrderSnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        liquidity(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        liquiditySnapshot(
+            leftPoint: BigNumberish,
+            rightPoint: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        maxLiquidPt(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        mint(
+            recipient: string,
+            leftPt: BigNumberish,
+            rightPt: BigNumberish,
+            liquidDelta: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        observations(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        observe(secondsAgos: BigNumberish[], overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        orderOrEndpoint(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        pointBitmap(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        pointDelta(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        points(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        rightMostPt(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        sqrtRate_96(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        state(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        swapX2Y(
+            recipient: string,
+            amount: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapX2YDesireY(
+            recipient: string,
+            desireY: BigNumberish,
+            lowPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapY2X(
+            recipient: string,
+            amount: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapY2XDesireX(
+            recipient: string,
+            desireX: BigNumberish,
+            highPt: BigNumberish,
+            data: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        tokenX(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        tokenY(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        totalFeeXCharged(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        totalFeeYCharged(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        userEarnX(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        userEarnY(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
     }
-  >;
-
-  rightMostPt(overrides?: CallOverrides): Promise<number>;
-
-  sqrtRate_96(overrides?: CallOverrides): Promise<BigNumber>;
-
-  state(
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      number,
-      number,
-      number,
-      number,
-      boolean,
-      BigNumber,
-      BigNumber
-    ] & {
-      sqrtPrice_96: BigNumber;
-      currentPoint: number;
-      observationCurrentIndex: number;
-      observationQueueLen: number;
-      observationNextQueueLen: number;
-      locked: boolean;
-      liquidity: BigNumber;
-      liquidityX: BigNumber;
-    }
-  >;
-
-  swapX2Y(
-    recipient: string,
-    amount: BigNumberish,
-    lowPt: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapX2YDesireY(
-    recipient: string,
-    desireY: BigNumberish,
-    lowPt: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapY2X(
-    recipient: string,
-    amount: BigNumberish,
-    highPt: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapY2XDesireX(
-    recipient: string,
-    desireX: BigNumberish,
-    highPt: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  tokenX(overrides?: CallOverrides): Promise<string>;
-
-  tokenY(overrides?: CallOverrides): Promise<string>;
-
-  totalFeeXCharged(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalFeeYCharged(overrides?: CallOverrides): Promise<BigNumber>;
-
-  userEarnX(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      lastAccEarn: BigNumber;
-      sellingRemain: BigNumber;
-      sellingDec: BigNumber;
-      earn: BigNumber;
-      earnAssign: BigNumber;
-    }
-  >;
-
-  userEarnY(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      lastAccEarn: BigNumber;
-      sellingRemain: BigNumber;
-      sellingDec: BigNumber;
-      earn: BigNumber;
-      earnAssign: BigNumber;
-    }
-  >;
-
-  callStatic: {
-    addLimOrderWithX(
-      recipient: string,
-      point: BigNumberish,
-      amountX: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { orderX: BigNumber; acquireY: BigNumber }
-    >;
-
-    addLimOrderWithY(
-      recipient: string,
-      point: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { orderY: BigNumber; acquireX: BigNumber }
-    >;
-
-    assignLimOrderEarnX(
-      point: BigNumberish,
-      assignX: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    assignLimOrderEarnY(
-      point: BigNumberish,
-      assignY: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    burn(
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }
-    >;
-
-    collect(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      amountXLim: BigNumberish,
-      amountYLim: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        actualAmountX: BigNumber;
-        actualAmountY: BigNumber;
-      }
-    >;
-
-    collectFeeCharged(overrides?: CallOverrides): Promise<void>;
-
-    collectLimOrder(
-      recipient: string,
-      point: BigNumberish,
-      collectDec: BigNumberish,
-      collectEarn: BigNumberish,
-      isEarnY: boolean,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        actualCollectDec: BigNumber;
-        actualCollectEarn: BigNumber;
-      }
-    >;
-
-    decLimOrderWithX(
-      point: BigNumberish,
-      deltaX: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    decLimOrderWithY(
-      point: BigNumberish,
-      deltaY: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    expandObservationQueue(
-      newNextQueueLen: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    factory(overrides?: CallOverrides): Promise<string>;
-
-    fee(overrides?: CallOverrides): Promise<number>;
-
-    feeChargePercent(overrides?: CallOverrides): Promise<number>;
-
-    feeScaleX_128(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeScaleY_128(overrides?: CallOverrides): Promise<BigNumber>;
-
-    flash(
-      recipient: string,
-      amountX: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    leftMostPt(overrides?: CallOverrides): Promise<number>;
-
-    limitOrderData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        sellingX: BigNumber;
-        earnY: BigNumber;
-        accEarnY: BigNumber;
-        sellingY: BigNumber;
-        earnX: BigNumber;
-        accEarnX: BigNumber;
-      }
-    >;
-
-    limitOrderSnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<IiZiSwapPool.LimitOrderStructStructOutput[]>;
-
-    liquidity(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        liquidity: BigNumber;
-        lastFeeScaleX_128: BigNumber;
-        lastFeeScaleY_128: BigNumber;
-        tokenOwedX: BigNumber;
-        tokenOwedY: BigNumber;
-      }
-    >;
-
-    liquiditySnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    maxLiquidPt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mint(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }
-    >;
-
-    observations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [number, BigNumber, boolean] & {
-        timestamp: number;
-        accPoint: BigNumber;
-        init: boolean;
-      }
-    >;
-
-    observe(
-      secondsAgos: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    orderOrEndpoint(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    pointBitmap(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pointDelta(overrides?: CallOverrides): Promise<number>;
-
-    points(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
-        liquidSum: BigNumber;
-        liquidDelta: BigNumber;
-        accFeeXOut_128: BigNumber;
-        accFeeYOut_128: BigNumber;
-        isEndpt: boolean;
-      }
-    >;
-
-    rightMostPt(overrides?: CallOverrides): Promise<number>;
-
-    sqrtRate_96(overrides?: CallOverrides): Promise<BigNumber>;
-
-    state(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        number,
-        number,
-        number,
-        number,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        sqrtPrice_96: BigNumber;
-        currentPoint: number;
-        observationCurrentIndex: number;
-        observationQueueLen: number;
-        observationNextQueueLen: number;
-        locked: boolean;
-        liquidity: BigNumber;
-        liquidityX: BigNumber;
-      }
-    >;
-
-    swapX2Y(
-      recipient: string,
-      amount: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }
-    >;
-
-    swapX2YDesireY(
-      recipient: string,
-      desireY: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }
-    >;
-
-    swapY2X(
-      recipient: string,
-      amount: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }
-    >;
-
-    swapY2XDesireX(
-      recipient: string,
-      desireX: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountX: BigNumber; amountY: BigNumber }
-    >;
-
-    tokenX(overrides?: CallOverrides): Promise<string>;
-
-    tokenY(overrides?: CallOverrides): Promise<string>;
-
-    totalFeeXCharged(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalFeeYCharged(overrides?: CallOverrides): Promise<BigNumber>;
-
-    userEarnX(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lastAccEarn: BigNumber;
-        sellingRemain: BigNumber;
-        sellingDec: BigNumber;
-        earn: BigNumber;
-        earnAssign: BigNumber;
-      }
-    >;
-
-    userEarnY(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lastAccEarn: BigNumber;
-        sellingRemain: BigNumber;
-        sellingDec: BigNumber;
-        earn: BigNumber;
-        earnAssign: BigNumber;
-      }
-    >;
-  };
-
-  filters: {
-    "AddLimitOrder(uint256,int24,bool)"(
-      amount?: null,
-      point?: null,
-      sellXEarnY?: null
-    ): AddLimitOrderEventFilter;
-    AddLimitOrder(
-      amount?: null,
-      point?: null,
-      sellXEarnY?: null
-    ): AddLimitOrderEventFilter;
-
-    "Burn(address,int24,int24,uint128,uint256,uint256)"(
-      owner?: string | null,
-      leftPoint?: BigNumberish | null,
-      rightPoint?: BigNumberish | null,
-      liquidity?: null,
-      amountX?: null,
-      amountY?: null
-    ): BurnEventFilter;
-    Burn(
-      owner?: string | null,
-      leftPoint?: BigNumberish | null,
-      rightPoint?: BigNumberish | null,
-      liquidity?: null,
-      amountX?: null,
-      amountY?: null
-    ): BurnEventFilter;
-
-    "DecLimitOrder(uint256,int24,bool)"(
-      amount?: null,
-      point?: null,
-      sellXEarnY?: null
-    ): DecLimitOrderEventFilter;
-    DecLimitOrder(
-      amount?: null,
-      point?: null,
-      sellXEarnY?: null
-    ): DecLimitOrderEventFilter;
-
-    "Flash(address,address,uint256,uint256,uint256,uint256)"(
-      sender?: string | null,
-      recipient?: string | null,
-      amountX?: null,
-      amountY?: null,
-      paidX?: null,
-      paidY?: null
-    ): FlashEventFilter;
-    Flash(
-      sender?: string | null,
-      recipient?: string | null,
-      amountX?: null,
-      amountY?: null,
-      paidX?: null,
-      paidY?: null
-    ): FlashEventFilter;
-
-    "Mint(address,address,int24,int24,uint128,uint256,uint256)"(
-      sender?: null,
-      owner?: string | null,
-      leftPoint?: BigNumberish | null,
-      rightPoint?: BigNumberish | null,
-      liquidity?: null,
-      amountX?: null,
-      amountY?: null
-    ): MintEventFilter;
-    Mint(
-      sender?: null,
-      owner?: string | null,
-      leftPoint?: BigNumberish | null,
-      rightPoint?: BigNumberish | null,
-      liquidity?: null,
-      amountX?: null,
-      amountY?: null
-    ): MintEventFilter;
-
-    "Swap(address,address,uint24,bool,uint256,uint256)"(
-      tokenX?: string | null,
-      tokenY?: string | null,
-      fee?: BigNumberish | null,
-      sellXEarnY?: null,
-      amountX?: null,
-      amountY?: null
-    ): SwapEventFilter;
-    Swap(
-      tokenX?: string | null,
-      tokenY?: string | null,
-      fee?: BigNumberish | null,
-      sellXEarnY?: null,
-      amountX?: null,
-      amountY?: null
-    ): SwapEventFilter;
-  };
-
-  estimateGas: {
-    addLimOrderWithX(
-      recipient: string,
-      point: BigNumberish,
-      amountX: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    addLimOrderWithY(
-      recipient: string,
-      point: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    assignLimOrderEarnX(
-      point: BigNumberish,
-      assignX: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    assignLimOrderEarnY(
-      point: BigNumberish,
-      assignY: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    burn(
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collect(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      amountXLim: BigNumberish,
-      amountYLim: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collectFeeCharged(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collectLimOrder(
-      recipient: string,
-      point: BigNumberish,
-      collectDec: BigNumberish,
-      collectEarn: BigNumberish,
-      isEarnY: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    decLimOrderWithX(
-      point: BigNumberish,
-      deltaX: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    decLimOrderWithY(
-      point: BigNumberish,
-      deltaY: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    expandObservationQueue(
-      newNextQueueLen: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    factory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    fee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeChargePercent(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeScaleX_128(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeScaleY_128(overrides?: CallOverrides): Promise<BigNumber>;
-
-    flash(
-      recipient: string,
-      amountX: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    leftMostPt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    limitOrderData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    limitOrderSnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidity(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    liquiditySnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxLiquidPt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mint(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    observations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    observe(
-      secondsAgos: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    orderOrEndpoint(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pointBitmap(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pointDelta(overrides?: CallOverrides): Promise<BigNumber>;
-
-    points(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    rightMostPt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sqrtRate_96(overrides?: CallOverrides): Promise<BigNumber>;
-
-    state(overrides?: CallOverrides): Promise<BigNumber>;
-
-    swapX2Y(
-      recipient: string,
-      amount: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    swapX2YDesireY(
-      recipient: string,
-      desireY: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    swapY2X(
-      recipient: string,
-      amount: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    swapY2XDesireX(
-      recipient: string,
-      desireX: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    tokenX(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tokenY(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalFeeXCharged(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalFeeYCharged(overrides?: CallOverrides): Promise<BigNumber>;
-
-    userEarnX(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    userEarnY(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    addLimOrderWithX(
-      recipient: string,
-      point: BigNumberish,
-      amountX: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addLimOrderWithY(
-      recipient: string,
-      point: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    assignLimOrderEarnX(
-      point: BigNumberish,
-      assignX: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    assignLimOrderEarnY(
-      point: BigNumberish,
-      assignY: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    burn(
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collect(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      amountXLim: BigNumberish,
-      amountYLim: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collectFeeCharged(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collectLimOrder(
-      recipient: string,
-      point: BigNumberish,
-      collectDec: BigNumberish,
-      collectEarn: BigNumberish,
-      isEarnY: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    decLimOrderWithX(
-      point: BigNumberish,
-      deltaX: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    decLimOrderWithY(
-      point: BigNumberish,
-      deltaY: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    expandObservationQueue(
-      newNextQueueLen: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeChargePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeScaleX_128(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeScaleY_128(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    flash(
-      recipient: string,
-      amountX: BigNumberish,
-      amountY: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leftMostPt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    limitOrderData(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    limitOrderSnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidity(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquiditySnapshot(
-      leftPoint: BigNumberish,
-      rightPoint: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxLiquidPt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mint(
-      recipient: string,
-      leftPt: BigNumberish,
-      rightPt: BigNumberish,
-      liquidDelta: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    observations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    observe(
-      secondsAgos: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    orderOrEndpoint(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pointBitmap(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pointDelta(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    points(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    rightMostPt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sqrtRate_96(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    state(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    swapX2Y(
-      recipient: string,
-      amount: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swapX2YDesireY(
-      recipient: string,
-      desireY: BigNumberish,
-      lowPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swapY2X(
-      recipient: string,
-      amount: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swapY2XDesireX(
-      recipient: string,
-      desireX: BigNumberish,
-      highPt: BigNumberish,
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    tokenX(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tokenY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalFeeXCharged(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalFeeYCharged(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    userEarnX(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    userEarnY(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
 }

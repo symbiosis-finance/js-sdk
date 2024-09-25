@@ -2,344 +2,265 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface OctoPoolFeeCollectorInterface extends utils.Interface {
-  contractName: "OctoPoolFeeCollector";
-  functions: {
-    "WAD()": FunctionFragment;
-    "changeFeeRate(uint256)": FunctionFragment;
-    "collectFee(uint256,address)": FunctionFragment;
-    "feeRate()": FunctionFragment;
-    "feeReceiver()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "setFeeReceiver(address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-  };
+    contractName: 'OctoPoolFeeCollector'
+    functions: {
+        'WAD()': FunctionFragment
+        'changeFeeRate(uint256)': FunctionFragment
+        'collectFee(uint256,address)': FunctionFragment
+        'feeRate()': FunctionFragment
+        'feeReceiver()': FunctionFragment
+        'owner()': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'setFeeReceiver(address)': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "WAD", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "changeFeeRate",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collectFee",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(functionFragment: "feeRate", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "feeReceiver",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFeeReceiver",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
+    encodeFunctionData(functionFragment: 'WAD', values?: undefined): string
+    encodeFunctionData(functionFragment: 'changeFeeRate', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'collectFee', values: [BigNumberish, string]): string
+    encodeFunctionData(functionFragment: 'feeRate', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeReceiver', values?: undefined): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'setFeeReceiver', values: [string]): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
 
-  decodeFunctionResult(functionFragment: "WAD", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "changeFeeRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "collectFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "feeRate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "feeReceiver",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setFeeReceiver",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'WAD', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'changeFeeRate', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'collectFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeRate', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeReceiver', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFeeReceiver', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
 
-  events: {
-    "ClaimedTokens(address,uint256)": EventFragment;
-    "FeeCollected(address,uint256,uint256)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-  };
+    events: {
+        'ClaimedTokens(address,uint256)': EventFragment
+        'FeeCollected(address,uint256,uint256)': EventFragment
+        'OwnershipTransferred(address,address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "ClaimedTokens"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeeCollected"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'ClaimedTokens'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'FeeCollected'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
 }
 
-export type ClaimedTokensEvent = TypedEvent<
-  [string, BigNumber],
-  { to: string; balance: BigNumber }
->;
+export type ClaimedTokensEvent = TypedEvent<[string, BigNumber], { to: string; balance: BigNumber }>
 
-export type ClaimedTokensEventFilter = TypedEventFilter<ClaimedTokensEvent>;
+export type ClaimedTokensEventFilter = TypedEventFilter<ClaimedTokensEvent>
 
 export type FeeCollectedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { token: string; amount: BigNumber; fee: BigNumber }
->;
+    [string, BigNumber, BigNumber],
+    { token: string; amount: BigNumber; fee: BigNumber }
+>
 
-export type FeeCollectedEventFilter = TypedEventFilter<FeeCollectedEvent>;
+export type FeeCollectedEventFilter = TypedEventFilter<FeeCollectedEvent>
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
 export interface OctoPoolFeeCollector extends BaseContract {
-  contractName: "OctoPoolFeeCollector";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'OctoPoolFeeCollector'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: OctoPoolFeeCollectorInterface;
+    interface: OctoPoolFeeCollectorInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    WAD(overrides?: CallOverrides): Promise<[BigNumber]>;
+    functions: {
+        WAD(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    changeFeeRate(
-      _newFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        changeFeeRate(
+            _newFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    collectFee(
-      amount: BigNumberish,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        collectFee(
+            amount: BigNumberish,
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    feeRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+        feeRate(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    feeReceiver(overrides?: CallOverrides): Promise<[string]>;
+        feeReceiver(overrides?: CallOverrides): Promise<[string]>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+        owner(overrides?: CallOverrides): Promise<[string]>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    setFeeReceiver(
-      _newFeeReceiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        setFeeReceiver(
+            _newFeeReceiver: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
 
-  WAD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  changeFeeRate(
-    _newFeeRate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  collectFee(
-    amount: BigNumberish,
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  feeRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeReceiver(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setFeeReceiver(
-    _newFeeReceiver: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    WAD(overrides?: CallOverrides): Promise<BigNumber>;
+    WAD(overrides?: CallOverrides): Promise<BigNumber>
 
     changeFeeRate(
-      _newFeeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        _newFeeRate: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     collectFee(
-      amount: BigNumberish,
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amount: BigNumberish,
+        token: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    feeRate(overrides?: CallOverrides): Promise<BigNumber>;
+    feeRate(overrides?: CallOverrides): Promise<BigNumber>
 
-    feeReceiver(overrides?: CallOverrides): Promise<string>;
+    feeReceiver(overrides?: CallOverrides): Promise<string>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    owner(overrides?: CallOverrides): Promise<string>
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    setFeeReceiver(
-      _newFeeReceiver: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
-
-  filters: {
-    "ClaimedTokens(address,uint256)"(
-      to?: null,
-      balance?: null
-    ): ClaimedTokensEventFilter;
-    ClaimedTokens(to?: null, balance?: null): ClaimedTokensEventFilter;
-
-    "FeeCollected(address,uint256,uint256)"(
-      token?: null,
-      amount?: null,
-      fee?: null
-    ): FeeCollectedEventFilter;
-    FeeCollected(
-      token?: null,
-      amount?: null,
-      fee?: null
-    ): FeeCollectedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-  };
-
-  estimateGas: {
-    WAD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    changeFeeRate(
-      _newFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collectFee(
-      amount: BigNumberish,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    feeRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeReceiver(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     setFeeReceiver(
-      _newFeeReceiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        _newFeeReceiver: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  populateTransaction: {
-    WAD(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    callStatic: {
+        WAD(overrides?: CallOverrides): Promise<BigNumber>
 
-    changeFeeRate(
-      _newFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        changeFeeRate(_newFeeRate: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-    collectFee(
-      amount: BigNumberish,
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        collectFee(amount: BigNumberish, token: string, overrides?: CallOverrides): Promise<void>
 
-    feeRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        feeRate(overrides?: CallOverrides): Promise<BigNumber>
 
-    feeReceiver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        feeReceiver(overrides?: CallOverrides): Promise<string>
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        owner(overrides?: CallOverrides): Promise<string>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
 
-    setFeeReceiver(
-      _newFeeReceiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        setFeeReceiver(_newFeeReceiver: string, overrides?: CallOverrides): Promise<void>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+    }
+
+    filters: {
+        'ClaimedTokens(address,uint256)'(to?: null, balance?: null): ClaimedTokensEventFilter
+        ClaimedTokens(to?: null, balance?: null): ClaimedTokensEventFilter
+
+        'FeeCollected(address,uint256,uint256)'(token?: null, amount?: null, fee?: null): FeeCollectedEventFilter
+        FeeCollected(token?: null, amount?: null, fee?: null): FeeCollectedEventFilter
+
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+    }
+
+    estimateGas: {
+        WAD(overrides?: CallOverrides): Promise<BigNumber>
+
+        changeFeeRate(
+            _newFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        collectFee(
+            amount: BigNumberish,
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        feeRate(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeReceiver(overrides?: CallOverrides): Promise<BigNumber>
+
+        owner(overrides?: CallOverrides): Promise<BigNumber>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        setFeeReceiver(
+            _newFeeReceiver: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        WAD(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        changeFeeRate(
+            _newFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        collectFee(
+            amount: BigNumberish,
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        feeRate(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeReceiver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        setFeeReceiver(
+            _newFeeReceiver: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }

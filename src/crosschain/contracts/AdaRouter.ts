@@ -2,1414 +2,1266 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PayableOverrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface AdaRouterInterface extends utils.Interface {
-  contractName: "AdaRouter";
-  functions: {
-    "WADA()": FunctionFragment;
-    "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "addLiquidityADA(address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "factory()": FunctionFragment;
-    "getAmountIn(uint256,uint256,uint256)": FunctionFragment;
-    "getAmountOut(uint256,uint256,uint256)": FunctionFragment;
-    "getAmountsIn(uint256,address[])": FunctionFragment;
-    "getAmountsOut(uint256,address[])": FunctionFragment;
-    "quote(uint256,uint256,uint256)": FunctionFragment;
-    "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "removeLiquidityADA(address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "removeLiquidityADASupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256)": FunctionFragment;
-    "removeLiquidityADAWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
-    "removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
-    "removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
-    "swapADAForExactTokens(uint256,address[],address,uint256)": FunctionFragment;
-    "swapExactADAForTokens(uint256,address[],address,uint256)": FunctionFragment;
-    "swapExactADAForTokensSupportingFeeOnTransferTokens(uint256,address[],address,uint256)": FunctionFragment;
-    "swapExactTokensForADA(uint256,uint256,address[],address,uint256)": FunctionFragment;
-    "swapExactTokensForADASupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)": FunctionFragment;
-    "swapExactTokensForTokens(uint256,uint256,address[],address,uint256)": FunctionFragment;
-    "swapExactTokensForTokensSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)": FunctionFragment;
-    "swapTokensForExactADA(uint256,uint256,address[],address,uint256)": FunctionFragment;
-    "swapTokensForExactTokens(uint256,uint256,address[],address,uint256)": FunctionFragment;
-  };
+    contractName: 'AdaRouter'
+    functions: {
+        'WADA()': FunctionFragment
+        'addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'addLiquidityADA(address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'factory()': FunctionFragment
+        'getAmountIn(uint256,uint256,uint256)': FunctionFragment
+        'getAmountOut(uint256,uint256,uint256)': FunctionFragment
+        'getAmountsIn(uint256,address[])': FunctionFragment
+        'getAmountsOut(uint256,address[])': FunctionFragment
+        'quote(uint256,uint256,uint256)': FunctionFragment
+        'removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'removeLiquidityADA(address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'removeLiquidityADASupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256)': FunctionFragment
+        'removeLiquidityADAWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)': FunctionFragment
+        'removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)': FunctionFragment
+        'removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)': FunctionFragment
+        'swapADAForExactTokens(uint256,address[],address,uint256)': FunctionFragment
+        'swapExactADAForTokens(uint256,address[],address,uint256)': FunctionFragment
+        'swapExactADAForTokensSupportingFeeOnTransferTokens(uint256,address[],address,uint256)': FunctionFragment
+        'swapExactTokensForADA(uint256,uint256,address[],address,uint256)': FunctionFragment
+        'swapExactTokensForADASupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)': FunctionFragment
+        'swapExactTokensForTokens(uint256,uint256,address[],address,uint256)': FunctionFragment
+        'swapExactTokensForTokensSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)': FunctionFragment
+        'swapTokensForExactADA(uint256,uint256,address[],address,uint256)': FunctionFragment
+        'swapTokensForExactTokens(uint256,uint256,address[],address,uint256)': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "WADA", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "addLiquidity",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addLiquidityADA",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getAmountIn",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAmountOut",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAmountsIn",
-    values: [BigNumberish, string[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAmountsOut",
-    values: [BigNumberish, string[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "quote",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidity",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityADA",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityADASupportingFeeOnTransferTokens",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityADAWithPermit",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityADAWithPermitSupportingFeeOnTransferTokens",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityWithPermit",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      boolean,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapADAForExactTokens",
-    values: [BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactADAForTokens",
-    values: [BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactADAForTokensSupportingFeeOnTransferTokens",
-    values: [BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactTokensForADA",
-    values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactTokensForADASupportingFeeOnTransferTokens",
-    values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactTokensForTokens",
-    values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-    values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapTokensForExactADA",
-    values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "swapTokensForExactTokens",
-    values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
-  ): string;
+    encodeFunctionData(functionFragment: 'WADA', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'addLiquidity',
+        values: [string, string, BigNumberish, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'addLiquidityADA',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'factory', values?: undefined): string
+    encodeFunctionData(functionFragment: 'getAmountIn', values: [BigNumberish, BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'getAmountOut', values: [BigNumberish, BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'getAmountsIn', values: [BigNumberish, string[]]): string
+    encodeFunctionData(functionFragment: 'getAmountsOut', values: [BigNumberish, string[]]): string
+    encodeFunctionData(functionFragment: 'quote', values: [BigNumberish, BigNumberish, BigNumberish]): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidity',
+        values: [string, string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityADA',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityADASupportingFeeOnTransferTokens',
+        values: [string, BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityADAWithPermit',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            string,
+            BigNumberish,
+            boolean,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityADAWithPermitSupportingFeeOnTransferTokens',
+        values: [
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            string,
+            BigNumberish,
+            boolean,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'removeLiquidityWithPermit',
+        values: [
+            string,
+            string,
+            BigNumberish,
+            BigNumberish,
+            BigNumberish,
+            string,
+            BigNumberish,
+            boolean,
+            BigNumberish,
+            BytesLike,
+            BytesLike
+        ]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapADAForExactTokens',
+        values: [BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactADAForTokens',
+        values: [BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactADAForTokensSupportingFeeOnTransferTokens',
+        values: [BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactTokensForADA',
+        values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactTokensForADASupportingFeeOnTransferTokens',
+        values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactTokensForTokens',
+        values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapExactTokensForTokensSupportingFeeOnTransferTokens',
+        values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapTokensForExactADA',
+        values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'swapTokensForExactTokens',
+        values: [BigNumberish, BigNumberish, string[], string, BigNumberish]
+    ): string
 
-  decodeFunctionResult(functionFragment: "WADA", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addLiquidityADA",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountIn",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountOut",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountsIn",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAmountsOut",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "quote", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityADA",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityADASupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityADAWithPermit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityADAWithPermitSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityWithPermit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapADAForExactTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactADAForTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactADAForTokensSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactTokensForADA",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactTokensForADASupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactTokensForTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapTokensForExactADA",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "swapTokensForExactTokens",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'WADA', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'addLiquidity', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'addLiquidityADA', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'factory', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getAmountIn', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getAmountOut', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getAmountsIn', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getAmountsOut', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'quote', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidity', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityADA', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityADASupportingFeeOnTransferTokens', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityADAWithPermit', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'removeLiquidityADAWithPermitSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(functionFragment: 'removeLiquidityWithPermit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapADAForExactTokens', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapExactADAForTokens', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'swapExactADAForTokensSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(functionFragment: 'swapExactTokensForADA', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'swapExactTokensForADASupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(functionFragment: 'swapExactTokensForTokens', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'swapExactTokensForTokensSupportingFeeOnTransferTokens',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(functionFragment: 'swapTokensForExactADA', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'swapTokensForExactTokens', data: BytesLike): Result
 
-  events: {};
+    events: {}
 }
 
 export interface AdaRouter extends BaseContract {
-  contractName: "AdaRouter";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'AdaRouter'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: AdaRouterInterface;
+    interface: AdaRouterInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    WADA(overrides?: CallOverrides): Promise<[string]>;
+    functions: {
+        WADA(overrides?: CallOverrides): Promise<[string]>
 
-    addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    addLiquidityADA(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        addLiquidityADA(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    factory(overrides?: CallOverrides): Promise<[string]>;
+        factory(overrides?: CallOverrides): Promise<[string]>
 
-    getAmountIn(
-      amountOut: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amountIn: BigNumber }>;
+        getAmountIn(
+            amountOut: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { amountIn: BigNumber }>
 
-    getAmountOut(
-      amountIn: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
+        getAmountOut(
+            amountIn: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { amountOut: BigNumber }>
 
-    getAmountsIn(
-      amountOut: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
+        getAmountsIn(
+            amountOut: BigNumberish,
+            path: string[],
+            overrides?: CallOverrides
+        ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
+        getAmountsOut(
+            amountIn: BigNumberish,
+            path: string[],
+            overrides?: CallOverrides
+        ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>
 
-    quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amountB: BigNumber }>;
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber] & { amountB: BigNumber }>
 
-    removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityADA(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityADA(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityADASupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityADASupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityADAWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityADAWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapADAForExactTokens(
-      amountOut: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapADAForExactTokens(
+            amountOut: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactADAForTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactADAForTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactADAForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactADAForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactTokensForADA(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactTokensForADA(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactTokensForADASupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactTokensForADASupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactTokensForTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactTokensForTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapTokensForExactADA(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        swapTokensForExactADA(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    swapTokensForExactTokens(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+        swapTokensForExactTokens(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
 
-  WADA(overrides?: CallOverrides): Promise<string>;
-
-  addLiquidity(
-    tokenA: string,
-    tokenB: string,
-    amountADesired: BigNumberish,
-    amountBDesired: BigNumberish,
-    amountAMin: BigNumberish,
-    amountBMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  addLiquidityADA(
-    token: string,
-    amountTokenDesired: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountADAMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  factory(overrides?: CallOverrides): Promise<string>;
-
-  getAmountIn(
-    amountOut: BigNumberish,
-    reserveIn: BigNumberish,
-    reserveOut: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getAmountOut(
-    amountIn: BigNumberish,
-    reserveIn: BigNumberish,
-    reserveOut: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getAmountsIn(
-    amountOut: BigNumberish,
-    path: string[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  getAmountsOut(
-    amountIn: BigNumberish,
-    path: string[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  quote(
-    amountA: BigNumberish,
-    reserveA: BigNumberish,
-    reserveB: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  removeLiquidity(
-    tokenA: string,
-    tokenB: string,
-    liquidity: BigNumberish,
-    amountAMin: BigNumberish,
-    amountBMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityADA(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountADAMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityADASupportingFeeOnTransferTokens(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountADAMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityADAWithPermit(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountADAMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    approveMax: boolean,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
-    token: string,
-    liquidity: BigNumberish,
-    amountTokenMin: BigNumberish,
-    amountADAMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    approveMax: boolean,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidityWithPermit(
-    tokenA: string,
-    tokenB: string,
-    liquidity: BigNumberish,
-    amountAMin: BigNumberish,
-    amountBMin: BigNumberish,
-    to: string,
-    deadline: BigNumberish,
-    approveMax: boolean,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapADAForExactTokens(
-    amountOut: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactADAForTokens(
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactADAForTokensSupportingFeeOnTransferTokens(
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactTokensForADA(
-    amountIn: BigNumberish,
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactTokensForADASupportingFeeOnTransferTokens(
-    amountIn: BigNumberish,
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactTokensForTokens(
-    amountIn: BigNumberish,
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapExactTokensForTokensSupportingFeeOnTransferTokens(
-    amountIn: BigNumberish,
-    amountOutMin: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapTokensForExactADA(
-    amountOut: BigNumberish,
-    amountInMax: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  swapTokensForExactTokens(
-    amountOut: BigNumberish,
-    amountInMax: BigNumberish,
-    path: string[],
-    to: string,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    WADA(overrides?: CallOverrides): Promise<string>;
+    WADA(overrides?: CallOverrides): Promise<string>
 
     addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amountA: BigNumber;
-        amountB: BigNumber;
-        liquidity: BigNumber;
-      }
-    >;
+        tokenA: string,
+        tokenB: string,
+        amountADesired: BigNumberish,
+        amountBDesired: BigNumberish,
+        amountAMin: BigNumberish,
+        amountBMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     addLiquidityADA(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amountToken: BigNumber;
-        amountADA: BigNumber;
-        liquidity: BigNumber;
-      }
-    >;
+        token: string,
+        amountTokenDesired: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountADAMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    factory(overrides?: CallOverrides): Promise<string>;
+    factory(overrides?: CallOverrides): Promise<string>
 
     getAmountIn(
-      amountOut: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        amountOut: BigNumberish,
+        reserveIn: BigNumberish,
+        reserveOut: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
     getAmountOut(
-      amountIn: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        amountIn: BigNumberish,
+        reserveIn: BigNumberish,
+        reserveOut: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
-    getAmountsIn(
-      amountOut: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    getAmountsIn(amountOut: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber[]>
 
     quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        amountA: BigNumberish,
+        reserveA: BigNumberish,
+        reserveB: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
     removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
-    >;
+        tokenA: string,
+        tokenB: string,
+        liquidity: BigNumberish,
+        amountAMin: BigNumberish,
+        amountBMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityADA(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountToken: BigNumber; amountADA: BigNumber }
-    >;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountADAMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityADASupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountADAMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityADAWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountToken: BigNumber; amountADA: BigNumber }
-    >;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountADAMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        approveMax: boolean,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        token: string,
+        liquidity: BigNumberish,
+        amountTokenMin: BigNumberish,
+        amountADAMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        approveMax: boolean,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
-    >;
+        tokenA: string,
+        tokenB: string,
+        liquidity: BigNumberish,
+        amountAMin: BigNumberish,
+        amountBMin: BigNumberish,
+        to: string,
+        deadline: BigNumberish,
+        approveMax: boolean,
+        v: BigNumberish,
+        r: BytesLike,
+        s: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapADAForExactTokens(
-      amountOut: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+        amountOut: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactADAForTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactADAForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactTokensForADA(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+        amountIn: BigNumberish,
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactTokensForADASupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amountIn: BigNumberish,
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactTokensForTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+        amountIn: BigNumberish,
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        amountIn: BigNumberish,
+        amountOutMin: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapTokensForExactADA(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+        amountOut: BigNumberish,
+        amountInMax: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     swapTokensForExactTokens(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-  };
+        amountOut: BigNumberish,
+        amountInMax: BigNumberish,
+        path: string[],
+        to: string,
+        deadline: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  filters: {};
+    callStatic: {
+        WADA(overrides?: CallOverrides): Promise<string>
 
-  estimateGas: {
-    WADA(overrides?: CallOverrides): Promise<BigNumber>;
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                amountA: BigNumber
+                amountB: BigNumber
+                liquidity: BigNumber
+            }
+        >
 
-    addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        addLiquidityADA(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                amountToken: BigNumber
+                amountADA: BigNumber
+                liquidity: BigNumber
+            }
+        >
 
-    addLiquidityADA(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        factory(overrides?: CallOverrides): Promise<string>
 
-    factory(overrides?: CallOverrides): Promise<BigNumber>;
+        getAmountIn(
+            amountOut: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    getAmountIn(
-      amountOut: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getAmountOut(
+            amountIn: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    getAmountOut(
-      amountIn: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getAmountsIn(amountOut: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    getAmountsIn(
-      amountOut: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber[]>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }>
 
-    removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityADA(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountToken: BigNumber; amountADA: BigNumber }>
 
-    removeLiquidityADA(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityADASupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    removeLiquidityADASupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityADAWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountToken: BigNumber; amountADA: BigNumber }>
 
-    removeLiquidityADAWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }>
 
-    removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapADAForExactTokens(
+            amountOut: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
 
-    swapADAForExactTokens(
-      amountOut: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactADAForTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
 
-    swapExactADAForTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactADAForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    swapExactADAForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactTokensForADA(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
 
-    swapExactTokensForADA(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactTokensForADASupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    swapExactTokensForADASupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactTokensForTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
 
-    swapExactTokensForTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapTokensForExactADA(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
 
-    swapTokensForExactADA(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        swapTokensForExactTokens(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
+    }
 
-    swapTokensForExactTokens(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+    filters: {}
 
-  populateTransaction: {
-    WADA(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    estimateGas: {
+        WADA(overrides?: CallOverrides): Promise<BigNumber>
 
-    addLiquidity(
-      tokenA: string,
-      tokenB: string,
-      amountADesired: BigNumberish,
-      amountBDesired: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    addLiquidityADA(
-      token: string,
-      amountTokenDesired: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        addLiquidityADA(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        factory(overrides?: CallOverrides): Promise<BigNumber>
 
-    getAmountIn(
-      amountOut: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getAmountIn(
+            amountOut: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    getAmountOut(
-      amountIn: BigNumberish,
-      reserveIn: BigNumberish,
-      reserveOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getAmountOut(
+            amountIn: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    getAmountsIn(
-      amountOut: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getAmountsIn(amountOut: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber>
 
-    getAmountsOut(
-      amountIn: BigNumberish,
-      path: string[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<BigNumber>
 
-    quote(
-      amountA: BigNumberish,
-      reserveA: BigNumberish,
-      reserveB: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    removeLiquidity(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityADA(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityADA(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityADASupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityADASupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityADAWithPermit(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityADAWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
-      token: string,
-      liquidity: BigNumberish,
-      amountTokenMin: BigNumberish,
-      amountADAMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    removeLiquidityWithPermit(
-      tokenA: string,
-      tokenB: string,
-      liquidity: BigNumberish,
-      amountAMin: BigNumberish,
-      amountBMin: BigNumberish,
-      to: string,
-      deadline: BigNumberish,
-      approveMax: boolean,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapADAForExactTokens(
-      amountOut: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapADAForExactTokens(
+            amountOut: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactADAForTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactADAForTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactADAForTokensSupportingFeeOnTransferTokens(
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactADAForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactTokensForADA(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactTokensForADA(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactTokensForADASupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactTokensForADASupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactTokensForTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactTokensForTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      amountIn: BigNumberish,
-      amountOutMin: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapTokensForExactADA(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        swapTokensForExactADA(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    swapTokensForExactTokens(
-      amountOut: BigNumberish,
-      amountInMax: BigNumberish,
-      path: string[],
-      to: string,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        swapTokensForExactTokens(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        WADA(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        addLiquidity(
+            tokenA: string,
+            tokenB: string,
+            amountADesired: BigNumberish,
+            amountBDesired: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        addLiquidityADA(
+            token: string,
+            amountTokenDesired: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        factory(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        getAmountIn(
+            amountOut: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        getAmountOut(
+            amountIn: BigNumberish,
+            reserveIn: BigNumberish,
+            reserveOut: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        getAmountsIn(amountOut: BigNumberish, path: string[], overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        getAmountsOut(amountIn: BigNumberish, path: string[], overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        quote(
+            amountA: BigNumberish,
+            reserveA: BigNumberish,
+            reserveB: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidity(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityADA(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityADASupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityADAWithPermit(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityADAWithPermitSupportingFeeOnTransferTokens(
+            token: string,
+            liquidity: BigNumberish,
+            amountTokenMin: BigNumberish,
+            amountADAMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        removeLiquidityWithPermit(
+            tokenA: string,
+            tokenB: string,
+            liquidity: BigNumberish,
+            amountAMin: BigNumberish,
+            amountBMin: BigNumberish,
+            to: string,
+            deadline: BigNumberish,
+            approveMax: boolean,
+            v: BigNumberish,
+            r: BytesLike,
+            s: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapADAForExactTokens(
+            amountOut: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactADAForTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactADAForTokensSupportingFeeOnTransferTokens(
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactTokensForADA(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactTokensForADASupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactTokensForTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amountIn: BigNumberish,
+            amountOutMin: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapTokensForExactADA(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        swapTokensForExactTokens(
+            amountOut: BigNumberish,
+            amountInMax: BigNumberish,
+            path: string[],
+            to: string,
+            deadline: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }

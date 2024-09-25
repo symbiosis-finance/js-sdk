@@ -2,534 +2,445 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface OmniPoolOracleInterface extends utils.Interface {
-  contractName: "OmniPoolOracle";
-  functions: {
-    "a()": FunctionFragment;
-    "devaddr()": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "lastIndex()": FunctionFragment;
-    "lpDividendRatio()": FunctionFragment;
-    "lpFee()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
-    "pool()": FunctionFragment;
-    "poolDev()": FunctionFragment;
-    "quoteDeposit(uint256,uint256)": FunctionFragment;
-    "quoteFrom(uint256,uint256,int256)": FunctionFragment;
-    "quoteWithdraw(uint256,uint256)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
-  };
+    contractName: 'OmniPoolOracle'
+    functions: {
+        'a()': FunctionFragment
+        'devaddr()': FunctionFragment
+        'initialize(address)': FunctionFragment
+        'lastIndex()': FunctionFragment
+        'lpDividendRatio()': FunctionFragment
+        'lpFee()': FunctionFragment
+        'owner()': FunctionFragment
+        'pause()': FunctionFragment
+        'paused()': FunctionFragment
+        'pool()': FunctionFragment
+        'poolDev()': FunctionFragment
+        'quoteDeposit(uint256,uint256)': FunctionFragment
+        'quoteFrom(uint256,uint256,int256)': FunctionFragment
+        'quoteWithdraw(uint256,uint256)': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+        'unpause()': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "a", values?: undefined): string;
-  encodeFunctionData(functionFragment: "devaddr", values?: undefined): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
-  encodeFunctionData(functionFragment: "lastIndex", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "lpDividendRatio",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "lpFee", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pool", values?: undefined): string;
-  encodeFunctionData(functionFragment: "poolDev", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "quoteDeposit",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "quoteFrom",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "quoteWithdraw",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+    encodeFunctionData(functionFragment: 'a', values?: undefined): string
+    encodeFunctionData(functionFragment: 'devaddr', values?: undefined): string
+    encodeFunctionData(functionFragment: 'initialize', values: [string]): string
+    encodeFunctionData(functionFragment: 'lastIndex', values?: undefined): string
+    encodeFunctionData(functionFragment: 'lpDividendRatio', values?: undefined): string
+    encodeFunctionData(functionFragment: 'lpFee', values?: undefined): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'pause', values?: undefined): string
+    encodeFunctionData(functionFragment: 'paused', values?: undefined): string
+    encodeFunctionData(functionFragment: 'pool', values?: undefined): string
+    encodeFunctionData(functionFragment: 'poolDev', values?: undefined): string
+    encodeFunctionData(functionFragment: 'quoteDeposit', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'quoteFrom', values: [BigNumberish, BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'quoteWithdraw', values: [BigNumberish, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
+    encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
 
-  decodeFunctionResult(functionFragment: "a", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "devaddr", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "lastIndex", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lpDividendRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "lpFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pool", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "poolDev", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "quoteDeposit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "quoteFrom", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "quoteWithdraw",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'a', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'devaddr', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lastIndex', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lpDividendRatio', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'lpFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'pool', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'poolDev', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'quoteDeposit', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'quoteFrom', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'quoteWithdraw', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result
 
-  events: {
-    "Initialized(uint8)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
-    "Unpaused(address)": EventFragment;
-  };
+    events: {
+        'Initialized(uint8)': EventFragment
+        'OwnershipTransferred(address,address)': EventFragment
+        'Paused(address)': EventFragment
+        'Unpaused(address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
 }
 
-export type InitializedEvent = TypedEvent<[number], { version: number }>;
+export type InitializedEvent = TypedEvent<[number], { version: number }>
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
-export type PausedEvent = TypedEvent<[string], { account: string }>;
+export type PausedEvent = TypedEvent<[string], { account: string }>
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export type PausedEventFilter = TypedEventFilter<PausedEvent>
 
-export type UnpausedEvent = TypedEvent<[string], { account: string }>;
+export type UnpausedEvent = TypedEvent<[string], { account: string }>
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
 
 export interface OmniPoolOracle extends BaseContract {
-  contractName: "OmniPoolOracle";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'OmniPoolOracle'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: OmniPoolOracleInterface;
+    interface: OmniPoolOracleInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    a(overrides?: CallOverrides): Promise<[BigNumber]>;
+    functions: {
+        a(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    devaddr(overrides?: CallOverrides): Promise<[string]>;
+        devaddr(overrides?: CallOverrides): Promise<[string]>
 
-    initialize(
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        initialize(
+            _pool: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    lastIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
+        lastIndex(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    lpDividendRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
+        lpDividendRatio(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    lpFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+        lpFee(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+        owner(overrides?: CallOverrides): Promise<[string]>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
+        paused(overrides?: CallOverrides): Promise<[boolean]>
 
-    pool(overrides?: CallOverrides): Promise<[string]>;
+        pool(overrides?: CallOverrides): Promise<[string]>
 
-    poolDev(overrides?: CallOverrides): Promise<[string]>;
+        poolDev(overrides?: CallOverrides): Promise<[string]>
 
-    quoteDeposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        lpTokenToMint: BigNumber;
-        liabilityToMint: BigNumber;
-        reward: BigNumber;
-      }
-    >;
+        quoteDeposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                lpTokenToMint: BigNumber
+                liabilityToMint: BigNumber
+                reward: BigNumber
+            }
+        >
 
-    quoteFrom(
-      _fromAsset: BigNumberish,
-      _toAsset: BigNumberish,
-      _fromAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        actualToAmount: BigNumber;
-        lpFeeAmount: BigNumber;
-      }
-    >;
+        quoteFrom(
+            _fromAsset: BigNumberish,
+            _toAsset: BigNumberish,
+            _fromAmount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber] & {
+                actualToAmount: BigNumber
+                lpFeeAmount: BigNumber
+            }
+        >
 
-    quoteWithdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amount: BigNumber;
-        liabilityToBurn: BigNumber;
-        fee: BigNumber;
-      }
-    >;
+        quoteWithdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                amount: BigNumber
+                liabilityToBurn: BigNumber
+                fee: BigNumber
+            }
+        >
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  a(overrides?: CallOverrides): Promise<BigNumber>;
-
-  devaddr(overrides?: CallOverrides): Promise<string>;
-
-  initialize(
-    _pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  lastIndex(overrides?: CallOverrides): Promise<BigNumber>;
-
-  lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  lpFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
-  pool(overrides?: CallOverrides): Promise<string>;
-
-  poolDev(overrides?: CallOverrides): Promise<string>;
-
-  quoteDeposit(
-    _id: BigNumberish,
-    _amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      lpTokenToMint: BigNumber;
-      liabilityToMint: BigNumber;
-      reward: BigNumber;
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
     }
-  >;
 
-  quoteFrom(
-    _fromAsset: BigNumberish,
-    _toAsset: BigNumberish,
-    _fromAmount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & {
-      actualToAmount: BigNumber;
-      lpFeeAmount: BigNumber;
+    a(overrides?: CallOverrides): Promise<BigNumber>
+
+    devaddr(overrides?: CallOverrides): Promise<string>
+
+    initialize(_pool: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+    lastIndex(overrides?: CallOverrides): Promise<BigNumber>
+
+    lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+    lpFee(overrides?: CallOverrides): Promise<BigNumber>
+
+    owner(overrides?: CallOverrides): Promise<string>
+
+    pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+    paused(overrides?: CallOverrides): Promise<boolean>
+
+    pool(overrides?: CallOverrides): Promise<string>
+
+    poolDev(overrides?: CallOverrides): Promise<string>
+
+    quoteDeposit(
+        _id: BigNumberish,
+        _amount: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<
+        [BigNumber, BigNumber, BigNumber] & {
+            lpTokenToMint: BigNumber
+            liabilityToMint: BigNumber
+            reward: BigNumber
+        }
+    >
+
+    quoteFrom(
+        _fromAsset: BigNumberish,
+        _toAsset: BigNumberish,
+        _fromAmount: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<
+        [BigNumber, BigNumber] & {
+            actualToAmount: BigNumber
+            lpFeeAmount: BigNumber
+        }
+    >
+
+    quoteWithdraw(
+        _id: BigNumberish,
+        _liquidity: BigNumberish,
+        overrides?: CallOverrides
+    ): Promise<
+        [BigNumber, BigNumber, BigNumber] & {
+            amount: BigNumber
+            liabilityToBurn: BigNumber
+            fee: BigNumber
+        }
+    >
+
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+    transferOwnership(
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+    callStatic: {
+        a(overrides?: CallOverrides): Promise<BigNumber>
+
+        devaddr(overrides?: CallOverrides): Promise<string>
+
+        initialize(_pool: string, overrides?: CallOverrides): Promise<void>
+
+        lastIndex(overrides?: CallOverrides): Promise<BigNumber>
+
+        lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>
+
+        lpFee(overrides?: CallOverrides): Promise<BigNumber>
+
+        owner(overrides?: CallOverrides): Promise<string>
+
+        pause(overrides?: CallOverrides): Promise<void>
+
+        paused(overrides?: CallOverrides): Promise<boolean>
+
+        pool(overrides?: CallOverrides): Promise<string>
+
+        poolDev(overrides?: CallOverrides): Promise<string>
+
+        quoteDeposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                lpTokenToMint: BigNumber
+                liabilityToMint: BigNumber
+                reward: BigNumber
+            }
+        >
+
+        quoteFrom(
+            _fromAsset: BigNumberish,
+            _toAsset: BigNumberish,
+            _fromAmount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber] & {
+                actualToAmount: BigNumber
+                lpFeeAmount: BigNumber
+            }
+        >
+
+        quoteWithdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<
+            [BigNumber, BigNumber, BigNumber] & {
+                amount: BigNumber
+                liabilityToBurn: BigNumber
+                fee: BigNumber
+            }
+        >
+
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
+
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+
+        unpause(overrides?: CallOverrides): Promise<void>
     }
-  >;
 
-  quoteWithdraw(
-    _id: BigNumberish,
-    _liquidity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      amount: BigNumber;
-      liabilityToBurn: BigNumber;
-      fee: BigNumber;
+    filters: {
+        'Initialized(uint8)'(version?: null): InitializedEventFilter
+        Initialized(version?: null): InitializedEventFilter
+
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+
+        'Paused(address)'(account?: null): PausedEventFilter
+        Paused(account?: null): PausedEventFilter
+
+        'Unpaused(address)'(account?: null): UnpausedEventFilter
+        Unpaused(account?: null): UnpausedEventFilter
     }
-  >;
 
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    estimateGas: {
+        a(overrides?: CallOverrides): Promise<BigNumber>
 
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        devaddr(overrides?: CallOverrides): Promise<BigNumber>
 
-  unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+        initialize(_pool: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
-  callStatic: {
-    a(overrides?: CallOverrides): Promise<BigNumber>;
+        lastIndex(overrides?: CallOverrides): Promise<BigNumber>
 
-    devaddr(overrides?: CallOverrides): Promise<string>;
+        lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>
 
-    initialize(_pool: string, overrides?: CallOverrides): Promise<void>;
+        lpFee(overrides?: CallOverrides): Promise<BigNumber>
 
-    lastIndex(overrides?: CallOverrides): Promise<BigNumber>;
+        owner(overrides?: CallOverrides): Promise<BigNumber>
 
-    lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>;
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
-    lpFee(overrides?: CallOverrides): Promise<BigNumber>;
+        paused(overrides?: CallOverrides): Promise<BigNumber>
 
-    owner(overrides?: CallOverrides): Promise<string>;
+        pool(overrides?: CallOverrides): Promise<BigNumber>
 
-    pause(overrides?: CallOverrides): Promise<void>;
+        poolDev(overrides?: CallOverrides): Promise<BigNumber>
 
-    paused(overrides?: CallOverrides): Promise<boolean>;
+        quoteDeposit(_id: BigNumberish, _amount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    pool(overrides?: CallOverrides): Promise<string>;
+        quoteFrom(
+            _fromAsset: BigNumberish,
+            _toAsset: BigNumberish,
+            _fromAmount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
-    poolDev(overrides?: CallOverrides): Promise<string>;
+        quoteWithdraw(_id: BigNumberish, _liquidity: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    quoteDeposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        lpTokenToMint: BigNumber;
-        liabilityToMint: BigNumber;
-        reward: BigNumber;
-      }
-    >;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
-    quoteFrom(
-      _fromAsset: BigNumberish,
-      _toAsset: BigNumberish,
-      _fromAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        actualToAmount: BigNumber;
-        lpFeeAmount: BigNumber;
-      }
-    >;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    quoteWithdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amount: BigNumber;
-        liabilityToBurn: BigNumber;
-        fee: BigNumber;
-      }
-    >;
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+    }
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    populateTransaction: {
+        a(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+        devaddr(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    unpause(overrides?: CallOverrides): Promise<void>;
-  };
+        initialize(
+            _pool: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-  filters: {
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
+        lastIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
+        lpDividendRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
+        lpFee(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-  };
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-  estimateGas: {
-    a(overrides?: CallOverrides): Promise<BigNumber>;
+        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
-    devaddr(overrides?: CallOverrides): Promise<BigNumber>;
+        paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    initialize(
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        pool(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    lastIndex(overrides?: CallOverrides): Promise<BigNumber>;
+        poolDev(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    lpDividendRatio(overrides?: CallOverrides): Promise<BigNumber>;
+        quoteDeposit(_id: BigNumberish, _amount: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-    lpFee(overrides?: CallOverrides): Promise<BigNumber>;
+        quoteFrom(
+            _fromAsset: BigNumberish,
+            _toAsset: BigNumberish,
+            _fromAmount: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+        quoteWithdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
 
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
 
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
-    pool(overrides?: CallOverrides): Promise<BigNumber>;
-
-    poolDev(overrides?: CallOverrides): Promise<BigNumber>;
-
-    quoteDeposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    quoteFrom(
-      _fromAsset: BigNumberish,
-      _toAsset: BigNumberish,
-      _fromAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    quoteWithdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    a(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    devaddr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    initialize(
-      _pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    lastIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    lpDividendRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    lpFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    poolDev(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    quoteDeposit(
-      _id: BigNumberish,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    quoteFrom(
-      _fromAsset: BigNumberish,
-      _toAsset: BigNumberish,
-      _fromAmount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    quoteWithdraw(
-      _id: BigNumberish,
-      _liquidity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+    }
 }

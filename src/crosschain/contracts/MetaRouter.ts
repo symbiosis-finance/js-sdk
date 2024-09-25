@@ -2,375 +2,344 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PayableOverrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace MetaRouteStructs {
-  export type MetaMintTransactionStruct = {
-    stableBridgingFee: BigNumberish;
-    amount: BigNumberish;
-    crossChainID: BytesLike;
-    externalID: BytesLike;
-    tokenReal: string;
-    chainID: BigNumberish;
-    to: string;
-    swapTokens: string[];
-    secondDexRouter: string;
-    secondSwapCalldata: BytesLike;
-    finalReceiveSide: string;
-    finalCalldata: BytesLike;
-    finalOffset: BigNumberish;
-  };
+    export type MetaMintTransactionStruct = {
+        stableBridgingFee: BigNumberish
+        amount: BigNumberish
+        crossChainID: BytesLike
+        externalID: BytesLike
+        tokenReal: string
+        chainID: BigNumberish
+        to: string
+        swapTokens: string[]
+        secondDexRouter: string
+        secondSwapCalldata: BytesLike
+        finalReceiveSide: string
+        finalCalldata: BytesLike
+        finalOffset: BigNumberish
+    }
 
-  export type MetaMintTransactionStructOutput = [
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    string,
-    BigNumber,
-    string,
-    string[],
-    string,
-    string,
-    string,
-    string,
-    BigNumber
-  ] & {
-    stableBridgingFee: BigNumber;
-    amount: BigNumber;
-    crossChainID: string;
-    externalID: string;
-    tokenReal: string;
-    chainID: BigNumber;
-    to: string;
-    swapTokens: string[];
-    secondDexRouter: string;
-    secondSwapCalldata: string;
-    finalReceiveSide: string;
-    finalCalldata: string;
-    finalOffset: BigNumber;
-  };
+    export type MetaMintTransactionStructOutput = [
+        BigNumber,
+        BigNumber,
+        string,
+        string,
+        string,
+        BigNumber,
+        string,
+        string[],
+        string,
+        string,
+        string,
+        string,
+        BigNumber
+    ] & {
+        stableBridgingFee: BigNumber
+        amount: BigNumber
+        crossChainID: string
+        externalID: string
+        tokenReal: string
+        chainID: BigNumber
+        to: string
+        swapTokens: string[]
+        secondDexRouter: string
+        secondSwapCalldata: string
+        finalReceiveSide: string
+        finalCalldata: string
+        finalOffset: BigNumber
+    }
 
-  export type MetaRouteTransactionStruct = {
-    firstSwapCalldata: BytesLike;
-    secondSwapCalldata: BytesLike;
-    approvedTokens: string[];
-    firstDexRouter: string;
-    secondDexRouter: string;
-    amount: BigNumberish;
-    nativeIn: boolean;
-    relayRecipient: string;
-    otherSideCalldata: BytesLike;
-  };
+    export type MetaRouteTransactionStruct = {
+        firstSwapCalldata: BytesLike
+        secondSwapCalldata: BytesLike
+        approvedTokens: string[]
+        firstDexRouter: string
+        secondDexRouter: string
+        amount: BigNumberish
+        nativeIn: boolean
+        relayRecipient: string
+        otherSideCalldata: BytesLike
+    }
 
-  export type MetaRouteTransactionStructOutput = [
-    string,
-    string,
-    string[],
-    string,
-    string,
-    BigNumber,
-    boolean,
-    string,
-    string
-  ] & {
-    firstSwapCalldata: string;
-    secondSwapCalldata: string;
-    approvedTokens: string[];
-    firstDexRouter: string;
-    secondDexRouter: string;
-    amount: BigNumber;
-    nativeIn: boolean;
-    relayRecipient: string;
-    otherSideCalldata: string;
-  };
+    export type MetaRouteTransactionStructOutput = [
+        string,
+        string,
+        string[],
+        string,
+        string,
+        BigNumber,
+        boolean,
+        string,
+        string
+    ] & {
+        firstSwapCalldata: string
+        secondSwapCalldata: string
+        approvedTokens: string[]
+        firstDexRouter: string
+        secondDexRouter: string
+        amount: BigNumber
+        nativeIn: boolean
+        relayRecipient: string
+        otherSideCalldata: string
+    }
 }
 
 export interface MetaRouterInterface extends utils.Interface {
-  contractName: "MetaRouter";
-  functions: {
-    "externalCall(address,uint256,address,bytes,uint256,address)": FunctionFragment;
-    "metaMintSwap((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))": FunctionFragment;
-    "metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))": FunctionFragment;
-    "metaRouterGateway()": FunctionFragment;
-    "returnSwap(address,uint256,address,bytes,address,address,bytes)": FunctionFragment;
-  };
+    contractName: 'MetaRouter'
+    functions: {
+        'externalCall(address,uint256,address,bytes,uint256,address)': FunctionFragment
+        'metaMintSwap((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
+        'metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
+        'metaRouterGateway()': FunctionFragment
+        'returnSwap(address,uint256,address,bytes,address,address,bytes)': FunctionFragment
+    }
 
-  encodeFunctionData(
-    functionFragment: "externalCall",
-    values: [string, BigNumberish, string, BytesLike, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaMintSwap",
-    values: [MetaRouteStructs.MetaMintTransactionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaRoute",
-    values: [MetaRouteStructs.MetaRouteTransactionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "metaRouterGateway",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "returnSwap",
-    values: [string, BigNumberish, string, BytesLike, string, string, BytesLike]
-  ): string;
+    encodeFunctionData(
+        functionFragment: 'externalCall',
+        values: [string, BigNumberish, string, BytesLike, BigNumberish, string]
+    ): string
+    encodeFunctionData(functionFragment: 'metaMintSwap', values: [MetaRouteStructs.MetaMintTransactionStruct]): string
+    encodeFunctionData(functionFragment: 'metaRoute', values: [MetaRouteStructs.MetaRouteTransactionStruct]): string
+    encodeFunctionData(functionFragment: 'metaRouterGateway', values?: undefined): string
+    encodeFunctionData(
+        functionFragment: 'returnSwap',
+        values: [string, BigNumberish, string, BytesLike, string, string, BytesLike]
+    ): string
 
-  decodeFunctionResult(
-    functionFragment: "externalCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "metaMintSwap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "metaRoute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "metaRouterGateway",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "returnSwap", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: 'externalCall', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaMintSwap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRoute', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'metaRouterGateway', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'returnSwap', data: BytesLike): Result
 
-  events: {
-    "TransitTokenSent(address,uint256,address)": EventFragment;
-  };
+    events: {
+        'TransitTokenSent(address,uint256,address)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "TransitTokenSent"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'TransitTokenSent'): EventFragment
 }
 
 export type TransitTokenSentEvent = TypedEvent<
-  [string, BigNumber, string],
-  { to: string; amount: BigNumber; token: string }
->;
+    [string, BigNumber, string],
+    { to: string; amount: BigNumber; token: string }
+>
 
-export type TransitTokenSentEventFilter =
-  TypedEventFilter<TransitTokenSentEvent>;
+export type TransitTokenSentEventFilter = TypedEventFilter<TransitTokenSentEvent>
 
 export interface MetaRouter extends BaseContract {
-  contractName: "MetaRouter";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'MetaRouter'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: MetaRouterInterface;
+    interface: MetaRouterInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
+    functions: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        metaMintSwap(
+            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        metaRouterGateway(overrides?: CallOverrides): Promise<[string]>
+
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
+
     externalCall(
-      _token: string,
-      _amount: BigNumberish,
-      _receiveSide: string,
-      _calldata: BytesLike,
-      _offset: BigNumberish,
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _token: string,
+        _amount: BigNumberish,
+        _receiveSide: string,
+        _calldata: BytesLike,
+        _offset: BigNumberish,
+        _to: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     metaMintSwap(
-      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     metaRoute(
-      _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
+        overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    metaRouterGateway(overrides?: CallOverrides): Promise<[string]>;
-
-    returnSwap(
-      _token: string,
-      _amount: BigNumberish,
-      _router: string,
-      _swapCalldata: BytesLike,
-      _burnToken: string,
-      _synthesis: string,
-      _burnCalldata: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  externalCall(
-    _token: string,
-    _amount: BigNumberish,
-    _receiveSide: string,
-    _calldata: BytesLike,
-    _offset: BigNumberish,
-    _to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  metaMintSwap(
-    _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  metaRoute(
-    _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  metaRouterGateway(overrides?: CallOverrides): Promise<string>;
-
-  returnSwap(
-    _token: string,
-    _amount: BigNumberish,
-    _router: string,
-    _swapCalldata: BytesLike,
-    _burnToken: string,
-    _synthesis: string,
-    _burnCalldata: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    externalCall(
-      _token: string,
-      _amount: BigNumberish,
-      _receiveSide: string,
-      _calldata: BytesLike,
-      _offset: BigNumberish,
-      _to: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    metaMintSwap(
-      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    metaRoute(
-      _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    metaRouterGateway(overrides?: CallOverrides): Promise<string>;
+    metaRouterGateway(overrides?: CallOverrides): Promise<string>
 
     returnSwap(
-      _token: string,
-      _amount: BigNumberish,
-      _router: string,
-      _swapCalldata: BytesLike,
-      _burnToken: string,
-      _synthesis: string,
-      _burnCalldata: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+        _token: string,
+        _amount: BigNumberish,
+        _router: string,
+        _swapCalldata: BytesLike,
+        _burnToken: string,
+        _synthesis: string,
+        _burnCalldata: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-  filters: {
-    "TransitTokenSent(address,uint256,address)"(
-      to?: null,
-      amount?: null,
-      token?: null
-    ): TransitTokenSentEventFilter;
-    TransitTokenSent(
-      to?: null,
-      amount?: null,
-      token?: null
-    ): TransitTokenSentEventFilter;
-  };
+    callStatic: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            _to: string,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-  estimateGas: {
-    externalCall(
-      _token: string,
-      _amount: BigNumberish,
-      _receiveSide: string,
-      _calldata: BytesLike,
-      _offset: BigNumberish,
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        metaMintSwap(
+            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    metaMintSwap(
-      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
+            overrides?: CallOverrides
+        ): Promise<void>
 
-    metaRoute(
-      _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+        metaRouterGateway(overrides?: CallOverrides): Promise<string>
 
-    metaRouterGateway(overrides?: CallOverrides): Promise<BigNumber>;
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<void>
+    }
 
-    returnSwap(
-      _token: string,
-      _amount: BigNumberish,
-      _router: string,
-      _swapCalldata: BytesLike,
-      _burnToken: string,
-      _synthesis: string,
-      _burnCalldata: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+    filters: {
+        'TransitTokenSent(address,uint256,address)'(to?: null, amount?: null, token?: null): TransitTokenSentEventFilter
+        TransitTokenSent(to?: null, amount?: null, token?: null): TransitTokenSentEventFilter
+    }
 
-  populateTransaction: {
-    externalCall(
-      _token: string,
-      _amount: BigNumberish,
-      _receiveSide: string,
-      _calldata: BytesLike,
-      _offset: BigNumberish,
-      _to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    estimateGas: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    metaMintSwap(
-      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        metaMintSwap(
+            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    metaRoute(
-      _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
-    metaRouterGateway(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        metaRouterGateway(overrides?: CallOverrides): Promise<BigNumber>
 
-    returnSwap(
-      _token: string,
-      _amount: BigNumberish,
-      _router: string,
-      _swapCalldata: BytesLike,
-      _burnToken: string,
-      _synthesis: string,
-      _burnCalldata: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        externalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            _to: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        metaMintSwap(
+            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        metaRoute(
+            _metarouteTransaction: MetaRouteStructs.MetaRouteTransactionStruct,
+            overrides?: PayableOverrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        metaRouterGateway(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        returnSwap(
+            _token: string,
+            _amount: BigNumberish,
+            _router: string,
+            _swapCalldata: BytesLike,
+            _burnToken: string,
+            _synthesis: string,
+            _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }
