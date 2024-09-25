@@ -414,8 +414,6 @@ export class Symbiosis {
             signature: this.signature,
         }
 
-        debugger
-
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {
             method: 'POST',
             headers: {
