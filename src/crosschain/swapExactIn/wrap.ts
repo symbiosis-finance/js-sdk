@@ -61,7 +61,6 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
         tokenAmountOutMin: amountOut,
         priceImpact: new Percent('0', '0'),
         approveTo,
-        route: [tokenAmountIn.token, weth],
         fees: [
             {
                 description: 'Wrap fee',

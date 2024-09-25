@@ -48,7 +48,6 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResu
     return {
         ...payload,
         kind: 'unwrap',
-        route: [params.tokenAmountIn.token, params.tokenOut], // TODO remove
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOut,
         priceImpact: new Percent('0', '0'),
