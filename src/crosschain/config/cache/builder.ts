@@ -28,7 +28,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../../abis/ERC20.json'
 import { isTronChainId } from '../../tron'
-import { isBtc } from '../../utils'
+import { isBtc, isTon } from '../../utils'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -119,6 +119,10 @@ export class Builder {
             const chain = chains[i]
             const bridge = this.bridge(chain.id)
 
+            if (isTon(chain.id)) {
+                continue
+            }
+
             if (chain.portal !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.portal)
                 if (!ok) {
@@ -140,6 +144,9 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
+            if (isTon(chain.id)) {
+                continue
+            }
             const portal = this.portal(chain.id)
             if (portal.address !== AddressZero) {
                 for (let j = 0; j < chain.stables.length; j++) {
@@ -177,7 +184,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtc(chain.id)) {
+            if (isBtc(chain.id) || isTon(chain.id)) {
                 continue
             }
 
@@ -234,13 +241,22 @@ export class Builder {
         type: 'Portal' | 'Synthesis',
         chain: ChainConfig
     ): Promise<TokenThreshold[]> {
-        const multicall = await getMulticall(this.getProvider(chain.id))
         const chainTokens = tokens.filter((token) => token.chainId === chain.id)
+
+        if (isTon(chain.id)) {
+            const index = chainTokens.findIndex(
+                (token) => token.address === '0x0000000000000000000000000000000000000003'
+            )
+            return [{ tokenId: chainTokens[index].id, type, value: '0' }]
+        }
+
         const calls = chainTokens.map((token) => ({
             target: contract.address,
             callData: contract.interface.encodeFunctionData('tokenThreshold', [token.address]),
         }))
+        const multicall = await getMulticall(this.getProvider(chain.id))
         const thresholdsResponse = await multicall.callStatic.tryAggregate(false, calls)
+
         return thresholdsResponse
             .map(([success, returnData], index) => {
                 if (!success) {
@@ -248,6 +264,7 @@ export class Builder {
                 }
 
                 const threshold = contract.interface.decodeFunctionResult('tokenThreshold', returnData)[0] as BigNumber
+
                 return {
                     tokenId: chainTokens[index].id,
                     type,

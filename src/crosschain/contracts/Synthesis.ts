@@ -2,1425 +2,1894 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    BytesLike,
-    CallOverrides,
-    ContractTransaction,
-    Overrides,
-    PopulatedTransaction,
-    Signer,
-    utils,
-} from 'ethers'
-import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
-import { Listener, Provider } from '@ethersproject/providers'
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
+import { Listener, Provider } from "@ethersproject/providers";
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+
+export declare namespace Synthesis {
+  export type TonAddressStruct = {
+    workchain: BigNumberish;
+    address_hash: BytesLike;
+  };
+
+  export type TonAddressStructOutput = [number, string] & {
+    workchain: number;
+    address_hash: string;
+  };
+}
 
 export declare namespace MetaRouteStructs {
-    export type MetaBurnTransactionStruct = {
-        stableBridgingFee: BigNumberish
-        amount: BigNumberish
-        crossChainID: BytesLike
-        syntCaller: string
-        finalReceiveSide: string
-        sToken: string
-        finalCallData: BytesLike
-        finalOffset: BigNumberish
-        chain2address: string
-        receiveSide: string
-        oppositeBridge: string
-        revertableAddress: string
-        chainID: BigNumberish
-        clientID: BytesLike
-    }
+  export type MetaBurnTransactionStruct = {
+    stableBridgingFee: BigNumberish;
+    amount: BigNumberish;
+    crossChainID: BytesLike;
+    syntCaller: string;
+    finalReceiveSide: string;
+    sToken: string;
+    finalCallData: BytesLike;
+    finalOffset: BigNumberish;
+    chain2address: string;
+    receiveSide: string;
+    oppositeBridge: string;
+    revertableAddress: string;
+    chainID: BigNumberish;
+    clientID: BytesLike;
+  };
 
-    export type MetaBurnTransactionStructOutput = [
-        BigNumber,
-        BigNumber,
-        string,
-        string,
-        string,
-        string,
-        string,
-        BigNumber,
-        string,
-        string,
-        string,
-        string,
-        BigNumber,
-        string
-    ] & {
-        stableBridgingFee: BigNumber
-        amount: BigNumber
-        crossChainID: string
-        syntCaller: string
-        finalReceiveSide: string
-        sToken: string
-        finalCallData: string
-        finalOffset: BigNumber
-        chain2address: string
-        receiveSide: string
-        oppositeBridge: string
-        revertableAddress: string
-        chainID: BigNumber
-        clientID: string
-    }
+  export type MetaBurnTransactionStructOutput = [
+    BigNumber,
+    BigNumber,
+    string,
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    string
+  ] & {
+    stableBridgingFee: BigNumber;
+    amount: BigNumber;
+    crossChainID: string;
+    syntCaller: string;
+    finalReceiveSide: string;
+    sToken: string;
+    finalCallData: string;
+    finalOffset: BigNumber;
+    chain2address: string;
+    receiveSide: string;
+    oppositeBridge: string;
+    revertableAddress: string;
+    chainID: BigNumber;
+    clientID: string;
+  };
 
-    export type MetaMintTransactionStruct = {
-        stableBridgingFee: BigNumberish
-        amount: BigNumberish
-        crossChainID: BytesLike
-        externalID: BytesLike
-        tokenReal: string
-        chainID: BigNumberish
-        to: string
-        swapTokens: string[]
-        secondDexRouter: string
-        secondSwapCalldata: BytesLike
-        finalReceiveSide: string
-        finalCalldata: BytesLike
-        finalOffset: BigNumberish
-    }
+  export type MetaMintTransactionStruct = {
+    stableBridgingFee: BigNumberish;
+    amount: BigNumberish;
+    crossChainID: BytesLike;
+    externalID: BytesLike;
+    tokenReal: string;
+    chainID: BigNumberish;
+    to: string;
+    swapTokens: string[];
+    secondDexRouter: string;
+    secondSwapCalldata: BytesLike;
+    finalReceiveSide: string;
+    finalCalldata: BytesLike;
+    finalOffset: BigNumberish;
+  };
 
-    export type MetaMintTransactionStructOutput = [
-        BigNumber,
-        BigNumber,
-        string,
-        string,
-        string,
-        BigNumber,
-        string,
-        string[],
-        string,
-        string,
-        string,
-        string,
-        BigNumber
-    ] & {
-        stableBridgingFee: BigNumber
-        amount: BigNumber
-        crossChainID: string
-        externalID: string
-        tokenReal: string
-        chainID: BigNumber
-        to: string
-        swapTokens: string[]
-        secondDexRouter: string
-        secondSwapCalldata: string
-        finalReceiveSide: string
-        finalCalldata: string
-        finalOffset: BigNumber
-    }
+  export type MetaMintTransactionStructOutput = [
+    BigNumber,
+    BigNumber,
+    string,
+    string,
+    string,
+    BigNumber,
+    string,
+    string[],
+    string,
+    string,
+    string,
+    string,
+    BigNumber
+  ] & {
+    stableBridgingFee: BigNumber;
+    amount: BigNumber;
+    crossChainID: string;
+    externalID: string;
+    tokenReal: string;
+    chainID: BigNumber;
+    to: string;
+    swapTokens: string[];
+    secondDexRouter: string;
+    secondSwapCalldata: string;
+    finalReceiveSide: string;
+    finalCalldata: string;
+    finalOffset: BigNumber;
+  };
 
-    export type MetaMintTransactionBTCStruct = {
-        stableBridgingFee: BigNumberish
-        amount: BigNumberish
-        serial: BigNumberish
-        crossChainID: BytesLike
-        externalID: BytesLike
-        tokenReal: string
-        chainID: BigNumberish
-        to: string
-        receiveSide: string
-        receiveSideCalldata: BytesLike
-        receiveSideOffset: BigNumberish
-    }
+  export type MetaMintTransactionBTCStruct = {
+    stableBridgingFee: BigNumberish;
+    amount: BigNumberish;
+    serial: BigNumberish;
+    crossChainID: BytesLike;
+    externalID: BytesLike;
+    tokenReal: string;
+    chainID: BigNumberish;
+    to: string;
+    receiveSide: string;
+    receiveSideCalldata: BytesLike;
+    receiveSideOffset: BigNumberish;
+  };
 
-    export type MetaMintTransactionBTCStructOutput = [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string,
-        string,
-        string,
-        BigNumber,
-        string,
-        string,
-        string,
-        BigNumber
-    ] & {
-        stableBridgingFee: BigNumber
-        amount: BigNumber
-        serial: BigNumber
-        crossChainID: string
-        externalID: string
-        tokenReal: string
-        chainID: BigNumber
-        to: string
-        receiveSide: string
-        receiveSideCalldata: string
-        receiveSideOffset: BigNumber
-    }
+  export type MetaMintTransactionBTCStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string,
+    string,
+    BigNumber,
+    string,
+    string,
+    string,
+    BigNumber
+  ] & {
+    stableBridgingFee: BigNumber;
+    amount: BigNumber;
+    serial: BigNumber;
+    crossChainID: string;
+    externalID: string;
+    tokenReal: string;
+    chainID: BigNumber;
+    to: string;
+    receiveSide: string;
+    receiveSideCalldata: string;
+    receiveSideOffset: BigNumber;
+  };
 }
 
 export interface SynthesisInterface extends utils.Interface {
-    contractName: 'Synthesis'
-    functions: {
-        'bridge()': FunctionFragment
-        'burnSyntheticToken(uint256,address,uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
-        'burnSyntheticTokenBTC(uint256,uint256,bytes,address,bytes32)': FunctionFragment
-        'fabric()': FunctionFragment
-        'initialize(address,address,address)': FunctionFragment
-        'isTrustedForwarder(address)': FunctionFragment
-        'metaBurnSyntheticToken((uint256,uint256,bytes32,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))': FunctionFragment
-        'metaMintSyntheticToken((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
-        'metaMintSyntheticTokenBTC((uint256,uint256,uint64,bytes32,bytes32,address,uint256,address,address,bytes,uint256))': FunctionFragment
-        'metaRouter()': FunctionFragment
-        'mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)': FunctionFragment
-        'owner()': FunctionFragment
-        'pause()': FunctionFragment
-        'paused()': FunctionFragment
-        'realToBurnSerialBTC(address)': FunctionFragment
-        'realToMintSerialBTC(address)': FunctionFragment
-        'renounceOwnership()': FunctionFragment
-        'requestCount()': FunctionFragment
-        'requests(bytes32)': FunctionFragment
-        'revertBurn(uint256,bytes32)': FunctionFragment
-        'revertBurnAndBurn(uint256,bytes32,address,address,uint256,address)': FunctionFragment
-        'revertMetaBurn(uint256,bytes32,address,bytes,address,address,bytes)': FunctionFragment
-        'revertSynthesizeRequest(uint256,bytes32,address,address,uint256,bytes32)': FunctionFragment
-        'revertSynthesizeRequestByBridge(uint256,bytes32,address,address,uint256,address,bytes32)': FunctionFragment
-        'setFabric(address)': FunctionFragment
-        'setMetaRouter(address)': FunctionFragment
-        'setMinFeeBTC(address,uint256)': FunctionFragment
-        'setTokenThreshold(address,uint256)': FunctionFragment
-        'syntToMinFeeBTC(address)': FunctionFragment
-        'synthesizeStates(bytes32)': FunctionFragment
-        'tokenThreshold(address)': FunctionFragment
-        'transferOwnership(address)': FunctionFragment
-        'unpause()': FunctionFragment
-        'versionRecipient()': FunctionFragment
-    }
+  contractName: "Synthesis";
+  functions: {
+    "bridge()": FunctionFragment;
+    "burnSyntheticToken(uint256,address,uint256,address,address,address,address,uint256,bytes32)": FunctionFragment;
+    "burnSyntheticTokenBTC(uint256,uint256,bytes,address,bytes32)": FunctionFragment;
+    "burnSyntheticTokenTON(uint256,bytes32,address,uint256,(int8,bytes32),address,address,address,uint256,bytes32)": FunctionFragment;
+    "fabric()": FunctionFragment;
+    "initialize(address,address,address)": FunctionFragment;
+    "isTrustedForwarder(address)": FunctionFragment;
+    "metaBurnSyntheticToken((uint256,uint256,bytes32,address,address,address,bytes,uint256,address,address,address,address,uint256,bytes32))": FunctionFragment;
+    "metaMintSyntheticToken((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))": FunctionFragment;
+    "metaMintSyntheticTokenBTC((uint256,uint256,uint64,bytes32,bytes32,address,uint256,address,address,bytes,uint256))": FunctionFragment;
+    "metaRouter()": FunctionFragment;
+    "mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
+    "realToBurnSerialBTC(address)": FunctionFragment;
+    "realToMintSerialBTC(address)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "requestCount()": FunctionFragment;
+    "requests(bytes32)": FunctionFragment;
+    "revertBurn(uint256,bytes32)": FunctionFragment;
+    "revertBurnAndBurn(uint256,bytes32,address,address,uint256,address)": FunctionFragment;
+    "revertMetaBurn(uint256,bytes32,address,bytes,address,address,bytes)": FunctionFragment;
+    "revertSynthesizeRequest(uint256,bytes32,address,address,uint256,bytes32)": FunctionFragment;
+    "revertSynthesizeRequestByBridge(uint256,bytes32,address,address,uint256,address,bytes32)": FunctionFragment;
+    "setFabric(address)": FunctionFragment;
+    "setMetaRouter(address)": FunctionFragment;
+    "setMinFeeBTC(address,uint256)": FunctionFragment;
+    "setTokenThreshold(address,uint256)": FunctionFragment;
+    "syntToMinFeeBTC(address)": FunctionFragment;
+    "synthesizeStates(bytes32)": FunctionFragment;
+    "tokenThreshold(address)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
+    "versionRecipient()": FunctionFragment;
+  };
 
-    encodeFunctionData(functionFragment: 'bridge', values?: undefined): string
-    encodeFunctionData(
-        functionFragment: 'burnSyntheticToken',
-        values: [BigNumberish, string, BigNumberish, string, string, string, string, BigNumberish, BytesLike]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'burnSyntheticTokenBTC',
-        values: [BigNumberish, BigNumberish, BytesLike, string, BytesLike]
-    ): string
-    encodeFunctionData(functionFragment: 'fabric', values?: undefined): string
-    encodeFunctionData(functionFragment: 'initialize', values: [string, string, string]): string
-    encodeFunctionData(functionFragment: 'isTrustedForwarder', values: [string]): string
-    encodeFunctionData(
-        functionFragment: 'metaBurnSyntheticToken',
-        values: [MetaRouteStructs.MetaBurnTransactionStruct]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'metaMintSyntheticToken',
-        values: [MetaRouteStructs.MetaMintTransactionStruct]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'metaMintSyntheticTokenBTC',
-        values: [MetaRouteStructs.MetaMintTransactionBTCStruct]
-    ): string
-    encodeFunctionData(functionFragment: 'metaRouter', values?: undefined): string
-    encodeFunctionData(
-        functionFragment: 'mintSyntheticToken',
-        values: [BigNumberish, BytesLike, BytesLike, string, BigNumberish, BigNumberish, string]
-    ): string
-    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
-    encodeFunctionData(functionFragment: 'pause', values?: undefined): string
-    encodeFunctionData(functionFragment: 'paused', values?: undefined): string
-    encodeFunctionData(functionFragment: 'realToBurnSerialBTC', values: [string]): string
-    encodeFunctionData(functionFragment: 'realToMintSerialBTC', values: [string]): string
-    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
-    encodeFunctionData(functionFragment: 'requestCount', values?: undefined): string
-    encodeFunctionData(functionFragment: 'requests', values: [BytesLike]): string
-    encodeFunctionData(functionFragment: 'revertBurn', values: [BigNumberish, BytesLike]): string
-    encodeFunctionData(
-        functionFragment: 'revertBurnAndBurn',
-        values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'revertMetaBurn',
-        values: [BigNumberish, BytesLike, string, BytesLike, string, string, BytesLike]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'revertSynthesizeRequest',
-        values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'revertSynthesizeRequestByBridge',
-        values: [BigNumberish, BytesLike, string, string, BigNumberish, string, BytesLike]
-    ): string
-    encodeFunctionData(functionFragment: 'setFabric', values: [string]): string
-    encodeFunctionData(functionFragment: 'setMetaRouter', values: [string]): string
-    encodeFunctionData(functionFragment: 'setMinFeeBTC', values: [string, BigNumberish]): string
-    encodeFunctionData(functionFragment: 'setTokenThreshold', values: [string, BigNumberish]): string
-    encodeFunctionData(functionFragment: 'syntToMinFeeBTC', values: [string]): string
-    encodeFunctionData(functionFragment: 'synthesizeStates', values: [BytesLike]): string
-    encodeFunctionData(functionFragment: 'tokenThreshold', values: [string]): string
-    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
-    encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
-    encodeFunctionData(functionFragment: 'versionRecipient', values?: undefined): string
+  encodeFunctionData(functionFragment: "bridge", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "burnSyntheticToken",
+    values: [
+      BigNumberish,
+      string,
+      BigNumberish,
+      string,
+      string,
+      string,
+      string,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSyntheticTokenBTC",
+    values: [BigNumberish, BigNumberish, BytesLike, string, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burnSyntheticTokenTON",
+    values: [
+      BigNumberish,
+      BytesLike,
+      string,
+      BigNumberish,
+      Synthesis.TonAddressStruct,
+      string,
+      string,
+      string,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "fabric", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isTrustedForwarder",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "metaBurnSyntheticToken",
+    values: [MetaRouteStructs.MetaBurnTransactionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "metaMintSyntheticToken",
+    values: [MetaRouteStructs.MetaMintTransactionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "metaMintSyntheticTokenBTC",
+    values: [MetaRouteStructs.MetaMintTransactionBTCStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "metaRouter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintSyntheticToken",
+    values: [
+      BigNumberish,
+      BytesLike,
+      BytesLike,
+      string,
+      BigNumberish,
+      BigNumberish,
+      string
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "realToBurnSerialBTC",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "realToMintSerialBTC",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requestCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "requests", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "revertBurn",
+    values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revertBurnAndBurn",
+    values: [BigNumberish, BytesLike, string, string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revertMetaBurn",
+    values: [
+      BigNumberish,
+      BytesLike,
+      string,
+      BytesLike,
+      string,
+      string,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revertSynthesizeRequest",
+    values: [BigNumberish, BytesLike, string, string, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revertSynthesizeRequestByBridge",
+    values: [
+      BigNumberish,
+      BytesLike,
+      string,
+      string,
+      BigNumberish,
+      string,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "setFabric", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setMetaRouter",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinFeeBTC",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTokenThreshold",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "syntToMinFeeBTC",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "synthesizeStates",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenThreshold",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "versionRecipient",
+    values?: undefined
+  ): string;
 
-    decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'burnSyntheticToken', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'burnSyntheticTokenBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'fabric', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'isTrustedForwarder', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'metaBurnSyntheticToken', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'metaMintSyntheticToken', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'metaMintSyntheticTokenBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'metaRouter', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'mintSyntheticToken', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'realToBurnSerialBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'realToMintSerialBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'requestCount', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'requests', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'revertBurn', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'revertBurnAndBurn', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'revertMetaBurn', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'revertSynthesizeRequest', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'revertSynthesizeRequestByBridge', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setFabric', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setMetaRouter', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setMinFeeBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setTokenThreshold', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'syntToMinFeeBTC', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'synthesizeStates', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'tokenThreshold', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'versionRecipient', data: BytesLike): Result
+  decodeFunctionResult(functionFragment: "bridge", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSyntheticToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSyntheticTokenBTC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "burnSyntheticTokenTON",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "fabric", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTrustedForwarder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "metaBurnSyntheticToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "metaMintSyntheticToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "metaMintSyntheticTokenBTC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "metaRouter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintSyntheticToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "realToBurnSerialBTC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "realToMintSerialBTC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "requests", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "revertBurn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "revertBurnAndBurn",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revertMetaBurn",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revertSynthesizeRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revertSynthesizeRequestByBridge",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setFabric", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMetaRouter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinFeeBTC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenThreshold",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "syntToMinFeeBTC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "synthesizeStates",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenThreshold",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "versionRecipient",
+    data: BytesLike
+  ): Result;
 
-    events: {
-        'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)': EventFragment
-        'BurnRequest(bytes32,address,uint256,address,address,uint256,address)': EventFragment
-        'BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)': EventFragment
-        'ClientIdLog(bytes32,bytes32)': EventFragment
-        'ClientIdLogBTC(uint64,bytes32)': EventFragment
-        'OwnershipTransferred(address,address)': EventFragment
-        'Paused(address)': EventFragment
-        'RevertBurnCompleted(bytes32,address,uint256,uint256,address)': EventFragment
-        'RevertSynthesizeRequest(bytes32,address)': EventFragment
-        'SetFabric(address)': EventFragment
-        'SetMetaRouter(address)': EventFragment
-        'SetMinFeeBTC(uint256)': EventFragment
-        'SetTokenThreshold(address,uint256)': EventFragment
-        'SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)': EventFragment
-        'Unpaused(address)': EventFragment
-    }
+  events: {
+    "BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)": EventFragment;
+    "BurnRequest(bytes32,address,uint256,address,address,uint256,address)": EventFragment;
+    "BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)": EventFragment;
+    "BurnRequestTON(bytes32,address,uint256,address,tuple,uint256,address)": EventFragment;
+    "ClientIdLog(bytes32,bytes32)": EventFragment;
+    "ClientIdLogBTC(uint64,bytes32)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
+    "RevertBurnCompleted(bytes32,address,uint256,uint256,address)": EventFragment;
+    "RevertSynthesizeRequest(bytes32,address)": EventFragment;
+    "SetFabric(address)": EventFragment;
+    "SetMetaRouter(address)": EventFragment;
+    "SetMinFeeBTC(uint256)": EventFragment;
+    "SetTokenThreshold(address,uint256)": EventFragment;
+    "SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)": EventFragment;
+    "Unpaused(address)": EventFragment;
+  };
 
-    getEvent(nameOrSignatureOrTopic: 'BTCSynthesizeCompleted'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'BurnRequest'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'BurnRequestBTC'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'ClientIdLogBTC'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'RevertBurnCompleted'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'RevertSynthesizeRequest'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'SetFabric'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'SetMetaRouter'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'SetMinFeeBTC'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'SetTokenThreshold'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'SynthesizeCompleted'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "BTCSynthesizeCompleted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BurnRequest"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BurnRequestBTC"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BurnRequestTON"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ClientIdLog"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ClientIdLogBTC"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RevertBurnCompleted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RevertSynthesizeRequest"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetFabric"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetMetaRouter"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetMinFeeBTC"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetTokenThreshold"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SynthesizeCompleted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export type BTCSynthesizeCompletedEvent = TypedEvent<
-    [string, string, BigNumber, BigNumber, BigNumber, string],
-    {
-        id: string
-        to: string
-        amount: BigNumber
-        serial: BigNumber
-        bridgingFee: BigNumber
-        token: string
-    }
->
+  [string, string, BigNumber, BigNumber, BigNumber, string],
+  {
+    id: string;
+    to: string;
+    amount: BigNumber;
+    serial: BigNumber;
+    bridgingFee: BigNumber;
+    token: string;
+  }
+>;
 
-export type BTCSynthesizeCompletedEventFilter = TypedEventFilter<BTCSynthesizeCompletedEvent>
+export type BTCSynthesizeCompletedEventFilter =
+  TypedEventFilter<BTCSynthesizeCompletedEvent>;
 
 export type BurnRequestEvent = TypedEvent<
-    [string, string, BigNumber, string, string, BigNumber, string],
-    {
-        id: string
-        from: string
-        chainID: BigNumber
-        revertableAddress: string
-        to: string
-        amount: BigNumber
-        token: string
-    }
->
+  [string, string, BigNumber, string, string, BigNumber, string],
+  {
+    id: string;
+    from: string;
+    chainID: BigNumber;
+    revertableAddress: string;
+    to: string;
+    amount: BigNumber;
+    token: string;
+  }
+>;
 
-export type BurnRequestEventFilter = TypedEventFilter<BurnRequestEvent>
+export type BurnRequestEventFilter = TypedEventFilter<BurnRequestEvent>;
 
 export type BurnRequestBTCEvent = TypedEvent<
-    [BigNumber, string, string, BigNumber, BigNumber, string],
-    {
-        burnSerial: BigNumber
-        from: string
-        to: string
-        amount: BigNumber
-        stableBridgingFee: BigNumber
-        rtoken: string
-    }
->
+  [BigNumber, string, string, BigNumber, BigNumber, string],
+  {
+    burnSerial: BigNumber;
+    from: string;
+    to: string;
+    amount: BigNumber;
+    stableBridgingFee: BigNumber;
+    rtoken: string;
+  }
+>;
 
-export type BurnRequestBTCEventFilter = TypedEventFilter<BurnRequestBTCEvent>
+export type BurnRequestBTCEventFilter = TypedEventFilter<BurnRequestBTCEvent>;
 
-export type ClientIdLogEvent = TypedEvent<[string, string], { requestId: string; clientId: string }>
+export type BurnRequestTONEvent = TypedEvent<
+  [
+    string,
+    string,
+    BigNumber,
+    string,
+    Synthesis.TonAddressStructOutput,
+    BigNumber,
+    string
+  ],
+  {
+    id: string;
+    from: string;
+    chainID: BigNumber;
+    revertableAddress: string;
+    to: Synthesis.TonAddressStructOutput;
+    amount: BigNumber;
+    token: string;
+  }
+>;
 
-export type ClientIdLogEventFilter = TypedEventFilter<ClientIdLogEvent>
+export type BurnRequestTONEventFilter = TypedEventFilter<BurnRequestTONEvent>;
 
-export type ClientIdLogBTCEvent = TypedEvent<[BigNumber, string], { burnSerial: BigNumber; clientId: string }>
+export type ClientIdLogEvent = TypedEvent<
+  [string, string],
+  { requestId: string; clientId: string }
+>;
 
-export type ClientIdLogBTCEventFilter = TypedEventFilter<ClientIdLogBTCEvent>
+export type ClientIdLogEventFilter = TypedEventFilter<ClientIdLogEvent>;
 
-export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
+export type ClientIdLogBTCEvent = TypedEvent<
+  [BigNumber, string],
+  { burnSerial: BigNumber; clientId: string }
+>;
 
-export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
+export type ClientIdLogBTCEventFilter = TypedEventFilter<ClientIdLogBTCEvent>;
 
-export type PausedEvent = TypedEvent<[string], { account: string }>
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  { previousOwner: string; newOwner: string }
+>;
 
-export type PausedEventFilter = TypedEventFilter<PausedEvent>
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
+export type PausedEvent = TypedEvent<[string], { account: string }>;
+
+export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export type RevertBurnCompletedEvent = TypedEvent<
-    [string, string, BigNumber, BigNumber, string],
-    {
-        id: string
-        to: string
-        amount: BigNumber
-        bridgingFee: BigNumber
-        token: string
-    }
->
+  [string, string, BigNumber, BigNumber, string],
+  {
+    id: string;
+    to: string;
+    amount: BigNumber;
+    bridgingFee: BigNumber;
+    token: string;
+  }
+>;
 
-export type RevertBurnCompletedEventFilter = TypedEventFilter<RevertBurnCompletedEvent>
+export type RevertBurnCompletedEventFilter =
+  TypedEventFilter<RevertBurnCompletedEvent>;
 
-export type RevertSynthesizeRequestEvent = TypedEvent<[string, string], { id: string; to: string }>
+export type RevertSynthesizeRequestEvent = TypedEvent<
+  [string, string],
+  { id: string; to: string }
+>;
 
-export type RevertSynthesizeRequestEventFilter = TypedEventFilter<RevertSynthesizeRequestEvent>
+export type RevertSynthesizeRequestEventFilter =
+  TypedEventFilter<RevertSynthesizeRequestEvent>;
 
-export type SetFabricEvent = TypedEvent<[string], { fabric: string }>
+export type SetFabricEvent = TypedEvent<[string], { fabric: string }>;
 
-export type SetFabricEventFilter = TypedEventFilter<SetFabricEvent>
+export type SetFabricEventFilter = TypedEventFilter<SetFabricEvent>;
 
-export type SetMetaRouterEvent = TypedEvent<[string], { metaRouter: string }>
+export type SetMetaRouterEvent = TypedEvent<[string], { metaRouter: string }>;
 
-export type SetMetaRouterEventFilter = TypedEventFilter<SetMetaRouterEvent>
+export type SetMetaRouterEventFilter = TypedEventFilter<SetMetaRouterEvent>;
 
-export type SetMinFeeBTCEvent = TypedEvent<[BigNumber], { minFee: BigNumber }>
+export type SetMinFeeBTCEvent = TypedEvent<[BigNumber], { minFee: BigNumber }>;
 
-export type SetMinFeeBTCEventFilter = TypedEventFilter<SetMinFeeBTCEvent>
+export type SetMinFeeBTCEventFilter = TypedEventFilter<SetMinFeeBTCEvent>;
 
-export type SetTokenThresholdEvent = TypedEvent<[string, BigNumber], { token: string; threshold: BigNumber }>
+export type SetTokenThresholdEvent = TypedEvent<
+  [string, BigNumber],
+  { token: string; threshold: BigNumber }
+>;
 
-export type SetTokenThresholdEventFilter = TypedEventFilter<SetTokenThresholdEvent>
+export type SetTokenThresholdEventFilter =
+  TypedEventFilter<SetTokenThresholdEvent>;
 
 export type SynthesizeCompletedEvent = TypedEvent<
-    [string, string, string, BigNumber, BigNumber, string],
-    {
-        id: string
-        to: string
-        crossChainID: string
-        amount: BigNumber
-        bridgingFee: BigNumber
-        token: string
-    }
->
+  [string, string, string, BigNumber, BigNumber, string],
+  {
+    id: string;
+    to: string;
+    crossChainID: string;
+    amount: BigNumber;
+    bridgingFee: BigNumber;
+    token: string;
+  }
+>;
 
-export type SynthesizeCompletedEventFilter = TypedEventFilter<SynthesizeCompletedEvent>
+export type SynthesizeCompletedEventFilter =
+  TypedEventFilter<SynthesizeCompletedEvent>;
 
-export type UnpausedEvent = TypedEvent<[string], { account: string }>
+export type UnpausedEvent = TypedEvent<[string], { account: string }>;
 
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
+export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface Synthesis extends BaseContract {
-    contractName: 'Synthesis'
-    connect(signerOrProvider: Signer | Provider | string): this
-    attach(addressOrName: string): this
-    deployed(): Promise<this>
+  contractName: "Synthesis";
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-    interface: SynthesisInterface
+  interface: SynthesisInterface;
 
-    queryFilter<TEvent extends TypedEvent>(
-        event: TypedEventFilter<TEvent>,
-        fromBlockOrBlockhash?: string | number | undefined,
-        toBlock?: string | number | undefined
-    ): Promise<Array<TEvent>>
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
-    listeners(eventName?: string): Array<Listener>
-    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-    removeAllListeners(eventName?: string): this
-    off: OnEvent<this>
-    on: OnEvent<this>
-    once: OnEvent<this>
-    removeListener: OnEvent<this>
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-    functions: {
-        bridge(overrides?: CallOverrides): Promise<[string]>
-
-        burnSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _stoken: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        burnSyntheticTokenBTC(
-            _stableBridgingFee: BigNumberish,
-            _amount: BigNumberish,
-            _to: BytesLike,
-            _stoken: string,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        fabric(overrides?: CallOverrides): Promise<[string]>
-
-        initialize(
-            _bridge: string,
-            _trustedForwarder: string,
-            _metaRouter: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<[boolean]>
-
-        metaBurnSyntheticToken(
-            _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        metaMintSyntheticToken(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        metaMintSyntheticTokenBTC(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        metaRouter(overrides?: CallOverrides): Promise<[string]>
-
-        mintSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _crossChainID: BytesLike,
-            _tokenReal: string,
-            _chainID: BigNumberish,
-            _amount: BigNumberish,
-            _to: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        owner(overrides?: CallOverrides): Promise<[string]>
-
-        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
-
-        paused(overrides?: CallOverrides): Promise<[boolean]>
-
-        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
-
-        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
-
-        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
-
-        requestCount(overrides?: CallOverrides): Promise<[BigNumber]>
-
-        requests(
-            arg0: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<
-            [string, string, BigNumber, string, string, number] & {
-                recipient: string
-                chain2address: string
-                amount: BigNumber
-                token: string
-                stoken: string
-                state: number
-            }
-        >
-
-        revertBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        revertBurnAndBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _revertableAddress: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        revertMetaBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _router: string,
-            _swapCalldata: BytesLike,
-            _synthesis: string,
-            _burnToken: string,
-            _burnCalldata: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        revertSynthesizeRequest(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        revertSynthesizeRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _sender: string,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        setFabric(
-            _fabric: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        setMetaRouter(
-            _metaRouter: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        setMinFeeBTC(
-            _synt: string,
-            _minFee: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        setTokenThreshold(
-            _token: string,
-            _threshold: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
-
-        synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<[number]>
-
-        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>
-
-        transferOwnership(
-            newOwner: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
-
-        versionRecipient(overrides?: CallOverrides): Promise<[string]>
-    }
-
-    bridge(overrides?: CallOverrides): Promise<string>
+  functions: {
+    bridge(overrides?: CallOverrides): Promise<[string]>;
 
     burnSyntheticToken(
-        _stableBridgingFee: BigNumberish,
-        _stoken: string,
-        _amount: BigNumberish,
-        _chain2address: string,
-        _receiveSide: string,
-        _oppositeBridge: string,
-        _revertableAddress: string,
-        _chainID: BigNumberish,
-        _clientID: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: string,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     burnSyntheticTokenBTC(
-        _stableBridgingFee: BigNumberish,
-        _amount: BigNumberish,
-        _to: BytesLike,
-        _stoken: string,
-        _clientID: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _amount: BigNumberish,
+      _to: BytesLike,
+      _stoken: string,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    fabric(overrides?: CallOverrides): Promise<string>
+    burnSyntheticTokenTON(
+      _stableBridgingFee: BigNumberish,
+      _crossChainID: BytesLike,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: Synthesis.TonAddressStruct,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    fabric(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
-        _bridge: string,
-        _trustedForwarder: string,
-        _metaRouter: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _bridge: string,
+      _trustedForwarder: string,
+      _metaRouter: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<boolean>
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     metaBurnSyntheticToken(
-        _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     metaMintSyntheticToken(
-        _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     metaMintSyntheticTokenBTC(
-        _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    metaRouter(overrides?: CallOverrides): Promise<string>
+    metaRouter(overrides?: CallOverrides): Promise<[string]>;
 
     mintSyntheticToken(
-        _stableBridgingFee: BigNumberish,
-        _externalID: BytesLike,
-        _crossChainID: BytesLike,
-        _tokenReal: string,
-        _chainID: BigNumberish,
-        _amount: BigNumberish,
-        _to: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _crossChainID: BytesLike,
+      _tokenReal: string,
+      _chainID: BigNumberish,
+      _amount: BigNumberish,
+      _to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<string>
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    paused(overrides?: CallOverrides): Promise<boolean>
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-    realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    realToBurnSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    realToMintSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    requestCount(overrides?: CallOverrides): Promise<BigNumber>
+    requestCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     requests(
-        arg0: BytesLike,
-        overrides?: CallOverrides
+      arg0: BytesLike,
+      overrides?: CallOverrides
     ): Promise<
-        [string, string, BigNumber, string, string, number] & {
-            recipient: string
-            chain2address: string
-            amount: BigNumber
-            token: string
-            stoken: string
-            state: number
-        }
-    >
+      [string, string, BigNumber, string, string, number] & {
+        recipient: string;
+        chain2address: string;
+        amount: BigNumber;
+        token: string;
+        stoken: string;
+        state: number;
+      }
+    >;
 
     revertBurn(
-        _stableBridgingFee: BigNumberish,
-        _externalID: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     revertBurnAndBurn(
-        _stableBridgingFee: BigNumberish,
-        _externalID: BytesLike,
-        _receiveSide: string,
-        _oppositeBridge: string,
-        _chainID: BigNumberish,
-        _revertableAddress: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _revertableAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     revertMetaBurn(
-        _stableBridgingFee: BigNumberish,
-        _externalID: BytesLike,
-        _router: string,
-        _swapCalldata: BytesLike,
-        _synthesis: string,
-        _burnToken: string,
-        _burnCalldata: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _router: string,
+      _swapCalldata: BytesLike,
+      _synthesis: string,
+      _burnToken: string,
+      _burnCalldata: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     revertSynthesizeRequest(
-        _stableBridgingFee: BigNumberish,
-        _internalID: BytesLike,
-        _receiveSide: string,
-        _oppositeBridge: string,
-        _chainID: BigNumberish,
-        _clientID: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     revertSynthesizeRequestByBridge(
-        _stableBridgingFee: BigNumberish,
-        _internalID: BytesLike,
-        _receiveSide: string,
-        _oppositeBridge: string,
-        _chainID: BigNumberish,
-        _sender: string,
-        _clientID: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _sender: string,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setFabric(
-        _fabric: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _fabric: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setMetaRouter(
-        _metaRouter: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _metaRouter: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setMinFeeBTC(
-        _synt: string,
-        _minFee: BigNumberish,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _synt: string,
+      _minFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setTokenThreshold(
-        _token: string,
-        _threshold: BigNumberish,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _token: string,
+      _threshold: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    syntToMinFeeBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
+    synthesizeStates(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
-    tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    tokenThreshold(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     transferOwnership(
-        newOwner: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    versionRecipient(overrides?: CallOverrides): Promise<string>
+    versionRecipient(overrides?: CallOverrides): Promise<[string]>;
+  };
 
-    callStatic: {
-        bridge(overrides?: CallOverrides): Promise<string>
+  bridge(overrides?: CallOverrides): Promise<string>;
 
-        burnSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _stoken: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<string>
+  burnSyntheticToken(
+    _stableBridgingFee: BigNumberish,
+    _stoken: string,
+    _amount: BigNumberish,
+    _chain2address: string,
+    _receiveSide: string,
+    _oppositeBridge: string,
+    _revertableAddress: string,
+    _chainID: BigNumberish,
+    _clientID: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        burnSyntheticTokenBTC(
-            _stableBridgingFee: BigNumberish,
-            _amount: BigNumberish,
-            _to: BytesLike,
-            _stoken: string,
-            _clientID: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<BigNumber>
+  burnSyntheticTokenBTC(
+    _stableBridgingFee: BigNumberish,
+    _amount: BigNumberish,
+    _to: BytesLike,
+    _stoken: string,
+    _clientID: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        fabric(overrides?: CallOverrides): Promise<string>
+  burnSyntheticTokenTON(
+    _stableBridgingFee: BigNumberish,
+    _crossChainID: BytesLike,
+    _stoken: string,
+    _amount: BigNumberish,
+    _chain2address: Synthesis.TonAddressStruct,
+    _receiveSide: string,
+    _oppositeBridge: string,
+    _revertableAddress: string,
+    _chainID: BigNumberish,
+    _clientID: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        initialize(
-            _bridge: string,
-            _trustedForwarder: string,
-            _metaRouter: string,
-            overrides?: CallOverrides
-        ): Promise<void>
+  fabric(overrides?: CallOverrides): Promise<string>;
 
-        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<boolean>
+  initialize(
+    _bridge: string,
+    _trustedForwarder: string,
+    _metaRouter: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        metaBurnSyntheticToken(
-            _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
-            overrides?: CallOverrides
-        ): Promise<string>
+  isTrustedForwarder(
+    forwarder: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-        metaMintSyntheticToken(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-            overrides?: CallOverrides
-        ): Promise<void>
+  metaBurnSyntheticToken(
+    _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        metaMintSyntheticTokenBTC(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
-            overrides?: CallOverrides
-        ): Promise<void>
+  metaMintSyntheticToken(
+    _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        metaRouter(overrides?: CallOverrides): Promise<string>
+  metaMintSyntheticTokenBTC(
+    _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        mintSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _crossChainID: BytesLike,
-            _tokenReal: string,
-            _chainID: BigNumberish,
-            _amount: BigNumberish,
-            _to: string,
-            overrides?: CallOverrides
-        ): Promise<void>
+  metaRouter(overrides?: CallOverrides): Promise<string>;
 
-        owner(overrides?: CallOverrides): Promise<string>
+  mintSyntheticToken(
+    _stableBridgingFee: BigNumberish,
+    _externalID: BytesLike,
+    _crossChainID: BytesLike,
+    _tokenReal: string,
+    _chainID: BigNumberish,
+    _amount: BigNumberish,
+    _to: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        pause(overrides?: CallOverrides): Promise<void>
+  owner(overrides?: CallOverrides): Promise<string>;
 
-        paused(overrides?: CallOverrides): Promise<boolean>
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+  paused(overrides?: CallOverrides): Promise<boolean>;
 
-        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+  realToBurnSerialBTC(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-        renounceOwnership(overrides?: CallOverrides): Promise<void>
+  realToMintSerialBTC(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-        requestCount(overrides?: CallOverrides): Promise<BigNumber>
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        requests(
-            arg0: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<
-            [string, string, BigNumber, string, string, number] & {
-                recipient: string
-                chain2address: string
-                amount: BigNumber
-                token: string
-                stoken: string
-                state: number
-            }
-        >
+  requestCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-        revertBurn(_stableBridgingFee: BigNumberish, _externalID: BytesLike, overrides?: CallOverrides): Promise<void>
-
-        revertBurnAndBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _revertableAddress: string,
-            overrides?: CallOverrides
-        ): Promise<void>
-
-        revertMetaBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _router: string,
-            _swapCalldata: BytesLike,
-            _synthesis: string,
-            _burnToken: string,
-            _burnCalldata: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
-
-        revertSynthesizeRequest(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
-
-        revertSynthesizeRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _sender: string,
-            _clientID: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
-
-        setFabric(_fabric: string, overrides?: CallOverrides): Promise<void>
-
-        setMetaRouter(_metaRouter: string, overrides?: CallOverrides): Promise<void>
-
-        setMinFeeBTC(_synt: string, _minFee: BigNumberish, overrides?: CallOverrides): Promise<void>
-
-        setTokenThreshold(_token: string, _threshold: BigNumberish, overrides?: CallOverrides): Promise<void>
-
-        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>
-
-        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
-
-        unpause(overrides?: CallOverrides): Promise<void>
-
-        versionRecipient(overrides?: CallOverrides): Promise<string>
+  requests(
+    arg0: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, BigNumber, string, string, number] & {
+      recipient: string;
+      chain2address: string;
+      amount: BigNumber;
+      token: string;
+      stoken: string;
+      state: number;
     }
-
-    filters: {
-        'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)'(
-            id?: BytesLike | null,
-            to?: string | null,
-            amount?: null,
-            serial?: null,
-            bridgingFee?: null,
-            token?: string | null
-        ): BTCSynthesizeCompletedEventFilter
-        BTCSynthesizeCompleted(
-            id?: BytesLike | null,
-            to?: string | null,
-            amount?: null,
-            serial?: null,
-            bridgingFee?: null,
-            token?: string | null
-        ): BTCSynthesizeCompletedEventFilter
-
-        'BurnRequest(bytes32,address,uint256,address,address,uint256,address)'(
-            id?: null,
-            from?: string | null,
-            chainID?: BigNumberish | null,
-            revertableAddress?: string | null,
-            to?: null,
-            amount?: null,
-            token?: null
-        ): BurnRequestEventFilter
-        BurnRequest(
-            id?: null,
-            from?: string | null,
-            chainID?: BigNumberish | null,
-            revertableAddress?: string | null,
-            to?: null,
-            amount?: null,
-            token?: null
-        ): BurnRequestEventFilter
-
-        'BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)'(
-            burnSerial?: null,
-            from?: string | null,
-            to?: null,
-            amount?: null,
-            stableBridgingFee?: null,
-            rtoken?: string | null
-        ): BurnRequestBTCEventFilter
-        BurnRequestBTC(
-            burnSerial?: null,
-            from?: string | null,
-            to?: null,
-            amount?: null,
-            stableBridgingFee?: null,
-            rtoken?: string | null
-        ): BurnRequestBTCEventFilter
-
-        'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
-        ClientIdLog(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
-
-        'ClientIdLogBTC(uint64,bytes32)'(burnSerial?: null, clientId?: BytesLike | null): ClientIdLogBTCEventFilter
-        ClientIdLogBTC(burnSerial?: null, clientId?: BytesLike | null): ClientIdLogBTCEventFilter
-
-        'OwnershipTransferred(address,address)'(
-            previousOwner?: string | null,
-            newOwner?: string | null
-        ): OwnershipTransferredEventFilter
-        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
-
-        'Paused(address)'(account?: null): PausedEventFilter
-        Paused(account?: null): PausedEventFilter
-
-        'RevertBurnCompleted(bytes32,address,uint256,uint256,address)'(
-            id?: BytesLike | null,
-            to?: string | null,
-            amount?: null,
-            bridgingFee?: null,
-            token?: null
-        ): RevertBurnCompletedEventFilter
-        RevertBurnCompleted(
-            id?: BytesLike | null,
-            to?: string | null,
-            amount?: null,
-            bridgingFee?: null,
-            token?: null
-        ): RevertBurnCompletedEventFilter
-
-        'RevertSynthesizeRequest(bytes32,address)'(
-            id?: BytesLike | null,
-            to?: string | null
-        ): RevertSynthesizeRequestEventFilter
-        RevertSynthesizeRequest(id?: BytesLike | null, to?: string | null): RevertSynthesizeRequestEventFilter
-
-        'SetFabric(address)'(fabric?: null): SetFabricEventFilter
-        SetFabric(fabric?: null): SetFabricEventFilter
-
-        'SetMetaRouter(address)'(metaRouter?: null): SetMetaRouterEventFilter
-        SetMetaRouter(metaRouter?: null): SetMetaRouterEventFilter
-
-        'SetMinFeeBTC(uint256)'(minFee?: null): SetMinFeeBTCEventFilter
-        SetMinFeeBTC(minFee?: null): SetMinFeeBTCEventFilter
-
-        'SetTokenThreshold(address,uint256)'(token?: null, threshold?: null): SetTokenThresholdEventFilter
-        SetTokenThreshold(token?: null, threshold?: null): SetTokenThresholdEventFilter
-
-        'SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)'(
-            id?: BytesLike | null,
-            to?: string | null,
-            crossChainID?: BytesLike | null,
-            amount?: null,
-            bridgingFee?: null,
-            token?: null
-        ): SynthesizeCompletedEventFilter
-        SynthesizeCompleted(
-            id?: BytesLike | null,
-            to?: string | null,
-            crossChainID?: BytesLike | null,
-            amount?: null,
-            bridgingFee?: null,
-            token?: null
-        ): SynthesizeCompletedEventFilter
-
-        'Unpaused(address)'(account?: null): UnpausedEventFilter
-        Unpaused(account?: null): UnpausedEventFilter
-    }
-
-    estimateGas: {
-        bridge(overrides?: CallOverrides): Promise<BigNumber>
-
-        burnSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _stoken: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        burnSyntheticTokenBTC(
-            _stableBridgingFee: BigNumberish,
-            _amount: BigNumberish,
-            _to: BytesLike,
-            _stoken: string,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        fabric(overrides?: CallOverrides): Promise<BigNumber>
-
-        initialize(
-            _bridge: string,
-            _trustedForwarder: string,
-            _metaRouter: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        metaBurnSyntheticToken(
-            _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        metaMintSyntheticToken(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        metaMintSyntheticTokenBTC(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        metaRouter(overrides?: CallOverrides): Promise<BigNumber>
-
-        mintSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _crossChainID: BytesLike,
-            _tokenReal: string,
-            _chainID: BigNumberish,
-            _amount: BigNumberish,
-            _to: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        owner(overrides?: CallOverrides): Promise<BigNumber>
-
-        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
-
-        paused(overrides?: CallOverrides): Promise<BigNumber>
-
-        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
-
-        requestCount(overrides?: CallOverrides): Promise<BigNumber>
-
-        requests(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-        revertBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        revertBurnAndBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _revertableAddress: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        revertMetaBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _router: string,
-            _swapCalldata: BytesLike,
-            _synthesis: string,
-            _burnToken: string,
-            _burnCalldata: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        revertSynthesizeRequest(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        revertSynthesizeRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _sender: string,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        setFabric(_fabric: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
-
-        setMetaRouter(
-            _metaRouter: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        setMinFeeBTC(
-            _synt: string,
-            _minFee: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        setTokenThreshold(
-            _token: string,
-            _threshold: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-        transferOwnership(
-            newOwner: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-
-        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
-
-        versionRecipient(overrides?: CallOverrides): Promise<BigNumber>
-    }
-
-    populateTransaction: {
-        bridge(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        burnSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _stoken: string,
-            _amount: BigNumberish,
-            _chain2address: string,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _revertableAddress: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        burnSyntheticTokenBTC(
-            _stableBridgingFee: BigNumberish,
-            _amount: BigNumberish,
-            _to: BytesLike,
-            _stoken: string,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        fabric(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        initialize(
-            _bridge: string,
-            _trustedForwarder: string,
-            _metaRouter: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        isTrustedForwarder(forwarder: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        metaBurnSyntheticToken(
-            _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        metaMintSyntheticToken(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        metaMintSyntheticTokenBTC(
-            _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        metaRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        mintSyntheticToken(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _crossChainID: BytesLike,
-            _tokenReal: string,
-            _chainID: BigNumberish,
-            _amount: BigNumberish,
-            _to: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        pause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
-
-        paused(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        realToBurnSerialBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        realToMintSerialBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
-
-        requestCount(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        requests(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        revertBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        revertBurnAndBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _revertableAddress: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        revertMetaBurn(
-            _stableBridgingFee: BigNumberish,
-            _externalID: BytesLike,
-            _router: string,
-            _swapCalldata: BytesLike,
-            _synthesis: string,
-            _burnToken: string,
-            _burnCalldata: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        revertSynthesizeRequest(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        revertSynthesizeRequestByBridge(
-            _stableBridgingFee: BigNumberish,
-            _internalID: BytesLike,
-            _receiveSide: string,
-            _oppositeBridge: string,
-            _chainID: BigNumberish,
-            _sender: string,
-            _clientID: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        setFabric(
-            _fabric: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        setMetaRouter(
-            _metaRouter: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        setMinFeeBTC(
-            _synt: string,
-            _minFee: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        setTokenThreshold(
-            _token: string,
-            _threshold: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        transferOwnership(
-            newOwner: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-
-        unpause(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
-
-        versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>
-    }
+  >;
+
+  revertBurn(
+    _stableBridgingFee: BigNumberish,
+    _externalID: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revertBurnAndBurn(
+    _stableBridgingFee: BigNumberish,
+    _externalID: BytesLike,
+    _receiveSide: string,
+    _oppositeBridge: string,
+    _chainID: BigNumberish,
+    _revertableAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revertMetaBurn(
+    _stableBridgingFee: BigNumberish,
+    _externalID: BytesLike,
+    _router: string,
+    _swapCalldata: BytesLike,
+    _synthesis: string,
+    _burnToken: string,
+    _burnCalldata: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revertSynthesizeRequest(
+    _stableBridgingFee: BigNumberish,
+    _internalID: BytesLike,
+    _receiveSide: string,
+    _oppositeBridge: string,
+    _chainID: BigNumberish,
+    _clientID: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revertSynthesizeRequestByBridge(
+    _stableBridgingFee: BigNumberish,
+    _internalID: BytesLike,
+    _receiveSide: string,
+    _oppositeBridge: string,
+    _chainID: BigNumberish,
+    _sender: string,
+    _clientID: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setFabric(
+    _fabric: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMetaRouter(
+    _metaRouter: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinFeeBTC(
+    _synt: string,
+    _minFee: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setTokenThreshold(
+    _token: string,
+    _threshold: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  syntToMinFeeBTC(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  synthesizeStates(arg0: BytesLike, overrides?: CallOverrides): Promise<number>;
+
+  tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unpause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  versionRecipient(overrides?: CallOverrides): Promise<string>;
+
+  callStatic: {
+    bridge(overrides?: CallOverrides): Promise<string>;
+
+    burnSyntheticToken(
+      _stableBridgingFee: BigNumberish,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: string,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    burnSyntheticTokenBTC(
+      _stableBridgingFee: BigNumberish,
+      _amount: BigNumberish,
+      _to: BytesLike,
+      _stoken: string,
+      _clientID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    burnSyntheticTokenTON(
+      _stableBridgingFee: BigNumberish,
+      _crossChainID: BytesLike,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: Synthesis.TonAddressStruct,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    fabric(overrides?: CallOverrides): Promise<string>;
+
+    initialize(
+      _bridge: string,
+      _trustedForwarder: string,
+      _metaRouter: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    metaBurnSyntheticToken(
+      _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    metaMintSyntheticToken(
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    metaMintSyntheticTokenBTC(
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    metaRouter(overrides?: CallOverrides): Promise<string>;
+
+    mintSyntheticToken(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _crossChainID: BytesLike,
+      _tokenReal: string,
+      _chainID: BigNumberish,
+      _amount: BigNumberish,
+      _to: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    realToBurnSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    realToMintSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    requestCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    requests(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, string, string, number] & {
+        recipient: string;
+        chain2address: string;
+        amount: BigNumber;
+        token: string;
+        stoken: string;
+        state: number;
+      }
+    >;
+
+    revertBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revertBurnAndBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _revertableAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revertMetaBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _router: string,
+      _swapCalldata: BytesLike,
+      _synthesis: string,
+      _burnToken: string,
+      _burnCalldata: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revertSynthesizeRequest(
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revertSynthesizeRequestByBridge(
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _sender: string,
+      _clientID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setFabric(_fabric: string, overrides?: CallOverrides): Promise<void>;
+
+    setMetaRouter(
+      _metaRouter: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinFeeBTC(
+      _synt: string,
+      _minFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTokenThreshold(
+      _token: string,
+      _threshold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    syntToMinFeeBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    synthesizeStates(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    versionRecipient(overrides?: CallOverrides): Promise<string>;
+  };
+
+  filters: {
+    "BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)"(
+      id?: BytesLike | null,
+      to?: string | null,
+      amount?: null,
+      serial?: null,
+      bridgingFee?: null,
+      token?: string | null
+    ): BTCSynthesizeCompletedEventFilter;
+    BTCSynthesizeCompleted(
+      id?: BytesLike | null,
+      to?: string | null,
+      amount?: null,
+      serial?: null,
+      bridgingFee?: null,
+      token?: string | null
+    ): BTCSynthesizeCompletedEventFilter;
+
+    "BurnRequest(bytes32,address,uint256,address,address,uint256,address)"(
+      id?: null,
+      from?: string | null,
+      chainID?: BigNumberish | null,
+      revertableAddress?: string | null,
+      to?: null,
+      amount?: null,
+      token?: null
+    ): BurnRequestEventFilter;
+    BurnRequest(
+      id?: null,
+      from?: string | null,
+      chainID?: BigNumberish | null,
+      revertableAddress?: string | null,
+      to?: null,
+      amount?: null,
+      token?: null
+    ): BurnRequestEventFilter;
+
+    "BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)"(
+      burnSerial?: null,
+      from?: string | null,
+      to?: null,
+      amount?: null,
+      stableBridgingFee?: null,
+      rtoken?: string | null
+    ): BurnRequestBTCEventFilter;
+    BurnRequestBTC(
+      burnSerial?: null,
+      from?: string | null,
+      to?: null,
+      amount?: null,
+      stableBridgingFee?: null,
+      rtoken?: string | null
+    ): BurnRequestBTCEventFilter;
+
+    "BurnRequestTON(bytes32,address,uint256,address,tuple,uint256,address)"(
+      id?: null,
+      from?: string | null,
+      chainID?: BigNumberish | null,
+      revertableAddress?: string | null,
+      to?: null,
+      amount?: null,
+      token?: null
+    ): BurnRequestTONEventFilter;
+    BurnRequestTON(
+      id?: null,
+      from?: string | null,
+      chainID?: BigNumberish | null,
+      revertableAddress?: string | null,
+      to?: null,
+      amount?: null,
+      token?: null
+    ): BurnRequestTONEventFilter;
+
+    "ClientIdLog(bytes32,bytes32)"(
+      requestId?: null,
+      clientId?: BytesLike | null
+    ): ClientIdLogEventFilter;
+    ClientIdLog(
+      requestId?: null,
+      clientId?: BytesLike | null
+    ): ClientIdLogEventFilter;
+
+    "ClientIdLogBTC(uint64,bytes32)"(
+      burnSerial?: null,
+      clientId?: BytesLike | null
+    ): ClientIdLogBTCEventFilter;
+    ClientIdLogBTC(
+      burnSerial?: null,
+      clientId?: BytesLike | null
+    ): ClientIdLogBTCEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+
+    "Paused(address)"(account?: null): PausedEventFilter;
+    Paused(account?: null): PausedEventFilter;
+
+    "RevertBurnCompleted(bytes32,address,uint256,uint256,address)"(
+      id?: BytesLike | null,
+      to?: string | null,
+      amount?: null,
+      bridgingFee?: null,
+      token?: null
+    ): RevertBurnCompletedEventFilter;
+    RevertBurnCompleted(
+      id?: BytesLike | null,
+      to?: string | null,
+      amount?: null,
+      bridgingFee?: null,
+      token?: null
+    ): RevertBurnCompletedEventFilter;
+
+    "RevertSynthesizeRequest(bytes32,address)"(
+      id?: BytesLike | null,
+      to?: string | null
+    ): RevertSynthesizeRequestEventFilter;
+    RevertSynthesizeRequest(
+      id?: BytesLike | null,
+      to?: string | null
+    ): RevertSynthesizeRequestEventFilter;
+
+    "SetFabric(address)"(fabric?: null): SetFabricEventFilter;
+    SetFabric(fabric?: null): SetFabricEventFilter;
+
+    "SetMetaRouter(address)"(metaRouter?: null): SetMetaRouterEventFilter;
+    SetMetaRouter(metaRouter?: null): SetMetaRouterEventFilter;
+
+    "SetMinFeeBTC(uint256)"(minFee?: null): SetMinFeeBTCEventFilter;
+    SetMinFeeBTC(minFee?: null): SetMinFeeBTCEventFilter;
+
+    "SetTokenThreshold(address,uint256)"(
+      token?: null,
+      threshold?: null
+    ): SetTokenThresholdEventFilter;
+    SetTokenThreshold(
+      token?: null,
+      threshold?: null
+    ): SetTokenThresholdEventFilter;
+
+    "SynthesizeCompleted(bytes32,address,bytes32,uint256,uint256,address)"(
+      id?: BytesLike | null,
+      to?: string | null,
+      crossChainID?: BytesLike | null,
+      amount?: null,
+      bridgingFee?: null,
+      token?: null
+    ): SynthesizeCompletedEventFilter;
+    SynthesizeCompleted(
+      id?: BytesLike | null,
+      to?: string | null,
+      crossChainID?: BytesLike | null,
+      amount?: null,
+      bridgingFee?: null,
+      token?: null
+    ): SynthesizeCompletedEventFilter;
+
+    "Unpaused(address)"(account?: null): UnpausedEventFilter;
+    Unpaused(account?: null): UnpausedEventFilter;
+  };
+
+  estimateGas: {
+    bridge(overrides?: CallOverrides): Promise<BigNumber>;
+
+    burnSyntheticToken(
+      _stableBridgingFee: BigNumberish,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: string,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    burnSyntheticTokenBTC(
+      _stableBridgingFee: BigNumberish,
+      _amount: BigNumberish,
+      _to: BytesLike,
+      _stoken: string,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    burnSyntheticTokenTON(
+      _stableBridgingFee: BigNumberish,
+      _crossChainID: BytesLike,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: Synthesis.TonAddressStruct,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    fabric(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      _bridge: string,
+      _trustedForwarder: string,
+      _metaRouter: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    metaBurnSyntheticToken(
+      _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    metaMintSyntheticToken(
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    metaMintSyntheticTokenBTC(
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    metaRouter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mintSyntheticToken(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _crossChainID: BytesLike,
+      _tokenReal: string,
+      _chainID: BigNumberish,
+      _amount: BigNumberish,
+      _to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    realToBurnSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    realToMintSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    requestCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    requests(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+    revertBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revertBurnAndBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _revertableAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revertMetaBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _router: string,
+      _swapCalldata: BytesLike,
+      _synthesis: string,
+      _burnToken: string,
+      _burnCalldata: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revertSynthesizeRequest(
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revertSynthesizeRequestByBridge(
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _sender: string,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setFabric(
+      _fabric: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMetaRouter(
+      _metaRouter: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinFeeBTC(
+      _synt: string,
+      _minFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setTokenThreshold(
+      _token: string,
+      _threshold: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    syntToMinFeeBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    synthesizeStates(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokenThreshold(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    versionRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    bridge(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    burnSyntheticToken(
+      _stableBridgingFee: BigNumberish,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: string,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    burnSyntheticTokenBTC(
+      _stableBridgingFee: BigNumberish,
+      _amount: BigNumberish,
+      _to: BytesLike,
+      _stoken: string,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    burnSyntheticTokenTON(
+      _stableBridgingFee: BigNumberish,
+      _crossChainID: BytesLike,
+      _stoken: string,
+      _amount: BigNumberish,
+      _chain2address: Synthesis.TonAddressStruct,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _revertableAddress: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    fabric(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    initialize(
+      _bridge: string,
+      _trustedForwarder: string,
+      _metaRouter: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    metaBurnSyntheticToken(
+      _metaBurnTransaction: MetaRouteStructs.MetaBurnTransactionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    metaMintSyntheticToken(
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    metaMintSyntheticTokenBTC(
+      _metaMintTransaction: MetaRouteStructs.MetaMintTransactionBTCStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    metaRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mintSyntheticToken(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _crossChainID: BytesLike,
+      _tokenReal: string,
+      _chainID: BigNumberish,
+      _amount: BigNumberish,
+      _to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    realToBurnSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    realToMintSerialBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    requestCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    requests(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    revertBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revertBurnAndBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _revertableAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revertMetaBurn(
+      _stableBridgingFee: BigNumberish,
+      _externalID: BytesLike,
+      _router: string,
+      _swapCalldata: BytesLike,
+      _synthesis: string,
+      _burnToken: string,
+      _burnCalldata: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revertSynthesizeRequest(
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revertSynthesizeRequestByBridge(
+      _stableBridgingFee: BigNumberish,
+      _internalID: BytesLike,
+      _receiveSide: string,
+      _oppositeBridge: string,
+      _chainID: BigNumberish,
+      _sender: string,
+      _clientID: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setFabric(
+      _fabric: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMetaRouter(
+      _metaRouter: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinFeeBTC(
+      _synt: string,
+      _minFee: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokenThreshold(
+      _token: string,
+      _threshold: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    syntToMinFeeBTC(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    synthesizeStates(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokenThreshold(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+  };
 }

@@ -200,7 +200,7 @@ export class Symbiosis {
 
     public chains(): Chain[] {
         const ids = this.config.chains.map((i) => i.id)
-        return chains.filter((i) => ids.includes(i.id))
+        return chains.filter((chain) => ids.includes(chain.id))
     }
 
     public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
@@ -413,6 +413,8 @@ export class Symbiosis {
             client_id: utils.parseBytes32String(this.clientId),
             signature: this.signature,
         }
+
+        debugger
 
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {
             method: 'POST',

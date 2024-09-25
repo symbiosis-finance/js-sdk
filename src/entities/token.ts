@@ -95,6 +95,11 @@ export const WETH = {
         address: '',
         decimals: 9,
     }),
+    [ChainId.TON_TESTNET]: new Token({
+        chainId: ChainId.TON_TESTNET,
+        address: '',
+        decimals: 9,
+    }),
     [ChainId.BTC_MAINNET]: new Token({
         chainId: ChainId.BTC_MAINNET,
         address: '',

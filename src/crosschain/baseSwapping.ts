@@ -126,12 +126,19 @@ export abstract class BaseSwapping {
         this.transitTokenOut =
             transitTokenOut || this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
 
+        console.log('omniPoolConfig', this.omniPoolConfig)
+        console.log('transitTokenIn --->', transitTokenIn, this.transitTokenIn)
+        console.log('transitTokenOut --->', transitTokenOut, this.transitTokenOut)
+
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
         this.slippage = this.buildDetailedSlippage(slippage)
         this.deadline = deadline
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
+
+        console.log('from ', this.from)
+        console.log('to ', this.to)
 
         if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
             this.revertableAddresses = {
@@ -142,6 +149,8 @@ export abstract class BaseSwapping {
             this.revertableAddresses = { AB: this.from, BC: this.from }
         }
 
+        console.log('revertableAddresses', this.revertableAddresses)
+
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
@@ -150,9 +159,13 @@ export abstract class BaseSwapping {
         }
 
         this.transit = this.buildTransit()
+
+        console.log('transit', this.transit)
         await this.transit.init()
         timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
         prev = Date.now()
+
+        console.log('transit 2', this.transit)
 
         await this.doPostTransitAction()
 

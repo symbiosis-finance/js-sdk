@@ -105,6 +105,8 @@ export class Zapping {
         this.omniLiquidity = this.buildOmniLiquidity()
         await this.omniLiquidity.init()
 
+        console.log(' i am here ---> 1')
+
         const fee = await this.getFee()
 
         this.omniLiquidity = this.buildOmniLiquidity(fee)

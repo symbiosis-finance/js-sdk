@@ -16,23 +16,23 @@ export const config: Config = {
         FRAX: '0.3',
     },
     omniPools: [
-        {
-            chainId: ChainId.BSC_TESTNET,
-            address: '0xFC385a59b2728cA437057E3cDBA4a2611B75c406', // BTC octopool
-            oracle: '0xfdF3dBF16a7Dc8078FE4E9D0c1ac391dfb8B19aF',
-            generalPurpose: true,
-        },
-        {
-            chainId: ChainId.BSC_TESTNET,
-            address: '0x3E524E5dbcEc08C3712D7Ac877Ad83cb8dAfCe8D', // BTC mainnet octopool
-            oracle: '0x7a62416f10cd039cb538953953f94316FE1c32FA',
-            generalPurpose: true,
-        },
+        // {
+        //     chainId: ChainId.BSC_TESTNET,
+        //     address: '0xFC385a59b2728cA437057E3cDBA4a2611B75c406', // BTC octopool
+        //     oracle: '0xfdF3dBF16a7Dc8078FE4E9D0c1ac391dfb8B19aF',
+        //     generalPurpose: true,
+        // },
+        // {
+        //     chainId: ChainId.BSC_TESTNET,
+        //     address: '0x3E524E5dbcEc08C3712D7Ac877Ad83cb8dAfCe8D', // BTC mainnet octopool
+        //     oracle: '0x7a62416f10cd039cb538953953f94316FE1c32FA',
+        //     generalPurpose: true,
+        // },
         {
             chainId: ChainId.BSC_TESTNET,
             address: '0x2826c540065C8eD792d7100ca89628E986f2F42E', // TON octopool
             oracle: '0xaF123f922b9cAe0F525c2E5A95314D7E8E229413',
-            generalPurpose: true,
+            generalPurpose: true, // maybe in prod false, eth -\-> ton
         },
     ],
     revertableAddress: {
@@ -45,30 +45,7 @@ export const config: Config = {
             id: ChainId.BSC_TESTNET,
             rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
             filterBlockOffset: 2000,
-            stables: [
-                {
-                    name: 'sWTON',
-                    symbol: 'sWTON',
-                    address: '0x4950b13CbC3A33164fdd782E75271891D0d9F1D9', // sTonFromFuji(WTON)
-                    chainId: ChainId.BSC_TESTNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                    },
-                },
-                {
-                    name: 'sTON',
-                    symbol: 'sTON',
-                    address: '0x8480c16DA4598aB6132194aAF8709628E139c796', // sTon from TON
-                    chainId: ChainId.BSC_TESTNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                    },
-                },
-            ],
+            stables: [],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179',
@@ -78,6 +55,33 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x9B8D0e0765cDa999910ff31A2204080E1192EfC7',
             multicallRouter: '0x086D8d30822086941729DF294f0e52E42EdC17F9',
+        },
+        {
+            id: ChainId.TON_TESTNET,
+            rpc: 'https://ton-testnet.blockpi.network/v1/rpc/public',
+            filterBlockOffset: 0,
+            stables: [
+                {
+                    name: 'TON Coin',
+                    symbol: 'TON',
+                    address: '0x0000000000000000000000000000000000000003', // origin token address (we choose this for create map in contracts)
+                    chainId: ChainId.TON_TESTNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000',
+            bridge: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: 'kQBLdw1TPXKisNQk6xlfdRmDd4jAw51p645LvJxDgg1TMGa5',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000',
         },
         // {
         //     id: ChainId.BTC_MUTINY,

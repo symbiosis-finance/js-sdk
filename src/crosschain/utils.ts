@@ -345,6 +345,11 @@ export function isBtc(chainId: ChainId | undefined) {
     return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
 }
 
+export function isTon(chainId: ChainId | undefined) {
+    if (!chainId) return false
+    return [ChainId.TON_MAINNET, ChainId.TON_TESTNET].includes(chainId)
+}
+
 export function selectError(errors: Error[]): Error {
     if (errors.length === 0) {
         throw new Error('Errors array is empty')
