@@ -124,6 +124,7 @@ export type RouteItem = {
 }
 
 export type FeeItem = {
+    provider: SymbiosisTradeType
     value: TokenAmount
     save?: TokenAmount
     description?: string

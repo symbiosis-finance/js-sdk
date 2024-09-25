@@ -94,6 +94,7 @@ export class ZappingBtc extends BaseSwapping {
             fees: [
                 ...result.fees,
                 {
+                    provider: 'symbiosis',
                     description: 'BTC fee',
                     value: this.minBtcFee,
                 },

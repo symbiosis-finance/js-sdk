@@ -86,6 +86,7 @@ export class ZappingTon extends BaseSwapping {
             fees: [
                 ...rest.fees,
                 {
+                    provider: 'ton-bridge',
                     description: 'TON bridge fee',
                     value: bridgeFee,
                 },

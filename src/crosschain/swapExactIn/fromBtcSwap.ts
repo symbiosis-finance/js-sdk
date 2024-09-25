@@ -167,14 +167,17 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         ],
         fees: [
             {
+                provider: 'symbiosis',
                 description: 'BTC Forwarder fee',
-                value: btcForwarderFee,
+                value: new TokenAmount(tokenAmountIn.token, btcForwarderFee.raw),
             },
             {
+                provider: 'symbiosis',
                 description: 'BTC Portal fee',
-                value: btcPortalFee,
+                value: new TokenAmount(tokenAmountIn.token, btcPortalFee.raw),
             },
             {
+                provider: 'symbiosis',
                 description: 'Mint fee',
                 value: mintFee,
             },

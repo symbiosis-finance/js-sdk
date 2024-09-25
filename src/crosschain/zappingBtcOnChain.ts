@@ -200,6 +200,7 @@ async function getBurnCall(symbiosis: Symbiosis, amountIn: TokenAmount, bitcoinA
         offset: 68,
         fees: [
             {
+                provider: 'symbiosis',
                 description: 'Burn fee',
                 value: fee,
             },
