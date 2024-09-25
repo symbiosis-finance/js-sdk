@@ -7,7 +7,7 @@ import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from './contracts'
 import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, SymbiosisTradeType, WrapTrade } from './trade'
+import { AggregatorTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
 import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './utils'
 import { WaitForComplete } from './waitForComplete'
@@ -16,53 +16,14 @@ import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
-import { OmniPoolConfig } from './types'
-
-export interface MiddlewareCall {
-    address: string
-    data: string
-    offset: number
-}
-
-export interface BaseSwappingExactInParams {
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    from: string
-    to: string
-    slippage: number
-    deadline: number
-    oneInchProtocols?: OneInchProtocols
-    transitTokenIn?: Token
-    transitTokenOut?: Token
-    middlewareCall?: MiddlewareCall
-}
-
-export interface BaseSwappingExactInInfo {
-    save: TokenAmount
-    fee: TokenAmount
-    extraFee?: TokenAmount
-    tokenAmountOut: TokenAmount
-    tokenAmountOutMin: TokenAmount
-    route: Token[]
-    priceImpact: Percent
-    amountInUsd: TokenAmount
-    approveTo: string
-    inTradeType?: SymbiosisTradeType
-    outTradeType?: SymbiosisTradeType
-    timeLog?: (string | number)[][]
-}
-
-type EthSwapExactIn = BaseSwappingExactInInfo & {
-    type: 'evm'
-    transactionRequest: TransactionRequest
-}
-
-type TronSwapExactIn = BaseSwappingExactInInfo & {
-    type: 'tron'
-    transactionRequest: TronTransactionData
-}
-
-export type BaseSwappingExactInResult = TronSwapExactIn | EthSwapExactIn
+import {
+    FeeItem,
+    OmniPoolConfig,
+    RouteItem,
+    SwapExactInParams,
+    SwapExactInResult,
+    SwapExactInTransactionPayload,
+} from './types'
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -111,10 +72,11 @@ export abstract class BaseSwapping {
         oneInchProtocols,
         transitTokenIn,
         transitTokenOut,
-    }: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
+    }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const start = Date.now()
         let prev = start
         const timeLog = []
+        const routes: RouteItem[] = []
 
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
@@ -156,16 +118,25 @@ export abstract class BaseSwapping {
             await this.tradeA.init()
             timeLog.push(['A', Date.now() - start])
             prev = Date.now()
+            routes.push({
+                provider: this.tradeA.tradeType,
+                tokens: [this.tradeA.tokenAmountIn.token, this.tradeA.amountOut.token],
+            })
         }
 
         this.transit = this.buildTransit()
 
-        console.log('transit', this.transit)
+        console.log('transit 1', this.transit)
         await this.transit.init()
         timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
         prev = Date.now()
 
-        console.log('transit 2', this.transit)
+        console.log('transitTokenIn', this.transit)
+
+        routes.push({
+            provider: 'symbiosis',
+            tokens: [this.transitTokenIn, this.transitTokenOut],
+        })
 
         await this.doPostTransitAction()
 
@@ -175,6 +146,10 @@ export abstract class BaseSwapping {
             await this.tradeC.init()
             timeLog.push(['C1', Date.now() - start, Date.now() - prev])
             prev = Date.now()
+            routes.push({
+                provider: this.tradeC.tradeType,
+                tokens: [this.tradeC.tokenAmountIn.token, this.tradeC.amountOut.token],
+            })
         }
 
         this.route = this.getRoute()
@@ -208,64 +183,54 @@ export abstract class BaseSwapping {
         }
         // <<< NOTE create trades with calculated fee
 
-        let crossChainFee = fee
-        if (feeV2) {
-            const pow = BigNumber.from(10).pow(fee.token.decimals)
-            const powV2 = BigNumber.from(10).pow(feeV2.token.decimals)
-
-            const feeBase = BigNumber.from(fee.raw.toString()).mul(powV2)
-            const feeV2Base = BigNumber.from(feeV2.raw.toString()).mul(pow)
-
-            crossChainFee = new TokenAmount(feeV2.token, feeBase.add(feeV2Base).div(pow).toString())
-        }
-
-        let crossChainSave = save
-        if (feeV2Raw?.save) {
-            const pow = BigNumber.from(10).pow(save.token.decimals)
-            const powV2 = BigNumber.from(10).pow(feeV2Raw.save.token.decimals)
-
-            const feeBase = BigNumber.from(save.raw.toString()).mul(powV2)
-            const feeV2Base = BigNumber.from(feeV2Raw.save.raw.toString()).mul(pow)
-
-            crossChainSave = new TokenAmount(feeV2Raw.save.token, feeBase.add(feeV2Base).div(pow).toString())
-        }
-
         const tokenAmountOut = this.tokenAmountOut(feeV2)
         const tokenAmountOutMin = new TokenAmount(
             tokenAmountOut.token,
             JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
         )
 
-        const swapInfo: BaseSwappingExactInInfo = {
-            save: crossChainSave,
-            fee: crossChainFee,
-            tokenAmountOut,
-            tokenAmountOutMin,
-            route: this.route,
-            priceImpact: this.calculatePriceImpact(),
-            amountInUsd: this.amountInUsd,
-            approveTo: this.approveTo(),
-            inTradeType: this.tradeA?.tradeType,
-            outTradeType: this.tradeC?.tradeType,
-        }
-
+        let payload: SwapExactInTransactionPayload
         if (isTronToken(this.tokenAmountIn.token)) {
             const transactionRequest = this.getTronTransactionRequest(fee, feeV2)
-
-            return {
-                ...swapInfo,
-                type: 'tron',
+            payload = {
+                transactionType: 'tron',
+                transactionRequest,
+            }
+        } else {
+            const transactionRequest = this.getEvmTransactionRequest(fee, feeV2)
+            payload = {
+                transactionType: 'evm',
                 transactionRequest,
             }
         }
 
-        const transactionRequest = this.getEvmTransactionRequest(fee, feeV2)
         timeLog.push(['F', Date.now() - start])
 
+        const fees: FeeItem[] = [
+            {
+                value: fee,
+                description: 'Symbiosis fee',
+                save,
+            },
+        ]
+        if (feeV2Raw) {
+            fees.push({
+                value: feeV2Raw.fee,
+                description: 'Symbiosis fee',
+                save: feeV2Raw.save,
+            })
+        }
+
         return {
-            ...swapInfo,
-            type: 'evm',
-            transactionRequest,
+            ...payload,
+            kind: 'crosschain-swap',
+            tokenAmountOut,
+            tokenAmountOutMin,
+            priceImpact: this.calculatePriceImpact(),
+            approveTo: this.approveTo(),
+            routes,
+            fees,
+            amountInUsd: this.amountInUsd,
             timeLog,
         }
     }

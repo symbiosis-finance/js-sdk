@@ -1,29 +1,30 @@
 import { DataProvider } from '../dataProvider'
 import { AggregatorTrade } from '../trade'
 import { preparePayload } from './preparePayload'
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
+import { TokenAmount } from '../../entities'
 
 export async function aggregatorsSwap({
     symbiosis,
     deadline,
-    toAddress,
-    fromAddress,
+    to,
+    from,
     slippage,
-    inTokenAmount,
-    outToken,
+    tokenAmountIn,
+    tokenOut,
     oneInchProtocols,
 }: SwapExactInParams): Promise<SwapExactInResult> {
     const dataProvider = new DataProvider(symbiosis)
     const ttl = deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
         symbiosis,
-        to: toAddress,
-        from: fromAddress,
+        to: to,
+        from: from,
         clientId: symbiosis.clientId,
         dataProvider,
         slippage,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: outToken,
+        tokenAmountIn: tokenAmountIn,
+        tokenOut: tokenOut,
         ttl,
         oneInchProtocols,
     })
@@ -33,25 +34,35 @@ export async function aggregatorsSwap({
     const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType, functionSelector } =
         aggregatorTrade
 
-    const value = inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : '0'
+    const value = tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : '0'
 
     const payload = preparePayload({
         functionSelector,
-        chainId: inTokenAmount.token.chainId,
-        fromAddress,
-        toAddress: routerAddress,
+        chainId: tokenAmountIn.token.chainId,
+        from,
+        to: routerAddress,
         value,
         callData,
     })
 
     return {
+        ...payload,
         kind: 'onchain-swap',
         approveTo: routerAddress,
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOutMin,
         priceImpact,
-        route,
-        inTradeType: tradeType,
-        ...payload,
+        fees: [
+            {
+                description: 'Aggregator fee',
+                value: new TokenAmount(tokenOut, '0'),
+            },
+        ],
+        routes: [
+            {
+                provider: tradeType,
+                tokens: route,
+            },
+        ],
     }
 }

@@ -1,5 +1,5 @@
-import { SwapExactInParams, SwapExactInResult } from './types'
-import { TokenAmount } from '../../entities'
+import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
+import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
@@ -8,128 +8,84 @@ import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { parseUnits } from '@ethersproject/units'
-import { BaseSwappingExactInResult } from '../baseSwapping'
 import { BigNumber } from 'ethers'
 import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
+import { AggregatorTrade } from '../trade'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { inTokenAmount, symbiosis } = context
+    const { tokenAmountIn, symbiosis } = context
 
-    if (!isBtc(inTokenAmount.token.chainId)) {
+    if (!isBtc(tokenAmountIn.token.chainId)) {
         return false
     }
 
-    symbiosis.validateLimits(inTokenAmount)
+    symbiosis.validateLimits(tokenAmountIn)
 
     return true
 }
 
-type BuildTailResult = BaseSwappingExactInResult & { tail: string }
+type BuildTailResult = SwapExactInResult & { tail: string }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, outToken, symbiosis, toAddress } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to } = context
 
-    const btcChainId = inTokenAmount.token.chainId
+    const btcChainId = tokenAmountIn.token.chainId
     const symBtcConfig = symbiosis.symBtcConfigFor(btcChainId)
 
     const sBtcChainId = symBtcConfig.chainId
     if (!sBtcChainId) {
         throw new Error(`Synthetic BTC chainId wasn't found`)
     }
-    const sBtc = symbiosis.getRepresentation(inTokenAmount.token, sBtcChainId)
+    const sBtc = symbiosis.getRepresentation(tokenAmountIn.token, sBtcChainId)
     if (!sBtc) {
         throw new Error(`Synthetic BTC wasn't found`)
     }
 
-    if (!isAddress(toAddress)) {
+    if (!isAddress(to)) {
         throw new Error(`Destination address wasn't provided`)
     }
-    // destination of swap is not Bitcoin sBtc
-    const isBtcBridging = outToken.equals(sBtc)
 
     const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
-    let sBtcAmount = new TokenAmount(sBtc, inTokenAmount.raw)
+    let sBtcAmount = new TokenAmount(sBtc, tokenAmountIn.raw)
 
     const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.dataProvider)
     const btcPortalFee = new TokenAmount(sBtc, btcPortalFeeRaw)
     sBtcAmount = sBtcAmount.subtract(btcPortalFee)
 
-    const sbfeeRaw = '1400' // 1400 sat * $70000 = ~$1 // TODO @allush estimate with advisor
-    const sbfee = new TokenAmount(sBtc, sbfeeRaw.toString())
-    if (sBtcAmount.lessThan(sbfee)) {
+    const mintFeeRaw = '1000' // satoshi
+    const mintFee = new TokenAmount(sBtc, mintFeeRaw.toString())
+    if (sBtcAmount.lessThan(mintFee)) {
         throw new Error(
-            `Amount ${sBtcAmount.toSignificant()} ${sBtcAmount.token.symbol} less than fee ${sbfee.toSignificant()} ${
-                sbfee.token.symbol
+            `Amount ${sBtcAmount.toSignificant()} ${sBtcAmount.token.symbol} less than fee ${mintFee.toSignificant()} ${
+                mintFee.token.symbol
             }`,
             ErrorCode.AMOUNT_LESS_THAN_FEE
         )
     }
-    sBtcAmount = sBtcAmount.subtract(sbfee)
+    sBtcAmount = sBtcAmount.subtract(mintFee)
 
     let tokenAmountOut: TokenAmount
     let tokenAmountOutMin: TokenAmount
     let btcForwarderFee: TokenAmount
     let btcForwarderFeeMax: TokenAmount
-    let tail: string = ''
-    let tailSbFee = new TokenAmount(sBtc, '0')
-    let tailResult: BuildTailResult | undefined
-    if (!isBtcBridging) {
-        btcForwarderFee = new TokenAmount(
-            sBtc,
-            await estimateWrap({
-                forwarderUrl,
-                portalFee: btcPortalFeeRaw,
-                sbfee: sbfeeRaw,
-                tail,
-                to: toAddress,
-            })
-        )
-        if (btcForwarderFee.greaterThan(sBtcAmount)) {
-            throw new Error(
-                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
-        }
-        const { tail: tail1 } = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
+    let tail: string
+    let tailFees: FeeItem[] = []
+    let priceImpact: Percent = new Percent('0', '0')
+    let amountInUsd: TokenAmount | undefined
+    let routes: RouteItem[] = []
 
-        tail = tail1
+    if (tokenOut.equals(sBtc)) {
+        // bridging BTC -> syBTC
+        tail = ''
         btcForwarderFee = new TokenAmount(
             sBtc,
             await estimateWrap({
                 forwarderUrl,
                 portalFee: btcPortalFeeRaw,
-                sbfee: sbfeeRaw,
+                stableBridgingFee: mintFeeRaw,
                 tail,
-                to: toAddress,
-            })
-        )
-        if (btcForwarderFee.greaterThan(sBtcAmount)) {
-            throw new Error(
-                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
-        }
-        tailResult = await buildTail(context, sBtcAmount.subtract(btcForwarderFee))
-
-        tail = tailResult.tail
-        tailSbFee = tailResult.fee
-        tokenAmountOut = tailResult.tokenAmountOut
-        tokenAmountOutMin = tailResult.tokenAmountOutMin
-        btcForwarderFeeMax = new TokenAmount(
-            btcForwarderFee.token,
-            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
-        )
-    } else {
-        btcForwarderFee = new TokenAmount(
-            sBtc,
-            await estimateWrap({
-                forwarderUrl,
-                portalFee: btcPortalFeeRaw,
-                sbfee: sbfeeRaw,
-                tail: '',
-                to: toAddress,
+                to,
             })
         )
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
@@ -145,19 +101,49 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
         )
         tokenAmountOutMin = sBtcAmount.subtract(btcForwarderFeeMax)
+    } else {
+        const sameChain = tokenOut.chainId === sBtc.chainId
+        const buildTailFunc = sameChain ? buildOnchainTail : buildTail
+
+        const { tail: initialTail } = await buildTailFunc(context, sBtcAmount)
+        btcForwarderFee = new TokenAmount(
+            sBtc,
+            await estimateWrap({
+                forwarderUrl,
+                portalFee: btcPortalFeeRaw,
+                stableBridgingFee: mintFeeRaw,
+                tail: initialTail,
+                to,
+            })
+        )
+        btcForwarderFeeMax = new TokenAmount(
+            btcForwarderFee.token,
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
+        )
+        if (btcForwarderFee.greaterThan(sBtcAmount)) {
+            throw new Error(
+                `Amount ${sBtcAmount.toSignificant()} less than btcForwarderFee ${btcForwarderFee.toSignificant()}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
+        const tailResult = await buildTailFunc(context, sBtcAmount.subtract(btcForwarderFee))
+        tail = tailResult.tail
+        tailFees = tailResult.fees
+        tokenAmountOut = tailResult.tokenAmountOut
+        tokenAmountOutMin = tailResult.tokenAmountOutMin
+        priceImpact = tailResult.priceImpact
+        amountInUsd = tailResult.amountInUsd
+        routes = tailResult.routes
     }
 
     const { validUntil, revealAddress } = await wrap({
         forwarderUrl,
         portalFee: btcPortalFeeRaw,
-        sbfee: sbfeeRaw,
+        stableBridgingFee: mintFeeRaw,
         tail,
-        to: toAddress,
+        to,
         feeLimit: btcForwarderFeeMax.raw.toString(),
     })
-
-    const parsedValue = parseUnits(tailSbFee.toExact(), sbfee.token.decimals).toString()
-    const tailFee = new TokenAmount(sbfee.token, parsedValue)
 
     return {
         kind: 'from-btc-swap',
@@ -167,32 +153,95 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             validUntil,
             tokenAmountOut,
         },
-        route: [inTokenAmount.token, ...(tailResult ? tailResult.route : [])],
         tokenAmountOut,
         tokenAmountOutMin,
-        priceImpact: tailResult?.priceImpact,
+        priceImpact,
         approveTo: AddressZero,
-        inTradeType: tailResult?.inTradeType,
-        outTradeType: tailResult?.outTradeType,
-        amountInUsd: tailResult?.amountInUsd,
-        fee: sbfee.add(tailFee),
-        save: tailResult && tailResult?.save ? new TokenAmount(sbfee.token, tailResult.save.raw) : undefined,
-        extraFee: btcPortalFee.add(btcForwarderFee),
+        amountInUsd,
+        routes: [
+            {
+                provider: 'symbiosis',
+                tokens: [tokenAmountIn.token, sBtc],
+            },
+            ...routes,
+        ],
+        fees: [
+            {
+                description: 'BTC Forwarder fee',
+                value: btcForwarderFee,
+            },
+            {
+                description: 'BTC Portal fee',
+                value: btcPortalFee,
+            },
+            {
+                description: 'Mint fee',
+                value: mintFee,
+            },
+            ...tailFees,
+        ],
+    }
+}
+
+async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
+    const { to, tokenOut, deadline, symbiosis } = context
+    const ttl = deadline - Math.floor(Date.now() / 1000)
+    const aggregatorTrade = new AggregatorTrade({
+        ...context,
+        from: to, // there is not from address, set user's address
+        clientId: symbiosis.clientId,
+        dataProvider: symbiosis.dataProvider,
+        tokenAmountIn: sBtcAmount,
+        ttl,
+    })
+    await aggregatorTrade.init()
+
+    const symBtcContract = symbiosis.symBtcFor(sBtcAmount.token.chainFromId!)
+    const tail = await symBtcContract.callStatic.packBTCTransactionTail({
+        receiveSide: aggregatorTrade.routerAddress,
+        receiveSideCalldata: aggregatorTrade.callData,
+        receiveSideOffset: aggregatorTrade.callDataOffset,
+    })
+
+    const { amountOut, amountOutMin, callData, priceImpact, routerAddress } = aggregatorTrade
+
+    const payload: SwapExactInTransactionPayload = {
+        transactionType: 'evm',
+        transactionRequest: {
+            chainId: sBtcAmount.token.chainId,
+            from: to, // there is not from address, set user's address
+            to,
+            value: '0',
+            data: callData,
+        },
+    }
+    return {
+        ...payload,
+        kind: 'onchain-swap',
+        tokenAmountOut: amountOut,
+        tokenAmountOutMin: amountOutMin,
+        priceImpact,
+        amountInUsd: sBtcAmount,
+        approveTo: routerAddress,
+        routes: [
+            {
+                provider: aggregatorTrade.tradeType,
+                tokens: [sBtcAmount.token, tokenOut],
+            },
+        ],
+        fees: [],
+        tail,
     }
 }
 
 async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
-    const { toAddress, slippage, deadline, oneInchProtocols, outToken, symbiosis } = context
+    const { to, symbiosis } = context
     const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
     const swapExactInResult = await bestPoolSwapping.exactIn({
+        ...context,
         tokenAmountIn: sBtcAmount,
-        tokenOut: outToken,
-        from: toAddress, // to be able to revert a tx
-        to: toAddress,
-        slippage,
-        deadline,
-        oneInchProtocols,
+        from: to, // to be able to revert a tx
     })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
@@ -221,12 +270,18 @@ interface DepositAddressResult {
 type EstimateWrapParams = {
     forwarderUrl: string
     portalFee: string
-    sbfee: string
+    stableBridgingFee: string
     tail: string
     to: string
 }
 
-async function estimateWrap({ forwarderUrl, portalFee, sbfee, tail, to }: EstimateWrapParams): Promise<string> {
+async function estimateWrap({
+    forwarderUrl,
+    portalFee,
+    stableBridgingFee,
+    tail,
+    to,
+}: EstimateWrapParams): Promise<string> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
@@ -237,7 +292,7 @@ async function estimateWrap({ forwarderUrl, portalFee, sbfee, tail, to }: Estima
         info: {
             portalFee: Number(portalFee),
             op: 0, // 0 - wrap operation
-            stableBridgingFee: Number(sbfee),
+            stableBridgingFee: Number(stableBridgingFee),
             tail: encodeTail(tail),
             to,
         },
@@ -264,12 +319,19 @@ async function estimateWrap({ forwarderUrl, portalFee, sbfee, tail, to }: Estima
 type WrapParams = EstimateWrapParams & {
     feeLimit: string
 }
-async function wrap({ forwarderUrl, portalFee, sbfee, tail, to, feeLimit }: WrapParams): Promise<DepositAddressResult> {
+async function wrap({
+    forwarderUrl,
+    portalFee,
+    stableBridgingFee,
+    tail,
+    to,
+    feeLimit,
+}: WrapParams): Promise<DepositAddressResult> {
     const raw = JSON.stringify({
         info: {
             portalFee: Number(portalFee),
             op: 0, // 0 - is wrap operation
-            stableBridgingFee: Number(sbfee),
+            stableBridgingFee: Number(stableBridgingFee),
             tail: encodeTail(tail),
             to,
         },

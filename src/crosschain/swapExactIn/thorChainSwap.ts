@@ -1,7 +1,6 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
-import { BaseSwappingExactInResult } from '../baseSwapping'
 import { Error, ErrorCode } from '../error'
 
 const ETH_USDC = new Token({
@@ -30,7 +29,7 @@ const AVAX_USDC = new Token({
 export const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount } = context
+    const { tokenAmountIn, from, to } = context
 
     // via stable pool only
     const omniPool = context.symbiosis.config.omniPools[0]
@@ -39,10 +38,10 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         const zappingThor = context.symbiosis.newZappingThor(omniPool)
 
         return zappingThor.exactIn({
-            tokenAmountIn: inTokenAmount,
+            tokenAmountIn,
             thorTokenIn: thorToken,
-            from: context.fromAddress,
-            to: context.toAddress,
+            from,
+            to,
             slippage: context.slippage,
             deadline: context.deadline,
         })
@@ -50,7 +49,7 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
 
     const results = await Promise.allSettled(promises)
 
-    let bestResult: BaseSwappingExactInResult | undefined
+    let bestResult: SwapExactInResult | undefined
     const errors: Error[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {
@@ -81,14 +80,13 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
     }
 
     const payload = {
-        transactionType: bestResult.type,
+        transactionType: bestResult.transactionType,
         transactionRequest: bestResult.transactionRequest,
     } as SwapExactInTransactionPayload
 
     return {
-        kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
-        zapType: 'thor-chain',
+        kind: 'crosschain-swap',
     }
 }

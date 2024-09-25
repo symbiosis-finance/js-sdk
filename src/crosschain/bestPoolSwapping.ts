@@ -1,8 +1,7 @@
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import type { BaseSwappingExactInResult, BaseSwappingExactInParams } from './baseSwapping'
 import type { Swapping } from './swapping'
 import type { Symbiosis } from './symbiosis'
-import type { OmniPoolConfig } from './types'
+import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from './types'
 import { Error } from './error'
 import { BestTokenSwapping } from './bestTokenSwapping'
 import { selectError } from './utils'
@@ -20,33 +19,14 @@ export class BestPoolSwapping {
 
     public swapping?: BestTokenSwapping | Swapping
 
-    async exactIn({
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
-        oneInchProtocols,
-        middlewareCall,
-    }: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
-        const exactInParams: BaseSwappingExactInParams = {
-            tokenAmountIn,
-            tokenOut,
-            from,
-            to,
-            slippage,
-            deadline,
-            oneInchProtocols,
-            middlewareCall,
-        }
-
+    async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+        const { tokenAmountIn, tokenOut } = params
         const optimalRoute = this.getOptimalRoute(tokenAmountIn.token, tokenOut)
         if (optimalRoute) {
             try {
                 const action = this.symbiosis.newSwapping(optimalRoute.pool)
                 const actionResult = await action.exactIn({
-                    ...exactInParams,
+                    ...params,
                     transitTokenIn: optimalRoute.transitTokenIn,
                     transitTokenOut: optimalRoute.transitTokenOut,
                 })
@@ -75,7 +55,7 @@ export class BestPoolSwapping {
             .map(async (omniPoolConfig) => {
                 const action = this.symbiosis.bestTokenSwapping(omniPoolConfig)
 
-                const actionResult = await action.exactIn(exactInParams)
+                const actionResult = await action.exactIn(params)
 
                 return { action, actionResult }
             })
@@ -83,7 +63,7 @@ export class BestPoolSwapping {
         const results = await Promise.allSettled(promises)
 
         let swapping: BestTokenSwapping | undefined
-        let actionResult: BaseSwappingExactInResult | undefined
+        let actionResult: SwapExactInResult | undefined
         const errors: Error[] = []
 
         for (const item of results) {

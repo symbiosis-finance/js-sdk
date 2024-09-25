@@ -1,12 +1,13 @@
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import TonWeb from 'tonweb'
-import { BaseSwapping, BaseSwappingExactInResult } from './baseSwapping'
+import { BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { MulticallRouter, TonBridge } from './contracts'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { OneInchProtocols } from './trade/oneInchTrade'
+import { SwapExactInResult } from './types'
 
 export const TON_TOKEN_DECIMALS = 9
 const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)
@@ -47,7 +48,7 @@ export class ZappingTon extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: ZappingTonExactInParams): Promise<BaseSwappingExactInResult> {
+    }: ZappingTonExactInParams): Promise<SwapExactInResult> {
         this.from = from
         this.userAddress = to
         this.multicallRouter = this.symbiosis.multicallRouter(option.chainId)
@@ -75,7 +76,20 @@ export class ZappingTon extends BaseSwapping {
             ...rest,
             tokenAmountOut: tonAmountOut,
             tokenAmountOutMin: tonAmountOut,
-            extraFee: bridgeFee,
+            routes: [
+                ...rest.routes,
+                {
+                    provider: 'ton-bridge',
+                    tokens: [option.wTon, TON],
+                },
+            ],
+            fees: [
+                ...rest.fees,
+                {
+                    description: 'TON bridge fee',
+                    value: bridgeFee,
+                },
+            ],
         }
     }
 

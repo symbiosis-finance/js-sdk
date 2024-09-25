@@ -1,34 +1,39 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { BaseSwappingExactInResult } from '../baseSwapping'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { Error, ErrorCode } from '../error'
 import { selectError } from '../utils'
 import { UnwrapBtc } from '../unwrapBtc'
 import { TokenAmount } from '../../entities'
+import { zappingBtcOnChain } from '../zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { inTokenAmount, outToken, symbiosis, fromAddress, toAddress, slippage, deadline } = context
+    const { tokenAmountIn, tokenOut, symbiosis, from, to, slippage, deadline } = context
 
-    const promises: Promise<BaseSwappingExactInResult>[] = []
+    const promises: Promise<SwapExactInResult>[] = []
 
     symbiosis.config.chains.forEach((chain) => {
-        const sBtc = symbiosis.getRepresentation(outToken, chain.id)
+        const sBtc = symbiosis.getRepresentation(tokenOut, chain.id)
         if (!sBtc) {
             return
         }
 
-        if (inTokenAmount.token.equals(sBtc)) {
+        if (tokenAmountIn.token.equals(sBtc)) {
             const burn = new UnwrapBtc(symbiosis)
             promises.push(
                 burn.exactIn({
-                    tokenAmountIn: new TokenAmount(sBtc, inTokenAmount.raw),
-                    to: toAddress,
+                    tokenAmountIn: new TokenAmount(sBtc, tokenAmountIn.raw),
+                    to,
                 })
             )
             return
         }
 
+        if (tokenAmountIn.token.chainId === sBtc.chainId) {
+            promises.push(zappingBtcOnChain(context))
+            return
+        }
+
         symbiosis.config.omniPools.forEach((poolConfig) => {
-            const transitTokensIn = symbiosis.transitTokens(inTokenAmount.token.chainId, poolConfig)
+            const transitTokensIn = symbiosis.transitTokens(tokenAmountIn.token.chainId, poolConfig)
             const transitTokensOut = symbiosis.transitTokens(sBtc.chainId, poolConfig)
 
             transitTokensIn.forEach((transitTokenIn) => {
@@ -39,10 +44,10 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                     const zappingBtc = symbiosis.newZappingBtc(poolConfig)
 
                     const promise = zappingBtc.exactIn({
-                        tokenAmountIn: inTokenAmount,
+                        tokenAmountIn,
                         sBtc,
-                        from: fromAddress,
-                        to: toAddress,
+                        from,
+                        to,
                         slippage,
                         deadline,
                         transitTokenIn,
@@ -60,7 +65,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
 
     const results = await Promise.allSettled(promises)
 
-    let bestResult: BaseSwappingExactInResult | undefined
+    let bestResult: SwapExactInResult | undefined
     const errors: Error[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {
@@ -82,14 +87,13 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
     }
 
     const payload = {
-        transactionType: bestResult.type,
+        transactionType: bestResult.transactionType,
         transactionRequest: bestResult.transactionRequest,
     } as SwapExactInTransactionPayload
 
     return {
-        kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
-        zapType: 'btc-bridge',
+        kind: 'crosschain-swap',
     }
 }

@@ -1,6 +1,6 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { BaseSwapping, BaseSwappingExactInResult } from './baseSwapping'
+import { BaseSwapping } from './baseSwapping'
 import { MulticallRouter, ThorRouter__factory } from './contracts'
 import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
@@ -8,6 +8,7 @@ import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
 import { getMinAmount } from './utils'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
+import { SwapExactInResult } from './types'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
@@ -110,7 +111,7 @@ export class ZappingThor extends BaseSwapping {
         to,
         slippage,
         deadline,
-    }: ZappingThorExactInParams): Promise<BaseSwappingExactInResult> {
+    }: ZappingThorExactInParams): Promise<SwapExactInResult> {
         const isAddressValid = validate(to)
         if (!isAddressValid) {
             throw new Error('Bitcoin address is not valid')
@@ -141,7 +142,20 @@ export class ZappingThor extends BaseSwapping {
             ...result,
             tokenAmountOut: this.thorQuote.amountOut,
             tokenAmountOutMin: this.thorQuote.amountOutMin,
-            extraFee: new TokenAmount(BTC, this.thorQuote.fees.total),
+            routes: [
+                ...result.routes,
+                {
+                    provider: 'thorchain-bridge',
+                    tokens: [thorTokenIn, BTC],
+                },
+            ],
+            fees: [
+                ...result.fees,
+                {
+                    description: 'THORChain fee',
+                    value: new TokenAmount(BTC, this.thorQuote.fees.total),
+                },
+            ],
         }
     }
 

@@ -1,5 +1,4 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from './types'
-import { BaseSwappingExactInResult } from '../baseSwapping'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { Error } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
@@ -47,8 +46,8 @@ const OPTIONS: Option[] = [
 ]
 
 // TON native bridge
-function nativeBridgeToTon(context: SwapExactInParams): Promise<BaseSwappingExactInResult>[] {
-    const { inTokenAmount, symbiosis } = context
+function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, from, to, symbiosis } = context
 
     const options = OPTIONS.filter((i) => {
         return symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
@@ -58,18 +57,17 @@ function nativeBridgeToTon(context: SwapExactInParams): Promise<BaseSwappingExac
         throw new Error(`There are no suitable option options through native TON bridge`)
     }
 
-    const promises: Promise<BaseSwappingExactInResult>[] = []
-
+    const promises: Promise<SwapExactInResult>[] = []
     symbiosis.config.omniPools
         .filter((pool) => pool.generalPurpose)
         .forEach((pool) => {
             options.forEach((option) => {
                 const zappingTon = symbiosis.newZappingTon(pool)
                 const promise = zappingTon.exactIn({
-                    tokenAmountIn: inTokenAmount,
+                    tokenAmountIn,
                     option,
-                    from: context.fromAddress,
-                    to: context.toAddress,
+                    from,
+                    to,
                     slippage: context.slippage,
                     deadline: context.deadline,
                 })
@@ -81,18 +79,18 @@ function nativeBridgeToTon(context: SwapExactInParams): Promise<BaseSwappingExac
 }
 
 // Symbiosis bridge
-function symbiosisBridgeToTon(context: SwapExactInParams): Promise<BaseSwappingExactInResult>[] {
-    const { inTokenAmount, symbiosis, outToken } = context
+function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, from, to, tokenOut, symbiosis } = context
 
-    const promises: Promise<BaseSwappingExactInResult>[] = []
+    const promises: Promise<SwapExactInResult>[] = []
 
     symbiosis.config.omniPools.forEach((pool) => {
         const swappingToTon = symbiosis.newSwappingToTon(pool)
         const promise = swappingToTon.exactIn({
-            tokenAmountIn: inTokenAmount,
-            tokenOut: outToken,
-            from: context.fromAddress,
-            to: context.toAddress,
+            tokenAmountIn,
+            tokenOut,
+            from,
+            to,
             slippage: context.slippage,
             deadline: context.deadline,
         })
@@ -110,7 +108,7 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
 
     console.log('results', results)
 
-    let bestResult: BaseSwappingExactInResult | undefined
+    let bestResult: SwapExactInResult | undefined
     const errors: Error[] = []
 
     // compare results
@@ -134,14 +132,13 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
     }
 
     const payload = {
-        transactionType: bestResult.type,
+        transactionType: bestResult.transactionType,
         transactionRequest: bestResult.transactionRequest,
     } as SwapExactInTransactionPayload
 
     return {
-        kind: 'crosschain-swap',
         ...bestResult,
         ...payload,
-        zapType: 'ton-bridge',
+        kind: 'crosschain-swap',
     }
 }

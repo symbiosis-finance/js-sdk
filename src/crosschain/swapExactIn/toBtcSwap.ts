@@ -1,4 +1,4 @@
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { thorChainSwap } from './thorChainSwap'
 import { burnSyntheticBtc } from './burnSyntheticBtc'
 import { isBtc, selectError } from '../utils'
@@ -14,19 +14,19 @@ function isNativeAvailable(chainId: ChainId) {
 }
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { outToken } = context
+    const { tokenOut } = context
 
-    return isThorChainAvailable(outToken.chainId) || isNativeAvailable(outToken.chainId)
+    return isThorChainAvailable(tokenOut.chainId) || isNativeAvailable(tokenOut.chainId)
 }
 
 export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { outToken } = context
+    const { tokenOut } = context
 
     const promises = []
-    if (isNativeAvailable(outToken.chainId)) {
+    if (isNativeAvailable(tokenOut.chainId)) {
         promises.push(burnSyntheticBtc(context))
     }
-    if (isThorChainAvailable(outToken.chainId)) {
+    if (isThorChainAvailable(tokenOut.chainId)) {
         promises.push(thorChainSwap(context))
     }
 

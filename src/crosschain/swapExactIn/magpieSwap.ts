@@ -1,20 +1,21 @@
-import { SwapExactInParams, SwapExactInResult } from './types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { MagpieTrade } from '../trade/magpieTrade'
+import { TokenAmount } from '../../entities'
 
 export async function magpieSwap({
     symbiosis,
-    inTokenAmount,
-    outToken,
-    fromAddress,
-    toAddress,
+    tokenAmountIn,
+    tokenOut,
+    from,
+    to,
     slippage,
 }: SwapExactInParams): Promise<SwapExactInResult> {
     const trade = new MagpieTrade({
         symbiosis,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: outToken,
-        from: fromAddress,
-        to: toAddress,
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
         slippage,
     })
 
@@ -22,16 +23,27 @@ export async function magpieSwap({
 
     return {
         kind: 'onchain-swap',
-        route: [inTokenAmount.token, outToken],
         tokenAmountOut: trade.amountOut,
+        tokenAmountOutMin: trade.amountOutMin,
         approveTo: trade.routerAddress,
         priceImpact: trade.priceImpact,
         transactionType: 'evm',
-        inTradeType: 'magpie',
         transactionRequest: {
             to: trade.routerAddress,
             data: trade.callData,
-            value: inTokenAmount.token.isNative ? inTokenAmount.raw.toString() : undefined,
+            value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
         },
+        fees: [
+            {
+                value: new TokenAmount(tokenOut, '0'),
+                description: 'Magpie fee',
+            },
+        ],
+        routes: [
+            {
+                provider: 'magpie',
+                tokens: [tokenAmountIn.token, tokenOut],
+            },
+        ],
     }
 }

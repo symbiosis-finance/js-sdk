@@ -8,7 +8,7 @@ import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, SymbiosisTradeType } from './trade'
+import { AggregatorTrade } from './trade'
 import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
 import { WaitForComplete } from './waitForComplete'
 import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
@@ -17,7 +17,7 @@ import { OmniLiquidity } from './omniLiquidity'
 import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig } from './types'
-import { WrapTrade } from './trade/wrapTrade'
+import { WrapTrade } from './trade'
 
 export type ZapExactIn = Promise<{
     type: 'tron' | 'evm'
@@ -27,7 +27,6 @@ export type ZapExactIn = Promise<{
     priceImpact: Percent
     amountInUsd: TokenAmount
     transactionRequest: TronTransactionData | TransactionRequest
-    inTradeType?: SymbiosisTradeType
 }>
 
 type ZappingExactInParams = {
@@ -120,7 +119,6 @@ export class Zapping {
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.getSynthAmount(fee),
             transactionRequest,
-            inTradeType: this.tradeA?.tradeType,
         }
         if ('call_value' in transactionRequest) {
             return {

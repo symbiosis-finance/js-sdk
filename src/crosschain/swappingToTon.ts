@@ -1,17 +1,18 @@
-import { BaseSwapping, BaseSwappingExactInParams, BaseSwappingExactInResult } from './baseSwapping'
+import { BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error } from './error'
 import { CROSS_CHAIN_ID } from './constants'
 import { ADDRESS_ZERO } from '@uniswap/v3-sdk'
 import { formatBytes32String } from 'ethers/lib/utils'
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 export const TON_TOKEN_DECIMALS = 9
 
 export type Option = { chainId: ChainId; bridge: string; wTon: Token }
 
 export class SwappingToTon extends BaseSwapping {
-    public async exactIn(params: BaseSwappingExactInParams): Promise<BaseSwappingExactInResult> {
+    public async exactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
         return this.doExactIn(params)
     }
 

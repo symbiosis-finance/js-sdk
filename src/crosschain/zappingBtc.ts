@@ -1,13 +1,12 @@
 import { ChainId } from '../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../entities'
-import { BaseSwapping, BaseSwappingExactInResult } from './baseSwapping'
+import { BaseSwapping } from './baseSwapping'
 import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { DataProvider } from './dataProvider'
-import { getFastestFee } from './mempool'
-import { BigNumber } from 'ethers'
+import { getToBtcFee } from './btc'
+import { SwapExactInResult } from './types'
 
 initEccLib(ecc)
 
@@ -56,7 +55,7 @@ export class ZappingBtc extends BaseSwapping {
         deadline,
         transitTokenIn,
         transitTokenOut,
-    }: ZappingBtcExactInParams): Promise<BaseSwappingExactInResult> {
+    }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
         if (!sBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
         }
@@ -72,7 +71,7 @@ export class ZappingBtc extends BaseSwapping {
         this.multicallRouter = this.symbiosis.multicallRouter(sBtc.chainId)
 
         this.synthesis = this.symbiosis.synthesis(sBtc.chainId)
-        this.minBtcFee = await this.getBtcFee(sBtc, this.symbiosis.dataProvider)
+        this.minBtcFee = await getToBtcFee(sBtc, this.synthesis, this.symbiosis.dataProvider)
 
         const result = await this.doExactIn({
             tokenAmountIn,
@@ -88,48 +87,25 @@ export class ZappingBtc extends BaseSwapping {
         const tokenAmountOut = new TokenAmount(btc, result.tokenAmountOut.subtract(this.minBtcFee).raw)
         const tokenAmountOutMin = new TokenAmount(btc, result.tokenAmountOutMin.subtract(this.minBtcFee).raw)
 
-        // >> for display route purposes only
-        if (result.route.length > 0) {
-            result.route[result.route.length - 1] = new Token({
-                ...sBtc,
-                chainId: sBtc.chainFromId,
-                chainFromId: undefined,
-            })
-        }
-
         return {
             ...result,
             tokenAmountOut,
             tokenAmountOutMin,
-            extraFee: this.minBtcFee,
-        }
-    }
-
-    protected async getBtcFee(sBtc: Token, dataProvider: DataProvider) {
-        let fee = await dataProvider.get(
-            ['syntToMinFeeBTC', this.synthesis.address, sBtc.address],
-            async () => {
-                return this.synthesis.syntToMinFeeBTC(sBtc.address)
-            },
-            600 // 10 minutes
-        )
-
-        try {
-            const recommendedFee = await dataProvider.get(
-                ['getFastestFee'],
-                async () => {
-                    const fastestFee = await getFastestFee()
-                    return BigNumber.from(fastestFee * 100)
+            fees: [
+                ...result.fees,
+                {
+                    description: 'BTC fee',
+                    value: this.minBtcFee,
                 },
-                60 // 1 minute
-            )
-            if (recommendedFee.gt(fee)) {
-                fee = recommendedFee
-            }
-        } catch {
-            /* nothing */
+            ],
+            routes: [
+                ...result.routes,
+                {
+                    provider: 'symbiosis',
+                    tokens: [sBtc, btc],
+                },
+            ],
         }
-        return new TokenAmount(sBtc, fee.toString())
     }
 
     protected tradeCTo(): string {
