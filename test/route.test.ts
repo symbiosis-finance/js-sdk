@@ -1,4 +1,4 @@
-import { Token, WETH, ChainId, Pair, TokenAmount, RouteItem } from '../src'
+import { Token, WETH, ChainId, Pair, TokenAmount, Route } from '../src'
 import { describe, expect, test } from 'vitest'
 
 describe('Route', () => {

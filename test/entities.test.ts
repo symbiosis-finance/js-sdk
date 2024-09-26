@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { ChainId, WETH as _WETH, TradeType, Rounding, Token, TokenAmount, Pair, RouteItem, Trade } from '../src'
+import { ChainId, WETH as _WETH, TradeType, Rounding, Token, TokenAmount, Pair, Route, Trade } from '../src'
 import { describe, expect, test } from 'vitest'
 
 const ADDRESSES = [
@@ -52,7 +52,7 @@ describe('entities', () => {
                 ]
             })
 
-            let route: RouteItem
+            let route: Route
             test('Route', () => {
                 route = new Route(pairs, tokens[0])
                 expect(route.pairs).toEqual(pairs)
@@ -103,7 +103,7 @@ describe('entities', () => {
             })
 
             describe.skip('Trade', () => {
-                let route: RouteItem
+                let route: Route
                 test('TradeType.EXACT_INPUT', () => {
                     route = new Route(
                         [
