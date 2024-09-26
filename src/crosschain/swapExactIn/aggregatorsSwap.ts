@@ -2,7 +2,6 @@ import { DataProvider } from '../dataProvider'
 import { AggregatorTrade } from '../trade'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { TokenAmount } from '../../entities'
 
 export async function aggregatorsSwap({
     symbiosis,

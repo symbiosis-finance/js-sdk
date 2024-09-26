@@ -7,10 +7,10 @@ import {
     SwapExactInParams,
     SwapExactInResult,
     Symbiosis,
-    TokenAmount, TronTransactionData,
+    TokenAmount,
     WETH,
 } from '../../../src'
-import TronWeb from "tronweb";
+import TronWeb from 'tronweb'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 
@@ -74,12 +74,7 @@ describe('#wrap', () => {
         expect(result).toStrictEqual({
             kind: 'wrap',
             approveTo: weth.address,
-            fees: [
-                {
-                    description: 'Wrap fee',
-                    value: new TokenAmount(weth, '0'),
-                },
-            ],
+            fees: [],
             priceImpact: new Percent('0', '0'),
             routes: [
                 {
@@ -101,16 +96,13 @@ describe('#wrap', () => {
     })
     test('TRON response structure', async () => {
         const result = await wrap(tronParams)
-        const wtrxAddress = TronWeb.address.fromHex(wtrx.address)
+        const wtrxNativeAddress = 'TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR'
+
+        expect(TronWeb.address.fromHex(wtrx.address)).toBe(wtrxNativeAddress)
         expect(result).toStrictEqual({
             kind: 'wrap',
-            approveTo: wtrxAddress,
-            fees: [
-                {
-                    description: 'Wrap fee',
-                    value: new TokenAmount(wtrx, '0'),
-                },
-            ],
+            approveTo: wtrxNativeAddress,
+            fees: [],
             priceImpact: new Percent('0', '0'),
             routes: [
                 {
@@ -124,7 +116,7 @@ describe('#wrap', () => {
             transactionRequest: {
                 call_value: '1000',
                 chain_id: ChainId.TRON_MAINNET,
-                contract_address: wtrxAddress,
+                contract_address: wtrxNativeAddress,
                 fee_limit: 150000000,
                 function_selector: 'deposit()',
                 owner_address: tronUserAddress,

@@ -65,6 +65,14 @@ export const config: Config = {
             generalPurpose: false,
             chainExceptions: [ChainId.FRAXTAL_MAINNET],
         },
+        {
+            // G
+            chainId: ChainId.BOBA_BNB,
+            address: '0x8D2209E88f68324c6241bCAA7d24538ebe94e2Ee',
+            oracle: '0xA7614e3427f52b04EeD23c7371a382640bD6C463',
+            generalPurpose: false,
+            chainExceptions: [ChainId.GRAVITY_MAINNET],
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -197,6 +205,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
+                {
+                    name: 'Gravity',
+                    symbol: 'G',
+                    address: '0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
+                    },
+                },
             ],
             router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
             dexFee: 30,
@@ -268,6 +287,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
+                    },
+                },
+                {
+                    name: 'Gravity',
+                    symbol: 'G',
+                    address: '0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
                     },
                 },
             ],
@@ -1508,6 +1538,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'Gravity',
+                    symbol: 'wG',
+                    address: '0xBB859E225ac8Fb6BE1C7e38D87b767e95Fef0EbD',
+                    chainId: ChainId.GRAVITY_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
                     },
                 },
             ],

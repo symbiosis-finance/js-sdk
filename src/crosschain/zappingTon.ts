@@ -63,19 +63,21 @@ export class ZappingTon extends BaseSwapping {
             deadline,
         })
 
-        const { tokenAmountOut, ...rest } = result
+        const { tokenAmountOut, tokenAmountOutMin, ...rest } = result
 
         let tonAmountOut = new TokenAmount(TON, tokenAmountOut.raw.toString())
+        let tonAmountOutMin = new TokenAmount(TON, tokenAmountOutMin.raw.toString())
         if (BigNumber.from(tonAmountOut.raw.toString()).lt(MIN_WTON_AMOUNT.toString())) {
             throw new Error(`Min bridge amount is ${formatUnits(MIN_WTON_AMOUNT, 9)} TON`, ErrorCode.MIN_TON_AMOUNT_IN)
         }
         const bridgeFee = this.estimateBridgeFee(tokenAmountOut)
         tonAmountOut = tonAmountOut.subtract(bridgeFee)
+        tonAmountOutMin = tonAmountOutMin.subtract(bridgeFee)
 
         return {
             ...rest,
             tokenAmountOut: tonAmountOut,
-            tokenAmountOutMin: tonAmountOut,
+            tokenAmountOutMin: tonAmountOutMin,
             routes: [
                 ...rest.routes,
                 {

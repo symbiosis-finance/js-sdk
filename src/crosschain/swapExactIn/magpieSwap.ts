@@ -1,6 +1,5 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { MagpieTrade } from '../trade/magpieTrade'
-import { TokenAmount } from '../../entities'
 
 export async function magpieSwap({
     symbiosis,
