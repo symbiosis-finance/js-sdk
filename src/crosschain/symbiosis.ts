@@ -53,7 +53,6 @@ import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
-import { BestPoolSwapping } from './bestPoolSwapping'
 import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
@@ -64,7 +63,6 @@ import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
 import { isBtc } from './utils'
-import { BestTokenSwapping } from './bestTokenSwapping'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
@@ -212,14 +210,6 @@ export class Symbiosis {
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {
         return new SwappingMiddleware(this, omniPoolConfig)
-    }
-
-    public bestPoolSwapping() {
-        return new BestPoolSwapping(this)
-    }
-
-    public bestTokenSwapping(omniPoolConfig: OmniPoolConfig) {
-        return new BestTokenSwapping(this, omniPoolConfig)
     }
 
     public newRevertPending(request: PendingRequest) {
@@ -524,6 +514,24 @@ export class Symbiosis {
             )
         }
         return transitToken
+    }
+
+    public getTransitCombinations(chainIdIn: ChainId, chainIdOut: ChainId, poolConfig: OmniPoolConfig) {
+        const transitTokensIn = this.transitTokens(chainIdIn, poolConfig)
+        const transitTokensOut = this.transitTokens(chainIdOut, poolConfig)
+
+        const combinations: { transitTokenIn: Token; transitTokenOut: Token }[] = []
+
+        transitTokensIn.forEach((transitTokenIn) => {
+            transitTokensOut.forEach((transitTokenOut) => {
+                if (transitTokenIn.equals(transitTokenOut)) {
+                    return
+                }
+                combinations.push({ transitTokenIn, transitTokenOut })
+            })
+        })
+
+        return combinations
     }
 
     public getOmniPoolByConfig(config: OmniPoolConfig): OmniPoolInfo | undefined {

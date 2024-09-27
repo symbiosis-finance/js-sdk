@@ -1,51 +1,50 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
-import { Error, ErrorCode } from '../error'
-import { selectError } from '../utils'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { UnwrapBtc } from '../unwrapBtc'
-import { TokenAmount } from '../../entities'
 import { zappingBtcOnChain } from '../zappingBtcOnChain'
+import { theBestOutput } from './utils'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, from, to, slippage, deadline } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
     symbiosis.config.chains.forEach((chain) => {
-        const sBtc = symbiosis.getRepresentation(tokenOut, chain.id)
-        if (!sBtc) {
+        const syBtc = symbiosis.getRepresentation(tokenOut, chain.id)
+        if (!syBtc) {
             return
         }
 
-        if (tokenAmountIn.token.equals(sBtc)) {
+        if (tokenAmountIn.token.equals(syBtc)) {
             const burn = new UnwrapBtc(symbiosis)
             promises.push(
                 burn.exactIn({
-                    tokenAmountIn: new TokenAmount(sBtc, tokenAmountIn.raw),
+                    tokenAmountIn,
                     to,
                 })
             )
             return
         }
 
-        if (tokenAmountIn.token.chainId === sBtc.chainId) {
+        if (tokenAmountIn.token.chainId === syBtc.chainId) {
             promises.push(zappingBtcOnChain(context))
             return
         }
 
-        symbiosis.config.omniPools.forEach((poolConfig) => {
-            const transitTokensIn = symbiosis.transitTokens(tokenAmountIn.token.chainId, poolConfig)
-            const transitTokensOut = symbiosis.transitTokens(sBtc.chainId, poolConfig)
-
-            transitTokensIn.forEach((transitTokenIn) => {
-                transitTokensOut.forEach((transitTokenOut) => {
-                    if (transitTokenIn.equals(transitTokenOut)) {
-                        return
-                    }
+        symbiosis.config.omniPools
+            .filter((poolConfig) => poolConfig.generalPurpose)
+            .forEach((poolConfig) => {
+                const combinations = symbiosis.getTransitCombinations(
+                    tokenAmountIn.token.chainId,
+                    syBtc.chainId,
+                    poolConfig
+                )
+                combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
                     const zappingBtc = symbiosis.newZappingBtc(poolConfig)
+                    const { from, slippage, deadline } = context
 
                     const promise = zappingBtc.exactIn({
                         tokenAmountIn,
-                        sBtc,
+                        syBtc,
                         from,
                         to,
                         slippage,
@@ -56,44 +55,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                     promises.push(promise)
                 })
             })
-        })
     })
 
-    if (promises.length === 0) {
-        throw new Error(`No route`, ErrorCode.NO_TRANSIT_TOKEN)
-    }
-
-    const results = await Promise.allSettled(promises)
-
-    let bestResult: SwapExactInResult | undefined
-    const errors: Error[] = []
-    for (const item of results) {
-        if (item.status !== 'fulfilled') {
-            errors.push(item.reason)
-            continue
-        }
-
-        const { value: result } = item
-
-        if (bestResult && bestResult.tokenAmountOut.greaterThanOrEqual(result.tokenAmountOut.raw)) {
-            continue
-        }
-
-        bestResult = result
-    }
-
-    if (!bestResult) {
-        throw selectError(errors)
-    }
-
-    const payload = {
-        transactionType: bestResult.transactionType,
-        transactionRequest: bestResult.transactionRequest,
-    } as SwapExactInTransactionPayload
-
-    return {
-        ...bestResult,
-        ...payload,
-        kind: 'crosschain-swap',
-    }
+    return theBestOutput(promises)
 }

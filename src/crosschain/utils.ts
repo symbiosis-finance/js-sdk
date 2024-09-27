@@ -8,7 +8,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS
 import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 import flatMap from 'lodash.flatmap'
-import { Error, ErrorCode } from './error'
+import { Error } from './error'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -343,38 +343,4 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
 export function isBtc(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
-}
-
-export function selectError(errors: Error[]): Error {
-    if (errors.length === 0) {
-        throw new Error('Errors array is empty')
-    }
-    const filteredErrors = errors.filter((i) => i instanceof Error)
-    if (filteredErrors.length === 0) {
-        throw errors[0]
-    }
-
-    const uniqueCodes = filteredErrors
-        .map((i) => i.code)
-        .reduce((acc, i) => {
-            if (!acc.includes(i)) {
-                acc.push(i)
-            }
-            return acc
-        }, [] as ErrorCode[])
-        .filter((i) => i !== undefined)
-
-    // if all errors are same return first of them
-    if (uniqueCodes.length === 1) {
-        return filteredErrors[0]
-    }
-    // skip no transit token error (no chains pair)
-    const otherErrors = filteredErrors.filter((e) => {
-        return e.code !== ErrorCode.NO_TRANSIT_TOKEN
-    })
-
-    if (otherErrors.length > 0) {
-        return otherErrors[0]
-    }
-    return filteredErrors[0]
 }

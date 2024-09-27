@@ -1,9 +1,9 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { Error } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
 import { Option, TON_TOKEN_DECIMALS } from '../zappingTon'
-import { selectError } from '../utils'
+import { theBestOutput } from './utils'
 
 const wTonAttributes = {
     decimals: TON_TOKEN_DECIMALS,
@@ -74,38 +74,5 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
             })
         })
 
-    const results = await Promise.allSettled(promises)
-
-    let bestResult: SwapExactInResult | undefined
-    const errors: Error[] = []
-
-    for (const item of results) {
-        if (item.status !== 'fulfilled') {
-            errors.push(item.reason)
-            continue
-        }
-
-        const { value: result } = item
-
-        if (bestResult && bestResult.tokenAmountOut.greaterThanOrEqual(result.tokenAmountOut.raw)) {
-            continue
-        }
-
-        bestResult = result
-    }
-
-    if (!bestResult) {
-        throw selectError(errors)
-    }
-
-    const payload = {
-        transactionType: bestResult.transactionType,
-        transactionRequest: bestResult.transactionRequest,
-    } as SwapExactInTransactionPayload
-
-    return {
-        ...bestResult,
-        ...payload,
-        kind: 'crosschain-swap',
-    }
+    return theBestOutput(promises)
 }

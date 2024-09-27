@@ -12,6 +12,7 @@ import { BigNumber } from 'ethers'
 import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
+import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -239,13 +240,22 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
 
 async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
     const { to, symbiosis } = context
-    const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
-    const swapExactInResult = await bestPoolSwapping.exactIn({
-        ...context,
-        tokenAmountIn: sBtcAmount,
-        from: to, // to be able to revert a tx
-    })
+    const poolConfig = symbiosis.config.omniPools[2] // btc pool only
+    const swapExactInResult = await bestTokenSwapping(
+        {
+            ...context,
+            tokenAmountIn: sBtcAmount,
+            from: to, // to be able to revert a tx
+        },
+        poolConfig
+    )
+
+    // const swapExactInResult = await bestPoolSwapping({
+    //     ...context,
+    //     tokenAmountIn: sBtcAmount,
+    //     from: to, // to be able to revert a tx
+    // })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
