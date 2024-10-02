@@ -9,7 +9,7 @@ export class OmniLiquidity {
     public callDataOffset = 4 + 32 * 2
 
     public constructor(
-        private readonly tokenAmountIn: TokenAmount,
+        public readonly tokenAmountIn: TokenAmount,
         private readonly to: string,
         private readonly slippage: number,
         private readonly deadline: number,
