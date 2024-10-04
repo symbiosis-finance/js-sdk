@@ -115,6 +115,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'telos',
         nativeTokenAddress: AddressZero,
     },
+    [ChainId.GRAVITY_MAINNET]: {
+        slug: 'gravity',
+        nativeTokenAddress: AddressZero,
+    },
 }
 
 const BASE_URL = 'https://open-api.openocean.finance/v3'

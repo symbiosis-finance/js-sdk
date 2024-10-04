@@ -9,6 +9,7 @@ import type { Symbiosis } from './symbiosis'
 import { Field } from './types'
 import flatMap from 'lodash.flatmap'
 import { Error } from './error'
+import { isTronChainId } from './tron'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -343,4 +344,14 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
 export function isBtcChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
+}
+
+export function isTonChainId(chainId: ChainId | undefined) {
+    if (!chainId) return false
+    return [ChainId.TON_MAINNET].includes(chainId)
+}
+
+export function isEvmChainId(chainId: ChainId | undefined) {
+    if (!chainId) return false
+    return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId)
 }
