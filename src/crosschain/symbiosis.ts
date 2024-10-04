@@ -586,9 +586,14 @@ export class Symbiosis {
         return waitForBtcDepositAccepted(forwarderUrl, depositAddress)
     }
 
-    public async waitForBtcRevealTxMined(btcChainId: ChainId, revealTx: string) {
+    public async waitForBtcRevealTxMined(
+        btcChainId: ChainId,
+        revealTx: string,
+        onConfirmation: (count: number) => void,
+        confirmations: number = 2
+    ) {
         const forwarderUrl = this.getForwarderUrl(btcChainId)
-        return waitForBtcRevealTxMined(forwarderUrl, revealTx)
+        return waitForBtcRevealTxMined(forwarderUrl, revealTx, confirmations, onConfirmation)
     }
 
     public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {
