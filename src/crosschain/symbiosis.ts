@@ -62,7 +62,7 @@ import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
-import { isBtc } from './utils'
+import { isBtcChainId } from './utils'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
@@ -281,7 +281,7 @@ export class Symbiosis {
     }
 
     public symBtcConfigFor(btcChainId: ChainId) {
-        if (!isBtc(btcChainId)) {
+        if (!isBtcChainId(btcChainId)) {
             throw new Error(`This chain ${btcChainId} is not BTC chain`)
         }
         const symBtcConfig = this.chainConfig(btcChainId).symBtc
@@ -571,7 +571,7 @@ export class Symbiosis {
     }
 
     public getForwarderUrl(btcChainId: ChainId): string {
-        if (!isBtc(btcChainId)) {
+        if (!isBtcChainId(btcChainId)) {
             throw new Error(`This chain ${btcChainId} is not BTC chain`)
         }
         const forwarderUrl = this.chainConfig(btcChainId).forwarderUrl

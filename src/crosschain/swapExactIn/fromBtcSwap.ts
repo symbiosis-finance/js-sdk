@@ -3,7 +3,7 @@ import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
-import { isBtc } from '../utils'
+import { isBtcChainId } from '../utils'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
@@ -17,7 +17,7 @@ import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
 
-    if (!isBtc(tokenAmountIn.token.chainId)) {
+    if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         return false
     }
 

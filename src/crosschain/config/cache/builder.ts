@@ -28,7 +28,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../../abis/ERC20.json'
 import { isTronChainId } from '../../tron'
-import { isBtc } from '../../utils'
+import { isBtcChainId } from '../../utils'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -177,7 +177,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtc(chain.id)) {
+            if (isBtcChainId(chain.id)) {
                 continue
             }
 

@@ -340,7 +340,7 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
     }
 }
 
-export function isBtc(chainId: ChainId | undefined) {
+export function isBtcChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
 }

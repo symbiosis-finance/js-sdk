@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { thorChainSwap } from './thorChainSwap'
 import { burnSyntheticBtc } from './burnSyntheticBtc'
-import { isBtc } from '../utils'
+import { isBtcChainId } from '../utils'
 import { ChainId } from '../../constants'
 import { theBestOutput } from './utils'
 
@@ -10,7 +10,7 @@ function isThorChainAvailable(chainId: ChainId) {
 }
 
 function isNativeAvailable(chainId: ChainId) {
-    return isBtc(chainId)
+    return isBtcChainId(chainId)
 }
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
