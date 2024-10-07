@@ -1,6 +1,13 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 
-export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
+export type SymbiosisKind =
+    | 'onchain-swap'
+    | 'crosschain-swap'
+    | 'wrap'
+    | 'unwrap'
+    | 'bridge'
+    | 'from-btc-swap'
+    | 'from-ton-swap'
 
 export type SymbiosisTradeType =
     | 'dex'

@@ -348,7 +348,7 @@ export function isBtcChainId(chainId: ChainId | undefined) {
 
 export function isTonChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
-    return [ChainId.TON_MAINNET].includes(chainId)
+    return [ChainId.TON_MAINNET, ChainId.TON_TESTNET].includes(chainId)
 }
 
 export function isEvmChainId(chainId: ChainId | undefined) {
