@@ -566,8 +566,8 @@
             "chainId": 324,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1.png"
+                "large": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200",
+                "small": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200"
             },
             "deprecated": false,
             "address": "0xED0c95EBe5a3E687cB2224687024FeC6518E683e",
@@ -1748,8 +1748,8 @@
             "chainId": 56288,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1.png"
+                "large": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200",
+                "small": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200"
             },
             "chainFromId": 324,
             "deprecated": false,

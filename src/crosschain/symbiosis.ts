@@ -495,7 +495,7 @@ export class Symbiosis {
             throw new Error(`Cannot find omniPool ${pool}`)
         }
         const tokens = this.configCache.tokens().filter((token) => {
-            return token.chainId === chainId
+            return token.chainId === chainId && !token.deprecated && !token.isSynthetic
         })
         if (tokens.length === 0) {
             throw new Error(`Cannot find token for chain ${chainId}`)
