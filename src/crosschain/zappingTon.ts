@@ -1,6 +1,5 @@
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
-import TonWeb from 'tonweb'
 import { BaseSwapping } from './baseSwapping'
 import { Token, TokenAmount } from '../entities'
 import { MulticallRouter, TonBridge } from './contracts'
@@ -8,6 +7,7 @@ import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { SwapExactInResult } from './types'
+import { Address } from '@ton/core'
 
 export const TON_TOKEN_DECIMALS = 9
 const MIN_WTON_AMOUNT = parseUnits('10', TON_TOKEN_DECIMALS)
@@ -118,13 +118,13 @@ export class ZappingTon extends BaseSwapping {
             throw new Error('TradeC is not initialized')
         }
 
-        const address = new TonWeb.utils.Address(this.userAddress)
+        const address = Address.parse(this.userAddress)
 
         const bridgeCallData = this.tonBridge.interface.encodeFunctionData('callBridgeRequest', [
             this.tradeC.amountOut.raw.toString(),
             {
-                workchain: address.wc,
-                address_hash: `0x${TonWeb.utils.bytesToHex(address.hashPart)}`,
+                workchain: address.workChain,
+                address_hash: `0x${address.hash.toString('hex')}`,
             },
         ])
 

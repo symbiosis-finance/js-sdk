@@ -562,11 +562,6 @@ const _abi = [
                 type: 'uint256',
             },
             {
-                internalType: 'bytes32',
-                name: '_crossChainID',
-                type: 'bytes32',
-            },
-            {
                 internalType: 'address',
                 name: '_stoken',
                 type: 'address',
@@ -575,6 +570,11 @@ const _abi = [
                 internalType: 'uint256',
                 name: '_amount',
                 type: 'uint256',
+            },
+            {
+                internalType: 'bytes32',
+                name: '_crossChainID',
+                type: 'bytes32',
             },
             {
                 components: [

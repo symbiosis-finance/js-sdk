@@ -54,7 +54,7 @@ function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResul
     })
 
     if (options.length === 0) {
-        throw new Error(`There are no suitable option options through native TON bridge`)
+        console.log(`Native bridge is not supported from this chain`)
     }
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -104,9 +104,8 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
     // const nativeTonBridgePromises = nativeBridgeToTon(context)
     const symbiosisTonBridgePromises = symbiosisBridgeToTon(context)
 
+    // [TODO]: add native bridge promises
     const results = await Promise.allSettled([...symbiosisTonBridgePromises])
-
-    console.log('results', results)
 
     let bestResult: SwapExactInResult | undefined
     const errors: Error[] = []

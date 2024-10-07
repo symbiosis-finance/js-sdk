@@ -7,12 +7,27 @@
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 3 },
-                { "index": 1, "tokenId": 2 }
+                { "index": 0, "tokenId": 4 },
+                { "index": 1, "tokenId": 3 },
+                { "index": 2, "tokenId": 0 }
             ]
         }
     ],
     "tokens": [
+        {
+            "decimals": 9,
+            "symbol": "WTON(BSC)",
+            "name": "WTON(BSC)",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
+            },
+            "deprecated": false,
+            "address": "0xe015581A4e36eEbf170a3F4a686fa7606d511b13",
+            "id": 0
+        },
         {
             "decimals": 9,
             "symbol": "TON",
@@ -25,7 +40,7 @@
             },
             "deprecated": false,
             "address": "0x0000000000000000000000000000000000000003",
-            "id": 0
+            "id": 1
         },
         {
             "decimals": 9,
@@ -39,7 +54,7 @@
             },
             "deprecated": false,
             "address": "0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179",
-            "id": 1
+            "id": 2
         },
         {
             "decimals": 9,
@@ -54,8 +69,8 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x8480c16DA4598aB6132194aAF8709628E139c796",
-            "id": 2,
-            "originalId": 0
+            "id": 3,
+            "originalId": 1
         },
         {
             "decimals": 9,
@@ -70,14 +85,14 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0x4950b13CbC3A33164fdd782E75271891D0d9F1D9",
-            "id": 3,
-            "originalId": 1
+            "id": 4,
+            "originalId": 2
         }
     ],
     "thresholds": [
-        { "tokenId": 2, "type": "Synthesis", "value": "0" },
+        { "tokenId": 0, "type": "Synthesis", "value": "0" },
         { "tokenId": 3, "type": "Synthesis", "value": "0" },
-        { "tokenId": 0, "type": "Portal", "value": "0" },
-        { "tokenId": 1, "type": "Portal", "value": "0" }
+        { "tokenId": 4, "type": "Synthesis", "value": "0" },
+        { "tokenId": 2, "type": "Portal", "value": "0" }
     ]
 }

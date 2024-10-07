@@ -34,6 +34,7 @@ export type ChainConfig = {
         chainId: ChainId
     }
     forwarderUrl?: string
+    tonPortal?: string
 }
 
 export type AdvisorConfig = {

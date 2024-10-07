@@ -88,7 +88,9 @@ export abstract class BaseSwapping {
         this.transitTokenOut =
             transitTokenOut || this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
 
-        console.log('omniPoolConfig', this.omniPoolConfig)
+        console.log('tokenAmountIn --->', tokenAmountIn)
+        console.log('tokenOut --->', tokenOut)
+        console.log('omniPoolConfig --->', this.omniPoolConfig)
         console.log('transitTokenIn --->', transitTokenIn, this.transitTokenIn)
         console.log('transitTokenOut --->', transitTokenOut, this.transitTokenOut)
 
@@ -99,8 +101,10 @@ export abstract class BaseSwapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
-        console.log('from ', this.from)
-        console.log('to ', this.to)
+        console.log('from --->', this.from)
+        console.log('to --->', this.to)
+
+        console.log('slippage --->', this.slippage)
 
         if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
             this.revertableAddresses = {
@@ -111,7 +115,7 @@ export abstract class BaseSwapping {
             this.revertableAddresses = { AB: this.from, BC: this.from }
         }
 
-        console.log('revertableAddresses', this.revertableAddresses)
+        console.log('revertableAddresses --->', this.revertableAddresses)
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
@@ -122,16 +126,18 @@ export abstract class BaseSwapping {
                 provider: this.tradeA.tradeType,
                 tokens: [this.tradeA.tokenAmountIn.token, this.tradeA.amountOut.token],
             })
+
+            console.log('tradeA --->', this.tradeA)
         }
 
         this.transit = this.buildTransit()
 
-        console.log('transit 1', this.transit)
+        console.log('transit without fee, 1 st call --->', this.transit)
         await this.transit.init()
         timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
         prev = Date.now()
 
-        console.log('transitTokenIn', this.transit)
+        console.log('transit without fee, after init --->', this.transit)
 
         routes.push({
             provider: 'symbiosis',
@@ -139,11 +145,17 @@ export abstract class BaseSwapping {
         })
 
         await this.doPostTransitAction()
+        console.log('do post transit action --->', this.doPostTransitAction)
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
+
+        console.log('amountInUsd (stables???) --->', this.amountInUsd)
+
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
+            console.log('tradeC --->', this.tradeC)
             await this.tradeC.init()
+            console.log('tradeC after init --->', this.tradeC)
             timeLog.push(['C1', Date.now() - start, Date.now() - prev])
             prev = Date.now()
             routes.push({
@@ -153,10 +165,15 @@ export abstract class BaseSwapping {
         }
 
         this.route = this.getRoute()
+
         const [feeV1Raw, feeV2Raw] = await Promise.all([
             this.getFee(this.transit.feeToken),
             this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
+
+        console.log('fee n1 burn/mint --->', feeV1Raw)
+        console.log('fee n2 burn --->', feeV2Raw)
+
         timeLog.push(['ADVISOR', Date.now() - start, Date.now() - prev])
         prev = Date.now()
 

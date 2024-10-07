@@ -45,7 +45,19 @@ export const config: Config = {
             id: ChainId.BSC_TESTNET,
             rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
             filterBlockOffset: 2000,
-            stables: [],
+            stables: [
+                {
+                    name: 'WTON(BSC)',
+                    symbol: 'WTON(BSC)',
+                    address: '0xe015581A4e36eEbf170a3F4a686fa7606d511b13',
+                    chainId: ChainId.BSC_TESTNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+            ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179',
@@ -58,7 +70,7 @@ export const config: Config = {
         },
         {
             id: ChainId.TON_TESTNET,
-            rpc: 'https://ton-testnet.blockpi.network/v1/rpc/public',
+            rpc: 'https://testnet.toncenter.com/api/v2/jsonRPC',
             filterBlockOffset: 0,
             stables: [
                 {
@@ -66,6 +78,7 @@ export const config: Config = {
                     symbol: 'TON',
                     address: '0x0000000000000000000000000000000000000003', // origin token address (we choose this for create map in contracts)
                     chainId: ChainId.TON_TESTNET,
+                    isNative: true,
                     decimals: 9,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
@@ -79,9 +92,10 @@ export const config: Config = {
             metaRouterGateway: '0x0000000000000000000000000000000000000000',
             bridge: '0x0000000000000000000000000000000000000000',
             synthesis: '0x0000000000000000000000000000000000000000',
-            portal: 'kQBLdw1TPXKisNQk6xlfdRmDd4jAw51p645LvJxDgg1TMGa5',
+            portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
+            tonPortal: 'kQChdry7W2UrILq1Wm1SN3WASMR8eWOAHQaDugEgOMVAcbXX',
         },
         // {
         //     id: ChainId.BTC_MUTINY,

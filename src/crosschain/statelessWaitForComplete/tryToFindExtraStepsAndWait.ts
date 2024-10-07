@@ -6,6 +6,7 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { Bridge__factory, Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
+import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -21,7 +22,7 @@ export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
     chainId: ChainId,
     txHash: string
-): Promise<{ extraStep?: 'thorChain' | 'burnRequestBtc'; outHash: string }> {
+): Promise<{ extraStep?: 'thorChain' | 'burnRequestBtc' | 'burnRequestTon'; outHash: string }> {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
@@ -53,10 +54,18 @@ export async function tryToFindExtraStepsAndWait(
         }
     }
 
-    const isTonDeposit = await findTonOracleRequest(receipt)
-    if (isTonDeposit) {
-        console.log('This is TON deposit. TON tracking have to be implemented')
+    const burnRequestTon = await findBurnRequestTON(receipt)
+    if (burnRequestTon) {
+        console.log('--BURN REQUEST TON--', burnRequestTon)
+        const { internalId, chainId } = burnRequestTon
+
+        const outHash = await waitForTonTxComplete(symbiosis, internalId, +chainId)
+        return {
+            extraStep: 'burnRequestTon',
+            outHash,
+        }
     }
+
     return {
         outHash: txHash,
     }
@@ -115,6 +124,31 @@ async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
     const { burnSerial, rtoken } = data.args
 
     return { burnSerial, rtoken }
+}
+
+async function findBurnRequestTON(receipt: TransactionReceipt): Promise<
+    | {
+          internalId: string
+          chainId: string
+      }
+    | undefined
+> {
+    const synthesisInterface = Synthesis__factory.createInterface()
+    const burnRequestTonTopic = synthesisInterface.getEventTopic('BurnRequestTON')
+    const log = receipt.logs.find((log) => {
+        return log.topics[0] === burnRequestTonTopic
+    })
+
+    console.log('log --->', log)
+    if (!log) {
+        return
+    }
+    const data: LogDescription = synthesisInterface.parseLog(log)
+    console.log('data --->', data)
+
+    const { id, chainID } = data.args
+
+    return { internalId: id, chainId: chainID.toString() }
 }
 
 interface UnwrapSerialBTCResponse {

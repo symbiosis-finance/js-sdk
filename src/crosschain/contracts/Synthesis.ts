@@ -172,7 +172,7 @@ export interface SynthesisInterface extends utils.Interface {
         'bridge()': FunctionFragment
         'burnSyntheticToken(uint256,address,uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
         'burnSyntheticTokenBTC(uint256,uint256,bytes,address,bytes32)': FunctionFragment
-        'burnSyntheticTokenTON(uint256,bytes32,address,uint256,(int8,bytes32),address,address,address,uint256,bytes32)': FunctionFragment
+        'burnSyntheticTokenTON(uint256,address,uint256,bytes32,(int8,bytes32),address,address,address,uint256,bytes32)': FunctionFragment
         'fabric()': FunctionFragment
         'initialize(address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
@@ -219,9 +219,9 @@ export interface SynthesisInterface extends utils.Interface {
         functionFragment: 'burnSyntheticTokenTON',
         values: [
             BigNumberish,
-            BytesLike,
             string,
             BigNumberish,
+            BytesLike,
             Synthesis.TonAddressStruct,
             string,
             string,
@@ -534,9 +534,9 @@ export interface Synthesis extends BaseContract {
 
         burnSyntheticTokenTON(
             _stableBridgingFee: BigNumberish,
-            _crossChainID: BytesLike,
             _stoken: string,
             _amount: BigNumberish,
+            _crossChainID: BytesLike,
             _chain2address: Synthesis.TonAddressStruct,
             _receiveSide: string,
             _oppositeBridge: string,
@@ -725,9 +725,9 @@ export interface Synthesis extends BaseContract {
 
     burnSyntheticTokenTON(
         _stableBridgingFee: BigNumberish,
-        _crossChainID: BytesLike,
         _stoken: string,
         _amount: BigNumberish,
+        _crossChainID: BytesLike,
         _chain2address: Synthesis.TonAddressStruct,
         _receiveSide: string,
         _oppositeBridge: string,
@@ -916,9 +916,9 @@ export interface Synthesis extends BaseContract {
 
         burnSyntheticTokenTON(
             _stableBridgingFee: BigNumberish,
-            _crossChainID: BytesLike,
             _stoken: string,
             _amount: BigNumberish,
+            _crossChainID: BytesLike,
             _chain2address: Synthesis.TonAddressStruct,
             _receiveSide: string,
             _oppositeBridge: string,
@@ -1229,9 +1229,9 @@ export interface Synthesis extends BaseContract {
 
         burnSyntheticTokenTON(
             _stableBridgingFee: BigNumberish,
-            _crossChainID: BytesLike,
             _stoken: string,
             _amount: BigNumberish,
+            _crossChainID: BytesLike,
             _chain2address: Synthesis.TonAddressStruct,
             _receiveSide: string,
             _oppositeBridge: string,
@@ -1406,9 +1406,9 @@ export interface Synthesis extends BaseContract {
 
         burnSyntheticTokenTON(
             _stableBridgingFee: BigNumberish,
-            _crossChainID: BytesLike,
             _stoken: string,
             _amount: BigNumberish,
+            _crossChainID: BytesLike,
             _chain2address: Synthesis.TonAddressStruct,
             _receiveSide: string,
             _oppositeBridge: string,
