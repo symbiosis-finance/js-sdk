@@ -27,6 +27,9 @@
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
+        "@ton/core": "^0.58.1",
+        "@ton/ton": "^15.0.0",
+        "@ton/crypto": "3.3.0",
         "@uniswap/sdk-core": "3.1.0",
         "@uniswap/v3-sdk": "3.9.0",
         "big.js": "^5.2.2",
@@ -40,7 +43,6 @@
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
         "toformat": "^2.0.0",
-        "tonweb": "^0.0.66",
         "tronweb": "^5.3.0"
     },
     "peerDependencies": {
