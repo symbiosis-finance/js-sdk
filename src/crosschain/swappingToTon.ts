@@ -104,8 +104,6 @@ export class SwappingToTon extends BaseSwapping {
         // take first 20 bytes (evm address size)of tonPortal base64 address
         const receiveSide = `0x${Buffer.from(tonPortal, 'base64').toString('hex').slice(0, 40)}`
 
-        console.log('receiveSide sended----->', receiveSide)
-
         return this.synthesisV2.interface.encodeFunctionData('burnSyntheticTokenTON', [
             feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
             this.transit.amountOut.token.address,

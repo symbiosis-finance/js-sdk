@@ -105,6 +105,9 @@ export type BtcTransactionData = {
     tokenAmountOut: TokenAmount
 }
 
+// [TODO]: Specify ton
+export type TonTransactionData = unknown
+
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -117,6 +120,10 @@ export type SwapExactInTransactionPayload =
     | {
           transactionType: 'btc'
           transactionRequest: BtcTransactionData
+      }
+    | {
+          transactionType: 'ton'
+          transactionRequest: TonTransactionData
       }
 
 export type RouteItem = {
