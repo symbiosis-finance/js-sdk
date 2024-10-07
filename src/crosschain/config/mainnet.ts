@@ -587,8 +587,8 @@ export const config: Config = {
                     chainId: ChainId.ZKSYNC_MAINNET,
                     decimals: 8,
                     icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1.png',
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
                     },
                 },
             ],
