@@ -59,7 +59,8 @@ class WaitForRevealBtcTxError extends Error {
 export async function waitForBtcRevealTxMined(
     forwarderUrl: string,
     revealTx: string,
-    blockConfirmations = 1
+    confirmations: number,
+    onConfirmation: (count: number) => void
 ): Promise<string | undefined> {
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
     txInfoUrl.searchParams.append('txid', revealTx)
@@ -68,7 +69,11 @@ export async function waitForBtcRevealTxMined(
         pollingFunction: async () => {
             return fetchData(txInfoUrl)
         },
-        successCondition: (response) => (response?.block?.confirmations || 0) >= blockConfirmations,
+        successCondition: (response) => {
+            const currentConfirmations = response?.block?.confirmations || 0
+            onConfirmation(currentConfirmations)
+            return currentConfirmations >= confirmations
+        },
         error: new WaitForRevealBtcTxError('getting TxResponse timeout exceed'),
     })
 

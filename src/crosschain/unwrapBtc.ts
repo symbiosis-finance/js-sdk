@@ -66,6 +66,7 @@ export class UnwrapBtc {
             ],
             fees: [
                 {
+                    provider: 'symbiosis',
                     value: minBtcFee,
                     description: 'Unwrap BTC fee',
                 },

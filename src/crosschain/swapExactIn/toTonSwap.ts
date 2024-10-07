@@ -1,9 +1,8 @@
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
-import { Error } from '../error'
+import { SwapExactInParams, SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
 import { Option, TON_TOKEN_DECIMALS } from '../zappingTon'
-import { selectError } from '../utils'
+import { theBestOutput } from './utils'
 
 const wTonAttributes = {
     decimals: TON_TOKEN_DECIMALS,
@@ -105,39 +104,5 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
     const symbiosisTonBridgePromises = symbiosisBridgeToTon(context)
 
     // [TODO]: add native bridge promises
-    const results = await Promise.allSettled([...symbiosisTonBridgePromises])
-
-    let bestResult: SwapExactInResult | undefined
-    const errors: Error[] = []
-
-    // compare results
-    for (const item of results) {
-        if (item.status !== 'fulfilled') {
-            errors.push(item.reason)
-            continue
-        }
-
-        const { value: result } = item
-
-        if (bestResult && bestResult.tokenAmountOut.greaterThanOrEqual(result.tokenAmountOut.raw)) {
-            continue
-        }
-
-        bestResult = result
-    }
-
-    if (!bestResult) {
-        throw selectError(errors)
-    }
-
-    const payload = {
-        transactionType: bestResult.transactionType,
-        transactionRequest: bestResult.transactionRequest,
-    } as SwapExactInTransactionPayload
-
-    return {
-        ...bestResult,
-        ...payload,
-        kind: 'crosschain-swap',
-    }
+    return theBestOutput([...symbiosisTonBridgePromises])
 }

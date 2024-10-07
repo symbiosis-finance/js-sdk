@@ -2,7 +2,7 @@ import TronWeb from 'tronweb'
 import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 import { Token, TokenAmount } from '../../entities'
 import { isTronToken } from '../tron'
-import { isBtc } from '../utils'
+import { isBtcChainId } from '../utils'
 
 const getGasTokenPrice = async (token: Token): Promise<number> => {
     const { chainId } = token
@@ -80,7 +80,7 @@ const getTokenPrice = async (token: Token, map?: Map<string, string>): Promise<n
 export const getTokenPriceUsd = async (token: Token, map?: Map<string, string>) => {
     let price = 0
 
-    if (token.isNative || isBtc(token.chainId)) {
+    if (token.isNative || isBtcChainId(token.chainId)) {
         price = await getGasTokenPrice(token)
     } else {
         price = await getTokenPrice(token, map)

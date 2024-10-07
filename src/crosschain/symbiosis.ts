@@ -53,7 +53,6 @@ import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
-import { BestPoolSwapping } from './bestPoolSwapping'
 import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
@@ -63,8 +62,7 @@ import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
-import { isBtc } from './utils'
-import { BestTokenSwapping } from './bestTokenSwapping'
+import { isBtcChainId } from './utils'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
@@ -219,14 +217,6 @@ export class Symbiosis {
         return new SwappingMiddleware(this, omniPoolConfig)
     }
 
-    public bestPoolSwapping() {
-        return new BestPoolSwapping(this)
-    }
-
-    public bestTokenSwapping(omniPoolConfig: OmniPoolConfig) {
-        return new BestTokenSwapping(this, omniPoolConfig)
-    }
-
     public newRevertPending(request: PendingRequest) {
         return new RevertPending(this, request)
     }
@@ -296,7 +286,7 @@ export class Symbiosis {
     }
 
     public symBtcConfigFor(btcChainId: ChainId) {
-        if (!isBtc(btcChainId)) {
+        if (!isBtcChainId(btcChainId)) {
             throw new Error(`This chain ${btcChainId} is not BTC chain`)
         }
         const symBtcConfig = this.chainConfig(btcChainId).symBtc
@@ -531,6 +521,24 @@ export class Symbiosis {
         return transitToken
     }
 
+    public getTransitCombinations(chainIdIn: ChainId, chainIdOut: ChainId, poolConfig: OmniPoolConfig) {
+        const transitTokensIn = this.transitTokens(chainIdIn, poolConfig)
+        const transitTokensOut = this.transitTokens(chainIdOut, poolConfig)
+
+        const combinations: { transitTokenIn: Token; transitTokenOut: Token }[] = []
+
+        transitTokensIn.forEach((transitTokenIn) => {
+            transitTokensOut.forEach((transitTokenOut) => {
+                if (transitTokenIn.equals(transitTokenOut)) {
+                    return
+                }
+                combinations.push({ transitTokenIn, transitTokenOut })
+            })
+        })
+
+        return combinations
+    }
+
     public getOmniPoolByConfig(config: OmniPoolConfig): OmniPoolInfo | undefined {
         return this.configCache.getOmniPoolByConfig(config)
     }
@@ -568,7 +576,7 @@ export class Symbiosis {
     }
 
     public getForwarderUrl(btcChainId: ChainId): string {
-        if (!isBtc(btcChainId)) {
+        if (!isBtcChainId(btcChainId)) {
             throw new Error(`This chain ${btcChainId} is not BTC chain`)
         }
         const forwarderUrl = this.chainConfig(btcChainId).forwarderUrl
@@ -583,9 +591,14 @@ export class Symbiosis {
         return waitForBtcDepositAccepted(forwarderUrl, depositAddress)
     }
 
-    public async waitForBtcRevealTxMined(btcChainId: ChainId, revealTx: string) {
+    public async waitForBtcRevealTxMined(
+        btcChainId: ChainId,
+        revealTx: string,
+        onConfirmation: (count: number) => void,
+        confirmations: number = 2
+    ) {
         const forwarderUrl = this.getForwarderUrl(btcChainId)
-        return waitForBtcRevealTxMined(forwarderUrl, revealTx)
+        return waitForBtcRevealTxMined(forwarderUrl, revealTx, confirmations, onConfirmation)
     }
 
     public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {

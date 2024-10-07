@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { BigNumber, BytesLike, utils } from 'ethers'
 import { ChainId } from '../../constants'
-import { TokenAmount } from '../../entities'
+import { GAS_TOKEN, TokenAmount } from '../../entities'
 import { onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { FeeCollector__factory } from '../contracts'
@@ -71,9 +71,11 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
 
     const [fee, approveAddress] = await Promise.all([contract.callStatic.fee(), contract.callStatic.onchainGateway()])
 
+    const feeToken = GAS_TOKEN[inChainId]
+    const feeTokenAmount = new TokenAmount(feeToken, fee.toString())
+
     let inTokenAmount = params.tokenAmountIn
-    if (inTokenAmount.token.isNative) {
-        const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
+    if (inTokenAmount.token.equals(feeToken)) {
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
             throw new Error(
                 `Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`,
@@ -134,5 +136,13 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
         ...result,
         ...payload,
         approveTo: approveAddress,
+        fees: [
+            {
+                provider: 'symbiosis',
+                value: feeTokenAmount,
+                description: 'Symbiosis on-chain fee',
+            },
+            ...result.fees,
+        ],
     }
 }

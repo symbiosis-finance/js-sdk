@@ -152,6 +152,7 @@ export class ZappingThor extends BaseSwapping {
             fees: [
                 ...result.fees,
                 {
+                    provider: 'thorchain-bridge',
                     description: 'THORChain fee',
                     value: new TokenAmount(BTC, this.thorQuote.fees.total),
                 },

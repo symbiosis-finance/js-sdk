@@ -127,12 +127,7 @@ export async function okxSwap({
             data: tx.data,
             value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
         },
-        fees: [
-            {
-                description: 'OKX fee',
-                value: new TokenAmount(tokenOut, '0'),
-            },
-        ],
+        fees: [],
         routes: [
             {
                 provider: 'okx',

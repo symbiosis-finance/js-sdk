@@ -52,12 +52,7 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResu
         tokenAmountOutMin: amountOut,
         priceImpact: new Percent('0', '0'),
         approveTo,
-        fees: [
-            {
-                description: 'Unwrap fee',
-                value: new TokenAmount(params.tokenOut, '0'),
-            },
-        ],
+        fees: [],
         routes: [
             {
                 provider: 'wrap',

@@ -28,7 +28,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../../abis/ERC20.json'
 import { isTronChainId } from '../../tron'
-import { isBtc, isTon } from '../../utils'
+import { isBtcChainId, isTonChainId } from '../../utils'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')
@@ -119,7 +119,7 @@ export class Builder {
             const chain = chains[i]
             const bridge = this.bridge(chain.id)
 
-            if (isTon(chain.id)) {
+            if (isTonChainId(chain.id)) {
                 continue
             }
 
@@ -144,7 +144,7 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
-            if (isTon(chain.id)) {
+            if (isTonChainId(chain.id)) {
                 continue
             }
             const portal = this.portal(chain.id)
@@ -184,7 +184,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtc(chain.id) || isTon(chain.id)) {
+            if (isBtcChainId(chain.id)) {
                 continue
             }
 
@@ -243,7 +243,7 @@ export class Builder {
     ): Promise<TokenThreshold[]> {
         const chainTokens = tokens.filter((token) => token.chainId === chain.id)
 
-        if (isTon(chain.id)) {
+        if (isTonChainId(chain.id)) {
             const index = chainTokens.findIndex(
                 (token) => token.address === '0x0000000000000000000000000000000000000003'
             )

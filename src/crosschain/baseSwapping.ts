@@ -225,15 +225,17 @@ export abstract class BaseSwapping {
 
         const fees: FeeItem[] = [
             {
+                provider: 'symbiosis',
                 value: fee,
-                description: 'Symbiosis fee',
+                description: 'Cross-chain fee',
                 save,
             },
         ]
         if (feeV2Raw) {
             fees.push({
+                provider: 'symbiosis',
                 value: feeV2Raw.fee,
-                description: 'Symbiosis fee',
+                description: 'Cross-chain fee',
                 save: feeV2Raw.save,
             })
         }

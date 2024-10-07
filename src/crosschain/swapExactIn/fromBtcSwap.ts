@@ -3,7 +3,7 @@ import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
-import { isBtc } from '../utils'
+import { isBtcChainId } from '../utils'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
@@ -12,11 +12,12 @@ import { BigNumber } from 'ethers'
 import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
+import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
 
-    if (!isBtc(tokenAmountIn.token.chainId)) {
+    if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         return false
     }
 
@@ -167,14 +168,17 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         ],
         fees: [
             {
+                provider: 'symbiosis',
                 description: 'BTC Forwarder fee',
-                value: btcForwarderFee,
+                value: new TokenAmount(tokenAmountIn.token, btcForwarderFee.raw),
             },
             {
+                provider: 'symbiosis',
                 description: 'BTC Portal fee',
-                value: btcPortalFee,
+                value: new TokenAmount(tokenAmountIn.token, btcPortalFee.raw),
             },
             {
+                provider: 'symbiosis',
                 description: 'Mint fee',
                 value: mintFee,
             },
@@ -236,13 +240,22 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
 
 async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
     const { to, symbiosis } = context
-    const bestPoolSwapping = symbiosis.bestPoolSwapping()
 
-    const swapExactInResult = await bestPoolSwapping.exactIn({
-        ...context,
-        tokenAmountIn: sBtcAmount,
-        from: to, // to be able to revert a tx
-    })
+    const poolConfig = symbiosis.config.omniPools[2] // btc pool only
+    const swapExactInResult = await bestTokenSwapping(
+        {
+            ...context,
+            tokenAmountIn: sBtcAmount,
+            from: to, // to be able to revert a tx
+        },
+        poolConfig
+    )
+
+    // const swapExactInResult = await bestPoolSwapping({
+    //     ...context,
+    //     tokenAmountIn: sBtcAmount,
+    //     from: to, // to be able to revert a tx
+    // })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)

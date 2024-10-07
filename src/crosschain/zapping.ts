@@ -1,33 +1,22 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { MaxUint256 } from '@ethersproject/constants'
-import { Log, TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/providers'
-import { Signer, BigNumber } from 'ethers'
+import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
+import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import { Execute, WaitForMined } from './bridging'
 import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade } from './trade'
-import { getExternalId, getInternalId, prepareTransactionRequest } from './utils'
-import { WaitForComplete } from './waitForComplete'
+import { getExternalId, getInternalId } from './utils'
 import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
-import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm, TronTransactionData } from './tron'
+import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
-import { OmniPoolConfig } from './types'
+import { OmniPoolConfig, RouteItem, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { WrapTrade } from './trade'
-
-export type ZapExactIn = Promise<{
-    type: 'tron' | 'evm'
-    execute?: (signer: Signer) => Execute
-    fee: TokenAmount
-    tokenAmountOut: TokenAmount
-    priceImpact: Percent
-    amountInUsd: TokenAmount
-    transactionRequest: TronTransactionData | TransactionRequest
-}>
+import { WaitForComplete } from './waitForComplete'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount
@@ -67,7 +56,13 @@ export class Zapping {
         this.multicallRouter = this.symbiosis.multicallRouter(omniPoolConfig.chainId)
     }
 
-    public async exactIn({ tokenAmountIn, from, to, slippage, deadline }: ZappingExactInParams): ZapExactIn {
+    public async exactIn({
+        tokenAmountIn,
+        from,
+        to,
+        slippage,
+        deadline,
+    }: ZappingExactInParams): Promise<SwapExactInResult> {
         this.tokenAmountIn = tokenAmountIn
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
@@ -84,7 +79,7 @@ export class Zapping {
 
         const targetPool = this.symbiosis.getOmniPoolByConfig(this.omniPoolConfig)
         if (!targetPool) {
-            throw new Error(`Unknown omni pool ${this.omniPoolConfig.address}`)
+            throw new Error(`Unknown pool ${this.omniPoolConfig.address}`)
         }
         const wrapped = wrappedToken(tokenAmountIn.token)
         const tokenPool = this.symbiosis.getOmniPoolByToken(wrapped)
@@ -111,26 +106,35 @@ export class Zapping {
         this.omniLiquidity = this.buildOmniLiquidity(fee)
         await this.omniLiquidity.init()
 
-        const transactionRequest = this.getTransactionRequest(fee)
+        const payload = this.getTransactionRequest(fee)
 
-        const base = {
-            fee,
-            tokenAmountOut: this.omniLiquidity.amountOut,
-            priceImpact: this.calculatePriceImpact(),
-            amountInUsd: this.getSynthAmount(fee),
-            transactionRequest,
+        const routes: RouteItem[] = []
+        if (this.tradeA) {
+            routes.push({
+                provider: this.tradeA.tradeType,
+                tokens: [this.tradeA.tokenAmountIn.token, this.tradeA.amountOut.token],
+            })
         }
-        if ('call_value' in transactionRequest) {
-            return {
-                ...base,
-                type: 'tron',
-            }
-        }
+        routes.push({
+            provider: 'symbiosis',
+            tokens: [this.getPortalTokenAmountIn().token, this.omniLiquidity.tokenAmountIn.token],
+        })
 
         return {
-            ...base,
-            type: 'evm',
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
+            ...payload,
+            fees: [
+                {
+                    provider: 'symbiosis',
+                    value: fee,
+                },
+            ],
+            routes,
+            kind: 'crosschain-swap',
+            approveTo: this.symbiosis.chainConfig(tokenAmountIn.token.chainId).metaRouterGateway,
+            priceImpact: this.calculatePriceImpact(),
+            amountInUsd: this.getSynthAmount(fee),
+            tokenAmountOut: this.omniLiquidity.amountOut,
+            tokenAmountOutMin: this.omniLiquidity.amountOut,
         }
     }
 
@@ -144,7 +148,7 @@ export class Zapping {
         }).waitForComplete(receipt)
     }
 
-    private getTransactionRequest(fee: TokenAmount): TransactionRequest | TronTransactionData {
+    private getTransactionRequest(fee: TokenAmount): SwapExactInTransactionPayload {
         const chainId = this.tokenAmountIn.token.chainId
         const metaRouter = this.symbiosis.metaRouter(chainId)
 
@@ -156,10 +160,7 @@ export class Zapping {
             firstToken = AddressZero
         }
 
-        const approvedTokens = [
-            firstToken,
-            this.tradeA ? this.tradeA.amountOut.token.address : this.tokenAmountIn.token.address,
-        ]
+        const approvedTokens = [firstToken, this.getPortalTokenAmountIn().token.address]
 
         const value =
             this.tradeA && this.tokenAmountIn.token.isNative
@@ -179,7 +180,7 @@ export class Zapping {
         }
 
         if (isTronChainId(chainId)) {
-            return prepareTronTransaction({
+            const transactionRequest = prepareTronTransaction({
                 chainId: chainId,
                 tronWeb: this.symbiosis.tronWeb(chainId),
                 abi: TRON_METAROUTER_ABI,
@@ -201,15 +202,23 @@ export class Zapping {
                 ownerAddress: this.from,
                 value: 0,
             })
+            return {
+                transactionRequest,
+                transactionType: 'tron',
+            }
         }
 
         const data = metaRouter.interface.encodeFunctionData('metaRoute', [params])
 
-        return {
+        const transactionRequest: TransactionRequest = {
             chainId,
             to: metaRouter.address,
             data,
             value,
+        }
+        return {
+            transactionRequest,
+            transactionType: 'evm',
         }
     }
 
@@ -223,11 +232,12 @@ export class Zapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
+    private getPortalTokenAmountIn(): TokenAmount {
+        return this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
+    }
+
     private getSynthAmount(fee?: TokenAmount): TokenAmount {
-        let synthAmount = new TokenAmount(
-            this.synthToken,
-            this.tradeA ? this.tradeA.amountOut.raw : this.tokenAmountIn.raw
-        )
+        let synthAmount = new TokenAmount(this.synthToken, this.getPortalTokenAmountIn().raw)
 
         if (fee) {
             synthAmount = synthAmount.subtract(fee)
@@ -283,7 +293,7 @@ export class Zapping {
 
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.omniPoolConfig.chainId
-        const tokenAmount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
+        const tokenAmount = this.getPortalTokenAmountIn()
 
         const portal = this.symbiosis.portal(chainIdIn)
 
@@ -312,29 +322,9 @@ export class Zapping {
         ]
     }
 
-    protected async execute(transactionRequest: TransactionRequest, signer: Signer): Execute {
-        const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
-
-        const response = await signer.sendTransaction(preparedTransactionRequest)
-
-        return {
-            response,
-            waitForMined: (confirmations = 1) => this.waitForMined(confirmations, response),
-        }
-    }
-
-    protected async waitForMined(confirmations: number, response: TransactionResponse): WaitForMined {
-        const receipt = await response.wait(confirmations)
-
-        return {
-            receipt,
-            waitForComplete: () => this.waitForComplete(receipt),
-        }
-    }
-
     private async getSynthToken(): Promise<Token> {
         const chainIdOut = this.omniPoolConfig.chainId
-        const rep = await this.symbiosis.getRepresentation(this.transitTokenIn, chainIdOut)
+        const rep = this.symbiosis.getRepresentation(this.transitTokenIn, chainIdOut)
 
         if (!rep) {
             throw new Error(
@@ -353,7 +343,7 @@ export class Zapping {
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)
 
-        const amount = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
+        const amount = this.getPortalTokenAmountIn()
 
         const internalId = getInternalId({
             contractAddress: portal.address,

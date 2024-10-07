@@ -12,7 +12,7 @@ initEccLib(ecc)
 
 interface ZappingBtcExactInParams {
     tokenAmountIn: TokenAmount
-    sBtc: Token
+    syBtc: Token
     from: string
     to: string
     slippage: number
@@ -48,7 +48,7 @@ export class ZappingBtc extends BaseSwapping {
 
     public async exactIn({
         tokenAmountIn,
-        sBtc,
+        syBtc,
         from,
         to,
         slippage,
@@ -56,26 +56,26 @@ export class ZappingBtc extends BaseSwapping {
         transitTokenIn,
         transitTokenOut,
     }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
-        if (!sBtc.chainFromId) {
+        if (!syBtc.chainFromId) {
             throw new Error('sBtc is not synthetic')
         }
-        const network = BTC_NETWORKS[sBtc.chainFromId]
+        const network = BTC_NETWORKS[syBtc.chainFromId]
         if (!network) {
             throw new Error('Unknown BTC network')
         }
-        const btc = GAS_TOKEN[sBtc.chainFromId]
+        const btc = GAS_TOKEN[syBtc.chainFromId]
 
         this.bitcoinAddress = getPkScript(to, network)
-        this.sBtc = sBtc
+        this.sBtc = syBtc
 
-        this.multicallRouter = this.symbiosis.multicallRouter(sBtc.chainId)
+        this.multicallRouter = this.symbiosis.multicallRouter(syBtc.chainId)
 
-        this.synthesis = this.symbiosis.synthesis(sBtc.chainId)
-        this.minBtcFee = await getToBtcFee(sBtc, this.synthesis, this.symbiosis.dataProvider)
+        this.synthesis = this.symbiosis.synthesis(syBtc.chainId)
+        this.minBtcFee = await getToBtcFee(syBtc, this.synthesis, this.symbiosis.dataProvider)
 
         const result = await this.doExactIn({
             tokenAmountIn,
-            tokenOut: sBtc,
+            tokenOut: syBtc,
             from,
             to: from,
             slippage,
@@ -94,6 +94,7 @@ export class ZappingBtc extends BaseSwapping {
             fees: [
                 ...result.fees,
                 {
+                    provider: 'symbiosis',
                     description: 'BTC fee',
                     value: this.minBtcFee,
                 },
@@ -102,7 +103,7 @@ export class ZappingBtc extends BaseSwapping {
                 ...result.routes,
                 {
                     provider: 'symbiosis',
-                    tokens: [sBtc, btc],
+                    tokens: [syBtc, btc],
                 },
             ],
         }

@@ -52,6 +52,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
         approveTo,
         fees: [
             {
+                provider: 'symbiosis',
                 description: 'Bridge fee',
                 value: result.fee,
             },

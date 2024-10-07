@@ -36,7 +36,7 @@ export class DataProvider {
 
     async getTokenPrice(token: Token) {
         return this.fromCache(
-            ['getTokenPriceUsd', token.address],
+            ['getTokenPriceUsd', token.chainId, token.address],
             () => {
                 return getTokenPriceUsd(token)
             },
