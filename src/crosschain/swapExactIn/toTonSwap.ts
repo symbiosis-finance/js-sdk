@@ -1,5 +1,4 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { Error } from '../error'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
 import { Option, TON_TOKEN_DECIMALS } from '../zappingTon'
@@ -45,15 +44,16 @@ const OPTIONS: Option[] = [
     },
 ]
 
-export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+// TON native bridge
+function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
     const { tokenAmountIn, from, to, symbiosis } = context
 
-    // find suitable option for current env
     const options = OPTIONS.filter((i) => {
         return symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
     })
+
     if (options.length === 0) {
-        throw new Error(`There are no suitable option options`)
+        console.log(`Native TON bridge is not supported from this chain`)
     }
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -74,5 +74,34 @@ export async function tonSwap(context: SwapExactInParams): Promise<SwapExactInRe
             })
         })
 
-    return theBestOutput(promises)
+    return promises
+}
+
+// Symbiosis bridge
+function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, from, to, tokenOut, symbiosis } = context
+
+    const promises: Promise<SwapExactInResult>[] = []
+
+    symbiosis.config.omniPools.forEach((pool) => {
+        const swappingToTon = symbiosis.newSwappingToTon(pool)
+        const promise = swappingToTon.exactIn({
+            tokenAmountIn,
+            tokenOut,
+            from,
+            to,
+            slippage: context.slippage,
+            deadline: context.deadline,
+        })
+        promises.push(promise)
+    })
+
+    return promises
+}
+
+export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+    const nativeTonBridgePromises = nativeBridgeToTon(context)
+    const symbiosisTonBridgePromises = symbiosisBridgeToTon(context)
+
+    return theBestOutput([...symbiosisTonBridgePromises, ...nativeTonBridgePromises])
 }

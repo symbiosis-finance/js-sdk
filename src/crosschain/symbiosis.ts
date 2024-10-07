@@ -66,6 +66,7 @@ import { isBtcChainId } from './utils'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
+import { SwappingToTon } from './swappingToTon'
 import { swapExactIn } from './swapExactIn'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
@@ -197,7 +198,7 @@ export class Symbiosis {
 
     public chains(): Chain[] {
         const ids = this.config.chains.map((i) => i.id)
-        return chains.filter((i) => ids.includes(i.id))
+        return chains.filter((chain) => ids.includes(chain.id))
     }
 
     public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
@@ -206,6 +207,10 @@ export class Symbiosis {
 
     public newBridging() {
         return new Bridging(this)
+    }
+
+    public newSwappingToTon(omniPoolConfig: OmniPoolConfig) {
+        return new SwappingToTon(this, omniPoolConfig)
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {

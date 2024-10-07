@@ -33,6 +33,17 @@ export const chains: Chain[] = [
         evm: false,
     }),
     new Chain({
+        id: ChainId.TON_TESTNET,
+        name: 'TON',
+        disabled: false,
+        explorer: 'https://testnet.tonscan.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+        },
+        evm: false,
+    }),
+    new Chain({
         id: ChainId.BTC_MAINNET,
         name: 'Bitcoin',
         disabled: false,

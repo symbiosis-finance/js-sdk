@@ -116,6 +116,7 @@ export abstract class BaseSwapping {
         }
 
         this.transit = this.buildTransit()
+
         await this.transit.init()
         timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
         prev = Date.now()
@@ -128,6 +129,7 @@ export abstract class BaseSwapping {
         await this.doPostTransitAction()
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
+
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
@@ -140,10 +142,12 @@ export abstract class BaseSwapping {
         }
 
         this.route = this.getRoute()
+
         const [feeV1Raw, feeV2Raw] = await Promise.all([
             this.getFee(this.transit.feeToken),
             this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
+
         timeLog.push(['ADVISOR', Date.now() - start, Date.now() - prev])
         prev = Date.now()
 

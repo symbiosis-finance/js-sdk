@@ -40,6 +40,7 @@ export const CHAINS_PRIORITY = [
     ChainId.POLYGON_ZK,
     ChainId.TRON_MAINNET,
     ChainId.TRON_TESTNET,
+    ChainId.TON_TESTNET,
     ChainId.LINEA_TESTNET,
     ChainId.LINEA_MAINNET,
     ChainId.MANTLE_MAINNET,
