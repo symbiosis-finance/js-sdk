@@ -1,16 +1,16 @@
 import { BigNumber, BytesLike, utils } from 'ethers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { ZERO_FEE_COLLECTOR_ADDRESSES } from './swapExactIn'
-import { Percent, TokenAmount } from '../entities'
-import { onchainSwap } from './swapExactIn/onchainSwap'
-import { tronAddressToEvm } from './tron'
-import { getToBtcFee } from './btc'
-import { Error, ErrorCode } from './error'
-import { FeeCollector__factory, MulticallRouterV2__factory } from './contracts'
-import { BTC_NETWORKS, getPkScript } from './zappingBtc'
-import { MULTICALL_ROUTER_V2 } from './constants'
-import { Symbiosis } from './symbiosis'
-import { FeeItem, SwapExactInParams, SwapExactInResult } from './types'
+import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../../swapExactIn'
+import { Percent, Token, TokenAmount } from '../../../entities'
+import { onchainSwap } from '../onchainSwap'
+import { tronAddressToEvm } from '../../tron'
+import { getToBtcFee } from '../../btc'
+import { Error, ErrorCode } from '../../error'
+import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
+import { BTC_NETWORKS, getPkScript } from '../../zappingBtc'
+import { MULTICALL_ROUTER_V2 } from '../../constants'
+import { Symbiosis } from '../../symbiosis'
+import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
 // TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -82,7 +82,12 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
         value = BigNumber.from(swapCall.value).add(fee).toString()
     }
 
-    const burnCall = await getBurnCall(symbiosis, new TokenAmount(syBTC, swapCall.amountOut.raw), bitcoinAddress)
+    const burnCall = await getBurnCall({
+        symbiosis,
+        amountIn: new TokenAmount(syBTC, swapCall.amountOut.raw),
+        tokenOut,
+        bitcoinAddress,
+    })
 
     const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
         inTokenAmount.raw.toString(),
@@ -105,20 +110,14 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
         multicallCalldata,
     ])
 
-    const tokenAmountOut = new TokenAmount(tokenOut, burnCall.amountOut.raw)
+    const tokenAmountOut = burnCall.amountOut
     return {
         tokenAmountOut,
         tokenAmountOutMin: tokenAmountOut,
         priceImpact: swapCall.priceImpact!,
         amountInUsd: swapCall.amountInUsd!,
         approveTo: approveAddress,
-        routes: [
-            ...swapCall.routes,
-            {
-                provider: 'symbiosis',
-                tokens: [burnCall.amountIn.token, burnCall.amountOut.token],
-            },
-        ],
+        routes: [...swapCall.routes, ...burnCall.routes],
         fees: [...swapCall.fees, ...burnCall.fees],
         kind: 'crosschain-swap',
         transactionType: 'evm',
@@ -139,6 +138,7 @@ type Call = {
     value: string
     offset: number
     fees: FeeItem[]
+    routes: RouteItem[]
 }
 
 type SwapCall = Call & SwapExactInResult
@@ -180,7 +180,17 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
     }
 }
 
-async function getBurnCall(symbiosis: Symbiosis, amountIn: TokenAmount, bitcoinAddress: Buffer): Promise<Call> {
+async function getBurnCall({
+    symbiosis,
+    amountIn,
+    tokenOut,
+    bitcoinAddress,
+}: {
+    symbiosis: Symbiosis
+    amountIn: TokenAmount
+    tokenOut: Token
+    bitcoinAddress: Buffer
+}): Promise<Call> {
     const synthesis = symbiosis.synthesis(amountIn.token.chainId)
     const fee = await getToBtcFee(amountIn.token, synthesis, symbiosis.dataProvider)
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
@@ -193,7 +203,7 @@ async function getBurnCall(symbiosis: Symbiosis, amountIn: TokenAmount, bitcoinA
 
     return {
         amountIn,
-        amountOut: amountIn.subtract(fee),
+        amountOut: new TokenAmount(tokenOut, amountIn.subtract(fee).raw),
         to: synthesis.address,
         data,
         value: '0',
@@ -203,6 +213,12 @@ async function getBurnCall(symbiosis: Symbiosis, amountIn: TokenAmount, bitcoinA
                 provider: 'symbiosis',
                 description: 'Burn fee',
                 value: fee,
+            },
+        ],
+        routes: [
+            {
+                provider: 'symbiosis',
+                tokens: [amountIn.token, tokenOut],
             },
         ],
     }

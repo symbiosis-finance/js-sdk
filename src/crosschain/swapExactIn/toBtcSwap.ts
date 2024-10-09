@@ -1,6 +1,6 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { thorChainSwap } from './thorChainSwap'
-import { burnSyntheticBtc } from './burnSyntheticBtc'
+import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { isBtcChainId } from '../utils'
 import { ChainId } from '../../constants'
 import { theBestOutput } from './utils'
