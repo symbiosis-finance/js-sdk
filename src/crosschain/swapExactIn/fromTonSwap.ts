@@ -1,17 +1,17 @@
-import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../types'
+import { OmniPoolConfig, SwapExactInParams, SwapExactInResult, TonTransactionData } from '../types'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error } from '../error'
-import { AbiCoder, id, isAddress, solidityKeccak256 } from 'ethers/lib/utils'
+import { isAddress } from 'ethers/lib/utils'
 import { Address, toNano } from '@ton/core'
 import { ChainId } from '../../constants'
-import { isTonChainId } from '../chainUtils/ton'
+import { isTonChainId, splitSlippage } from '../chainUtils'
 import { Bridge } from '../chainUtils/ton'
-import { TON_CHAIN_ID } from '../chainUtils/ton'
 import { Percent, TokenAmount } from '../../entities'
-import { splitSlippage } from '../chainUtils/evm'
 import { CROSS_CHAIN_ID } from '../constants'
 import { Transit } from '../transit'
+import { theBestOutput } from './utils'
+import { Symbiosis } from '../symbiosis'
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
 
@@ -28,10 +28,9 @@ export function isFromTonSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut, to, deadline } = context
+    const { symbiosis, tokenAmountIn, tokenOut, to } = context
 
     const tonPortal = symbiosis.config.chains.find((i) => isTonChainId(i.id))?.tonPortal
-
     if (!tonPortal) {
         throw new Error('Ton portal not found in symbiosis config')
     }
@@ -40,7 +39,7 @@ export async function fromTonSwap(context: SwapExactInParams): Promise<SwapExact
         throw new Error(`Destination address wasn't provided`)
     }
 
-    const swapPromises: Promise<ToTonSwapExactIn>[] = []
+    const promises: Promise<SwapExactInResult>[] = []
 
     symbiosis.config.omniPools.forEach((poolConfig) => {
         const transitTokenCombinations = symbiosis.getTransitCombinations(
@@ -53,131 +52,102 @@ export async function fromTonSwap(context: SwapExactInParams): Promise<SwapExact
             const newContext = { ...context, transitTokenIn, transitTokenOut }
 
             const promise = doExactIn({ context: newContext, poolConfig })
-            swapPromises.push(promise)
+            promises.push(promise)
         })
     })
 
-    const result = await Promise.all(swapPromises)
-
-    // const bestOutput = await theBestOutput(promises)
-
-    // best pool pass to create request
-    const tonTransactionMessage = _getTonTransactionRequest(context, result[0])
+    const bestOutput = await theBestOutput(promises)
 
     return {
+        ...bestOutput,
         kind: 'crosschain-swap',
-        transactionType: 'ton',
-        transactionRequest: {
-            validUntil: deadline.toString(),
-            messages: [tonTransactionMessage],
-        },
-        tokenAmountOut: new TokenAmount(tokenOut, result[0].amountOut.raw.toString()),
-        tokenAmountOutMin: new TokenAmount(tokenOut, result[0].amountOut.raw.toString()),
-        priceImpact: new Percent(BigInt(10), BigInt(10000)),
         approveTo: AddressZero,
-        // amountInUsd: '',
-        routes: [
-            {
-                provider: 'symbiosis',
-                tokens: [tokenAmountIn.token, tokenOut],
-            },
-        ],
         fees: [
             {
-                provider: 'symbiosis',
-                description: 'Mint fee',
+                provider: 'ton-call',
+                description: 'TON method call',
                 value: new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS),
             },
+            ...bestOutput.fees,
         ],
     }
 }
 
-interface TonTransactionMessage {
-    address: string
-    amount: string
-    payload: string
+interface ExactInParams {
+    context: SwapExactInParams
+    poolConfig: OmniPoolConfig
 }
 
-// [TODO]: CASE for TON only, add case for jettons (USDT)
-function _getTonTransactionRequest(context: SwapExactInParams, params: ToTonSwapExactIn): TonTransactionMessage {
-    const { symbiosis, tokenAmountIn, to } = context
+async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
+    const { context, poolConfig } = params
+    const { symbiosis, tokenAmountIn, to, deadline } = context
 
-    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === tokenAmountIn.token.chainId)?.tonPortal
+    const {
+        to: secondDexRouter,
+        data: secondSwapCallData,
+        amount: amountToBurn,
+        swapTokens,
+    } = await buildSecondCall(params)
 
-    if (!tonPortal) {
-        throw new Error(`No TON portal for chain ${tokenAmountIn.token.chainId}`)
+    const {
+        to: finalReceiveSide,
+        data: finalCallData,
+        offset: finalOffset,
+        amount: amountOut,
+    } = buildFinalCall(params, amountToBurn)
+
+    if (!swapTokens) {
+        throw new Error('! swap tokens')
     }
-
-    console.log('params TON transaction', {
-        stableBridgingFee: BigInt('0'), // 1-st transfer ton --> hostchain
-        token: Address.parse('EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4'), // simulate jetton for gas token TEP-161
-        amount: BigInt(tokenAmountIn.raw.toString()),
-        chain2Address: Buffer.from(to.slice(2), 'hex'), // adress evm (my wallet)
-        receiveSide: Buffer.from(symbiosis.synthesis(97).address.slice(2), 'hex'), // syntehsis host chain
-        oppositeBridge: Buffer.from(symbiosis.bridge(97).address.slice(2), 'hex'), // bridge host chain
-        chainId: BigInt(97), // host chain 97 (bsc testnet)
-        revertableAddress: Buffer.from(to.slice(2), 'hex'), // evm this.to
-        swapTokens: params.swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
-        secondDexRouter: Buffer.from(params.secondDexRouter.slice(2), 'hex'), // octopul address hostchain
-        secondSwapCallData: Buffer.from(params.secondSwapCallData.slice(2), 'hex'), // octopul calldata swap sTON --> sWTON hostchain
-        finalCallData: Buffer.from(params.finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
-        finalReceiveSide: Buffer.from(params.finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
-        finalOffset: params.finalOffset, // finalOffset
-    })
-
-    const cell = Bridge.metaSynthesizeMessage({
-        stableBridgingFee: BigInt('0'), // 1-st transfer ton --> hostchain
-        token: Address.parse('EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4'), // simulate jetton for gas token TEP-161
-        amount: BigInt(tokenAmountIn.raw.toString()),
-        chain2Address: Buffer.from(to.slice(2), 'hex'), // adress evm (my wallet)
-        receiveSide: Buffer.from(symbiosis.synthesis(97).address.slice(2), 'hex'), // syntehsis host chain
-        oppositeBridge: Buffer.from(symbiosis.bridge(97).address.slice(2), 'hex'), // bridge host chain
-        chainId: BigInt(97), // host chain 97 (bsc testnet)
-        revertableAddress: Buffer.from(to.slice(2), 'hex'), // evm this.to
-        swapTokens: params.swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
-        secondDexRouter: Buffer.from(params.secondDexRouter.slice(2), 'hex'), // octopul address hostchain
-        secondSwapCallData: Buffer.from(params.secondSwapCallData.slice(2), 'hex'), // octopul calldata swap sTON --> sWTON hostchain
-        finalCallData: Buffer.from(params.finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
-        finalReceiveSide: Buffer.from(params.finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
-        finalOffset: params.finalOffset, // finalOffset
+    // best pool pass to create request
+    const transactionData = buildTonTransactionRequest({
+        symbiosis,
+        amountIn: tokenAmountIn,
+        amountOut,
+        secondDexRouter,
+        secondSwapCallData,
+        swapTokens,
+        finalReceiveSide,
+        finalCallData,
+        finalOffset,
+        evmAddress: to,
+        poolChainId: poolConfig.chainId,
+        validUntil: deadline,
     })
 
     return {
-        address: tonPortal,
-        amount: tokenAmountIn.add(new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS)).raw.toString(),
-        payload: cell.toBoc().toString('base64'),
+        transactionType: 'ton',
+        transactionRequest: transactionData,
+        kind: 'crosschain-swap',
+        tokenAmountOut: amountOut,
+        tokenAmountOutMin: amountOut,
+        approveTo: '',
+        routes: [],
+        fees: [],
+        priceImpact: new Percent('0', '0'),
     }
 }
 
-interface ToTonSwapExactIn {
-    swapTokens: [string, string] // sTON, sWTON,
-    secondSwapCallData: string
-    secondDexRouter: string
-    finalCallData: string
-    finalReceiveSide: string
-    finalOffset: bigint
-    amountOut: TokenAmount
+interface Call {
+    to: string
+    data: string
+    offset: number
+    amount: TokenAmount
+    swapTokens?: string[]
 }
 
-async function doExactIn({
-    context,
-    poolConfig,
-}: {
-    context: SwapExactInParams
-    poolConfig: OmniPoolConfig
-}): Promise<ToTonSwapExactIn> {
-    const { symbiosis, tokenOut, tokenAmountIn, slippage, deadline, transitTokenIn, transitTokenOut } = context
+async function buildSecondCall(params: ExactInParams): Promise<Call> {
+    const { context, poolConfig } = params
+    const { tokenAmountIn, tokenOut, symbiosis, transitTokenIn, transitTokenOut, slippage, deadline } = context
 
     if (!transitTokenIn || !transitTokenOut) {
         throw new Error('Transit tokens not found')
     }
 
-    const synthesis = symbiosis.synthesis(poolConfig.chainId)
-    const synthteticFrom = symbiosis.getRepresentation(transitTokenIn, poolConfig.chainId)
-    const synthteticTo = symbiosis.getRepresentation(transitTokenOut, poolConfig.chainId)
-
-    if (!synthteticFrom || !synthteticTo) {
-        throw new Error('Synthtetic tokens not found')
+    const syntheticFrom = symbiosis.getRepresentation(transitTokenIn, poolConfig.chainId)
+    const syntheticTo = symbiosis.getRepresentation(transitTokenOut, poolConfig.chainId)
+    if (!syntheticFrom || !syntheticTo) {
+        throw new Error('Synthetic tokens not found')
     }
 
     // assume no tradeA and tradeC
@@ -202,7 +172,6 @@ async function doExactIn({
 
     // calldata for octopul swap + fee (skipped)
     const transitCalls = transit.calls()
-
     if (!transitCalls) {
         throw new Error('Transit calls not found')
     }
@@ -211,7 +180,7 @@ async function doExactIn({
 
     const multicallRouter = symbiosis.multicallRouter(poolConfig.chainId)
 
-    const secondSwapCallData = multicallRouter.interface.encodeFunctionData('multicall', [
+    const data = multicallRouter.interface.encodeFunctionData('multicall', [
         transit.amountIn.raw.toString(),
         calldatas, // calldata
         receiveSides, // receiveSides
@@ -220,37 +189,31 @@ async function doExactIn({
         symbiosis.metaRouter(poolConfig.chainId).address,
     ])
 
-    const finalCallData = finalCalldataV2(context, transit, poolConfig)
+    const synthesis = symbiosis.synthesis(poolConfig.chainId)
 
     return {
-        swapTokens: [synthteticFrom.address, synthteticTo.address], // sTON, sWTON,
-        secondSwapCallData: secondSwapCallData,
-        secondDexRouter: multicallRouter.address,
-        finalCallData: finalCallData,
-        finalReceiveSide: synthesis.address,
-        finalOffset: BigInt(100),
-        amountOut: transit.amountOut, // substract fee v2 from advisor
+        to: synthesis.address,
+        data,
+        offset: 0,
+        amount: transit.amountOut,
+        swapTokens: [syntheticFrom.address, syntheticTo.address],
     }
 }
 
-export function finalCalldataV2(
-    context: SwapExactInParams,
-    transit: Transit,
-    poolConfig: OmniPoolConfig,
-    feeV2?: TokenAmount | undefined
-): string {
+function buildFinalCall(params: ExactInParams, amountToBurn: TokenAmount, feeV2?: TokenAmount | undefined): Call {
+    const { context, poolConfig } = params
     const { symbiosis, tokenOut, to } = context
 
-    const synthesisV2 = symbiosis.synthesis(tokenOut.chainId)
+    const synthesis = symbiosis.synthesis(poolConfig.chainId)
 
-    return synthesisV2.interface.encodeFunctionData('metaBurnSyntheticToken', [
+    const data = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
         {
             stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
-            amount: transit.amountOut.raw.toString(), // uint256 amount;
+            amount: amountToBurn.raw.toString(), // uint256 amount;
             syntCaller: symbiosis.metaRouter(poolConfig.chainId).address, // address syntCaller;
             crossChainID: CROSS_CHAIN_ID,
             finalReceiveSide: AddressZero, // address finalReceiveSide;
-            sToken: transit.amountOut.token.address, // address sToken;
+            sToken: amountToBurn.token.address, // address sToken;
             finalCallData: [], // bytes finalCallData;
             finalOffset: 0, // uint256 finalOffset;
             chain2address: to, // address chain2address;
@@ -261,73 +224,143 @@ export function finalCalldataV2(
             clientID: symbiosis.clientId,
         },
     ])
+
+    return {
+        to: synthesis.address,
+        data,
+        amount: new TokenAmount(tokenOut, amountToBurn.raw), // TODO subtract feeV2
+        offset: 100,
+    }
 }
 
-export function buildInternalId(bridgeAddr: Address, requestCount: bigint): string {
-    const bridgeAddressHex = '0x' + bridgeAddr.hash.toString('hex')
-
-    const internalId = solidityKeccak256(
-        ['int8', 'bytes32', 'uint256', 'uint256'],
-        [bridgeAddr.workChain, bridgeAddressHex, requestCount, ChainId.TON_TESTNET]
-    )
-
-    return internalId
+interface MetaSynthesizeParams {
+    symbiosis: Symbiosis
+    amountIn: TokenAmount
+    poolChainId: ChainId
+    evmAddress: string
+    swapTokens: string[]
+    secondSwapCallData: string
+    secondDexRouter: string
+    finalCallData: string
+    finalReceiveSide: string
+    finalOffset: number
+    amountOut: TokenAmount
+    validUntil: number
 }
 
-export function buildExternalId({
-    internalId,
-    receiveSide,
-    revertableAddress,
-    chainId,
-}: {
-    internalId: string
-    receiveSide: Buffer
-    revertableAddress: Buffer
-    chainId: bigint
-}): string {
-    const externalId = solidityKeccak256(
-        ['bytes32', 'address', 'address', 'uint256'],
-        [internalId, receiveSide, revertableAddress, chainId]
-    )
+// [TODO]: CASE for TON only, add case for jettons (USDT)
+function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactionData {
+    const {
+        symbiosis,
+        amountIn,
+        evmAddress,
+        poolChainId,
+        swapTokens,
+        secondDexRouter,
+        secondSwapCallData,
+        finalReceiveSide,
+        finalCallData,
+        finalOffset,
+        validUntil,
+    } = params
+    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)?.tonPortal
+    if (!tonPortal) {
+        throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
+    }
 
-    return externalId
-}
+    const synthesisAddress = symbiosis.synthesis(poolChainId).address
+    const bridgeAddress = symbiosis.bridge(poolChainId).address
 
-export function buildMintSyntheticTokenCallData(
-    bridgeAddr: Address,
-    stableBridgingFee: bigint,
-    token: Address,
-    amount: bigint,
-    chain2Address: Buffer,
-    receiveSide: Buffer,
-    revertableAddress: Buffer,
-    chainId: bigint,
-    requestCount: bigint
-): string {
-    const internalId = buildInternalId(bridgeAddr, requestCount)
-    const externalId = buildExternalId({
-        internalId,
-        receiveSide,
-        revertableAddress,
-        chainId,
+    const cell = Bridge.metaSynthesizeMessage({
+        stableBridgingFee: BigInt('0'), // fee taken on host chain
+        token: Address.parse(amountIn.token.address), // Address.parse('EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4'), // simulate jetton for gas token TEP-161
+        amount: BigInt(amountIn.raw.toString()),
+        chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
+        receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
+        oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
+        chainId: BigInt(poolChainId),
+        revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
+        swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
+        secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
+        secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
+        finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
+        finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
+        finalOffset: BigInt(finalOffset),
     })
 
-    const abiCoder = new AbiCoder()
-
-    const chain2AddrHex = '0x' + chain2Address.toString('hex')
-    // We convert token address to Ethereum-like address by taking last 20
-    // bytes of its hash
-    const tokenHashHex = '0x' + token.hash.subarray(12).toString('hex')
-
-    const signature = 'mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)'
-    const selector = id(signature).substring(0, 10)
-
-    const paramTypes = ['uint256', 'bytes32', 'bytes32', 'address', 'uint256', 'uint256', 'address']
-
-    const paramValues = [stableBridgingFee, externalId, internalId, tokenHashHex, TON_CHAIN_ID, amount, chain2AddrHex]
-
-    const encodedParams = abiCoder.encode(paramTypes, paramValues)
-    const callData = selector.substring(2) + encodedParams.substring(2)
-
-    return callData
+    return {
+        validUntil,
+        messages: [
+            {
+                address: tonPortal,
+                amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
+                payload: cell.toBoc().toString('base64'),
+            },
+        ],
+    }
 }
+
+// function buildInternalId(bridgeAddr: Address, requestCount: bigint): string {
+//     const bridgeAddressHex = '0x' + bridgeAddr.hash.toString('hex')
+//
+//     return solidityKeccak256(
+//         ['int8', 'bytes32', 'uint256', 'uint256'],
+//         [bridgeAddr.workChain, bridgeAddressHex, requestCount, ChainId.TON_TESTNET]
+//     )
+// }
+//
+// function buildExternalId({
+//                                     internalId,
+//                                     receiveSide,
+//                                     revertableAddress,
+//                                     chainId,
+//                                 }: {
+//     internalId: string
+//     receiveSide: Buffer
+//     revertableAddress: Buffer
+//     chainId: bigint
+// }): string {
+//     return solidityKeccak256(
+//         ['bytes32', 'address', 'address', 'uint256'],
+//         [internalId, receiveSide, revertableAddress, chainId]
+//     )
+// }
+
+// function buildMintSyntheticTokenCallData(
+//     bridgeAddr: Address,
+//     stableBridgingFee: bigint,
+//     token: Address,
+//     amount: bigint,
+//     chain2Address: Buffer,
+//     receiveSide: Buffer,
+//     revertableAddress: Buffer,
+//     chainId: bigint,
+//     requestCount: bigint
+// ): string {
+//     const internalId = buildInternalId(bridgeAddr, requestCount)
+//     const externalId = buildExternalId({
+//         internalId,
+//         receiveSide,
+//         revertableAddress,
+//         chainId,
+//     })
+//
+//     const abiCoder = new AbiCoder()
+//
+//     const chain2AddrHex = '0x' + chain2Address.toString('hex')
+//     // We convert token address to Ethereum-like address by taking last 20
+//     // bytes of its hash
+//     const tokenHashHex = '0x' + token.hash.subarray(12).toString('hex')
+//
+//     const signature = 'mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)'
+//     const selector = id(signature).substring(0, 10)
+//
+//     const paramTypes = ['uint256', 'bytes32', 'bytes32', 'address', 'uint256', 'uint256', 'address']
+//
+//     const paramValues = [stableBridgingFee, externalId, internalId, tokenHashHex, TON_CHAIN_ID, amount, chain2AddrHex]
+//
+//     const encodedParams = abiCoder.encode(paramTypes, paramValues)
+//     const callData = selector.substring(2) + encodedParams.substring(2)
+//
+//     return callData
+// }

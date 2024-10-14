@@ -106,7 +106,7 @@ export type BtcTransactionData = {
 }
 
 export type TonTransactionData = {
-    validUntil: string
+    validUntil: number
     messages: {
         address: string
         amount: string
