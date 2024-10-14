@@ -17,13 +17,13 @@ export async function aggregatorsSwap({
     const ttl = deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
         symbiosis,
-        to: to,
-        from: from,
+        to,
+        from,
         clientId: symbiosis.clientId,
         dataProvider,
         slippage,
-        tokenAmountIn: tokenAmountIn,
-        tokenOut: tokenOut,
+        tokenAmountIn,
+        tokenOut,
         ttl,
         oneInchProtocols,
     })

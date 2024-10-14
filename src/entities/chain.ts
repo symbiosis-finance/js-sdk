@@ -648,6 +648,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
         },
     }),
+    new Chain({
+        id: ChainId.BSQUARED_MAINNET,
+        name: 'B² Network',
+        disabled: false,
+        explorer: 'https://explorer.bsquared.network',
+        icons: {
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/239/small/bsquared-network.jpeg?1713432732',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/239/small/bsquared-network.jpeg?1713432732',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

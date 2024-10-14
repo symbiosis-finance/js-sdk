@@ -5,11 +5,11 @@ import { BigNumber } from 'ethers'
 import { Synthesis } from '../contracts'
 import { ChainId } from '../../constants'
 
-export const getToBtcFee = async (sBtc: Token, synthesis: Synthesis, dataProvider: DataProvider) => {
+export const getToBtcFee = async (syBtc: Token, synthesis: Synthesis, dataProvider: DataProvider) => {
     let fee = await dataProvider.get(
-        ['syntToMinFeeBTC', synthesis.address, sBtc.address],
+        ['syntToMinFeeBTC', synthesis.address, syBtc.address],
         async () => {
-            return synthesis.syntToMinFeeBTC(sBtc.address)
+            return synthesis.syntToMinFeeBTC(syBtc.address)
         },
         600 // 10 minutes
     )
@@ -29,7 +29,7 @@ export const getToBtcFee = async (sBtc: Token, synthesis: Synthesis, dataProvide
     } catch {
         /* nothing */
     }
-    return new TokenAmount(sBtc, fee.toString())
+    return new TokenAmount(syBtc, fee.toString())
 }
 
 export function isBtcChainId(chainId: ChainId | undefined) {

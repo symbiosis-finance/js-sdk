@@ -1,7 +1,7 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { UnwrapBtc } from '../unwrapBtc'
-import { zappingBtcOnChain } from '../zappingBtcOnChain'
-import { theBestOutput } from './utils'
+import { SwapExactInParams, SwapExactInResult } from '../../types'
+import { unwrapBtc } from './unwrapBtc'
+import { zappingBtcOnChain } from './zappingBtcOnChain'
+import { theBestOutput } from '../utils'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, symbiosis, to } = context
@@ -15,13 +15,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         }
 
         if (tokenAmountIn.token.equals(syBtc)) {
-            const burn = new UnwrapBtc(symbiosis)
-            promises.push(
-                burn.exactIn({
-                    tokenAmountIn,
-                    to,
-                })
-            )
+            promises.push(unwrapBtc(context))
             return
         }
 

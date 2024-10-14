@@ -32,6 +32,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.CRONOS_MAINNET]: 'cronos',
     [ChainId.FRAXTAL_MAINNET]: 'fraxtal',
     [ChainId.GRAVITY_MAINNET]: 'gravity-alpha',
+    [ChainId.BSQUARED_MAINNET]: 'bsquared-network',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -68,4 +69,5 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.CRONOS_MAINNET]: 'crypto-com-chain',
     [ChainId.FRAXTAL_MAINNET]: 'frax-ether',
     [ChainId.GRAVITY_MAINNET]: 'g-token',
+    [ChainId.BSQUARED_MAINNET]: 'bitcoin',
 }
