@@ -1,7 +1,7 @@
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { Unwrapper__factory, Weth__factory } from '../contracts'
-import { getFunctionSelector } from '../tron'
+import { getFunctionSelector } from '../chainUtils/tron'
 import type { SymbiosisTrade } from './symbiosisTrade'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {

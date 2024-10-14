@@ -1,8 +1,8 @@
 import TronWeb from 'tronweb'
 import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 import { Token, TokenAmount } from '../../entities'
-import { isTronToken } from '../tron'
-import { isBtcChainId } from '../utils'
+import { isTronToken } from '../chainUtils/tron'
+import { isBtcChainId } from '../chainUtils/btc'
 
 const getGasTokenPrice = async (token: Token): Promise<number> => {
     const { chainId } = token

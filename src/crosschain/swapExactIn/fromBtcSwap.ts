@@ -3,7 +3,7 @@ import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
-import { isBtcChainId } from '../utils'
+import { isBtcChainId } from '../chainUtils/btc'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'

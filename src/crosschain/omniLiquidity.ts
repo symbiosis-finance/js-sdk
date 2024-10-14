@@ -1,5 +1,5 @@
 import { Percent, Token, TokenAmount } from '../entities'
-import { getMinAmount } from './utils'
+import { getMinAmount } from './chainUtils/evm'
 import { OmniPool, OmniPoolOracle } from './contracts'
 
 export class OmniLiquidity {

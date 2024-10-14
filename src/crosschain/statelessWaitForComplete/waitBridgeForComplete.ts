@@ -2,8 +2,8 @@ import { Contract, EventFilter } from 'ethers'
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
-import { getExternalId, getLogWithTimeout } from '../utils'
-import { tronAddressToEvm } from '../tron'
+import { getExternalId, getLogWithTimeout } from '../chainUtils/evm'
+import { tronAddressToEvm } from '../chainUtils/tron'
 import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
 
 /**
@@ -15,7 +15,6 @@ import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
 export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<string> {
     const txIdWithPrefix = txId.startsWith('0x') ? txId : `0x${txId}`
 
-    console.log('tx', txIdWithPrefix)
     const aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)
     if (!aBridgeInfo) {
         const { outHash, extraStep } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)

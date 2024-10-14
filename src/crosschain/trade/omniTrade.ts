@@ -1,6 +1,6 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OctoPoolFeeCollector__factory, OmniPool, OmniPoolOracle } from '../contracts'
-import { calculatePriceImpact, getMinAmount } from '../utils'
+import { calculatePriceImpact, getMinAmount } from '../chainUtils/evm'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
 import { ChainId } from '../../constants'

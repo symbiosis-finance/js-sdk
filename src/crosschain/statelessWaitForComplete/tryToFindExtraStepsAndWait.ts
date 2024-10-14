@@ -56,7 +56,6 @@ export async function tryToFindExtraStepsAndWait(
 
     const burnRequestTon = await findBurnRequestTON(receipt)
     if (burnRequestTon) {
-        console.log('--BURN REQUEST TON--', burnRequestTon)
         const { internalId, chainId } = burnRequestTon
 
         const outHash = await waitForTonTxComplete(symbiosis, internalId, +chainId)
@@ -139,12 +138,10 @@ async function findBurnRequestTON(receipt: TransactionReceipt): Promise<
         return log.topics[0] === burnRequestTonTopic
     })
 
-    console.log('log --->', log)
     if (!log) {
         return
     }
     const data: LogDescription = synthesisInterface.parseLog(log)
-    console.log('data --->', data)
 
     const { id, chainID } = data.args
 

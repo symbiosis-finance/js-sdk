@@ -1,9 +1,9 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { thorChainSwap } from './thorChainSwap'
 import { burnSyntheticBtc } from './burnSyntheticBtc'
-import { isBtcChainId } from '../utils'
 import { ChainId } from '../../constants'
 import { theBestOutput } from './utils'
+import { isBtcChainId } from '../chainUtils/btc'
 
 function isThorChainAvailable(chainId: ChainId) {
     return chainId === ChainId.BTC_MAINNET

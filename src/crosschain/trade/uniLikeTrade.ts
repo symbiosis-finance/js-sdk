@@ -15,9 +15,9 @@ import {
 } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../utils'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils/evm'
 import { SymbiosisTrade } from './symbiosisTrade'
-import { getFunctionSelector } from '../tron'
+import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export class UniLikeTrade implements SymbiosisTrade {

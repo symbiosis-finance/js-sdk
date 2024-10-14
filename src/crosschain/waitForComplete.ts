@@ -8,7 +8,7 @@ import { BurnRequestEvent } from './contracts/Synthesis'
 import { TypedEvent } from './contracts/common'
 import type { Symbiosis } from './symbiosis'
 import { BridgeDirection } from './types'
-import { GetLogTimeoutExceededError, getExternalId, getLogWithTimeout } from './utils'
+import { GetLogTimeoutExceededError, getExternalId, getLogWithTimeout } from './chainUtils/evm'
 import { PendingRequest, PendingRequestState, PendingRequestType } from './revertRequest'
 
 type EventArgs<Event> = Event extends TypedEvent<any, infer TArgsObject> ? TArgsObject : never

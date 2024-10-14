@@ -222,6 +222,7 @@ export class Transit {
             offsets.push(preCall.offset)
         }
 
+        // octopul swap
         calldatas.push(this.trade.callData)
         receiveSides.push(this.trade.pool.address)
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])

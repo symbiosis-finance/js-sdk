@@ -1,4 +1,4 @@
-import { isTronChainId, tronAddressToEvm } from '../tron'
+import { isTronChainId, tronAddressToEvm } from '../chainUtils/tron'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
@@ -9,7 +9,8 @@ import { isWrapSupported, wrap } from './wrap'
 import { toTonSwap } from './toTonSwap'
 import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
-import { isTonChainId } from '../utils'
+import { isTonChainId } from '../chainUtils/ton'
+import { fromTonSwap, isFromTonSwapSupported } from './fromTonSwap'
 
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -56,6 +57,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isTonChainId(tokenOut.chainId)) {
         return toTonSwap(params)
+    }
+
+    if (isFromTonSwapSupported(params)) {
+        return fromTonSwap(params)
     }
 
     return crosschainSwap(params)

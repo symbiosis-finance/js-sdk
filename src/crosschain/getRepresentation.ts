@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '../constants'
 import { Token, wrappedToken } from '../entities'
 import { Symbiosis } from './symbiosis'
-import { isTronToken, tronAddressToEvm } from './tron'
+import { isTronToken, tronAddressToEvm } from './chainUtils/tron'
 
 export async function getRepresentation(
     symbiosis: Symbiosis,

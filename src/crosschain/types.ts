@@ -4,7 +4,7 @@ import { Percent, Token, TokenAmount } from '../entities'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { SymbiosisKind, SymbiosisTradeType } from './trade'
 import { TransactionRequest } from '@ethersproject/providers'
-import { TronTransactionData } from './tron'
+import { TronTransactionData } from './chainUtils/tron'
 import { Symbiosis } from './symbiosis'
 
 export enum Field {
@@ -105,6 +105,15 @@ export type BtcTransactionData = {
     tokenAmountOut: TokenAmount
 }
 
+export type TonTransactionData = {
+    validUntil: string
+    messages: {
+        address: string
+        amount: string
+        payload: string
+    }[]
+}
+
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -117,6 +126,10 @@ export type SwapExactInTransactionPayload =
     | {
           transactionType: 'btc'
           transactionRequest: BtcTransactionData
+      }
+    | {
+          transactionType: 'ton'
+          transactionRequest: TonTransactionData
       }
 
 export type RouteItem = {

@@ -1,7 +1,7 @@
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade } from './symbiosisTrade'
-import { getMinAmount } from '../utils'
+import { getMinAmount } from '../chainUtils/evm'
 import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'

@@ -27,8 +27,9 @@ import { BigNumberish } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../../abis/ERC20.json'
-import { isTronChainId } from '../../tron'
-import { isBtcChainId, isTonChainId } from '../../utils'
+import { isTronChainId } from '../../chainUtils/tron'
+import { isBtcChainId } from '../../chainUtils/btc'
+import { isTonChainId } from '../../chainUtils/ton'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs')

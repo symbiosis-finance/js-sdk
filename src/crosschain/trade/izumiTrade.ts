@@ -7,7 +7,7 @@ import { BIPS_BASE } from '../constants'
 import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
 import { getMulticall } from '../multicall'
 import { Symbiosis } from '../symbiosis'
-import { getMinAmount } from '../utils'
+import { getMinAmount } from '../chainUtils/evm'
 import type { SymbiosisTrade } from './symbiosisTrade'
 import { Multicall2 } from '../contracts/Multicall'
 

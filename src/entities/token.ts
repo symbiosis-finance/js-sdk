@@ -1,7 +1,7 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { isTronChainId, tronAddressToEvm } from '../crosschain/tron'
+import { isTronChainId, tronAddressToEvm } from '../crosschain/chainUtils/tron'
 import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import { Chain, getChainById } from './chain'
 

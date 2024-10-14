@@ -60,7 +60,6 @@ function _getExternalIdTon({
     receiveSide: string
     chainId: ChainId
 }) {
-    console.log('external id ton form ---->', internalId, receiveSide, chainId)
     return solidityKeccak256(['bytes32', 'address', 'uint256'], [internalId, receiveSide, chainId])
 }
 
@@ -72,7 +71,6 @@ class WaitForTonTxCompleteError extends Error {
 }
 
 export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
-    console.log('chainId ----->', chainId)
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
 
     if (!tonChainConfig) {
@@ -87,16 +85,11 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     // take first 20 bytes (evm address size) of tonPortal base64 address
     const receiveSide = `0x${Buffer.from(tonPortal, 'base64').toString('hex').slice(0, 40)}`
-    console.log('receiveSide from wait for ton deposit ----->', receiveSide)
     const externalId = _getExternalIdTon({ internalId, receiveSide, chainId })
 
     const client = new TonClient({
         endpoint: tonChainConfig.rpc,
     })
-
-    console.log('--->externalId from evm', externalId)
-
-    console.log('synthesis contract requests -->', symbiosis.synthesis(ChainId.AVAX_TESTNET).requests(externalId))
 
     let txTon = ''
 
@@ -106,7 +99,6 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         },
         successCondition: (txs) => {
             let status = false
-            console.log('<-------- txs TON  --->', txs)
 
             for (const tx of txs) {
                 const outMsgs = tx.outMessages
@@ -115,19 +107,8 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
                     if (outMsg?.info.type === 'external-out') {
                         const burnCompletedEvent = parseBurnCompletedBody(outMsg.body)
 
-                        console.log('burnCompletedEvent --->', burnCompletedEvent)
-
-                        console.log('burn completed event externalId ----->', burnCompletedEvent?.externalId)
-                        console.log(
-                            'externalId from evm ----->',
-                            externalId,
-                            'buffer externalId ----->',
-                            Buffer.from(externalId.slice(2), 'hex')
-                        )
-
                         if (burnCompletedEvent?.externalId.equals(Buffer.from(externalId.slice(2), 'hex'))) {
                             status = true
-                            console.log('<---- burnCompletedEvent complete ---->', outMsg.info.src)
                             txTon = outMsg.info.src.hash.toString()
                         }
                     }

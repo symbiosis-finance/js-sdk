@@ -18,7 +18,7 @@ import {
     ZERO,
 } from '../constants'
 import { parseBigintIsh, sqrt } from '../utils'
-import { getTronCreate2Address, isTronToken } from '../crosschain/tron'
+import { getTronCreate2Address, isTronToken } from '../crosschain/chainUtils/tron'
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 

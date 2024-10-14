@@ -1,8 +1,9 @@
-import { Token, TokenAmount } from '../entities'
-import { DataProvider } from './dataProvider'
-import { getFastestFee } from './mempool'
+import { Token, TokenAmount } from '../../entities'
+import { DataProvider } from '../dataProvider'
+import { getFastestFee } from '../mempool'
 import { BigNumber } from 'ethers'
-import { Synthesis } from './contracts'
+import { Synthesis } from '../contracts'
+import { ChainId } from '../../constants'
 
 export const getToBtcFee = async (sBtc: Token, synthesis: Synthesis, dataProvider: DataProvider) => {
     let fee = await dataProvider.get(
@@ -29,4 +30,9 @@ export const getToBtcFee = async (sBtc: Token, synthesis: Synthesis, dataProvide
         /* nothing */
     }
     return new TokenAmount(sBtc, fee.toString())
+}
+
+export function isBtcChainId(chainId: ChainId | undefined) {
+    if (!chainId) return false
+    return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
 }

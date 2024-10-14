@@ -47,7 +47,7 @@ import {
     statelessWaitForComplete,
     StatelessWaitForCompleteParams,
 } from './statelessWaitForComplete/statelessWaitForComplete'
-import { getTransactionInfoById, isTronChainId } from './tron'
+import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig, SwapExactInParams, SwapExactInResult } from './types'
 import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
@@ -62,12 +62,12 @@ import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
 import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
-import { isBtcChainId } from './utils'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
 import { SwappingToTon } from './swappingToTon'
 import { swapExactIn } from './swapExactIn'
+import { isBtcChainId } from './chainUtils/btc'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 

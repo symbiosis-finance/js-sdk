@@ -8,11 +8,11 @@ import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade } from './trade'
-import { getExternalId, getInternalId } from './utils'
+import { getExternalId, getInternalId } from './chainUtils/evm'
 import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
-import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
+import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm } from './chainUtils/tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig, RouteItem, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { WrapTrade } from './trade'
@@ -98,8 +98,6 @@ export class Zapping {
 
         this.omniLiquidity = this.buildOmniLiquidity()
         await this.omniLiquidity.init()
-
-        console.log(' i am here ---> 1')
 
         const fee = await this.getFee()
 
