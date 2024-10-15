@@ -76,13 +76,25 @@ export const config: Config = {
                 {
                     name: 'TON Coin',
                     symbol: 'TON',
-                    address: '0x0000000000000000000000000000000000000003', // origin token address (we choose this for create map in contracts)
+                    address: '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C', // derived from EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4
                     chainId: ChainId.TON_TESTNET,
                     isNative: true,
                     decimals: 9,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+                {
+                    name: 'USDt',
+                    symbol: 'USDT',
+                    address: '0x46deec715e419a1f0f5959b5c8450894959d2dbf', // derived from EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a
+                    chainId: ChainId.TON_TESTNET,
+                    isNative: true,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                     },
                 },
             ],

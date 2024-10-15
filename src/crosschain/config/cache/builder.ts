@@ -185,7 +185,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtcChainId(chain.id)) {
+            if (isBtcChainId(chain.id) || isTonChainId(chain.id)) {
                 continue
             }
 
@@ -244,9 +244,10 @@ export class Builder {
     ): Promise<TokenThreshold[]> {
         const chainTokens = tokens.filter((token) => token.chainId === chain.id)
 
+        // [TODO] get from constant
         if (isTonChainId(chain.id)) {
             const index = chainTokens.findIndex(
-                (token) => token.address === '0x0000000000000000000000000000000000000003'
+                (token) => token.address === '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C'
             )
             return [{ tokenId: chainTokens[index].id, type, value: '0' }]
         }

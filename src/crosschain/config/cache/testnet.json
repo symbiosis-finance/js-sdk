@@ -7,9 +7,9 @@
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 4 },
-                { "index": 1, "tokenId": 3 },
-                { "index": 2, "tokenId": 0 }
+                { "index": 0, "tokenId": 6 },
+                { "index": 2, "tokenId": 0 },
+                { "index": 3, "tokenId": 4 }
             ]
         }
     ],
@@ -33,14 +33,28 @@
             "symbol": "TON",
             "name": "TON Coin",
             "chainId": 85918,
-            "isNative": false,
+            "isNative": true,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
             },
             "deprecated": false,
-            "address": "0x0000000000000000000000000000000000000003",
+            "address": "0x7eA393298D1077e19ec59F8e3FE8fe642738c08C",
             "id": 1
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "USDt",
+            "chainId": 85918,
+            "isNative": true,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "deprecated": false,
+            "address": "0x46DEEc715E419a1f0F5959b5c8450894959d2DbF",
+            "id": 2
         },
         {
             "decimals": 9,
@@ -54,23 +68,39 @@
             },
             "deprecated": false,
             "address": "0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179",
-            "id": 2
+            "id": 3
         },
         {
             "decimals": 9,
-            "symbol": "sTON",
-            "name": "sTON",
+            "symbol": "sWTON",
+            "name": "sWTON",
             "chainId": 97,
-            "isNative": false,
+            "isNative": true,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
             },
             "chainFromId": 85918,
             "deprecated": false,
-            "address": "0x8480c16DA4598aB6132194aAF8709628E139c796",
-            "id": 3,
+            "address": "0xAED4B4cC04513b913e1DcD327a6f86560d7F96c6",
+            "id": 4,
             "originalId": 1
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDT",
+            "name": "sUSDT",
+            "chainId": 97,
+            "isNative": true,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 85918,
+            "deprecated": false,
+            "address": "0xC83f6Bbf8957B6A5b02e564E898254F470662379",
+            "id": 5,
+            "originalId": 2
         },
         {
             "decimals": 9,
@@ -85,14 +115,15 @@
             "chainFromId": 43113,
             "deprecated": false,
             "address": "0x4950b13CbC3A33164fdd782E75271891D0d9F1D9",
-            "id": 4,
-            "originalId": 2
+            "id": 6,
+            "originalId": 3
         }
     ],
     "thresholds": [
         { "tokenId": 0, "type": "Synthesis", "value": "0" },
-        { "tokenId": 3, "type": "Synthesis", "value": "0" },
         { "tokenId": 4, "type": "Synthesis", "value": "0" },
-        { "tokenId": 2, "type": "Portal", "value": "0" }
+        { "tokenId": 5, "type": "Synthesis", "value": "0" },
+        { "tokenId": 6, "type": "Synthesis", "value": "0" },
+        { "tokenId": 3, "type": "Portal", "value": "0" }
     ]
 }
