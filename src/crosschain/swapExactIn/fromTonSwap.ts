@@ -3,7 +3,7 @@ import { OmniPoolConfig, SwapExactInParams, SwapExactInResult, TonTransactionDat
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error } from '../error'
 import { isAddress } from 'ethers/lib/utils'
-import { Address, toNano } from '@ton/core'
+import { Address, beginCell, toNano } from '@ton/core'
 import { ChainId } from '../../constants'
 import { isTonChainId, splitSlippage } from '../chainUtils'
 import { Bridge } from '../chainUtils/ton'
@@ -14,6 +14,7 @@ import { theBestOutput } from './utils'
 import { Symbiosis } from '../symbiosis'
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
+export const MIN_META_SYNTH_JETTONS = toNano('0.1')
 
 export function isFromTonSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -80,7 +81,7 @@ interface ExactInParams {
 
 async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
     const { context, poolConfig } = params
-    const { symbiosis, tokenAmountIn, to, deadline } = context
+    const { symbiosis, tokenAmountIn, to, deadline, from } = context
 
     // TODO calculate fee from source chain to host chain with advisor
     // call metaMintSyntheticToken
@@ -112,6 +113,7 @@ async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
     // best pool pass to create request
     const transactionData = buildTonTransactionRequest({
         symbiosis,
+        from,
         amountIn: tokenAmountIn,
         amountOut,
         secondDexRouter,
@@ -245,6 +247,7 @@ function buildFinalCall(params: ExactInParams, amountToBurn: TokenAmount, feeV2?
 
 interface MetaSynthesizeParams {
     symbiosis: Symbiosis
+    from: string
     amountIn: TokenAmount
     poolChainId: ChainId
     evmAddress: string
@@ -261,6 +264,7 @@ interface MetaSynthesizeParams {
 function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactionData {
     const {
         symbiosis,
+        from,
         amountIn,
         evmAddress,
         poolChainId,
@@ -280,100 +284,82 @@ function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactio
     const synthesisAddress = symbiosis.synthesis(poolChainId).address
     const bridgeAddress = symbiosis.bridge(poolChainId).address
 
-    // TODO select correct from depends of input token
-    const WTON_ADDRESS = 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4'
-    const USDT_ADDRESS = 'kQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tvwTQ'
+    const WTON_EVM_ADDRESS = symbiosis
+        .tokens()
+        .find((token) => token.chainId === ChainId.TON_TESTNET && token.isNative)?.address
 
-    const cell = Bridge.metaSynthesizeMessage({
-        stableBridgingFee: BigInt('0'), // fee taken on host chain
-        token: Address.parse(WTON_ADDRESS), // simulate jetton for gas token TEP-161
-        amount: BigInt(amountIn.raw.toString()),
-        chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
-        receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
-        oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
-        chainId: BigInt(poolChainId),
-        revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
-        swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
-        secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
-        secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
-        finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
-        finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
-        finalOffset: BigInt(finalOffset),
-    })
+    const USDT_EVM_ADDRESS = symbiosis
+        .tokens()
+        .find((token) => token.chainId === ChainId.TON_TESTNET && token.symbol?.toLowerCase() === 'usdt')?.address
 
-    return {
-        validUntil,
-        messages: [
-            {
-                address: tonPortal,
-                amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
-                payload: cell.toBoc().toString('base64'),
-            },
-        ],
+    if (amountIn.token.address === WTON_EVM_ADDRESS) {
+        const cell = Bridge.metaSynthesizeMessage({
+            stableBridgingFee: BigInt('0'), // fee taken on host chain
+            token: Address.parse(WTON_EVM_ADDRESS), // simulate jetton for gas token TEP-161
+            amount: BigInt(amountIn.raw.toString()),
+            chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
+            receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
+            oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
+            chainId: BigInt(poolChainId),
+            revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
+            swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
+            secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
+            secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
+            finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
+            finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
+            finalOffset: BigInt(finalOffset),
+        })
+
+        return {
+            validUntil,
+            messages: [
+                {
+                    address: tonPortal,
+                    amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
+                    payload: cell.toBoc().toString('base64'),
+                },
+            ],
+        }
+    } else if (amountIn.token.address === USDT_EVM_ADDRESS) {
+        const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
+            stableBridgingFee: BigInt('0'), // fee taken on host chain
+            token: Address.parse(USDT_EVM_ADDRESS), // simulate jetton for gas token TEP-161
+            amount: BigInt(amountIn.raw.toString()),
+            chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
+            receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
+            oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
+            chainId: BigInt(poolChainId),
+            revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
+            swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
+            secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
+            secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
+            finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
+            finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
+            finalOffset: BigInt(finalOffset),
+        })
+
+        const cell = beginCell()
+            .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
+            .storeUint(0, 64) // query id
+            .storeCoins(BigInt(amountIn.raw.toString())) // jetton amount
+            .storeAddress(Address.parse(tonPortal)) // destination
+            .storeAddress(Address.parse(from)) // response_destination for excesses of ton
+            .storeBit(0) // null custom payload
+            .storeCoins(toNano('0.05')) // forward amount - if >0, will send notification message
+            .storeMaybeRef(metaSynthesizeBody)
+            .endCell()
+
+        return {
+            validUntil,
+            messages: [
+                {
+                    address: '', // [TODO]: Calc your own jetton wallet address to send jettons
+                    amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
+                    payload: cell.toBoc().toString('base64'),
+                },
+            ],
+        }
     }
+
+    throw new Error('No TON transaction request. Unsupported token')
 }
-
-// function buildInternalId(bridgeAddr: Address, requestCount: bigint): string {
-//     const bridgeAddressHex = '0x' + bridgeAddr.hash.toString('hex')
-//
-//     return solidityKeccak256(
-//         ['int8', 'bytes32', 'uint256', 'uint256'],
-//         [bridgeAddr.workChain, bridgeAddressHex, requestCount, ChainId.TON_TESTNET]
-//     )
-// }
-//
-// function buildExternalId({
-//                                     internalId,
-//                                     receiveSide,
-//                                     revertableAddress,
-//                                     chainId,
-//                                 }: {
-//     internalId: string
-//     receiveSide: Buffer
-//     revertableAddress: Buffer
-//     chainId: bigint
-// }): string {
-//     return solidityKeccak256(
-//         ['bytes32', 'address', 'address', 'uint256'],
-//         [internalId, receiveSide, revertableAddress, chainId]
-//     )
-// }
-
-// function buildMintSyntheticTokenCallData(
-//     bridgeAddr: Address,
-//     stableBridgingFee: bigint,
-//     token: Address,
-//     amount: bigint,
-//     chain2Address: Buffer,
-//     receiveSide: Buffer,
-//     revertableAddress: Buffer,
-//     chainId: bigint,
-//     requestCount: bigint
-// ): string {
-//     const internalId = buildInternalId(bridgeAddr, requestCount)
-//     const externalId = buildExternalId({
-//         internalId,
-//         receiveSide,
-//         revertableAddress,
-//         chainId,
-//     })
-//
-//     const abiCoder = new AbiCoder()
-//
-//     const chain2AddrHex = '0x' + chain2Address.toString('hex')
-//     // We convert token address to Ethereum-like address by taking last 20
-//     // bytes of its hash
-//     const tokenHashHex = '0x' + token.hash.subarray(12).toString('hex')
-//
-//     const signature = 'mintSyntheticToken(uint256,bytes32,bytes32,address,uint256,uint256,address)'
-//     const selector = id(signature).substring(0, 10)
-//
-//     const paramTypes = ['uint256', 'bytes32', 'bytes32', 'address', 'uint256', 'uint256', 'address']
-//
-//     const paramValues = [stableBridgingFee, externalId, internalId, tokenHashHex, TON_CHAIN_ID, amount, chain2AddrHex]
-//
-//     const encodedParams = abiCoder.encode(paramTypes, paramValues)
-//     const callData = selector.substring(2) + encodedParams.substring(2)
-//
-//     return callData
-// }
