@@ -47,7 +47,7 @@
             "symbol": "USDT",
             "name": "USDt",
             "chainId": 85918,
-            "isNative": true,
+            "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
@@ -91,7 +91,7 @@
             "symbol": "sUSDT",
             "name": "sUSDT",
             "chainId": 97,
-            "isNative": true,
+            "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
