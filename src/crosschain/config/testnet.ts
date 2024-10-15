@@ -78,7 +78,7 @@ export const config: Config = {
                     symbol: 'TON',
                     address: '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C', // derived from EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4
                     chainId: ChainId.TON_TESTNET,
-                    isNative: true,
+                    isNative: false,
                     decimals: 9,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',

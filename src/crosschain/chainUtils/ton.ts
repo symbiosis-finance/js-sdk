@@ -332,20 +332,29 @@ export class Bridge implements Contract {
     }
 
     // Creates forward payload for 'synthesize' endpoint
-    static synthesizeMessage(
-        stableBridgingFee: bigint,
-        token: Address,
-        jettonAmount: bigint,
-        chain2Address: Buffer,
-        receiveSide: Buffer,
-        oppositeBridge: Buffer,
-        revertableAddress: Buffer,
+    static synthesizeMessage({
+        stableBridgingFee,
+        token,
+        amount,
+        chain2Address,
+        receiveSide,
+        oppositeBridge,
+        revertableAddress,
+        chainId,
+    }: {
+        stableBridgingFee: bigint
+        token: Address
+        amount: bigint
+        chain2Address: Buffer
+        receiveSide: Buffer
+        oppositeBridge: Buffer
+        revertableAddress: Buffer
         chainId: bigint
-    ): Cell {
+    }): Cell {
         const payloadCell1 = beginCell()
             .storeCoins(stableBridgingFee)
             .storeAddress(token) // token
-            .storeCoins(jettonAmount)
+            .storeCoins(amount)
             .storeBuffer(chain2Address)
             .storeBuffer(receiveSide)
             .endCell()
