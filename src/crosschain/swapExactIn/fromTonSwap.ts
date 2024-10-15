@@ -82,6 +82,13 @@ async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
     const { context, poolConfig } = params
     const { symbiosis, tokenAmountIn, to, deadline } = context
 
+    // TODO calculate fee from source chain to host chain with advisor
+    // call metaMintSyntheticToken
+    // const fee1 = undefined // in sToken (amount in sTon)
+
+    // (portal) metaSynthesize ->
+    // (synthesis) metaMintSyntheticToken + swap on octopool + metaBurnSyntheticToken () ->
+    // (portal) metaUnsynthesize (finalCalldata2).
     const {
         to: secondDexRouter,
         data: secondSwapCallData,
@@ -89,12 +96,15 @@ async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
         swapTokens,
     } = await buildSecondCall(params)
 
+    // TODO calculate fee from host chain to dest chain with advisor
+    const fee2 = undefined
+
     const {
         to: finalReceiveSide,
         data: finalCallData,
         offset: finalOffset,
         amount: amountOut,
-    } = buildFinalCall(params, amountToBurn)
+    } = buildFinalCall(params, amountToBurn, fee2)
 
     if (!swapTokens) {
         throw new Error('! swap tokens')
@@ -248,7 +258,6 @@ interface MetaSynthesizeParams {
     validUntil: number
 }
 
-// [TODO]: CASE for TON only, add case for jettons (USDT)
 function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactionData {
     const {
         symbiosis,
@@ -271,9 +280,13 @@ function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactio
     const synthesisAddress = symbiosis.synthesis(poolChainId).address
     const bridgeAddress = symbiosis.bridge(poolChainId).address
 
+    // TODO select correct from depends of input token
+    const WTON_ADDRESS = 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4'
+    const USDT_ADDRESS = 'kQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tvwTQ'
+
     const cell = Bridge.metaSynthesizeMessage({
         stableBridgingFee: BigInt('0'), // fee taken on host chain
-        token: Address.parse(amountIn.token.address), // Address.parse('EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4'), // simulate jetton for gas token TEP-161
+        token: Address.parse(WTON_ADDRESS), // simulate jetton for gas token TEP-161
         amount: BigInt(amountIn.raw.toString()),
         chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
         receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
