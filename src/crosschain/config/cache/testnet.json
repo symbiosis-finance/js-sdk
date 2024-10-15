@@ -118,12 +118,5 @@
             "id": 6,
             "originalId": 3
         }
-    ],
-    "thresholds": [
-        { "tokenId": 0, "type": "Synthesis", "value": "0" },
-        { "tokenId": 4, "type": "Synthesis", "value": "0" },
-        { "tokenId": 5, "type": "Synthesis", "value": "0" },
-        { "tokenId": 6, "type": "Synthesis", "value": "0" },
-        { "tokenId": 3, "type": "Portal", "value": "0" }
     ]
 }

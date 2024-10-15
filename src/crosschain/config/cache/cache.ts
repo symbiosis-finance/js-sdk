@@ -6,7 +6,6 @@ import { Error, ErrorCode } from '../../error'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
 import { Token, wrappedToken } from '../../../entities'
-import { BigNumber } from 'ethers'
 import { OmniPoolConfig } from '../../types'
 
 export class ConfigCache {
@@ -40,20 +39,6 @@ export class ConfigCache {
         }
 
         return this.getSynthTokens(token).find((i) => i.chainId === chainId)
-    }
-
-    public getTokenThreshold(token: Token): BigNumber {
-        const tokenInfo = this.getTokenInfoByToken(token)
-        const type = token.isSynthetic ? 'Synthesis' : 'Portal'
-
-        const threshold = this.data.thresholds.find((i) => {
-            return i.tokenId === tokenInfo.id && i.type === type
-        })
-        if (!threshold) {
-            throw new Error(`There is no threshold for token ${token.address}`)
-        }
-
-        return BigNumber.from(threshold.value)
     }
 
     public getOmniPoolByConfig(omniPoolConfig: OmniPoolConfig): OmniPoolInfo | undefined {

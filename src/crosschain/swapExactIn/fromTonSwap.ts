@@ -2,7 +2,7 @@ import { OmniPoolConfig, SwapExactInParams, SwapExactInResult, TonTransactionDat
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error } from '../error'
-import { isAddress, poll } from 'ethers/lib/utils'
+import { isAddress } from 'ethers/lib/utils'
 import { Address, beginCell, toNano } from '@ton/core'
 import { ChainId } from '../../constants'
 import { isTonChainId, splitSlippage } from '../chainUtils'
@@ -34,16 +34,7 @@ export function isFromTonSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut, to } = context
-
-    const tonPortal = symbiosis.config.chains.find((i) => isTonChainId(i.id))?.tonPortal
-    if (!tonPortal) {
-        throw new Error('Ton portal not found in symbiosis config')
-    }
-
-    if (!isAddress(to)) {
-        throw new Error(`Destination address wasn't provided`)
-    }
+    const { symbiosis, tokenAmountIn, tokenOut } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
@@ -85,57 +76,17 @@ interface ExactInParams {
 }
 
 async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
-    const { context, poolConfig } = params
-    const { symbiosis, tokenAmountIn, to, deadline, from, tokenOut } = context
-
-    // Bridge case to HOST chain only, TON --> sTON
-    if (tokenOut.chainId === poolConfig.chainId) {
-        const tonPortal = symbiosis.config.chains.find((chain) => chain.id === tokenAmountIn.token.chainId)?.tonPortal
-        if (!tonPortal) {
-            throw new Error('Ton portal not found in symbiosis config')
-        }
-
-        const evmAddress = tokenAmountIn.token.address.toLowerCase() as keyof typeof EVM_TO_TON
-
-        if (!EVM_TO_TON[evmAddress]) {
-            throw new Error('EVM address not found in EVM_TO_TON')
-        }
-
-        const cell = Bridge.synthesizeMessage({
-            stableBridgingFee: BigInt('0'),
-            token: Address.parse(EVM_TO_TON[evmAddress]),
-            amount: BigInt(tokenAmountIn.raw.toString()),
-            chain2Address: Buffer.from(to.slice(2), 'hex'),
-            receiveSide: Buffer.from(symbiosis.synthesis(poolConfig.chainId).address.slice(2), 'hex'),
-            oppositeBridge: Buffer.from(symbiosis.bridge(poolConfig.chainId).address.slice(2), 'hex'),
-            revertableAddress: Buffer.from(to.slice(2), 'hex'),
-            chainId: BigInt(poolConfig.chainId),
-        })
-
-        return {
-            transactionType: 'ton',
-            transactionRequest: {
-                validUntil: deadline,
-                messages: [
-                    {
-                        address: tonPortal,
-                        amount: tokenAmountIn
-                            .add(new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS))
-                            .raw.toString(),
-                        payload: cell.toBoc().toString('base64'),
-                    },
-                ],
-            },
-            kind: 'bridge',
-            tokenAmountOut: new TokenAmount(tokenOut, tokenAmountIn.raw),
-            tokenAmountOutMin: new TokenAmount(tokenOut, tokenAmountIn.raw),
-            approveTo: '',
-            routes: [],
-            fees: [],
-            priceImpact: new Percent('0', '0'),
-        }
+    const bridgeResult = tryToBuildBridgeCall(params)
+    if (bridgeResult) {
+        return bridgeResult
     }
 
+    const { context, poolConfig } = params
+    const { symbiosis, tokenAmountIn, to, deadline, from } = context
+
+    if (!isAddress(to)) {
+        throw new Error(`Receiver address is incorrect`)
+    }
     // TODO calculate fee from source chain to host chain with advisor
     // call metaMintSyntheticToken
     // const fee1 = undefined // in sToken (amount in sTon)
@@ -181,14 +132,81 @@ async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
     })
 
     return {
+        kind: 'crosschain-swap',
         transactionType: 'ton',
         transactionRequest: transactionData,
-        kind: 'crosschain-swap',
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOut,
         approveTo: '',
         routes: [],
         fees: [],
+        priceImpact: new Percent('0', '0'),
+    }
+}
+
+function tryToBuildBridgeCall(params: ExactInParams): SwapExactInResult | undefined {
+    const { context, poolConfig } = params
+    const { symbiosis, tokenAmountIn, tokenOut, to, deadline } = context
+
+    const sToken = symbiosis.getRepresentation(tokenAmountIn.token, poolConfig.chainId)
+    if (!sToken) {
+        return
+    }
+    if (!tokenOut.equals(sToken)) {
+        return
+    }
+
+    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === tokenAmountIn.token.chainId)?.tonPortal
+    if (!tonPortal) {
+        throw new Error('Ton portal not found in symbiosis config')
+    }
+
+    const tonTokenAddressInEvm = tokenAmountIn.token.address.toLowerCase() as keyof typeof EVM_TO_TON
+    const tonTokenAddress = EVM_TO_TON[tonTokenAddressInEvm]
+    if (!tonTokenAddress) {
+        throw new Error('EVM address not found in EVM_TO_TON')
+    }
+
+    const cell = Bridge.synthesizeMessage({
+        stableBridgingFee: BigInt('0'),
+        token: Address.parse(tonTokenAddress),
+        amount: BigInt(tokenAmountIn.raw.toString()),
+        chain2Address: Buffer.from(to.slice(2), 'hex'),
+        receiveSide: Buffer.from(symbiosis.synthesis(poolConfig.chainId).address.slice(2), 'hex'),
+        oppositeBridge: Buffer.from(symbiosis.bridge(poolConfig.chainId).address.slice(2), 'hex'),
+        revertableAddress: Buffer.from(to.slice(2), 'hex'),
+        chainId: BigInt(poolConfig.chainId),
+    })
+
+    return {
+        kind: 'bridge',
+        transactionType: 'ton',
+        transactionRequest: {
+            validUntil: deadline,
+            messages: [
+                {
+                    address: tonPortal,
+                    amount: tokenAmountIn.add(new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS)).raw.toString(),
+                    payload: cell.toBoc().toString('base64'),
+                },
+            ],
+        },
+        tokenAmountOut: new TokenAmount(tokenOut, tokenAmountIn.raw),
+        tokenAmountOutMin: new TokenAmount(tokenOut, tokenAmountIn.raw),
+        approveTo: '',
+        routes: [
+            {
+                provider: 'symbiosis',
+                tokens: [tokenAmountIn.token, tokenOut],
+            },
+        ],
+        fees: [
+            {
+                provider: 'symbiosis',
+                value: new TokenAmount(tokenOut, '0'),
+                description: 'Bridge fee',
+            },
+        ],
         priceImpact: new Percent('0', '0'),
     }
 }
@@ -235,7 +253,7 @@ async function buildSecondCall(params: ExactInParams): Promise<Call> {
 
     await transit.init()
 
-    // calldata for octopul swap + fee (skipped)
+    // calldata for pool swap + fee (skipped)
     const transitCalls = transit.calls()
     if (!transitCalls) {
         throw new Error('Transit calls not found')
