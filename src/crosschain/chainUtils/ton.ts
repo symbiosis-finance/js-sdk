@@ -7,6 +7,7 @@ import {
     Contract,
     contractAddress,
     ContractProvider,
+    OpenedContract,
     Sender,
     SendMode,
     Slice,
@@ -14,6 +15,7 @@ import {
 import { secp256k1 as secp } from '@noble/curves/secp256k1'
 import { keccak256 } from 'ethers/lib/utils'
 import { ChainId } from '../../constants'
+import { WalletContractV4 } from '@ton/ton'
 
 export const EVM_TO_TON: Record<string, string> = {
     '0x7ea393298d1077e19ec59f8e3fe8fe642738c08c': 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4', // TON
@@ -534,4 +536,23 @@ export class Bridge implements Contract {
 
         return [payload1, payload2]
     }
+}
+
+export async function waitForTransaction(
+    walletContract: OpenedContract<WalletContractV4>,
+    seqno: number,
+    endpointName: string
+) {
+    let currentSeqno = seqno
+
+    while (currentSeqno == seqno) {
+        console.log(`Waiting for transaction ${endpointName} to confirm...`)
+        await sleep(1500)
+        currentSeqno = await walletContract.getSeqno()
+    }
+    console.log(`Transaction ${endpointName} confirmed!`)
+}
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
 }
