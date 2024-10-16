@@ -15,6 +15,11 @@ import { secp256k1 as secp } from '@noble/curves/secp256k1'
 import { keccak256 } from 'ethers/lib/utils'
 import { ChainId } from '../../constants'
 
+export const EVM_TO_TON: Record<string, string> = {
+    '0x7ea393298d1077e19ec59f8e3fe8fe642738c08c': 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4', // TON
+    '0x46deec715e419a1f0f5959b5c8450894959d2dbf': 'EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a', // USDT
+}
+
 export function isTonChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.TON_MAINNET, ChainId.TON_TESTNET].includes(chainId)

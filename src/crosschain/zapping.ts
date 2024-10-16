@@ -8,15 +8,23 @@ import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade } from './trade'
-import { getExternalId, getInternalId } from './chainUtils/evm'
+import {
+    getExternalId,
+    getInternalId,
+    isTronChainId,
+    isTronToken,
+    prepareTronTransaction,
+    tronAddressToEvm,
+} from './chainUtils'
 import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
-import { isTronChainId, isTronToken, prepareTronTransaction, tronAddressToEvm } from './chainUtils/tron'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig, RouteItem, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { WrapTrade } from './trade'
 import { WaitForComplete } from './waitForComplete'
+import { isTonChainId } from './chainUtils'
+import { buildMetaSynthesize } from './swapExactIn/fromTonSwap'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount
@@ -175,6 +183,27 @@ export class Zapping {
             nativeIn: this.tokenAmountIn.token.isNative,
             relayRecipient,
             otherSideCalldata,
+        }
+
+        if (isTonChainId(chainId)) {
+            const transactionRequest = buildMetaSynthesize({
+                symbiosis: this.symbiosis,
+                validUntil: this.deadline,
+                from: this.from,
+                amountIn: this.tokenAmountIn,
+                poolChainId: this.omniPoolConfig.chainId,
+                evmAddress: this.to,
+                swapTokens: [],
+                secondSwapCallData: '',
+                secondDexRouter: AddressZero,
+                finalCallData: otherSideCalldata,
+                finalReceiveSide: relayRecipient,
+                finalOffset: 100,
+            })
+            return {
+                transactionRequest,
+                transactionType: 'ton',
+            }
         }
 
         if (isTronChainId(chainId)) {
@@ -337,6 +366,10 @@ export class Zapping {
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.omniPoolConfig.chainId
+
+        if (isTonChainId(chainIdIn)) {
+            return new TokenAmount(this.synthToken, '0')
+        }
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)

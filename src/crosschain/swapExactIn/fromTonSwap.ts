@@ -6,20 +6,16 @@ import { isAddress } from 'ethers/lib/utils'
 import { Address, beginCell, toNano } from '@ton/core'
 import { ChainId } from '../../constants'
 import { isTonChainId, splitSlippage } from '../chainUtils'
-import { Bridge } from '../chainUtils/ton'
+import { Bridge, EVM_TO_TON } from '../chainUtils/ton'
 import { Percent, TokenAmount } from '../../entities'
 import { CROSS_CHAIN_ID } from '../constants'
 import { Transit } from '../transit'
 import { theBestOutput } from './utils'
 import { Symbiosis } from '../symbiosis'
+import { bridgeFromTon } from './fromTon/bridge'
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
 export const MIN_META_SYNTH_JETTONS = toNano('0.1')
-
-const EVM_TO_TON = {
-    '0x7ea393298d1077e19ec59f8e3fe8fe642738c08c': 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4', // TON
-    '0x46deec715e419a1f0f5959b5c8450894959d2dbf': 'EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a', // USDT
-}
 
 export function isFromTonSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -53,30 +49,16 @@ export async function fromTonSwap(context: SwapExactInParams): Promise<SwapExact
         })
     })
 
-    const bestOutput = await theBestOutput(promises)
-
-    return {
-        ...bestOutput,
-        kind: 'crosschain-swap',
-        approveTo: AddressZero,
-        fees: [
-            {
-                provider: 'ton-call',
-                description: 'TON method call',
-                value: new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS),
-            },
-            ...bestOutput.fees,
-        ],
-    }
+    return theBestOutput(promises)
 }
 
-interface ExactInParams {
+export interface FromTonParams {
     context: SwapExactInParams
     poolConfig: OmniPoolConfig
 }
 
-async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
-    const bridgeResult = tryToBuildBridgeCall(params)
+async function doExactIn(params: FromTonParams): Promise<SwapExactInResult> {
+    const bridgeResult = bridgeFromTon(params)
     if (bridgeResult) {
         return bridgeResult
     }
@@ -115,11 +97,10 @@ async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
         throw new Error('! swap tokens')
     }
 
-    const transactionData = buildTonTransactionRequest({
+    const transactionData = buildMetaSynthesize({
         symbiosis,
         from,
         amountIn: tokenAmountIn,
-        amountOut,
         secondDexRouter,
         secondSwapCallData,
         swapTokens,
@@ -144,73 +125,6 @@ async function doExactIn(params: ExactInParams): Promise<SwapExactInResult> {
     }
 }
 
-function tryToBuildBridgeCall(params: ExactInParams): SwapExactInResult | undefined {
-    const { context, poolConfig } = params
-    const { symbiosis, tokenAmountIn, tokenOut, to, deadline } = context
-
-    const sToken = symbiosis.getRepresentation(tokenAmountIn.token, poolConfig.chainId)
-    if (!sToken) {
-        return
-    }
-    if (!tokenOut.equals(sToken)) {
-        return
-    }
-
-    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === tokenAmountIn.token.chainId)?.tonPortal
-    if (!tonPortal) {
-        throw new Error('Ton portal not found in symbiosis config')
-    }
-
-    const tonTokenAddressInEvm = tokenAmountIn.token.address.toLowerCase() as keyof typeof EVM_TO_TON
-    const tonTokenAddress = EVM_TO_TON[tonTokenAddressInEvm]
-    if (!tonTokenAddress) {
-        throw new Error('EVM address not found in EVM_TO_TON')
-    }
-
-    const cell = Bridge.synthesizeMessage({
-        stableBridgingFee: BigInt('0'),
-        token: Address.parse(tonTokenAddress),
-        amount: BigInt(tokenAmountIn.raw.toString()),
-        chain2Address: Buffer.from(to.slice(2), 'hex'),
-        receiveSide: Buffer.from(symbiosis.synthesis(poolConfig.chainId).address.slice(2), 'hex'),
-        oppositeBridge: Buffer.from(symbiosis.bridge(poolConfig.chainId).address.slice(2), 'hex'),
-        revertableAddress: Buffer.from(to.slice(2), 'hex'),
-        chainId: BigInt(poolConfig.chainId),
-    })
-
-    return {
-        kind: 'bridge',
-        transactionType: 'ton',
-        transactionRequest: {
-            validUntil: deadline,
-            messages: [
-                {
-                    address: tonPortal,
-                    amount: tokenAmountIn.add(new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS)).raw.toString(),
-                    payload: cell.toBoc().toString('base64'),
-                },
-            ],
-        },
-        tokenAmountOut: new TokenAmount(tokenOut, tokenAmountIn.raw),
-        tokenAmountOutMin: new TokenAmount(tokenOut, tokenAmountIn.raw),
-        approveTo: '',
-        routes: [
-            {
-                provider: 'symbiosis',
-                tokens: [tokenAmountIn.token, tokenOut],
-            },
-        ],
-        fees: [
-            {
-                provider: 'symbiosis',
-                value: new TokenAmount(tokenOut, '0'),
-                description: 'Bridge fee',
-            },
-        ],
-        priceImpact: new Percent('0', '0'),
-    }
-}
-
 interface Call {
     to: string
     data: string
@@ -219,7 +133,7 @@ interface Call {
     swapTokens?: string[]
 }
 
-async function buildSecondCall(params: ExactInParams): Promise<Call> {
+async function buildSecondCall(params: FromTonParams): Promise<Call> {
     const { context, poolConfig } = params
     const { tokenAmountIn, tokenOut, symbiosis, transitTokenIn, transitTokenOut, slippage, deadline } = context
 
@@ -283,7 +197,7 @@ async function buildSecondCall(params: ExactInParams): Promise<Call> {
     }
 }
 
-function buildFinalCall(params: ExactInParams, amountToBurn: TokenAmount, feeV2?: TokenAmount | undefined): Call {
+function buildFinalCall(params: FromTonParams, amountToBurn: TokenAmount, feeV2?: TokenAmount | undefined): Call {
     const { context, poolConfig } = params
     const { symbiosis, tokenOut, to } = context
 
@@ -328,11 +242,10 @@ interface MetaSynthesizeParams {
     finalCallData: string
     finalReceiveSide: string
     finalOffset: number
-    amountOut: TokenAmount
     validUntil: number
 }
 
-function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactionData {
+export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactionData {
     const {
         symbiosis,
         from,
@@ -355,60 +268,48 @@ function buildTonTransactionRequest(params: MetaSynthesizeParams): TonTransactio
     const synthesisAddress = symbiosis.synthesis(poolChainId).address
     const bridgeAddress = symbiosis.bridge(poolChainId).address
 
-    const WTON_EVM_ADDRESS = symbiosis
+    const WTON_EVM = symbiosis
         .tokens()
-        .find((token) => token.chainId === ChainId.TON_TESTNET && token.isNative)?.address
+        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'ton')
 
-    const USDT_EVM_ADDRESS = symbiosis
+    const USDT_EVM = symbiosis
         .tokens()
-        .find((token) => token.chainId === ChainId.TON_TESTNET && token.symbol?.toLowerCase() === 'usdt')?.address
+        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'usdt')
 
-    if (amountIn.token.address === WTON_EVM_ADDRESS) {
-        const cell = Bridge.metaSynthesizeMessage({
-            stableBridgingFee: BigInt('0'), // fee taken on host chain
-            token: Address.parse(WTON_EVM_ADDRESS), // simulate jetton for gas token TEP-161
-            amount: BigInt(amountIn.raw.toString()),
-            chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
-            receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
-            oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
-            chainId: BigInt(poolChainId),
-            revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
-            swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
-            secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
-            secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
-            finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
-            finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
-            finalOffset: BigInt(finalOffset),
-        })
+    const tonTokenAddress = EVM_TO_TON[amountIn.token.address.toLowerCase()]
+    if (!tonTokenAddress) {
+        throw new Error('EVM address not found in EVM_TO_TON')
+    }
 
+    const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
+        stableBridgingFee: BigInt('0'), // fee taken on host chain
+        token: Address.parse(tonTokenAddress), // simulate jetton for gas token TEP-161
+        amount: BigInt(amountIn.raw.toString()),
+        chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
+        receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
+        oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
+        chainId: BigInt(poolChainId),
+        revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
+        swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
+        secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
+        secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
+        finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
+        finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
+        finalOffset: BigInt(finalOffset),
+    })
+
+    if (WTON_EVM?.equals(amountIn.token)) {
         return {
             validUntil,
             messages: [
                 {
                     address: tonPortal,
                     amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
-                    payload: cell.toBoc().toString('base64'),
+                    payload: metaSynthesizeBody.toBoc().toString('base64'),
                 },
             ],
         }
-    } else if (amountIn.token.address === USDT_EVM_ADDRESS) {
-        const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
-            stableBridgingFee: BigInt('0'), // fee taken on host chain
-            token: Address.parse(USDT_EVM_ADDRESS),
-            amount: BigInt(amountIn.raw.toString()),
-            chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
-            receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
-            oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
-            chainId: BigInt(poolChainId),
-            revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
-            swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
-            secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
-            secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
-            finalCallData: Buffer.from(finalCallData.slice(2), 'hex'), // metaBurnSyntheticToken host chain (synthesis.sol) hostchain (include extra swap on 3-rd chain)
-            finalReceiveSide: Buffer.from(finalReceiveSide.slice(2), 'hex'), // synthesis host chain address
-            finalOffset: BigInt(finalOffset),
-        })
-
+    } else if (USDT_EVM?.equals(amountIn.token)) {
         const cell = beginCell()
             .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
             .storeUint(0, 64) // query id

@@ -472,7 +472,7 @@ export const config: Config = {
                     address: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
                     symbol: 'USDC',
                     decimals: 6,
-                    chainId: 288,
+                    chainId: ChainId.BOBA_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -490,7 +490,7 @@ export const config: Config = {
             multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3',
         },
         {
-            id: 56288,
+            id: ChainId.BOBA_BNB,
             rpc: 'https://replica.bnb.boba.network',
             spareRpcs: ['https://bnb.boba.network', 'https://gateway.tenderly.co/public/boba-bnb'],
             filterBlockOffset: 3000,
@@ -500,7 +500,7 @@ export const config: Config = {
                     address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
                     symbol: 'USDC',
                     decimals: 18,
-                    chainId: 56288,
+                    chainId: ChainId.BOBA_BNB,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
