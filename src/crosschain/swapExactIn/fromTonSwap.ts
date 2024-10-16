@@ -1,18 +1,15 @@
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult, TonTransactionData } from '../types'
 
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error } from '../error'
-import { isAddress } from 'ethers/lib/utils'
 import { Address, beginCell, toNano } from '@ton/core'
 import { ChainId } from '../../constants'
-import { isTonChainId, splitSlippage } from '../chainUtils'
+import { isTonChainId } from '../chainUtils'
 import { Bridge, EVM_TO_TON } from '../chainUtils/ton'
-import { Percent, TokenAmount } from '../../entities'
-import { CROSS_CHAIN_ID } from '../constants'
-import { Transit } from '../transit'
+import { TokenAmount } from '../../entities'
 import { theBestOutput } from './utils'
 import { Symbiosis } from '../symbiosis'
 import { bridgeFromTon } from './fromTon/bridge'
+import { SwappingFromTon } from '../swappingFromTon'
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
 export const MIN_META_SYNTH_JETTONS = toNano('0.1')
@@ -63,175 +60,17 @@ async function doExactIn(params: FromTonParams): Promise<SwapExactInResult> {
         return bridgeResult
     }
 
-    const { context, poolConfig } = params
-    const { symbiosis, tokenAmountIn, to, deadline, from } = context
-
-    if (!isAddress(to)) {
-        throw new Error(`Receiver address is incorrect`)
-    }
-    // TODO calculate fee from source chain to host chain with advisor
-    // call metaMintSyntheticToken
-    // const fee1 = undefined // in sToken (amount in sTon)
-
-    // (portal) metaSynthesize ->
-    // (synthesis) metaMintSyntheticToken + swap on octopool + metaBurnSyntheticToken () ->
-    // (portal) metaUnsynthesize (finalCalldata2).
     const {
-        to: secondDexRouter,
-        data: secondSwapCallData,
-        amount: amountToBurn,
-        swapTokens,
-    } = await buildSecondCall(params)
-
-    // TODO calculate fee from host chain to dest chain with advisor
-    const fee2 = undefined
-
-    const {
-        to: finalReceiveSide,
-        data: finalCallData,
-        offset: finalOffset,
-        amount: amountOut,
-    } = buildFinalCall(params, amountToBurn, fee2)
-
-    if (!swapTokens) {
-        throw new Error('! swap tokens')
-    }
-
-    const transactionData = buildMetaSynthesize({
-        symbiosis,
-        from,
-        amountIn: tokenAmountIn,
-        secondDexRouter,
-        secondSwapCallData,
-        swapTokens,
-        finalReceiveSide,
-        finalCallData,
-        finalOffset,
-        evmAddress: to,
-        poolChainId: poolConfig.chainId,
-        validUntil: deadline,
-    })
-
-    return {
-        kind: 'crosschain-swap',
-        transactionType: 'ton',
-        transactionRequest: transactionData,
-        tokenAmountOut: amountOut,
-        tokenAmountOutMin: amountOut,
-        approveTo: '',
-        routes: [],
-        fees: [],
-        priceImpact: new Percent('0', '0'),
-    }
-}
-
-interface Call {
-    to: string
-    data: string
-    offset: number
-    amount: TokenAmount
-    swapTokens?: string[]
-}
-
-async function buildSecondCall(params: FromTonParams): Promise<Call> {
-    const { context, poolConfig } = params
-    const { tokenAmountIn, tokenOut, symbiosis, transitTokenIn, transitTokenOut, slippage, deadline } = context
-
-    if (!transitTokenIn || !transitTokenOut) {
-        throw new Error('Transit tokens not found')
-    }
-
-    const syntheticFrom = symbiosis.getRepresentation(transitTokenIn, poolConfig.chainId)
-    const syntheticTo = symbiosis.getRepresentation(transitTokenOut, poolConfig.chainId)
-    if (!syntheticFrom || !syntheticTo) {
-        throw new Error('Synthetic tokens not found')
-    }
-
-    // assume no tradeA and tradeC
-    const splittedSlippage = splitSlippage(slippage, false, false)
-
-    symbiosis.validateLimits(tokenAmountIn)
-
-    // add fee from advisor, last param for transit
-    const transit = new Transit(
-        symbiosis,
-        tokenAmountIn,
-        tokenAmountIn,
-        tokenOut,
-        transitTokenIn,
-        transitTokenOut,
-        splittedSlippage['B'],
-        deadline,
-        poolConfig
-    )
-
-    await transit.init()
-
-    // calldata for pool swap + fee (skipped)
-    const transitCalls = transit.calls()
-    if (!transitCalls) {
-        throw new Error('Transit calls not found')
-    }
-
-    const { calldatas, receiveSides, paths, offsets } = transitCalls
-
-    const multicallRouter = symbiosis.multicallRouter(poolConfig.chainId)
-
-    const data = multicallRouter.interface.encodeFunctionData('multicall', [
-        transit.amountIn.raw.toString(),
-        calldatas, // calldata
-        receiveSides, // receiveSides
-        paths, // path
-        offsets, // offset
-        symbiosis.metaRouter(poolConfig.chainId).address,
-    ])
-
-    const synthesis = symbiosis.synthesis(poolConfig.chainId)
-
-    return {
-        to: synthesis.address,
-        data,
-        offset: 0,
-        amount: transit.amountOut,
-        swapTokens: [syntheticFrom.address, syntheticTo.address],
-    }
-}
-
-function buildFinalCall(params: FromTonParams, amountToBurn: TokenAmount, feeV2?: TokenAmount | undefined): Call {
-    const { context, poolConfig } = params
-    const { symbiosis, tokenOut, to } = context
-
-    const synthesis = symbiosis.synthesis(poolConfig.chainId)
-
-    const data = synthesis.interface.encodeFunctionData('metaBurnSyntheticToken', [
-        {
-            stableBridgingFee: feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
-            amount: amountToBurn.raw.toString(), // uint256 amount;
-            syntCaller: symbiosis.metaRouter(poolConfig.chainId).address, // address syntCaller;
-            crossChainID: CROSS_CHAIN_ID,
-            finalReceiveSide: AddressZero, // address finalReceiveSide;
-            sToken: amountToBurn.token.address, // address sToken;
-            finalCallData: [], // bytes finalCallData;
-            finalOffset: 0, // uint256 finalOffset;
-            chain2address: to, // address chain2address;
-            receiveSide: symbiosis.portal(tokenOut.chainId).address,
-            oppositeBridge: symbiosis.bridge(tokenOut.chainId).address,
-            revertableAddress: to,
-            chainID: tokenOut.chainId,
-            clientID: symbiosis.clientId,
-        },
-    ])
-
-    return {
-        to: synthesis.address,
-        data,
-        amount: new TokenAmount(tokenOut, amountToBurn.raw), // TODO subtract feeV2
-        offset: 100,
-    }
+        context: { symbiosis },
+        poolConfig,
+    } = params
+    const swapping = new SwappingFromTon(symbiosis, poolConfig)
+    return swapping.doExactIn(params.context)
 }
 
 interface MetaSynthesizeParams {
     symbiosis: Symbiosis
+    fee: TokenAmount
     from: string
     amountIn: TokenAmount
     poolChainId: ChainId
@@ -248,6 +87,7 @@ interface MetaSynthesizeParams {
 export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactionData {
     const {
         symbiosis,
+        fee,
         from,
         amountIn,
         evmAddress,
@@ -282,7 +122,7 @@ export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactio
     }
 
     const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
-        stableBridgingFee: BigInt('0'), // fee taken on host chain
+        stableBridgingFee: BigInt(fee.raw.toString()),
         token: Address.parse(tonTokenAddress), // simulate jetton for gas token TEP-161
         amount: BigInt(amountIn.raw.toString()),
         chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),

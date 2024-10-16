@@ -3,6 +3,7 @@ import { ChainId } from '../../constants'
 import { Token } from '../../entities'
 import { Option, TON_TOKEN_DECIMALS } from '../zappingTon'
 import { theBestOutput } from './utils'
+import { SwappingToTon } from '../swappingToTon'
 
 const wTonAttributes = {
     decimals: TON_TOKEN_DECIMALS,
@@ -84,7 +85,7 @@ function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInRe
     const promises: Promise<SwapExactInResult>[] = []
 
     symbiosis.config.omniPools.forEach((pool) => {
-        const swappingToTon = symbiosis.newSwappingToTon(pool)
+        const swappingToTon = new SwappingToTon(symbiosis, pool)
         const promise = swappingToTon.exactIn({
             tokenAmountIn,
             tokenOut,

@@ -188,6 +188,7 @@ export class Zapping {
         if (isTonChainId(chainId)) {
             const transactionRequest = buildMetaSynthesize({
                 symbiosis: this.symbiosis,
+                fee,
                 validUntil: this.deadline,
                 from: this.from,
                 amountIn: this.tokenAmountIn,

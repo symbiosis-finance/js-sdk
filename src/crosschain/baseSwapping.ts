@@ -9,12 +9,22 @@ import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
-import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './chainUtils/evm'
 import { WaitForComplete } from './waitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './chainUtils/tron'
+import {
+    splitSlippage,
+    getExternalId,
+    getInternalId,
+    DetailedSlippage,
+    TronTransactionData,
+    isTronToken,
+    prepareTronTransaction,
+    tronAddressToEvm,
+    isTronChainId,
+    isTonChainId,
+} from './chainUtils'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import {
     FeeItem,
@@ -23,6 +33,7 @@ import {
     SwapExactInParams,
     SwapExactInResult,
     SwapExactInTransactionPayload,
+    TonTransactionData,
 } from './types'
 
 export abstract class BaseSwapping {
@@ -96,6 +107,11 @@ export abstract class BaseSwapping {
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
         if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
+            }
+        } else if (isTonChainId(this.tokenAmountIn.token.chainId) || isTonChainId(this.tokenOut.chainId)) {
             this.revertableAddresses = {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
@@ -181,10 +197,16 @@ export abstract class BaseSwapping {
         )
 
         let payload: SwapExactInTransactionPayload
-        if (isTronToken(this.tokenAmountIn.token)) {
+        if (isTronChainId(this.tokenAmountIn.token.chainId)) {
             const transactionRequest = this.getTronTransactionRequest(fee, feeV2)
             payload = {
                 transactionType: 'tron',
+                transactionRequest,
+            }
+        } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
+            const transactionRequest = this.getTonTransactionRequest(fee, feeV2)
+            payload = {
+                transactionType: 'ton',
                 transactionRequest,
             }
         } else {
@@ -353,6 +375,11 @@ export abstract class BaseSwapping {
             ownerAddress: this.from,
             value: value?.toString() ?? 0,
         })
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected getTonTransactionRequest(_fee: TokenAmount, _feeV2: TokenAmount | undefined): TonTransactionData {
+        throw new Error('getTonTransactionRequest not implemented')
     }
 
     protected calculatePriceImpact(): Percent {

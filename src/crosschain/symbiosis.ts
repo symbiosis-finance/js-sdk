@@ -65,7 +65,6 @@ import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMin
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
-import { SwappingToTon } from './swappingToTon'
 import { swapExactIn } from './swapExactIn'
 import { isBtcChainId } from './chainUtils/btc'
 
@@ -207,10 +206,6 @@ export class Symbiosis {
 
     public newBridging() {
         return new Bridging(this)
-    }
-
-    public newSwappingToTon(omniPoolConfig: OmniPoolConfig) {
-        return new SwappingToTon(this, omniPoolConfig)
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {
