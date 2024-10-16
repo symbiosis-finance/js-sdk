@@ -3,6 +3,7 @@ import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript } from '../../zappingBtc'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../../types'
+import { getToBtcFee } from '../../btc'
 
 initEccLib(ecc)
 
@@ -29,8 +30,7 @@ export async function unwrapBtc({ symbiosis, tokenAmountIn, to }: SwapExactInPar
     const bitcoinAddress = getPkScript(to, network)
 
     const synthesis = symbiosis.synthesis(syBtc.chainId)
-    const minBtcFeeRaw = await synthesis.syntToMinFeeBTC(syBtc.address)
-    const minBtcFee = new TokenAmount(syBtc, minBtcFeeRaw.toString())
+    const minBtcFee = await getToBtcFee(syBtc, synthesis, symbiosis.dataProvider)
 
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
         minBtcFee.raw.toString(), // _stableBridgingFee must be >= minBtcFee

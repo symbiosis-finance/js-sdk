@@ -408,14 +408,8 @@ async function getBtcPortalFee(forwarderUrl: string, dataProvider: DataProvider)
     )
 
     try {
-        const recommendedFee: number = await dataProvider.get(
-            ['getFastestFee'],
-            async () => {
-                const fastestFee = await getFastestFee()
-                return fastestFee * 200
-            },
-            60 // 1 minute
-        )
+        const fastestFee = await dataProvider.get(['getFastestFee'], getFastestFee, 60) // 1 minute
+        const recommendedFee = fastestFee * 200 // 200 vByte
         if (recommendedFee > fee) {
             fee = recommendedFee
         }
