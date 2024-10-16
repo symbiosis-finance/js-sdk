@@ -14,14 +14,8 @@ export const getToBtcFee = async (syBtc: Token, synthesis: Synthesis, dataProvid
     )
 
     try {
-        const recommendedFee = await dataProvider.get(
-            ['getFastestFee'],
-            async () => {
-                const fastestFee = await getFastestFee()
-                return BigNumber.from(fastestFee * 100)
-            },
-            60 // 1 minute
-        )
+        const fastestFee = await dataProvider.get(['getFastestFee'], getFastestFee, 60) // 1 minute
+        const recommendedFee = BigNumber.from(fastestFee * 300) // 300 vByte
         if (recommendedFee.gt(fee)) {
             fee = recommendedFee
         }
