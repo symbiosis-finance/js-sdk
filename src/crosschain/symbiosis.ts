@@ -5,7 +5,6 @@ import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
-import { Bridging } from './bridging'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
     AdaRouter,
@@ -202,10 +201,6 @@ export class Symbiosis {
 
     public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         return swapExactIn({ symbiosis: this, ...params })
-    }
-
-    public newBridging() {
-        return new Bridging(this)
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {

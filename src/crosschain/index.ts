@@ -1,5 +1,4 @@
 export * from './symbiosis'
-export * from './bridging'
 export * from './types'
 export * from './error'
 export * from './chainUtils'
