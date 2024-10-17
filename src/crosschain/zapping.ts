@@ -16,12 +16,19 @@ import {
     isTronToken,
     prepareTronTransaction,
     tronAddressToEvm,
+    TronTransactionData,
 } from './chainUtils'
 import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 import { TRON_METAROUTER_ABI } from './tronAbis'
-import { OmniPoolConfig, RouteItem, SwapExactInResult, SwapExactInTransactionPayload } from './types'
+import {
+    OmniPoolConfig,
+    RouteItem,
+    SwapExactInResult,
+    SwapExactInTransactionPayload,
+    TonTransactionData,
+} from './types'
 import { WrapTrade } from './trade'
 import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { isTonChainId } from './chainUtils'
@@ -112,7 +119,26 @@ export class Zapping {
         this.omniLiquidity = this.buildOmniLiquidity(fee)
         await this.omniLiquidity.init()
 
-        const payload = this.getTransactionRequest(fee)
+        let payload: SwapExactInTransactionPayload
+        if (isTronChainId(this.tokenAmountIn.token.chainId)) {
+            const transactionRequest = this.getTronTransactionRequest(fee)
+            payload = {
+                transactionType: 'tron',
+                transactionRequest,
+            }
+        } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
+            const transactionRequest = this.getTonTransactionRequest(fee)
+            payload = {
+                transactionType: 'ton',
+                transactionRequest,
+            }
+        } else {
+            const transactionRequest = this.getEvmTransactionRequest(fee)
+            payload = {
+                transactionType: 'evm',
+                transactionRequest,
+            }
+        }
 
         const routes: RouteItem[] = []
         if (this.tradeA) {
@@ -154,10 +180,25 @@ export class Zapping {
         }).waitForComplete(receipt)
     }
 
-    private getTransactionRequest(fee: TokenAmount): SwapExactInTransactionPayload {
-        const chainId = this.tokenAmountIn.token.chainId
-        const metaRouter = this.symbiosis.metaRouter(chainId)
+    private getTonTransactionRequest(fee: TokenAmount): TonTransactionData {
+        return buildMetaSynthesize({
+            symbiosis: this.symbiosis,
+            fee,
+            validUntil: this.deadline,
+            from: this.from,
+            amountIn: this.tokenAmountIn,
+            poolChainId: this.omniPoolConfig.chainId,
+            evmAddress: this.to,
+            secondDexRouter: this.multicallRouter.address,
+            secondSwapCallData: this.getMulticallData(),
+            swapTokens: [this.synthToken.address, this.synthToken.address],
+            finalCallData: '',
+            finalReceiveSide: AddressZero,
+            finalOffset: 0,
+        })
+    }
 
+    private getEvmTransactionRequest(fee: TokenAmount): TransactionRequest {
         const [relayRecipient, otherSideCalldata] = this.otherSideSynthCallData(fee)
 
         let firstToken = this.tradeA ? this.tradeA.tokenAmountIn.token.address : this.tokenAmountIn.token.address
@@ -185,69 +226,54 @@ export class Zapping {
             otherSideCalldata,
         }
 
-        if (isTonChainId(chainId)) {
-            const transactionRequest = buildMetaSynthesize({
-                symbiosis: this.symbiosis,
-                fee,
-                validUntil: this.deadline,
-                from: this.from,
-                amountIn: this.tokenAmountIn,
-                poolChainId: this.omniPoolConfig.chainId,
-                evmAddress: this.to,
-                swapTokens: [],
-                secondSwapCallData: '',
-                secondDexRouter: AddressZero,
-                finalCallData: otherSideCalldata,
-                finalReceiveSide: relayRecipient,
-                finalOffset: 100,
-            })
-            return {
-                transactionRequest,
-                transactionType: 'ton',
-            }
-        }
-
-        if (isTronChainId(chainId)) {
-            const transactionRequest = prepareTronTransaction({
-                chainId: chainId,
-                tronWeb: this.symbiosis.tronWeb(chainId),
-                abi: TRON_METAROUTER_ABI,
-                contractAddress: metaRouter.address,
-                functionName: 'metaRoute',
-                params: [
-                    [
-                        this.tradeA?.callData || [],
-                        [],
-                        approvedTokens,
-                        this.tradeA?.routerAddress || AddressZero,
-                        AddressZero,
-                        this.tokenAmountIn.raw.toString(),
-                        this.tokenAmountIn.token.isNative,
-                        relayRecipient,
-                        otherSideCalldata,
-                    ],
-                ],
-                ownerAddress: this.from,
-                value: 0,
-            })
-            return {
-                transactionRequest,
-                transactionType: 'tron',
-            }
-        }
-
+        const { chainId } = this.tokenAmountIn.token
+        const metaRouter = this.symbiosis.metaRouter(chainId)
         const data = metaRouter.interface.encodeFunctionData('metaRoute', [params])
 
-        const transactionRequest: TransactionRequest = {
+        return {
             chainId,
             to: metaRouter.address,
             data,
             value,
         }
-        return {
-            transactionRequest,
-            transactionType: 'evm',
+    }
+
+    private getTronTransactionRequest(fee: TokenAmount): TronTransactionData {
+        const [relayRecipient, otherSideCalldata] = this.otherSideSynthCallData(fee)
+
+        let firstToken = this.tradeA ? this.tradeA.tokenAmountIn.token.address : this.tokenAmountIn.token.address
+        if (!firstToken) {
+            // AddressZero if first token is GasToken
+            firstToken = AddressZero
         }
+
+        const approvedTokens = [firstToken, this.getPortalTokenAmountIn().token.address]
+
+        const { chainId } = this.tokenAmountIn.token
+        const metaRouter = this.symbiosis.metaRouter(chainId)
+
+        return prepareTronTransaction({
+            chainId,
+            tronWeb: this.symbiosis.tronWeb(chainId),
+            abi: TRON_METAROUTER_ABI,
+            contractAddress: metaRouter.address,
+            functionName: 'metaRoute',
+            params: [
+                [
+                    this.tradeA?.callData || [],
+                    [],
+                    approvedTokens,
+                    this.tradeA?.routerAddress || AddressZero,
+                    AddressZero,
+                    this.tokenAmountIn.raw.toString(),
+                    this.tokenAmountIn.token.isNative,
+                    relayRecipient,
+                    otherSideCalldata,
+                ],
+            ],
+            ownerAddress: this.from,
+            value: 0,
+        })
     }
 
     private calculatePriceImpact(): Percent {
