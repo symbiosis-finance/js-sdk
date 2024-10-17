@@ -22,25 +22,15 @@ export class SwappingToTon extends BaseSwapping {
         })
     }
 
-    // TODO: wait for advisor to work with testnet
+    // TODO: remove when advisor is ready
     protected async getFeeV2(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-        const feeToken = this.symbiosis.tokens().find((token) => token.chainId === ChainId.TON_TESTNET)
+        const feeToken = this.transitTokenOut
 
         return {
-            fee: new TokenAmount(feeToken!, '100000000'),
-            save: new TokenAmount(feeToken!, '0'),
+            fee: new TokenAmount(feeToken, '1000000'),
+            save: new TokenAmount(feeToken, '0'),
         }
     }
-
-    // uncomment for test from omni chain (bsc testnet) Wait advisor to work with testnet
-    // protected async getFee(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-    //     const feeToken = this.symbiosis.tokens().find((token) => token.chainId === ChainId.TON_TESTNET)
-
-    //     return {
-    //         fee: new TokenAmount(feeToken!, '100000000'),
-    //         save: new TokenAmount(feeToken!, '0'),
-    //     }
-    // }
 
     protected metaBurnSyntheticToken(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn || !this.tokenOut) {
@@ -61,7 +51,7 @@ export class SwappingToTon extends BaseSwapping {
         return [
             synthesis.address,
             synthesis.interface.encodeFunctionData('burnSyntheticTokenTON', [
-                fee ? fee?.raw.toString() : '0', // uint256 stableBridgingFee;
+                fee.raw.toString(),
                 amount.token.address,
                 amount.raw.toString(),
                 CROSS_CHAIN_ID,

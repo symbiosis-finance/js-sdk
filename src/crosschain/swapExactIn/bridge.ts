@@ -8,6 +8,7 @@ import {
     isEvmChainId,
     isTonChainId,
     isTronChainId,
+    MIN_META_SYNTH_TONS,
     prepareTronTransaction,
     TronTransactionData,
 } from '../chainUtils'
@@ -18,7 +19,6 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
 import { Bridge, EVM_TO_TON } from '../chainUtils/ton'
 import { Address } from '@ton/core'
-import { MIN_META_SYNTH_TONS } from './fromTonSwap'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context
@@ -117,7 +117,7 @@ async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
 
     // TODO remove after advisor is implemented
     if (isTonChainId(chainIdIn)) {
-        return new TokenAmount(tokenOut, '0')
+        return new TokenAmount(tokenOut, '1000000')
     }
 
     const internalId = getInternalId({
@@ -165,7 +165,7 @@ async function getBurnFee(context: SwapExactInParams): Promise<TokenAmount> {
 
     // TODO remove after advisor is implemented
     if (isTonChainId(chainIdOut)) {
-        return new TokenAmount(tokenOut, '0')
+        return new TokenAmount(tokenOut, '1000000')
     }
 
     const internalId = getInternalId({

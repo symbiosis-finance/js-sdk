@@ -9,7 +9,6 @@ import { isWrapSupported, wrap } from './wrap'
 import { toTonSwap } from './toTonSwap'
 import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
-import { fromTonSwap, isFromTonSwapSupported } from './fromTonSwap'
 
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -56,10 +55,6 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isTonChainId(tokenOut.chainId)) {
         return toTonSwap(params)
-    }
-
-    if (isFromTonSwapSupported(params)) {
-        return fromTonSwap(params)
     }
 
     return crosschainSwap(params)

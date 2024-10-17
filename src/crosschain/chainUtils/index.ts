@@ -1,5 +1,5 @@
 export { isBtcChainId } from './btc'
-export { isTonChainId } from './ton'
+export * from './ton'
 export {
     prepareTronTransaction,
     isTronToken,

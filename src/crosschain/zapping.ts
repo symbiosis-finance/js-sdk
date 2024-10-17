@@ -9,6 +9,7 @@ import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade } from './trade'
 import {
+    buildMetaSynthesize,
     getExternalId,
     getInternalId,
     isTronChainId,
@@ -24,7 +25,6 @@ import { OmniPoolConfig, RouteItem, SwapExactInResult, SwapExactInTransactionPay
 import { WrapTrade } from './trade'
 import { WaitForComplete } from './waitForComplete'
 import { isTonChainId } from './chainUtils'
-import { buildMetaSynthesize } from './swapExactIn/fromTonSwap'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount

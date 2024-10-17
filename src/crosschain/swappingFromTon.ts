@@ -1,17 +1,11 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Token, TokenAmount } from '../entities'
-import { Error } from './error'
-import { tronAddressToEvm } from './chainUtils'
+import { buildMetaSynthesize, tronAddressToEvm } from './chainUtils'
 import { TonTransactionData } from './types'
-import { buildMetaSynthesize } from './swapExactIn/fromTonSwap'
 import { BaseSwapping } from './baseSwapping'
 
 export class SwappingFromTon extends BaseSwapping {
     protected getTonTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TonTransactionData {
-        if (!this.tokenAmountIn || !this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
         let secondSwapCallData = this.secondSwapCalldata()
         if (secondSwapCallData.length === 0) {
             secondSwapCallData = ''
@@ -36,7 +30,7 @@ export class SwappingFromTon extends BaseSwapping {
     // TODO rm after advisor is ready
     protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         return {
-            fee: new TokenAmount(feeToken, '0'),
+            fee: new TokenAmount(feeToken, '1000000'),
             save: new TokenAmount(feeToken, '0'),
         }
     }
