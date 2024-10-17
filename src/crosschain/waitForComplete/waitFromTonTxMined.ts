@@ -1,6 +1,5 @@
 import { TonClient } from '@ton/ton'
 import { Address, Cell, Slice, Transaction } from '@ton/core'
-import { Maybe } from '@ton/ton/dist/utils/maybe'
 
 import { ChainId } from '../../constants'
 import { longPolling } from './utils'
@@ -103,40 +102,39 @@ function loadHexBytes(slice: Slice, bytesCount: number): string {
     return slice.loadBuffer(bytesCount).toString('hex')
 }
 
-function parseOracleRequestBody(msgBody: Cell): Maybe<OracleRequestEvent> {
+function parseOracleRequestBody(msgBody: Cell): OracleRequestEvent | undefined {
     const bodySlice = msgBody.beginParse()
 
     const opcode = bodySlice.loadUint(32)
-
-    if (opcode === ORACLE_REQUEST_OPCODE) {
-        const refCalldata = bodySlice.loadRef().beginParse()
-
-        const ref1 = refCalldata.loadRef().beginParse()
-        const ref2 = refCalldata.loadRef().beginParse()
-
-        const functionSelector = loadHexBytes(ref1, 4) // function selector
-
-        let internalId, externalId
-
-        if (functionSelector === META_SYNTHESIZE_SELECTOR) {
-            ref1.loadBuffer(64) // stable_bridging_fee, amount
-            internalId = loadHexBytes(ref1, 32) // internal_id
-            externalId = loadHexBytes(ref2, 32) // external_id
-        } else if (functionSelector === SYNTHESIZE_SELECTOR) {
-            ref1.loadBuffer(32) // stable_bridging_fee
-            externalId = loadHexBytes(ref1, 32) // external_id
-            internalId = loadHexBytes(ref1, 32) // internal_id
-        }
-
-        if (!internalId || !externalId) {
-            throw new Error('Invalid oracle request body')
-        }
-
-        return {
-            internalId: '0x' + internalId,
-            externalId: '0x' + externalId,
-        }
+    if (opcode !== ORACLE_REQUEST_OPCODE) {
+        return
     }
 
-    return null
+    const refCalldata = bodySlice.loadRef().beginParse()
+
+    const ref1 = refCalldata.loadRef().beginParse()
+    const ref2 = refCalldata.loadRef().beginParse()
+
+    const functionSelector = loadHexBytes(ref1, 4) // function selector
+
+    let internalId, externalId
+
+    if (functionSelector === META_SYNTHESIZE_SELECTOR) {
+        ref1.loadBuffer(64) // stable_bridging_fee, amount
+        internalId = loadHexBytes(ref1, 32) // internal_id
+        externalId = loadHexBytes(ref2, 32) // external_id
+    } else if (functionSelector === SYNTHESIZE_SELECTOR) {
+        ref1.loadBuffer(32) // stable_bridging_fee
+        externalId = loadHexBytes(ref1, 32) // external_id
+        internalId = loadHexBytes(ref1, 32) // internal_id
+    }
+
+    if (!internalId || !externalId) {
+        throw new Error('Invalid oracle request body')
+    }
+
+    return {
+        internalId: '0x' + internalId,
+        externalId: '0x' + externalId,
+    }
 }
