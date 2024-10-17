@@ -1,6 +1,6 @@
 import { Percent, TokenAmount, wrappedToken } from '../../entities'
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData } from '../types'
+import { AddressZero } from '@ethersproject/constants'
 import { Error, ErrorCode } from '../error'
 import {
     getExternalId,
@@ -16,6 +16,9 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
+import { Bridge, EVM_TO_TON } from '../chainUtils/ton'
+import { Address } from '@ton/core'
+import { MIN_META_SYNTH_TONS } from './fromTonSwap'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context
@@ -46,7 +49,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
     const amountOut = getAmountOut(context, fee)
     const payload = getTransactionPayload(context, fee, revertableAddress, direction)
 
-    let approveTo: string = AddressZero
+    let approveTo = ''
     if (payload.transactionType === 'tron') {
         approveTo = payload.transactionRequest.contract_address
     } else if (payload.transactionType === 'evm') {
@@ -112,6 +115,11 @@ async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
     const chainIdIn = tokenAmountIn.token.chainId
     const chainIdOut = tokenOut.chainId
 
+    // TODO remove after advisor is implemented
+    if (isTonChainId(chainIdIn)) {
+        return new TokenAmount(tokenOut, '0')
+    }
+
     const internalId = getInternalId({
         contractAddress: symbiosis.chainConfig(chainIdIn).portal,
         requestCount: MaxUint256, // we must use last possible request count because it is always free
@@ -154,6 +162,11 @@ async function getBurnFee(context: SwapExactInParams): Promise<TokenAmount> {
     const { symbiosis, tokenAmountIn, tokenOut, to } = context
     const chainIdIn = tokenAmountIn.token.chainId
     const chainIdOut = tokenOut.chainId
+
+    // TODO remove after advisor is implemented
+    if (isTonChainId(chainIdOut)) {
+        return new TokenAmount(tokenOut, '0')
+    }
 
     const internalId = getInternalId({
         contractAddress: symbiosis.chainConfig(chainIdIn).synthesis,
@@ -221,14 +234,14 @@ function getTransactionPayload(
         }
     }
 
-    // if (isTonChainId(chainId)) {
-    //     const transactionRequest = getTonTransactionRequest(fee)
-    //
-    //     return {
-    //         transactionType: 'ton',
-    //         transactionRequest,
-    //     }
-    // }
+    if (isTonChainId(chainIdIn)) {
+        const transactionRequest = getTonTransactionRequest(context, fee, revertableAddress, direction)
+
+        return {
+            transactionType: 'ton',
+            transactionRequest,
+        }
+    }
 
     if (isEvmChainId(chainIdIn)) {
         const transactionRequest = getEvmTransactionRequest(context, fee, revertableAddress, direction)
@@ -257,7 +270,6 @@ function getTronTransactionRequest(
         throw new Error('Burn is not supported on Tron')
     }
 
-    // TODO tronAddressToEvm
     return prepareTronTransaction({
         chainId: chainIdIn,
         abi: TRON_PORTAL_ABI,
@@ -279,6 +291,55 @@ function getTronTransactionRequest(
     })
 }
 
+function getTonTransactionRequest(
+    context: SwapExactInParams,
+    fee: TokenAmount,
+    revertableAddress: string,
+    direction: Direction
+): TonTransactionData {
+    const { symbiosis, tokenAmountIn, tokenOut, to, deadline } = context
+
+    const chainIdIn = tokenAmountIn.token.chainId
+    const chainIdOut = tokenOut.chainId
+
+    if (direction === 'burn') {
+        throw new Error('Burn is not supported on Tron')
+    }
+
+    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === chainIdIn)?.tonPortal
+    if (!tonPortal) {
+        throw new Error('Ton portal not found in symbiosis config')
+    }
+
+    const tonTokenAddress = EVM_TO_TON[tokenAmountIn.token.address.toLowerCase()]
+    if (!tonTokenAddress) {
+        throw new Error('EVM address not found in EVM_TO_TON')
+    }
+    const cell = Bridge.synthesizeMessage({
+        stableBridgingFee: BigInt(fee.raw.toString()),
+        token: Address.parse(tonTokenAddress),
+        amount: BigInt(tokenAmountIn.raw.toString()),
+        chain2Address: Buffer.from(to.slice(2), 'hex'),
+        receiveSide: Buffer.from(symbiosis.synthesis(chainIdOut).address.slice(2), 'hex'),
+        oppositeBridge: Buffer.from(symbiosis.bridge(chainIdOut).address.slice(2), 'hex'),
+        revertableAddress: Buffer.from(revertableAddress.slice(2), 'hex'),
+        chainId: BigInt(chainIdOut),
+    })
+
+    const tonFee = new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS)
+
+    return {
+        validUntil: deadline,
+        messages: [
+            {
+                address: tonPortal,
+                amount: tokenAmountIn.add(tonFee).raw.toString(),
+                payload: cell.toBoc().toString('base64'),
+            },
+        ],
+    }
+}
+
 function getEvmTransactionRequest(
     context: SwapExactInParams,
     fee: TokenAmount,
@@ -292,20 +353,49 @@ function getEvmTransactionRequest(
     if (direction === 'burn') {
         const synthesis = symbiosis.synthesis(chainIdIn)
 
-        return {
-            chainId: chainIdIn,
-            to: synthesis.address,
-            data: synthesis.interface.encodeFunctionData('burnSyntheticToken', [
+        if (isTonChainId(chainIdOut)) {
+            const { workChain, hash } = Address.parse(to)
+
+            const tonAddress = {
+                workchain: workChain,
+                address_hash: `0x${hash.toString('hex')}`,
+            }
+
+            const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenTON', [
                 fee.raw.toString(),
                 tokenAmountIn.token.address,
                 tokenAmountIn.raw.toString(),
-                to,
-                symbiosis.chainConfig(chainIdOut).portal,
-                symbiosis.chainConfig(chainIdOut).bridge,
+                CROSS_CHAIN_ID,
+                tonAddress,
+                AddressZero, // any arbitrary data, this addresses passed from relayer
+                AddressZero, // any arbitrary data, this addresses passed from relayer
                 revertableAddress,
                 chainIdOut,
                 symbiosis.clientId,
-            ]),
+            ])
+            return {
+                chainId: chainIdIn,
+                to: synthesis.address,
+                data,
+            }
+        }
+
+        const data = synthesis.interface.encodeFunctionData('burnSyntheticToken', [
+            fee.raw.toString(),
+            tokenAmountIn.token.address,
+            tokenAmountIn.raw.toString(),
+            to,
+            symbiosis.chainConfig(chainIdOut).portal,
+            symbiosis.chainConfig(chainIdOut).bridge,
+            revertableAddress,
+            chainIdOut,
+            symbiosis.clientId,
+        ])
+
+        return {
+            chainId: chainIdIn,
+            to: synthesis.address,
+            data,
         }
     }
 

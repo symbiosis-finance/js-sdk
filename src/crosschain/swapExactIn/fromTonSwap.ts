@@ -8,7 +8,6 @@ import { Bridge, EVM_TO_TON } from '../chainUtils/ton'
 import { TokenAmount } from '../../entities'
 import { theBestOutput } from './utils'
 import { Symbiosis } from '../symbiosis'
-import { bridgeFromTon } from './fromTon/bridge'
 import { SwappingFromTon } from '../swappingFromTon'
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
@@ -55,11 +54,6 @@ export interface FromTonParams {
 }
 
 async function doExactIn(params: FromTonParams): Promise<SwapExactInResult> {
-    const bridgeResult = bridgeFromTon(params)
-    if (bridgeResult) {
-        return bridgeResult
-    }
-
     const {
         context: { symbiosis },
         poolConfig,
