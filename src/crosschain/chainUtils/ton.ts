@@ -542,28 +542,10 @@ export class Bridge implements Contract {
         return [payload1, payload2]
     }
 }
-//
-// export async function waitForTransaction(
-//     walletContract: OpenedContract<WalletContractV4>,
-//     seqno: number,
-//     endpointName: string
-// ) {
-//     let currentSeqno = seqno
-//
-//     while (currentSeqno == seqno) {
-//         console.log(`Waiting for transaction ${endpointName} to confirm...`)
-//         await sleep(1500)
-//         currentSeqno = await walletContract.getSeqno()
-//     }
-//     console.log(`Transaction ${endpointName} confirmed!`)
-// }
-//
-// function sleep(ms: number) {
-//     return new Promise((resolve) => setTimeout(resolve, ms))
-// }
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
 export const MIN_META_SYNTH_JETTONS = toNano('0.1')
+export const MIN_SYNTH_TONS = toNano('0.015')
 
 interface MetaSynthesizeParams {
     symbiosis: Symbiosis

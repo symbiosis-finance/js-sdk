@@ -195,9 +195,6 @@ async function waitOtherSideTx(symbiosis: Symbiosis, bridgeInfo: BridgeTxInfo): 
     switch (requestType) {
         case 'SynthesizeRequest': {
             const synthesis = symbiosis.synthesis(externalChainId)
-            console.log('externalChainId --->', externalChainId)
-            console.log('externalId --->', externalId)
-            console.log('contract address --->', synthesis.address)
             filter = synthesis.filters.SynthesizeCompleted(externalId)
             break
         }

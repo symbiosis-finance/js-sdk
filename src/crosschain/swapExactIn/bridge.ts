@@ -8,7 +8,6 @@ import {
     isEvmChainId,
     isTonChainId,
     isTronChainId,
-    MIN_META_SYNTH_TONS,
     prepareTronTransaction,
     TronTransactionData,
 } from '../chainUtils'
@@ -17,7 +16,7 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
-import { Bridge, EVM_TO_TON } from '../chainUtils/ton'
+import { Bridge, EVM_TO_TON, MIN_SYNTH_TONS } from '../chainUtils/ton'
 import { Address } from '@ton/core'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
@@ -315,6 +314,7 @@ function getTonTransactionRequest(
     if (!tonTokenAddress) {
         throw new Error('EVM address not found in EVM_TO_TON')
     }
+
     const cell = Bridge.synthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
         token: Address.parse(tonTokenAddress),
@@ -326,7 +326,7 @@ function getTonTransactionRequest(
         chainId: BigInt(chainIdOut),
     })
 
-    const tonFee = new TokenAmount(tokenAmountIn.token, MIN_META_SYNTH_TONS)
+    const tonFee = new TokenAmount(tokenAmountIn.token, MIN_SYNTH_TONS)
 
     return {
         validUntil: deadline,

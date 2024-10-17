@@ -46,11 +46,6 @@ export async function waitFromTonTxMined(
     const accountInfo = await client.getContractState(Address.parse(tonPortal))
     const lastTx = accountInfo.lastTransaction?.lt
 
-    console.log('lastTx --->', lastTx)
-
-    console.log('tonPortal --->', tonPortal)
-    console.log('ton address --->', tonAddress)
-
     let internalId, externalId
 
     await longPolling<Transaction[]>({
@@ -65,16 +60,9 @@ export async function waitFromTonTxMined(
                 // case for TON only (called directly from user)
                 const senderAddress = tx.inMessage?.info.src
 
-                console.log('senderAddress --->', senderAddress)
-
                 if (Address.isAddress(senderAddress) && !Address.parse(tonAddress).equals(senderAddress)) {
                     continue
                 }
-
-                console.log(
-                    'isAddress are equal --->',
-                    Address.isAddress(senderAddress) && Address.parse(tonAddress).equals(senderAddress)
-                )
 
                 for (const outMsg of outMsgs.values()) {
                     if (outMsg?.info.type === 'external-out') {
@@ -120,8 +108,6 @@ function parseOracleRequestBody(msgBody: Cell): Maybe<OracleRequestEvent> {
 
     const opcode = bodySlice.loadUint(32)
 
-    console.log('opcode --->', opcode)
-
     if (opcode === ORACLE_REQUEST_OPCODE) {
         const refCalldata = bodySlice.loadRef().beginParse()
 
@@ -129,8 +115,6 @@ function parseOracleRequestBody(msgBody: Cell): Maybe<OracleRequestEvent> {
         const ref2 = refCalldata.loadRef().beginParse()
 
         const functionSelector = loadHexBytes(ref1, 4) // function selector
-
-        console.log('functionSelector --->', functionSelector)
 
         let internalId, externalId
 
