@@ -9,7 +9,7 @@ import type { Symbiosis } from './symbiosis'
 import { getExternalId, getInternalId, getLogWithTimeout, prepareTransactionRequest } from './chainUtils/evm'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
-import { WaitForComplete } from './waitForComplete'
+import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { OmniTrade } from './trade'
 import { OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
@@ -100,7 +100,7 @@ export class RevertPending {
 
         const receipt = await mChainSynthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
 
-        const wfc = new WaitForComplete({
+        const wfc = new LegacyWaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
             revertableAddress,
@@ -121,7 +121,7 @@ export class RevertPending {
 
         const receipt = await synthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
 
-        const wfc = new WaitForComplete({
+        const wfc = new LegacyWaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
             revertableAddress,

@@ -1,4 +1,6 @@
-export { statelessWaitForComplete } from './statelessWaitForComplete'
+export { waitForComplete } from './waitForComplete'
 export { waitForBtcDepositAccepted } from './waitForBtcDepositAccepted'
 export { waitForBtcRevealTxMined } from './waitForBtcRevealTxMined'
 export { waitForBtcEvmTxIssued } from './waitForBtcEvmTxIssued'
+export { waitFromTonTxMined } from './waitFromTonTxMined'
+export { BridgeTxInfo } from './types'

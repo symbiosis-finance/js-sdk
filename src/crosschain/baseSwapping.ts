@@ -9,7 +9,7 @@ import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
-import { WaitForComplete } from './waitForComplete'
+import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
@@ -274,7 +274,7 @@ export abstract class BaseSwapping {
         }
 
         if (this.transit.isV2()) {
-            const wfc1 = new WaitForComplete({
+            const wfc1 = new LegacyWaitForComplete({
                 direction: 'mint',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.getRevertableAddress('AB'),
@@ -286,7 +286,7 @@ export abstract class BaseSwapping {
             const provider = this.symbiosis.getProvider(this.omniPoolConfig.chainId)
             const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
 
-            const wfc2 = new WaitForComplete({
+            const wfc2 = new LegacyWaitForComplete({
                 direction: 'burn',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.getRevertableAddress('BC'),
@@ -296,7 +296,7 @@ export abstract class BaseSwapping {
             return wfc2.waitForComplete(receipt2)
         }
 
-        return new WaitForComplete({
+        return new LegacyWaitForComplete({
             direction: this.transit.direction,
             chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,

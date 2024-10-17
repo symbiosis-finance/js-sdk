@@ -28,7 +28,7 @@ export class TransactionStuckError extends Error {
 }
 
 // TODO: Rework to pure functions and move to utils
-export class WaitForComplete {
+export class LegacyWaitForComplete {
     private readonly direction: BridgeDirection
     private readonly symbiosis: Symbiosis
     private readonly chainIdOut: ChainId

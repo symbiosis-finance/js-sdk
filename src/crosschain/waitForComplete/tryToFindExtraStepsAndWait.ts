@@ -3,7 +3,7 @@ import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
 import { fetchData, longPolling } from './utils'
 import { TransactionReceipt } from '@ethersproject/providers'
-import { Bridge__factory, Synthesis__factory } from '../contracts'
+import { Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
@@ -18,11 +18,13 @@ interface ThorStatusResponse {
     }
 }
 
+type ExtraStep = 'thorChain' | 'burnRequestBtc' | 'burnRequestTon'
+
 export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
     chainId: ChainId,
     txHash: string
-): Promise<{ extraStep?: 'thorChain' | 'burnRequestBtc' | 'burnRequestTon'; outHash: string }> {
+): Promise<{ extraStep?: ExtraStep; outHash: string }> {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
@@ -155,6 +157,7 @@ interface UnwrapSerialBTCResponse {
     value: number
     outputIdx: string
 }
+
 async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigNumber): Promise<string> {
     const unwrapInfoUrl = new URL(`${forwarderUrl}/unwrap?serial=${burnSerialBtc.toString()}`)
 
@@ -169,18 +172,4 @@ async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigN
     })
 
     return result.tx
-}
-async function findTonOracleRequest(receipt: TransactionReceipt) {
-    const bridgeInterface = Bridge__factory.createInterface()
-    const topic0 = bridgeInterface.getEventTopic('OracleRequest')
-    const log = receipt.logs.find((log) => {
-        return log.topics[0] === topic0
-    })
-    if (!log) {
-        return false
-    }
-
-    const decoded = bridgeInterface.decodeEventLog('OracleRequest', log.data)
-
-    return decoded.chainId.toString() === ChainId.TON_MAINNET.toString()
 }

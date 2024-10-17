@@ -23,7 +23,7 @@ import { OmniLiquidity } from './omniLiquidity'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import { OmniPoolConfig, RouteItem, SwapExactInResult, SwapExactInTransactionPayload } from './types'
 import { WrapTrade } from './trade'
-import { WaitForComplete } from './waitForComplete'
+import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { isTonChainId } from './chainUtils'
 
 type ZappingExactInParams = {
@@ -145,7 +145,7 @@ export class Zapping {
     }
 
     async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        return new WaitForComplete({
+        return new LegacyWaitForComplete({
             direction: 'mint',
             chainIdOut: this.omniLiquidity.amountOut.token.chainId,
             symbiosis: this.symbiosis,

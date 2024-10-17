@@ -42,10 +42,6 @@ import {
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
-import {
-    statelessWaitForComplete,
-    StatelessWaitForCompleteParams,
-} from './statelessWaitForComplete/statelessWaitForComplete'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig, SwapExactInParams, SwapExactInResult } from './types'
 import { Zapping } from './zapping'
@@ -60,12 +56,19 @@ import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
 import { ZappingTon } from './zappingTon'
 import { ZappingBtc } from './zappingBtc'
-import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
+import {
+    waitForBtcDepositAccepted,
+    waitForBtcEvmTxIssued,
+    waitForBtcRevealTxMined,
+    waitForComplete,
+    waitFromTonTxMined,
+} from './waitForComplete'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { isBtcChainId } from './chainUtils/btc'
+import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -561,8 +564,9 @@ export class Symbiosis {
     public async waitForComplete({
         chainId,
         txId,
-    }: Omit<StatelessWaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
-        return statelessWaitForComplete({ symbiosis: this, chainId, txId })
+        tonBridgeInfo,
+    }: Omit<WaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
+        return waitForComplete({ symbiosis: this, chainId, txId, tonBridgeInfo })
     }
 
     public getForwarderUrl(btcChainId: ChainId): string {
@@ -593,6 +597,10 @@ export class Symbiosis {
 
     public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {
         return waitForBtcEvmTxIssued(this, revealTx, btcChainId)
+    }
+
+    public async waitFromTonTxMined(chainId: ChainId, tonAddress: string) {
+        return waitFromTonTxMined(this, chainId, tonAddress)
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {
