@@ -5,7 +5,10 @@ import { TonTransactionData } from './types'
 import { BaseSwapping } from './baseSwapping'
 
 export class SwappingFromTon extends BaseSwapping {
-    protected getTonTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TonTransactionData {
+    protected async getTonTransactionRequest(
+        fee: TokenAmount,
+        feeV2: TokenAmount | undefined
+    ): Promise<TonTransactionData> {
         let secondSwapCallData = this.secondSwapCalldata()
         if (secondSwapCallData.length === 0) {
             secondSwapCallData = ''

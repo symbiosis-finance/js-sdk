@@ -204,7 +204,7 @@ export abstract class BaseSwapping {
                 transactionRequest,
             }
         } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
-            const transactionRequest = this.getTonTransactionRequest(fee, feeV2)
+            const transactionRequest = await this.getTonTransactionRequest(fee, feeV2)
             payload = {
                 transactionType: 'ton',
                 transactionRequest,
@@ -377,8 +377,12 @@ export abstract class BaseSwapping {
         })
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected getTonTransactionRequest(_fee: TokenAmount, _feeV2: TokenAmount | undefined): TonTransactionData {
+    protected async getTonTransactionRequest(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _fee: TokenAmount,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _feeV2: TokenAmount | undefined
+    ): Promise<TonTransactionData> {
         throw new Error('getTonTransactionRequest not implemented')
     }
 

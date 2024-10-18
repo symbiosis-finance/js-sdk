@@ -22,7 +22,7 @@ export interface WaitForCompleteParams {
  * @param symbiosis - context class
  * @param chainId - chain evm id to check event
  * @param txId - transaction hash to check
- * @param tonBridgeInfo - optional, TON bridge info from TON bc
+ * @param txTon - optional, TON tx on bridge
  * @returns Transaction hash from portal contract in bitcoin network to user's wallet
  */
 export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitForCompleteParams): Promise<string> {
