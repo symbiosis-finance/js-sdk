@@ -564,9 +564,9 @@ export class Symbiosis {
     public async waitForComplete({
         chainId,
         txId,
-        tonBridgeInfo,
+        txTon,
     }: Omit<WaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
-        return waitForComplete({ symbiosis: this, chainId, txId, tonBridgeInfo })
+        return waitForComplete({ symbiosis: this, chainId, txId, txTon })
     }
 
     public getForwarderUrl(btcChainId: ChainId): string {
