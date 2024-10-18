@@ -47,20 +47,21 @@ export async function waitFromTonTxMined(
         throw new Error(`No LT`)
     }
 
+    const now = Math.floor(Date.now() / 1000)
     const tx = await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            debugger
             const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 20 })
             const filtered = txs.filter((tx) => {
+                if (tx.now < now) {
+                    return false
+                }
+
                 const senderAddress = tx.inMessage?.info.src
                 if (!Address.isAddress(senderAddress)) {
                     return false
                 }
 
-                if (!Address.parse(tonAddress).equals(senderAddress)) {
-                    return false
-                }
-                return tx.lt >= BigInt(lastTxLt)
+                return Address.parse(tonAddress).equals(senderAddress)
             })
             return filtered.length > 0 ? filtered[0] : undefined // is no reliable logic, we take just last sent tx
         },
