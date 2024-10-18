@@ -1,4 +1,5 @@
 import { Contract, EventFilter } from 'ethers'
+import type { Transaction } from '@ton/core'
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
@@ -8,12 +9,13 @@ import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
 import { isTonChainId } from '../chainUtils'
 
 import { BridgeTxInfo, BridgeRequestType } from './types'
+import { getTxTonBridgeInfo } from './getTxTonBridgeInfo'
 
 export interface WaitForCompleteParams {
     symbiosis: Symbiosis
     chainId: ChainId
     txId: string
-    tonBridgeInfo?: BridgeTxInfo
+    txTon?: Transaction
 }
 
 /**
@@ -23,17 +25,12 @@ export interface WaitForCompleteParams {
  * @param tonBridgeInfo - optional, TON bridge info from TON bc
  * @returns Transaction hash from portal contract in bitcoin network to user's wallet
  */
-export async function waitForComplete({
-    symbiosis,
-    chainId,
-    txId,
-    tonBridgeInfo,
-}: WaitForCompleteParams): Promise<string> {
+export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitForCompleteParams): Promise<string> {
     const txIdWithPrefix = txId.startsWith('0x') ? txId : `0x${txId}`
 
     let aBridgeInfo
-    if (isTonChainId(chainId) && tonBridgeInfo) {
-        aBridgeInfo = tonBridgeInfo // first part of the bridge on TON blockchain
+    if (isTonChainId(chainId) && txTon) {
+        aBridgeInfo = getTxTonBridgeInfo(txTon)
     } else {
         aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix) // first part of the bridge on EVM chain
     }
