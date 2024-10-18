@@ -25,7 +25,7 @@ export const chains: Chain[] = [
         id: ChainId.TON_MAINNET,
         name: 'TON',
         disabled: false,
-        explorer: 'https://tonscan.org',
+        explorer: 'https://tonviewer.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
@@ -36,7 +36,7 @@ export const chains: Chain[] = [
         id: ChainId.TON_TESTNET,
         name: 'TON',
         disabled: false,
-        explorer: 'https://testnet.tonscan.org',
+        explorer: 'https://testnet.tonviewer.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
