@@ -20,6 +20,7 @@ import { Symbiosis } from '../symbiosis'
 import { TokenAmount } from '../../entities'
 import { TonTransactionData } from '../types'
 import { Error } from '../error'
+import { JettonMaster, TonClient } from '@ton/ton'
 // import { WalletContractV4 } from '@ton/ton'
 
 export const EVM_TO_TON: Record<string, string> = {
@@ -561,9 +562,10 @@ interface MetaSynthesizeParams {
     finalReceiveSide: string
     finalOffset: number
     validUntil: number
+    tonWalletAddress?: string
 }
 
-export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactionData {
+export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise<TonTransactionData> {
     const {
         symbiosis,
         fee,
@@ -578,8 +580,13 @@ export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactio
         finalCallData,
         finalOffset,
         validUntil,
+        tonWalletAddress,
     } = params
-    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)?.tonPortal
+    const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)
+    if (!tonChainConfig) {
+        throw new Error(`No TON chain config for chain ${amountIn.token.chainId}`)
+    }
+    const tonPortal = tonChainConfig.tonPortal
     if (!tonPortal) {
         throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
     }
@@ -629,6 +636,19 @@ export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactio
             ],
         }
     } else if (USDT_EVM?.equals(amountIn.token)) {
+        if (!tonWalletAddress) {
+            throw new Error('Ton wallet address is required')
+        }
+
+        const minter = JettonMaster.create(Address.parse(EVM_TO_TON[USDT_EVM.address.toLowerCase()]))
+        const tonClient = new TonClient({
+            endpoint: tonChainConfig.rpc,
+        })
+
+        const minterContract = await tonClient.open(minter)
+
+        const myJettonWallet = await minterContract.getWalletAddress(Address.parse(tonWalletAddress))
+
         const cell = beginCell()
             .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
             .storeUint(0, 64) // query id
@@ -644,8 +664,8 @@ export function buildMetaSynthesize(params: MetaSynthesizeParams): TonTransactio
             validUntil,
             messages: [
                 {
-                    address: '', // [TODO]: Calc your own jetton wallet address to send jettons
-                    amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
+                    address: myJettonWallet.toString(),
+                    amount: MIN_META_SYNTH_JETTONS.toString(),
                     payload: cell.toBoc().toString('base64'),
                 },
             ],

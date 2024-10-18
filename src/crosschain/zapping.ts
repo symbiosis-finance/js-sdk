@@ -127,7 +127,7 @@ export class Zapping {
                 transactionRequest,
             }
         } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
-            const transactionRequest = this.getTonTransactionRequest(fee)
+            const transactionRequest = await this.getTonTransactionRequest(fee)
             payload = {
                 transactionType: 'ton',
                 transactionRequest,
@@ -180,7 +180,7 @@ export class Zapping {
         }).waitForComplete(receipt)
     }
 
-    private getTonTransactionRequest(fee: TokenAmount): TonTransactionData {
+    private async getTonTransactionRequest(fee: TokenAmount): Promise<TonTransactionData> {
         return buildMetaSynthesize({
             symbiosis: this.symbiosis,
             fee,
