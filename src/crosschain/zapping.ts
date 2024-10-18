@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { MaxUint256 } from '@ethersproject/constants'
-import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
+import { TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
@@ -30,7 +30,6 @@ import {
     TonTransactionData,
 } from './types'
 import { WrapTrade } from './trade'
-import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { isTonChainId } from './chainUtils'
 
 type ZappingExactInParams = {
@@ -168,16 +167,6 @@ export class Zapping {
             tokenAmountOut: this.omniLiquidity.amountOut,
             tokenAmountOutMin: this.omniLiquidity.amountOut,
         }
-    }
-
-    async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        return new LegacyWaitForComplete({
-            direction: 'mint',
-            chainIdOut: this.omniLiquidity.amountOut.token.chainId,
-            symbiosis: this.symbiosis,
-            revertableAddress: this.revertableAddress,
-            chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
     }
 
     private getTonTransactionRequest(fee: TokenAmount): TonTransactionData {

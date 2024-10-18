@@ -2,6 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { unwrapBtc } from './unwrapBtc'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 import { theBestOutput } from '../utils'
+import { ZappingBtc } from '../../zappingBtc'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, symbiosis, to } = context
@@ -33,7 +34,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                     poolConfig
                 )
                 combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
-                    const zappingBtc = symbiosis.newZappingBtc(poolConfig)
+                    const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
                     const { from, slippage, deadline } = context
 
                     const promise = zappingBtc.exactIn({

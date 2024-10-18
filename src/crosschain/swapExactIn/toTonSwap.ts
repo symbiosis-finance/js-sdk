@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
-import { Option, TON_TOKEN_DECIMALS } from '../zappingTon'
+import { Option, TON_TOKEN_DECIMALS, ZappingTon } from '../zappingTon'
 import { theBestOutput } from './utils'
 import { SwappingToTon } from '../swappingToTon'
 
@@ -62,7 +62,7 @@ function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResul
         .filter((pool) => pool.generalPurpose)
         .forEach((pool) => {
             options.forEach((option) => {
-                const zappingTon = symbiosis.newZappingTon(pool)
+                const zappingTon = new ZappingTon(symbiosis, pool)
                 const promise = zappingTon.exactIn({
                     tokenAmountIn,
                     option,
@@ -104,6 +104,5 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
     const nativeTonBridgePromises = nativeBridgeToTon(context)
     const symbiosisTonBridgePromises = symbiosisBridgeToTon(context)
 
-    // [TODO]: add native bridge promises
     return theBestOutput([...symbiosisTonBridgePromises, ...nativeTonBridgePromises])
 }

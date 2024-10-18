@@ -52,10 +52,7 @@ import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
 import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchRequest'
-import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
-import { ZappingTon } from './zappingTon'
-import { ZappingBtc } from './zappingBtc'
 import {
     waitForBtcDepositAccepted,
     waitForBtcEvmTxIssued,
@@ -67,7 +64,7 @@ import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
-import { isBtcChainId } from './chainUtils/btc'
+import { isBtcChainId } from './chainUtils'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
@@ -216,18 +213,6 @@ export class Symbiosis {
 
     public newZapping(omniPoolConfig: OmniPoolConfig) {
         return new Zapping(this, omniPoolConfig)
-    }
-
-    public newZappingThor(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingThor(this, omniPoolConfig)
-    }
-
-    public newZappingBtc(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingBtc(this, omniPoolConfig)
-    }
-
-    public newZappingTon(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingTon(this, omniPoolConfig)
     }
 
     public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
