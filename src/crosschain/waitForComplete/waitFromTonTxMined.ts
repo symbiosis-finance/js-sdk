@@ -33,7 +33,6 @@ export async function waitFromTonTxMined(
     }
 
     const tonPortal = tonChainConfig.tonPortal
-
     if (!tonPortal) {
         throw new Error(`Ton portal not found for chain ${chainId}`)
     }
@@ -42,45 +41,49 @@ export async function waitFromTonTxMined(
         endpoint: tonChainConfig.rpc,
     })
 
-    const accountInfo = await client.getContractState(Address.parse(tonPortal))
-    const lastTx = accountInfo.lastTransaction?.lt
+    const accountInfo = await client.getContractState(Address.parse(tonAddress))
+    const lastTxLt = accountInfo.lastTransaction?.lt
+    if (!lastTxLt) {
+        throw new Error(`No LT`)
+    }
 
-    let internalId, externalId
-
-    await longPolling<Transaction[]>({
+    const tx = await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            return client.getTransactions(Address.parse(tonPortal), { limit: 10, lt: lastTx })
-        },
-        successCondition: (txs) => {
-            let status = false
-
-            for (const tx of txs) {
-                const outMsgs = tx.outMessages
-                // case for TON only (called directly from user)
+            debugger
+            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 20 })
+            const filtered = txs.filter((tx) => {
                 const senderAddress = tx.inMessage?.info.src
-
-                if (Address.isAddress(senderAddress) && !Address.parse(tonAddress).equals(senderAddress)) {
-                    continue
+                if (!Address.isAddress(senderAddress)) {
+                    return false
                 }
 
-                for (const outMsg of outMsgs.values()) {
-                    if (outMsg?.info.type === 'external-out') {
-                        const parsedOracleRequest = parseOracleRequestBody(outMsg.body)
-
-                        if (parsedOracleRequest?.externalId && parsedOracleRequest?.internalId) {
-                            status = true
-                            internalId = parsedOracleRequest.internalId
-                            externalId = parsedOracleRequest.externalId
-                        }
-                    }
+                if (!Address.parse(tonAddress).equals(senderAddress)) {
+                    return false
                 }
-            }
-
-            return status
+                return tx.lt >= BigInt(lastTxLt)
+            })
+            return filtered.length > 0 ? filtered[0] : undefined // is no reliable logic, we take just last sent tx
+        },
+        successCondition: (tx) => {
+            return tx !== undefined
         },
         error: new waitFromTonTxCompleteError('Ton transaction not found on TON chain'),
     })
+    if (!tx) {
+        throw new Error(`No tx found`)
+    }
 
+    let internalId: string | undefined
+    let externalId: string | undefined
+    for (const outMsg of tx.outMessages.values()) {
+        if (outMsg?.info.type !== 'external-out') {
+            continue
+        }
+        const parsedOracleRequest = parseOracleRequestBody(outMsg.body)
+        internalId = parsedOracleRequest?.internalId
+        externalId = parsedOracleRequest?.externalId
+        break
+    }
     if (!internalId || !externalId) {
         throw new Error('Invalid oracle request body')
     }
