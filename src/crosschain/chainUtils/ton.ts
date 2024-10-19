@@ -547,6 +547,7 @@ export class Bridge implements Contract {
 export const MIN_META_SYNTH_TONS = toNano('0.02')
 export const MIN_META_SYNTH_JETTONS = toNano('0.1')
 export const MIN_SYNTH_TONS = toNano('0.015')
+export const MIN_SYNTH_JETTONS = toNano('0.1')
 
 interface MetaSynthesizeParams {
     symbiosis: Symbiosis
@@ -562,7 +563,6 @@ interface MetaSynthesizeParams {
     finalReceiveSide: string
     finalOffset: number
     validUntil: number
-    tonWalletAddress?: string
 }
 
 export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise<TonTransactionData> {
@@ -580,7 +580,6 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
         finalCallData,
         finalOffset,
         validUntil,
-        tonWalletAddress,
     } = params
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)
     if (!tonChainConfig) {
@@ -636,18 +635,17 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             ],
         }
     } else if (USDT_EVM?.equals(amountIn.token)) {
-        if (!tonWalletAddress) {
-            throw new Error('Ton wallet address is required')
-        }
-
-        const minter = JettonMaster.create(Address.parse(EVM_TO_TON[USDT_EVM.address.toLowerCase()]))
         const tonClient = new TonClient({
             endpoint: tonChainConfig.rpc,
         })
 
-        const minterContract = await tonClient.open(minter)
+        const jettonMaster = JettonMaster.create(Address.parse(EVM_TO_TON[USDT_EVM.address.toLowerCase()]))
 
-        const myJettonWallet = await minterContract.getWalletAddress(Address.parse(tonWalletAddress))
+        const provider = tonClient.provider(jettonMaster.address)
+
+        const jettonWalletAddress = await jettonMaster.getWalletAddress(provider, Address.parse(from))
+
+        console.log('USDT case jettonWalletAddress ----->', jettonWalletAddress.toString())
 
         const cell = beginCell()
             .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
@@ -664,7 +662,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             validUntil,
             messages: [
                 {
-                    address: myJettonWallet.toString(),
+                    address: jettonWalletAddress.toString(),
                     amount: MIN_META_SYNTH_JETTONS.toString(),
                     payload: cell.toBoc().toString('base64'),
                 },

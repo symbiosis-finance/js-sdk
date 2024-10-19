@@ -16,8 +16,9 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
-import { Bridge, EVM_TO_TON, MIN_SYNTH_TONS } from '../chainUtils/ton'
-import { Address } from '@ton/core'
+import { Bridge, EVM_TO_TON, MIN_SYNTH_JETTONS, MIN_SYNTH_TONS } from '../chainUtils/ton'
+import { Address, beginCell, toNano } from '@ton/core'
+import { JettonMaster, TonClient } from '@ton/ton'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context
@@ -290,13 +291,13 @@ function getTronTransactionRequest(
     })
 }
 
-function getTonTransactionRequest(
+async function getTonTransactionRequest(
     context: SwapExactInParams,
     fee: TokenAmount,
     revertableAddress: string,
     direction: Direction
-): TonTransactionData {
-    const { symbiosis, tokenAmountIn, tokenOut, to, deadline } = context
+): Promise<TonTransactionData> {
+    const { symbiosis, tokenAmountIn, tokenOut, to, from, deadline } = context
 
     const chainIdIn = tokenAmountIn.token.chainId
     const chainIdOut = tokenOut.chainId
@@ -327,6 +328,48 @@ function getTonTransactionRequest(
     })
 
     const tonFee = new TokenAmount(tokenAmountIn.token, MIN_SYNTH_TONS)
+
+    if (tokenAmountIn.token.symbol === 'USDT') {
+        const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainIdIn)
+        if (!to || !tonChainConfig) {
+            throw new Error('Ton wallet address is required or ton chain config is missing')
+        }
+
+        const tonClient = new TonClient({
+            endpoint: tonChainConfig.rpc,
+        })
+
+        // [TODO]: get from sdk or config, hardcoded for USDT testnet TON
+        const jettonMaster = JettonMaster.create(Address.parse('kQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tvwTQ'))
+
+        const provider = tonClient.provider(jettonMaster.address)
+
+        const jettonWalletAddress = await jettonMaster.getWalletAddress(provider, Address.parse(from))
+
+        console.log('USDT case jettonWalletAddress ----->', jettonWalletAddress.toString())
+
+        const jettonTransferBody = beginCell()
+            .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
+            .storeUint(0, 64) // query id
+            .storeCoins(BigInt(tokenAmountIn.raw.toString())) // jetton amount
+            .storeAddress(Address.parse(tonPortal)) // bridge contract address
+            .storeAddress(Address.parse(from)) // response_destination for excesses of ton
+            .storeBit(0) // null custom payload
+            .storeCoins(toNano('0.05')) // forward amount - if >0, will send notification message
+            .storeMaybeRef(cell)
+            .endCell()
+
+        return {
+            validUntil: deadline,
+            messages: [
+                {
+                    address: jettonWalletAddress.toString(),
+                    amount: MIN_SYNTH_JETTONS.toString(),
+                    payload: jettonTransferBody.toBoc().toString('base64'),
+                },
+            ],
+        }
+    }
 
     return {
         validUntil: deadline,
