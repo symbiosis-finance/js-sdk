@@ -47,7 +47,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
     const revertableAddress = getRevertableAddress(context)
     const fee = await getFee(context, direction)
     const amountOut = getAmountOut(context, fee)
-    const payload = getTransactionPayload(context, fee, revertableAddress, direction)
+    const payload = await getTransactionPayload(context, fee, revertableAddress, direction)
 
     let approveTo = ''
     if (payload.transactionType === 'tron') {

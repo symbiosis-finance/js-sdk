@@ -216,6 +216,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
                     },
                 },
+                {
+                    name: 'Wrapped TON',
+                    symbol: 'WTON',
+                    address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
             ],
             router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
             dexFee: 30,
@@ -298,6 +309,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
+                    },
+                },
+                {
+                    name: 'Wrapped TON',
+                    symbol: 'WTON',
+                    address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                     },
                 },
             ],
@@ -1589,6 +1611,47 @@ export const config: Config = {
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.TON_MAINNET,
+            rpc: 'https://toncenter.com/api/v2/jsonRPC',
+            filterBlockOffset: 0,
+            stables: [
+                {
+                    name: 'TON Coin',
+                    symbol: 'TON',
+                    address: '0x0000000000000000000000000000000BaDc0ffee', // EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALrcD_7sm7
+                    chainId: ChainId.TON_MAINNET,
+                    isNative: false,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+                {
+                    name: 'USDt',
+                    symbol: 'USDT',
+                    address: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe', // EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs
+                    chainId: ChainId.TON_MAINNET,
+                    isNative: false,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000',
+            bridge: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000',
+            tonPortal: 'EQDpUHhVl5lJ6Y47DCd0TWdXB_kd-U-N6KyAELePNjfj15HT',
         },
     ],
 }
