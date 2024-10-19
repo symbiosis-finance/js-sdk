@@ -217,12 +217,12 @@ function getAmountOut(context: SwapExactInParams, fee: TokenAmount) {
     return amountOut.subtract(fee)
 }
 
-function getTransactionPayload(
+async function getTransactionPayload(
     context: SwapExactInParams,
     fee: TokenAmount,
     revertableAddress: string,
     direction: Direction
-): SwapExactInTransactionPayload {
+): Promise<SwapExactInTransactionPayload> {
     const { tokenAmountIn } = context
     const chainIdIn = tokenAmountIn.token.chainId
     if (isTronChainId(chainIdIn)) {
@@ -235,7 +235,7 @@ function getTransactionPayload(
     }
 
     if (isTonChainId(chainIdIn)) {
-        const transactionRequest = getTonTransactionRequest(context, fee, revertableAddress, direction)
+        const transactionRequest = await getTonTransactionRequest(context, fee, revertableAddress, direction)
 
         return {
             transactionType: 'ton',
