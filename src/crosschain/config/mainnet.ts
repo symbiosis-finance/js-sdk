@@ -73,6 +73,13 @@ export const config: Config = {
             generalPurpose: false,
             chainExceptions: [ChainId.GRAVITY_MAINNET],
         },
+        {
+            // WTON
+            chainId: ChainId.BOBA_BNB,
+            address: '0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23',
+            oracle: '0xe717C95007cA64334c9facFFC1975310C3B98EE8',
+            generalPurpose: false,
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -1620,9 +1627,8 @@ export const config: Config = {
                 {
                     name: 'TON Coin',
                     symbol: 'TON',
-                    address: '0x0000000000000000000000000000000BaDc0ffee', // EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALrcD_7sm7
+                    address: '0x0000000000000000000000000000000BaDc0ffee',
                     chainId: ChainId.TON_MAINNET,
-                    isNative: false,
                     decimals: 9,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
@@ -1632,9 +1638,8 @@ export const config: Config = {
                 {
                     name: 'USDt',
                     symbol: 'USDT',
-                    address: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe', // EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs
+                    address: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe',
                     chainId: ChainId.TON_MAINNET,
-                    isNative: false,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',

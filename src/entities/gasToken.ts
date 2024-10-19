@@ -15,17 +15,19 @@ const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
         },
     })
 
-export const GAS_TOKEN_METIS_MAINNET = new Token({
-    chainId: ChainId.METIS_MAINNET,
-    address: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
-    symbol: 'METIS',
-    decimals: 18,
-    icons: {
-        small: `https://s3.openocean.finance/token_logos/logos/1675591118302_8481324929046925.jpeg`,
-        large: `https://s3.openocean.finance/token_logos/logos/1675591118302_8481324929046925.jpeg`,
-    },
-    name: 'Metis',
-})
+const TOKEN_AS_GAS = (chainId: ChainId, address: string, symbol: string, iconId: number, decimals = 18) =>
+    new Token({
+        name: symbol,
+        symbol,
+        address,
+        chainId,
+        decimals,
+        icons: {
+            small: `https://s2.coinmarketcap.com/static/img/coins/64x64/${iconId}.png`,
+            large: `https://s2.coinmarketcap.com/static/img/coins/64x64/${iconId}.png`,
+        },
+    })
+
 export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ETH_MAINNET]: GAS(ChainId.ETH_MAINNET, 'ETH', 1027),
     [ChainId.ETH_RINKEBY]: GAS(ChainId.ETH_RINKEBY, 'ETH', 1027),
@@ -71,7 +73,12 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.TRON_MAINNET]: GAS(ChainId.TRON_MAINNET, 'TRX', 1958, 6),
     [ChainId.SCROLL_MAINNET]: GAS(ChainId.SCROLL_MAINNET, 'ETH', 1027),
     [ChainId.MANTA_MAINNET]: GAS(ChainId.MANTA_MAINNET, 'ETH', 1027),
-    [ChainId.METIS_MAINNET]: GAS_TOKEN_METIS_MAINNET,
+    [ChainId.METIS_MAINNET]: TOKEN_AS_GAS(
+        ChainId.METIS_MAINNET,
+        '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
+        'METIS',
+        9640
+    ),
     [ChainId.OKX_X1_TESTNET]: GAS(ChainId.OKX_X1_TESTNET, 'OKB', 3897),
     [ChainId.BAHAMUT_MAINNET]: GAS(ChainId.BAHAMUT_MAINNET, 'FTN', 22615),
     [ChainId.MODE_MAINNET]: GAS(ChainId.MODE_MAINNET, 'ETH', 1027),
@@ -81,8 +88,20 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ZKLINK_MAINNET]: GAS(ChainId.ZKLINK_MAINNET, 'ETH', 1027),
     [ChainId.SEPOLIA_TESTNET]: GAS(ChainId.SEPOLIA_TESTNET, 'ETH', 1027),
     [ChainId.CORE_MAINNET]: GAS(ChainId.CORE_MAINNET, 'CORE', 23254),
-    [ChainId.TON_MAINNET]: GAS(ChainId.TON_MAINNET, 'TON', 11419, 9),
-    [ChainId.TON_TESTNET]: GAS(ChainId.TON_TESTNET, 'TON', 11419, 9),
+    [ChainId.TON_MAINNET]: TOKEN_AS_GAS(
+        ChainId.TON_MAINNET,
+        '0x0000000000000000000000000000000BaDc0ffee',
+        'TON',
+        11419,
+        9
+    ),
+    [ChainId.TON_TESTNET]: TOKEN_AS_GAS(
+        ChainId.TON_TESTNET,
+        '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C',
+        'TON',
+        11419,
+        9
+    ),
     [ChainId.TAIKO_MAINNET]: GAS(ChainId.TAIKO_MAINNET, 'ETH', 1027),
     [ChainId.SEI_EVM_MAINNET]: GAS(ChainId.SEI_EVM_MAINNET, 'SEI', 23149),
     [ChainId.ZETACHAIN_MAINNET]: GAS(ChainId.ZETACHAIN_MAINNET, 'ZETA', 21259),

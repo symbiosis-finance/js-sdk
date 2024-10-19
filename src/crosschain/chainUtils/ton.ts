@@ -7,7 +7,6 @@ import {
     Contract,
     contractAddress,
     ContractProvider,
-    // OpenedContract,
     Sender,
     SendMode,
     Slice,
@@ -21,11 +20,34 @@ import { TokenAmount } from '../../entities'
 import { TonTransactionData } from '../types'
 import { Error } from '../error'
 import { JettonMaster, TonClient } from '@ton/ton'
-// import { WalletContractV4 } from '@ton/ton'
 
-export const EVM_TO_TON: Record<string, string> = {
-    '0x7ea393298d1077e19ec59f8e3fe8fe642738c08c': 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4', // TON
-    '0x46deec715e419a1f0f5959b5c8450894959d2dbf': 'EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a', // USDT
+const TON_ADDRESSES_MAP = [
+    {
+        evm: '0x0000000000000000000000000000000BaDc0ffee',
+        ton: 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALrcD_7sm7', // TON
+    },
+    {
+        evm: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe',
+        ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs', // USDT
+    },
+    {
+        evm: '0x7ea393298d1077e19ec59f8e3fe8fe642738c08c', // TON testnet
+        ton: 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4',
+    },
+    {
+        evm: '0x46deec715e419a1f0f5959b5c8450894959d2dbf',
+        ton: 'EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a', // USDT testnet
+    },
+]
+
+export function getTonTokenAddress(address: string) {
+    const found = TON_ADDRESSES_MAP.find((item) => {
+        return item.evm.toLowerCase() === address.toLowerCase()
+    })
+    if (!found) {
+        throw new Error('TON address was not found')
+    }
+    return found.ton
 }
 
 export function isTonChainId(chainId: ChainId | undefined) {
@@ -601,10 +623,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
         .tokens()
         .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'usdt')
 
-    const tonTokenAddress = EVM_TO_TON[amountIn.token.address.toLowerCase()]
-    if (!tonTokenAddress) {
-        throw new Error('EVM address not found in EVM_TO_TON')
-    }
+    const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
 
     const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
@@ -639,7 +658,8 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             endpoint: tonChainConfig.rpc,
         })
 
-        const jettonMaster = JettonMaster.create(Address.parse(EVM_TO_TON[USDT_EVM.address.toLowerCase()]))
+        const tonTokenAddress = getTonTokenAddress(USDT_EVM.address)
+        const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
         const provider = tonClient.provider(jettonMaster.address)
 

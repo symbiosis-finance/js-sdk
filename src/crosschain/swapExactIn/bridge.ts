@@ -5,6 +5,7 @@ import { Error, ErrorCode } from '../error'
 import {
     getExternalId,
     getInternalId,
+    getTonTokenAddress,
     isEvmChainId,
     isTonChainId,
     isTronChainId,
@@ -16,7 +17,7 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
-import { Bridge, EVM_TO_TON, MIN_SYNTH_JETTONS, MIN_SYNTH_TONS } from '../chainUtils/ton'
+import { Bridge, MIN_SYNTH_JETTONS, MIN_SYNTH_TONS } from '../chainUtils'
 import { Address, beginCell, toNano } from '@ton/core'
 import { JettonMaster, TonClient } from '@ton/ton'
 
@@ -311,10 +312,7 @@ async function getTonTransactionRequest(
         throw new Error('Ton portal not found in symbiosis config')
     }
 
-    const tonTokenAddress = EVM_TO_TON[tokenAmountIn.token.address.toLowerCase()]
-    if (!tonTokenAddress) {
-        throw new Error('EVM address not found in EVM_TO_TON')
-    }
+    const tonTokenAddress = getTonTokenAddress(tokenAmountIn.token.address)
 
     const cell = Bridge.synthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
