@@ -16,7 +16,7 @@ import { secp256k1 as secp } from '@noble/curves/secp256k1'
 import { keccak256 } from 'ethers/lib/utils'
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
-import { TokenAmount } from '../../entities'
+import { Token, TokenAmount } from '../../entities'
 import { TonTransactionData } from '../types'
 import { Error } from '../error'
 import { JettonMaster, TonClient } from '@ton/ton'
@@ -575,9 +575,10 @@ interface MetaSynthesizeParams {
     symbiosis: Symbiosis
     fee: TokenAmount
     from: string
+    to: string
+    revertableAddress: string
     amountIn: TokenAmount
-    poolChainId: ChainId
-    evmAddress: string
+    chainIdOut: ChainId
     swapTokens: string[]
     secondSwapCallData: string
     secondDexRouter: string
@@ -587,14 +588,35 @@ interface MetaSynthesizeParams {
     validUntil: number
 }
 
+export function isWTon(symbiosis: Symbiosis, token: Token) {
+    const wton = symbiosis
+        .tokens()
+        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'ton')
+    if (!wton) {
+        return false
+    }
+    return wton.equals(token)
+}
+
+export function isUsdt(symbiosis: Symbiosis, token: Token) {
+    const usdt = symbiosis
+        .tokens()
+        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'usdt')
+    if (!usdt) {
+        return false
+    }
+    return usdt.equals(token)
+}
+
 export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise<TonTransactionData> {
     const {
         symbiosis,
         fee,
         from,
+        to,
+        revertableAddress,
         amountIn,
-        evmAddress,
-        poolChainId,
+        chainIdOut,
         swapTokens,
         secondDexRouter,
         secondSwapCallData,
@@ -612,28 +634,17 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
         throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
-    const synthesisAddress = symbiosis.synthesis(poolChainId).address
-    const bridgeAddress = symbiosis.bridge(poolChainId).address
-
-    const WTON_EVM = symbiosis
-        .tokens()
-        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'ton')
-
-    const USDT_EVM = symbiosis
-        .tokens()
-        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'usdt')
-
     const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
 
     const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
         token: Address.parse(tonTokenAddress), // simulate jetton for gas token TEP-161
         amount: BigInt(amountIn.raw.toString()),
-        chain2Address: Buffer.from(evmAddress.slice(2), 'hex'),
-        receiveSide: Buffer.from(synthesisAddress.slice(2), 'hex'),
-        oppositeBridge: Buffer.from(bridgeAddress.slice(2), 'hex'),
-        chainId: BigInt(poolChainId),
-        revertableAddress: Buffer.from(evmAddress.slice(2), 'hex'), // evm this.to
+        chain2Address: Buffer.from(to.slice(2), 'hex'),
+        receiveSide: Buffer.from(symbiosis.synthesis(chainIdOut).address.slice(2), 'hex'),
+        oppositeBridge: Buffer.from(symbiosis.bridge(chainIdOut).address.slice(2), 'hex'),
+        chainId: BigInt(chainIdOut),
+        revertableAddress: Buffer.from(revertableAddress.slice(2), 'hex'),
         swapTokens: swapTokens.map((token) => Buffer.from(token.slice(2), 'hex')), // sTON, sWTON host chain tokens
         secondDexRouter: Buffer.from(secondDexRouter.slice(2), 'hex'),
         secondSwapCallData: Buffer.from(secondSwapCallData.slice(2), 'hex'),
@@ -642,23 +653,25 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
         finalOffset: BigInt(finalOffset),
     })
 
-    if (WTON_EVM?.equals(amountIn.token)) {
+    const tonFee = new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)
+
+    if (isWTon(symbiosis, amountIn.token)) {
         return {
             validUntil,
             messages: [
                 {
                     address: tonPortal,
-                    amount: amountIn.add(new TokenAmount(amountIn.token, MIN_META_SYNTH_TONS)).raw.toString(), // FIXME not possible to sum USDT and TON
+                    amount: amountIn.add(tonFee).raw.toString(),
                     payload: metaSynthesizeBody.toBoc().toString('base64'),
                 },
             ],
         }
-    } else if (USDT_EVM?.equals(amountIn.token)) {
+    } else if (isUsdt(symbiosis, amountIn.token)) {
         const tonClient = new TonClient({
             endpoint: tonChainConfig.rpc,
         })
 
-        const tonTokenAddress = getTonTokenAddress(USDT_EVM.address)
+        const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
         const provider = tonClient.provider(jettonMaster.address)
@@ -684,6 +697,94 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
                 {
                     address: jettonWalletAddress.toString(),
                     amount: MIN_META_SYNTH_JETTONS.toString(),
+                    payload: cell.toBoc().toString('base64'),
+                },
+            ],
+        }
+    }
+
+    throw new Error('No TON transaction request. Unsupported token')
+}
+
+interface SynthesizeParams {
+    symbiosis: Symbiosis
+    fee: TokenAmount
+    amountIn: TokenAmount
+    chainIdOut: ChainId
+    from: string
+    to: string
+    revertableAddress: string
+    validUntil: number
+}
+
+export async function buildSynthesize(params: SynthesizeParams): Promise<TonTransactionData> {
+    const { symbiosis, fee, from, amountIn, to, chainIdOut, validUntil, revertableAddress } = params
+    const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)
+    if (!tonChainConfig) {
+        throw new Error(`No TON chain config for chain ${amountIn.token.chainId}`)
+    }
+    const tonPortal = tonChainConfig.tonPortal
+    if (!tonPortal) {
+        throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
+    }
+
+    const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
+
+    const synthesizeMessage = Bridge.synthesizeMessage({
+        stableBridgingFee: BigInt(fee.raw.toString()),
+        token: Address.parse(tonTokenAddress),
+        amount: BigInt(amountIn.raw.toString()),
+        chain2Address: Buffer.from(to.slice(2), 'hex'),
+        receiveSide: Buffer.from(symbiosis.synthesis(chainIdOut).address.slice(2), 'hex'),
+        oppositeBridge: Buffer.from(symbiosis.bridge(chainIdOut).address.slice(2), 'hex'),
+        revertableAddress: Buffer.from(revertableAddress.slice(2), 'hex'),
+        chainId: BigInt(chainIdOut),
+    })
+
+    const tonFee = new TokenAmount(amountIn.token, MIN_SYNTH_TONS)
+
+    if (isWTon(symbiosis, amountIn.token)) {
+        return {
+            validUntil,
+            messages: [
+                {
+                    address: tonPortal,
+                    amount: amountIn.add(tonFee).raw.toString(),
+                    payload: synthesizeMessage.toBoc().toString('base64'),
+                },
+            ],
+        }
+    } else if (isUsdt(symbiosis, amountIn.token)) {
+        const tonClient = new TonClient({
+            endpoint: tonChainConfig.rpc,
+        })
+
+        const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
+        const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
+
+        const provider = tonClient.provider(jettonMaster.address)
+
+        const jettonWalletAddress = await jettonMaster.getWalletAddress(provider, Address.parse(from))
+
+        console.log('USDT case jettonWalletAddress ----->', jettonWalletAddress.toString())
+
+        const cell = beginCell()
+            .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
+            .storeUint(0, 64) // query id
+            .storeCoins(BigInt(amountIn.raw.toString())) // jetton amount
+            .storeAddress(Address.parse(tonPortal)) // destination
+            .storeAddress(Address.parse(from)) // response_destination for excesses of ton
+            .storeBit(0) // null custom payload
+            .storeCoins(toNano('0.05')) // forward amount - if >0, will send notification message
+            .storeMaybeRef(synthesizeMessage)
+            .endCell()
+
+        return {
+            validUntil,
+            messages: [
+                {
+                    address: jettonWalletAddress.toString(),
+                    amount: MIN_SYNTH_JETTONS.toString(),
                     payload: cell.toBoc().toString('base64'),
                 },
             ],

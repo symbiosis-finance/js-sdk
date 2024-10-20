@@ -31,6 +31,7 @@ import {
 } from './types'
 import { WrapTrade } from './trade'
 import { isTonChainId } from './chainUtils'
+import { parseUnits } from '@ethersproject/units'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount
@@ -86,6 +87,8 @@ export class Zapping {
         this.ttl = deadline - Math.floor(Date.now() / 1000)
 
         if (isTronToken(this.tokenAmountIn.token)) {
+            this.revertableAddress = this.symbiosis.getRevertableAddress(this.omniPoolConfig.chainId)
+        } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
             this.revertableAddress = this.symbiosis.getRevertableAddress(this.omniPoolConfig.chainId)
         } else {
             this.revertableAddress = this.from
@@ -175,9 +178,10 @@ export class Zapping {
             fee,
             validUntil: this.deadline,
             from: this.from,
+            to: this.to,
+            revertableAddress: this.revertableAddress,
             amountIn: this.tokenAmountIn,
-            poolChainId: this.omniPoolConfig.chainId,
-            evmAddress: this.to,
+            chainIdOut: this.omniPoolConfig.chainId,
             secondDexRouter: this.multicallRouter.address,
             secondSwapCallData: this.getMulticallData(),
             swapTokens: [this.synthToken.address, this.synthToken.address],
@@ -383,8 +387,9 @@ export class Zapping {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.omniPoolConfig.chainId
 
+        // TODO remove after advisor is implemented
         if (isTonChainId(chainIdIn)) {
-            return new TokenAmount(this.synthToken, '0')
+            return new TokenAmount(this.synthToken, parseUnits('0.1', this.synthToken.decimals).toString())
         }
 
         const portal = this.symbiosis.portal(chainIdIn)

@@ -5,6 +5,7 @@ import { ChainId } from '../constants'
 import { SwapExactInParams, SwapExactInResult } from './types'
 import { CROSS_CHAIN_ID } from './constants'
 import { AddressZero } from '@ethersproject/constants'
+import { parseUnits } from '@ethersproject/units'
 
 export const TON_TOKEN_DECIMALS = 9
 
@@ -27,7 +28,7 @@ export class SwappingToTon extends BaseSwapping {
         const feeToken = this.transitTokenOut
 
         return {
-            fee: new TokenAmount(feeToken, '1000000'),
+            fee: new TokenAmount(feeToken, parseUnits('0.1', feeToken.decimals).toString()),
             save: new TokenAmount(feeToken, '0'),
         }
     }

@@ -3,6 +3,7 @@ import { Token, TokenAmount } from '../entities'
 import { buildMetaSynthesize, tronAddressToEvm } from './chainUtils'
 import { TonTransactionData } from './types'
 import { BaseSwapping } from './baseSwapping'
+import { parseUnits } from '@ethersproject/units'
 
 export class SwappingFromTon extends BaseSwapping {
     protected async getTonTransactionRequest(
@@ -21,8 +22,9 @@ export class SwappingFromTon extends BaseSwapping {
             secondSwapCallData: secondSwapCallData as string,
             swapTokens: this.swapTokens().map(tronAddressToEvm),
             from: this.from,
-            evmAddress: this.to,
-            poolChainId: this.omniPoolConfig.chainId,
+            to: this.to,
+            revertableAddress: this.getRevertableAddress('AB'),
+            chainIdOut: this.omniPoolConfig.chainId,
             validUntil: this.deadline,
             finalReceiveSide: tronAddressToEvm(this.transit.isV2() ? this.finalReceiveSideV2() : AddressZero),
             finalCallData: this.transit.isV2() ? this.finalCalldataV2(feeV2) : '',
@@ -33,7 +35,7 @@ export class SwappingFromTon extends BaseSwapping {
     // TODO rm after advisor is ready
     protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         return {
-            fee: new TokenAmount(feeToken, '1000000'),
+            fee: new TokenAmount(feeToken, parseUnits('0.1', feeToken.decimals).toString()),
             save: new TokenAmount(feeToken, '0'),
         }
     }

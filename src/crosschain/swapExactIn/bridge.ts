@@ -3,9 +3,9 @@ import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, To
 import { AddressZero } from '@ethersproject/constants'
 import { Error, ErrorCode } from '../error'
 import {
+    buildSynthesize,
     getExternalId,
     getInternalId,
-    getTonTokenAddress,
     isEvmChainId,
     isTonChainId,
     isTronChainId,
@@ -17,9 +17,8 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
-import { Bridge, MIN_SYNTH_JETTONS, MIN_SYNTH_TONS } from '../chainUtils'
-import { Address, beginCell, toNano } from '@ton/core'
-import { JettonMaster, TonClient } from '@ton/ton'
+import { Address } from '@ton/core'
+import { parseUnits } from '@ethersproject/units'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context
@@ -118,7 +117,7 @@ async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
 
     // TODO remove after advisor is implemented
     if (isTonChainId(chainIdIn)) {
-        return new TokenAmount(tokenOut, '1000000')
+        return new TokenAmount(tokenOut, parseUnits('0.1', tokenOut.decimals).toString())
     }
 
     const internalId = getInternalId({
@@ -166,7 +165,7 @@ async function getBurnFee(context: SwapExactInParams): Promise<TokenAmount> {
 
     // TODO remove after advisor is implemented
     if (isTonChainId(chainIdOut)) {
-        return new TokenAmount(tokenOut, '1000000')
+        return new TokenAmount(tokenOut, parseUnits('0.1', tokenOut.decimals).toString())
     }
 
     const internalId = getInternalId({
@@ -298,87 +297,22 @@ async function getTonTransactionRequest(
     revertableAddress: string,
     direction: Direction
 ): Promise<TonTransactionData> {
-    const { symbiosis, tokenAmountIn, tokenOut, to, from, deadline } = context
-
-    const chainIdIn = tokenAmountIn.token.chainId
-    const chainIdOut = tokenOut.chainId
-
     if (direction === 'burn') {
         throw new Error('Burn is not supported on Tron')
     }
 
-    const tonPortal = symbiosis.config.chains.find((chain) => chain.id === chainIdIn)?.tonPortal
-    if (!tonPortal) {
-        throw new Error('Ton portal not found in symbiosis config')
-    }
+    const { symbiosis, tokenAmountIn, tokenOut, to, from, deadline } = context
 
-    const tonTokenAddress = getTonTokenAddress(tokenAmountIn.token.address)
-
-    const cell = Bridge.synthesizeMessage({
-        stableBridgingFee: BigInt(fee.raw.toString()),
-        token: Address.parse(tonTokenAddress),
-        amount: BigInt(tokenAmountIn.raw.toString()),
-        chain2Address: Buffer.from(to.slice(2), 'hex'),
-        receiveSide: Buffer.from(symbiosis.synthesis(chainIdOut).address.slice(2), 'hex'),
-        oppositeBridge: Buffer.from(symbiosis.bridge(chainIdOut).address.slice(2), 'hex'),
-        revertableAddress: Buffer.from(revertableAddress.slice(2), 'hex'),
-        chainId: BigInt(chainIdOut),
-    })
-
-    const tonFee = new TokenAmount(tokenAmountIn.token, MIN_SYNTH_TONS)
-
-    if (tokenAmountIn.token.symbol === 'USDT') {
-        const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainIdIn)
-        if (!to || !tonChainConfig) {
-            throw new Error('Ton wallet address is required or ton chain config is missing')
-        }
-
-        const tonClient = new TonClient({
-            endpoint: tonChainConfig.rpc,
-        })
-
-        // [TODO]: get from sdk or config, hardcoded for USDT testnet TON
-        const jettonMaster = JettonMaster.create(Address.parse('kQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tvwTQ'))
-
-        const provider = tonClient.provider(jettonMaster.address)
-
-        const jettonWalletAddress = await jettonMaster.getWalletAddress(provider, Address.parse(from))
-
-        console.log('USDT case jettonWalletAddress ----->', jettonWalletAddress.toString())
-
-        const jettonTransferBody = beginCell()
-            .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
-            .storeUint(0, 64) // query id
-            .storeCoins(BigInt(tokenAmountIn.raw.toString())) // jetton amount
-            .storeAddress(Address.parse(tonPortal)) // bridge contract address
-            .storeAddress(Address.parse(from)) // response_destination for excesses of ton
-            .storeBit(0) // null custom payload
-            .storeCoins(toNano('0.05')) // forward amount - if >0, will send notification message
-            .storeMaybeRef(cell)
-            .endCell()
-
-        return {
-            validUntil: deadline,
-            messages: [
-                {
-                    address: jettonWalletAddress.toString(),
-                    amount: MIN_SYNTH_JETTONS.toString(),
-                    payload: jettonTransferBody.toBoc().toString('base64'),
-                },
-            ],
-        }
-    }
-
-    return {
+    return buildSynthesize({
+        symbiosis,
+        fee,
+        amountIn: tokenAmountIn,
+        chainIdOut: tokenOut.chainId,
+        from,
+        to,
+        revertableAddress,
         validUntil: deadline,
-        messages: [
-            {
-                address: tonPortal,
-                amount: tokenAmountIn.add(tonFee).raw.toString(),
-                payload: cell.toBoc().toString('base64'),
-            },
-        ],
-    }
+    })
 }
 
 function getEvmTransactionRequest(

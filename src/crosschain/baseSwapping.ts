@@ -250,7 +250,7 @@ export abstract class BaseSwapping {
         }
     }
 
-    private getRevertableAddress(side: 'AB' | 'BC'): string {
+    protected getRevertableAddress(side: 'AB' | 'BC'): string {
         return this.revertableAddresses[side]
     }
 
