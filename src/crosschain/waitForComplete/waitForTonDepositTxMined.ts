@@ -73,13 +73,11 @@ class WaitForTonTxCompleteError extends Error {
 
 export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
-
     if (!tonChainConfig) {
         throw new Error('Ton chain config not found')
     }
 
     const tonPortal = tonChainConfig.tonPortal
-
     if (!tonPortal) {
         throw new Error(`Ton portal not found for chain ${chainId}`)
     }
@@ -90,34 +88,28 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         endpoint: tonChainConfig.rpc,
     })
 
-    let txTon = ''
-
-    await longPolling<Transaction[]>({
+    const tx = await longPolling<Transaction>({
         pollingFunction: async () => {
-            return client.getTransactions(Address.parse(tonPortal), { limit: 10, archival: true })
-        },
-        successCondition: (txs) => {
-            let status = false
-
-            for (const tx of txs) {
-                const outMsgs = tx.outMessages
-
-                for (const outMsg of outMsgs.values()) {
-                    if (outMsg?.info.type === 'external-out') {
-                        const burnCompletedEvent = parseBurnCompletedBody(outMsg.body)
-
-                        if (burnCompletedEvent?.externalId.equals(Buffer.from(externalId.slice(2), 'hex'))) {
-                            status = true
-                            txTon = outMsg.info.src.hash.toString()
-                        }
+            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 10, archival: true })
+            return txs.find((tx) => {
+                return tx.outMessages.values().find((msg) => {
+                    if (msg.info.type !== 'external-out') {
+                        return false
                     }
-                }
-            }
+                    const burnCompletedEvent = parseBurnCompletedBody(msg.body)
+                    if (!burnCompletedEvent) {
+                        return false
+                    }
 
-            return status
+                    return burnCompletedEvent.externalId.equals(Buffer.from(externalId.slice(2), 'hex'))
+                })
+            })
+        },
+        successCondition: (tx) => {
+            return tx !== undefined
         },
         error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
-    return txTon
+    return tx.hash().toString('hex')
 }
