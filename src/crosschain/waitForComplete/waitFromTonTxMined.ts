@@ -12,6 +12,8 @@ class waitFromTonTxCompleteError extends Error {
     }
 }
 
+const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
+
 // [TODO]: Implement jetton case opcode 0 (return unused TON)
 export async function waitFromTonTxMined(
     symbiosis: Symbiosis,
@@ -43,7 +45,24 @@ export async function waitFromTonTxMined(
                     return false
                 }
 
+                // 1. case for jetton transfer
+                const bodyInMsg = tx.inMessage?.body
+
+                if (bodyInMsg) {
+                    const body = bodyInMsg.beginParse()
+                    const opcode = body.loadUint(32).toString(16)
+                    body.loadUint(64) // query id skip
+                    body.loadCoins() // amount skip
+                    const senderAddress = body.loadAddress() // sender
+
+                    if (opcode === TRANSFER_NOTIFICATION_OPCODE && senderAddress.equals(Address.parse(tonAddress))) {
+                        return true
+                    }
+                }
+
+                // 2. case for TON transfer
                 const senderAddress = tx.inMessage?.info.src
+
                 if (!Address.isAddress(senderAddress)) {
                     return false
                 }

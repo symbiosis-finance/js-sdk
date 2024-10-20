@@ -4,7 +4,7 @@ import { BridgeTxInfo } from './types'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const ORACLE_REQUEST_OPCODE = 0x7b425851
-// const TRANSFER_NOTIFICATION_OPCODE = 0x0
+const TRANSFER_NOTIFICATION_OPCODE = '7362d09c' // jetton transfer
 
 const META_SYNTHESIZE_SELECTOR = 'c29a91bc' // metaMintSyntheticToken(...)
 const SYNTHESIZE_SELECTOR = 'a83e754b' // mintSyntheticToken(...)
