@@ -37,7 +37,7 @@ export async function waitFromTonTxMined(
 
     return await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 20 })
+            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 20, archival: true })
             const filtered = txs.filter((tx) => {
                 if (tx.now < now) {
                     return false

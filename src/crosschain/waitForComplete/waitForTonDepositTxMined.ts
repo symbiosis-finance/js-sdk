@@ -6,6 +6,7 @@ import { solidityKeccak256 } from 'ethers/lib/utils'
 import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
+import { AddressZero } from '@ethersproject/constants'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -83,9 +84,7 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         throw new Error(`Ton portal not found for chain ${chainId}`)
     }
 
-    // take first 20 bytes (evm address size) of tonPortal base64 address
-    const receiveSide = `0x${Buffer.from(tonPortal, 'base64').toString('hex').slice(0, 40)}`
-    const externalId = _getExternalIdTon({ internalId, receiveSide, chainId })
+    const externalId = _getExternalIdTon({ internalId, receiveSide: AddressZero, chainId })
 
     const client = new TonClient({
         endpoint: tonChainConfig.rpc,
@@ -95,7 +94,7 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     await longPolling<Transaction[]>({
         pollingFunction: async () => {
-            return client.getTransactions(Address.parse(tonPortal), { limit: 10 })
+            return client.getTransactions(Address.parse(tonPortal), { limit: 10, archival: true })
         },
         successCondition: (txs) => {
             let status = false

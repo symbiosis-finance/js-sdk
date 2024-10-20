@@ -91,7 +91,7 @@ export const config: Config = {
                     address: '0x46deec715e419a1f0f5959b5c8450894959d2dbf', // derived from EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a
                     chainId: ChainId.TON_TESTNET,
                     isNative: false,
-                    decimals: 6,
+                    decimals: 9,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',

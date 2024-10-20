@@ -31,7 +31,7 @@ const TON_ADDRESSES_MAP = [
         ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs', // USDT
     },
     {
-        evm: '0x7ea393298d1077e19ec59f8e3fe8fe642738c08c', // TON testnet
+        evm: '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C', // TON testnet
         ton: 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4',
     },
     {
@@ -45,7 +45,7 @@ export function getTonTokenAddress(address: string) {
         return item.evm.toLowerCase() === address.toLowerCase()
     })
     if (!found) {
-        throw new Error('TON address was not found')
+        throw new Error(`TON address was not found by evm address ${address}`)
     }
     return found.ton
 }
@@ -570,6 +570,7 @@ export const MIN_META_SYNTH_TONS = toNano('0.02')
 export const MIN_META_SYNTH_JETTONS = toNano('0.1')
 export const MIN_SYNTH_TONS = toNano('0.015')
 export const MIN_SYNTH_JETTONS = toNano('0.1')
+export const NOTIFICATION_PAYMENT = toNano('0.05')
 
 interface MetaSynthesizeParams {
     symbiosis: Symbiosis
@@ -687,7 +688,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             .storeAddress(Address.parse(tonPortal)) // destination
             .storeAddress(Address.parse(from)) // response_destination for excesses of ton
             .storeBit(0) // null custom payload
-            .storeCoins(toNano('0.05')) // forward amount - if >0, will send notification message
+            .storeCoins(NOTIFICATION_PAYMENT) // forward amount - if >0, will send notification message
             .storeMaybeRef(metaSynthesizeBody)
             .endCell()
 
@@ -775,7 +776,7 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
             .storeAddress(Address.parse(tonPortal)) // destination
             .storeAddress(Address.parse(from)) // response_destination for excesses of ton
             .storeBit(0) // null custom payload
-            .storeCoins(toNano('0.05')) // forward amount - if >0, will send notification message
+            .storeCoins(NOTIFICATION_PAYMENT) // forward amount - if >0, will send notification message
             .storeMaybeRef(synthesizeMessage)
             .endCell()
 

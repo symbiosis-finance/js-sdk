@@ -43,7 +43,7 @@
             "id": 1
         },
         {
-            "decimals": 6,
+            "decimals": 9,
             "symbol": "USDT",
             "name": "USDt",
             "chainId": 85918,
@@ -87,7 +87,7 @@
             "originalId": 1
         },
         {
-            "decimals": 6,
+            "decimals": 9,
             "symbol": "sUSDT",
             "name": "sUSDT",
             "chainId": 97,
