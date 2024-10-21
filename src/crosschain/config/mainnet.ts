@@ -79,6 +79,7 @@ export const config: Config = {
             address: '0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23',
             oracle: '0xe717C95007cA64334c9facFFC1975310C3B98EE8',
             generalPurpose: false,
+            chainExceptions: [ChainId.ETH_MAINNET, ChainId.BSC_MAINNET],
         },
     ],
     revertableAddress: {
