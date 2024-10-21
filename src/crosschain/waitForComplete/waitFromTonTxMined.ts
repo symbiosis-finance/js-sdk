@@ -51,12 +51,14 @@ export async function waitFromTonTxMined(
                 if (bodyInMsg) {
                     const body = bodyInMsg.beginParse()
                     const opcode = body.loadUint(32).toString(16)
-                    body.loadUint(64) // query id skip
-                    body.loadCoins() // amount skip
-                    const senderAddress = body.loadAddress() // sender
 
-                    if (opcode === TRANSFER_NOTIFICATION_OPCODE && senderAddress.equals(Address.parse(tonAddress))) {
-                        return true
+                    if (opcode === TRANSFER_NOTIFICATION_OPCODE) {
+                        body.loadUint(64) // query id skip
+                        body.loadCoins() // amount skip
+                        const senderAddress = body.loadAddress()
+                        if (senderAddress.equals(Address.parse(tonAddress))) {
+                            return true
+                        }
                     }
                 }
 
