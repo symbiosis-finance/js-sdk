@@ -13,13 +13,15 @@ import {
     toNano,
 } from '@ton/core'
 import { secp256k1 as secp } from '@noble/curves/secp256k1'
+import { JettonMaster, TonClient } from '@ton/ton'
+import { getHttpEndpoint } from '@orbs-network/ton-access'
 import { keccak256 } from 'ethers/lib/utils'
+
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { Token, TokenAmount } from '../../entities'
 import { TonTransactionData } from '../types'
 import { Error } from '../error'
-import { JettonMaster, TonClient } from '@ton/ton'
 
 const TON_ADDRESSES_MAP = [
     {
@@ -668,8 +670,13 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             ],
         }
     } else if (isUsdt(symbiosis, amountIn.token)) {
+        // [TODO]: Can't do because same address for both mainnet and testnet
+        // const isTestnet = tonChainConfig.id === ChainId.TON_TESTNET
+        const isTestnet = tonPortal === 'kQChdry7W2UrILq1Wm1SN3WASMR8eWOAHQaDugEgOMVAcbXX'
+
+        const endpoint = await getHttpEndpoint({ network: isTestnet ? 'testnet' : 'mainnet' })
         const tonClient = new TonClient({
-            endpoint: tonChainConfig.rpc,
+            endpoint,
         })
 
         const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
@@ -756,8 +763,13 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
             ],
         }
     } else if (isUsdt(symbiosis, amountIn.token)) {
+        // [TODO]: Can't do because same address for both mainnet and testnet
+        // const isTestnet = tonChainConfig.id === ChainId.TON_TESTNET
+        const isTestnet = tonPortal === 'kQChdry7W2UrILq1Wm1SN3WASMR8eWOAHQaDugEgOMVAcbXX'
+        const endpoint = await getHttpEndpoint({ network: isTestnet ? 'testnet' : 'mainnet' })
+
         const tonClient = new TonClient({
-            endpoint: tonChainConfig.rpc,
+            endpoint,
         })
 
         const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
