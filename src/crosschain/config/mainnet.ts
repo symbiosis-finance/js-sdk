@@ -1627,7 +1627,7 @@ export const config: Config = {
                 {
                     name: 'TON Coin',
                     symbol: 'TON',
-                    address: '0x0000000000000000000000000000000BaDc0ffee',
+                    address: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
                     chainId: ChainId.TON_MAINNET,
                     decimals: 9,
                     icons: {
