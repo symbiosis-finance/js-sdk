@@ -1,10 +1,8 @@
-import { TonClient } from '@ton/ton'
 import { Address, Transaction } from '@ton/core'
 
 import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
-import { getHttpEndpoint } from '@orbs-network/ton-access'
 
 class waitFromTonTxCompleteError extends Error {
     constructor(message: string) {
@@ -32,14 +30,7 @@ export async function waitFromTonTxMined(
         throw new Error(`Ton portal not found for chain ${chainId}`)
     }
 
-    // [TODO]: Can't do because same address for both mainnet and testnet
-    const isTestnet = tonPortal === 'kQChdry7W2UrILq1Wm1SN3WASMR8eWOAHQaDugEgOMVAcbXX'
-    // const isTestnet = tonChainConfig.id === ChainId.TON_TESTNET
-    const endpoint = await getHttpEndpoint({ network: isTestnet ? 'testnet' : 'mainnet' })
-
-    const client = new TonClient({
-        endpoint,
-    })
+    const client = await symbiosis.getTonClient()
 
     const now = Math.floor(Date.now() / 1000)
 

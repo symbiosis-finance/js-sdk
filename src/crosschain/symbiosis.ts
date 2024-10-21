@@ -66,6 +66,8 @@ import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { isBtcChainId } from './chainUtils'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
+import { getHttpEndpoint, Network } from '@orbs-network/ton-access'
+import { TonClient } from '@ton/ton'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -83,6 +85,7 @@ export class Symbiosis {
 
     public readonly dataProvider: DataProvider
     public readonly config: Config
+    public readonly configName: ConfigName
     public readonly clientId: string
     public readonly isDirectRouteClient: boolean
 
@@ -144,12 +147,13 @@ export class Symbiosis {
         return json['percent'] as number
     }
 
-    public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
-        if (config === 'mainnet') {
+    public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
+        this.configName = configName
+        if (configName === 'mainnet') {
             this.config = mainnet
-        } else if (config === 'testnet') {
+        } else if (configName === 'testnet') {
             this.config = testnet
-        } else if (config === 'dev') {
+        } else if (configName === 'dev') {
             this.config = dev
         } else {
             throw new Error('Unknown config name')
@@ -180,7 +184,7 @@ export class Symbiosis {
 
         this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
 
-        this.configCache = new ConfigCache(config)
+        this.configCache = new ConfigCache(configName)
 
         this.clientId = utils.formatBytes32String(clientId)
         this.isDirectRouteClient = (overrideConfig?.directRouteClients || []).includes(clientId)
@@ -192,6 +196,12 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
+    }
+
+    public async getTonClient(): Promise<TonClient> {
+        const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
+        const endpoint = await getHttpEndpoint({ network })
+        return new TonClient({ endpoint })
     }
 
     public chains(): Chain[] {

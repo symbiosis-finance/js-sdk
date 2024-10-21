@@ -1,4 +1,3 @@
-import { TonClient } from '@ton/ton'
 import { Address, Cell, Transaction } from '@ton/core'
 import { Maybe } from '@ton/ton/dist/utils/maybe'
 import { solidityKeccak256 } from 'ethers/lib/utils'
@@ -7,7 +6,6 @@ import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
 import { AddressZero } from '@ethersproject/constants'
-import { getHttpEndpoint } from '@orbs-network/ton-access'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -85,15 +83,7 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     const externalId = _getExternalIdTon({ internalId, receiveSide: AddressZero, chainId })
 
-    // [TODO]: Can't do because same address for both mainnet and testnet
-    // const isTestnet = tonChainConfig.id === ChainId.TON_TESTNET
-    const isTestnet = tonPortal === 'kQChdry7W2UrILq1Wm1SN3WASMR8eWOAHQaDugEgOMVAcbXX'
-
-    const endpoint = await getHttpEndpoint({ network: isTestnet ? 'testnet' : 'mainnet' })
-
-    const client = new TonClient({
-        endpoint,
-    })
+    const client = await symbiosis.getTonClient()
 
     const tx = await longPolling<Transaction>({
         pollingFunction: async () => {
