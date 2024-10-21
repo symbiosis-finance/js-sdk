@@ -199,9 +199,15 @@ export class Symbiosis {
     }
 
     public async getTonClient(): Promise<TonClient> {
-        const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
-        const endpoint = await getHttpEndpoint({ network })
-        return new TonClient({ endpoint })
+        return this.dataProvider.get(
+            ['tonClient'],
+            async () => {
+                const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
+                const endpoint = await getHttpEndpoint({ network })
+                return new TonClient({ endpoint })
+            },
+            60 // 1 minute
+        )
     }
 
     public chains(): Chain[] {
