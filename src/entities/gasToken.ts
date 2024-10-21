@@ -90,7 +90,7 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.CORE_MAINNET]: GAS(ChainId.CORE_MAINNET, 'CORE', 23254),
     [ChainId.TON_MAINNET]: TOKEN_AS_GAS(
         ChainId.TON_MAINNET,
-        '0x0000000000000000000000000000000BaDc0ffee',
+        '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
         'TON',
         11419,
         9

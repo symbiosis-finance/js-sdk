@@ -23,8 +23,8 @@ import { JettonMaster, TonClient } from '@ton/ton'
 
 const TON_ADDRESSES_MAP = [
     {
-        evm: '0x0000000000000000000000000000000BaDc0ffee',
-        ton: 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALrcD_7sm7', // TON
+        evm: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
+        ton: 'EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I', // TON
     },
     {
         evm: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe',
