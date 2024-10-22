@@ -1,6 +1,6 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
-import { Token } from '../../entities'
+import { GAS_TOKEN, Token } from '../../entities'
 import { Option, TON_TOKEN_DECIMALS, ZappingTon } from '../zappingTon'
 import { theBestOutput } from './utils'
 import { SwappingToTon } from '../swappingToTon'
@@ -47,7 +47,7 @@ const OPTIONS: Option[] = [
 
 // TON native bridge
 function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { tokenAmountIn, from, to, symbiosis } = context
+    const { tokenAmountIn, from, to, symbiosis, slippage, deadline } = context
 
     const options = OPTIONS.filter((i) => {
         return symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
@@ -68,8 +68,8 @@ function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResul
                     option,
                     from,
                     to,
-                    slippage: context.slippage,
-                    deadline: context.deadline,
+                    slippage,
+                    deadline,
                 })
                 promises.push(promise)
             })
@@ -80,29 +80,30 @@ function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResul
 
 // Symbiosis bridge
 function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { tokenAmountIn, from, to, tokenOut, symbiosis } = context
+    const { symbiosis, tokenAmountIn, tokenOut } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    symbiosis.config.omniPools.forEach((pool) => {
-        const swappingToTon = new SwappingToTon(symbiosis, pool)
-        const promise = swappingToTon.exactIn({
-            tokenAmountIn,
-            tokenOut,
-            from,
-            to,
-            slippage: context.slippage,
-            deadline: context.deadline,
+    symbiosis.config.omniPools.forEach((poolConfig) => {
+        const combinations = symbiosis.getTransitCombinations(tokenAmountIn.token.chainId, tokenOut.chainId, poolConfig)
+        const poolPromises = combinations.map(({ transitTokenIn, transitTokenOut }) => {
+            const swappingToTon = new SwappingToTon(symbiosis, poolConfig)
+            return swappingToTon.exactIn({ ...context, transitTokenIn, transitTokenOut })
         })
-        promises.push(promise)
+        promises.push(...poolPromises)
     })
 
     return promises
 }
 
 export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const nativeTonBridgePromises = nativeBridgeToTon(context)
-    const symbiosisTonBridgePromises = symbiosisBridgeToTon(context)
+    const { tokenOut } = context
 
-    return theBestOutput([...symbiosisTonBridgePromises, ...nativeTonBridgePromises])
+    const promises = []
+    if (tokenOut.equals(GAS_TOKEN[tokenOut.chainId])) {
+        promises.push(...nativeBridgeToTon(context))
+    }
+    promises.push(...symbiosisBridgeToTon(context))
+
+    return theBestOutput(promises)
 }
