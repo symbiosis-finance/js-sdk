@@ -1,26 +1,13 @@
-import {
-    Address,
-    beginCell,
-    BitBuilder,
-    BitString,
-    Cell,
-    Contract,
-    contractAddress,
-    ContractProvider,
-    Sender,
-    SendMode,
-    Slice,
-    toNano,
-} from '@ton/core'
-import { secp256k1 as secp } from '@noble/curves/secp256k1'
+import { Address, beginCell, Cell, Contract, toNano } from '@ton/core'
 import { JettonMaster } from '@ton/ton'
-import { keccak256 } from 'ethers/lib/utils'
 
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { Token, TokenAmount } from '../../entities'
 import { TonTransactionData } from '../types'
 import { Error } from '../error'
+
+export const TON_TOKEN_DECIMALS = 9
 
 const TON_ADDRESSES_MAP = [
     {
@@ -41,6 +28,51 @@ const TON_ADDRESSES_MAP = [
     },
 ]
 
+const WTON_TOKEN = {
+    decimals: TON_TOKEN_DECIMALS,
+    name: 'Wrapped Toncoin',
+    symbol: 'WTON',
+    icons: {
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+    },
+}
+
+export type Option = { chainId: ChainId; bridge: string; wTon: Token; bridgeTonAddr: string }
+
+export const NATIVE_TON_BRIDGE_OPTIONS: Option[] = [
+    {
+        chainId: ChainId.SEPOLIA_TESTNET,
+        bridge: '0x3A1e6dA810637fb1c99fa0899b4F402A60E131D2',
+        wTon: new Token({
+            chainId: ChainId.SEPOLIA_TESTNET,
+            address: '0x331f40cc27aC106e1d5242CE633dc6436626a6F8',
+            ...WTON_TOKEN,
+        }),
+        bridgeTonAddr: 'Ef-56ZiqKUbtp_Ax2Qg4Vwh7yXXJCO8cNJAb229J6XXe4-aC',
+    },
+    {
+        chainId: ChainId.BSC_MAINNET,
+        bridge: '0x35D39bB2cbc51ce6c03f0306d0D8d56948b1f990',
+        wTon: new Token({
+            chainId: ChainId.BSC_MAINNET,
+            address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
+            ...WTON_TOKEN,
+        }),
+        bridgeTonAddr: 'Ef9NXAIQs12t2qIZ-sRZ26D977H65Ol6DQeXc5_gUNaUys5r',
+    },
+    {
+        chainId: ChainId.ETH_MAINNET,
+        bridge: '0x195A07D222a82b50DB84e8f47B71504D1E8C5fa2',
+        wTon: new Token({
+            chainId: ChainId.ETH_MAINNET,
+            address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
+            ...WTON_TOKEN,
+        }),
+        bridgeTonAddr: 'Ef_dJMSh8riPi3BTUTtcxsWjG8RLKnLctNjAM4rw8NN-xWdr',
+    },
+]
+
 export function getTonTokenAddress(address: string) {
     const found = TON_ADDRESSES_MAP.find((item) => {
         return item.evm.toLowerCase() === address.toLowerCase()
@@ -54,89 +86,6 @@ export function getTonTokenAddress(address: string) {
 export function isTonChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.TON_MAINNET, ChainId.TON_TESTNET].includes(chainId)
-}
-
-// Function to hash the message
-function hashMessage(message: Buffer): Buffer {
-    return Buffer.from(keccak256(message), 'hex')
-}
-
-// Hash and sign the message
-export async function sign(msg: Buffer, private_key: Uint8Array): Promise<Buffer> {
-    const signatureObj = await secp.sign(hashMessage(msg), private_key)
-    return Buffer.concat([signatureObj.toCompactRawBytes(), Buffer.from([signatureObj.recovery])])
-}
-
-export function collectMetaMintSyntheticTokenCalldata(cell: Cell): string {
-    const slice = cell.beginParse()
-
-    const ref1 = slice.loadRef().beginParse()
-    const ref2 = slice.loadRef().beginParse()
-    const ref3 = slice.loadRef().beginParse()
-    const ref4 = slice.loadRef().beginParse()
-    const ref4_1 = ref4.loadRef().beginParse()
-    const ref4_2 = ref4.loadRef().beginParse()
-
-    const ref4_2_1 = ref4_2.loadRef()
-    const ref4_2_2 = ref4_2.loadRef()
-
-    let res = ''
-
-    res += loadHexBytes(ref1, 4) // function selector
-    res += loadHexBytes(ref1, 32) // stable_bridging_fee
-    res += loadHexBytes(ref1, 32) // amount
-    res += loadHexBytes(ref1, 32) // internal_id
-
-    res += loadHexBytes(ref2, 32) // external_id
-    res += loadHexBytes(ref2, 32) // token_eth_addr
-    res += loadHexBytes(ref2, 32) // TON_CHAIN_ID
-    res += loadHexBytes(ref2, 12) // 12 bytes padding for chain_2_address
-
-    res += loadHexBytes(ref3, 20) // chain_2_address
-    res += loadHexBytes(ref3, 32) // offset of swap_tokens array
-    res += loadHexBytes(ref3, 32) // second_dex_router
-    res += loadHexBytes(ref3, 32) // offset of second_swap_call_data bytes
-
-    res += loadHexBytes(ref4, 32) // final_receive_side
-    res += loadHexBytes(ref4, 32) // offset of final_call_data bytes
-    res += loadHexBytes(ref4, 32) // final_offset
-
-    res += loadHexBytes(ref4_1, ref4_1.remainingBits / 8) // swap_tokens array
-
-    res += loadHexBytes(ref4_2, 32) // second_swap_call_data length
-    res += cellToCallDataHex(ref4_2_1) // second_swap_call_data
-
-    res += loadHexBytes(ref4_2, 32) // final_call_data length
-    res += cellToCallDataHex(ref4_2_2) // final_call_data
-
-    return res
-}
-
-export function collectMintSyntheticTokenCalldata(cell: Cell): string {
-    const slice = cell.beginParse()
-
-    const ref1 = slice.loadRef().beginParse()
-    const ref2 = slice.loadRef().beginParse()
-    const ref3 = slice.loadRef().beginParse()
-
-    let res = ''
-
-    res += loadHexBytes(ref1, 4) // function selector
-    res += loadHexBytes(ref1, 32) // stable_bridging_fee
-    res += loadHexBytes(ref1, 32) // external_id
-    res += loadHexBytes(ref1, 32) // internal_id
-
-    res += loadHexBytes(ref2, 32) // token_eth_addr
-    res += loadHexBytes(ref2, 32) // TON_CHAIN_ID
-
-    res += loadHexBytes(ref3, 32) // amount
-    res += loadHexBytes(ref3, 32) // chain_2_address
-
-    return res
-}
-
-function loadHexBytes(slice: Slice, bytesCount: number): string {
-    return slice.loadBuffer(bytesCount).toString('hex')
 }
 
 export function callDataToCell(finalCallData: Buffer): Cell {
@@ -172,26 +121,6 @@ export function callDataToCell(finalCallData: Buffer): Cell {
     return createCell(padBuffer(finalCallData))
 }
 
-function cellToCallDataHex(cell: Cell): string {
-    const buffers: Buffer[] = []
-
-    function collectBytes(currentCell: Cell) {
-        const currentSlice = currentCell.beginParse()
-        buffers.push(currentSlice.loadBuffer(currentSlice.remainingBits / 8))
-
-        if (currentCell.refs.length > 0) {
-            collectBytes(currentCell.refs[0])
-        }
-    }
-    collectBytes(cell)
-
-    return Buffer.concat(buffers).toString('hex')
-}
-
-export const TON_CHAIN_ID = 85918
-
-export const TON_CHAIN_ID_BUFFER: Buffer = beginCell().storeUint(TON_CHAIN_ID, 32).endCell().beginParse().loadBuffer(4)
-
 export type BridgeConfig = {
     isPaused: boolean
     owner: Address
@@ -202,38 +131,8 @@ export type BridgeConfig = {
 }
 
 export const Opcodes = {
-    EpSetIsPaused: 813515931,
-    EpSetOwner: 171034560,
-    EpWithdrawFee: 666076618,
-    EpChangeMPC: 4088934783,
-    EpChangeMPCSigned: 2263527702,
-    EpReceiveRequestV2Signed: 1528786663,
-    EpReceiveRequestV2SignedContinuation: 2983749531,
-    EpAddWhitelistedJetton: 4068725157,
-    EpRemoveWhitelistedJetton: 3984169854,
-    EpSetTonTokenAddress: 3379498946,
-    ExpiredExternalIdResponse: 3112622900,
-    EpSetJettonThreshold: 1712822444,
     EpSynthesize: 2048159929,
     EpMetaSynthesize: 1585287200,
-}
-
-export const ErrorCodes = {
-    ReqOwner: 1001,
-    ReqOwnerOrAdmin: 1002,
-    InvalidSignature: 1003,
-    InsufficientAmount: 1004,
-    InsufficientBalance: 1005,
-    ContractPaused: 1006,
-    UnexpectedSender: 1007,
-    UnknownJetton: 1008,
-    InsufficientMessageValue: 1009,
-    AmountUnderThreshold: 1010,
-    MalformedForwardPayload: 1011,
-    TokenAddressMismatch: 1012,
-    AmountMismatch: 1013,
-    ZeroMpcAddr: 1014,
-    UnknownOp: 65535,
 }
 
 export const EventIds = {
@@ -243,129 +142,8 @@ export const EventIds = {
     OracleRequest: BigInt(2067945553),
 }
 
-export const ErrorMessages = {
-    InsufficientJettons: 'Jetton amount should be greater than fee.',
-}
-
-export function bridgeConfigToCell(config: BridgeConfig): Cell {
-    return beginCell()
-        .storeUint(config.isPaused ? 1 : 0, 1)
-        .storeAddress(config.owner)
-        .storeAddress(config.admin)
-        .storeBuffer(config.mpcAddress)
-        .storeDict(null)
-        .storeRef(config.externalIdContractCode)
-        .storeDict(null)
-        .storeAddress(config.tonAddress)
-        .storeRef(beginCell().storeDict(null).storeUint(0, 256).endCell())
-        .endCell()
-}
-
 export class Bridge implements Contract {
     constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
-
-    static createFromAddress(address: Address) {
-        return new Bridge(address)
-    }
-
-    static createFromConfig(config: BridgeConfig, code: Cell, workchain = 0) {
-        const data = bridgeConfigToCell(config)
-        const init = { code, data }
-        return new Bridge(contractAddress(workchain, init), init)
-    }
-
-    async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
-        await provider.internal(via, {
-            value,
-            sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: beginCell().endCell(),
-        })
-    }
-
-    async getExternalIdAddress(provider: ContractProvider, externalId: Buffer): Promise<Address> {
-        const arg = beginCell().storeBuffer(externalId).endCell()
-        const res = await provider.get('get_external_id_address', [{ type: 'slice', cell: arg }])
-        return res.stack.readAddress()
-    }
-
-    async getMpc(provider: ContractProvider): Promise<Buffer> {
-        const res = await provider.get('get_mpc', [])
-        return res.stack.readBuffer()
-    }
-
-    static setIsPausedMessage(isPaused: boolean): Cell {
-        return beginCell().storeUint(Opcodes.EpSetIsPaused, 32).storeBit(isPaused).endCell()
-    }
-
-    static setOwnerMessage(owner: Address): Cell {
-        return beginCell().storeUint(Opcodes.EpSetOwner, 32).storeAddress(owner).endCell()
-    }
-
-    static changeMpcMessage(mpc: Buffer): Cell {
-        return beginCell().storeUint(Opcodes.EpChangeMPC, 32).storeBuffer(mpc).endCell()
-    }
-
-    static changeMpcSignedMessage(mpc: Buffer, signature: Buffer): Cell {
-        return beginCell().storeUint(Opcodes.EpChangeMPCSigned, 32).storeBuffer(mpc).storeBuffer(signature).endCell()
-    }
-
-    static addWhitelistedJettonMessage(tokenAddress: Address, jettonWalletAddress: Address, balance: bigint): Cell {
-        return beginCell()
-            .storeUint(Opcodes.EpAddWhitelistedJetton, 32)
-            .storeAddress(tokenAddress)
-            .storeAddress(jettonWalletAddress)
-            .storeCoins(balance)
-            .endCell()
-    }
-
-    static removeWhitelistedJettonMessage(tokenAddress: Address): Cell {
-        return beginCell().storeUint(Opcodes.EpRemoveWhitelistedJetton, 32).storeAddress(tokenAddress).endCell()
-    }
-
-    static setTonTokenAddressMessage(tonTokenAddress: Address): Cell {
-        return beginCell().storeUint(Opcodes.EpSetTonTokenAddress, 32).storeAddress(tonTokenAddress).endCell()
-    }
-
-    static withdrawFeeMessage(token: Address, receiver: Address, amount: bigint): Cell {
-        return beginCell()
-            .storeUint(Opcodes.EpWithdrawFee, 32)
-            .storeAddress(token)
-            .storeAddress(receiver)
-            .storeCoins(amount)
-            .endCell()
-    }
-
-    static receiveRequestV2SignedMessage(
-        token: Address,
-        receiver: Address,
-        externalId: Buffer,
-        crossChainID: Buffer,
-        amount: bigint,
-        fee: bigint,
-        signature: Buffer
-    ): Cell {
-        const callData1 = beginCell().storeAddress(token).storeAddress(receiver).storeBuffer(externalId).endCell()
-
-        const callData2 = beginCell()
-            .storeBuffer(crossChainID)
-            .storeCoins(amount)
-            .storeCoins(fee)
-            // Padding; So hash function used here and the hashing instruction in TVM does
-            // not like the source message to contain a non-integer number of bytes. So we
-            // pad this part of payload with some zeros so that when both parts are put together
-            // they ll form an integer number of bytes.
-            //
-            // In this case, it turns out that we should add 2 bits to make it aligned.
-            .storeBits(new BitString(Buffer.from('00', 'hex'), 0, 2))
-            .endCell()
-
-        return beginCell()
-            .storeUint(Opcodes.EpReceiveRequestV2Signed, 32)
-            .storeRef(callData1)
-            .storeRef(callData2)
-            .storeBuffer(signature)
-            .endCell()
-    }
 
     // Creates forward payload for 'synthesize' endpoint
     static synthesizeMessage({
@@ -470,100 +248,6 @@ export class Bridge implements Contract {
             .storeRef(payloadCell2)
             .storeRef(payloadCell3)
             .endCell()
-    }
-
-    static setJettonThresholdMessage(token: Address, threshold: bigint): Cell {
-        return beginCell()
-            .storeUint(Opcodes.EpSetJettonThreshold, 32)
-            .storeAddress(token)
-            .storeCoins(threshold)
-            .endCell()
-    }
-
-    static async createReceiveRequestSignature(
-        privateKey: Uint8Array,
-        bridgeAddress: Address,
-        token: Address,
-        receiver: Address,
-        externalId: Buffer,
-        crossChainID: Buffer,
-        amount: bigint,
-        fee: bigint
-    ): Promise<Buffer> {
-        const callData1 = beginCell().storeAddress(token).storeAddress(receiver).storeBuffer(externalId).endCell()
-
-        const callData2 = beginCell()
-            .storeBuffer(crossChainID)
-            .storeCoins(amount)
-            .storeCoins(fee)
-            // Padding; So hash function used here and the hashing instruction in TVM does
-            // not like the source message to contain a non-integer number of bytes. So we
-            // pad this part of payload with some zeros so that when both parts are put together
-            // they ll form an integer number of bytes.
-            //
-            // In this case, it turns out that we should add 2 bits to make it aligned.
-            .storeBits(new BitString(Buffer.from('00', 'hex'), 0, 2))
-            .endCell()
-
-        const bitBuilder = new BitBuilder(1024 * 10)
-        bitBuilder.writeBits(callData1.bits)
-        bitBuilder.writeBits(callData2.bits)
-        const payloadBuffer = bitBuilder.buffer()
-
-        const toSign = Buffer.concat([
-            Buffer.from('receiveRequestV2'),
-            payloadBuffer,
-            bridgeAddress.toRaw(),
-            TON_CHAIN_ID_BUFFER,
-        ])
-
-        const signature = await sign(toSign, privateKey)
-
-        return signature
-    }
-
-    static async createChangeMpcSignature(
-        privateKey: Uint8Array,
-        mpc: Buffer,
-        bridgeAddress: Address
-    ): Promise<Buffer> {
-        const toSign = Buffer.concat([Buffer.from('changeMPC'), mpc, bridgeAddress.toRaw(), TON_CHAIN_ID_BUFFER])
-        const signature = await sign(toSign, privateKey)
-
-        return signature
-    }
-
-    /**
-     * Helper function for tests
-     */
-    static createReceiveRequestV2SignedPayload(
-        tokenAddress: Address,
-        receiverAddress: Address,
-        externalId: Buffer,
-        crossChainID: Buffer,
-        amount: bigint,
-        fee: bigint
-    ): [Cell, Cell] {
-        const payload1 = beginCell()
-            .storeAddress(tokenAddress)
-            .storeAddress(receiverAddress)
-            .storeBuffer(externalId)
-            .endCell()
-
-        const payload2 = beginCell()
-            .storeBuffer(crossChainID)
-            .storeCoins(amount)
-            .storeCoins(fee)
-            // Padding; So hash function used here and the hashing instruction in TVM does
-            // not like the source message to contain a non-integer number of bytes. So we
-            // pad this part of payload with some zeros so that when both parts are put together
-            // they ll form an integer number of bytes.
-            //
-            // In this case, it turns out that we should add 2 bits to make it aligned.
-            .storeBits(new BitString(Buffer.from('00', 'hex'), 0, 2))
-            .endCell()
-
-        return [payload1, payload2]
     }
 }
 
@@ -677,8 +361,6 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
 
         const jettonWalletAddress = await jettonMaster.getWalletAddress(provider, Address.parse(from))
 
-        console.log('USDT case jettonWalletAddress ----->', jettonWalletAddress.toString())
-
         const cell = beginCell()
             .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
             .storeUint(0, 64) // query id
@@ -761,8 +443,6 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
         const provider = tonClient.provider(jettonMaster.address)
 
         const jettonWalletAddress = await jettonMaster.getWalletAddress(provider, Address.parse(from))
-
-        console.log('USDT case jettonWalletAddress ----->', jettonWalletAddress.toString())
 
         const cell = beginCell()
             .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer

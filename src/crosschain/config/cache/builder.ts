@@ -24,7 +24,7 @@ import { config as testnet } from '../testnet'
 import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
 import { Contract } from '@ethersproject/contracts'
-import ERC20 from '../../../abis/ERC20.json'
+import ERC20 from '../../abis/ERC20.json'
 import { isTronChainId, isBtcChainId, isTonChainId } from '../../chainUtils'
 import fs from 'fs'
 

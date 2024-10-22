@@ -13,7 +13,6 @@ class waitFromTonTxCompleteError extends Error {
 
 const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
 
-// [TODO]: Implement jetton case opcode 0 (return unused TON)
 export async function waitFromTonTxMined(
     symbiosis: Symbiosis,
     chainId: ChainId,

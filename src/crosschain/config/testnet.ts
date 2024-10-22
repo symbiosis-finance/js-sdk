@@ -69,6 +69,33 @@ export const config: Config = {
             multicallRouter: '0x086D8d30822086941729DF294f0e52E42EdC17F9',
         },
         {
+            id: ChainId.SEPOLIA_TESTNET,
+            rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
+            filterBlockOffset: 2000,
+            stables: [
+                {
+                    name: 'TONCOIN',
+                    symbol: 'TONCOIN',
+                    address: '0x331f40cc27aC106e1d5242CE633dc6436626a6F8',
+                    chainId: ChainId.SEPOLIA_TESTNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000',
+            metaRouterGateway: '0x0000000000000000000000000000000000000000',
+            bridge: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x0000000000000000000000000000000000000000',
+        },
+        {
             id: ChainId.TON_TESTNET,
             rpc: 'https://testnet.toncenter.com/api/v2/jsonRPC',
             filterBlockOffset: 0,

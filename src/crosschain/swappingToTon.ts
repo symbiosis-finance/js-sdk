@@ -1,15 +1,12 @@
 import { Address } from '@ton/core'
-import { BaseSwapping } from './baseSwapping'
-import { Token, TokenAmount } from '../entities'
-import { ChainId } from '../constants'
-import { SwapExactInParams, SwapExactInResult } from './types'
-import { CROSS_CHAIN_ID } from './constants'
 import { AddressZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 
-export const TON_TOKEN_DECIMALS = 9
+import { BaseSwapping } from './baseSwapping'
+import { TokenAmount } from '../entities'
+import { CROSS_CHAIN_ID } from './constants'
 
-export type Option = { chainId: ChainId; bridge: string; wTon: Token }
+import { SwapExactInParams, SwapExactInResult } from './types'
 
 export class SwappingToTon extends BaseSwapping {
     protected userAddress!: string

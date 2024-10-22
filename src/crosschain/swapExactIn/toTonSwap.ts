@@ -1,55 +1,15 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { ChainId } from '../../constants'
-import { GAS_TOKEN, Token } from '../../entities'
-import { Option, TON_TOKEN_DECIMALS, ZappingTon } from '../zappingTon'
+import { GAS_TOKEN } from '../../entities'
 import { theBestOutput } from './utils'
 import { SwappingToTon } from '../swappingToTon'
-
-const wTonAttributes = {
-    decimals: TON_TOKEN_DECIMALS,
-    name: 'Wrapped Toncoin',
-    symbol: 'WTON',
-    icons: {
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-    },
-}
-
-const OPTIONS: Option[] = [
-    {
-        chainId: ChainId.SEPOLIA_TESTNET,
-        bridge: '0x3A1e6dA810637fb1c99fa0899b4F402A60E131D2',
-        wTon: new Token({
-            chainId: ChainId.SEPOLIA_TESTNET,
-            address: '0x331f40cc27aC106e1d5242CE633dc6436626a6F8',
-            ...wTonAttributes,
-        }),
-    },
-    {
-        chainId: ChainId.BSC_MAINNET,
-        bridge: '0x35D39bB2cbc51ce6c03f0306d0D8d56948b1f990',
-        wTon: new Token({
-            chainId: ChainId.BSC_MAINNET,
-            address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
-            ...wTonAttributes,
-        }),
-    },
-    {
-        chainId: ChainId.ETH_MAINNET,
-        bridge: '0x195A07D222a82b50DB84e8f47B71504D1E8C5fa2',
-        wTon: new Token({
-            chainId: ChainId.ETH_MAINNET,
-            address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
-            ...wTonAttributes,
-        }),
-    },
-]
+import { NATIVE_TON_BRIDGE_OPTIONS } from '../chainUtils'
+import { ZappingTon } from '../zappingTon'
 
 // TON native bridge
 function nativeBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline } = context
 
-    const options = OPTIONS.filter((i) => {
+    const options = NATIVE_TON_BRIDGE_OPTIONS.filter((i) => {
         return symbiosis.config.chains.map((chain) => chain.id).find((chainId) => chainId === i.chainId)
     })
 
