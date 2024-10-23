@@ -56,7 +56,7 @@ import { delay } from '../utils'
 import {
     waitForBtcDepositAccepted,
     waitForBtcEvmTxIssued,
-    waitForBtcRevealTxMined,
+    waitForBtcCommitTxMined,
     waitForComplete,
     waitFromTonTxMined,
 } from './waitForComplete'
@@ -586,14 +586,14 @@ export class Symbiosis {
         return waitForBtcDepositAccepted(forwarderUrl, depositAddress)
     }
 
-    public async waitForBtcRevealTxMined(
+    public async waitForBtcCommitTxMined(
         btcChainId: ChainId,
-        revealTx: string,
+        commitTx: string,
         onConfirmation: (count: number) => void,
         confirmations: number = 2
     ) {
         const forwarderUrl = this.getForwarderUrl(btcChainId)
-        return waitForBtcRevealTxMined(forwarderUrl, revealTx, confirmations, onConfirmation)
+        return waitForBtcCommitTxMined({ forwarderUrl, commitTx, confirmations, onConfirmation })
     }
 
     public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {
