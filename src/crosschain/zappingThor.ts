@@ -6,7 +6,7 @@ import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Error, ErrorCode } from './error'
 import { BigNumber } from 'ethers'
-import { getMinAmount } from './utils'
+import { getMinAmount } from './chainUtils/evm'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
 import { SwapExactInResult } from './types'
 

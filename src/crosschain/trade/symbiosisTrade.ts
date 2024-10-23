@@ -13,6 +13,7 @@ export type SymbiosisTradeType =
     | 'magpie'
     | 'symbiosis'
     | 'ton-bridge'
+    | 'ton'
     | 'thorchain-bridge'
 
 export interface SymbiosisTrade {

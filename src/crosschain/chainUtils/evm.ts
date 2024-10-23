@@ -2,14 +2,16 @@ import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils, Signer } from 'ethers'
 import JSBI from 'jsbi'
-import { BigintIsh, ChainId, ONE } from '../constants'
-import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../entities'
-import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from './constants'
-import type { Symbiosis } from './symbiosis'
-import { Field } from './types'
+import { BigintIsh, ChainId, ONE } from '../../constants'
+import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
+import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from '../constants'
+import type { Symbiosis } from '../symbiosis'
+import { Field } from '../types'
 import flatMap from 'lodash.flatmap'
-import { Error } from './error'
+import { Error } from '../error'
+import { isBtcChainId } from './btc'
 import { isTronChainId } from './tron'
+import { isTonChainId } from './ton'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -22,6 +24,11 @@ interface GetExternalIdParams {
     contractAddress: string
     revertableAddress: string
     chainId: ChainId
+}
+
+export function isEvmChainId(chainId: ChainId | undefined) {
+    if (!chainId) return false
+    return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId)
 }
 
 export const canOneInch = (chainId: ChainId) => {
@@ -339,19 +346,4 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
         B: slippage,
         C: hasTradeC ? totalSlippage : 0,
     }
-}
-
-export function isBtcChainId(chainId: ChainId | undefined) {
-    if (!chainId) return false
-    return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
-}
-
-export function isTonChainId(chainId: ChainId | undefined) {
-    if (!chainId) return false
-    return [ChainId.TON_MAINNET].includes(chainId)
-}
-
-export function isEvmChainId(chainId: ChainId | undefined) {
-    if (!chainId) return false
-    return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId)
 }

@@ -1,22 +1,40 @@
 import { Contract, EventFilter } from 'ethers'
+import type { Transaction } from '@ton/core'
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
-import { getExternalId, getLogWithTimeout } from '../utils'
-import { tronAddressToEvm } from '../tron'
+import { getExternalId, getLogWithTimeout } from '../chainUtils/evm'
+import { tronAddressToEvm } from '../chainUtils/tron'
 import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
+import { isTonChainId } from '../chainUtils'
+
+import { BridgeTxInfo, BridgeRequestType } from './types'
+import { getTxTonBridgeInfo } from './getTxTonBridgeInfo'
+
+export interface WaitForCompleteParams {
+    symbiosis: Symbiosis
+    chainId: ChainId
+    txId: string
+    txTon?: Transaction
+}
 
 /**
  * @param symbiosis - context class
  * @param chainId - chain evm id to check event
  * @param txId - transaction hash to check
+ * @param txTon - optional, TON tx on bridge
  * @returns Transaction hash from portal contract in bitcoin network to user's wallet
  */
-export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<string> {
+export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitForCompleteParams): Promise<string> {
     const txIdWithPrefix = txId.startsWith('0x') ? txId : `0x${txId}`
 
-    console.log('tx', txIdWithPrefix)
-    const aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix)
+    let aBridgeInfo
+    if (isTonChainId(chainId) && txTon) {
+        aBridgeInfo = getTxTonBridgeInfo(txTon)
+    } else {
+        aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix) // first part of the bridge on EVM chain
+    }
+
     if (!aBridgeInfo) {
         const { outHash, extraStep } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
         if (!extraStep) {
@@ -45,20 +63,6 @@ export async function waitBridgeForComplete(symbiosis: Symbiosis, chainId: Chain
 
     const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
     return outHash
-}
-
-type BridgeRequestType =
-    | 'SynthesizeRequest'
-    | 'BurnRequest'
-    | 'RevertSynthesizeRequest'
-    | 'RevertSynthesizeCompleted'
-    | 'RevertBurnCompleted'
-
-interface BridgeTxInfo {
-    internalId: string
-    externalId: string
-    externalChainId: ChainId
-    requestType: BridgeRequestType
 }
 
 async function getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<BridgeTxInfo | null> {

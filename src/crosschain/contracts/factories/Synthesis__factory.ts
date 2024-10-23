@@ -148,6 +148,67 @@ const _abi = [
             {
                 indexed: false,
                 internalType: 'bytes32',
+                name: 'id',
+                type: 'bytes32',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'from',
+                type: 'address',
+            },
+            {
+                indexed: true,
+                internalType: 'uint256',
+                name: 'chainID',
+                type: 'uint256',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'revertableAddress',
+                type: 'address',
+            },
+            {
+                components: [
+                    {
+                        internalType: 'int8',
+                        name: 'workchain',
+                        type: 'int8',
+                    },
+                    {
+                        internalType: 'bytes32',
+                        name: 'address_hash',
+                        type: 'bytes32',
+                    },
+                ],
+                indexed: false,
+                internalType: 'struct Synthesis.TonAddress',
+                name: 'to',
+                type: 'tuple',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'address',
+                name: 'token',
+                type: 'address',
+            },
+        ],
+        name: 'BurnRequestTON',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'bytes32',
                 name: 'requestId',
                 type: 'bytes32',
             },
@@ -488,6 +549,82 @@ const _abi = [
                 internalType: 'BtcSerial',
                 name: '',
                 type: 'uint64',
+            },
+        ],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: '_stableBridgingFee',
+                type: 'uint256',
+            },
+            {
+                internalType: 'address',
+                name: '_stoken',
+                type: 'address',
+            },
+            {
+                internalType: 'uint256',
+                name: '_amount',
+                type: 'uint256',
+            },
+            {
+                internalType: 'bytes32',
+                name: '_crossChainID',
+                type: 'bytes32',
+            },
+            {
+                components: [
+                    {
+                        internalType: 'int8',
+                        name: 'workchain',
+                        type: 'int8',
+                    },
+                    {
+                        internalType: 'bytes32',
+                        name: 'address_hash',
+                        type: 'bytes32',
+                    },
+                ],
+                internalType: 'struct Synthesis.TonAddress',
+                name: '_chain2address',
+                type: 'tuple',
+            },
+            {
+                internalType: 'address',
+                name: '_receiveSide',
+                type: 'address',
+            },
+            {
+                internalType: 'address',
+                name: '_oppositeBridge',
+                type: 'address',
+            },
+            {
+                internalType: 'address',
+                name: '_revertableAddress',
+                type: 'address',
+            },
+            {
+                internalType: 'uint256',
+                name: '_chainID',
+                type: 'uint256',
+            },
+            {
+                internalType: 'bytes32',
+                name: '_clientID',
+                type: 'bytes32',
+            },
+        ],
+        name: 'burnSyntheticTokenTON',
+        outputs: [
+            {
+                internalType: 'bytes32',
+                name: 'internalID',
+                type: 'bytes32',
             },
         ],
         stateMutability: 'nonpayable',

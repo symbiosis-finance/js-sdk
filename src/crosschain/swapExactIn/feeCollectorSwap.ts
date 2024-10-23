@@ -6,7 +6,7 @@ import { onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
-import { getFunctionSelector, tronAddressToEvm } from '../tron'
+import { getFunctionSelector, tronAddressToEvm } from '../chainUtils/tron'
 import { Error, ErrorCode } from '../error'
 
 export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {

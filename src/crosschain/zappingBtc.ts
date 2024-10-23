@@ -5,7 +5,7 @@ import { MulticallRouter, Synthesis } from './contracts'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { getToBtcFee } from './btc'
+import { getToBtcFee } from './chainUtils/btc'
 import { SwapExactInResult } from './types'
 
 initEccLib(ecc)

@@ -9,12 +9,22 @@ import { DataProvider } from './dataProvider'
 import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, WrapTrade } from './trade'
 import { Transit } from './transit'
-import { splitSlippage, getExternalId, getInternalId, DetailedSlippage } from './utils'
-import { WaitForComplete } from './waitForComplete'
+import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { Error, ErrorCode } from './error'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { OneInchProtocols } from './trade/oneInchTrade'
-import { TronTransactionData, isTronToken, prepareTronTransaction, tronAddressToEvm } from './tron'
+import {
+    splitSlippage,
+    getExternalId,
+    getInternalId,
+    DetailedSlippage,
+    TronTransactionData,
+    isTronToken,
+    prepareTronTransaction,
+    tronAddressToEvm,
+    isTronChainId,
+    isTonChainId,
+} from './chainUtils'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import {
     FeeItem,
@@ -23,6 +33,7 @@ import {
     SwapExactInParams,
     SwapExactInResult,
     SwapExactInTransactionPayload,
+    TonTransactionData,
 } from './types'
 
 export abstract class BaseSwapping {
@@ -100,6 +111,11 @@ export abstract class BaseSwapping {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
+        } else if (isTonChainId(this.tokenAmountIn.token.chainId) || isTonChainId(this.tokenOut.chainId)) {
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
+            }
         } else {
             this.revertableAddresses = { AB: this.from, BC: this.from }
         }
@@ -116,6 +132,7 @@ export abstract class BaseSwapping {
         }
 
         this.transit = this.buildTransit()
+
         await this.transit.init()
         timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
         prev = Date.now()
@@ -128,6 +145,7 @@ export abstract class BaseSwapping {
         await this.doPostTransitAction()
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
+
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
@@ -140,10 +158,12 @@ export abstract class BaseSwapping {
         }
 
         this.route = this.getRoute()
+
         const [feeV1Raw, feeV2Raw] = await Promise.all([
             this.getFee(this.transit.feeToken),
             this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
+
         timeLog.push(['ADVISOR', Date.now() - start, Date.now() - prev])
         prev = Date.now()
 
@@ -177,10 +197,16 @@ export abstract class BaseSwapping {
         )
 
         let payload: SwapExactInTransactionPayload
-        if (isTronToken(this.tokenAmountIn.token)) {
+        if (isTronChainId(this.tokenAmountIn.token.chainId)) {
             const transactionRequest = this.getTronTransactionRequest(fee, feeV2)
             payload = {
                 transactionType: 'tron',
+                transactionRequest,
+            }
+        } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
+            const transactionRequest = await this.getTonTransactionRequest(fee, feeV2)
+            payload = {
+                transactionType: 'ton',
                 transactionRequest,
             }
         } else {
@@ -224,7 +250,7 @@ export abstract class BaseSwapping {
         }
     }
 
-    private getRevertableAddress(side: 'AB' | 'BC'): string {
+    protected getRevertableAddress(side: 'AB' | 'BC'): string {
         return this.revertableAddresses[side]
     }
 
@@ -248,7 +274,7 @@ export abstract class BaseSwapping {
         }
 
         if (this.transit.isV2()) {
-            const wfc1 = new WaitForComplete({
+            const wfc1 = new LegacyWaitForComplete({
                 direction: 'mint',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.getRevertableAddress('AB'),
@@ -260,7 +286,7 @@ export abstract class BaseSwapping {
             const provider = this.symbiosis.getProvider(this.omniPoolConfig.chainId)
             const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
 
-            const wfc2 = new WaitForComplete({
+            const wfc2 = new LegacyWaitForComplete({
                 direction: 'burn',
                 symbiosis: this.symbiosis,
                 revertableAddress: this.getRevertableAddress('BC'),
@@ -270,7 +296,7 @@ export abstract class BaseSwapping {
             return wfc2.waitForComplete(receipt2)
         }
 
-        return new WaitForComplete({
+        return new LegacyWaitForComplete({
             direction: this.transit.direction,
             chainIdOut: this.tokenOut.chainId,
             symbiosis: this.symbiosis,
@@ -349,6 +375,15 @@ export abstract class BaseSwapping {
             ownerAddress: this.from,
             value: value?.toString() ?? 0,
         })
+    }
+
+    protected async getTonTransactionRequest(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _fee: TokenAmount,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _feeV2: TokenAmount | undefined
+    ): Promise<TonTransactionData> {
+        throw new Error('getTonTransactionRequest not implemented')
     }
 
     protected calculatePriceImpact(): Percent {
@@ -749,11 +784,13 @@ export abstract class BaseSwapping {
         return this.tradeA?.callData || []
     }
 
+    // 1) get multicall router address
     protected secondDexRouter(): string {
         const multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
         return multicallRouter.address
     }
 
+    // 2) get second swap calldata, no edits (will be only [swap]). Put in field secondSwapCalldata() in ton request
     protected secondSwapCalldata(): string | [] {
         const calls = this.transit.calls()
         if (!calls) {

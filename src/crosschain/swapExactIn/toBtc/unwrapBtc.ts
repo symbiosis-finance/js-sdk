@@ -3,7 +3,7 @@ import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript } from '../../zappingBtc'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../../types'
-import { getToBtcFee } from '../../btc'
+import { getToBtcFee } from '../../chainUtils/btc'
 
 initEccLib(ecc)
 

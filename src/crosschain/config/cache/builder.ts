@@ -23,15 +23,10 @@ import { config as mainnet } from '../mainnet'
 import { config as testnet } from '../testnet'
 import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
-import { BigNumberish } from 'ethers'
-import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import ERC20 from '../../../abis/ERC20.json'
-import { isTronChainId } from '../../tron'
-import { isBtcChainId } from '../../utils'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs')
+import ERC20 from '../../abis/ERC20.json'
+import { isTronChainId, isBtcChainId, isTonChainId } from '../../chainUtils'
+import fs from 'fs'
 
 export type Id = number
 
@@ -50,16 +45,9 @@ export type OmniPoolInfo = OmniPoolConfig & {
     tokens: OmniPoolToken[]
 }
 
-export type TokenThreshold = {
-    tokenId: Id
-    type: string
-    value: BigNumberish
-}
-
 export type ConfigCacheData = {
     tokens: TokenInfo[]
     omniPools: OmniPoolInfo[]
-    thresholds: TokenThreshold[]
 }
 
 export class Builder {
@@ -93,14 +81,12 @@ export class Builder {
             await this.checkMetarouters()
             const tokens = await this.buildTokensList()
             const omniPools = await this.buildOmniPools(tokens)
-            const thresholds = await this.buildThresholds(tokens)
 
             const jsonData = JSON.stringify({
                 omniPools,
                 tokens,
-                thresholds,
             } as ConfigCacheData)
-            fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err: any) {
+            fs.writeFile(`./src/crosschain/config/cache/${this.configName}.json`, jsonData, function (err) {
                 if (err) {
                     console.error(err)
                 }
@@ -118,6 +104,10 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
             const bridge = this.bridge(chain.id)
+
+            if (isTonChainId(chain.id)) {
+                continue
+            }
 
             if (chain.portal !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.portal)
@@ -140,6 +130,9 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
+            if (isTonChainId(chain.id)) {
+                continue
+            }
             const portal = this.portal(chain.id)
             if (portal.address !== AddressZero) {
                 for (let j = 0; j < chain.stables.length; j++) {
@@ -177,7 +170,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtcChainId(chain.id)) {
+            if (isBtcChainId(chain.id) || isTonChainId(chain.id)) {
                 continue
             }
 
@@ -226,58 +219,6 @@ export class Builder {
         if (error) {
             throw new Error('There are differences')
         }
-    }
-
-    private async getThresholds(
-        tokens: TokenInfo[],
-        contract: Portal | Synthesis,
-        type: 'Portal' | 'Synthesis',
-        chain: ChainConfig
-    ): Promise<TokenThreshold[]> {
-        const multicall = await getMulticall(this.getProvider(chain.id))
-        const chainTokens = tokens.filter((token) => token.chainId === chain.id)
-        const calls = chainTokens.map((token) => ({
-            target: contract.address,
-            callData: contract.interface.encodeFunctionData('tokenThreshold', [token.address]),
-        }))
-        const thresholdsResponse = await multicall.callStatic.tryAggregate(false, calls)
-        return thresholdsResponse
-            .map(([success, returnData], index) => {
-                if (!success) {
-                    throw new Error(`Cannot get token threshold from portal on chain ${chain.id}`)
-                }
-
-                const threshold = contract.interface.decodeFunctionResult('tokenThreshold', returnData)[0] as BigNumber
-                return {
-                    tokenId: chainTokens[index].id,
-                    type,
-                    value: threshold.toString(),
-                } as TokenThreshold
-            })
-            .filter((i) => !!i)
-    }
-    private async buildThresholds(tokens: TokenInfo[]): Promise<TokenThreshold[]> {
-        const chains = this.config.chains
-        let thresholds: TokenThreshold[] = []
-
-        for (let i = 0; i < chains.length; i++) {
-            const chain = chains[i]
-            console.log(`Get thresholds from chain ${chain.id}`)
-
-            if (chain.portal !== AddressZero) {
-                const portal = this.portal(chain.id)
-                const portalThresholds = await this.getThresholds(tokens, portal, 'Portal', chain)
-                thresholds = [...thresholds, ...portalThresholds]
-            }
-
-            if (chain.synthesis !== AddressZero) {
-                const synthesis = this.synthesis(chain.id)
-                const synthesisThresholds = await this.getThresholds(tokens, synthesis, 'Synthesis', chain)
-                thresholds = [...thresholds, ...synthesisThresholds]
-            }
-        }
-
-        return thresholds
     }
 
     private async buildOmniPools(tokens: TokenInfo[]): Promise<OmniPoolInfo[]> {

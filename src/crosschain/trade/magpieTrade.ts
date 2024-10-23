@@ -1,7 +1,7 @@
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade } from './symbiosisTrade'
-import { getMinAmount } from '../utils'
+import { getMinAmount } from '../chainUtils/evm'
 import type { Symbiosis } from '../symbiosis'
 import { getTokenAmountUsd } from '../coingecko'
 import JSBI from 'jsbi'

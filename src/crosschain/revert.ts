@@ -6,14 +6,14 @@ import JSBI from 'jsbi'
 import { Token, TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { getExternalId, getInternalId, getLogWithTimeout, prepareTransactionRequest } from './utils'
+import { getExternalId, getInternalId, getLogWithTimeout, prepareTransactionRequest } from './chainUtils/evm'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
-import { WaitForComplete } from './waitForComplete'
+import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { OmniTrade } from './trade'
 import { OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
-import { isTronChainId, prepareTronTransaction, TronTransactionData } from './tron'
+import { isTronChainId, prepareTronTransaction, TronTransactionData } from './chainUtils/tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { CROSS_CHAIN_ID } from './constants'
 
@@ -100,7 +100,7 @@ export class RevertPending {
 
         const receipt = await mChainSynthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
 
-        const wfc = new WaitForComplete({
+        const wfc = new LegacyWaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
             revertableAddress,
@@ -121,7 +121,7 @@ export class RevertPending {
 
         const receipt = await synthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
 
-        const wfc = new WaitForComplete({
+        const wfc = new LegacyWaitForComplete({
             direction: 'burn',
             symbiosis: this.symbiosis,
             revertableAddress,

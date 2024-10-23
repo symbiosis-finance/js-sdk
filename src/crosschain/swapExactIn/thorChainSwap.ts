@@ -2,6 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
 import { theBestOutput } from './utils'
+import { ZappingThor } from '../zappingThor'
 
 const ETH_USDC = new Token({
     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -29,21 +30,21 @@ const AVAX_USDC = new Token({
 export const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, from, to } = context
+    const { tokenAmountIn, from, to, symbiosis, slippage, deadline } = context
 
     // via stable pool only
-    const omniPool = context.symbiosis.config.omniPools[0]
+    const poolConfig = symbiosis.config.omniPools[0]
 
     const promises = THOR_TOKENS.map((thorToken) => {
-        const zappingThor = context.symbiosis.newZappingThor(omniPool)
+        const zappingThor = new ZappingThor(symbiosis, poolConfig)
 
         return zappingThor.exactIn({
             tokenAmountIn,
             thorTokenIn: thorToken,
             from,
             to,
-            slippage: context.slippage,
-            deadline: context.deadline,
+            slippage,
+            deadline,
         })
     })
 

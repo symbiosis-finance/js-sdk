@@ -5,8 +5,8 @@ import { keccak256 as kekKeccak256 } from '@ethersproject/keccak256'
 import BigNumber from 'bignumber.js'
 import { utils } from 'ethers'
 import TronWeb, { TransactionInfo } from 'tronweb'
-import { ChainId } from '../constants'
-import { Chain, Token } from '../entities'
+import { ChainId } from '../../constants'
+import { Chain, Token } from '../../entities'
 
 export interface TronTransactionData {
     chain_id: number

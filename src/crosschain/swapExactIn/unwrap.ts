@@ -1,6 +1,6 @@
 import { Percent, TokenAmount, WETH } from '../../entities'
 import { Weth__factory } from '../contracts'
-import { getFunctionSelector } from '../tron'
+import { getFunctionSelector } from '../chainUtils/tron'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'

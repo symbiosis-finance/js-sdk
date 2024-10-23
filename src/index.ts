@@ -16,5 +16,4 @@ export {
 export * from './errors'
 export * from './entities'
 export * from './router'
-export * from './fetcher'
 export * from './crosschain'

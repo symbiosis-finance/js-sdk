@@ -1,6 +1,6 @@
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
-import { getLogWithTimeout } from '../utils'
+import { getLogWithTimeout } from '../chainUtils/evm'
 
 export async function waitForBtcEvmTxIssued(
     symbiosis: Symbiosis,

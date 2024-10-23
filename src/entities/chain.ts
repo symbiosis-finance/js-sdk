@@ -25,7 +25,18 @@ export const chains: Chain[] = [
         id: ChainId.TON_MAINNET,
         name: 'TON',
         disabled: false,
-        explorer: 'https://tonscan.org',
+        explorer: 'https://tonviewer.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.TON_TESTNET,
+        name: 'TON',
+        disabled: false,
+        explorer: 'https://testnet.tonviewer.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
@@ -523,8 +534,8 @@ export const chains: Chain[] = [
         disabled: false,
         explorer: 'https://rootstock.blockscout.com',
         icons: {
-            small: 'https://rootstock.blockscout.com/assets/favicon/favicon-32x32.png',
-            large: 'https://rootstock.blockscout.com/assets/favicon/favicon-32x32.png',
+            small: 'https://rootstock.blockscout.com/assets/favicon/favicon.ico',
+            large: 'https://rootstock.blockscout.com/assets/favicon/favicon.ico',
         },
     }),
     new Chain({

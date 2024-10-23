@@ -5,7 +5,6 @@ import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
-import { Bridging } from './bridging'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
     AdaRouter,
@@ -43,11 +42,7 @@ import {
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
-import {
-    statelessWaitForComplete,
-    StatelessWaitForCompleteParams,
-} from './statelessWaitForComplete/statelessWaitForComplete'
-import { getTransactionInfoById, isTronChainId } from './tron'
+import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import { ChainConfig, Config, OmniPoolConfig, OverrideConfig, SwapExactInParams, SwapExactInResult } from './types'
 import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
@@ -57,16 +52,22 @@ import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
 import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchRequest'
-import { ZappingThor } from './zappingThor'
 import { delay } from '../utils'
-import { ZappingTon } from './zappingTon'
-import { ZappingBtc } from './zappingBtc'
-import { waitForBtcDepositAccepted, waitForBtcEvmTxIssued, waitForBtcRevealTxMined } from './statelessWaitForComplete'
-import { isBtcChainId } from './utils'
+import {
+    waitForBtcDepositAccepted,
+    waitForBtcEvmTxIssued,
+    waitForBtcRevealTxMined,
+    waitForComplete,
+    waitFromTonTxMined,
+} from './waitForComplete'
 import { DataProvider } from './dataProvider'
 import { SwappingMiddleware } from './swappingMiddleware'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
+import { isBtcChainId } from './chainUtils'
+import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
+import { getHttpEndpoint, Network } from '@orbs-network/ton-access'
+import { TonClient } from '@ton/ton'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -84,6 +85,7 @@ export class Symbiosis {
 
     public readonly dataProvider: DataProvider
     public readonly config: Config
+    public readonly configName: ConfigName
     public readonly clientId: string
     public readonly isDirectRouteClient: boolean
 
@@ -145,12 +147,13 @@ export class Symbiosis {
         return json['percent'] as number
     }
 
-    public constructor(config: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
-        if (config === 'mainnet') {
+    public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
+        this.configName = configName
+        if (configName === 'mainnet') {
             this.config = mainnet
-        } else if (config === 'testnet') {
+        } else if (configName === 'testnet') {
             this.config = testnet
-        } else if (config === 'dev') {
+        } else if (configName === 'dev') {
             this.config = dev
         } else {
             throw new Error('Unknown config name')
@@ -181,7 +184,7 @@ export class Symbiosis {
 
         this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
 
-        this.configCache = new ConfigCache(config)
+        this.configCache = new ConfigCache(configName)
 
         this.clientId = utils.formatBytes32String(clientId)
         this.isDirectRouteClient = (overrideConfig?.directRouteClients || []).includes(clientId)
@@ -195,17 +198,25 @@ export class Symbiosis {
         )
     }
 
+    public async getTonClient(): Promise<TonClient> {
+        return this.dataProvider.get(
+            ['tonClient'],
+            async () => {
+                const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
+                const endpoint = await getHttpEndpoint({ network })
+                return new TonClient({ endpoint })
+            },
+            60 // 1 minute
+        )
+    }
+
     public chains(): Chain[] {
         const ids = this.config.chains.map((i) => i.id)
-        return chains.filter((i) => ids.includes(i.id))
+        return chains.filter((chain) => ids.includes(chain.id))
     }
 
     public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         return swapExactIn({ symbiosis: this, ...params })
-    }
-
-    public newBridging() {
-        return new Bridging(this)
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {
@@ -218,18 +229,6 @@ export class Symbiosis {
 
     public newZapping(omniPoolConfig: OmniPoolConfig) {
         return new Zapping(this, omniPoolConfig)
-    }
-
-    public newZappingThor(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingThor(this, omniPoolConfig)
-    }
-
-    public newZappingBtc(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingBtc(this, omniPoolConfig)
-    }
-
-    public newZappingTon(omniPoolConfig: OmniPoolConfig) {
-        return new ZappingTon(this, omniPoolConfig)
     }
 
     public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
@@ -566,8 +565,9 @@ export class Symbiosis {
     public async waitForComplete({
         chainId,
         txId,
-    }: Omit<StatelessWaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
-        return statelessWaitForComplete({ symbiosis: this, chainId, txId })
+        txTon,
+    }: Omit<WaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
+        return waitForComplete({ symbiosis: this, chainId, txId, txTon })
     }
 
     public getForwarderUrl(btcChainId: ChainId): string {
@@ -598,6 +598,10 @@ export class Symbiosis {
 
     public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {
         return waitForBtcEvmTxIssued(this, revealTx, btcChainId)
+    }
+
+    public async waitFromTonTxMined(chainId: ChainId, tonAddress: string) {
+        return waitFromTonTxMined(this, chainId, tonAddress)
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {

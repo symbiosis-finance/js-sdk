@@ -17,6 +17,18 @@ import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
+export declare namespace Synthesis {
+    export type TonAddressStruct = {
+        workchain: BigNumberish
+        address_hash: BytesLike
+    }
+
+    export type TonAddressStructOutput = [number, string] & {
+        workchain: number
+        address_hash: string
+    }
+}
+
 export declare namespace MetaRouteStructs {
     export type MetaBurnTransactionStruct = {
         stableBridgingFee: BigNumberish
@@ -160,6 +172,7 @@ export interface SynthesisInterface extends utils.Interface {
         'bridge()': FunctionFragment
         'burnSyntheticToken(uint256,address,uint256,address,address,address,address,uint256,bytes32)': FunctionFragment
         'burnSyntheticTokenBTC(uint256,uint256,bytes,address,bytes32)': FunctionFragment
+        'burnSyntheticTokenTON(uint256,address,uint256,bytes32,(int8,bytes32),address,address,address,uint256,bytes32)': FunctionFragment
         'fabric()': FunctionFragment
         'initialize(address,address,address)': FunctionFragment
         'isTrustedForwarder(address)': FunctionFragment
@@ -201,6 +214,21 @@ export interface SynthesisInterface extends utils.Interface {
     encodeFunctionData(
         functionFragment: 'burnSyntheticTokenBTC',
         values: [BigNumberish, BigNumberish, BytesLike, string, BytesLike]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'burnSyntheticTokenTON',
+        values: [
+            BigNumberish,
+            string,
+            BigNumberish,
+            BytesLike,
+            Synthesis.TonAddressStruct,
+            string,
+            string,
+            string,
+            BigNumberish,
+            BytesLike
+        ]
     ): string
     encodeFunctionData(functionFragment: 'fabric', values?: undefined): string
     encodeFunctionData(functionFragment: 'initialize', values: [string, string, string]): string
@@ -261,6 +289,7 @@ export interface SynthesisInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'bridge', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'burnSyntheticToken', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'burnSyntheticTokenBTC', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'burnSyntheticTokenTON', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'fabric', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'isTrustedForwarder', data: BytesLike): Result
@@ -297,6 +326,7 @@ export interface SynthesisInterface extends utils.Interface {
         'BTCSynthesizeCompleted(bytes32,address,uint256,uint64,uint256,address)': EventFragment
         'BurnRequest(bytes32,address,uint256,address,address,uint256,address)': EventFragment
         'BurnRequestBTC(uint64,address,bytes,uint256,uint256,address)': EventFragment
+        'BurnRequestTON(bytes32,address,uint256,address,tuple,uint256,address)': EventFragment
         'ClientIdLog(bytes32,bytes32)': EventFragment
         'ClientIdLogBTC(uint64,bytes32)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
@@ -314,6 +344,7 @@ export interface SynthesisInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'BTCSynthesizeCompleted'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'BurnRequest'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'BurnRequestBTC'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'BurnRequestTON'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'ClientIdLog'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'ClientIdLogBTC'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
@@ -370,6 +401,21 @@ export type BurnRequestBTCEvent = TypedEvent<
 >
 
 export type BurnRequestBTCEventFilter = TypedEventFilter<BurnRequestBTCEvent>
+
+export type BurnRequestTONEvent = TypedEvent<
+    [string, string, BigNumber, string, Synthesis.TonAddressStructOutput, BigNumber, string],
+    {
+        id: string
+        from: string
+        chainID: BigNumber
+        revertableAddress: string
+        to: Synthesis.TonAddressStructOutput
+        amount: BigNumber
+        token: string
+    }
+>
+
+export type BurnRequestTONEventFilter = TypedEventFilter<BurnRequestTONEvent>
 
 export type ClientIdLogEvent = TypedEvent<[string, string], { requestId: string; clientId: string }>
 
@@ -482,6 +528,20 @@ export interface Synthesis extends BaseContract {
             _amount: BigNumberish,
             _to: BytesLike,
             _stoken: string,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        burnSyntheticTokenTON(
+            _stableBridgingFee: BigNumberish,
+            _stoken: string,
+            _amount: BigNumberish,
+            _crossChainID: BytesLike,
+            _chain2address: Synthesis.TonAddressStruct,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
             _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
@@ -663,6 +723,20 @@ export interface Synthesis extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
+    burnSyntheticTokenTON(
+        _stableBridgingFee: BigNumberish,
+        _stoken: string,
+        _amount: BigNumberish,
+        _crossChainID: BytesLike,
+        _chain2address: Synthesis.TonAddressStruct,
+        _receiveSide: string,
+        _oppositeBridge: string,
+        _revertableAddress: string,
+        _chainID: BigNumberish,
+        _clientID: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     fabric(overrides?: CallOverrides): Promise<string>
 
     initialize(
@@ -839,6 +913,20 @@ export interface Synthesis extends BaseContract {
             _clientID: BytesLike,
             overrides?: CallOverrides
         ): Promise<BigNumber>
+
+        burnSyntheticTokenTON(
+            _stableBridgingFee: BigNumberish,
+            _stoken: string,
+            _amount: BigNumberish,
+            _crossChainID: BytesLike,
+            _chain2address: Synthesis.TonAddressStruct,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
+            _clientID: BytesLike,
+            overrides?: CallOverrides
+        ): Promise<string>
 
         fabric(overrides?: CallOverrides): Promise<string>
 
@@ -1026,6 +1114,25 @@ export interface Synthesis extends BaseContract {
             rtoken?: string | null
         ): BurnRequestBTCEventFilter
 
+        'BurnRequestTON(bytes32,address,uint256,address,tuple,uint256,address)'(
+            id?: null,
+            from?: string | null,
+            chainID?: BigNumberish | null,
+            revertableAddress?: string | null,
+            to?: null,
+            amount?: null,
+            token?: null
+        ): BurnRequestTONEventFilter
+        BurnRequestTON(
+            id?: null,
+            from?: string | null,
+            chainID?: BigNumberish | null,
+            revertableAddress?: string | null,
+            to?: null,
+            amount?: null,
+            token?: null
+        ): BurnRequestTONEventFilter
+
         'ClientIdLog(bytes32,bytes32)'(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
         ClientIdLog(requestId?: null, clientId?: BytesLike | null): ClientIdLogEventFilter
 
@@ -1116,6 +1223,20 @@ export interface Synthesis extends BaseContract {
             _amount: BigNumberish,
             _to: BytesLike,
             _stoken: string,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        burnSyntheticTokenTON(
+            _stableBridgingFee: BigNumberish,
+            _stoken: string,
+            _amount: BigNumberish,
+            _crossChainID: BytesLike,
+            _chain2address: Synthesis.TonAddressStruct,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
             _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
@@ -1279,6 +1400,20 @@ export interface Synthesis extends BaseContract {
             _amount: BigNumberish,
             _to: BytesLike,
             _stoken: string,
+            _clientID: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        burnSyntheticTokenTON(
+            _stableBridgingFee: BigNumberish,
+            _stoken: string,
+            _amount: BigNumberish,
+            _crossChainID: BytesLike,
+            _chain2address: Synthesis.TonAddressStruct,
+            _receiveSide: string,
+            _oppositeBridge: string,
+            _revertableAddress: string,
+            _chainID: BigNumberish,
             _clientID: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>

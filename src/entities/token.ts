@@ -1,7 +1,7 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { isTronChainId, tronAddressToEvm } from '../crosschain/tron'
+import { isTronChainId, tronAddressToEvm } from '../crosschain/chainUtils/tron'
 import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import { Chain, getChainById } from './chain'
 
@@ -92,6 +92,11 @@ export const WETH = {
     // >> FAKE
     [ChainId.TON_MAINNET]: new Token({
         chainId: ChainId.TON_MAINNET,
+        address: '',
+        decimals: 9,
+    }),
+    [ChainId.TON_TESTNET]: new Token({
+        chainId: ChainId.TON_TESTNET,
         address: '',
         decimals: 9,
     }),
