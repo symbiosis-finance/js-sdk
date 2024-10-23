@@ -10,6 +10,7 @@ import {
     isTonChainId,
     isTronChainId,
     prepareTronTransaction,
+    tonAdvisorMock,
     TronTransactionData,
 } from '../chainUtils'
 import { TRON_PORTAL_ABI } from '../tronAbis'
@@ -18,7 +19,6 @@ import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
 import { CROSS_CHAIN_ID } from '../constants'
 import { Address } from '@ton/core'
-import { parseUnits } from '@ethersproject/units'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context
@@ -117,7 +117,7 @@ async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
 
     // TODO remove after advisor is implemented
     if (isTonChainId(chainIdIn)) {
-        return new TokenAmount(tokenOut, parseUnits('0.1', tokenOut.decimals).toString())
+        return tonAdvisorMock(tokenOut).fee
     }
 
     const internalId = getInternalId({
@@ -165,7 +165,7 @@ async function getBurnFee(context: SwapExactInParams): Promise<TokenAmount> {
 
     // TODO remove after advisor is implemented
     if (isTonChainId(chainIdOut)) {
-        return new TokenAmount(tokenOut, parseUnits('0.1', tokenOut.decimals).toString())
+        return tonAdvisorMock(tokenOut).fee
     }
 
     const internalId = getInternalId({

@@ -1,9 +1,8 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Token, TokenAmount } from '../entities'
-import { buildMetaSynthesize, tronAddressToEvm } from './chainUtils'
+import { buildMetaSynthesize, tonAdvisorMock, tronAddressToEvm } from './chainUtils'
 import { TonTransactionData } from './types'
 import { BaseSwapping } from './baseSwapping'
-import { parseUnits } from '@ethersproject/units'
 
 export class SwappingFromTon extends BaseSwapping {
     protected async getTonTransactionRequest(
@@ -34,9 +33,6 @@ export class SwappingFromTon extends BaseSwapping {
 
     // TODO rm after advisor is ready
     protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-        return {
-            fee: new TokenAmount(feeToken, parseUnits('0.1', feeToken.decimals).toString()),
-            save: new TokenAmount(feeToken, '0'),
-        }
+        return tonAdvisorMock(feeToken)
     }
 }

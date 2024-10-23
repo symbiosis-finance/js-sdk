@@ -6,6 +6,7 @@ import { Symbiosis } from '../symbiosis'
 import { Token, TokenAmount } from '../../entities'
 import { TonTransactionData } from '../types'
 import { Error } from '../error'
+import { parseUnits } from '@ethersproject/units'
 
 export const TON_TOKEN_DECIMALS = 9
 
@@ -468,4 +469,15 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
     }
 
     throw new Error('No TON transaction request. Unsupported token')
+}
+
+export function tonAdvisorMock(feeToken: Token) {
+    let feeRaw = '0.1' // wton
+    if (feeToken.symbol?.toLowerCase().includes('usdt')) {
+        feeRaw = '0.6'
+    }
+    return {
+        fee: new TokenAmount(feeToken, parseUnits(feeRaw, feeToken.decimals).toString()),
+        save: new TokenAmount(feeToken, '0'),
+    }
 }

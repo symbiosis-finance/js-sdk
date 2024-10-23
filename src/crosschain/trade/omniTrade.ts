@@ -47,7 +47,7 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
         // 0.1%
         chainId: ChainId.BOBA_BNB,
         address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
-        eligibleChains: [ChainId.SEI_EVM_MAINNET],
+        eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.TON_MAINNET],
     },
 ]
 

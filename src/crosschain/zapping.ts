@@ -15,6 +15,7 @@ import {
     isTronChainId,
     isTronToken,
     prepareTronTransaction,
+    tonAdvisorMock,
     tronAddressToEvm,
     TronTransactionData,
 } from './chainUtils'
@@ -31,7 +32,6 @@ import {
 } from './types'
 import { WrapTrade } from './trade'
 import { isTonChainId } from './chainUtils'
-import { parseUnits } from '@ethersproject/units'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount
@@ -389,7 +389,7 @@ export class Zapping {
 
         // TODO remove after advisor is implemented
         if (isTonChainId(chainIdIn)) {
-            return new TokenAmount(this.synthToken, parseUnits('0.1', this.synthToken.decimals).toString())
+            return tonAdvisorMock(this.synthToken).fee
         }
 
         const portal = this.symbiosis.portal(chainIdIn)

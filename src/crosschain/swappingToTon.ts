@@ -1,12 +1,12 @@
 import { Address } from '@ton/core'
 import { AddressZero } from '@ethersproject/constants'
-import { parseUnits } from '@ethersproject/units'
 
 import { BaseSwapping } from './baseSwapping'
 import { TokenAmount } from '../entities'
 import { CROSS_CHAIN_ID } from './constants'
 
 import { SwapExactInParams, SwapExactInResult } from './types'
+import { tonAdvisorMock } from './chainUtils'
 
 export class SwappingToTon extends BaseSwapping {
     protected userAddress!: string
@@ -22,12 +22,7 @@ export class SwappingToTon extends BaseSwapping {
 
     // TODO: remove when advisor is ready
     protected async getFeeV2(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-        const feeToken = this.transitTokenOut
-
-        return {
-            fee: new TokenAmount(feeToken, parseUnits('0.1', feeToken.decimals).toString()),
-            save: new TokenAmount(feeToken, '0'),
-        }
+        return tonAdvisorMock(this.transitTokenOut)
     }
 
     protected metaBurnSyntheticToken(fee: TokenAmount): [string, string] {
