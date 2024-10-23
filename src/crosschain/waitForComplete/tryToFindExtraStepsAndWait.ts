@@ -8,7 +8,6 @@ import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 import { NATIVE_TON_BRIDGE_OPTIONS, TON_TOKEN_DECIMALS } from '../chainUtils'
-import { SwapEthToTonEvent } from '../contracts/WTON'
 import { Address } from '@ton/core'
 import { parseUnits } from 'ethers/lib/utils'
 
@@ -29,9 +28,8 @@ export async function tryToFindExtraStepsAndWait(
     chainId: ChainId,
     txHash: string
 ): Promise<{ extraStep?: ExtraStep; outHash: string }> {
-    const txHash1 = '0x3e3b57b535dab277f9bcd120ca4008d9ad194ce98c55f21252ae56ed3f349d50'
     const provider = symbiosis.getProvider(chainId)
-    const receipt = await provider.getTransactionReceipt(txHash1)
+    const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
         throw new TxNotFound(txHash)
     }
@@ -72,14 +70,14 @@ export async function tryToFindExtraStepsAndWait(
         }
     }
 
-    const nativeTonBridge = await findNativeTonBridge(symbiosis, chainId, receipt)
-    if (nativeTonBridge) {
-        const { outHash } = nativeTonBridge
-        return {
-            extraStep: 'swapEthToTon',
-            outHash,
-        }
-    }
+    // const nativeTonBridge = await findNativeTonBridge(symbiosis, chainId, receipt)
+    // if (nativeTonBridge) {
+    //     const { outHash } = nativeTonBridge
+    //     return {
+    //         extraStep: 'swapEthToTon',
+    //         outHash,
+    //     }
+    // }
 
     return {
         outHash: txHash,
@@ -288,13 +286,16 @@ export async function findNativeTonBridge(symbiosis: Symbiosis, chainId: ChainId
                 archival: true,
             })
 
-            const tx = txs.find((tx) => {
-                if (!Address.isAddress(tx?.inMessage?.info.src) || !bridgeTonAddr) {
-                    return undefined
+            return txs.find((tx) => {
+                if (!tx?.inMessage) {
+                    return
+                }
+                if (!Address.isAddress(tx.inMessage?.info.src) || !bridgeTonAddr) {
+                    return
                 }
 
                 if (tx.now < now) {
-                    return undefined
+                    return
                 }
 
                 const txInMessageAddr = tx.inMessage.info.src
@@ -310,8 +311,6 @@ export async function findNativeTonBridge(symbiosis: Symbiosis, chainId: ChainId
                     tonTxValue.lt(tonAmountRange[1])
                 )
             })
-
-            return tx
         },
         successCondition: (tx) => !!tx,
         error: new Error(`No transaction found on ${tonAddress.toString()} in TON blockchain`),
