@@ -49,21 +49,28 @@ interface TxResponse {
     wrap: WrapOperation
 }
 
-class WaitForRevealBtcTxError extends Error {
+class WaitForCommitBtcTxError extends Error {
     constructor(message: string) {
         super(message)
-        this.name = 'WaitForRevealBtcTxError'
+        this.name = 'WaitForCommitBtcTxError'
     }
 }
 
-export async function waitForBtcRevealTxMined(
-    forwarderUrl: string,
-    revealTx: string,
-    confirmations: number,
+interface WaitForBtcCommitTxMinedParams {
+    forwarderUrl: string
+    commitTx: string
+    confirmations: number
     onConfirmation: (count: number) => void
-): Promise<string | undefined> {
+}
+
+export async function waitForBtcCommitTxMined({
+    forwarderUrl,
+    commitTx,
+    confirmations,
+    onConfirmation,
+}: WaitForBtcCommitTxMinedParams): Promise<string | undefined> {
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
-    txInfoUrl.searchParams.append('txid', revealTx)
+    txInfoUrl.searchParams.append('txid', commitTx)
 
     const txResponse = await longPolling<TxResponse>({
         pollingFunction: async () => {
@@ -74,12 +81,12 @@ export async function waitForBtcRevealTxMined(
             onConfirmation(currentConfirmations)
             return currentConfirmations >= confirmations
         },
-        error: new WaitForRevealBtcTxError('getting TxResponse timeout exceed'),
+        error: new WaitForCommitBtcTxError('getting TxResponse timeout exceed'),
     })
 
     if (!txResponse || !txResponse.txInfo) {
         return
     }
 
-    return txResponse.txInfo.revealTx
+    return txResponse.txInfo.commitTx
 }

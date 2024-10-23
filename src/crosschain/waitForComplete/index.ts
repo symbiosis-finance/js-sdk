@@ -1,6 +1,6 @@
 export { waitForComplete } from './waitForComplete'
 export { waitForBtcDepositAccepted } from './waitForBtcDepositAccepted'
-export { waitForBtcRevealTxMined } from './waitForBtcRevealTxMined'
+export { waitForBtcCommitTxMined } from './waitForBtcCommitTxMined'
 export { waitForBtcEvmTxIssued } from './waitForBtcEvmTxIssued'
 export { waitFromTonTxMined } from './waitFromTonTxMined'
 export { BridgeTxInfo } from './types'
