@@ -15,7 +15,6 @@ import {
     isTronChainId,
     isTronToken,
     prepareTronTransaction,
-    tonAdvisorMock,
     tronAddressToEvm,
     TronTransactionData,
 } from './chainUtils'
@@ -386,11 +385,6 @@ export class Zapping {
     protected async getFee(): Promise<TokenAmount> {
         const chainIdIn = this.tokenAmountIn.token.chainId
         const chainIdOut = this.omniPoolConfig.chainId
-
-        // TODO remove after advisor is implemented
-        if (isTonChainId(chainIdIn)) {
-            return tonAdvisorMock(this.synthToken).fee
-        }
 
         const portal = this.symbiosis.portal(chainIdIn)
         const synthesis = this.symbiosis.synthesis(chainIdOut)

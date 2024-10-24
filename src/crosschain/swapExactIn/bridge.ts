@@ -115,11 +115,6 @@ async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
     const chainIdIn = tokenAmountIn.token.chainId
     const chainIdOut = tokenOut.chainId
 
-    // TODO remove after advisor is implemented
-    if (isTonChainId(chainIdIn)) {
-        return tonAdvisorMock(tokenOut).fee
-    }
-
     const internalId = getInternalId({
         contractAddress: symbiosis.chainConfig(chainIdIn).portal,
         requestCount: MaxUint256, // we must use last possible request count because it is always free
