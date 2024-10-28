@@ -1,7 +1,7 @@
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade } from './symbiosisTrade'
-import { getMinAmount } from '../chainUtils/evm'
+import { getMinAmount } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
@@ -131,7 +131,7 @@ export class OpenOceanTrade implements SymbiosisTrade {
     public amountOut!: TokenAmount
     public amountOutMin!: TokenAmount
     public callData!: string
-    public callDataOffset: number
+    public callDataOffset?: number
     public priceImpact!: Percent
     public routerAddress!: string
 
@@ -154,7 +154,6 @@ export class OpenOceanTrade implements SymbiosisTrade {
         this.tokenOut = tokenOut
         this.to = to
         this.slippage = slippage
-        this.callDataOffset = 4 + 8 * 32
         this.endpoint = BASE_URL
     }
 
@@ -202,6 +201,8 @@ export class OpenOceanTrade implements SymbiosisTrade {
 
         this.routerAddress = to
         this.callData = data
+        this.callDataOffset = this.getOffset(data)
+
         this.amountOut = new TokenAmount(this.tokenOut, outAmount)
 
         const amountOutMinRaw = getMinAmount(this.slippage, outAmount)
@@ -212,6 +213,38 @@ export class OpenOceanTrade implements SymbiosisTrade {
         this.priceImpact = this.convertPriceImpact(priceImpactString)
 
         return this
+    }
+
+    private getOffset(callData: string) {
+        const methods = [
+            {
+                // swap
+                sigHash: '90411a32',
+                offset: 260,
+            },
+            {
+                // uniswapV3SwapTo
+                sigHash: 'bc80f1a8',
+                offset: 68,
+            },
+            {
+                // callUniswapTo
+                sigHash: '6b58f2f0',
+                offset: 68,
+            },
+        ]
+
+        const sigHash = callData.slice(2, 10)
+
+        const method = methods.find((i) => {
+            return i.sigHash === sigHash
+        })
+
+        if (method === undefined) {
+            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+        }
+
+        return method.offset
     }
 
     private convertPriceImpact(value?: string) {
