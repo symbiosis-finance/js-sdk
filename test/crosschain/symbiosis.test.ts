@@ -4,17 +4,6 @@ import { Token } from '../../src/entities'
 import { ChainId } from '../../src/constants'
 import { config as mainnet } from '../../src/crosschain/config/mainnet'
 
-describe('#isDirectRouteClient', () => {
-    test('no', () => {
-        const s = new Symbiosis('mainnet', 'test')
-        expect(s.isDirectRouteClient).toBe(false)
-    })
-    test('yes', () => {
-        const s = new Symbiosis('mainnet', 'test2', { directRouteClients: ['test', 'test2'] })
-        expect(s.isDirectRouteClient).toBe(true)
-    })
-})
-
 const symbiosis = new Symbiosis('mainnet', 'test')
 
 describe('#getRepresentation', () => {

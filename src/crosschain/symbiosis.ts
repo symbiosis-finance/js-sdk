@@ -87,7 +87,6 @@ export class Symbiosis {
     public readonly config: Config
     public readonly configName: ConfigName
     public readonly clientId: string
-    public readonly isDirectRouteClient: boolean
 
     private readonly configCache: ConfigCache
 
@@ -187,7 +186,6 @@ export class Symbiosis {
         this.configCache = new ConfigCache(configName)
 
         this.clientId = utils.formatBytes32String(clientId)
-        this.isDirectRouteClient = (overrideConfig?.directRouteClients || []).includes(clientId)
 
         this.providers = new Map(
             this.config.chains.map((chain) => {
