@@ -99,7 +99,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
         btcForwarderFeeMax = new TokenAmount(
             btcForwarderFee.token,
-            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(200).div(100).toString() // +100% of fee
         )
         tokenAmountOutMin = sBtcAmount.subtract(btcForwarderFeeMax)
     } else {
@@ -119,7 +119,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         )
         btcForwarderFeeMax = new TokenAmount(
             btcForwarderFee.token,
-            BigNumber.from(btcForwarderFee.raw.toString()).mul(120).div(100).toString() // +20% of fee
+            BigNumber.from(btcForwarderFee.raw.toString()).mul(200).div(100).toString() // +100% of fee
         )
         if (btcForwarderFee.greaterThan(sBtcAmount)) {
             throw new Error(
