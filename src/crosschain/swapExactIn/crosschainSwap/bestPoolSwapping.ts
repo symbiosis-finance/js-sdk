@@ -15,15 +15,19 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const optimalRoute = getOptimalRoute(symbiosis, tokenAmountIn.token, tokenOut)
     if (optimalRoute) {
-        const result = await symbiosis.newSwapping(optimalRoute.pool).exactIn({
-            ...params,
-            transitTokenIn: optimalRoute.transitTokenIn,
-            transitTokenOut: optimalRoute.transitTokenOut,
-        })
+        try {
+            const result = await symbiosis.newSwapping(optimalRoute.pool).exactIn({
+                ...params,
+                transitTokenIn: optimalRoute.transitTokenIn,
+                transitTokenOut: optimalRoute.transitTokenOut,
+            })
 
-        const threshold = new Percent('-1', '100') // -1%
-        if (result.priceImpact.greaterThan(threshold)) {
-            return result
+            const threshold = new Percent('-1', '100') // -1%
+            if (result.priceImpact.greaterThan(threshold)) {
+                return result
+            }
+        } catch (e) {
+            console.error('Optimal route has not been built', e)
         }
     }
 
