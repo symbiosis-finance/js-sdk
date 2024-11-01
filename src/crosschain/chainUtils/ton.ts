@@ -474,7 +474,7 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
 export function tonAdvisorMock(feeToken: Token) {
     let feeRaw = '0.1' // wton
     if (feeToken.symbol?.toLowerCase().includes('usdt')) {
-        feeRaw = '0.6'
+        feeRaw = '0.5'
     }
     return {
         fee: new TokenAmount(feeToken, parseUnits(feeRaw, feeToken.decimals).toString()),
