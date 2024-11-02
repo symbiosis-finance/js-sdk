@@ -93,31 +93,6 @@ const { execute, fee, tokenAmountOut, route, priceImpact } = await swapping.exac
 })
 ```
 
-All next steps as in swapping example
-
-## Bridging
-
-Bridging allows you to swap stable tokens between chains.
-
-```ts
-// Create new Bridging instance
-const bridging = symbiosis.newBridging()
-
-// Calculates fee for bridging and get execute function
-const { transactionRequest } = await bridging.exactIn({
-    tokenAmountIn, // TokenAmount object
-    tokenOut, // Token object
-    to, // to account address
-    revertableAddress // account who can revert stucked transaction
-})
-
-// Send transaction or get receipt
-const receipt = ...
-
-// Wait for transaction to be completed on recipient chain
-const log = await bridging.waitForComplete(receipt)
-```
-
 ### Revert stucked transaction:
 
 ```ts
