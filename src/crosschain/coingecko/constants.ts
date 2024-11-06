@@ -29,6 +29,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.TON_TESTNET]: 'the-open-network',
     [ChainId.BTC_MAINNET]: 'bitcoin',
     [ChainId.TRON_MAINNET]: 'tron',
+    [ChainId.TAIKO_MAINNET]: 'taiko',
     [ChainId.ZETACHAIN_MAINNET]: 'zetachain',
     [ChainId.CRONOS_MAINNET]: 'cronos',
     [ChainId.FRAXTAL_MAINNET]: 'fraxtal',
