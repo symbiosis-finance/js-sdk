@@ -6,6 +6,7 @@ import { SymbiosisKind, SymbiosisTradeType } from './trade'
 import { TransactionRequest } from '@ethersproject/providers'
 import { TronTransactionData } from './chainUtils/tron'
 import { Symbiosis } from './symbiosis'
+import {ProfilerItem} from "../entities/profiler";
 
 export enum Field {
     INPUT = 'INPUT',
@@ -153,5 +154,5 @@ export type SwapExactInResult = {
     fees: FeeItem[]
 
     amountInUsd?: TokenAmount
-    timeLog?: (string | number)[][]
+    timeLog?: ProfilerItem[]
 } & SwapExactInTransactionPayload

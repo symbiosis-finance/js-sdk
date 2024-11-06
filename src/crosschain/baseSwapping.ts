@@ -35,6 +35,7 @@ import {
     SwapExactInTransactionPayload,
     TonTransactionData,
 } from './types'
+import { Profiler } from '../entities/profiler'
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -67,10 +68,13 @@ export abstract class BaseSwapping {
 
     protected feeV2: TokenAmount | undefined
 
+    private profiler: Profiler
+
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
         this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
         this.dataProvider = new DataProvider(symbiosis)
+        this.profiler = new Profiler()
     }
 
     async doExactIn({
@@ -84,9 +88,6 @@ export abstract class BaseSwapping {
         transitTokenIn,
         transitTokenOut,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
-        const start = Date.now()
-        let prev = start
-        const timeLog = []
         const routes: RouteItem[] = []
 
         this.oneInchProtocols = oneInchProtocols
@@ -123,8 +124,7 @@ export abstract class BaseSwapping {
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA()
             await this.tradeA.init()
-            timeLog.push(['A', Date.now() - start])
-            prev = Date.now()
+            this.profiler.tick('A')
             routes.push({
                 provider: this.tradeA.tradeType,
                 tokens: [this.tradeA.tokenAmountIn.token, this.tradeA.amountOut.token],
@@ -132,10 +132,8 @@ export abstract class BaseSwapping {
         }
 
         this.transit = this.buildTransit()
-
         await this.transit.init()
-        timeLog.push(['TRANSIT', Date.now() - start, Date.now() - prev])
-        prev = Date.now()
+        this.profiler.tick('TRANSIT')
 
         routes.push({
             provider: 'symbiosis',
@@ -143,14 +141,14 @@ export abstract class BaseSwapping {
         })
 
         await this.doPostTransitAction()
+        this.profiler.tick('POST_TRANSIT_ACTION')
 
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
-            timeLog.push(['C1', Date.now() - start, Date.now() - prev])
-            prev = Date.now()
+            this.profiler.tick('C_1')
             routes.push({
                 provider: this.tradeC.tradeType,
                 tokens: [this.tradeC.tokenAmountIn.token, this.tradeC.amountOut.token],
@@ -163,9 +161,7 @@ export abstract class BaseSwapping {
             this.getFee(this.transit.feeToken),
             this.transit.isV2() ? this.getFeeV2() : undefined,
         ])
-
-        timeLog.push(['ADVISOR', Date.now() - start, Date.now() - prev])
-        prev = Date.now()
+        this.profiler.tick('ADVISOR')
 
         const feeV2 = feeV2Raw?.fee
         this.feeV2 = feeV2
@@ -179,14 +175,14 @@ export abstract class BaseSwapping {
             save = feeV1Raw.save
             this.transit = this.buildTransit(fee)
             await this.transit.init()
+            this.profiler.tick('TRANSIT_2')
         }
 
         await this.doPostTransitAction()
         if (!this.transitTokenOut.equals(tokenOut)) {
             this.tradeC = this.buildTradeC()
             await this.tradeC.init()
-
-            timeLog.push(['C2', Date.now() - start, Date.now() - prev])
+            this.profiler.tick('C_2')
         }
         // <<< NOTE create trades with calculated fee
 
@@ -217,7 +213,7 @@ export abstract class BaseSwapping {
             }
         }
 
-        timeLog.push(['F', Date.now() - start])
+        this.profiler.tick('TRANSACTION_REQUEST')
 
         const fees: FeeItem[] = [
             {
@@ -236,6 +232,7 @@ export abstract class BaseSwapping {
             })
         }
 
+        console.log({ timeLog: this.profiler.toString() })
         return {
             ...payload,
             kind: 'crosschain-swap',
@@ -246,7 +243,7 @@ export abstract class BaseSwapping {
             routes,
             fees,
             amountInUsd: this.amountInUsd,
-            timeLog,
+            timeLog: this.profiler.toString(),
         }
     }
 
