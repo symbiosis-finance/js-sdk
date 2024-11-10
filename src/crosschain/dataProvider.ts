@@ -2,7 +2,7 @@ import { ChainId } from '../constants'
 import { Token } from '../entities'
 import { OneInchOracle } from './contracts'
 import { Symbiosis } from './symbiosis'
-import { OneInchTrade, UniLikeTrade, getRateToEth } from './trade'
+import { OneInchTrade, UniV2Trade, getRateToEth } from './trade'
 import { getTokenPriceUsd } from './coingecko'
 
 export class DataProvider {
@@ -14,7 +14,7 @@ export class DataProvider {
         return this.fromCache(['getPairs', tokenIn.address, tokenIn.address], () => {
             const provider = this.symbiosis.getProvider(tokenIn.chainId)
 
-            return UniLikeTrade.getPairs(provider, tokenIn, tokenOut)
+            return UniV2Trade.getPairs(provider, tokenIn, tokenOut)
         })
     }
 

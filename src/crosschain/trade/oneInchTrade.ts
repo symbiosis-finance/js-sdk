@@ -3,7 +3,7 @@ import { Percent, Token, TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
-import { canOneInch, getMinAmount } from '../chainUtils/evm'
+import { canOneInch, getMinAmount } from '../chainUtils'
 import { getTradePriceImpact } from './getTradePriceImpact'
 import { SymbiosisTrade } from './symbiosisTrade'
 

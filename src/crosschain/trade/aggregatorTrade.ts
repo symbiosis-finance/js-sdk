@@ -16,7 +16,7 @@ import {
     KimRouter,
     UniLikeRouter,
 } from '../contracts'
-import { UniLikeTrade } from './uniLikeTrade'
+import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 
 interface AggregatorTradeParams {
@@ -40,7 +40,7 @@ class TradeNotInitializedError extends Error {
 
 const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('openocean')
 
-type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniLikeTrade | UniV3Trade
+type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
 function limitOpenOceanPromise() {
     return new Promise((_resolve, reject) => {
@@ -127,7 +127,7 @@ export class AggregatorTrade implements SymbiosisTrade {
             aggregators.push(uniV3Trade.init())
         }
 
-        aggregators.push(this.buildUniLikeTrade())
+        aggregators.push(this.buildUniV2Trade())
 
         const tradesResults = await Promise.allSettled(aggregators)
 
@@ -162,7 +162,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
     }
 
-    private async buildUniLikeTrade(): Promise<UniLikeTrade> {
+    private async buildUniV2Trade(): Promise<UniV2Trade> {
         const { symbiosis, tokenAmountIn, tokenOut, to, slippage, ttl } = this.params
         const { chainId } = tokenAmountIn.token
         let router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter =
@@ -187,7 +187,7 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
 
         const dexFee = symbiosis.dexFee(chainId)
-        const trade = new UniLikeTrade(tokenAmountIn, tokenOut, to, slippage, ttl, router, dexFee)
+        const trade = new UniV2Trade(tokenAmountIn, tokenOut, to, slippage, ttl, router, dexFee)
 
         await trade.init()
 

@@ -15,12 +15,12 @@ import {
 } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils/evm'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
-export class UniLikeTrade implements SymbiosisTrade {
+export class UniV2Trade implements SymbiosisTrade {
     tradeType = 'dex' as const
 
     public tokenAmountIn: TokenAmount
@@ -70,7 +70,7 @@ export class UniLikeTrade implements SymbiosisTrade {
         if (dataProvider) {
             this.pairs = await dataProvider.getPairs(this.tokenAmountIn.token, this.tokenOut)
         } else {
-            this.pairs = await UniLikeTrade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
+            this.pairs = await UniV2Trade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
         }
 
         const [trade] = Trade.bestTradeExactIn(this.pairs, this.tokenAmountIn, this.tokenOut, {
@@ -140,7 +140,7 @@ export class UniLikeTrade implements SymbiosisTrade {
 
     static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token): Promise<Pair[]> {
         const allPairCombinations = getAllPairCombinations(tokenIn, tokenOut)
-        return await UniLikeTrade.allPairs(provider, allPairCombinations)
+        return await UniV2Trade.allPairs(provider, allPairCombinations)
     }
 
     private static async allPairs(provider: Provider, tokens: [Token, Token][]): Promise<Pair[]> {

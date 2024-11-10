@@ -27,5 +27,6 @@ export interface SymbiosisTrade {
     priceImpact: Percent
     routerAddress: string
     callDataOffset?: number
+    minReceivedOffset?: number
     functionSelector?: string
 }
