@@ -29,51 +29,6 @@ const TON_ADDRESSES_MAP = [
     },
 ]
 
-const WTON_TOKEN = {
-    decimals: TON_TOKEN_DECIMALS,
-    name: 'Wrapped Toncoin',
-    symbol: 'WTON',
-    icons: {
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-    },
-}
-
-export type Option = { chainId: ChainId; bridge: string; wTon: Token; bridgeTonAddr: string }
-
-export const NATIVE_TON_BRIDGE_OPTIONS: Option[] = [
-    {
-        chainId: ChainId.SEPOLIA_TESTNET,
-        bridge: '0x3A1e6dA810637fb1c99fa0899b4F402A60E131D2',
-        wTon: new Token({
-            chainId: ChainId.SEPOLIA_TESTNET,
-            address: '0x331f40cc27aC106e1d5242CE633dc6436626a6F8',
-            ...WTON_TOKEN,
-        }),
-        bridgeTonAddr: 'Ef-56ZiqKUbtp_Ax2Qg4Vwh7yXXJCO8cNJAb229J6XXe4-aC',
-    },
-    {
-        chainId: ChainId.BSC_MAINNET,
-        bridge: '0x35D39bB2cbc51ce6c03f0306d0D8d56948b1f990',
-        wTon: new Token({
-            chainId: ChainId.BSC_MAINNET,
-            address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
-            ...WTON_TOKEN,
-        }),
-        bridgeTonAddr: 'Ef9NXAIQs12t2qIZ-sRZ26D977H65Ol6DQeXc5_gUNaUys5r',
-    },
-    {
-        chainId: ChainId.ETH_MAINNET,
-        bridge: '0x195A07D222a82b50DB84e8f47B71504D1E8C5fa2',
-        wTon: new Token({
-            chainId: ChainId.ETH_MAINNET,
-            address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
-            ...WTON_TOKEN,
-        }),
-        bridgeTonAddr: 'Ef_dJMSh8riPi3BTUTtcxsWjG8RLKnLctNjAM4rw8NN-xWdr',
-    },
-]
-
 export function getTonTokenAddress(address: string) {
     const found = TON_ADDRESSES_MAP.find((item) => {
         return item.evm.toLowerCase() === address.toLowerCase()

@@ -5,6 +5,7 @@ import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
 import { ChainId } from '../../constants'
 import { BigNumber } from 'ethers'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 interface ExtraFeeCollector {
     chainId: ChainId
@@ -51,7 +52,10 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
     },
 ]
 
-export class OmniTrade {
+export class OctoPoolTrade implements SymbiosisTrade {
+    tradeType = 'octopool' as const
+
+    public routerAddress: string
     public route!: Token[]
     public amountOut!: TokenAmount
     public amountOutMin!: TokenAmount
@@ -75,6 +79,7 @@ export class OmniTrade {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
         this.callDataOffset = 100
+        this.routerAddress = this.pool.address
     }
 
     public async init() {

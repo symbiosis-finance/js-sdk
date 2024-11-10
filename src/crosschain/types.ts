@@ -4,9 +4,9 @@ import { Percent, Token, TokenAmount } from '../entities'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { SymbiosisKind, SymbiosisTradeType } from './trade'
 import { TransactionRequest } from '@ethersproject/providers'
-import { TronTransactionData } from './chainUtils/tron'
+import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
-import {ProfilerItem} from "../entities/profiler";
+import { ProfilerItem } from '../entities/profiler'
 
 export enum Field {
     INPUT = 'INPUT',

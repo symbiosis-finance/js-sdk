@@ -1,20 +1,18 @@
-import { Percent, Token, TokenAmount } from '../../entities'
-
-export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
-
 export type SymbiosisTradeType =
-    | 'dex'
+    | 'uni-v2'
+    | 'uni-v3'
     | '1inch'
     | 'open-ocean'
     | 'wrap'
     | 'izumi'
-    | 'okx'
-    | 'uni-v3'
     | 'magpie'
+    | 'octopool'
     | 'symbiosis'
-    | 'ton-bridge'
-    | 'ton'
     | 'thorchain-bridge'
+
+import { Percent, Token, TokenAmount } from '../../entities'
+
+export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 
 export interface SymbiosisTrade {
     init(): Promise<this>

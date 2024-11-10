@@ -21,7 +21,7 @@ import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
 export class UniV2Trade implements SymbiosisTrade {
-    tradeType = 'dex' as const
+    tradeType = 'uni-v2' as const
 
     public tokenAmountIn: TokenAmount
 

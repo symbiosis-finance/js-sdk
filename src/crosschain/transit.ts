@@ -4,7 +4,7 @@ import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
 import { CHAINS_PRIORITY } from './constants'
 import { BridgeDirection, OmniPoolConfig } from './types'
-import { OmniTrade } from './trade'
+import { OctoPoolTrade } from './trade'
 import { parseUnits } from '@ethersproject/units'
 
 export class Transit {
@@ -15,7 +15,7 @@ export class Transit {
     public amountOut!: TokenAmount
     public amountOutMin!: TokenAmount
     public feeToken: Token
-    public trade: OmniTrade | undefined
+    public trade: OctoPoolTrade | undefined
 
     public constructor(
         protected symbiosis: Symbiosis,
@@ -182,14 +182,14 @@ export class Transit {
         return rep
     }
 
-    protected async buildTrade(): Promise<OmniTrade> {
+    protected async buildTrade(): Promise<OctoPoolTrade> {
         const tokenAmountIn = this.getTradeAmountIn(this.amountIn)
         const tokenAmountInMin = this.getTradeAmountIn(this.amountInMin)
         const tokenOut = this.getTradeTokenOut()
 
         const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
 
-        const trade = new OmniTrade(
+        const trade = new OctoPoolTrade(
             tokenAmountIn,
             tokenAmountInMin,
             tokenOut,
@@ -224,7 +224,7 @@ export class Transit {
 
         // octopul swap
         calldatas.push(this.trade.callData)
-        receiveSides.push(this.trade.pool.address)
+        receiveSides.push(this.trade.routerAddress)
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
         offsets.push(this.trade.callDataOffset)
 

@@ -1,6 +1,6 @@
 export { AggregatorTrade } from './aggregatorTrade'
 export { getRateToEth, getTradePriceImpact } from './getTradePriceImpact'
-export { OmniTrade } from './omniTrade'
+export { OctoPoolTrade } from './octoPoolTrade'
 export { OneInchTrade } from './oneInchTrade'
 export type { SymbiosisTradeType, SymbiosisKind } from './symbiosisTrade'
 export { UniV2Trade } from './uniV2Trade'

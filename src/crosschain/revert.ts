@@ -9,7 +9,7 @@ import type { Symbiosis } from './symbiosis'
 import { getExternalId, getInternalId, isTronChainId, prepareTronTransaction, TronTransactionData } from './chainUtils'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
-import { OmniTrade } from './trade'
+import { OctoPoolTrade } from './trade'
 import { OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
 import { TRON_PORTAL_ABI } from './tronAbis'
@@ -408,7 +408,7 @@ export class RevertPending {
 
         const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 
-        const omniTrade = new OmniTrade(
+        const octoPoolTrade = new OctoPoolTrade(
             amount,
             amount, // amountInMin
             tokenOut,
@@ -418,14 +418,14 @@ export class RevertPending {
             to,
             this.omniPoolConfig
         )
-        await omniTrade.init()
+        await octoPoolTrade.init()
 
         return [
             this.multicallRouter.address,
             this.multicallRouter.interface.encodeFunctionData('multicall', [
                 amount.raw.toString(),
-                [omniTrade.callData], // calldata
-                [omniTrade.pool.address], // receiveSides
+                [octoPoolTrade.callData], // calldata
+                [octoPoolTrade.routerAddress], // receiveSides
                 [tokenIn.address, tokenOut.address], // path
                 [100], // offset
                 to,
