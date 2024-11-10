@@ -1,18 +1,17 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { Log, TransactionReceipt, TransactionRequest } from '@ethersproject/providers'
+import { TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
-import { Portal__factory, Synthesis, Synthesis__factory } from './contracts'
-import { DataProvider } from './dataProvider'
-import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, WrapTrade } from './trade'
-import { Transit } from './transit'
-import { LegacyWaitForComplete } from './legacyWaitForComplete'
-import { Error, ErrorCode } from './error'
-import { SymbiosisTrade } from './trade/symbiosisTrade'
-import { OneInchProtocols } from './trade/oneInchTrade'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
+import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
+import { DataProvider } from '../dataProvider'
+import type { Symbiosis } from '../symbiosis'
+import { AggregatorTrade, WrapTrade } from '../trade'
+import { Transit } from '../transit'
+import { Error, ErrorCode } from '../error'
+import { SymbiosisTrade } from '../trade/symbiosisTrade'
+import { OneInchProtocols } from '../trade/oneInchTrade'
 import {
     splitSlippage,
     getExternalId,
@@ -24,8 +23,8 @@ import {
     tronAddressToEvm,
     isTronChainId,
     isTonChainId,
-} from './chainUtils'
-import { TRON_METAROUTER_ABI } from './tronAbis'
+} from '../chainUtils'
+import { TRON_METAROUTER_ABI } from '../tronAbis'
 import {
     FeeItem,
     OmniPoolConfig,
@@ -34,8 +33,8 @@ import {
     SwapExactInResult,
     SwapExactInTransactionPayload,
     TonTransactionData,
-} from './types'
-import { Profiler } from '../entities/profiler'
+} from '../types'
+import { Profiler } from '../../entities/profiler'
 
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
@@ -263,43 +262,6 @@ export abstract class BaseSwapping {
 
     protected approveTo(): string {
         return this.symbiosis.chainConfig(this.tokenAmountIn.token.chainId).metaRouterGateway
-    }
-
-    public async waitForComplete(receipt: TransactionReceipt): Promise<Log> {
-        if (!this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
-        if (this.transit.isV2()) {
-            const wfc1 = new LegacyWaitForComplete({
-                direction: 'mint',
-                symbiosis: this.symbiosis,
-                revertableAddress: this.getRevertableAddress('AB'),
-                chainIdIn: this.tokenAmountIn.token.chainId,
-                chainIdOut: this.omniPoolConfig.chainId,
-            })
-            const log = await wfc1.waitForComplete(receipt)
-
-            const provider = this.symbiosis.getProvider(this.omniPoolConfig.chainId)
-            const receipt2 = await provider.getTransactionReceipt(log.transactionHash)
-
-            const wfc2 = new LegacyWaitForComplete({
-                direction: 'burn',
-                symbiosis: this.symbiosis,
-                revertableAddress: this.getRevertableAddress('BC'),
-                chainIdIn: this.omniPoolConfig.chainId,
-                chainIdOut: this.tokenOut.chainId,
-            })
-            return wfc2.waitForComplete(receipt2)
-        }
-
-        return new LegacyWaitForComplete({
-            direction: this.transit.direction,
-            chainIdOut: this.tokenOut.chainId,
-            symbiosis: this.symbiosis,
-            revertableAddress: this.getRevertableAddress('AB'),
-            chainIdIn: this.tokenAmountIn.token.chainId,
-        }).waitForComplete(receipt)
     }
 
     protected getEvmTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TransactionRequest {

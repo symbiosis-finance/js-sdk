@@ -2,7 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { unwrapBtc } from './unwrapBtc'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 import { theBestOutput } from '../utils'
-import { ZappingBtc } from '../../zappingBtc'
+import { ZappingBtc } from '../../swapping'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, symbiosis, to } = context

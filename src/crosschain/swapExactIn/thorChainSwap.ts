@@ -2,7 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
 import { theBestOutput } from './utils'
-import { ZappingThor } from '../zappingThor'
+import { ZappingThor } from '../swapping'
 
 const ETH_USDC = new Token({
     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',

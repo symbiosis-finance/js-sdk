@@ -1,12 +1,12 @@
-import { ChainId } from '../constants'
-import { GAS_TOKEN, Token, TokenAmount } from '../entities'
+import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 import { BaseSwapping } from './baseSwapping'
-import { MulticallRouter, Synthesis } from './contracts'
-import { OneInchProtocols } from './trade/oneInchTrade'
+import { MulticallRouter, Synthesis } from '../contracts'
+import { OneInchProtocols } from '../trade/oneInchTrade'
 import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { getToBtcFee } from './chainUtils/btc'
-import { SwapExactInResult } from './types'
+import { getToBtcFee } from '../chainUtils/btc'
+import { SwapExactInResult } from '../types'
+import { ChainId } from '../../constants'
 
 initEccLib(ecc)
 

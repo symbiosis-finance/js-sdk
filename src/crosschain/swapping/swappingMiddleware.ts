@@ -1,7 +1,7 @@
 import { BaseSwapping } from './baseSwapping'
 import { Swapping } from './swapping'
-import { SwapExactInParams, SwapExactInResult } from './types'
-import { isTonChainId } from './chainUtils'
+import { SwapExactInParams, SwapExactInResult } from '../types'
+import { isTonChainId } from '../chainUtils'
 import { SwappingFromTon } from './swappingFromTon'
 
 export class SwappingMiddleware extends BaseSwapping {

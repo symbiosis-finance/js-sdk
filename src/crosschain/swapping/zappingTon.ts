@@ -1,12 +1,12 @@
 import { formatUnits, parseUnits } from '@ethersproject/units'
 import { BigNumber } from 'ethers'
 import { BaseSwapping } from './baseSwapping'
-import { Token, TokenAmount } from '../entities'
-import { MulticallRouter, TonBridge } from './contracts'
-import { ChainId } from '../constants'
-import { Error, ErrorCode } from './error'
-import { OneInchProtocols } from './trade/oneInchTrade'
-import { SwapExactInResult } from './types'
+import { Token, TokenAmount } from '../../entities'
+import { MulticallRouter, TonBridge } from '../contracts'
+import { ChainId } from '../../constants'
+import { Error, ErrorCode } from '../error'
+import { OneInchProtocols } from '../trade/oneInchTrade'
+import { SwapExactInResult } from '../types'
 import { Address } from '@ton/core'
 
 export const TON_TOKEN_DECIMALS = 9

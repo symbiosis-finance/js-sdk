@@ -1,7 +1,7 @@
 import { GAS_TOKEN, Percent, TokenAmount } from '../../../entities'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { BTC_NETWORKS, getPkScript } from '../../zappingBtc'
+import { BTC_NETWORKS, getPkScript } from '../../swapping/zappingBtc'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../../types'
 import { getToBtcFee } from '../../chainUtils/btc'
 

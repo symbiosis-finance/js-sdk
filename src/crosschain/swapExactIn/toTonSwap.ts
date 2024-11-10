@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 // import { GAS_TOKEN } from '../../entities'
 import { theBestOutput } from './utils'
-import { SwappingToTon } from '../swappingToTon'
+import { SwappingToTon } from '../swapping'
 // import { NATIVE_TON_BRIDGE_OPTIONS } from '../chainUtils'
 // import { ZappingTon } from '../zappingTon'
 

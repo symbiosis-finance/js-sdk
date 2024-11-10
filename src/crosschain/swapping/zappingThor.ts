@@ -1,14 +1,14 @@
-import { ChainId } from '../constants'
-import { GAS_TOKEN, Token, TokenAmount } from '../entities'
+import { ChainId } from '../../constants'
+import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 import { BaseSwapping } from './baseSwapping'
-import { MulticallRouter, ThorRouter__factory } from './contracts'
+import { MulticallRouter, ThorRouter__factory } from '../contracts'
 import fetch from 'isomorphic-unfetch'
-import { OneInchProtocols } from './trade/oneInchTrade'
-import { Error, ErrorCode } from './error'
+import { OneInchProtocols } from '../trade/oneInchTrade'
+import { Error, ErrorCode } from '../error'
 import { BigNumber } from 'ethers'
-import { getMinAmount } from './chainUtils/evm'
+import { getMinAmount } from '../chainUtils'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
-import { SwapExactInResult } from './types'
+import { SwapExactInResult } from '../types'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount

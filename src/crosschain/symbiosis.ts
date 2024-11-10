@@ -61,7 +61,7 @@ import {
     waitFromTonTxMined,
 } from './waitForComplete'
 import { DataProvider } from './dataProvider'
-import { SwappingMiddleware } from './swappingMiddleware'
+import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { isBtcChainId } from './chainUtils'

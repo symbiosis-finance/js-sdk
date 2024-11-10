@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { TokenAmount } from '../entities'
-import { buildMetaSynthesize, tronAddressToEvm } from './chainUtils'
-import { TonTransactionData } from './types'
+import { TokenAmount } from '../../entities'
+import { buildMetaSynthesize, tronAddressToEvm } from '../chainUtils'
+import { TonTransactionData } from '../types'
 import { BaseSwapping } from './baseSwapping'
 
 export class SwappingFromTon extends BaseSwapping {

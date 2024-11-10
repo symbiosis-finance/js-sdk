@@ -1,19 +1,17 @@
-import { Filter, TransactionRequest } from '@ethersproject/providers'
+import { TransactionRequest } from '@ethersproject/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { BigNumberish, BytesLike, ContractTransaction, Signer } from 'ethers'
+import { BigNumberish, BytesLike } from 'ethers'
 import JSBI from 'jsbi'
 import { Token, TokenAmount } from '../entities'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { getExternalId, getInternalId, getLogWithTimeout, prepareTransactionRequest } from './chainUtils/evm'
+import { getExternalId, getInternalId, isTronChainId, prepareTronTransaction, TronTransactionData } from './chainUtils'
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
-import { LegacyWaitForComplete } from './legacyWaitForComplete'
 import { OmniTrade } from './trade'
 import { OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
-import { isTronChainId, prepareTronTransaction, TronTransactionData } from './chainUtils/tron'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { CROSS_CHAIN_ID } from './constants'
 
@@ -22,7 +20,6 @@ type RevertBase = {
     fee: TokenAmount
 }
 export type EvmRevertResponse = RevertBase & {
-    execute: (signer: Signer) => any
     transactionRequest: TransactionRequest
 }
 
@@ -77,88 +74,7 @@ export class RevertPending {
             type: 'evm',
             fee,
             transactionRequest,
-            execute: (signer: Signer) => this.execute(transactionRequest, signer),
         }
-    }
-
-    private async waitForCompleteV2() {
-        const { chainIdFrom, internalId, chainIdTo, revertableAddress } = this.request
-
-        const externalId = getExternalId({
-            internalId,
-            chainId: chainIdTo,
-            revertableAddress,
-            contractAddress: this.symbiosis.portal(chainIdTo).address,
-        })
-        const mChainSynthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
-
-        const revertBurnLog = await getLogWithTimeout({
-            chainId: this.omniPoolConfig.chainId,
-            filter: mChainSynthesis.filters.RevertBurnCompleted(externalId),
-            symbiosis: this.symbiosis,
-        })
-
-        const receipt = await mChainSynthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
-
-        const wfc = new LegacyWaitForComplete({
-            direction: 'burn',
-            symbiosis: this.symbiosis,
-            revertableAddress,
-            chainIdIn: this.omniPoolConfig.chainId,
-            chainIdOut: chainIdFrom,
-        })
-        const log = await wfc.waitForComplete(receipt)
-
-        return log.transactionHash
-    }
-
-    private async waitForCompleteV2Revert() {
-        const { chainIdFrom, chainIdTo, revertableAddress } = this.request
-        const synthesis = this.symbiosis.synthesis(chainIdFrom)
-        const externalId = this.getExternalId()
-        const filter = synthesis.filters.RevertBurnCompleted(externalId)
-        const revertBurnLog = await getLogWithTimeout({ chainId: chainIdFrom, filter, symbiosis: this.symbiosis })
-
-        const receipt = await synthesis.provider.getTransactionReceipt(revertBurnLog.transactionHash)
-
-        const wfc = new LegacyWaitForComplete({
-            direction: 'burn',
-            symbiosis: this.symbiosis,
-            revertableAddress,
-            chainIdIn: chainIdFrom,
-            chainIdOut: chainIdTo,
-        })
-        const log = await wfc.waitForComplete(receipt)
-
-        return log.transactionHash
-    }
-
-    // Wait for the revert transaction to be mined on the original chain
-    async waitForComplete() {
-        const { type } = this.request
-        if (type === 'burn-v2') {
-            return this.waitForCompleteV2()
-        }
-
-        if (type === 'burn-v2-revert') {
-            return this.waitForCompleteV2Revert()
-        }
-
-        const { chainIdFrom } = this.request
-        const externalId = this.getExternalId()
-
-        let filter: Filter
-        if (type === 'synthesize' || type === 'synthesize-v2') {
-            const otherPortal = this.symbiosis.portal(chainIdFrom)
-            filter = otherPortal.filters.RevertSynthesizeCompleted(externalId)
-        } else {
-            const otherSynthesis = this.symbiosis.synthesis(chainIdFrom)
-            filter = otherSynthesis.filters.RevertBurnCompleted(externalId)
-        }
-
-        const log = await getLogWithTimeout({ chainId: chainIdFrom, filter, symbiosis: this.symbiosis })
-
-        return log.transactionHash
     }
 
     protected async getFeeV2(): Promise<TokenAmount> {
@@ -637,26 +553,6 @@ export class RevertPending {
             to: portal.address,
             data: portal.interface.encodeFunctionData('metaRevertRequest', [params]),
             chainId: chainIdTo,
-        }
-    }
-
-    private async execute(transactionRequest: TransactionRequest, signer: Signer) {
-        const preparedTransactionRequest = await prepareTransactionRequest(transactionRequest, signer)
-
-        const transaction = await signer.sendTransaction(preparedTransactionRequest)
-
-        return {
-            waitForMined: (confirmations = 1) => this.waitForMined(confirmations, transaction),
-            transaction,
-        }
-    }
-
-    private async waitForMined(confirmations: number, response: ContractTransaction) {
-        const receipt = await response.wait(confirmations)
-
-        return {
-            receipt,
-            waitForComplete: () => this.waitForComplete(),
         }
     }
 
