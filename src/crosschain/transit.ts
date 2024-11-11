@@ -96,15 +96,15 @@ export class Transit {
     // PROTECTED
 
     protected static getDirection(chainIdIn: ChainId, chainIdOut: ChainId, omniPoolChainId?: ChainId): BridgeDirection {
-        const withManagerChain = chainIdIn === omniPoolChainId || chainIdOut === omniPoolChainId
-        if (!withManagerChain) {
+        const withHostChain = chainIdIn === omniPoolChainId || chainIdOut === omniPoolChainId
+        if (!withHostChain) {
             return 'v2'
         }
 
-        const chainsPriorityWithMChain = [...CHAINS_PRIORITY, omniPoolChainId]
+        const chainsPriorityWithHostChain = [...CHAINS_PRIORITY, omniPoolChainId]
 
-        const indexIn = chainsPriorityWithMChain.indexOf(chainIdIn)
-        const indexOut = chainsPriorityWithMChain.indexOf(chainIdOut)
+        const indexIn = chainsPriorityWithHostChain.indexOf(chainIdIn)
+        const indexOut = chainsPriorityWithHostChain.indexOf(chainIdOut)
         if (indexIn === -1) {
             throw new Error(`Chain ${chainIdIn} not found in chains priority`)
         }

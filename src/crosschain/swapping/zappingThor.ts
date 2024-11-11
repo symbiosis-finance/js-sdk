@@ -129,6 +129,9 @@ export class ZappingThor extends BaseSwapping {
         this.multicallRouter = this.symbiosis.multicallRouter(thorTokenIn.chainId)
         this.thorVault = await ZappingThor.getThorVault(thorTokenIn)
 
+        const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
+        const transitTokenOut = this.symbiosis.transitToken(thorTokenIn.chainId, this.omniPoolConfig)
+
         const result = await this.doExactIn({
             tokenAmountIn,
             tokenOut: thorTokenIn,
@@ -136,6 +139,8 @@ export class ZappingThor extends BaseSwapping {
             to: from,
             slippage,
             deadline,
+            transitTokenIn,
+            transitTokenOut,
         })
 
         return {

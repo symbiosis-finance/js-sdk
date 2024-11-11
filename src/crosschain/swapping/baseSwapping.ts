@@ -1,6 +1,5 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
-import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
@@ -23,6 +22,7 @@ import {
     tronAddressToEvm,
     isTronChainId,
     isTonChainId,
+    isEvmChainId,
 } from '../chainUtils'
 import { TRON_METAROUTER_ABI } from '../tronAbis'
 import {
@@ -36,6 +36,17 @@ import {
 } from '../types'
 import { Profiler } from '../../entities/profiler'
 
+type MetaRouteParams = {
+    amount: string
+    nativeIn: boolean
+    approvedTokens: string[]
+    firstDexRouter: string
+    firstSwapCalldata: string | []
+    secondDexRouter: string
+    secondSwapCalldata: string | []
+    relayRecipient: string
+    otherSideCalldata: string
+}
 export abstract class BaseSwapping {
     public amountInUsd: TokenAmount | undefined
 
@@ -92,12 +103,8 @@ export abstract class BaseSwapping {
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
-
-        this.transitTokenIn =
-            transitTokenIn || this.symbiosis.transitToken(this.tokenAmountIn.token.chainId, this.omniPoolConfig)
-
-        this.transitTokenOut =
-            transitTokenOut || this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
+        this.transitTokenIn = transitTokenIn
+        this.transitTokenOut = transitTokenOut
 
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
@@ -191,9 +198,17 @@ export abstract class BaseSwapping {
             JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
         )
 
+        const metaRouteParams = this.getMetaRouteParams(fee, feeV2)
+
         let payload: SwapExactInTransactionPayload
-        if (isTronChainId(this.tokenAmountIn.token.chainId)) {
-            const transactionRequest = this.getTronTransactionRequest(fee, feeV2)
+        if (isEvmChainId(this.tokenAmountIn.token.chainId)) {
+            const transactionRequest = this.getEvmTransactionRequest(metaRouteParams)
+            payload = {
+                transactionType: 'evm',
+                transactionRequest,
+            }
+        } else if (isTronChainId(this.tokenAmountIn.token.chainId)) {
+            const transactionRequest = this.getTronTransactionRequest(metaRouteParams)
             payload = {
                 transactionType: 'tron',
                 transactionRequest,
@@ -205,11 +220,7 @@ export abstract class BaseSwapping {
                 transactionRequest,
             }
         } else {
-            const transactionRequest = this.getEvmTransactionRequest(fee, feeV2)
-            payload = {
-                transactionType: 'evm',
-                transactionRequest,
-            }
+            throw new Error(`Unsupported chain type: ${this.tokenAmountIn.token.chainId}`)
         }
 
         this.profiler.tick('TRANSACTION_REQUEST')
@@ -264,51 +275,43 @@ export abstract class BaseSwapping {
         return this.symbiosis.chainConfig(this.tokenAmountIn.token.chainId).metaRouterGateway
     }
 
-    protected getEvmTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TransactionRequest {
-        const chainId = this.tokenAmountIn.token.chainId
-        const metaRouter = this.symbiosis.metaRouter(chainId)
+    protected getValue() {
+        return this.tokenAmountIn.token.isNative ? this.tokenAmountIn.raw.toString() : '0'
+    }
 
+    protected getMetaRouteParams(fee: TokenAmount, feeV2: TokenAmount | undefined): MetaRouteParams {
         const [relayRecipient, otherSideCalldata] = this.otherSideData(fee, feeV2)
 
         const amount = this.tradeA ? this.tradeA.tokenAmountIn : this.tokenAmountIn
-        const value =
-            this.tradeA && this.tokenAmountIn.token.isNative
-                ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
-                : undefined
+        return {
+            amount: amount.raw.toString(),
+            nativeIn: amount.token.isNative,
+            approvedTokens: this.approvedTokens().map(tronAddressToEvm),
+            firstDexRouter: tronAddressToEvm(this.firstDexRouter()),
+            firstSwapCalldata: this.firstSwapCalldata(),
+            secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
+            secondSwapCalldata: this.transit.direction === 'burn' ? this.secondSwapCalldata() : [],
+            relayRecipient,
+            otherSideCalldata,
+        }
+    }
 
-        const data = metaRouter.interface.encodeFunctionData('metaRoute', [
-            {
-                amount: amount.raw.toString(),
-                nativeIn: amount.token.isNative,
-                approvedTokens: this.approvedTokens().map(tronAddressToEvm),
-                firstDexRouter: tronAddressToEvm(this.firstDexRouter()),
-                firstSwapCalldata: this.firstSwapCalldata(),
-                secondDexRouter: tronAddressToEvm(this.secondDexRouter()),
-                secondSwapCalldata: this.transit.direction === 'burn' ? this.secondSwapCalldata() : [],
-                relayRecipient,
-                otherSideCalldata,
-            },
-        ])
+    protected getEvmTransactionRequest(params: MetaRouteParams): TransactionRequest {
+        const chainId = this.tokenAmountIn.token.chainId
+        const metaRouter = this.symbiosis.metaRouter(chainId)
+        const data = metaRouter.interface.encodeFunctionData('metaRoute', [params])
 
         return {
             chainId,
             to: metaRouter.address,
             data,
-            value,
+            value: this.getValue(),
         }
     }
 
-    protected getTronTransactionRequest(fee: TokenAmount, feeV2: TokenAmount | undefined): TronTransactionData {
+    protected getTronTransactionRequest(params: MetaRouteParams): TronTransactionData {
         const { chainId } = this.tokenAmountIn.token
         const { metaRouter } = this.symbiosis.chainConfig(chainId)
-
-        const [relayRecipient, otherSideCalldata] = this.otherSideData(fee, feeV2)
-
-        const amount = this.tradeA ? this.tradeA.tokenAmountIn : this.tokenAmountIn
-        const value =
-            this.tradeA && this.tokenAmountIn.token.isNative
-                ? BigNumber.from(this.tradeA.tokenAmountIn.raw.toString())
-                : undefined
 
         const tronWeb = this.symbiosis.tronWeb(chainId)
 
@@ -320,19 +323,19 @@ export abstract class BaseSwapping {
             functionName: 'metaRoute',
             params: [
                 [
-                    this.firstSwapCalldata(),
-                    this.transit.direction === 'burn' ? this.secondSwapCalldata() : [],
-                    this.approvedTokens().map(tronAddressToEvm),
-                    tronAddressToEvm(this.firstDexRouter()),
-                    this.secondDexRouter(),
-                    amount.raw.toString(),
-                    amount.token.isNative,
-                    tronAddressToEvm(relayRecipient),
-                    otherSideCalldata,
+                    params.firstSwapCalldata,
+                    params.secondSwapCalldata,
+                    params.approvedTokens,
+                    params.firstDexRouter,
+                    params.secondDexRouter,
+                    params.amount,
+                    params.nativeIn,
+                    params.relayRecipient,
+                    params.otherSideCalldata,
                 ],
             ],
             ownerAddress: this.from,
-            value: value?.toString() ?? 0,
+            value: this.getValue(),
         })
     }
 
@@ -743,13 +746,11 @@ export abstract class BaseSwapping {
         return this.tradeA?.callData || []
     }
 
-    // 1) get multicall router address
     protected secondDexRouter(): string {
         const multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
         return multicallRouter.address
     }
 
-    // 2) get second swap calldata, no edits (will be only [swap]). Put in field secondSwapCalldata() in ton request
     protected secondSwapCalldata(): string | [] {
         const calls = this.transit.calls()
         if (!calls) {
@@ -758,6 +759,7 @@ export abstract class BaseSwapping {
 
         const { calldatas, receiveSides, paths, offsets } = calls
 
+        // this flow when there is swap on host chain, for example, USDC -> BOBA
         if (this.transit.direction === 'mint' && this.tradeC) {
             calldatas.push(this.finalCalldata() as string)
             receiveSides.push(this.finalReceiveSide())
@@ -768,10 +770,10 @@ export abstract class BaseSwapping {
         const multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
         return multicallRouter.interface.encodeFunctionData('multicall', [
             this.transit.amountIn.raw.toString(),
-            calldatas, // calldata
-            receiveSides, // receiveSides
-            paths, // path
-            offsets, // offset
+            calldatas,
+            receiveSides,
+            paths,
+            offsets,
             this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address,
         ])
     }
@@ -780,13 +782,16 @@ export abstract class BaseSwapping {
         return this.tradeC?.routerAddress || AddressZero
     }
 
-    protected finalReceiveSideV2(): string {
-        return this.synthesisV2.address
-    }
-
-    // C
     protected finalCalldata(): string | [] {
         return this.tradeC?.callData || []
+    }
+
+    protected finalOffset(): number {
+        return this.tradeC?.callDataOffset || 0
+    }
+
+    protected finalReceiveSideV2(): string {
+        return this.synthesisV2.address
     }
 
     protected finalCalldataV2(feeV2?: TokenAmount | undefined): string {
@@ -810,10 +815,6 @@ export abstract class BaseSwapping {
         ])
     }
 
-    protected finalOffset(): number {
-        return this.tradeC?.callDataOffset || 0
-    }
-
     protected finalOffsetV2(): number {
         return 100
     }
@@ -831,13 +832,8 @@ export abstract class BaseSwapping {
 
         if (this.tradeC) {
             tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
-        } else {
-            tokens.push(...this.extraSwapTokens())
         }
-        return tokens
-    }
 
-    protected extraSwapTokens(): string[] {
-        return []
+        return tokens
     }
 }

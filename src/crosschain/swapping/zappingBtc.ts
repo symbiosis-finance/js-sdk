@@ -18,8 +18,8 @@ interface ZappingBtcExactInParams {
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
-    transitTokenIn?: Token
-    transitTokenOut?: Token
+    transitTokenIn: Token
+    transitTokenOut: Token
 }
 
 export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
@@ -43,8 +43,6 @@ export class ZappingBtc extends BaseSwapping {
     protected sBtc!: Token
     protected minBtcFee!: TokenAmount
     protected synthesis!: Synthesis
-
-    protected async doPostTransitAction() {}
 
     public async exactIn({
         tokenAmountIn,
