@@ -93,8 +93,8 @@ export interface SwapExactInParams {
     to: string
     slippage: number
     deadline: number
-    transitTokenIn: Token
-    transitTokenOut: Token
+    transitTokenIn?: Token
+    transitTokenOut?: Token
     oneInchProtocols?: OneInchProtocols
     middlewareCall?: MiddlewareCall
 }

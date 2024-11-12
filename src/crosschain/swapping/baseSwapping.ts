@@ -103,8 +103,11 @@ export abstract class BaseSwapping {
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
-        this.transitTokenIn = transitTokenIn
-        this.transitTokenOut = transitTokenOut
+        this.transitTokenIn =
+            transitTokenIn || this.symbiosis.transitToken(this.tokenAmountIn.token.chainId, this.omniPoolConfig)
+
+        this.transitTokenOut =
+            transitTokenOut || this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
 
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
@@ -832,8 +835,13 @@ export abstract class BaseSwapping {
 
         if (this.tradeC) {
             tokens.push(wrappedToken(this.tradeC.amountOut.token).address)
+        } else {
+            tokens.push(...this.extraSwapTokens())
         }
-
         return tokens
+    }
+
+    protected extraSwapTokens(): string[] {
+        return []
     }
 }
