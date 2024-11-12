@@ -128,7 +128,7 @@ export class ZappingBtc extends BaseSwapping {
         const receiveSides = []
         const path = []
         const offsets = []
-        const amount = this.getTradeCAmountIn()
+        const amount = this.transit.amountOut
 
         if (this.tradeC) {
             callDatas.push(this.tradeC.callData)

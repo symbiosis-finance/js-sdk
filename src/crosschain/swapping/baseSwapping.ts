@@ -8,7 +8,7 @@ import { DataProvider } from '../dataProvider'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { Transit } from '../transit'
-import { Error, ErrorCode } from '../error'
+import { Error } from '../error'
 import { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import {
@@ -48,6 +48,7 @@ type MetaRouteParams = {
     otherSideCalldata: string
 }
 export abstract class BaseSwapping {
+    // TODO rename to `transitAmount`
     public amountInUsd: TokenAmount | undefined
 
     protected from!: string
@@ -58,8 +59,6 @@ export abstract class BaseSwapping {
     protected deadline!: number
     protected ttl!: number
     protected revertableAddresses!: { AB: string; BC: string }
-
-    protected route!: Token[]
 
     protected tradeA: SymbiosisTrade | undefined
     protected transit!: Transit
@@ -75,8 +74,6 @@ export abstract class BaseSwapping {
 
     protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
-
-    protected feeV2: TokenAmount | undefined
 
     private profiler: Profiler
 
@@ -143,7 +140,6 @@ export abstract class BaseSwapping {
         this.transit = this.buildTransit()
         await this.transit.init()
         this.profiler.tick('TRANSIT')
-
         routes.push({
             provider: 'symbiosis',
             tokens: [this.transitTokenIn, this.transitTokenOut],
@@ -164,44 +160,26 @@ export abstract class BaseSwapping {
             })
         }
 
-        this.route = this.getRoute()
-
-        const [feeV1Raw, feeV2Raw] = await Promise.all([
-            this.getFee(this.transit.feeToken),
-            this.transit.isV2() ? this.getFeeV2() : undefined,
+        const [fee1Raw, fee2Raw] = await Promise.all([
+            this.getFee(this.transit.feeToken1),
+            this.transit.feeToken2 ? this.getFeeV2(this.transit.feeToken2) : undefined,
         ])
         this.profiler.tick('ADVISOR')
 
-        const feeV2 = feeV2Raw?.fee
-        this.feeV2 = feeV2
+        // TODO patch fees
 
-        // >>> NOTE create trades with calculated fee
-        let fee = this.transit.fee!
-        let save = new TokenAmount(this.transit.feeToken, '0')
+        const fee1 = fee1Raw.fee
+        const save1 = fee1Raw.save
+        const fee2 = fee2Raw?.fee
+        const save2 = fee2Raw?.save
 
-        if (!this.transit.fee) {
-            fee = feeV1Raw.fee
-            save = feeV1Raw.save
-            this.transit = this.buildTransit(fee)
-            await this.transit.init()
-            this.profiler.tick('TRANSIT_2')
-        }
-
-        await this.doPostTransitAction()
-        if (!this.transitTokenOut.equals(tokenOut)) {
-            this.tradeC = this.buildTradeC()
-            await this.tradeC.init()
-            this.profiler.tick('C_2')
-        }
-        // <<< NOTE create trades with calculated fee
-
-        const tokenAmountOut = this.tokenAmountOut(feeV2)
+        const tokenAmountOut = this.tokenAmountOut()
         const tokenAmountOutMin = new TokenAmount(
             tokenAmountOut.token,
             JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
         )
 
-        const metaRouteParams = this.getMetaRouteParams(fee, feeV2)
+        const metaRouteParams = this.getMetaRouteParams(fee1, fee2)
 
         let payload: SwapExactInTransactionPayload
         if (isEvmChainId(this.tokenAmountIn.token.chainId)) {
@@ -217,7 +195,7 @@ export abstract class BaseSwapping {
                 transactionRequest,
             }
         } else if (isTonChainId(this.tokenAmountIn.token.chainId)) {
-            const transactionRequest = await this.getTonTransactionRequest(fee, feeV2)
+            const transactionRequest = await this.getTonTransactionRequest(fee1, fee2)
             payload = {
                 transactionType: 'ton',
                 transactionRequest,
@@ -231,21 +209,20 @@ export abstract class BaseSwapping {
         const fees: FeeItem[] = [
             {
                 provider: 'symbiosis',
-                value: fee,
+                value: fee1,
                 description: 'Cross-chain fee',
-                save,
+                save: save1,
             },
         ]
-        if (feeV2Raw) {
+        if (fee2) {
             fees.push({
                 provider: 'symbiosis',
-                value: feeV2Raw.fee,
+                value: fee2,
                 description: 'Cross-chain fee',
-                save: feeV2Raw.save,
+                save: save2,
             })
         }
 
-        console.log({ timeLog: this.profiler.toString() })
         return {
             ...payload,
             kind: 'crosschain-swap',
@@ -354,7 +331,7 @@ export abstract class BaseSwapping {
     protected calculatePriceImpact(): Percent {
         const zero = new Percent(JSBI.BigInt(0), BIPS_BASE) // 0%
         const pia = this.tradeA?.priceImpact || zero
-        const pib = this.transit.priceImpact || zero
+        const pib = this.transit.trade.priceImpact || zero
         const pic = this.tradeC?.priceImpact || zero
 
         let pi = pia.add(pib).add(pic)
@@ -365,24 +342,9 @@ export abstract class BaseSwapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
-    protected tokenAmountOut(feeV2?: TokenAmount | undefined): TokenAmount {
+    protected tokenAmountOut(): TokenAmount {
         if (this.tradeC) {
             return this.tradeC.amountOut
-        }
-        if (this.transit.isV2()) {
-            let amount = this.transit.amountOut.raw
-            if (feeV2) {
-                if (JSBI.lessThan(amount, feeV2.raw) || JSBI.equal(amount, feeV2.raw)) {
-                    throw new Error(
-                        `Amount ${this.transit.amountOut.toSignificant()} ${
-                            feeV2.token.symbol
-                        } less than feeV2 ${feeV2.toSignificant()} ${feeV2.token.symbol}`,
-                        ErrorCode.AMOUNT_LESS_THAN_FEE
-                    )
-                }
-                amount = JSBI.subtract(amount, feeV2.raw)
-            }
-            return new TokenAmount(this.tokenOut, amount)
         }
 
         return this.transit.amountOut
@@ -396,7 +358,7 @@ export abstract class BaseSwapping {
         }
 
         const chainId = this.tokenAmountIn.token.chainId
-        const from = this.symbiosis.metaRouter(chainId).address
+        const from = this.symbiosis.chainConfig(chainId).metaRouter
         const to = from
 
         return new AggregatorTrade({
@@ -413,7 +375,7 @@ export abstract class BaseSwapping {
         })
     }
 
-    protected buildTransit(fee?: TokenAmount): Transit {
+    protected buildTransit(): Transit {
         const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
 
@@ -423,13 +385,10 @@ export abstract class BaseSwapping {
             this.symbiosis,
             amountIn,
             amountInMin,
-            this.tokenOut,
-            this.transitTokenIn,
             this.transitTokenOut,
             this.slippage['B'],
             this.deadline,
-            this.omniPoolConfig,
-            fee
+            this.omniPoolConfig
         )
     }
 
@@ -437,41 +396,17 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected getTradeCAmountIn(): TokenAmount {
-        let amountIn = this.transit.amountOut
-
-        if (this.transit.isV2()) {
-            let amountRaw = amountIn.raw
-            if (this.feeV2) {
-                if (amountIn.lessThan(this.feeV2) || amountIn.equalTo(this.feeV2)) {
-                    throw new Error(
-                        `Amount ${amountIn.toSignificant()} ${
-                            amountIn.token.symbol
-                        } less than feeV2 ${this.feeV2.toSignificant()} ${this.feeV2.token.symbol}`,
-                        ErrorCode.AMOUNT_LESS_THAN_FEE
-                    )
-                }
-                amountRaw = JSBI.subtract(amountRaw, this.feeV2.raw)
-            }
-            amountIn = new TokenAmount(this.transitTokenOut, amountRaw)
-        }
-        return amountIn
-    }
-
     protected buildTradeC() {
-        const amountIn = this.getTradeCAmountIn()
-
-        const chainId = this.tokenOut.chainId
+        const amountIn = this.transit.amountOut
 
         if (WrapTrade.isSupported(amountIn, this.tokenOut)) {
             return new WrapTrade(amountIn, this.tokenOut, this.to)
         }
 
-        const from = this.symbiosis.metaRouter(chainId).address
         return new AggregatorTrade({
             tokenAmountIn: amountIn,
             tokenOut: this.tokenOut,
-            from,
+            from: this.symbiosis.chainConfig(this.tokenOut.chainId).metaRouter,
             to: this.tradeCTo(),
             slippage: this.slippage['C'],
             symbiosis: this.symbiosis,
@@ -480,23 +415,6 @@ export abstract class BaseSwapping {
             ttl: this.ttl,
             oneInchProtocols: this.oneInchProtocols,
         })
-    }
-
-    protected getRoute(): Token[] {
-        const started = this.tradeA ? [] : [this.tokenAmountIn.token]
-        const terminated = this.tradeC ? [] : [this.tokenOut]
-
-        return [
-            ...started,
-            ...(this.tradeA ? this.tradeA.route : []),
-            ...this.transit.route,
-            ...(this.tradeC ? this.tradeC.route : []),
-            ...terminated,
-        ].reduce((acc: Token[], token: Token) => {
-            const found = acc.find((i) => i.equals(token))
-            if (found) return acc
-            return [...acc, token]
-        }, [])
     }
 
     protected metaBurnSyntheticToken(fee: TokenAmount): [string, string] {
@@ -710,8 +628,7 @@ export abstract class BaseSwapping {
         }
     }
 
-    protected async getFeeV2(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-        const feeToken = this.transitTokenOut
+    protected async getFeeV2(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         const [receiveSide, calldata] = this.feeBurnCallDataV2()
 
         const { price: fee, save } = await this.symbiosis.getBridgeFee({
@@ -734,7 +651,7 @@ export abstract class BaseSwapping {
 
         let tokens: string[]
         if (this.transit.direction === 'burn') {
-            tokens = [firstToken, ...this.transit.route.map((i) => i.address)]
+            tokens = [firstToken, ...this.transit.trade.route.map((i) => i.address)]
         } else {
             tokens = [firstToken, this.tradeA ? this.tradeA.amountOut.token.address : this.tokenAmountIn.token.address]
         }
@@ -823,11 +740,14 @@ export abstract class BaseSwapping {
     }
 
     protected swapTokens(): string[] {
-        if (this.transit.route.length === 0) {
+        if (this.transit.trade.route.length === 0) {
             return []
         }
 
-        const tokens = [this.transit.route[0].address, this.transit.route[this.transit.route.length - 1].address]
+        const tokens = [
+            this.transit.trade.route[0].address,
+            this.transit.trade.route[this.transit.trade.route.length - 1].address,
+        ]
 
         if (this.transit.isV2()) {
             return tokens

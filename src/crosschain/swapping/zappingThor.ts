@@ -100,8 +100,7 @@ export class ZappingThor extends BaseSwapping {
                 ErrorCode.MIN_THORCHAIN_AMOUNT_IN
             )
         }
-        const amount = this.getTradeCAmountIn()
-        this.thorQuote = await this.getThorQuote(amount)
+        this.thorQuote = await this.getThorQuote(this.transit.amountOut)
     }
 
     public async exactIn({
@@ -271,7 +270,7 @@ export class ZappingThor extends BaseSwapping {
         const receiveSides = []
         const path = []
         const offsets = []
-        const amount = this.getTradeCAmountIn()
+        const amount = this.transit.amountOut
 
         if (this.tradeC) {
             callDatas.push(this.tradeC.callData)
