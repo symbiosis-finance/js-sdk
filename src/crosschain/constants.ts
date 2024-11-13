@@ -672,7 +672,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.FRAXTAL_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.GRAVITY_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.BSQUARED_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
-    [ChainId.CRONOS_ZK_MAINNET]: '',
+    [ChainId.CRONOS_ZK_MAINNET]: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {

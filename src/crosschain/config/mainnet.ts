@@ -1677,7 +1677,8 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x39aD8C3067281e60045DF041846EE01c1Dd3a853', // H2 Finance
+            // router: '0x39ad8c3067281e60045df041846ee01c1dd3a853', // H2 Finance
+            router: '0x519288687016Dd5199F454123F44D5016fF7Dd5a', // Ryoshi
             dexFee: 30,
             metaRouter: '0x681BeeF15D68E4abae4d912ACF3Df5D589fe61B9',
             metaRouterGateway: '0x17D51F08C2044fAbFeFE2C58564Bd89BF2DE1C4d',
