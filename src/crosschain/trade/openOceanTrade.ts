@@ -214,6 +214,10 @@ export class OpenOceanTrade implements SymbiosisTrade {
 
         return this
     }
+    public applyAmountIn(amount: TokenAmount) {
+        // TODO implement me
+        console.log(amount)
+    }
 
     private getOffset(callData: string) {
         const methods = [

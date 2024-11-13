@@ -434,6 +434,11 @@ export class IzumiTrade implements SymbiosisTrade {
         return this
     }
 
+    public applyAmountIn(amount: TokenAmount) {
+        // TODO implement me
+        console.log(amount)
+    }
+
     async getCurrentPoolPoints({ fees, tokens }: IzumiRoute) {
         const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
 

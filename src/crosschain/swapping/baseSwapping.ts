@@ -166,12 +166,33 @@ export abstract class BaseSwapping {
         ])
         this.profiler.tick('ADVISOR')
 
-        // TODO patch fees
-
         const fee1 = fee1Raw.fee
         const save1 = fee1Raw.save
         const fee2 = fee2Raw?.fee
         const save2 = fee2Raw?.save
+
+        const patchingEnabled = true
+        if (patchingEnabled) {
+            this.transit.applyFees(fee1, fee2)
+            if (this.tradeC) {
+                this.tradeC.applyAmountIn(this.transit.amountOut)
+            }
+        } else {
+            // this.transit = this.buildTransit(fee1, fee2)
+            // await this.transit.init()
+            // this.profiler.tick('TRANSIT_2')
+            //
+            // await this.doPostTransitAction()
+            // this.profiler.tick('POST_TRANSIT_ACTION_2')
+            //
+            // this.amountInUsd = this.transit.getBridgeAmountIn()
+            //
+            // if (!this.transitTokenOut.equals(tokenOut)) {
+            //     this.tradeC = this.buildTradeC()
+            //     await this.tradeC.init()
+            //     this.profiler.tick('C_2')
+            // }
+        }
 
         const tokenAmountOut = this.tokenAmountOut()
         const tokenAmountOutMin = new TokenAmount(
@@ -375,7 +396,7 @@ export abstract class BaseSwapping {
         })
     }
 
-    protected buildTransit(): Transit {
+    protected buildTransit(fee1?: TokenAmount, fee2?: TokenAmount): Transit {
         const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
 
@@ -388,7 +409,9 @@ export abstract class BaseSwapping {
             this.transitTokenOut,
             this.slippage['B'],
             this.deadline,
-            this.omniPoolConfig
+            this.omniPoolConfig,
+            fee1,
+            fee2
         )
     }
 

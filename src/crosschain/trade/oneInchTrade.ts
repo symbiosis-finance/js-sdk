@@ -131,6 +131,11 @@ export class OneInchTrade implements SymbiosisTrade {
         return this
     }
 
+    public applyAmountIn(amount: TokenAmount) {
+        // TODO implement me
+        console.log(amount)
+    }
+
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
         try {
             const json = await symbiosis.makeOneInchRequest(`${chainId}/liquidity-sources`)

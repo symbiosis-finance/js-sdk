@@ -111,6 +111,11 @@ export class UniV2Trade implements SymbiosisTrade {
         return this
     }
 
+    public applyAmountIn(amount: TokenAmount) {
+        // TODO implement me
+        console.log(amount)
+    }
+
     private buildCallData(trade: Trade): { data: string; offset: number; functionSelector: string } {
         const { methodName, args, offset } = Router.swapCallParameters(trade, {
             allowedSlippage: new Percent(JSBI.BigInt(Math.floor(this.slippage)), BIPS_BASE),

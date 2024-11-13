@@ -16,6 +16,7 @@ export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwra
 
 export interface SymbiosisTrade {
     init(): Promise<this>
+    applyAmountIn(amount: TokenAmount): void
     tradeType: SymbiosisTradeType
     callData: string
     tokenAmountIn: TokenAmount

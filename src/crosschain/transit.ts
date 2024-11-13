@@ -12,9 +12,7 @@ export class Transit {
     public amountOutMin!: TokenAmount
     public trade!: OctoPoolTrade
     public feeToken1: Token
-    public feeToken2?: Token
-    public fee1?: TokenAmount
-    public fee2?: TokenAmount
+    public feeToken2: Token | undefined
 
     public constructor(
         protected symbiosis: Symbiosis,
@@ -23,7 +21,9 @@ export class Transit {
         public tokenOut: Token,
         protected slippage: number,
         protected deadline: number,
-        protected omniPoolConfig: OmniPoolConfig
+        protected omniPoolConfig: OmniPoolConfig,
+        public fee1?: TokenAmount,
+        public fee2?: TokenAmount
     ) {
         this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, omniPoolConfig.chainId)
 
@@ -90,6 +90,32 @@ export class Transit {
         }
 
         return this.amountIn
+    }
+
+    public applyFees(fee1: TokenAmount, fee2?: TokenAmount) {
+        if (!fee1.token.equals(this.feeToken1)) {
+            throw new Error('Incorrect fee1 token')
+        }
+        this.fee1 = fee1
+
+        if (this.isV2()) {
+            if (!fee2) {
+                throw new Error('fee2 should be passed')
+            }
+            if (!this.feeToken2) {
+                throw new Error('feeToken2 should have been initialized')
+            }
+            if (!fee2.token.equals(this.feeToken2)) {
+                throw new Error('Incorrect fee2 token')
+            }
+            this.fee2 = fee2
+        }
+
+        const newAmountIn = this.getTradeAmountIn(this.amountIn)
+        this.trade.applyAmountIn(newAmountIn)
+
+        this.amountOut = this.getAmountOut(this.trade.amountOut)
+        this.amountOutMin = this.getAmountOut(this.trade.amountOutMin)
     }
 
     // PRIVATE

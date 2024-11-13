@@ -1,11 +1,12 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 import { OctoPoolFeeCollector__factory, OmniPool, OmniPoolOracle } from '../contracts'
-import { calculatePriceImpact, getMinAmount } from '../chainUtils'
+import { calculatePriceImpact, getMinAmount, patchCalldata } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
 import { ChainId } from '../../constants'
 import { BigNumber } from 'ethers'
 import { SymbiosisTrade } from './symbiosisTrade'
+import JSBI from 'jsbi'
 
 interface ExtraFeeCollector {
     chainId: ChainId
@@ -61,6 +62,7 @@ export class OctoPoolTrade implements SymbiosisTrade {
     public amountOutMin!: TokenAmount
     public callData!: string
     public callDataOffset: number
+    public minReceivedOffset: number
     public priceImpact!: Percent
 
     public readonly pool: OmniPool
@@ -79,6 +81,7 @@ export class OctoPoolTrade implements SymbiosisTrade {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
         this.callDataOffset = 100
+        this.minReceivedOffset = 132
         this.routerAddress = this.pool.address
     }
 
@@ -96,6 +99,7 @@ export class OctoPoolTrade implements SymbiosisTrade {
 
         const feeRateBase = BigNumber.from(10).pow(18)
 
+        // TODO feeRates can be hardcoded
         const [preFeeRate, postFeeRate] = await Promise.all([
             preFeeCollector ? this.getFeeRate(preFeeCollector) : BigNumber.from(0),
             postFeeCollector ? this.getFeeRate(postFeeCollector) : BigNumber.from(0),
@@ -140,6 +144,16 @@ export class OctoPoolTrade implements SymbiosisTrade {
         this.priceImpact = priceImpact
 
         return this
+    }
+
+    public applyAmountIn(amount: TokenAmount) {
+        const k = JSBI.divide(amount.raw, this.tokenAmountIn.raw)
+
+        this.callData = patchCalldata(this.callData, this.callDataOffset, amount)
+
+        // TODO affect this.amountOut
+
+        console.log({ k: k.toString() })
     }
 
     public buildFeePreCall() {

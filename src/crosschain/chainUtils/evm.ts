@@ -1,6 +1,6 @@
 import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import { BigNumber, utils, Signer } from 'ethers'
+import { BigNumber, Signer, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { BigintIsh, ChainId, ONE } from '../../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
@@ -346,4 +346,22 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
         B: slippage,
         C: hasTradeC ? totalSlippage : 0,
     }
+}
+
+export function patchCalldata(data: string, bytesOffset: number, amount: TokenAmount) {
+    let hexPrefix = 0
+    if (data.startsWith('0x')) {
+        hexPrefix += 2
+    }
+    const stringOffset = bytesOffset * 2 + hexPrefix
+    if (data.length < stringOffset) {
+        throw new Error('offset is to big')
+    }
+    const amountWidth = 64
+    const stringAmount = amount.raw.toString(16).padStart(amountWidth, '0').toLowerCase()
+    if (stringAmount.length !== amountWidth) {
+        throw new Error('amount is to wide')
+    }
+
+    return data.substring(0, stringOffset - amountWidth) + stringAmount + data.substring(stringOffset)
 }

@@ -91,4 +91,9 @@ export class WrapTrade implements SymbiosisTrade {
 
         return this
     }
+
+    public applyAmountIn(amount: TokenAmount) {
+        // TODO implement me
+        console.log(amount)
+    }
 }

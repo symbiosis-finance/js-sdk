@@ -251,4 +251,8 @@ export class AggregatorTrade implements SymbiosisTrade {
 
         return undefined
     }
+    public applyAmountIn(amount: TokenAmount) {
+        this.assertTradeInitialized()
+        return this.trade.applyAmountIn(amount)
+    }
 }

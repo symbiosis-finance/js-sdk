@@ -166,6 +166,11 @@ export class MagpieTrade implements SymbiosisTrade {
         return this
     }
 
+    public applyAmountIn(amount: TokenAmount) {
+        // TODO implement me
+        console.log(amount)
+    }
+
     private async getQuote(fromTokenAddress: string, toTokenAddress: string): Promise<MagpieQuoteResponse> {
         const url = new URL(`${BASE_URL}/aggregator/quote`)
         url.searchParams.set('network', this.chain!.slug)
