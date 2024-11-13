@@ -109,4 +109,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.FRAXTAL_MAINNET]: GAS(ChainId.FRAXTAL_MAINNET, 'frxETH', 23225),
     [ChainId.GRAVITY_MAINNET]: GAS(ChainId.GRAVITY_MAINNET, 'G', 32120),
     [ChainId.BSQUARED_MAINNET]: GAS(ChainId.BSQUARED_MAINNET, 'BTC', 1),
+    [ChainId.CRONOS_ZK_MAINNET]: GAS(ChainId.CRONOS_ZK_MAINNET, 'zkCRO', 33873),
 }
