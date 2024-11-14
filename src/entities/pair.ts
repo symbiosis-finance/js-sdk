@@ -1,5 +1,4 @@
-import { Price } from './fractions'
-import { TokenAmount } from './fractions'
+import { Price, TokenAmount } from './fractions'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import { keccak256, pack } from '@ethersproject/solidity'
@@ -18,11 +17,32 @@ import {
     ZERO,
 } from '../constants'
 import { parseBigintIsh, sqrt } from '../utils'
-import { getTronCreate2Address, isTronToken } from '../crosschain/chainUtils/tron'
+import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/tron'
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
+import { BytesLike } from '@ethersproject/bytes'
 
 let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
+
+// TODO replace with onchain call to Factory.getPair method
+export function getZkCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
+    const MAP: Record<string, Record<string, string>> = {
+        '0x50704Ac00064be03CEEd817f41E0Aa61F52ef4DC': {
+            '0x10dac1b69a0ef99baf5786f77bf0aab84749fd564007f4fad53a9395afa06d6a':
+                '0x20eDB5049461c9a6F490671742824c9F9aD05eD8', // H2 (USDC,wzkCRO)
+            '0xdaa80bb10d1689abf76a659ce2e4b2c7e859fca2d05933a3d81c3636c0ef62f0':
+                '0x006022eb9de7869e84f021605Ae23bE6C7D2d952', // H2 (USDC,vUSD)
+            '0x91965e804433f989e92a043ea20a588fec7c4ca4ce64a380d6215f3992eadbb6':
+                '0xA61947027caDbe9505d2a40E73EB21CB957e2daD', // H2 (wzkCRO,vUSD)
+        },
+    }
+    try {
+        return MAP[from][salt as string]
+    } catch {
+        console.error({ initCodeHash })
+        throw new Error('Unknown zk pair')
+    }
+}
 
 export class Pair {
     public readonly liquidityToken: Token
@@ -42,7 +62,13 @@ export class Pair {
         }
 
         if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-            const getCreate2Address = isTronToken(tokenA) ? getTronCreate2Address : getEvmCreate2Address
+            let getCreate2Address = getEvmCreate2Address
+
+            if (isTronChainId(chainId)) {
+                getCreate2Address = getTronCreate2Address
+            } else if (chainId === ChainId.CRONOS_ZK_MAINNET) {
+                getCreate2Address = getZkCreate2Address
+            }
 
             PAIR_ADDRESS_CACHE = {
                 ...PAIR_ADDRESS_CACHE,

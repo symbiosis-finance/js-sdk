@@ -508,7 +508,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.FRAXTAL_MAINNET]: [],
     [ChainId.GRAVITY_MAINNET]: [],
     [ChainId.BSQUARED_MAINNET]: [],
-    [ChainId.CRONOS_ZK_MAINNET]: [],
+    [ChainId.CRONOS_ZK_MAINNET]: [
+        new Token({
+            chainId: ChainId.CRONOS_ZK_MAINNET,
+            address: '0x5b91e29Ae5A71d9052620Acb813d5aC25eC7a4A2',
+            decimals: 18,
+            symbol: 'vUSD',
+            name: 'Veno USD',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
