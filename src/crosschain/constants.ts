@@ -65,6 +65,7 @@ export const CHAINS_PRIORITY = [
     ChainId.FRAXTAL_MAINNET,
     ChainId.GRAVITY_MAINNET,
     ChainId.BSQUARED_MAINNET,
+    ChainId.CRONOS_ZK_MAINNET,
 ]
 
 // a list of tokens by chain
@@ -153,6 +154,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.FRAXTAL_MAINNET]: [WETH[ChainId.FRAXTAL_MAINNET]],
     [ChainId.GRAVITY_MAINNET]: [WETH[ChainId.GRAVITY_MAINNET]],
     [ChainId.BSQUARED_MAINNET]: [WETH[ChainId.BSQUARED_MAINNET]],
+    [ChainId.CRONOS_ZK_MAINNET]: [WETH[ChainId.CRONOS_ZK_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -506,6 +508,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.FRAXTAL_MAINNET]: [],
     [ChainId.GRAVITY_MAINNET]: [],
     [ChainId.BSQUARED_MAINNET]: [],
+    [ChainId.CRONOS_ZK_MAINNET]: [
+        new Token({
+            chainId: ChainId.CRONOS_ZK_MAINNET,
+            address: '0x5b91e29Ae5A71d9052620Acb813d5aC25eC7a4A2',
+            decimals: 18,
+            symbol: 'vUSD',
+            name: 'Veno USD',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
@@ -589,6 +600,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.BSQUARED_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.BSQUARED_MAINNET],
     ],
+    [ChainId.CRONOS_ZK_MAINNET]: [
+        WETH[ChainId.CRONOS_ZK_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.CRONOS_ZK_MAINNET],
+    ],
 }
 
 /**
@@ -665,6 +680,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.FRAXTAL_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.GRAVITY_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.BSQUARED_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+    [ChainId.CRONOS_ZK_MAINNET]: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {

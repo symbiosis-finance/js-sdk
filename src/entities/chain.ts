@@ -658,6 +658,16 @@ export const chains: Chain[] = [
             large: 'https://coin-images.coingecko.com/asset_platforms/images/239/small/bsquared-network.jpeg?1713432732',
         },
     }),
+    new Chain({
+        id: ChainId.CRONOS_ZK_MAINNET,
+        name: 'Cronos zkEVM',
+        disabled: false,
+        explorer: 'https://explorer.zkevm.cronos.org/',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

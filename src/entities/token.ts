@@ -814,4 +814,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
         },
     }),
+    [ChainId.CRONOS_ZK_MAINNET]: new Token({
+        chainId: ChainId.CRONOS_ZK_MAINNET,
+        address: '0xC1bF55EE54E16229d9b369a5502Bfe5fC9F20b6d',
+        decimals: 18,
+        symbol: 'wzkCRO',
+        isNative: false,
+        name: 'Wrapped zkCRO',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
+        },
+    }),
 }

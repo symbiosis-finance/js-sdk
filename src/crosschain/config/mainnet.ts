@@ -1659,5 +1659,33 @@ export const config: Config = {
             multicallRouter: '0x0000000000000000000000000000000000000000',
             tonPortal: 'EQDpUHhVl5lJ6Y47DCd0TWdXB_kd-U-N6KyAELePNjfj15HT',
         },
+        {
+            id: ChainId.CRONOS_ZK_MAINNET,
+            rpc: 'https://mainnet.zkevm.cronos.org',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xaa5b845f8c9c047779bedf64829601d8b264076c',
+                    chainId: ChainId.CRONOS_ZK_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x39ad8c3067281e60045df041846ee01c1dd3a853', // H2 Finance
+            dexFee: 30,
+            metaRouter: '0x681BeeF15D68E4abae4d912ACF3Df5D589fe61B9',
+            metaRouterGateway: '0x17D51F08C2044fAbFeFE2C58564Bd89BF2DE1C4d',
+            bridge: '0xe004DE550074856bD64Cc1A89A8B3b56bD3eAf31',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x2E818E50b913457015E1277B43E469b63AC5D3d7',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xAcb35C2D11FEA8849cd9f5Ff6fBC56bB5296641B',
+        },
     ],
 }
