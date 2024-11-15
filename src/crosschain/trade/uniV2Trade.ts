@@ -48,7 +48,7 @@ export class UniV2Trade extends SymbiosisTrade {
     }
 
     public async init(dataProvider?: DataProvider) {
-        if (this.routerAddress === AddressZero) {
+        if (this.router.address === AddressZero) {
             throw new Error('Router address is zero')
         }
         if (dataProvider) {

@@ -14,7 +14,6 @@ export async function aggregatorsSwap({
     oneInchProtocols,
 }: SwapExactInParams): Promise<SwapExactInResult> {
     const dataProvider = new DataProvider(symbiosis)
-    const ttl = deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
         symbiosis,
         to,
@@ -24,7 +23,7 @@ export async function aggregatorsSwap({
         slippage,
         tokenAmountIn,
         tokenOut,
-        ttl,
+        deadline,
         oneInchProtocols,
     })
 

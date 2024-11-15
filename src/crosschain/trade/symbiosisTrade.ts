@@ -35,9 +35,9 @@ export interface SymbiosisTradeOutResult {
     functionSelector?: string
 }
 
-class TradeNotInitializedError extends Error {
-    constructor() {
-        super('Trade is not initialized')
+class OutNotInitializedError extends Error {
+    constructor(msg?: string) {
+        super(`Out is not initialized: ${msg}`)
     }
 }
 
@@ -65,52 +65,52 @@ export abstract class SymbiosisTrade {
     }
 
     get amountOut(): TokenAmount {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('amountOut')
         return this.out.amountOut
     }
 
     get amountOutMin(): TokenAmount {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('amountOutMin')
         return this.out.amountOutMin
     }
 
     get routerAddress(): string {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('routerAddress')
         return this.out.routerAddress
     }
 
     get route(): Token[] {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('route')
         return this.out.route
     }
 
     get callData(): string {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('callData')
         return this.out.callData
     }
 
     get callDataOffset(): number {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('callDataOffset')
         return this.out.callDataOffset
     }
 
     get minReceivedOffset(): number {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('minReceivedOffset')
         return this.out.minReceivedOffset
     }
 
     get priceImpact(): Percent {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('priceImpact')
         return this.out.priceImpact
     }
 
     get functionSelector(): string | undefined {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('functionSelector')
         return this.out.functionSelector
     }
 
     public applyAmountIn(newAmount: TokenAmount) {
-        this.assertTradeInitialized()
+        this.assertOutInitialized('applyAmountIn')
 
         const originalAmount = this.tokenAmountIn
         const proportionally = (a: TokenAmount) => {
@@ -137,11 +137,11 @@ export abstract class SymbiosisTrade {
         }
     }
 
-    private assertTradeInitialized(): asserts this is {
+    private assertOutInitialized(msg?: string): asserts this is {
         out: SymbiosisTradeOutResult
     } {
         if (!this.out) {
-            throw new TradeNotInitializedError()
+            throw new OutNotInitializedError(msg)
         }
     }
 }

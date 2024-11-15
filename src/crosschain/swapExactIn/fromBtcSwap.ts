@@ -193,14 +193,13 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
 async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
     const { to, tokenOut, deadline, symbiosis } = context
-    const ttl = deadline - Math.floor(Date.now() / 1000)
     const aggregatorTrade = new AggregatorTrade({
         ...context,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
         dataProvider: symbiosis.dataProvider,
         tokenAmountIn: sBtcAmount,
-        ttl,
+        deadline,
     })
     await aggregatorTrade.init()
 

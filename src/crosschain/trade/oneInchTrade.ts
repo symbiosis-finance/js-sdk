@@ -110,7 +110,7 @@ export class OneInchTrade extends SymbiosisTrade {
             dataProvider: this.dataProvider,
             oracle: this.oracle,
             tokenAmountIn: this.tokenAmountIn,
-            tokenAmountOut: this.amountOut,
+            tokenAmountOut: amountOut,
         })
 
         this.out = {
@@ -215,7 +215,7 @@ export class OneInchTrade extends SymbiosisTrade {
         })
 
         if (method === undefined) {
-            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+            throw new Error('Unknown OneInchTrade swap method encoded to calldata')
         }
         return {
             amountOffset: method.offset,

@@ -206,7 +206,7 @@ export class UniV3Trade extends SymbiosisTrade {
         })
 
         if (method === undefined) {
-            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+            throw new Error('Unknown uniV3Trade swap method encoded to calldata')
         }
 
         return {
