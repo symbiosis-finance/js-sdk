@@ -10,47 +10,50 @@ import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symb
 interface ExtraFeeCollector {
     chainId: ChainId
     address: string
+    feeRate: string
     eligibleChains: ChainId[]
 }
 
 const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
     {
-        // 0.6%
         chainId: ChainId.BOBA_BNB,
         address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
+        feeRate: '6000000000000000', // 0.6%
         eligibleChains: [],
     },
     {
-        // 0.5%
         chainId: ChainId.BOBA_BNB,
         address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
+        feeRate: '5000000000000000', // 0.5%
         eligibleChains: [],
     },
     {
-        // 0.4%
         chainId: ChainId.BOBA_BNB,
         address: '0x5f5829F7CDca871b16ed76E498EeE35D4250738A',
+        feeRate: '4000000000000000', // 0.4%
         eligibleChains: [],
     },
     {
-        // 0.3%
         chainId: ChainId.BOBA_BNB,
         address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
+        feeRate: '3000000000000000', // 0.3%
         eligibleChains: [ChainId.CRONOS_MAINNET],
     },
     {
-        // 0.2%
         chainId: ChainId.BOBA_BNB,
         address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
+        feeRate: '2000000000000000', // 0.2%
         eligibleChains: [ChainId.TRON_MAINNET],
     },
     {
-        // 0.1%
         chainId: ChainId.BOBA_BNB,
         address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
+        feeRate: '1000000000000000', // 0.1%
         eligibleChains: [ChainId.SEI_EVM_MAINNET],
     },
 ]
+
+const FEE_RATE_BASE = BigNumber.from(10).pow(18)
 
 interface OctoPoolTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -87,53 +90,41 @@ export class OctoPoolTrade extends SymbiosisTrade {
         let amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
 
         const preFeeCollector = this.getExtraFeeCollector(this.tokenAmountIn.token)
-        const postFeeCollector = this.getExtraFeeCollector(this.tokenOut)
-
-        const feeRateBase = BigNumber.from(10).pow(18)
-
-        // TODO feeRates can be hardcoded
-        const [preFeeRate, postFeeRate] = await Promise.all([
-            preFeeCollector ? this.getFeeRate(preFeeCollector) : BigNumber.from(0),
-            postFeeCollector ? this.getFeeRate(postFeeCollector) : BigNumber.from(0),
-        ])
-
         if (preFeeCollector) {
-            amountIn = amountIn.sub(amountIn.mul(preFeeRate).div(feeRateBase))
-            amountInMin = amountInMin.sub(amountInMin.mul(preFeeRate).div(feeRateBase))
+            const preFeeRate = BigNumber.from(preFeeCollector.feeRate)
+            amountIn = amountIn.sub(amountIn.mul(preFeeRate).div(FEE_RATE_BASE))
+            amountInMin = amountInMin.sub(amountInMin.mul(preFeeRate).div(FEE_RATE_BASE))
         }
 
         const poolOracle = this.symbiosis.omniPoolOracle(this.poolConfig)
         let { actualToAmount: quote } = await poolOracle.quoteFrom(indexIn, indexOut, amountIn)
 
         let quoteMin = quote
-        if (!amountIn.eq(amountInMin)) {
-            const response = await poolOracle.quoteFrom(indexIn, indexOut, amountInMin)
-            quoteMin = response.actualToAmount
+        if (amountInMin.lt(amountIn)) {
+            quoteMin = quote.mul(amountInMin).div(amountIn) // proportionally
         }
 
-        if (postFeeCollector) {
-            quote = quote.sub(quote.mul(postFeeRate).div(feeRateBase))
-            quoteMin = quoteMin.sub(quoteMin.mul(postFeeRate).div(feeRateBase))
-        }
-
-        const amountOut = new TokenAmount(this.tokenOut, quote.toString())
-
-        const amountOutMinRaw = getMinAmount(this.slippage, quoteMin.toString())
-        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
-
-        const priceImpact = calculatePriceImpact(this.tokenAmountIn, amountOut)
-        if (!priceImpact) {
-            throw new Error('Cannot calculate priceImpact')
-        }
+        quoteMin = BigNumber.from(getMinAmount(this.slippage, quoteMin.toString()).toString())
 
         const callData = OmniPool__factory.createInterface().encodeFunctionData('swap', [
             indexIn,
             indexOut,
-            this.tokenAmountIn.raw.toString(),
-            amountOutMinRaw.toString(),
+            amountIn.toString(),
+            quoteMin.toString(),
             this.to,
             this.deadline,
         ])
+
+        const postFeeCollector = this.getExtraFeeCollector(this.tokenOut)
+        if (postFeeCollector) {
+            const postFeeRate = BigNumber.from(postFeeCollector.feeRate)
+            quote = quote.sub(quote.mul(postFeeRate).div(FEE_RATE_BASE))
+            quoteMin = quoteMin.sub(quoteMin.mul(postFeeRate).div(FEE_RATE_BASE))
+        }
+
+        const amountOut = new TokenAmount(this.tokenOut, quote.toString())
+        const amountOutMin = new TokenAmount(this.tokenOut, quoteMin.toString())
+        const priceImpact = calculatePriceImpact(this.tokenAmountIn, amountOut)
 
         this.out = {
             amountOut,
@@ -158,12 +149,6 @@ export class OctoPoolTrade extends SymbiosisTrade {
     }
 
     // private
-    private async getFeeRate(extraFeeCollector: ExtraFeeCollector) {
-        const { chainId, address } = extraFeeCollector
-        const provider = this.symbiosis.getProvider(chainId)
-        const feeCollector = OctoPoolFeeCollector__factory.connect(address, provider)
-        return feeCollector.feeRate()
-    }
 
     private getExtraFeeCollector(token: Token): ExtraFeeCollector | undefined {
         if (!token.chainFromId) {

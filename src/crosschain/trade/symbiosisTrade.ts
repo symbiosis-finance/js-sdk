@@ -1,6 +1,4 @@
-import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount } from '../../entities'
-import { patchCalldata } from '../chainUtils'
 import { BigNumber } from 'ethers'
 
 export type SymbiosisTradeType =
@@ -113,35 +111,28 @@ export abstract class SymbiosisTrade {
     public applyAmountIn(newAmount: TokenAmount) {
         this.assertOutInitialized('applyAmountIn')
 
-        const originalAmount = this.tokenAmountIn
-        const proportionally = (a: TokenAmount) => {
-            const raw = JSBI.divide(JSBI.multiply(a.raw, newAmount.raw), originalAmount.raw)
-            return new TokenAmount(a.token, raw)
+        const originalAmount = BigNumber.from(this.tokenAmountIn.raw.toString())
+        const proportionallyBn = (value: BigNumber) => {
+            const newAmountBn = BigNumber.from(newAmount.raw.toString())
+            return value.mul(newAmountBn).div(originalAmount)
         }
-        const getAmountFromCallData = (data: string, bytesOffset: number): string => {
-            let hexPrefix = 0
-            if (data.startsWith('0x')) {
-                hexPrefix += 2
-            }
-            const stringOffset = bytesOffset * 2 + hexPrefix
-
-            const amountWidth = 64
-            const amountString = '0x' + data.substring(stringOffset - amountWidth, stringOffset)
-            return BigNumber.from(amountString).toString()
+        const proportionally = (value: TokenAmount) => {
+            return new TokenAmount(value.token, proportionallyBn(BigNumber.from(value.raw.toString())).toString())
         }
 
         const newAmountOut = proportionally(this.amountOut)
+        const newAmountOutMin = proportionally(this.amountOutMin)
 
-        let newAmountOutMin = this.amountOutMin
         let callData = this.callData
         if (this.minReceivedOffset > 0) {
-            const minReceivedFromCallDataRaw = getAmountFromCallData(callData, this.minReceivedOffset)
-            const minReceivedFromCallData = new TokenAmount(this.amountOutMin.token, minReceivedFromCallDataRaw)
-            newAmountOutMin = proportionally(minReceivedFromCallData)
-            callData = patchCalldata(callData, this.minReceivedOffset, newAmountOutMin)
+            const minReceivedFromCallDataRaw = SymbiosisTrade.getAmountFromCallData(callData, this.minReceivedOffset)
+            const newMinReceived = proportionallyBn(minReceivedFromCallDataRaw)
+            callData = SymbiosisTrade.patchCallData(callData, this.minReceivedOffset, newMinReceived)
         }
         if (this.callDataOffset > 0) {
-            callData = patchCalldata(callData, this.callDataOffset, newAmount)
+            const amountInFromCallDataRaw = SymbiosisTrade.getAmountFromCallData(callData, this.callDataOffset)
+            const newAmountIn = proportionallyBn(amountInFromCallDataRaw)
+            callData = SymbiosisTrade.patchCallData(callData, this.callDataOffset, newAmountIn)
         }
 
         this.tokenAmountIn = newAmount
@@ -159,5 +150,35 @@ export abstract class SymbiosisTrade {
         if (!this.out) {
             throw new OutNotInitializedError(msg)
         }
+    }
+
+    public static getAmountFromCallData(data: string, bytesOffset: number): BigNumber {
+        let hexPrefix = 0
+        if (data.startsWith('0x')) {
+            hexPrefix += 2
+        }
+        const stringOffset = bytesOffset * 2 + hexPrefix
+
+        const amountWidth = 64
+        const amountString = '0x' + data.substring(stringOffset - amountWidth, stringOffset)
+        return BigNumber.from(amountString)
+    }
+
+    public static patchCallData(data: string, bytesOffset: number, amount: BigNumber) {
+        let hexPrefix = 0
+        if (data.startsWith('0x')) {
+            hexPrefix += 2
+        }
+        const stringOffset = bytesOffset * 2 + hexPrefix
+        if (data.length < stringOffset) {
+            throw new Error('offset is to big')
+        }
+        const amountWidth = 64
+        const stringAmount = amount.toHexString().substring(2).padStart(amountWidth, '0').toLowerCase()
+        if (stringAmount.length !== amountWidth) {
+            throw new Error('amount is to wide')
+        }
+
+        return data.substring(0, stringOffset - amountWidth) + stringAmount + data.substring(stringOffset)
     }
 }
