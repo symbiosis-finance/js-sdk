@@ -1,20 +1,11 @@
 import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
-import { SymbiosisTrade } from './symbiosisTrade'
-import { getMinAmount } from '../chainUtils/evm'
+import { Percent, TokenAmount } from '../../entities'
+import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade'
+import { getMinAmount } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
 import { getTokenAmountUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
-
-interface MagpieTradeParams {
-    symbiosis: Symbiosis
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    from: string
-    to: string
-    slippage: number
-}
 
 interface MagpieQuoteResponse {
     id: string
@@ -94,47 +85,35 @@ const MAGPIE_NETWORKS: Partial<Record<ChainId, MagpieChain>> = {
 const BASE_URL = 'https://api.magpiefi.xyz'
 const MAGPIE_NATIVE = '0x0000000000000000000000000000000000000000'
 
-export class MagpieTrade implements SymbiosisTrade {
-    public tradeType = 'magpie' as const
+interface MagpieTradeParams extends SymbiosisTradeParams {
+    symbiosis: Symbiosis
+    from: string
+}
 
-    public tokenAmountIn: TokenAmount
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public callDataOffset: number
-    public priceImpact!: Percent
-    public routerAddress!: string
-
-    private chain?: MagpieChain
-
+export class MagpieTrade extends SymbiosisTrade {
+    private readonly chain: MagpieChain
     private readonly symbiosis: Symbiosis
-    private readonly tokenOut: Token
     private readonly from: string
-    private readonly to: string
-    private readonly slippage: number
 
     static isAvailable(chainId: ChainId): boolean {
         return Object.keys(MAGPIE_NETWORKS).includes(chainId.toString())
     }
 
-    public constructor({ symbiosis, tokenAmountIn, tokenOut, from, to, slippage }: MagpieTradeParams) {
-        this.symbiosis = symbiosis
+    public constructor(params: MagpieTradeParams) {
+        super(params)
 
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenOut = tokenOut
-        this.to = to
+        const { symbiosis, from, tokenAmountIn } = params
+        this.symbiosis = symbiosis
         this.from = from
-        this.slippage = slippage
-        this.callDataOffset = 0 // TODO if crosschain will be connected
+
+        const chain = MAGPIE_NETWORKS[tokenAmountIn.token.chainId]
+        if (!chain) {
+            throw new Error('Unsupported chain')
+        }
+        this.chain = chain
     }
 
     public async init() {
-        this.chain = MAGPIE_NETWORKS[this.tokenAmountIn.token.chainId]
-        if (!this.chain) {
-            throw new Error('Unsupported chain')
-        }
-
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
             fromTokenAddress = MAGPIE_NATIVE
@@ -148,27 +127,30 @@ export class MagpieTrade implements SymbiosisTrade {
         const quote: MagpieQuoteResponse = await this.getQuote(fromTokenAddress, toTokenAddress)
         const tx: MagpieTransactionResponse = await this.getTransaction(quote.id, this.to, this.from)
 
-        this.routerAddress = tx.to
-        this.callData = tx.data
-        this.amountOut = new TokenAmount(this.tokenOut, quote.amountOut)
+        const amountOut = new TokenAmount(this.tokenOut, quote.amountOut)
 
         const amountOutMinRaw = getMinAmount(this.slippage, quote.amountOut)
-        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
-
+        let priceImpact = new Percent('0', '100')
         try {
-            this.priceImpact = await this.getPriceImpact(this.tokenAmountIn, this.amountOut)
-        } catch (e) {
-            this.priceImpact = new Percent('0', '100')
+            priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
+        } catch {
+            /* empty */
+        }
+
+        this.out = {
+            amountOut,
+            amountOutMin,
+            routerAddress: tx.to,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            callData: tx.data,
+            callDataOffset: 0, // TODO
+            minReceivedOffset: 0, // TODO
+            priceImpact,
         }
 
         return this
-    }
-
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
     }
 
     private async getQuote(fromTokenAddress: string, toTokenAddress: string): Promise<MagpieQuoteResponse> {
@@ -209,6 +191,7 @@ export class MagpieTrade implements SymbiosisTrade {
 
         return response.json()
     }
+
     private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
         const [tokenInPrice, tokenOutPrice] = await Promise.all([
             this.symbiosis.dataProvider.getTokenPrice(tokenAmountIn.token),

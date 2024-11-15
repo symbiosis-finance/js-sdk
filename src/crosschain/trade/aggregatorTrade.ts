@@ -1,11 +1,10 @@
 import { utils } from 'ethers'
 import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
 import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
 import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade'
 import { IzumiTrade } from './izumiTrade'
 import {
     AdaRouter,
@@ -19,25 +18,6 @@ import {
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 
-interface AggregatorTradeParams {
-    symbiosis: Symbiosis
-    dataProvider: DataProvider
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    from: string
-    to: string
-    slippage: number
-    clientId: string
-    ttl: number
-    oneInchProtocols?: OneInchProtocols
-}
-
-class TradeNotInitializedError extends Error {
-    constructor() {
-        super('Trade is not initialized')
-    }
-}
-
 const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('openocean')
 
 type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
@@ -50,8 +30,16 @@ function limitOpenOceanPromise() {
     }) as Promise<OpenOceanTrade>
 }
 
-// Get the best trade from all aggregators
-export class AggregatorTrade implements SymbiosisTrade {
+interface AggregatorTradeParams extends SymbiosisTradeParams {
+    symbiosis: Symbiosis
+    dataProvider: DataProvider
+    from: string
+    clientId: string
+    deadline: number
+    oneInchProtocols?: OneInchProtocols
+}
+
+export class AggregatorTrade extends SymbiosisTrade {
     protected trade: TradeType | undefined
 
     static isAvailable(chainId: ChainId): boolean {
@@ -63,16 +51,29 @@ export class AggregatorTrade implements SymbiosisTrade {
         )
     }
 
-    constructor(private params: AggregatorTradeParams) {}
+    constructor(private params: AggregatorTradeParams) {
+        super(params)
+    }
 
     public async init() {
-        const { dataProvider, from, slippage, symbiosis, to, tokenAmountIn, tokenOut, clientId, ttl } = this.params
+        const {
+            dataProvider,
+            from,
+            slippage,
+            symbiosis,
+            deadline,
+            to,
+            tokenAmountIn,
+            tokenOut,
+            clientId,
+            oneInchProtocols,
+        } = this.params
 
         const aggregators: Promise<TradeType>[] = []
         if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
-            const oneInchTrade = new OneInchTrade(
-                this.params.symbiosis,
+            const oneInchTrade = new OneInchTrade({
+                symbiosis,
                 tokenAmountIn,
                 tokenOut,
                 from,
@@ -80,8 +81,8 @@ export class AggregatorTrade implements SymbiosisTrade {
                 slippage,
                 oracle,
                 dataProvider,
-                this.params.oneInchProtocols
-            )
+                protocols: oneInchProtocols,
+            })
 
             aggregators.push(oneInchTrade.init())
         }
@@ -89,10 +90,10 @@ export class AggregatorTrade implements SymbiosisTrade {
         if (OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const openOceanTrade = new OpenOceanTrade({
                 symbiosis,
-                slippage,
                 to,
                 tokenAmountIn,
                 tokenOut,
+                slippage,
             })
 
             const promises: Promise<OpenOceanTrade>[] = [openOceanTrade.init()]
@@ -109,7 +110,7 @@ export class AggregatorTrade implements SymbiosisTrade {
                 tokenAmountIn,
                 tokenOut,
                 slippage,
-                ttl,
+                deadline,
                 to,
             })
             aggregators.push(izumiTrade.init())
@@ -121,7 +122,7 @@ export class AggregatorTrade implements SymbiosisTrade {
                 tokenAmountIn,
                 tokenOut,
                 slippage,
-                ttl,
+                deadline,
                 to,
             })
             aggregators.push(uniV3Trade.init())
@@ -154,16 +155,8 @@ export class AggregatorTrade implements SymbiosisTrade {
         return this
     }
 
-    private assertTradeInitialized(): asserts this is {
-        trade: TradeType
-    } {
-        if (!this.trade) {
-            throw new TradeNotInitializedError()
-        }
-    }
-
     private async buildUniV2Trade(): Promise<UniV2Trade> {
-        const { symbiosis, tokenAmountIn, tokenOut, to, slippage, ttl } = this.params
+        const { symbiosis, tokenAmountIn, tokenOut, to, slippage, deadline } = this.params
         const { chainId } = tokenAmountIn.token
         let router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter =
             symbiosis.uniLikeRouter(chainId)
@@ -187,72 +180,18 @@ export class AggregatorTrade implements SymbiosisTrade {
         }
 
         const dexFee = symbiosis.dexFee(chainId)
-        const trade = new UniV2Trade(tokenAmountIn, tokenOut, to, slippage, ttl, router, dexFee)
+        const trade = new UniV2Trade({
+            tokenAmountIn,
+            tokenOut,
+            to,
+            slippage,
+            deadline,
+            router,
+            dexFee,
+        })
 
         await trade.init()
 
         return trade
-    }
-
-    /**
-     * TODO: Use proxy to avoid code duplication
-     */
-    get callData(): string {
-        this.assertTradeInitialized()
-        return this.trade.callData
-    }
-
-    get callDataOffset(): number {
-        this.assertTradeInitialized()
-        return this.trade.callDataOffset || 0
-    }
-
-    get tokenAmountIn(): TokenAmount {
-        this.assertTradeInitialized()
-        return this.trade.tokenAmountIn
-    }
-
-    get amountOut(): TokenAmount {
-        this.assertTradeInitialized()
-        return this.trade.amountOut
-    }
-
-    get amountOutMin(): TokenAmount {
-        this.assertTradeInitialized()
-        return this.trade.amountOutMin
-    }
-
-    get routerAddress(): string {
-        this.assertTradeInitialized()
-        return this.trade.routerAddress
-    }
-
-    get priceImpact(): Percent {
-        this.assertTradeInitialized()
-        return this.trade.priceImpact
-    }
-
-    get route(): Token[] {
-        this.assertTradeInitialized()
-        return this.trade.route
-    }
-
-    get tradeType(): SymbiosisTradeType {
-        this.assertTradeInitialized()
-        return this.trade.tradeType
-    }
-
-    get functionSelector(): string | undefined {
-        this.assertTradeInitialized()
-
-        if ('functionSelector' in this.trade) {
-            return this.trade.functionSelector
-        }
-
-        return undefined
-    }
-    public applyAmountIn(amount: TokenAmount) {
-        this.assertTradeInitialized()
-        return this.trade.applyAmountIn(amount)
     }
 }

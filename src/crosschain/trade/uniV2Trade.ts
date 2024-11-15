@@ -16,51 +16,35 @@ import {
 import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
-export class UniV2Trade implements SymbiosisTrade {
-    tradeType = 'uni-v2' as const
+interface UniV2TradeParams extends SymbiosisTradeParams {
+    router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
+    dexFee: number
+    deadline: number
+}
 
-    public tokenAmountIn: TokenAmount
-
+export class UniV2Trade extends SymbiosisTrade {
     public trade!: Trade
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public priceImpact!: Percent
-    public routerAddress!: string
-    public callDataOffset?: number
-    public functionSelector?: string
-
     private pairs!: Pair[]
 
-    private readonly tokenOut: Token
-    private readonly to: string
-    private readonly deadline: number
-    private readonly slippage: number
     private readonly router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
     private readonly dexFee: number
+    private readonly deadline: number
 
-    public constructor(
-        tokenAmountIn: TokenAmount,
-        tokenOut: Token,
-        to: string,
-        slippage: number,
-        deadline: number,
-        router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter,
-        dexFee: number
-    ) {
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenOut = tokenOut
-        this.to = to
-        this.slippage = slippage
-        this.deadline = deadline
+    public constructor(params: UniV2TradeParams) {
+        super(params)
+
+        const { router, dexFee, deadline } = params
         this.router = router
-        this.routerAddress = router.address
         this.dexFee = dexFee
+        this.deadline = deadline
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        return 'uni-v2'
     }
 
     public async init(dataProvider?: DataProvider) {
@@ -87,33 +71,29 @@ export class UniV2Trade implements SymbiosisTrade {
         if (!priceImpact) {
             throw new Error('Cannot calculate priceImpact')
         }
-        this.priceImpact = priceImpact
-
-        this.route = trade.route.path
-
-        this.amountOut = trade.outputAmount
 
         const amountOutMin = computeSlippageAdjustedAmounts(trade, this.slippage).OUTPUT
         if (!amountOutMin) {
             throw new Error('Cannot compute amountOutMin')
         }
-        this.amountOutMin = amountOutMin
 
         const { data, offset, functionSelector } = this.buildCallData(trade)
-        this.callData = data
-        this.callDataOffset = offset
-        this.functionSelector = functionSelector
-
-        if (!this.callData) {
+        if (!data) {
             throw new Error('Cannot build callData')
         }
 
+        this.out = {
+            amountOut: trade.outputAmount,
+            amountOutMin,
+            routerAddress: this.router.address,
+            route: trade.route.path,
+            callData: data,
+            callDataOffset: offset,
+            minReceivedOffset: 0, // TODO
+            priceImpact,
+            functionSelector,
+        }
         return this
-    }
-
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
     }
 
     private buildCallData(trade: Trade): { data: string; offset: number; functionSelector: string } {

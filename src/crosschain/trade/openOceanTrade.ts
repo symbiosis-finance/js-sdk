@@ -1,18 +1,14 @@
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { Percent, TokenAmount } from '../../entities'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getMinAmount } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 
-interface OpenOceanTradeParams {
+interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    to: string
-    slippage: number
 }
 
 interface OpenOceanQuote {
@@ -123,47 +119,32 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
 
 const BASE_URL = 'https://open-api.openocean.finance/v3'
 
-export class OpenOceanTrade implements SymbiosisTrade {
-    public tradeType = 'open-ocean' as const
-
-    public tokenAmountIn: TokenAmount
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public callDataOffset?: number
-    public priceImpact!: Percent
-    public routerAddress!: string
-
-    private chain?: OpenOceanChain
-    private endpoint: string
-
+export class OpenOceanTrade extends SymbiosisTrade {
+    private readonly chain: OpenOceanChain
+    private readonly endpoint: string
     private readonly symbiosis: Symbiosis
-    private readonly tokenOut: Token
-    private readonly to: string
-    private readonly slippage: number
 
     static isAvailable(chainId: ChainId): boolean {
         return Object.keys(OPEN_OCEAN_NETWORKS).includes(chainId.toString())
     }
 
-    public constructor({ symbiosis, tokenAmountIn, tokenOut, to, slippage }: OpenOceanTradeParams) {
-        this.symbiosis = symbiosis
+    public constructor(params: OpenOceanTradeParams) {
+        super(params)
 
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenOut = tokenOut
-        this.to = to
-        this.slippage = slippage
-        this.endpoint = BASE_URL
+        const chain = OPEN_OCEAN_NETWORKS[this.tokenAmountIn.token.chainId]
+        if (!chain) {
+            throw new Error('Unsupported chain')
+        }
+        this.chain = chain
+        this.symbiosis = params.symbiosis
+        this.endpoint = `${BASE_URL}/${this.chain.slug}`
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        return 'open-ocean'
     }
 
     public async init() {
-        this.chain = OPEN_OCEAN_NETWORKS[this.tokenAmountIn.token.chainId]
-        if (!this.chain) {
-            throw new Error('Unsupported chain')
-        }
-        this.endpoint = `${BASE_URL}/${this.chain.slug}`
-
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
             fromTokenAddress = this.chain.nativeTokenAddress
@@ -199,42 +180,46 @@ export class OpenOceanTrade implements SymbiosisTrade {
 
         const { data, outAmount, to, price_impact: priceImpactString } = json.data as OpenOceanQuote
 
-        this.routerAddress = to
-        this.callData = data
-        this.callDataOffset = this.getOffset(data)
+        const { amountOffset, minReceivedOffset } = this.getOffsets(data)
 
-        this.amountOut = new TokenAmount(this.tokenOut, outAmount)
+        const amountOut = new TokenAmount(this.tokenOut, outAmount)
 
         const amountOutMinRaw = getMinAmount(this.slippage, outAmount)
-        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
-
-        this.priceImpact = this.convertPriceImpact(priceImpactString)
+        this.out = {
+            amountOut,
+            amountOutMin,
+            routerAddress: to,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            callData: data,
+            callDataOffset: amountOffset,
+            minReceivedOffset,
+            priceImpact: this.convertPriceImpact(priceImpactString),
+        }
 
         return this
     }
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
-    }
 
-    private getOffset(callData: string) {
+    private getOffsets(callData: string) {
         const methods = [
             {
                 // swap
                 sigHash: '90411a32',
-                offset: 260,
+                amountOffset: 260,
+                minReceivedOffset: 292,
             },
             {
                 // uniswapV3SwapTo
                 sigHash: 'bc80f1a8',
-                offset: 68,
+                amountOffset: 68,
+                minReceivedOffset: 100,
             },
             {
                 // callUniswapTo
                 sigHash: '6b58f2f0',
-                offset: 68,
+                amountOffset: 68,
+                minReceivedOffset: 100,
             },
         ]
 
@@ -248,7 +233,10 @@ export class OpenOceanTrade implements SymbiosisTrade {
             throw new Error('Unknown OpenOcean swap method encoded to calldata')
         }
 
-        return method.offset
+        return {
+            amountOffset: method.amountOffset,
+            minReceivedOffset: method.minReceivedOffset,
+        }
     }
 
     private convertPriceImpact(value?: string) {

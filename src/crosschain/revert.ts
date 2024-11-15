@@ -408,16 +408,16 @@ export class RevertPending {
 
         const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
 
-        const octoPoolTrade = new OctoPoolTrade(
-            amount,
-            amount, // amountInMin
+        const octoPoolTrade = new OctoPoolTrade({
+            tokenAmountIn: amount,
+            tokenAmountInMin: amount, // amountInMin
             tokenOut,
-            this.slippage,
-            this.deadline,
-            this.symbiosis,
+            slippage: this.slippage,
+            deadline: this.deadline,
+            symbiosis: this.symbiosis,
             to,
-            this.omniPoolConfig
-        )
+            omniPoolConfig: this.omniPoolConfig,
+        })
         await octoPoolTrade.init()
 
         return [

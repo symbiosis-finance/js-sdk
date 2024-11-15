@@ -1,12 +1,11 @@
-import { Percent, Token, TokenAmount } from '../../entities'
-import { OctoPoolFeeCollector__factory, OmniPool, OmniPoolOracle } from '../contracts'
-import { calculatePriceImpact, getMinAmount, patchCalldata } from '../chainUtils'
+import { Token, TokenAmount } from '../../entities'
+import { OctoPoolFeeCollector__factory, OmniPool__factory } from '../contracts'
+import { calculatePriceImpact, getMinAmount } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
 import { ChainId } from '../../constants'
 import { BigNumber } from 'ethers'
-import { SymbiosisTrade } from './symbiosisTrade'
-import JSBI from 'jsbi'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
 interface ExtraFeeCollector {
     chainId: ChainId
@@ -53,43 +52,36 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
     },
 ]
 
-export class OctoPoolTrade implements SymbiosisTrade {
-    tradeType = 'octopool' as const
+interface OctoPoolTradeParams extends SymbiosisTradeParams {
+    symbiosis: Symbiosis
+    tokenAmountInMin: TokenAmount
+    deadline: number
+    omniPoolConfig: OmniPoolConfig
+}
 
-    public routerAddress: string
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public callDataOffset: number
-    public minReceivedOffset: number
-    public priceImpact!: Percent
+export class OctoPoolTrade extends SymbiosisTrade {
+    public readonly symbiosis: Symbiosis
+    public readonly tokenAmountInMin: TokenAmount
+    public readonly deadline: number
+    public readonly poolConfig: OmniPoolConfig
 
-    public readonly pool: OmniPool
-    public readonly poolOracle: OmniPoolOracle
+    public constructor(params: OctoPoolTradeParams) {
+        super(params)
 
-    public constructor(
-        public readonly tokenAmountIn: TokenAmount,
-        public readonly tokenAmountInMin: TokenAmount,
-        private readonly tokenOut: Token,
-        private readonly slippage: number,
-        private readonly deadline: number,
-        private readonly symbiosis: Symbiosis,
-        private readonly to: string,
-        private readonly omniPoolConfig: OmniPoolConfig
-    ) {
-        this.pool = this.symbiosis.omniPool(omniPoolConfig)
-        this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
-        this.callDataOffset = 100
-        this.minReceivedOffset = 132
-        this.routerAddress = this.pool.address
+        const { symbiosis, omniPoolConfig, tokenAmountInMin, deadline } = params
+        this.symbiosis = symbiosis
+        this.tokenAmountInMin = tokenAmountInMin
+        this.deadline = deadline
+        this.poolConfig = omniPoolConfig
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        return 'octopool'
     }
 
     public async init() {
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
-
-        const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenAmountIn.token)
-        const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.omniPoolConfig, this.tokenOut)
+        const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.poolConfig, this.tokenAmountIn.token)
+        const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.poolConfig, this.tokenOut)
 
         let amountIn = BigNumber.from(this.tokenAmountIn.raw.toString())
         let amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
@@ -110,11 +102,12 @@ export class OctoPoolTrade implements SymbiosisTrade {
             amountInMin = amountInMin.sub(amountInMin.mul(preFeeRate).div(feeRateBase))
         }
 
-        let { actualToAmount: quote } = await this.poolOracle.quoteFrom(indexIn, indexOut, amountIn)
+        const poolOracle = this.symbiosis.omniPoolOracle(this.poolConfig)
+        let { actualToAmount: quote } = await poolOracle.quoteFrom(indexIn, indexOut, amountIn)
 
         let quoteMin = quote
         if (!amountIn.eq(amountInMin)) {
-            const response = await this.poolOracle.quoteFrom(indexIn, indexOut, amountInMin)
+            const response = await poolOracle.quoteFrom(indexIn, indexOut, amountInMin)
             quoteMin = response.actualToAmount
         }
 
@@ -123,12 +116,17 @@ export class OctoPoolTrade implements SymbiosisTrade {
             quoteMin = quoteMin.sub(quoteMin.mul(postFeeRate).div(feeRateBase))
         }
 
-        this.amountOut = new TokenAmount(this.tokenOut, quote.toString())
+        const amountOut = new TokenAmount(this.tokenOut, quote.toString())
 
         const amountOutMinRaw = getMinAmount(this.slippage, quoteMin.toString())
-        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
-        this.callData = this.pool.interface.encodeFunctionData('swap', [
+        const priceImpact = calculatePriceImpact(this.tokenAmountIn, this.amountOut)
+        if (!priceImpact) {
+            throw new Error('Cannot calculate priceImpact')
+        }
+
+        const callData = OmniPool__factory.createInterface().encodeFunctionData('swap', [
             indexIn,
             indexOut,
             this.tokenAmountIn.raw.toString(),
@@ -137,23 +135,18 @@ export class OctoPoolTrade implements SymbiosisTrade {
             this.deadline,
         ])
 
-        const priceImpact = calculatePriceImpact(this.tokenAmountIn, this.amountOut)
-        if (!priceImpact) {
-            throw new Error('Cannot calculate priceImpact')
+        this.out = {
+            amountOut,
+            amountOutMin,
+            routerAddress: this.poolConfig.address,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            callData,
+            callDataOffset: 100,
+            minReceivedOffset: 132,
+            priceImpact,
         }
-        this.priceImpact = priceImpact
 
         return this
-    }
-
-    public applyAmountIn(amount: TokenAmount) {
-        const k = JSBI.divide(amount.raw, this.tokenAmountIn.raw)
-
-        this.callData = patchCalldata(this.callData, this.callDataOffset, amount)
-
-        // TODO affect this.amountOut
-
-        console.log({ k: k.toString() })
     }
 
     public buildFeePreCall() {
@@ -177,7 +170,7 @@ export class OctoPoolTrade implements SymbiosisTrade {
             return undefined
         }
         return EXTRA_FEE_COLLECTORS.find((i) => {
-            return i.chainId === this.omniPoolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
+            return i.chainId === this.poolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
         })
     }
 

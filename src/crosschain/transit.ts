@@ -217,16 +217,16 @@ export class Transit {
 
         const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
 
-        const trade = new OctoPoolTrade(
+        const trade = new OctoPoolTrade({
             tokenAmountIn,
             tokenAmountInMin,
             tokenOut,
-            this.slippage,
-            this.deadline,
-            this.symbiosis,
+            slippage: this.slippage,
+            deadline: this.deadline,
+            symbiosis: this.symbiosis,
             to,
-            this.omniPoolConfig
-        )
+            omniPoolConfig: this.omniPoolConfig,
+        })
         await trade.init()
 
         return trade

@@ -7,11 +7,12 @@ import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
 import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
 import { Error, ErrorCode } from './error'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade } from './trade'
+import { AggregatorTrade, WrapTrade } from './trade'
 import {
     buildMetaSynthesize,
     getExternalId,
     getInternalId,
+    isTonChainId,
     isTronChainId,
     isTronToken,
     prepareTronTransaction,
@@ -29,8 +30,6 @@ import {
     SwapExactInTransactionPayload,
     TonTransactionData,
 } from './types'
-import { WrapTrade } from './trade'
-import { isTonChainId } from './chainUtils'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount
@@ -50,7 +49,6 @@ export class Zapping {
     private tokenAmountIn!: TokenAmount
     private slippage!: number
     private deadline!: number
-    private ttl!: number
 
     private tradeA: AggregatorTrade | WrapTrade | undefined
 
@@ -83,7 +81,6 @@ export class Zapping {
 
         this.slippage = slippage
         this.deadline = deadline
-        this.ttl = deadline - Math.floor(Date.now() / 1000)
 
         if (isTronToken(this.tokenAmountIn.token)) {
             this.revertableAddress = this.symbiosis.getRevertableAddress(this.omniPoolConfig.chainId)
@@ -299,7 +296,11 @@ export class Zapping {
         const to = from
 
         if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
-            return new WrapTrade(this.tokenAmountIn, tokenOut, this.to)
+            return new WrapTrade({
+                tokenAmountIn: this.tokenAmountIn,
+                tokenOut,
+                to: this.to,
+            })
         }
 
         return new AggregatorTrade({
@@ -311,7 +312,7 @@ export class Zapping {
             dataProvider: this.dataProvider,
             symbiosis: this.symbiosis,
             clientId: this.symbiosis.clientId,
-            ttl: this.ttl,
+            deadline: this.deadline,
         })
     }
 

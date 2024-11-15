@@ -2,7 +2,7 @@ import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router__factory } from '../contracts'
 import { Symbiosis } from '../symbiosis'
-import type { SymbiosisTrade } from './symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import {
     encodeRouteToPath,
     FeeAmount,
@@ -29,15 +29,6 @@ interface Deployment {
     quoter: string
     swap: string
     baseTokens: Token[]
-}
-
-interface UniV3TradeParams {
-    symbiosis: Symbiosis
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    slippage: number
-    ttl: number
-    to: string
 }
 
 const POSSIBLE_FEES = [FeeAmount.LOWEST, FeeAmount.LOW, FeeAmount.MEDIUM, FeeAmount.HIGH]
@@ -73,37 +64,29 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
     // },
 }
 
-export class UniV3Trade implements SymbiosisTrade {
-    tradeType = 'uni-v3' as const
+interface UniV3TradeParams extends SymbiosisTradeParams {
+    symbiosis: Symbiosis
+    deadline: number
+}
 
-    public priceImpact: Percent = new Percent('0', '100')
+export class UniV3Trade extends SymbiosisTrade {
     private readonly symbiosis: Symbiosis
-    public readonly tokenAmountIn: TokenAmount
-    private readonly tokenOut: Token
-    private readonly slippage: number
-    private readonly ttl: number
-    private readonly to: string
-
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public routerAddress!: string
-    public callDataOffset?: number
+    private readonly deadline: number
 
     static isSupported(chainId: ChainId): boolean {
         return !!DEPLOYMENT_ADDRESSES[chainId]
     }
 
     public constructor(params: UniV3TradeParams) {
-        const { symbiosis, tokenAmountIn, tokenOut, slippage, ttl, to } = params
+        super(params)
 
+        const { symbiosis, deadline } = params
         this.symbiosis = symbiosis
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenOut = tokenOut
-        this.slippage = slippage
-        this.ttl = ttl
-        this.to = to
+        this.deadline = deadline
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        return 'uni-v3'
     }
 
     public async init() {
@@ -161,8 +144,8 @@ export class UniV3Trade implements SymbiosisTrade {
             throw new Error('Route not found')
         }
 
-        this.amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
-        this.amountOutMin = new TokenAmount(this.tokenOut, bestAmountOut.toString())
+        const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
+        const amountOutMin = new TokenAmount(this.tokenOut, bestAmountOut.toString())
 
         const trade = Trade.createUncheckedTrade({
             route: bestSwapRoute,
@@ -175,38 +158,44 @@ export class UniV3Trade implements SymbiosisTrade {
 
         const options: SwapOptions = {
             slippageTolerance,
-            deadline: Math.floor(Date.now() / 1000) + this.ttl,
+            deadline: this.deadline,
             recipient: this.to,
         }
         const methodParameters = UniV3Trade.swapCallParameters([trade], options, swap)
 
-        this.priceImpact = new Percent(
+        const priceImpact = new Percent(
             JSBI.multiply(trade.priceImpact.numerator, JSBI.BigInt('-1')),
             trade.priceImpact.denominator
         )
-        this.callDataOffset = UniV3Trade.getOffset(methodParameters.calldata)
-        this.routerAddress = swap
-        this.callData = methodParameters.calldata
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
+        const callData = methodParameters.calldata
+        const { amountOffset, minReceivedOffset } = UniV3Trade.getOffsets(callData)
 
+        this.out = {
+            amountOut,
+            amountOutMin,
+            routerAddress: swap,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            callData,
+            callDataOffset: amountOffset,
+            minReceivedOffset,
+            priceImpact,
+        }
         return this
     }
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
-    }
 
-    private static getOffset(callData: string) {
+    private static getOffsets(callData: string) {
         const methods = [
             {
                 // exactInputSingle
                 sigHash: '04e45aaf',
                 offset: 4 + 5 * 32,
+                minReceivedOffset: 0, // TODO
             },
             {
                 // multicall
                 sigHash: 'ac9650d8',
                 offset: 328,
+                minReceivedOffset: 0, // TODO
             },
         ]
 
@@ -216,7 +205,14 @@ export class UniV3Trade implements SymbiosisTrade {
             return i.sigHash === sigHash
         })
 
-        return method?.offset
+        if (method === undefined) {
+            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+        }
+
+        return {
+            amountOffset: method.offset,
+            minReceivedOffset: method.minReceivedOffset,
+        }
     }
 
     public static swapCallParameters(

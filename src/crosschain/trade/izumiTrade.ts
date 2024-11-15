@@ -7,8 +7,8 @@ import { BIPS_BASE } from '../constants'
 import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
 import { getMulticall } from '../multicall'
 import { Symbiosis } from '../symbiosis'
-import { getMinAmount } from '../chainUtils/evm'
-import type { SymbiosisTrade } from './symbiosisTrade'
+import { getMinAmount } from '../chainUtils'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { Multicall2 } from '../contracts/Multicall'
 
 interface IzumiAddresses {
@@ -22,15 +22,6 @@ interface IzumiRoute {
     tokens: Token[]
     fees: number[]
     path: string
-}
-
-interface IzumiTradeParams {
-    symbiosis: Symbiosis
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-    slippage: number
-    ttl: number
-    to: string
 }
 
 const POSSIBLE_FEES = [100, 400, 500, 2000, 3000, 10000]
@@ -248,37 +239,29 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
     },
 }
 
-export class IzumiTrade implements SymbiosisTrade {
-    tradeType = 'izumi' as const
+interface IzumiTradeParams extends SymbiosisTradeParams {
+    symbiosis: Symbiosis
+    deadline: number
+}
 
-    public priceImpact: Percent = new Percent('0')
+export class IzumiTrade extends SymbiosisTrade {
     private readonly symbiosis: Symbiosis
-    public readonly tokenAmountIn: TokenAmount
-    private readonly tokenOut: Token
-    private readonly slippage: number
-    private readonly ttl: number
-    private readonly to: string
-
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public routerAddress!: string
-    public callDataOffset?: number
+    private readonly deadline: number
 
     static isSupported(chainId: ChainId): boolean {
         return !!IZUMI_ADDRESSES[chainId]
     }
 
     public constructor(params: IzumiTradeParams) {
-        const { symbiosis, tokenAmountIn, tokenOut, slippage, ttl, to } = params
+        super(params)
 
+        const { symbiosis, deadline } = params
         this.symbiosis = symbiosis
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenOut = tokenOut
-        this.slippage = slippage
-        this.ttl = ttl
-        this.to = to
+        this.deadline = deadline
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        return 'izumi'
     }
 
     public async init() {
@@ -368,7 +351,7 @@ export class IzumiTrade implements SymbiosisTrade {
         const initDecimalPriceEndByStart = getPriceDecimalEndByStart(bestRoute, pointsBefore)
         const initDecimalPriceEndByStartTrimmed = new BNJS(initDecimalPriceEndByStart.toFixed(4))
 
-        this.priceImpact = new Percent('0')
+        let priceImpact = new Percent('0')
 
         if (!initDecimalPriceEndByStartTrimmed.isEqualTo('0')) {
             const spotPriceBNJS = new BNJS(this.tokenAmountIn.raw.toString())
@@ -378,13 +361,13 @@ export class IzumiTrade implements SymbiosisTrade {
             const bestOutputBNJS = new BNJS(bestOutput.toString()).dividedBy(10 ** this.tokenOut.decimals)
             const impactBNJS = spotPriceBNJS.minus(bestOutputBNJS).div(bestOutputBNJS).negated()
 
-            this.priceImpact = new Percent(impactBNJS.times(BIPS_BASE.toString()).toFixed(0).toString(), BIPS_BASE)
+            priceImpact = new Percent(impactBNJS.times(BIPS_BASE.toString()).toFixed(0).toString(), BIPS_BASE)
         }
 
-        this.amountOut = new TokenAmount(this.tokenOut, bestOutput.toString())
+        const amountOut = new TokenAmount(this.tokenOut, bestOutput.toString())
 
         const minAcquired = getMinAmount(this.slippage, bestOutput.toString())
-        this.amountOutMin = new TokenAmount(this.tokenOut, minAcquired.toString())
+        const amountOutMin = new TokenAmount(this.tokenOut, minAcquired.toString())
 
         const outputToken = tokens[tokens.length - 1]
 
@@ -403,7 +386,7 @@ export class IzumiTrade implements SymbiosisTrade {
                 recipient: innerRecipientAddress,
                 amount: this.tokenAmountIn.raw.toString(),
                 minAcquired: minAcquired.toString(),
-                deadline: Math.floor(Date.now() / 1000) + this.ttl,
+                deadline: this.deadline,
             },
         ])
 
@@ -424,19 +407,19 @@ export class IzumiTrade implements SymbiosisTrade {
         const position = callData.indexOf(encodedCallData) + encodedCallData.length
 
         // Exclude the 0x from calculating the offset
-        this.callDataOffset = (position - 2) / 2
+        const callDataOffset = (position - 2) / 2
 
-        this.routerAddress = swap
-        this.callData = callData
-
-        this.route = tokens
-
+        this.out = {
+            amountOut,
+            amountOutMin,
+            routerAddress: swap,
+            route: tokens,
+            callData,
+            callDataOffset,
+            minReceivedOffset: 0, // TODO
+            priceImpact,
+        }
         return this
-    }
-
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
     }
 
     async getCurrentPoolPoints({ fees, tokens }: IzumiRoute) {
@@ -452,7 +435,10 @@ export class IzumiTrade implements SymbiosisTrade {
 
         const factoryInterface = IzumiFactory__factory.createInterface()
 
-        const getPoolAddressesCalls: { target: string; callData: string }[] = []
+        const getPoolAddressesCalls: {
+            target: string
+            callData: string
+        }[] = []
         for (let i = 0; i < fees.length; i++) {
             getPoolAddressesCalls.push({
                 target: addresses.factory,
@@ -521,7 +507,13 @@ export const getTokenChainPath = (tokenChain: Token[], feeChain: number[]): stri
     return hexString
 }
 
-export const getTokenXYFromToken = (tokenA: Token, tokenB: Token): { tokenX: Token; tokenY: Token } => {
+export const getTokenXYFromToken = (
+    tokenA: Token,
+    tokenB: Token
+): {
+    tokenX: Token
+    tokenY: Token
+} => {
     const addressA = wrappedToken(tokenA).address
     const addressB = wrappedToken(tokenB).address
 

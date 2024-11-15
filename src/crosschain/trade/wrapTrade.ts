@@ -1,8 +1,8 @@
 import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { Unwrapper__factory, Weth__factory } from '../contracts'
 import { getFunctionSelector } from '../chainUtils/tron'
-import type { SymbiosisTrade } from './symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
@@ -28,21 +28,13 @@ const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.BSQUARED_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
 }
 
-export class WrapTrade implements SymbiosisTrade {
-    tradeType = 'wrap' as const
+interface WrapTradeParams {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+    to: string
+}
 
-    public priceImpact: Percent = new Percent('0')
-
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public routerAddress!: string
-    public callDataOffset?: number
-    public functionSelector!: string
-
-    public constructor(public tokenAmountIn: TokenAmount, private tokenOut: Token, private to: string) {}
-
+export class WrapTrade extends SymbiosisTrade {
     public static isSupported(tokenAmountIn: TokenAmount, tokenOut: Token): boolean {
         const wrappedInToken = wrappedToken(tokenAmountIn.token)
         if (tokenAmountIn.token.isNative && wrappedInToken.equals(tokenOut)) {
@@ -57,19 +49,38 @@ export class WrapTrade implements SymbiosisTrade {
         return !!unwrapAddress && tokenOut.isNative && wrappedOutToken.equals(tokenAmountIn.token)
     }
 
+    public constructor(params: WrapTradeParams) {
+        super({ ...params, slippage: 0 })
+    }
+
+    public get tradeType(): SymbiosisTradeType {
+        return 'wrap'
+    }
+
     public async init() {
-        const wethInterface = Weth__factory.createInterface()
+        const route = [this.tokenAmountIn.token, this.tokenOut]
+        const priceImpact = new Percent('0', '0')
 
         if (this.tokenAmountIn.token.isNative) {
             const wethToken = wrappedToken(this.tokenAmountIn.token)
 
-            this.route = [this.tokenAmountIn.token, wethToken]
-            this.amountOut = new TokenAmount(wethToken, this.tokenAmountIn.raw)
-            this.amountOutMin = this.amountOut
-            this.routerAddress = wethToken.address
+            const amountOut = new TokenAmount(wethToken, this.tokenAmountIn.raw)
+            const amountOutMin = amountOut
 
-            this.callData = wethInterface.encodeFunctionData('deposit')
-            this.functionSelector = getFunctionSelector(wethInterface.getFunction('deposit'))
+            const wethInterface = Weth__factory.createInterface()
+            const callData = wethInterface.encodeFunctionData('deposit')
+            const functionSelector = getFunctionSelector(wethInterface.getFunction('deposit'))
+            this.out = {
+                amountOut,
+                amountOutMin,
+                routerAddress: wethToken.address,
+                route,
+                callData,
+                functionSelector,
+                callDataOffset: 0,
+                minReceivedOffset: 0,
+                priceImpact,
+            }
             return this
         }
 
@@ -78,22 +89,24 @@ export class WrapTrade implements SymbiosisTrade {
             throw new Error('Cannot unwrap on this network')
         }
 
+        const amountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
+        const amountOutMin = amountOut
+
         const unwrapperInterface = Unwrapper__factory.createInterface()
+        const callData = unwrapperInterface.encodeFunctionData('unwrap', [this.tokenAmountIn.raw.toString(), this.to])
+        const functionSelector = getFunctionSelector(unwrapperInterface.getFunction('unwrap'))
 
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
-        this.amountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
-        this.amountOutMin = this.amountOut
-        this.routerAddress = unwrapperAddress
-
-        this.callData = unwrapperInterface.encodeFunctionData('unwrap', [this.tokenAmountIn.raw.toString(), this.to])
-        this.functionSelector = getFunctionSelector(unwrapperInterface.getFunction('unwrap'))
-        this.callDataOffset = 4 + 32
-
+        this.out = {
+            amountOut,
+            amountOutMin,
+            routerAddress: unwrapperAddress,
+            route,
+            callData,
+            functionSelector,
+            callDataOffset: 4 + 32,
+            minReceivedOffset: 0,
+            priceImpact,
+        }
         return this
-    }
-
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
     }
 }

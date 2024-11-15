@@ -1,11 +1,11 @@
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
+import { TokenAmount } from '../../entities'
 import { OneInchOracle } from '../contracts'
 import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
 import { canOneInch, getMinAmount } from '../chainUtils'
 import { getTradePriceImpact } from './getTradePriceImpact'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
 export type OneInchProtocols = string[]
 
@@ -16,24 +16,18 @@ interface Protocol {
     img_color: string
 }
 
-export class OneInchTrade implements SymbiosisTrade {
-    tradeType = '1inch' as const
+interface OneInchTradeParams extends SymbiosisTradeParams {
+    symbiosis: Symbiosis
+    from: string
+    oracle: OneInchOracle
+    dataProvider: DataProvider
+    protocols?: OneInchProtocols
+}
 
-    public tokenAmountIn: TokenAmount
-    public route!: Token[]
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public callData!: string
-    public priceImpact!: Percent
-    public routerAddress!: string
-    public oracle: OneInchOracle
-    public callDataOffset?: number
-
+export class OneInchTrade extends SymbiosisTrade {
+    private readonly oracle: OneInchOracle
     private readonly symbiosis: Symbiosis
-    private readonly tokenOut: Token
     private readonly from: string
-    private readonly to: string
-    private readonly slippage: number
     private readonly dataProvider: DataProvider
     private readonly protocols: OneInchProtocols
 
@@ -41,26 +35,19 @@ export class OneInchTrade implements SymbiosisTrade {
         return canOneInch(chainId)
     }
 
-    public constructor(
-        symbiosis: Symbiosis,
-        tokenAmountIn: TokenAmount,
-        tokenOut: Token,
-        from: string,
-        to: string,
-        slippage: number,
-        oracle: OneInchOracle,
-        dataProvider: DataProvider,
-        protocols?: OneInchProtocols
-    ) {
-        this.symbiosis = symbiosis
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenOut = tokenOut
-        this.from = from
-        this.to = to
-        this.slippage = slippage
+    public constructor(params: OneInchTradeParams) {
+        super(params)
+
+        const { symbiosis, from, oracle, dataProvider, protocols } = params
         this.oracle = oracle
+        this.symbiosis = symbiosis
+        this.from = from
         this.dataProvider = dataProvider
         this.protocols = protocols || []
+    }
+
+    get tradeType(): SymbiosisTradeType {
+        return '1inch'
     }
 
     public async init() {
@@ -110,30 +97,33 @@ export class OneInchTrade implements SymbiosisTrade {
             gas: string
             gasPrice: string
         } = json['tx']
-        const amountOutRaw: string = json['toAmount']
+        const callData = tx.data
+        const { amountOffset, minReceivedOffset } = this.getOffsets(callData)
 
-        this.routerAddress = tx.to
-        this.callData = tx.data
-        this.callDataOffset = this.getOffset(tx.data)
-        this.amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
+        const amountOutRaw: string = json['toAmount']
+        const amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
 
         const amountOutMinRaw = getMinAmount(this.slippage, amountOutRaw)
-        this.amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
-        this.route = [this.tokenAmountIn.token, this.tokenOut]
-        this.priceImpact = await getTradePriceImpact({
+        const priceImpact = await getTradePriceImpact({
             dataProvider: this.dataProvider,
             oracle: this.oracle,
             tokenAmountIn: this.tokenAmountIn,
             tokenAmountOut: this.amountOut,
         })
 
+        this.out = {
+            amountOut,
+            amountOutMin,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            routerAddress: tx.to,
+            callData,
+            callDataOffset: amountOffset,
+            minReceivedOffset,
+            priceImpact,
+        }
         return this
-    }
-
-    public applyAmountIn(amount: TokenAmount) {
-        // TODO implement me
-        console.log(amount)
     }
 
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
@@ -157,28 +147,32 @@ export class OneInchTrade implements SymbiosisTrade {
         }
     }
 
-    private getOffset(callData: string) {
+    private getOffsets(callData: string) {
         const methods = [
             // V4
             {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256,bytes),bytes)
                 sigHash: '7c025200',
                 offset: 260,
+                minReceivedOffset: 0, // TODO all
             },
             {
                 // clipperSwapTo(address,address,address,uint256,uint256)
                 sigHash: '9994dd15',
                 offset: 132,
+                minReceivedOffset: 0,
             },
             {
                 // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,uint256,address)
                 sigHash: 'baba5855',
                 offset: 292,
+                minReceivedOffset: 0,
             },
             {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])
                 sigHash: 'bc80f1a8',
                 offset: 68,
+                minReceivedOffset: 0,
             },
 
             // V5
@@ -186,26 +180,31 @@ export class OneInchTrade implements SymbiosisTrade {
                 // clipperSwapTo(address,address,address,address,uint256,uint256,uint256,bytes32,bytes32)
                 sigHash: '093d4fa5',
                 offset: 164, // +
+                minReceivedOffset: 0,
             },
             {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256),bytes,bytes)
                 sigHash: '12aa3caf',
                 offset: 196, // +/-
+                minReceivedOffset: 0,
             },
             {
                 // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,address)
                 sigHash: '5a099843',
                 offset: 196,
+                minReceivedOffset: 0,
             },
             {
                 // unoswapTo(address,address,uint256,uint256,uint256[])
                 sigHash: 'f78dc253',
                 offset: 100,
+                minReceivedOffset: 0,
             },
             {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])
                 sigHash: 'bc80f1a8',
                 offset: 68,
+                minReceivedOffset: 0,
             },
         ]
 
@@ -215,6 +214,12 @@ export class OneInchTrade implements SymbiosisTrade {
             return i.sigHash === sigHash
         })
 
-        return method?.offset
+        if (method === undefined) {
+            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+        }
+        return {
+            amountOffset: method.offset,
+            minReceivedOffset: method.minReceivedOffset,
+        }
     }
 }
