@@ -96,8 +96,7 @@ export class OctoPoolTrade extends SymbiosisTrade {
             amountInMin = amountInMin.sub(amountInMin.mul(preFeeRate).div(FEE_RATE_BASE))
         }
 
-        const poolOracle = this.symbiosis.omniPoolOracle(this.poolConfig)
-        let { actualToAmount: quote } = await poolOracle.quoteFrom(indexIn, indexOut, amountIn)
+        let quote = await this.quote(indexIn, indexOut, amountIn)
 
         let quoteMin = quote
         if (amountInMin.lt(amountIn)) {
@@ -149,6 +148,12 @@ export class OctoPoolTrade extends SymbiosisTrade {
     }
 
     // private
+
+    private async quote(indexIn: number, indexOut: number, amountIn: BigNumber): Promise<BigNumber> {
+        const poolOracle = this.symbiosis.omniPoolOracle(this.poolConfig)
+        const { actualToAmount } = await poolOracle.quoteFrom(indexIn, indexOut, amountIn)
+        return actualToAmount
+    }
 
     private getExtraFeeCollector(token: Token): ExtraFeeCollector | undefined {
         if (!token.chainFromId) {
