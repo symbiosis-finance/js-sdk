@@ -403,11 +403,14 @@ export class IzumiTrade extends SymbiosisTrade {
         }
 
         const abiCoder = new AbiCoder()
-        const encodedCallData = abiCoder.encode(['uint128'], [this.tokenAmountIn.raw.toString()]).replace('0x', '')
-        const position = callData.indexOf(encodedCallData) + encodedCallData.length
 
-        // Exclude the 0x from calculating the offset
-        const callDataOffset = (position - 2) / 2
+        const amountInCallData = abiCoder.encode(['uint128'], [this.tokenAmountIn.raw.toString()]).replace('0x', '')
+        const amountPosition = callData.indexOf(amountInCallData) + amountInCallData.length
+        const callDataOffset = (amountPosition - 2) / 2 // Exclude the 0x from calculating the offset
+
+        const minReceivedCallData = abiCoder.encode(['uint128'], [minAcquired.toString()]).replace('0x', '')
+        const minReceivedPosition = callData.indexOf(minReceivedCallData) + minReceivedCallData.length
+        const minReceivedOffset = (minReceivedPosition - 2) / 2 // Exclude the 0x from calculating the offset
 
         this.out = {
             amountOut,
@@ -416,7 +419,7 @@ export class IzumiTrade extends SymbiosisTrade {
             route: tokens,
             callData,
             callDataOffset,
-            minReceivedOffset: 0, // TODO
+            minReceivedOffset,
             priceImpact,
         }
         return this

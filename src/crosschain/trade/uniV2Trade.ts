@@ -77,7 +77,7 @@ export class UniV2Trade extends SymbiosisTrade {
             throw new Error('Cannot compute amountOutMin')
         }
 
-        const { data, offset, functionSelector } = this.buildCallData(trade)
+        const { data, offset, minReceivedOffset, functionSelector } = this.buildCallData(trade)
         if (!data) {
             throw new Error('Cannot build callData')
         }
@@ -89,15 +89,20 @@ export class UniV2Trade extends SymbiosisTrade {
             route: trade.route.path,
             callData: data,
             callDataOffset: offset,
-            minReceivedOffset: 0, // TODO
+            minReceivedOffset,
             priceImpact,
             functionSelector,
         }
         return this
     }
 
-    private buildCallData(trade: Trade): { data: string; offset: number; functionSelector: string } {
-        const { methodName, args, offset } = Router.swapCallParameters(trade, {
+    private buildCallData(trade: Trade): {
+        data: string
+        offset: number
+        minReceivedOffset: number
+        functionSelector: string
+    } {
+        const { methodName, args, offset, minReceivedOffset } = Router.swapCallParameters(trade, {
             allowedSlippage: new Percent(JSBI.BigInt(Math.floor(this.slippage)), BIPS_BASE),
             recipient: this.to,
             ttl: this.deadline,
@@ -120,6 +125,7 @@ export class UniV2Trade extends SymbiosisTrade {
             functionSelector: getFunctionSelector(functionAbi),
             data: this.router.interface.encodeFunctionData(method as any, args as any),
             offset,
+            minReceivedOffset,
         }
     }
 

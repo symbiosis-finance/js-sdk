@@ -189,13 +189,13 @@ export class UniV3Trade extends SymbiosisTrade {
                 // exactInputSingle
                 sigHash: '04e45aaf',
                 offset: 4 + 5 * 32,
-                minReceivedOffset: 0, // TODO
+                minReceivedOffset: 4 + 6 * 32,
             },
             {
                 // multicall
                 sigHash: 'ac9650d8',
                 offset: 328,
-                minReceivedOffset: 0, // TODO
+                minReceivedOffset: 360, // I'm not sure
             },
         ]
 

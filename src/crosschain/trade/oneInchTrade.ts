@@ -154,25 +154,25 @@ export class OneInchTrade extends SymbiosisTrade {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256,bytes),bytes)
                 sigHash: '7c025200',
                 offset: 260,
-                minReceivedOffset: 0, // TODO all
+                minReceivedOffset: 292,
             },
             {
                 // clipperSwapTo(address,address,address,uint256,uint256)
                 sigHash: '9994dd15',
                 offset: 132,
-                minReceivedOffset: 0,
+                minReceivedOffset: 164,
             },
             {
                 // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,uint256,address)
                 sigHash: 'baba5855',
                 offset: 292,
-                minReceivedOffset: 0,
+                minReceivedOffset: 324,
             },
             {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])
                 sigHash: 'bc80f1a8',
                 offset: 68,
-                minReceivedOffset: 0,
+                minReceivedOffset: 100,
             },
 
             // V5
@@ -180,31 +180,31 @@ export class OneInchTrade extends SymbiosisTrade {
                 // clipperSwapTo(address,address,address,address,uint256,uint256,uint256,bytes32,bytes32)
                 sigHash: '093d4fa5',
                 offset: 164, // +
-                minReceivedOffset: 0,
+                minReceivedOffset: 196,
             },
             {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256),bytes,bytes)
                 sigHash: '12aa3caf',
                 offset: 196, // +/-
-                minReceivedOffset: 0,
+                minReceivedOffset: 228,
             },
             {
                 // fillOrderRFQTo((uint256,address,address,address,address,uint256,uint256),bytes,uint256,address)
                 sigHash: '5a099843',
                 offset: 196,
-                minReceivedOffset: 0,
+                minReceivedOffset: 228,
             },
             {
                 // unoswapTo(address,address,uint256,uint256,uint256[])
                 sigHash: 'f78dc253',
                 offset: 100,
-                minReceivedOffset: 0,
+                minReceivedOffset: 132,
             },
             {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])
                 sigHash: 'bc80f1a8',
                 offset: 68,
-                minReceivedOffset: 0,
+                minReceivedOffset: 100,
             },
         ]
 
