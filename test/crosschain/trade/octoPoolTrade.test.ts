@@ -79,7 +79,7 @@ describe('OctoPoolTrade', () => {
             const data = dataWithoutDeadline + deadlineHex
             expect(trade.callData).toEqual(data)
             // includes amountIn 100000000000000000000
-            expect(data.indexOf('56BC75E2D63100000'.toLowerCase())).toBeTruthy()
+            expect(data.includes('56BC75E2D63100000'.toLowerCase())).toBeTruthy()
             // includes minReceived 71280000000000000000
             expect(data.includes('3DD356E57A5D80000'.toLowerCase())).toBeTruthy()
         })
@@ -119,8 +119,8 @@ describe('OctoPoolTrade', () => {
             const data = dataWithoutDeadline + deadlineHex
 
             expect(trade.callData).toEqual(data)
-            // includes amountIn 40000000000000000000
-            expect(data.indexOf('22B1C8C1227A00000'.toLowerCase())).toBeTruthy()
+            // includes amountIn 50000000000000000000
+            expect(data.includes('2B5E3AF16B1880000'.toLowerCase())).toBeTruthy()
             // includes minReceived 35640000000000000000
             expect(data.includes('1EE9AB72BD2EC0000'.toLowerCase())).toBeTruthy()
         })
