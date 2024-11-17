@@ -205,35 +205,12 @@ describe('Transit#noExtraFee', async () => {
 
         test('createOctoPoolTradeSpy', () => {
             const multicallRouterOnHostChain = '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4'
-            const tokenOut = new Token({
-                decimals: 18,
-                symbol: 'sUSDC',
-                name: 'Synthetic Binance-Peg USD Coin from BSC',
-                chainId: 56288,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                },
-                chainFromId: 56,
-                address: '0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB',
-            })
-            const tokenIn = new Token({
-                decimals: 6,
-                symbol: 'sUSDC',
-                name: 'Synthetic USD Coin from Ethereum',
-                chainId: 56288,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                },
-                chainFromId: 1,
-                address: '0x7d6EC42b5d9566931560411a8652Cea00b90d982',
-            })
+
             expect(createOctoPoolTradeSpy).toHaveBeenCalledWith({
                 to: multicallRouterOnHostChain,
-                tokenAmountIn: new TokenAmount(tokenIn, '100000000000000000000'), // 100
-                tokenAmountInMin: new TokenAmount(tokenIn, '90000000000000000000'), // 90
-                tokenOut,
+                tokenAmountIn: new TokenAmount(tradeTokenIn, '100000000000000000000'), // 100
+                tokenAmountInMin: new TokenAmount(tradeTokenIn, '90000000000000000000'), // 90
+                tokenOut: tradeTokenOut,
             })
         })
 

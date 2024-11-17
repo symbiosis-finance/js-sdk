@@ -132,7 +132,6 @@ export class Transit {
         if (!this.trade) {
             return undefined
         }
-
         const calldatas = []
         const receiveSides = []
         const paths = []
@@ -248,6 +247,15 @@ export class Transit {
         amountOut: TokenAmount
         amountOutMin: TokenAmount
     } {
+        let tradeAmountOutNew = tradeAmountOut
+        let tradeAmountOutMinNew = tradeAmountOutMin
+        const postFeeCollector = this.getExtraFeeCollector(tradeAmountOut.token)
+        if (postFeeCollector) {
+            this.postCall = Transit.buildFeeCall(tradeAmountOut, postFeeCollector)
+            tradeAmountOutNew = Transit.applyExtraFee(tradeAmountOut, postFeeCollector)
+            tradeAmountOutMinNew = Transit.applyExtraFee(tradeAmountOutMin, postFeeCollector)
+        }
+
         if (this.direction === 'mint') {
             return {
                 amountOut: tradeAmountOut,
@@ -255,8 +263,8 @@ export class Transit {
             }
         }
 
-        let amountOut = new TokenAmount(this.tokenOut, tradeAmountOut.raw)
-        let amountOutMin = new TokenAmount(this.tokenOut, tradeAmountOutMin.raw)
+        let amountOut = new TokenAmount(this.tokenOut, tradeAmountOutNew.raw)
+        let amountOutMin = new TokenAmount(this.tokenOut, tradeAmountOutMinNew.raw)
 
         let fee = this.fee1
         if (this.isV2()) {
@@ -273,13 +281,6 @@ export class Transit {
             }
             amountOut = amountOut.subtract(fee)
             amountOutMin = amountOutMin.subtract(fee)
-        }
-
-        const postFeeCollector = this.getExtraFeeCollector(amountOut.token)
-        if (postFeeCollector) {
-            this.postCall = Transit.buildFeeCall(amountOut, postFeeCollector)
-            amountOut = Transit.applyExtraFee(amountOut, postFeeCollector)
-            amountOut = Transit.applyExtraFee(amountOut, postFeeCollector)
         }
 
         return {
