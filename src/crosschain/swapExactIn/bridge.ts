@@ -17,7 +17,7 @@ import { TRON_PORTAL_ABI } from '../tronAbis'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { MaxUint256 } from '@ethersproject/constants'
-import { CROSS_CHAIN_ID } from '../constants'
+import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Address } from '@ton/core'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
@@ -60,7 +60,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
         kind: 'bridge',
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOut,
-        priceImpact: new Percent('0', '0'),
+        priceImpact: new Percent('0', BIPS_BASE),
         approveTo,
         fees: [
             {

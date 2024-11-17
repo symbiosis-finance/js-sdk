@@ -241,12 +241,12 @@ export class OpenOceanTrade extends SymbiosisTrade {
 
     private convertPriceImpact(value?: string) {
         if (!value) {
-            return new Percent('0')
+            return new Percent('0', BIPS_BASE)
         }
 
         const number = new BigNumber(value.split('%')[0])
         if (number.isNaN()) {
-            return new Percent('0')
+            return new Percent('0', BIPS_BASE)
         }
 
         return new Percent(number.multipliedBy(100).integerValue().toString(), BIPS_BASE)

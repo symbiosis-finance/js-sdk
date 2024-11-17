@@ -4,6 +4,7 @@ import { getFunctionSelector } from '../chainUtils/tron'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { BIPS_BASE } from '../constants'
 
 export function isUnwrapSupported(params: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, from, to } = params
@@ -50,7 +51,7 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResu
         kind: 'unwrap',
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOut,
-        priceImpact: new Percent('0', '0'),
+        priceImpact: new Percent('0', BIPS_BASE),
         approveTo,
         fees: [],
         routes: [

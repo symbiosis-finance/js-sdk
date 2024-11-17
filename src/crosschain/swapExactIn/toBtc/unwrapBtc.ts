@@ -4,6 +4,7 @@ import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript } from '../../swapping/zappingBtc'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../../types'
 import { getToBtcFee } from '../../chainUtils/btc'
+import { BIPS_BASE } from '../../constants'
 
 initEccLib(ecc)
 
@@ -54,7 +55,7 @@ export async function unwrapBtc({ symbiosis, tokenAmountIn, to }: SwapExactInPar
         ...payload,
         tokenAmountOut,
         tokenAmountOutMin: tokenAmountOut,
-        priceImpact: new Percent('0', '0'),
+        priceImpact: new Percent('0', BIPS_BASE),
         amountInUsd: tokenAmountIn,
         approveTo: synthesis.address,
         routes: [

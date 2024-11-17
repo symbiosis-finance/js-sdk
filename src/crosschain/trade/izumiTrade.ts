@@ -351,7 +351,7 @@ export class IzumiTrade extends SymbiosisTrade {
         const initDecimalPriceEndByStart = getPriceDecimalEndByStart(bestRoute, pointsBefore)
         const initDecimalPriceEndByStartTrimmed = new BNJS(initDecimalPriceEndByStart.toFixed(4))
 
-        let priceImpact = new Percent('0')
+        let priceImpact = new Percent('0', BIPS_BASE)
 
         if (!initDecimalPriceEndByStartTrimmed.isEqualTo('0')) {
             const spotPriceBNJS = new BNJS(this.tokenAmountIn.raw.toString())

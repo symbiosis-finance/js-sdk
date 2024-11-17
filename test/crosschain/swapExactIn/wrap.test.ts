@@ -75,7 +75,7 @@ describe('#wrap', () => {
             kind: 'wrap',
             approveTo: weth.address,
             fees: [],
-            priceImpact: new Percent('0', '0'),
+            priceImpact: new Percent('0', '10000'),
             routes: [
                 {
                     provider: 'wrap',
@@ -103,7 +103,7 @@ describe('#wrap', () => {
             kind: 'wrap',
             approveTo: wtrxNativeAddress,
             fees: [],
-            priceImpact: new Percent('0', '0'),
+            priceImpact: new Percent('0', '10000'),
             routes: [
                 {
                     provider: 'wrap',

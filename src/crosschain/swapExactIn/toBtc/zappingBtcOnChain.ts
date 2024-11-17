@@ -8,7 +8,7 @@ import { getToBtcFee } from '../../chainUtils/btc'
 import { Error, ErrorCode } from '../../error'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BTC_NETWORKS, getPkScript } from '../../swapping/zappingBtc'
-import { MULTICALL_ROUTER_V2 } from '../../constants'
+import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { Symbiosis } from '../../symbiosis'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
@@ -168,7 +168,7 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
 
     return {
         ...result,
-        priceImpact: result.priceImpact || new Percent('0', '0'),
+        priceImpact: result.priceImpact || new Percent('0', BIPS_BASE),
         amountInUsd: result.amountInUsd || params.tokenAmountIn,
         // Call type params
         amountIn: params.tokenAmountIn,

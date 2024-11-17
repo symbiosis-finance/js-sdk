@@ -3,6 +3,7 @@ import { Unwrapper__factory, Weth__factory } from '../contracts'
 import { getFunctionSelector } from '../chainUtils/tron'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { BIPS_BASE } from '../constants'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
@@ -59,7 +60,7 @@ export class WrapTrade extends SymbiosisTrade {
 
     public async init() {
         const route = [this.tokenAmountIn.token, this.tokenOut]
-        const priceImpact = new Percent('0', '0')
+        const priceImpact = new Percent('0', BIPS_BASE)
 
         if (this.tokenAmountIn.token.isNative) {
             const wethToken = wrappedToken(this.tokenAmountIn.token)

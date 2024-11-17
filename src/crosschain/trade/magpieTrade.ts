@@ -132,7 +132,7 @@ export class MagpieTrade extends SymbiosisTrade {
         const amountOutMinRaw = getMinAmount(this.slippage, quote.amountOut)
         const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
-        let priceImpact = new Percent('0', '100')
+        let priceImpact = new Percent('0', BIPS_BASE)
         try {
             priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
         } catch {

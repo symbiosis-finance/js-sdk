@@ -13,6 +13,7 @@ import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
 import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
+import { BIPS_BASE } from '../constants'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -73,7 +74,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     let btcForwarderFeeMax: TokenAmount
     let tail: string
     let tailFees: FeeItem[] = []
-    let priceImpact: Percent = new Percent('0', '0')
+    let priceImpact: Percent = new Percent('0', BIPS_BASE)
     let amountInUsd: TokenAmount | undefined
     let routes: RouteItem[] = []
 
