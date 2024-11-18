@@ -1,8 +1,7 @@
 import { Symbiosis } from './symbiosis'
-import { Token, TokenAmount } from '../entities'
+import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { CHAINS_PRIORITY } from './constants'
 import { BridgeDirection, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
 import { OctoPoolFeeCollector__factory } from './contracts'
@@ -375,19 +374,20 @@ export class Transit {
         return new TokenAmount(amount.token, raw.toString())
     }
 
-    private static getDirection(chainIdIn: ChainId, chainIdOut: ChainId, omniPoolChainId?: ChainId): BridgeDirection {
-        const withHostChain = chainIdIn === omniPoolChainId || chainIdOut === omniPoolChainId
+    private static getDirection(chainIdIn: ChainId, chainIdOut: ChainId, hostChainId: ChainId): BridgeDirection {
+        const withHostChain = chainIdIn === hostChainId || chainIdOut === hostChainId
         if (!withHostChain) {
             return 'v2'
         }
 
-        const chainsPriorityWithHostChain = [...CHAINS_PRIORITY, omniPoolChainId]
+        const chainsExceptHostChain = chains.map((chain) => chain.id).filter((chainId) => chainId !== hostChainId)
+        const chainsWithHostChain = [...chainsExceptHostChain, hostChainId]
 
-        const indexIn = chainsPriorityWithHostChain.indexOf(chainIdIn)
-        const indexOut = chainsPriorityWithHostChain.indexOf(chainIdOut)
+        const indexIn = chainsWithHostChain.indexOf(chainIdIn)
         if (indexIn === -1) {
             throw new Error(`Chain ${chainIdIn} not found in chains priority`)
         }
+        const indexOut = chainsWithHostChain.indexOf(chainIdOut)
         if (indexOut === -1) {
             throw new Error(`Chain ${chainIdOut} not found in chains priority`)
         }

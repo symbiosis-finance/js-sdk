@@ -21,21 +21,19 @@ export class SwappingToTon extends BaseSwapping {
     }
 
     // TODO: remove when advisor is ready
+    protected async getFee(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
+        return tonAdvisorMock(this.transitTokenOut)
+    }
+
+    // TODO: remove when advisor is ready
     protected async getFeeV2(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         return tonAdvisorMock(this.transitTokenOut)
     }
 
     protected metaBurnSyntheticToken(fee: TokenAmount): [string, string] {
-        if (!this.tokenAmountIn || !this.tokenOut) {
-            throw new Error('Tokens are not set')
-        }
-
         const synthesis = this.symbiosis.synthesis(this.tokenAmountIn.token.chainId)
-
-        const amount = this.transit.getBridgeAmountIn()
-
+        const amount = this.transit.trade.amountOut
         const { workChain, hash } = Address.parse(this.userAddress)
-
         const tonAddress = {
             workchain: workChain,
             address_hash: `0x${hash.toString('hex')}`,
@@ -63,8 +61,8 @@ export class SwappingToTon extends BaseSwapping {
     }
 
     protected finalCalldataV2(feeV2?: TokenAmount | undefined): string {
+        const amount = this.transit.trade.amountOut
         const { workChain, hash } = Address.parse(this.userAddress)
-
         const tonAddress = {
             workchain: workChain,
             address_hash: `0x${hash.toString('hex')}`,
@@ -72,8 +70,8 @@ export class SwappingToTon extends BaseSwapping {
 
         return this.synthesisV2.interface.encodeFunctionData('burnSyntheticTokenTON', [
             feeV2 ? feeV2?.raw.toString() : '0', // uint256 stableBridgingFee;
-            this.transit.amountOut.token.address,
-            this.transit.amountOut.raw.toString(),
+            amount.token.address,
+            amount.raw.toString(),
             CROSS_CHAIN_ID,
             tonAddress,
             AddressZero,
