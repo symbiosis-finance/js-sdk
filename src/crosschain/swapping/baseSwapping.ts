@@ -176,6 +176,7 @@ export abstract class BaseSwapping {
             if (this.tradeC) {
                 this.tradeC.applyAmountIn(this.transit.amountOut)
             }
+            this.profiler.tick('PATCHING')
         } else {
             this.transit = this.buildTransit(fee1, fee2)
             await this.transit.init()
@@ -193,11 +194,8 @@ export abstract class BaseSwapping {
             }
         }
 
-        const tokenAmountOut = this.tokenAmountOut()
-        const tokenAmountOutMin = new TokenAmount(
-            tokenAmountOut.token,
-            JSBI.divide(JSBI.multiply(this.transit.amountOutMin.raw, tokenAmountOut.raw), this.transit.amountOut.raw)
-        )
+        const tokenAmountOut = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
+        const tokenAmountOutMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
 
         const metaRouteParams = this.getMetaRouteParams(fee1, fee2)
 
@@ -226,6 +224,7 @@ export abstract class BaseSwapping {
 
         this.profiler.tick('TRANSACTION_REQUEST')
 
+        console.log(this.profiler.toString())
         const fees: FeeItem[] = [
             {
                 provider: 'symbiosis',
@@ -360,14 +359,6 @@ export abstract class BaseSwapping {
         if (pi.greaterThan(max)) pi = max
 
         return new Percent(pi.numerator, pi.denominator)
-    }
-
-    protected tokenAmountOut(): TokenAmount {
-        if (this.tradeC) {
-            return this.tradeC.amountOut
-        }
-
-        return this.transit.amountOut
     }
 
     protected buildTradeA(): SymbiosisTrade {

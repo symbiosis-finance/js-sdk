@@ -1,4 +1,3 @@
-import { utils } from 'ethers'
 import { ChainId } from '../../constants'
 import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
@@ -19,16 +18,18 @@ import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 
-const OPEN_OCEAN_CLIENT_ID = utils.formatBytes32String('openocean')
-
 type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
-function limitOpenOceanPromise() {
+function timeLimitPromise<T>(name: string): Promise<T> {
     return new Promise((_resolve, reject) => {
         setTimeout(() => {
-            reject(new Error('Timeout OO'))
-        }, 5 * 1000)
-    }) as Promise<OpenOceanTrade>
+            reject(new Error(`timeLimitPromise: ${name}`))
+        }, 2000)
+    })
+}
+
+async function timeLimited<T>(name: string, fn: Promise<T>): Promise<T> {
+    return Promise.race([fn, timeLimitPromise<T>(name)])
 }
 
 interface AggregatorTradeParams extends SymbiosisTradeParams {
@@ -68,18 +69,8 @@ export class AggregatorTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        const {
-            dataProvider,
-            from,
-            slippage,
-            symbiosis,
-            deadline,
-            to,
-            tokenAmountIn,
-            tokenOut,
-            clientId,
-            oneInchProtocols,
-        } = this.params
+        const { dataProvider, from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } =
+            this.params
 
         const aggregators: Promise<TradeType>[] = []
         if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
@@ -96,7 +87,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 protocols: oneInchProtocols,
             })
 
-            aggregators.push(oneInchTrade.init())
+            aggregators.push(timeLimited('1inch', oneInchTrade.init()))
         }
 
         if (OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
@@ -108,12 +99,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
             })
 
-            const promises: Promise<OpenOceanTrade>[] = [openOceanTrade.init()]
-            if (clientId !== OPEN_OCEAN_CLIENT_ID) {
-                promises.push(limitOpenOceanPromise())
-            }
-
-            aggregators.push(Promise.race(promises))
+            aggregators.push(timeLimited('OpenOcean', openOceanTrade.init()))
         }
 
         if (IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
@@ -125,7 +111,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            aggregators.push(izumiTrade.init())
+            aggregators.push(timeLimited('izumi', izumiTrade.init()))
         }
 
         if (UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
@@ -137,10 +123,10 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            aggregators.push(uniV3Trade.init())
+            aggregators.push(timeLimited('UniV3', uniV3Trade.init()))
         }
 
-        aggregators.push(this.buildUniV2Trade())
+        aggregators.push(timeLimited('UniV2', this.buildUniV2Trade()))
 
         const tradesResults = await Promise.allSettled(aggregators)
 

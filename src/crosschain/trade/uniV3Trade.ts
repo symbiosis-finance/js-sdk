@@ -34,20 +34,20 @@ interface Deployment {
 const POSSIBLE_FEES = [FeeAmount.LOWEST, FeeAmount.LOW, FeeAmount.MEDIUM, FeeAmount.HIGH]
 
 const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
-    [ChainId.RSK_MAINNET]: {
-        factory: '0xaF37EC98A00FD63689CF3060BF3B6784E00caD82',
-        quoter: '0xb51727c996C68E60F598A923a5006853cd2fEB31',
-        swap: '0x0B14ff67f0014046b4b99057Aec4509640b3947A',
-        baseTokens: [
-            new Token({
-                name: 'Tether USD',
-                symbol: 'rUSDT',
-                address: '0xef213441a85df4d7acbdae0cf78004e1e486bb96',
-                chainId: ChainId.RSK_MAINNET,
-                decimals: 18,
-            }),
-        ],
-    },
+    // [ChainId.RSK_MAINNET]: {
+    //     factory: '0xaF37EC98A00FD63689CF3060BF3B6784E00caD82',
+    //     quoter: '0xb51727c996C68E60F598A923a5006853cd2fEB31',
+    //     swap: '0x0B14ff67f0014046b4b99057Aec4509640b3947A',
+    //     baseTokens: [
+    //         new Token({
+    //             name: 'Tether USD',
+    //             symbol: 'rUSDT',
+    //             address: '0xef213441a85df4d7acbdae0cf78004e1e486bb96',
+    //             chainId: ChainId.RSK_MAINNET,
+    //             decimals: 18,
+    //         }),
+    //     ],
+    // },
     // [ChainId.CORE_MAINNET]: {
     //     factory: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
     //     quoter: '0x640129e6b5C31B3b12640A5b39FECdCa9F81C640',
