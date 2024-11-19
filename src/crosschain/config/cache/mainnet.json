@@ -7,39 +7,39 @@
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 89 },
-                { "index": 1, "tokenId": 99 },
-                { "index": 2, "tokenId": 106 },
-                { "index": 3, "tokenId": 107 },
+                { "index": 0, "tokenId": 90 },
+                { "index": 1, "tokenId": 100 },
+                { "index": 2, "tokenId": 107 },
+                { "index": 3, "tokenId": 108 },
                 { "index": 4, "tokenId": 26 },
-                { "index": 5, "tokenId": 112 },
-                { "index": 10, "tokenId": 98 },
-                { "index": 11, "tokenId": 113 },
-                { "index": 12, "tokenId": 120 },
-                { "index": 13, "tokenId": 125 },
-                { "index": 14, "tokenId": 127 },
-                { "index": 15, "tokenId": 129 },
-                { "index": 16, "tokenId": 119 },
-                { "index": 17, "tokenId": 105 },
-                { "index": 18, "tokenId": 135 },
-                { "index": 19, "tokenId": 111 },
-                { "index": 20, "tokenId": 138 },
-                { "index": 21, "tokenId": 133 },
-                { "index": 22, "tokenId": 110 },
-                { "index": 23, "tokenId": 139 },
-                { "index": 24, "tokenId": 141 },
-                { "index": 25, "tokenId": 145 },
-                { "index": 26, "tokenId": 130 },
-                { "index": 27, "tokenId": 150 },
-                { "index": 28, "tokenId": 148 },
-                { "index": 29, "tokenId": 114 },
-                { "index": 30, "tokenId": 158 },
-                { "index": 31, "tokenId": 159 },
-                { "index": 32, "tokenId": 162 },
-                { "index": 33, "tokenId": 161 },
-                { "index": 34, "tokenId": 165 },
-                { "index": 35, "tokenId": 169 },
-                { "index": 36, "tokenId": 170 }
+                { "index": 5, "tokenId": 113 },
+                { "index": 10, "tokenId": 99 },
+                { "index": 11, "tokenId": 114 },
+                { "index": 12, "tokenId": 121 },
+                { "index": 13, "tokenId": 126 },
+                { "index": 14, "tokenId": 128 },
+                { "index": 15, "tokenId": 130 },
+                { "index": 16, "tokenId": 120 },
+                { "index": 17, "tokenId": 106 },
+                { "index": 18, "tokenId": 136 },
+                { "index": 19, "tokenId": 112 },
+                { "index": 20, "tokenId": 139 },
+                { "index": 21, "tokenId": 134 },
+                { "index": 22, "tokenId": 111 },
+                { "index": 23, "tokenId": 141 },
+                { "index": 24, "tokenId": 143 },
+                { "index": 25, "tokenId": 147 },
+                { "index": 26, "tokenId": 131 },
+                { "index": 27, "tokenId": 152 },
+                { "index": 28, "tokenId": 150 },
+                { "index": 29, "tokenId": 115 },
+                { "index": 30, "tokenId": 160 },
+                { "index": 31, "tokenId": 161 },
+                { "index": 32, "tokenId": 164 },
+                { "index": 33, "tokenId": 163 },
+                { "index": 34, "tokenId": 167 },
+                { "index": 35, "tokenId": 171 },
+                { "index": 36, "tokenId": 172 }
             ]
         },
         {
@@ -49,25 +49,25 @@
             "generalPurpose": true,
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 115 },
-                { "index": 2, "tokenId": 131 },
-                { "index": 3, "tokenId": 121 },
-                { "index": 5, "tokenId": 108 },
-                { "index": 6, "tokenId": 100 },
-                { "index": 7, "tokenId": 126 },
-                { "index": 8, "tokenId": 128 },
-                { "index": 9, "tokenId": 91 },
-                { "index": 10, "tokenId": 132 },
-                { "index": 11, "tokenId": 136 },
-                { "index": 12, "tokenId": 137 },
-                { "index": 13, "tokenId": 140 },
-                { "index": 14, "tokenId": 144 },
-                { "index": 15, "tokenId": 147 },
-                { "index": 16, "tokenId": 149 },
-                { "index": 17, "tokenId": 152 },
-                { "index": 18, "tokenId": 154 },
-                { "index": 19, "tokenId": 157 },
-                { "index": 20, "tokenId": 163 }
+                { "index": 1, "tokenId": 116 },
+                { "index": 2, "tokenId": 132 },
+                { "index": 3, "tokenId": 122 },
+                { "index": 5, "tokenId": 109 },
+                { "index": 6, "tokenId": 101 },
+                { "index": 7, "tokenId": 127 },
+                { "index": 8, "tokenId": 129 },
+                { "index": 9, "tokenId": 92 },
+                { "index": 10, "tokenId": 133 },
+                { "index": 11, "tokenId": 137 },
+                { "index": 12, "tokenId": 138 },
+                { "index": 13, "tokenId": 142 },
+                { "index": 14, "tokenId": 146 },
+                { "index": 15, "tokenId": 149 },
+                { "index": 16, "tokenId": 151 },
+                { "index": 17, "tokenId": 154 },
+                { "index": 18, "tokenId": 156 },
+                { "index": 19, "tokenId": 159 },
+                { "index": 20, "tokenId": 165 }
             ]
         },
         {
@@ -77,14 +77,14 @@
             "generalPurpose": true,
             "id": 2,
             "tokens": [
-                { "index": 0, "tokenId": 92 },
-                { "index": 1, "tokenId": 101 },
-                { "index": 2, "tokenId": 116 },
-                { "index": 3, "tokenId": 151 },
-                { "index": 4, "tokenId": 153 },
-                { "index": 5, "tokenId": 156 },
-                { "index": 7, "tokenId": 118 },
-                { "index": 8, "tokenId": 167 }
+                { "index": 0, "tokenId": 93 },
+                { "index": 1, "tokenId": 102 },
+                { "index": 2, "tokenId": 117 },
+                { "index": 3, "tokenId": 153 },
+                { "index": 4, "tokenId": 155 },
+                { "index": 5, "tokenId": 158 },
+                { "index": 7, "tokenId": 119 },
+                { "index": 8, "tokenId": 169 }
             ]
         },
         {
@@ -94,8 +94,8 @@
             "generalPurpose": false,
             "id": 3,
             "tokens": [
-                { "index": 0, "tokenId": 93 },
-                { "index": 1, "tokenId": 123 }
+                { "index": 0, "tokenId": 94 },
+                { "index": 1, "tokenId": 124 }
             ]
         },
         {
@@ -105,12 +105,12 @@
             "generalPurpose": false,
             "id": 4,
             "tokens": [
-                { "index": 0, "tokenId": 90 },
-                { "index": 1, "tokenId": 122 },
-                { "index": 2, "tokenId": 102 },
-                { "index": 3, "tokenId": 117 },
-                { "index": 4, "tokenId": 134 },
-                { "index": 5, "tokenId": 142 }
+                { "index": 0, "tokenId": 91 },
+                { "index": 1, "tokenId": 123 },
+                { "index": 2, "tokenId": 103 },
+                { "index": 3, "tokenId": 118 },
+                { "index": 4, "tokenId": 135 },
+                { "index": 5, "tokenId": 144 }
             ]
         },
         {
@@ -121,10 +121,10 @@
             "chainExceptions": [252],
             "id": 5,
             "tokens": [
-                { "index": 0, "tokenId": 95 },
-                { "index": 1, "tokenId": 109 },
-                { "index": 2, "tokenId": 124 },
-                { "index": 3, "tokenId": 164 }
+                { "index": 0, "tokenId": 96 },
+                { "index": 1, "tokenId": 110 },
+                { "index": 2, "tokenId": 125 },
+                { "index": 3, "tokenId": 166 }
             ]
         },
         {
@@ -135,9 +135,10 @@
             "chainExceptions": [1625],
             "id": 6,
             "tokens": [
-                { "index": 0, "tokenId": 96 },
-                { "index": 1, "tokenId": 103 },
-                { "index": 2, "tokenId": 166 }
+                { "index": 0, "tokenId": 97 },
+                { "index": 1, "tokenId": 104 },
+                { "index": 2, "tokenId": 168 },
+                { "index": 3, "tokenId": 140 }
             ]
         },
         {
@@ -148,9 +149,9 @@
             "chainExceptions": [1, 56],
             "id": 7,
             "tokens": [
-                { "index": 1, "tokenId": 97 },
-                { "index": 2, "tokenId": 104 },
-                { "index": 4, "tokenId": 168 }
+                { "index": 1, "tokenId": 98 },
+                { "index": 2, "tokenId": 105 },
+                { "index": 4, "tokenId": 170 }
             ]
         }
     ],
@@ -898,6 +899,20 @@
             "id": 52
         },
         {
+            "decimals": 18,
+            "symbol": "G",
+            "name": "Gravity",
+            "chainId": 8453,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png"
+            },
+            "deprecated": false,
+            "address": "0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649",
+            "id": 53
+        },
+        {
             "decimals": 6,
             "symbol": "USDT",
             "name": "Tether USDt",
@@ -909,7 +924,7 @@
             },
             "deprecated": false,
             "address": "0xa614f803b6fd780986a42c78ec9c7f77e6ded13c",
-            "id": 53
+            "id": 54
         },
         {
             "decimals": 18,
@@ -923,7 +938,7 @@
             },
             "deprecated": false,
             "address": "0x5300000000000000000000000000000000000004",
-            "id": 54
+            "id": 55
         },
         {
             "decimals": 6,
@@ -937,7 +952,7 @@
             },
             "deprecated": false,
             "address": "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
-            "id": 55
+            "id": 56
         },
         {
             "decimals": 18,
@@ -951,7 +966,7 @@
             },
             "deprecated": false,
             "address": "0x1467b62A6AE5CdcB10A6a8173cfe187DD2C5a136",
-            "id": 56
+            "id": 57
         },
         {
             "decimals": 18,
@@ -965,7 +980,7 @@
             },
             "deprecated": false,
             "address": "0xc4d46E8402F476F269c379677C99F18E22Ea030e",
-            "id": 57
+            "id": 58
         },
         {
             "decimals": 18,
@@ -979,7 +994,7 @@
             },
             "deprecated": false,
             "address": "0x0Dc808adcE2099A9F62AA87D9670745AbA741746",
-            "id": 58
+            "id": 59
         },
         {
             "decimals": 6,
@@ -993,7 +1008,7 @@
             },
             "deprecated": false,
             "address": "0xb73603C5d87fA094B7314C74ACE2e64D165016fb",
-            "id": 59
+            "id": 60
         },
         {
             "decimals": 18,
@@ -1007,7 +1022,7 @@
             },
             "deprecated": false,
             "address": "0xA53E005Cecd3D7C89A4AE814617cC14828b6527E",
-            "id": 60
+            "id": 61
         },
         {
             "decimals": 18,
@@ -1021,7 +1036,7 @@
             },
             "deprecated": false,
             "address": "0x420000000000000000000000000000000000000A",
-            "id": 61
+            "id": 62
         },
         {
             "decimals": 6,
@@ -1035,7 +1050,7 @@
             },
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 62
+            "id": 63
         },
         {
             "decimals": 18,
@@ -1049,7 +1064,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 63
+            "id": 64
         },
         {
             "decimals": 18,
@@ -1063,7 +1078,7 @@
             },
             "deprecated": false,
             "address": "0xef213441A85dF4d7ACbDaE0Cf78004e1E486bB96",
-            "id": 64
+            "id": 65
         },
         {
             "decimals": 18,
@@ -1077,7 +1092,7 @@
             },
             "deprecated": false,
             "address": "0x542fDA317318eBF1d3DEAf76E0b632741A7e677d",
-            "id": 65
+            "id": 66
         },
         {
             "decimals": 18,
@@ -1091,7 +1106,7 @@
             },
             "deprecated": false,
             "address": "0x4300000000000000000000000000000000000004",
-            "id": 66
+            "id": 67
         },
         {
             "decimals": 18,
@@ -1105,7 +1120,7 @@
             },
             "deprecated": false,
             "address": "0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA",
-            "id": 67
+            "id": 68
         },
         {
             "decimals": 18,
@@ -1119,7 +1134,7 @@
             },
             "deprecated": false,
             "address": "0x8280a4e7D5B3B658ec4580d3Bc30f5e50454F169",
-            "id": 68
+            "id": 69
         },
         {
             "decimals": 18,
@@ -1133,7 +1148,7 @@
             },
             "deprecated": false,
             "address": "0x1B49eCf1A8323Db4abf48b2F5EFaA33F7DdAB3FC",
-            "id": 69
+            "id": 70
         },
         {
             "decimals": 8,
@@ -1147,7 +1162,7 @@
             },
             "deprecated": false,
             "address": "0x8034aB88C3512246Bf7894f57C834DdDBd1De01F",
-            "id": 70
+            "id": 71
         },
         {
             "decimals": 18,
@@ -1161,7 +1176,7 @@
             },
             "deprecated": false,
             "address": "0xA51894664A773981C6C112C43ce576f315d5b1B6",
-            "id": 71
+            "id": 72
         },
         {
             "decimals": 6,
@@ -1175,7 +1190,7 @@
             },
             "deprecated": false,
             "address": "0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1",
-            "id": 72
+            "id": 73
         },
         {
             "decimals": 6,
@@ -1189,7 +1204,7 @@
             },
             "deprecated": false,
             "address": "0xB75D0B03c06A926e488e2659DF1A861F860bD3d1",
-            "id": 73
+            "id": 74
         },
         {
             "decimals": 18,
@@ -1203,7 +1218,7 @@
             },
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 74
+            "id": 75
         },
         {
             "decimals": 6,
@@ -1217,7 +1232,7 @@
             },
             "deprecated": false,
             "address": "0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a",
-            "id": 75
+            "id": 76
         },
         {
             "decimals": 6,
@@ -1231,7 +1246,7 @@
             },
             "deprecated": false,
             "address": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59",
-            "id": 76
+            "id": 77
         },
         {
             "decimals": 18,
@@ -1245,7 +1260,7 @@
             },
             "deprecated": false,
             "address": "0xA8a59D73388D0c4344a7b0Ba287ddb654227c38a",
-            "id": 77
+            "id": 78
         },
         {
             "decimals": 18,
@@ -1259,7 +1274,7 @@
             },
             "deprecated": false,
             "address": "0xFc00000000000000000000000000000000000001",
-            "id": 78
+            "id": 79
         },
         {
             "decimals": 6,
@@ -1273,7 +1288,7 @@
             },
             "deprecated": false,
             "address": "0xFbDa5F676cB37624f28265A144A48B0d6e87d3b6",
-            "id": 79
+            "id": 80
         },
         {
             "decimals": 18,
@@ -1287,7 +1302,7 @@
             },
             "deprecated": false,
             "address": "0xBB859E225ac8Fb6BE1C7e38D87b767e95Fef0EbD",
-            "id": 80
+            "id": 81
         },
         {
             "decimals": 18,
@@ -1301,7 +1316,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 81
+            "id": 82
         },
         {
             "decimals": 9,
@@ -1315,7 +1330,7 @@
             },
             "deprecated": false,
             "address": "0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C",
-            "id": 82
+            "id": 83
         },
         {
             "decimals": 6,
@@ -1329,7 +1344,7 @@
             },
             "deprecated": false,
             "address": "0x9328Eb759596C38a25f59028B146Fecdc3621Dfe",
-            "id": 83
+            "id": 84
         },
         {
             "decimals": 6,
@@ -1343,7 +1358,7 @@
             },
             "deprecated": false,
             "address": "0xaa5b845F8C9c047779bEDf64829601d8B264076c",
-            "id": 84
+            "id": 85
         },
         {
             "decimals": 18,
@@ -1358,7 +1373,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
-            "id": 85,
+            "id": 86,
             "originalId": 2
         },
         {
@@ -1374,7 +1389,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xe6E5f3d264117E030C21920356641DbD5B3d660c",
-            "id": 86,
+            "id": 87,
             "originalId": 1
         },
         {
@@ -1390,7 +1405,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x63d71E79AdF0886c989A23b04a0E86F1489b6BC3",
-            "id": 87,
+            "id": 88,
             "originalId": 3
         },
         {
@@ -1406,7 +1421,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7bD3ffe9f0C9CF08FD60e102FEa455A6EA580276",
-            "id": 88,
+            "id": 89,
             "originalId": 4
         },
         {
@@ -1422,7 +1437,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7d6EC42b5d9566931560411a8652Cea00b90d982",
-            "id": 89,
+            "id": 90,
             "originalId": 1
         },
         {
@@ -1438,7 +1453,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4E985A18B4Ac70a1C3d986a5f55CB4c5BC8f65AE",
-            "id": 90,
+            "id": 91,
             "originalId": 2
         },
         {
@@ -1454,7 +1469,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1CE4E75E2Bd6bbbACDE1E10D6813228138337E86",
-            "id": 91,
+            "id": 92,
             "originalId": 3
         },
         {
@@ -1470,7 +1485,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE6Bb73E4dACD20653Bb8BdC427C9b4766fC159f5",
-            "id": 92,
+            "id": 93,
             "originalId": 5
         },
         {
@@ -1486,7 +1501,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7405b3cf567003317800114511474e52937e1a5e",
-            "id": 93,
+            "id": 94,
             "originalId": 6
         },
         {
@@ -1502,7 +1517,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1acF9c15a25752132b14bb4f5e1A47bC88a4CB7E",
-            "id": 94,
+            "id": 95,
             "originalId": 7
         },
         {
@@ -1518,7 +1533,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xcde7866D581Ca2a4425d5BDE8074413FBbf958F4",
-            "id": 95,
+            "id": 96,
             "originalId": 8
         },
         {
@@ -1534,7 +1549,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5E6576FeAf298f8c253Ef8C010a9d51090AfBb6",
-            "id": 96,
+            "id": 97,
             "originalId": 9
         },
         {
@@ -1550,7 +1565,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x45Bb4E28609f1c6EA05c738F4e7229e5b3bC8657",
-            "id": 97,
+            "id": 98,
             "originalId": 10
         },
         {
@@ -1566,7 +1581,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB",
-            "id": 98,
+            "id": 99,
             "originalId": 11
         },
         {
@@ -1582,7 +1597,7 @@
             "chainFromId": 56,
             "deprecated": true,
             "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
-            "id": 99,
+            "id": 100,
             "originalId": 12
         },
         {
@@ -1598,7 +1613,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x424190072b7Db5352bB91cC70DabD82F547AE003",
-            "id": 100,
+            "id": 101,
             "originalId": 13
         },
         {
@@ -1614,7 +1629,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x814f76A3f2FF408ad6BCEB5412B60D9fC3B6C0EA",
-            "id": 101,
+            "id": 102,
             "originalId": 14
         },
         {
@@ -1630,7 +1645,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 102,
+            "id": 103,
             "originalId": 15
         },
         {
@@ -1646,7 +1661,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0xe2c3145649EF1988fBa03274bE4C9FAB118CaBd5",
-            "id": 103,
+            "id": 104,
             "originalId": 16
         },
         {
@@ -1662,7 +1677,7 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x42B7f88dc7DE1679FbAD6A6FF32A5ea36aA2E129",
-            "id": 104,
+            "id": 105,
             "originalId": 17
         },
         {
@@ -1678,7 +1693,7 @@
             "chainFromId": 43114,
             "deprecated": false,
             "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0",
-            "id": 105,
+            "id": 106,
             "originalId": 18
         },
         {
@@ -1694,7 +1709,7 @@
             "chainFromId": 43114,
             "deprecated": true,
             "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
-            "id": 106,
+            "id": 107,
             "originalId": 19
         },
         {
@@ -1710,7 +1725,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x59AA2e5F628659918A4890A2a732E6C8bD334E7A",
-            "id": 107,
+            "id": 108,
             "originalId": 20
         },
         {
@@ -1726,7 +1741,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x93A973297E492d4E7a2b4aBaB3bFB4f140D1E3Bb",
-            "id": 108,
+            "id": 109,
             "originalId": 21
         },
         {
@@ -1742,7 +1757,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x7Fd2eab338fBC3a2d724F92468fE6A9f72f18A12",
-            "id": 109,
+            "id": 110,
             "originalId": 22
         },
         {
@@ -1758,7 +1773,7 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 110,
+            "id": 111,
             "originalId": 23
         },
         {
@@ -1774,7 +1789,7 @@
             "chainFromId": 2222,
             "deprecated": false,
             "address": "0xCdc9C3e0fc1909205aC96EC98795aCAa29a6A1E3",
-            "id": 111,
+            "id": 112,
             "originalId": 24
         },
         {
@@ -1790,7 +1805,7 @@
             "chainFromId": 288,
             "deprecated": false,
             "address": "0x1a3d48492Cd334AD140587091AC382E5695a4934",
-            "id": 112,
+            "id": 113,
             "originalId": 25
         },
         {
@@ -1806,7 +1821,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xC6CC7E50A0F20268DB1BAb041ff18b2c7E97a9d3",
-            "id": 113,
+            "id": 114,
             "originalId": 27
         },
         {
@@ -1822,7 +1837,7 @@
             "chainFromId": 324,
             "deprecated": true,
             "address": "0x3a2213CaEbcf1727D7b3422B8Ef8Dd5654877f42",
-            "id": 114,
+            "id": 115,
             "originalId": 28
         },
         {
@@ -1838,7 +1853,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xE3dB9aD5A3c6387beCe39fAfc26Dbb2b594fb7ff",
-            "id": 115,
+            "id": 116,
             "originalId": 29
         },
         {
@@ -1854,7 +1869,7 @@
             "chainFromId": 324,
             "deprecated": true,
             "address": "0x83a9e719C9b6d0108D64073DC35aCFD40FC9C672",
-            "id": 116,
+            "id": 117,
             "originalId": 30
         },
         {
@@ -1870,7 +1885,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x2E752d64cCc7B1e8F3F8b58F8218C3e0F21A9F3C",
-            "id": 117,
+            "id": 118,
             "originalId": 31
         },
         {
@@ -1886,7 +1901,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x0a5CF42021F48d2cE026Ca133404b00F99dc82f3",
-            "id": 118,
+            "id": 119,
             "originalId": 32
         },
         {
@@ -1902,7 +1917,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f",
-            "id": 119,
+            "id": 120,
             "originalId": 33
         },
         {
@@ -1918,7 +1933,7 @@
             "chainFromId": 42161,
             "deprecated": true,
             "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462",
-            "id": 120,
+            "id": 121,
             "originalId": 34
         },
         {
@@ -1934,7 +1949,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x4994b8bb0b58708Cc6A66079d22db35c95650B4b",
-            "id": 121,
+            "id": 122,
             "originalId": 35
         },
         {
@@ -1950,7 +1965,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x94F3F6C21e7D2D63d4ea484713B110e64A722fD7",
-            "id": 122,
+            "id": 123,
             "originalId": 36
         },
         {
@@ -1966,7 +1981,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x355b105634AD4184fd6Cc264C594615F861BE5AA",
-            "id": 123,
+            "id": 124,
             "originalId": 37
         },
         {
@@ -1982,7 +1997,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x5ffc6ac1437C51D94362069E464C646E011c3337",
-            "id": 124,
+            "id": 125,
             "originalId": 38
         },
         {
@@ -1998,7 +2013,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C",
-            "id": 125,
+            "id": 126,
             "originalId": 39
         },
         {
@@ -2014,7 +2029,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084",
-            "id": 126,
+            "id": 127,
             "originalId": 40
         },
         {
@@ -2030,7 +2045,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677",
-            "id": 127,
+            "id": 128,
             "originalId": 41
         },
         {
@@ -2046,7 +2061,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C",
-            "id": 128,
+            "id": 129,
             "originalId": 42
         },
         {
@@ -2062,7 +2077,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012",
-            "id": 129,
+            "id": 130,
             "originalId": 43
         },
         {
@@ -2078,7 +2093,7 @@
             "chainFromId": 1101,
             "deprecated": true,
             "address": "0xC28C38B2Af831b222b6933E52637B5145a6774Ad",
-            "id": 130,
+            "id": 131,
             "originalId": 44
         },
         {
@@ -2094,7 +2109,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6",
-            "id": 131,
+            "id": 132,
             "originalId": 45
         },
         {
@@ -2110,7 +2125,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x6ca6FCbD2fe65F0CB7671f5F0638867fdC991462",
-            "id": 132,
+            "id": 133,
             "originalId": 46
         },
         {
@@ -2126,7 +2141,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0xD2f5B8525758857aF3553142F59e2b35CbFa0aBE",
-            "id": 133,
+            "id": 134,
             "originalId": 47
         },
         {
@@ -2142,7 +2157,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x32478a5EE4F9854A26aC4606aa107CfD3E5F8775",
-            "id": 134,
+            "id": 135,
             "originalId": 48
         },
         {
@@ -2158,7 +2173,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
-            "id": 135,
+            "id": 136,
             "originalId": 49
         },
         {
@@ -2174,7 +2189,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0xA6e6c78746F873dB8545B7571DD1C5d87cC95763",
-            "id": 136,
+            "id": 137,
             "originalId": 50
         },
         {
@@ -2190,7 +2205,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0x8eFFD39D090C756Db49A8154Db7BD05f59A62193",
-            "id": 137,
+            "id": 138,
             "originalId": 51
         },
         {
@@ -2206,8 +2221,24 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0xDD1a897f92c14cDA3aB7023b094615A7068d01fA",
-            "id": 138,
+            "id": 139,
             "originalId": 52
+        },
+        {
+            "decimals": 18,
+            "symbol": "sG",
+            "name": "Synthetic G (Base)",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png"
+            },
+            "chainFromId": 8453,
+            "deprecated": false,
+            "address": "0x6538515Db6666FD3bE5feCaCE8C4EBc9AFF8b7de",
+            "id": 140,
+            "originalId": 53
         },
         {
             "decimals": 6,
@@ -2222,8 +2253,8 @@
             "chainFromId": 728126428,
             "deprecated": false,
             "address": "0x2dF311E049a839E1011507ccE20Afb6f871a81a1",
-            "id": 139,
-            "originalId": 53
+            "id": 141,
+            "originalId": 54
         },
         {
             "decimals": 18,
@@ -2238,8 +2269,8 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0xC66d177BDa9ef1d9278948FcD86C2C4420ca708C",
-            "id": 140,
-            "originalId": 54
+            "id": 142,
+            "originalId": 55
         },
         {
             "decimals": 6,
@@ -2254,8 +2285,8 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x616152a28eAb796789050407DF0f566307bFffDA",
-            "id": 141,
-            "originalId": 55
+            "id": 143,
+            "originalId": 56
         },
         {
             "decimals": 18,
@@ -2270,8 +2301,8 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x1adD5ac0E2b68f020dC8a3bC0BaE1A1bFc873F49",
-            "id": 142,
-            "originalId": 56
+            "id": 144,
+            "originalId": 57
         },
         {
             "decimals": 18,
@@ -2286,8 +2317,8 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x32699d39c059dc61F2D26B9778830f49c5d200Ca",
-            "id": 143,
-            "originalId": 57
+            "id": 145,
+            "originalId": 58
         },
         {
             "decimals": 18,
@@ -2302,8 +2333,8 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x3e54f3F0C9FA63282B92C84a3b710FD2968F177E",
-            "id": 144,
-            "originalId": 58
+            "id": 146,
+            "originalId": 59
         },
         {
             "decimals": 6,
@@ -2318,8 +2349,8 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x60F58f1AbD788eaEFa00838d9a69639F62cC16B8",
-            "id": 145,
-            "originalId": 59
+            "id": 147,
+            "originalId": 60
         },
         {
             "decimals": 18,
@@ -2334,8 +2365,8 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0xeC4f77C7EfCf5A1Ff26eA8e19d4236A375b3Dfe4",
-            "id": 146,
-            "originalId": 60
+            "id": 148,
+            "originalId": 61
         },
         {
             "decimals": 18,
@@ -2350,8 +2381,8 @@
             "chainFromId": 1088,
             "deprecated": false,
             "address": "0x04E7379CdF5b3427E5B3A557B0E98DD92E70584f",
-            "id": 147,
-            "originalId": 61
+            "id": 149,
+            "originalId": 62
         },
         {
             "decimals": 6,
@@ -2366,8 +2397,8 @@
             "chainFromId": 5165,
             "deprecated": false,
             "address": "0xf2CF7f859FE187BAa9b2F197Cd6C1698A4BC0905",
-            "id": 148,
-            "originalId": 62
+            "id": 150,
+            "originalId": 63
         },
         {
             "decimals": 18,
@@ -2382,8 +2413,8 @@
             "chainFromId": 34443,
             "deprecated": false,
             "address": "0x467fAC56cB149D06A8b268A5Cb8638Fc7B2d8F73",
-            "id": 149,
-            "originalId": 63
+            "id": 151,
+            "originalId": 64
         },
         {
             "decimals": 18,
@@ -2398,8 +2429,8 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0xA5De76FEda5bC1c824Ee1FfcCE82c8BbAe1f558F",
-            "id": 150,
-            "originalId": 64
+            "id": 152,
+            "originalId": 65
         },
         {
             "decimals": 18,
@@ -2414,8 +2445,8 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0x4A95D151d5b16B90481F98432Cf3D3B62deef1Fe",
-            "id": 151,
-            "originalId": 65
+            "id": 153,
+            "originalId": 66
         },
         {
             "decimals": 18,
@@ -2430,8 +2461,8 @@
             "chainFromId": 81457,
             "deprecated": false,
             "address": "0xB4A492d5d61d4539a70AE3E7BF564250159d1c57",
-            "id": 152,
-            "originalId": 66
+            "id": 154,
+            "originalId": 67
         },
         {
             "decimals": 18,
@@ -2446,8 +2477,8 @@
             "chainFromId": 4200,
             "deprecated": false,
             "address": "0xc1Aca13EE7Ee4F9211BBC7bb0Da0fCA58405993B",
-            "id": 153,
-            "originalId": 67
+            "id": 155,
+            "originalId": 68
         },
         {
             "decimals": 18,
@@ -2462,8 +2493,8 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x997D45FFC15bC54A52EBDeeFa0E6fc856fC97a55",
-            "id": 154,
-            "originalId": 68
+            "id": 156,
+            "originalId": 69
         },
         {
             "decimals": 18,
@@ -2478,8 +2509,8 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x42481B8ccE6947178B54D80BFD82B38F6E5b0F61",
-            "id": 155,
-            "originalId": 69
+            "id": 157,
+            "originalId": 70
         },
         {
             "decimals": 8,
@@ -2494,8 +2525,8 @@
             "chainFromId": 1116,
             "deprecated": false,
             "address": "0x5dC2326bb71725a5bBC18Fb39A2582C5560B67f0",
-            "id": 156,
-            "originalId": 70
+            "id": 158,
+            "originalId": 71
         },
         {
             "decimals": 18,
@@ -2510,8 +2541,8 @@
             "chainFromId": 167000,
             "deprecated": false,
             "address": "0x3C717a1F4a8e79D93635E812648253A38Bb27557",
-            "id": 157,
-            "originalId": 71
+            "id": 159,
+            "originalId": 72
         },
         {
             "decimals": 6,
@@ -2526,8 +2557,8 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
-            "id": 158,
-            "originalId": 72
+            "id": 160,
+            "originalId": 73
         },
         {
             "decimals": 6,
@@ -2542,8 +2573,8 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0x6d13035F5F1ae26a22CBB25A3f7666e0C335E6bC",
-            "id": 159,
-            "originalId": 73
+            "id": 161,
+            "originalId": 74
         },
         {
             "decimals": 18,
@@ -2558,8 +2589,8 @@
             "chainFromId": 7000,
             "deprecated": false,
             "address": "0x1F39B97acAd7e3C46010c608ea300ceC1FD51EcA",
-            "id": 160,
-            "originalId": 74
+            "id": 162,
+            "originalId": 75
         },
         {
             "decimals": 6,
@@ -2574,8 +2605,8 @@
             "chainFromId": 7000,
             "deprecated": false,
             "address": "0x15FD72412E6bD2768C3C0E2166545A25dC932e0e",
-            "id": 161,
-            "originalId": 75
+            "id": 163,
+            "originalId": 76
         },
         {
             "decimals": 6,
@@ -2590,8 +2621,8 @@
             "chainFromId": 25,
             "deprecated": false,
             "address": "0xBF73aF83aE56Ce393737faFcC4778Aa5751d1552",
-            "id": 162,
-            "originalId": 76
+            "id": 164,
+            "originalId": 77
         },
         {
             "decimals": 18,
@@ -2606,8 +2637,8 @@
             "chainFromId": 252,
             "deprecated": false,
             "address": "0xe51753e4ceee1496aEe26AEFfCa97494C41Fc10E",
-            "id": 163,
-            "originalId": 77
+            "id": 165,
+            "originalId": 78
         },
         {
             "decimals": 18,
@@ -2622,8 +2653,8 @@
             "chainFromId": 252,
             "deprecated": false,
             "address": "0x8B6b4b3c037622a81233027c47a733535d0f080B",
-            "id": 164,
-            "originalId": 78
+            "id": 166,
+            "originalId": 79
         },
         {
             "decimals": 6,
@@ -2638,8 +2669,8 @@
             "chainFromId": 1625,
             "deprecated": false,
             "address": "0xC1FeD2fB83F7CacA0CfC772767Ae33ef6b04899e",
-            "id": 165,
-            "originalId": 79
+            "id": 167,
+            "originalId": 80
         },
         {
             "decimals": 18,
@@ -2654,8 +2685,8 @@
             "chainFromId": 1625,
             "deprecated": false,
             "address": "0x7cE9911e690d80c421069A683163FA2946E6b400",
-            "id": 166,
-            "originalId": 80
+            "id": 168,
+            "originalId": 81
         },
         {
             "decimals": 18,
@@ -2670,8 +2701,8 @@
             "chainFromId": 223,
             "deprecated": false,
             "address": "0x2C11Ba8b608841C9Cf29f60645029421dc120fBe",
-            "id": 167,
-            "originalId": 81
+            "id": 169,
+            "originalId": 82
         },
         {
             "decimals": 9,
@@ -2686,8 +2717,8 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x8d17D04A595eCFbBFc8bF8016949161AA034A75B",
-            "id": 168,
-            "originalId": 82
+            "id": 170,
+            "originalId": 83
         },
         {
             "decimals": 6,
@@ -2702,8 +2733,8 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x651c4CA3f3df776F2db9eD1658e850151b7E1208",
-            "id": 169,
-            "originalId": 83
+            "id": 171,
+            "originalId": 84
         },
         {
             "decimals": 6,
@@ -2718,8 +2749,8 @@
             "chainFromId": 388,
             "deprecated": false,
             "address": "0x1D041D63c056628734f1a6DA3eE9F1828e6d2861",
-            "id": 170,
-            "originalId": 84
+            "id": 172,
+            "originalId": 85
         },
         {
             "decimals": 18,
@@ -2734,8 +2765,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 171,
-            "originalId": 85
+            "id": 173,
+            "originalId": 86
         },
         {
             "decimals": 6,
@@ -2750,8 +2781,8 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 172,
-            "originalId": 86
+            "id": 174,
+            "originalId": 87
         },
         {
             "decimals": 8,
@@ -2766,7 +2797,7 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0xED0c95EBe5a3E687cB2224687024FeC6518E683e",
-            "id": 173,
+            "id": 175,
             "originalId": 0
         },
         {
@@ -2782,7 +2813,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 174,
+            "id": 176,
             "originalId": 1
         },
         {
@@ -2798,7 +2829,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5b3562A0fa9eC3e718C96FfE349e1280D2Be591",
-            "id": 175,
+            "id": 177,
             "originalId": 3
         },
         {
@@ -2814,7 +2845,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xDeF886C55a79830C47108eeb9c37e78a49684e41",
-            "id": 176,
+            "id": 178,
             "originalId": 4
         },
         {
@@ -2830,7 +2861,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 177,
+            "id": 179,
             "originalId": 7
         }
     ]
