@@ -136,28 +136,47 @@ export abstract class BaseSwapping {
             })
         }
 
-        this.transit = this.buildTransit()
-        await this.transit.init()
-        this.profiler.tick('TRANSIT')
+        const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
+        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : transitAmountIn
+
+        const promises = []
+        promises.push(this.buildTransit(transitAmountIn, transitAmountInMin).init())
         routes.push({
             provider: 'symbiosis',
             tokens: [this.transitTokenIn, this.transitTokenOut],
         })
 
+        promises.push(
+            (async () => {
+                if (this.transitTokenOut.equals(tokenOut)) {
+                    return
+                }
+                // >> create fake amountIn for tradeC
+                const decimalsIn = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(transitAmountIn.token.decimals))
+                const decimalsOut = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.transitTokenOut.decimals))
+                const fakeTradeCAmountInRaw = JSBI.divide(JSBI.multiply(transitAmountIn.raw, decimalsOut), decimalsIn)
+                const fakeTradeCAmountIn = new TokenAmount(this.transitTokenOut, fakeTradeCAmountInRaw)
+                // << create fake amountIn for tradeC
+
+                return this.buildTradeC(fakeTradeCAmountIn).init()
+            })()
+        )
+
+        const [transit, tradeC] = await Promise.all(promises)
+
+        this.profiler.tick('T+C')
+        this.transit = transit as Transit
+        this.tradeC = tradeC as SymbiosisTrade | undefined
+
         await this.doPostTransitAction()
-        this.profiler.tick('POST_TRANSIT_ACTION')
 
-        this.amountInUsd = this.transit.getBridgeAmountIn()
-
-        if (!this.transitTokenOut.equals(tokenOut)) {
-            this.tradeC = this.buildTradeC()
-            await this.tradeC.init()
-            this.profiler.tick('C_1')
+        if (this.tradeC) {
             routes.push({
                 provider: this.tradeC.tradeType,
                 tokens: [this.tradeC.tokenAmountIn.token, this.tradeC.amountOut.token],
             })
         }
+        this.amountInUsd = this.transit.getBridgeAmountIn()
 
         const [fee1Raw, fee2Raw] = await Promise.all([
             this.getFee(this.transit.feeToken1),
@@ -170,29 +189,11 @@ export abstract class BaseSwapping {
         const fee2 = fee2Raw?.fee
         const save2 = fee2Raw?.save
 
-        const patchingEnabled = true
-        if (patchingEnabled) {
-            this.transit.applyFees(fee1, fee2)
-            if (this.tradeC) {
-                this.tradeC.applyAmountIn(this.transit.amountOut)
-            }
-            this.profiler.tick('PATCHING')
-        } else {
-            this.transit = this.buildTransit(fee1, fee2)
-            await this.transit.init()
-            this.profiler.tick('TRANSIT_2')
-
-            await this.doPostTransitAction()
-            this.profiler.tick('POST_TRANSIT_ACTION_2')
-
-            this.amountInUsd = this.transit.getBridgeAmountIn()
-
-            if (!this.transitTokenOut.equals(tokenOut)) {
-                this.tradeC = this.buildTradeC()
-                await this.tradeC.init()
-                this.profiler.tick('C_2')
-            }
+        this.transit.applyFees(fee1, fee2)
+        if (this.tradeC) {
+            this.tradeC.applyAmountIn(this.transit.amountOut)
         }
+        this.profiler.tick('PATCHING')
 
         const tokenAmountOut = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const tokenAmountOutMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
@@ -386,10 +387,7 @@ export abstract class BaseSwapping {
         })
     }
 
-    protected buildTransit(fee1?: TokenAmount, fee2?: TokenAmount): Transit {
-        const amountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-        const amountInMin = this.tradeA ? this.tradeA.amountOutMin : amountIn
-
+    protected buildTransit(amountIn: TokenAmount, amountInMin: TokenAmount): Transit {
         this.symbiosis.validateLimits(amountIn)
 
         return new Transit(
@@ -399,9 +397,7 @@ export abstract class BaseSwapping {
             this.transitTokenOut,
             this.slippage['B'],
             this.deadline,
-            this.omniPoolConfig,
-            fee1,
-            fee2
+            this.omniPoolConfig
         )
     }
 
@@ -409,9 +405,7 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected buildTradeC() {
-        const amountIn = this.transit.amountOut
-
+    protected buildTradeC(amountIn: TokenAmount) {
         if (WrapTrade.isSupported(amountIn, this.tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: amountIn,
