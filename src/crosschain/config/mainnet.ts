@@ -974,6 +974,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                     },
                 },
+                {
+                    name: 'Gravity',
+                    symbol: 'G',
+                    address: '0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649',
+                    chainId: ChainId.BASE_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
+                    },
+                },
             ],
             router: '0x327Df1E6de05895d2ab08513aaDD9313Fe505d86',
             dexFee: 0,
