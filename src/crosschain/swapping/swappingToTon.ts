@@ -2,7 +2,7 @@ import { Address } from '@ton/core'
 import { AddressZero } from '@ethersproject/constants'
 
 import { BaseSwapping } from './baseSwapping'
-import { TokenAmount } from '../../entities'
+import { Token, TokenAmount } from '../../entities'
 import { CROSS_CHAIN_ID } from '../constants'
 
 import { SwapExactInParams, SwapExactInResult } from '../types'
@@ -21,13 +21,13 @@ export class SwappingToTon extends BaseSwapping {
     }
 
     // TODO: remove when advisor is ready
-    protected async getFee(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-        return tonAdvisorMock(this.transitTokenOut)
+    protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
+        return tonAdvisorMock(feeToken)
     }
 
     // TODO: remove when advisor is ready
-    protected async getFeeV2(): Promise<{ fee: TokenAmount; save: TokenAmount }> {
-        return tonAdvisorMock(this.transitTokenOut)
+    protected async getFeeV2(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
+        return tonAdvisorMock(feeToken)
     }
 
     protected metaBurnSyntheticToken(fee: TokenAmount): [string, string] {
