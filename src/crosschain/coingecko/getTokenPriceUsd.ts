@@ -1,8 +1,38 @@
 import TronWeb from 'tronweb'
 import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
-import { isTronToken, isBtcChainId } from '../chainUtils'
-import { getTonTokenAddress, isTonChainId } from '../chainUtils'
+import { getTonTokenAddress, isBtcChainId, isTonChainId, isTronToken } from '../chainUtils'
+
+const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
+    const address = token.equals(GAS_TOKEN[token.chainId]) ? '' : token.address
+    const raw = JSON.stringify([
+        {
+            address,
+            chain_id: token.chainId,
+        },
+    ])
+    const myHeaders = new Headers()
+    myHeaders.append('Content-Type', 'application/json')
+    const response = await fetch(`https://api.symbiosis.finance/calculations/v1/token/price`, {
+        method: 'POST',
+        body: raw,
+        headers: myHeaders,
+    })
+
+    if (!response.ok) {
+        const text = await response.text()
+        const json = JSON.parse(text)
+        throw new Error(`Advisor: failed to get token price: ${json.message ?? text}`)
+    }
+
+    const json = await response.json()
+
+    const price = json[0]['price']
+    if (!price) {
+        throw new Error(`Advisor: unknown price for token ${token.chainId}.${token.address}`)
+    }
+    return price
+}
 
 const getGasTokenPrice = async (token: Token): Promise<number> => {
     const { chainId } = token
@@ -80,11 +110,15 @@ const getTokenPrice = async (token: Token, map?: Map<string, string>): Promise<n
 }
 
 export const getTokenPriceUsd = async (token: Token, map?: Map<string, string>) => {
-    if (token.isNative || token.equals(GAS_TOKEN[token.chainId]) || isBtcChainId(token.chainId)) {
-        return getGasTokenPrice(token)
-    }
+    try {
+        return await getTokenPriceFromAdvisor(token)
+    } catch (e) {
+        if (token.isNative || token.equals(GAS_TOKEN[token.chainId]) || isBtcChainId(token.chainId)) {
+            return getGasTokenPrice(token)
+        }
 
-    return getTokenPrice(token, map)
+        return getTokenPrice(token, map)
+    }
 }
 
 export const getTokenAmountUsd = (tokenAmount: TokenAmount, price: number): number => {
