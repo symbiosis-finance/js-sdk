@@ -1,16 +1,16 @@
-import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
+import {AddressZero, MaxUint256} from '@ethersproject/constants'
+import {TransactionRequest} from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
-import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
-import { DataProvider } from '../dataProvider'
-import type { Symbiosis } from '../symbiosis'
-import { AggregatorTrade, WrapTrade } from '../trade'
-import { Transit } from '../transit'
-import { Error } from '../error'
-import { SymbiosisTrade } from '../trade/symbiosisTrade'
-import { OneInchProtocols } from '../trade/oneInchTrade'
+import {Percent, Token, TokenAmount, wrappedToken} from '../../entities'
+import {BIPS_BASE, CROSS_CHAIN_ID} from '../constants'
+import {Portal__factory, Synthesis, Synthesis__factory} from '../contracts'
+import {DataProvider} from '../dataProvider'
+import type {Symbiosis} from '../symbiosis'
+import {AggregatorTrade, WrapTrade} from '../trade'
+import {Transit} from '../transit'
+import {Error} from '../error'
+import {SymbiosisTrade} from '../trade/symbiosisTrade'
+import {OneInchProtocols} from '../trade/oneInchTrade'
 import {
     DetailedSlippage,
     getExternalId,
@@ -24,17 +24,9 @@ import {
     tronAddressToEvm,
     TronTransactionData,
 } from '../chainUtils'
-import { TRON_METAROUTER_ABI } from '../tronAbis'
-import {
-    FeeItem,
-    OmniPoolConfig,
-    RouteItem,
-    SwapExactInParams,
-    SwapExactInResult,
-    SwapExactInTransactionPayload,
-    TonTransactionData,
-} from '../types'
-import { Profiler } from '../../entities/profiler'
+import {TRON_METAROUTER_ABI} from '../tronAbis'
+import {FeeItem, OmniPoolConfig, RouteItem, SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData,} from '../types'
+import {Profiler} from '../../entities/profiler'
 
 type MetaRouteParams = {
     amount: string
@@ -85,16 +77,16 @@ export abstract class BaseSwapping {
     }
 
     async doExactIn({
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
-        oneInchProtocols,
-        transitTokenIn,
-        transitTokenOut,
-    }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+                        tokenAmountIn,
+                        tokenOut,
+                        from,
+                        to,
+                        slippage,
+                        deadline,
+                        oneInchProtocols,
+                        transitTokenIn,
+                        transitTokenOut,
+                    }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
 
         this.oneInchProtocols = oneInchProtocols
@@ -123,7 +115,7 @@ export abstract class BaseSwapping {
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
         } else {
-            this.revertableAddresses = { AB: this.from, BC: this.from }
+            this.revertableAddresses = {AB: this.from, BC: this.from}
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
@@ -164,7 +156,7 @@ export abstract class BaseSwapping {
 
         const [transit, tradeC] = await Promise.all(promises)
 
-        this.profiler.tick('T+C')
+        this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
         this.transit = transit as Transit
         this.tradeC = tradeC as SymbiosisTrade | undefined
 
@@ -225,7 +217,6 @@ export abstract class BaseSwapping {
 
         this.profiler.tick('TRANSACTION_REQUEST')
 
-        console.log(this.profiler.toString())
         const fees: FeeItem[] = [
             {
                 provider: 'symbiosis',
@@ -262,7 +253,8 @@ export abstract class BaseSwapping {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    protected async doPostTransitAction() {}
+    protected async doPostTransitAction() {
+    }
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
         const hasTradeA = !this.transitTokenIn.equals(this.tokenAmountIn.token)
@@ -310,8 +302,8 @@ export abstract class BaseSwapping {
     }
 
     protected getTronTransactionRequest(params: MetaRouteParams): TronTransactionData {
-        const { chainId } = this.tokenAmountIn.token
-        const { metaRouter } = this.symbiosis.chainConfig(chainId)
+        const {chainId} = this.tokenAmountIn.token
+        const {metaRouter} = this.symbiosis.chainConfig(chainId)
 
         const tronWeb = this.symbiosis.tronWeb(chainId)
 
@@ -366,7 +358,7 @@ export abstract class BaseSwapping {
         const tokenOut = this.transitTokenIn
 
         if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
-            return new WrapTrade({ tokenAmountIn: this.tokenAmountIn, tokenOut, to: this.to })
+            return new WrapTrade({tokenAmountIn: this.tokenAmountIn, tokenOut, to: this.to})
         }
 
         const chainId = this.tokenAmountIn.token.chainId
@@ -617,7 +609,7 @@ export abstract class BaseSwapping {
         const chainIdTo = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata] =
             this.transit.direction === 'burn' ? this.feeBurnCallData() : this.feeMintCallData() // mint or v2
-        const { price: fee, save } = await this.symbiosis.getBridgeFee({
+        const {price: fee, save} = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom,
@@ -633,7 +625,7 @@ export abstract class BaseSwapping {
     protected async getFeeV2(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
         const [receiveSide, calldata] = this.feeBurnCallDataV2()
 
-        const { price: fee, save } = await this.symbiosis.getBridgeFee({
+        const {price: fee, save} = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom: this.omniPoolConfig.chainId,
@@ -679,7 +671,7 @@ export abstract class BaseSwapping {
             return []
         }
 
-        const { calldatas, receiveSides, paths, offsets } = calls
+        const {calldatas, receiveSides, paths, offsets} = calls
 
         // this flow when there is swap on host chain, for example, USDC -> BOBA
         if (this.transit.direction === 'mint' && this.tradeC) {
