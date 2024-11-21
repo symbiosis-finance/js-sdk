@@ -63,7 +63,6 @@ export type Config = {
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    transitFeeMap: Record<string, string>
 }
 
 export type OverrideChainConfig = {
@@ -76,7 +75,6 @@ export type OverrideConfig = {
     makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
     advisor?: AdvisorConfig
-    transitFeeMap?: Record<string, string>
 }
 
 export interface MiddlewareCall {
@@ -155,4 +153,5 @@ export type SwapExactInResult = {
 
     amountInUsd?: TokenAmount
     timeLog?: ProfilerItem[]
+    routeType?: string
 } & SwapExactInTransactionPayload

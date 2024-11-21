@@ -6,15 +6,6 @@ export const config: Config = {
         url: 'https://api.testnet.symbiosis.finance/calculations',
     },
     limits: [],
-    transitFeeMap: {
-        ETH: '0.0003',
-        USD: '0.3',
-        SIS: '1',
-        TON: '0.1',
-        BTC: '0.00001',
-        LADYS: '3000000',
-        FRAX: '0.3',
-    },
     omniPools: [
         // {
         //     chainId: ChainId.BSC_TESTNET,
