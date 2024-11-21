@@ -135,7 +135,9 @@ export abstract class BaseSwapping {
                 provider: this.tradeA.tradeType,
                 tokens: [this.tradeA.tokenAmountIn.token, this.tradeA.amountOut.token],
             })
-            routeType.push('ANY')
+            if (this.tradeA.tradeType !== 'wrap') {
+                routeType.push('ANY')
+            }
         }
 
         const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
@@ -178,7 +180,9 @@ export abstract class BaseSwapping {
                 provider: this.tradeC.tradeType,
                 tokens: [this.tradeC.tokenAmountIn.token, this.tradeC.amountOut.token],
             })
-            routeType.push('ANY')
+            if (this.tradeC.tradeType !== 'wrap') {
+                routeType.push('ANY')
+            }
         }
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
