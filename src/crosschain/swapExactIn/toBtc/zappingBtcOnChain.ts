@@ -192,7 +192,7 @@ async function getBurnCall({
     bitcoinAddress: Buffer
 }): Promise<Call> {
     const synthesis = symbiosis.synthesis(amountIn.token.chainId)
-    const fee = await getToBtcFee(amountIn.token, synthesis, symbiosis.dataProvider)
+    const fee = await getToBtcFee(amountIn, synthesis, symbiosis.dataProvider)
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
         fee.raw.toString(), // _stableBridgingFee must be >= minBtcFee
         '0', // _amount will be patched

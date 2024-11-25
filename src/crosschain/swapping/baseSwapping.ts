@@ -35,6 +35,7 @@ import {
     TonTransactionData,
 } from '../types'
 import { Profiler } from '../../entities/profiler'
+import { createFakeAmount } from '../../utils'
 
 type MetaRouteParams = {
     amount: string
@@ -156,12 +157,7 @@ export abstract class BaseSwapping {
                 if (this.transitTokenOut.equals(tokenOut)) {
                     return
                 }
-                // >> create fake amountIn for tradeC
-                const decimalsIn = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(transitAmountIn.token.decimals))
-                const decimalsOut = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.transitTokenOut.decimals))
-                const fakeTradeCAmountInRaw = JSBI.divide(JSBI.multiply(transitAmountIn.raw, decimalsOut), decimalsIn)
-                const fakeTradeCAmountIn = new TokenAmount(this.transitTokenOut, fakeTradeCAmountInRaw)
-                // << create fake amountIn for tradeC
+                const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
 
                 return this.buildTradeC(fakeTradeCAmountIn).init()
             })()

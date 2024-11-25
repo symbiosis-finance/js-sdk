@@ -67,16 +67,26 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
     },
 ]
 
+export interface TransitOutResult {
+    trade: OctoPoolTrade
+    preCall?: ExtraFeeCall
+    postCall?: ExtraFeeCall
+    amountOut: TokenAmount
+    amountOutMin: TokenAmount
+}
+
+class OutNotInitializedError extends Error {
+    constructor(msg?: string) {
+        super(`Out is not initialized: ${msg}`)
+    }
+}
+
 export class Transit {
     public direction: BridgeDirection
-    public amountOut!: TokenAmount
-    public amountOutMin!: TokenAmount
-    public trade!: OctoPoolTrade
     public feeToken1: Token
     public feeToken2: Token | undefined
 
-    private preCall?: ExtraFeeCall
-    private postCall?: ExtraFeeCall
+    protected out?: TransitOutResult
 
     public constructor(
         protected symbiosis: Symbiosis,
@@ -102,24 +112,53 @@ export class Transit {
         }
     }
 
+    get amountOut(): TokenAmount {
+        this.assertOutInitialized('amountOut')
+        return this.out.amountOut
+    }
+
+    get amountOutMin(): TokenAmount {
+        this.assertOutInitialized('amountOutMin')
+        return this.out.amountOutMin
+    }
+
+    get trade(): OctoPoolTrade {
+        this.assertOutInitialized('trade')
+        return this.out.trade
+    }
+
+    get preCall(): ExtraFeeCall | undefined {
+        this.assertOutInitialized('preCall')
+        return this.out.preCall
+    }
+
+    get postCall(): ExtraFeeCall | undefined {
+        this.assertOutInitialized('postCall')
+        return this.out.postCall
+    }
+
     public async init(): Promise<Transit> {
-        const { tradeAmountIn, tradeAmountInMin } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
+        const { tradeAmountIn, tradeAmountInMin, preCall } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         const tradeTokenOut = this.getTradeTokenOut()
 
         const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
 
-        this.trade = await this.createOctoPoolTrade({
+        const trade = await this.createOctoPoolTrade({
             tokenAmountIn: tradeAmountIn,
             tokenAmountInMin: tradeAmountInMin,
             tokenOut: tradeTokenOut,
             to,
         })
 
-        const { amountOut, amountOutMin } = this.getAmountsOut(this.trade.amountOut, this.trade.amountOutMin)
+        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(trade.amountOut, trade.amountOutMin)
 
-        this.amountOut = amountOut
-        this.amountOutMin = amountOutMin
-
+        this.out = {
+            amountOut,
+            amountOutMin,
+            trade,
+            preCall,
+            postCall,
+        }
         return this
     }
 
@@ -128,9 +167,8 @@ export class Transit {
     }
 
     public calls() {
-        if (!this.trade) {
-            return undefined
-        }
+        this.assertOutInitialized('calls')
+
         const calldatas = []
         const receiveSides = []
         const paths = []
@@ -165,6 +203,8 @@ export class Transit {
     }
 
     public getBridgeAmountIn(): TokenAmount {
+        this.assertOutInitialized('getBridgeAmountIn')
+
         if (this.direction === 'burn') {
             return this.trade.amountOut
         }
@@ -173,6 +213,8 @@ export class Transit {
     }
 
     public applyFees(fee1: TokenAmount, fee2?: TokenAmount) {
+        this.assertOutInitialized('applyFees')
+
         if (!fee1.token.equals(this.feeToken1)) {
             throw new Error('Incorrect fee1 token')
         }
@@ -191,12 +233,18 @@ export class Transit {
             this.fee2 = fee2
         }
 
-        const { tradeAmountIn: newAmountIn } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
+        const { tradeAmountIn: newAmountIn, preCall } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         this.trade.applyAmountIn(newAmountIn)
 
-        const { amountOut, amountOutMin } = this.getAmountsOut(this.trade.amountOut, this.trade.amountOutMin)
-        this.amountOut = amountOut
-        this.amountOutMin = amountOutMin
+        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(this.trade.amountOut, this.trade.amountOutMin)
+
+        this.out = {
+            trade: this.trade,
+            preCall,
+            postCall,
+            amountOut,
+            amountOutMin,
+        }
     }
 
     public async createOctoPoolTrade(params: CreateOctoPoolTradeParams) {
@@ -245,18 +293,21 @@ export class Transit {
     ): {
         amountOut: TokenAmount
         amountOutMin: TokenAmount
+        postCall: ExtraFeeCall | undefined
     } {
         let tradeAmountOutNew = tradeAmountOut
         let tradeAmountOutMinNew = tradeAmountOutMin
+        let postCall: ExtraFeeCall | undefined = undefined
         const postFeeCollector = this.getExtraFeeCollector(tradeAmountOut.token)
         if (postFeeCollector) {
-            this.postCall = Transit.buildFeeCall(tradeAmountOut, postFeeCollector)
+            postCall = Transit.buildFeeCall(tradeAmountOut, postFeeCollector)
             tradeAmountOutNew = Transit.applyExtraFee(tradeAmountOut, postFeeCollector)
             tradeAmountOutMinNew = Transit.applyExtraFee(tradeAmountOutMin, postFeeCollector)
         }
 
         if (this.direction === 'mint') {
             return {
+                postCall,
                 amountOut: tradeAmountOut,
                 amountOutMin: tradeAmountOutMin,
             }
@@ -283,6 +334,7 @@ export class Transit {
         }
 
         return {
+            postCall,
             amountOut,
             amountOutMin,
         }
@@ -291,11 +343,16 @@ export class Transit {
     private getTradeAmountsIn(
         amountIn: TokenAmount,
         amountInMin: TokenAmount
-    ): { tradeAmountIn: TokenAmount; tradeAmountInMin: TokenAmount } {
+    ): {
+        tradeAmountIn: TokenAmount
+        tradeAmountInMin: TokenAmount
+        preCall: ExtraFeeCall | undefined
+    } {
         if (this.direction === 'burn') {
             return {
                 tradeAmountIn: amountIn,
                 tradeAmountInMin: amountInMin,
+                preCall: undefined,
             }
         }
 
@@ -315,8 +372,9 @@ export class Transit {
         }
 
         const preFeeCollector = this.getExtraFeeCollector(tradeAmountIn.token)
+        let preCall: ExtraFeeCall | undefined
         if (preFeeCollector) {
-            this.preCall = Transit.buildFeeCall(tradeAmountIn, preFeeCollector)
+            preCall = Transit.buildFeeCall(tradeAmountIn, preFeeCollector)
             tradeAmountIn = Transit.applyExtraFee(tradeAmountIn, preFeeCollector)
             tradeAmountInMin = Transit.applyExtraFee(tradeAmountInMin, preFeeCollector)
         }
@@ -324,6 +382,7 @@ export class Transit {
         return {
             tradeAmountIn,
             tradeAmountInMin,
+            preCall,
         }
     }
 
@@ -393,5 +452,13 @@ export class Transit {
         }
 
         return indexIn > indexOut ? 'burn' : 'mint'
+    }
+
+    private assertOutInitialized(msg?: string): asserts this is {
+        out: TransitOutResult
+    } {
+        if (!this.out) {
+            throw new OutNotInitializedError(msg)
+        }
     }
 }

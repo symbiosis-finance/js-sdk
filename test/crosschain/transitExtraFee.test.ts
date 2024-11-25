@@ -107,8 +107,6 @@ describe('Transit#ExtraFee', async () => {
         expect(transit.isV2()).toBeTruthy()
         expect(transit.feeToken1).toEqual(feeToken1)
         expect(transit.feeToken2).toEqual(feeToken2)
-        expect(transit.calls()).toBeUndefined()
-        expect(transit.getBridgeAmountIn()).toEqual(tokenAmountIn)
     })
 
     test('NO FEES SET', async () => {

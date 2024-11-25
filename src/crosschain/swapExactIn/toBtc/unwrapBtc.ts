@@ -31,7 +31,7 @@ export async function unwrapBtc({ symbiosis, tokenAmountIn, to }: SwapExactInPar
     const bitcoinAddress = getPkScript(to, network)
 
     const synthesis = symbiosis.synthesis(syBtc.chainId)
-    const minBtcFee = await getToBtcFee(syBtc, synthesis, symbiosis.dataProvider)
+    const minBtcFee = await getToBtcFee(tokenAmountIn, synthesis, symbiosis.dataProvider)
 
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
         minBtcFee.raw.toString(), // _stableBridgingFee must be >= minBtcFee

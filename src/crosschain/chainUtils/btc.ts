@@ -1,11 +1,12 @@
-import { Token, TokenAmount } from '../../entities'
+import { TokenAmount } from '../../entities'
 import { DataProvider } from '../dataProvider'
 import { getFastestFee } from '../mempool'
 import { BigNumber } from 'ethers'
 import { Synthesis } from '../contracts'
 import { ChainId } from '../../constants'
 
-export const getToBtcFee = async (syBtc: Token, synthesis: Synthesis, dataProvider: DataProvider) => {
+export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis, dataProvider: DataProvider) => {
+    const syBtc = syBtcAmount.token
     let fee = await dataProvider.get(
         ['syntToMinFeeBTC', synthesis.address, syBtc.address],
         async () => {
@@ -23,7 +24,11 @@ export const getToBtcFee = async (syBtc: Token, synthesis: Synthesis, dataProvid
     } catch {
         /* nothing */
     }
-    return new TokenAmount(syBtc, fee.toString())
+
+    // fee 1.5%
+    const volumeFee = BigNumber.from(syBtcAmount.raw.toString()).mul(15).div(1000)
+
+    return new TokenAmount(syBtc, fee.add(volumeFee).toString())
 }
 
 export function isBtcChainId(chainId: ChainId | undefined) {
