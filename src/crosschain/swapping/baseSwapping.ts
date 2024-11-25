@@ -49,6 +49,11 @@ type MetaRouteParams = {
     otherSideCalldata: string
 }
 
+type FeeConfig = {
+    token: Token
+    value: string
+}
+
 export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
     public amountInUsd: TokenAmount | undefined
@@ -85,17 +90,20 @@ export abstract class BaseSwapping {
         this.profiler = new Profiler()
     }
 
-    async doExactIn({
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
-        oneInchProtocols,
-        transitTokenIn,
-        transitTokenOut,
-    }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+    async doExactIn(
+        {
+            tokenAmountIn,
+            tokenOut,
+            from,
+            to,
+            slippage,
+            deadline,
+            oneInchProtocols,
+            transitTokenIn,
+            transitTokenOut,
+        }: Omit<SwapExactInParams, 'symbiosis'>,
+        feesConfig?: FeeConfig[]
+    ): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
@@ -182,14 +190,11 @@ export abstract class BaseSwapping {
         }
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
-        const [fee1Raw, fee2Raw] = await Promise.all([
-            this.getFee(this.transit.feeToken1),
-            this.transit.feeToken2 ? this.getFeeV2(this.transit.feeToken2) : undefined,
-        ])
+        const { fee1Raw, fee2Raw } = await this.getAdvisorFees(feesConfig)
         this.profiler.tick('ADVISOR')
 
-        const fee1 = fee1Raw.fee
-        const save1 = fee1Raw.save
+        const fee1 = fee1Raw!.fee
+        const save1 = fee1Raw!.save
         const fee2 = fee2Raw?.fee
         const save2 = fee2Raw?.save
 
@@ -259,6 +264,43 @@ export abstract class BaseSwapping {
             amountInUsd: this.amountInUsd,
             timeLog: this.profiler.toString(),
             routeType: routeType.join('-'),
+        }
+    }
+
+    protected async getAdvisorFees(feesConfig?: FeeConfig[]) {
+        const feePromises = []
+
+        const feeToken1 = this.transit.feeToken1
+        const fee1Config = feesConfig?.find((i) => i.token.equals(feeToken1))
+        if (fee1Config) {
+            feePromises.push({
+                fee: new TokenAmount(fee1Config.token, fee1Config.value),
+                save: new TokenAmount(fee1Config.token, '0'),
+            })
+        } else {
+            feePromises.push(this.getFee(feeToken1))
+        }
+
+        const feeToken2 = this.transit.feeToken2
+        if (feeToken2) {
+            const fee2Config = feesConfig?.find((i) => i.token.equals(feeToken2))
+            if (fee2Config) {
+                feePromises.push({
+                    fee: new TokenAmount(fee2Config.token, fee2Config.value),
+                    save: new TokenAmount(fee2Config.token, '0'),
+                })
+            } else {
+                feePromises.push(this.getFeeV2(feeToken2))
+            }
+        } else {
+            feePromises.push(undefined)
+        }
+
+        const [fee1Raw, fee2Raw] = await Promise.all(feePromises)
+
+        return {
+            fee1Raw,
+            fee2Raw,
         }
     }
 
