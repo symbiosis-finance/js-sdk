@@ -43,7 +43,15 @@ import {
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
-import { ChainConfig, Config, OmniPoolConfig, OverrideConfig, SwapExactInParams, SwapExactInResult } from './types'
+import {
+    ChainConfig,
+    Config,
+    FeeConfig,
+    OmniPoolConfig,
+    OverrideConfig,
+    SwapExactInParams,
+    SwapExactInResult,
+} from './types'
 import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
@@ -54,9 +62,9 @@ import { PendingRequest } from './revertRequest'
 import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchRequest'
 import { delay } from '../utils'
 import {
+    waitForBtcCommitTxMined,
     waitForBtcDepositAccepted,
     waitForBtcEvmTxIssued,
-    waitForBtcCommitTxMined,
     waitForComplete,
     waitFromTonTxMined,
 } from './waitForComplete'
@@ -87,10 +95,11 @@ export class Symbiosis {
     public readonly config: Config
     public readonly configName: ConfigName
     public readonly clientId: string
-
     private readonly configCache: ConfigCache
 
     private signature: string | undefined
+
+    public feesConfig?: FeeConfig[]
 
     public readonly makeOneInchRequest: MakeOneInchRequestFn
 
@@ -98,6 +107,10 @@ export class Symbiosis {
 
     public setSignature(signature: string | undefined) {
         this.signature = signature
+    }
+
+    public setFeesConfig(feesConfig: FeeConfig[]) {
+        this.feesConfig = feesConfig
     }
 
     public async getDiscountTiers(): Promise<DiscountTier[]> {
@@ -320,6 +333,7 @@ export class Symbiosis {
 
         return KavaRouter__factory.connect(address, signerOrProvider)
     }
+
     public kimRouter(chainId: ChainId, signer?: Signer): KimRouter {
         const address = this.chainConfig(chainId).router
         const signerOrProvider = signer || this.getProvider(chainId)

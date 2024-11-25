@@ -69,6 +69,10 @@ export type OverrideChainConfig = {
     id: ChainId
     rpc: string
 }
+export type FeeConfig = {
+    token: Token
+    value: string
+}
 export type OverrideConfig = {
     chains?: OverrideChainConfig[]
     limits?: SwapLimit[]

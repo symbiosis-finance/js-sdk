@@ -49,11 +49,6 @@ type MetaRouteParams = {
     otherSideCalldata: string
 }
 
-type FeeConfig = {
-    token: Token
-    value: string
-}
-
 export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
     public amountInUsd: TokenAmount | undefined
@@ -90,20 +85,17 @@ export abstract class BaseSwapping {
         this.profiler = new Profiler()
     }
 
-    async doExactIn(
-        {
-            tokenAmountIn,
-            tokenOut,
-            from,
-            to,
-            slippage,
-            deadline,
-            oneInchProtocols,
-            transitTokenIn,
-            transitTokenOut,
-        }: Omit<SwapExactInParams, 'symbiosis'>,
-        feesConfig?: FeeConfig[]
-    ): Promise<SwapExactInResult> {
+    async doExactIn({
+        tokenAmountIn,
+        tokenOut,
+        from,
+        to,
+        slippage,
+        deadline,
+        oneInchProtocols,
+        transitTokenIn,
+        transitTokenOut,
+    }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
@@ -190,7 +182,7 @@ export abstract class BaseSwapping {
         }
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
-        const { fee1Raw, fee2Raw } = await this.getAdvisorFees(feesConfig)
+        const { fee1Raw, fee2Raw } = await this.getAdvisorFees()
         this.profiler.tick('ADVISOR')
 
         const fee1 = fee1Raw!.fee
@@ -267,30 +259,42 @@ export abstract class BaseSwapping {
         }
     }
 
-    protected async getAdvisorFees(feesConfig?: FeeConfig[]) {
+    protected async getAdvisorFees() {
         const feePromises = []
 
-        const feeToken1 = this.transit.feeToken1
-        const fee1Config = feesConfig?.find((i) => i.token.equals(feeToken1))
+        let feeToken1 = this.transit.feeToken1
+        if (feeToken1.chainFromId) {
+            const original = this.symbiosis.getRepresentation(feeToken1, feeToken1.chainFromId)
+            if (original) {
+                feeToken1 = original
+            }
+        }
+        const fee1Config = this.symbiosis.feesConfig?.find((i) => i.token.equals(feeToken1))
         if (fee1Config) {
             feePromises.push({
-                fee: new TokenAmount(fee1Config.token, fee1Config.value),
-                save: new TokenAmount(fee1Config.token, '0'),
+                fee: new TokenAmount(this.transit.feeToken1, fee1Config.value),
+                save: new TokenAmount(this.transit.feeToken1, '0'),
             })
         } else {
-            feePromises.push(this.getFee(feeToken1))
+            feePromises.push(this.getFee(this.transit.feeToken1))
         }
 
-        const feeToken2 = this.transit.feeToken2
+        let feeToken2 = this.transit.feeToken2
         if (feeToken2) {
-            const fee2Config = feesConfig?.find((i) => i.token.equals(feeToken2))
+            if (feeToken2.chainFromId) {
+                const original = this.symbiosis.getRepresentation(feeToken2, feeToken2.chainFromId)
+                if (original) {
+                    feeToken2 = original
+                }
+            }
+            const fee2Config = this.symbiosis.feesConfig?.find((i) => i.token.equals(feeToken2!))
             if (fee2Config) {
                 feePromises.push({
-                    fee: new TokenAmount(fee2Config.token, fee2Config.value),
-                    save: new TokenAmount(fee2Config.token, '0'),
+                    fee: new TokenAmount(this.transit.feeToken2!, fee2Config.value),
+                    save: new TokenAmount(this.transit.feeToken2!, '0'),
                 })
             } else {
-                feePromises.push(this.getFeeV2(feeToken2))
+                feePromises.push(this.getFeeV2(this.transit.feeToken2!))
             }
         } else {
             feePromises.push(undefined)
