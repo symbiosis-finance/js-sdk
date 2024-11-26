@@ -87,6 +87,11 @@ export interface MiddlewareCall {
     offset: number
 }
 
+export interface RevertableAddress {
+    chainId: ChainId
+    address: string
+}
+
 export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
@@ -99,6 +104,7 @@ export interface SwapExactInParams {
     transitTokenOut?: Token
     oneInchProtocols?: OneInchProtocols
     middlewareCall?: MiddlewareCall
+    revertableAddresses?: RevertableAddress[]
 }
 
 export type BtcTransactionData = {

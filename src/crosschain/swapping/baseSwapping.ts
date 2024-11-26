@@ -95,6 +95,7 @@ export abstract class BaseSwapping {
         oneInchProtocols,
         transitTokenIn,
         transitTokenOut,
+        revertableAddresses,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
@@ -124,6 +125,16 @@ export abstract class BaseSwapping {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
+        } else if (revertableAddresses) {
+            const AB = revertableAddresses.find((ra) => ra.chainId === this.tokenAmountIn.token.chainId)
+            if (!AB) {
+                throw new Error(`Revertable address for chain ${this.tokenAmountIn.token.chainId} was not specified`)
+            }
+            const BC = revertableAddresses.find((ra) => ra.chainId === this.tokenOut.chainId)
+            if (!BC) {
+                throw new Error(`Revertable address for chain ${this.tokenOut.chainId} was not specified`)
+            }
+            this.revertableAddresses = { AB: AB.address, BC: BC.address }
         } else {
             this.revertableAddresses = { AB: this.from, BC: this.from }
         }
