@@ -25,8 +25,8 @@ export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis
         /* nothing */
     }
 
-    // fee 1.5%
-    const volumeFee = BigNumber.from(syBtcAmount.raw.toString()).mul(15).div(1000)
+    // 0.5%
+    const volumeFee = BigNumber.from(syBtcAmount.raw.toString()).mul(5).div(1000)
 
     return new TokenAmount(syBtc, fee.add(volumeFee).toString())
 }

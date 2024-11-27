@@ -81,7 +81,7 @@ function toThorAmount(tokenAmount: TokenAmount): BigNumber {
     return BigNumber.from(tokenAmount.raw.toString()).mul(thorDecimals).div(tokenDecimals)
 }
 
-const MIN_AMOUNT_IN = 100
+const MIN_AMOUNT_IN = 1000
 
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
