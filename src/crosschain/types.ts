@@ -164,4 +164,5 @@ export type SwapExactInResult = {
     amountInUsd?: TokenAmount
     timeLog?: ProfilerItem[]
     routeType?: string
+    poolAddress?: string
 } & SwapExactInTransactionPayload

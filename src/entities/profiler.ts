@@ -2,6 +2,7 @@ export interface ProfilerItem {
     name: string
     start: number
     stop: number
+    duration?: number
 }
 
 export class Profiler {
@@ -26,7 +27,7 @@ export class Profiler {
         this.stop = now
     }
 
-    public toString() {
+    public toString(): ProfilerItem[] {
         const list = this.list.map((i) => {
             return { ...i, duration: i.stop - i.start }
         })
