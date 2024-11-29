@@ -49,6 +49,7 @@ import {
     FeeConfig,
     OmniPoolConfig,
     OverrideConfig,
+    SelectMode,
     SwapExactInParams,
     SwapExactInResult,
 } from './types'
@@ -91,6 +92,7 @@ const defaultFetch: typeof fetch = (url, init) => {
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
+    public readonly selectMode: SelectMode
     public readonly dataProvider: DataProvider
     public readonly config: Config
     public readonly configName: ConfigName
@@ -188,6 +190,8 @@ export class Symbiosis {
         if (overrideConfig?.advisor) {
             this.config.advisor = overrideConfig.advisor
         }
+
+        this.selectMode = overrideConfig?.selectMode || 'best_return'
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 

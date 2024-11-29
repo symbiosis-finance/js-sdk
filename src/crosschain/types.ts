@@ -73,12 +73,16 @@ export type FeeConfig = {
     token: Token
     value: string
 }
+
+export type SelectMode = 'fastest' | 'best_return'
+
 export type OverrideConfig = {
     chains?: OverrideChainConfig[]
     limits?: SwapLimit[]
     makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
     advisor?: AdvisorConfig
+    selectMode?: SelectMode
 }
 
 export interface MiddlewareCall {

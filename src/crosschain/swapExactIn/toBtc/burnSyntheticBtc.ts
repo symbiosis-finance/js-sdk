@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { unwrapBtc } from './unwrapBtc'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
-import { theBestOutput } from '../utils'
+import { theBest } from '../utils'
 import { ZappingBtc } from '../../swapping'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
@@ -52,5 +52,5 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             })
     })
 
-    return theBestOutput(promises)
+    return theBest(promises, symbiosis.selectMode)
 }

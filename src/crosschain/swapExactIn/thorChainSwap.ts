@@ -1,7 +1,7 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
-import { theBestOutput } from './utils'
+import { theBest } from './utils'
 import { ZappingThor } from '../swapping'
 
 const ETH_USDC = new Token({
@@ -48,5 +48,5 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         })
     })
 
-    return theBestOutput(promises)
+    return theBest(promises, symbiosis.selectMode)
 }

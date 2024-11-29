@@ -2,7 +2,7 @@ import { Percent, Token, wrappedToken } from '../../../entities'
 import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { bestTokenSwapping } from './bestTokenSwapping'
 import { Symbiosis } from '../../symbiosis'
-import { theFastestAnswer } from '../utils'
+import { theBest } from '../utils'
 
 interface OptimalRoute {
     pool: OmniPoolConfig
@@ -37,7 +37,7 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
         .filter((poolConfig) => poolConfig.generalPurpose || poolConfig.chainExceptions?.includes(tokenOut.chainId))
         .map((poolConfig) => bestTokenSwapping(params, poolConfig))
 
-    return theFastestAnswer(promises)
+    return theBest(promises, symbiosis.selectMode)
 }
 
 function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token): OptimalRoute | undefined {

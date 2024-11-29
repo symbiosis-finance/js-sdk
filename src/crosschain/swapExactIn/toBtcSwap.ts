@@ -2,7 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { thorChainSwap } from './thorChainSwap'
 import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { ChainId } from '../../constants'
-import { theBestOutput } from './utils'
+import { theBest } from './utils'
 import { isBtcChainId } from '../chainUtils'
 
 function isThorChainAvailable(chainId: ChainId) {
@@ -20,7 +20,7 @@ export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenOut } = context
+    const { tokenOut, symbiosis } = context
 
     const promises = []
     if (isNativeAvailable(tokenOut.chainId)) {
@@ -30,5 +30,5 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
         promises.push(thorChainSwap(context))
     }
 
-    return theBestOutput(promises)
+    return theBest(promises, symbiosis.selectMode)
 }

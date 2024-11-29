@@ -1,5 +1,5 @@
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBestOutput } from '../utils'
+import { theBest } from '../utils'
 
 export async function bestTokenSwapping(
     params: SwapExactInParams,
@@ -13,5 +13,5 @@ export async function bestTokenSwapping(
         return action.exactIn({ ...params, transitTokenIn, transitTokenOut })
     })
 
-    return theBestOutput(promises)
+    return theBest(promises, symbiosis.selectMode)
 }
