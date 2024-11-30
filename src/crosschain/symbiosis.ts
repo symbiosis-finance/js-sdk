@@ -46,10 +46,10 @@ import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
     ChainConfig,
     Config,
+    ExtraFeeCollector,
     FeeConfig,
     OmniPoolConfig,
     OverrideConfig,
-    SelectMode,
     SwapExactInParams,
     SwapExactInResult,
 } from './types'
@@ -92,12 +92,12 @@ const defaultFetch: typeof fetch = (url, init) => {
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
-    public readonly selectMode: SelectMode
     public readonly dataProvider: DataProvider
     public readonly config: Config
     public readonly configName: ConfigName
     public readonly clientId: string
     private readonly configCache: ConfigCache
+    public extraFeeCollectors: ExtraFeeCollector[]
 
     private signature: string | undefined
 
@@ -191,8 +191,6 @@ export class Symbiosis {
             this.config.advisor = overrideConfig.advisor
         }
 
-        this.selectMode = overrideConfig?.selectMode || 'best_return'
-
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
         this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
@@ -208,6 +206,7 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
+        this.extraFeeCollectors = []
     }
 
     public async getTonClient(): Promise<TonClient> {

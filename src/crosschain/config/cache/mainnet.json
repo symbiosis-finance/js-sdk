@@ -586,7 +586,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3717.png"
             },
-            "deprecated": true,
+            "deprecated": false,
             "address": "0xBBeB516fb02a01611cBBE0453Fe3c580D7281011",
             "id": 30
         },
@@ -1867,7 +1867,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3717.png"
             },
             "chainFromId": 324,
-            "deprecated": true,
+            "deprecated": false,
             "address": "0x83a9e719C9b6d0108D64073DC35aCFD40FC9C672",
             "id": 117,
             "originalId": 30

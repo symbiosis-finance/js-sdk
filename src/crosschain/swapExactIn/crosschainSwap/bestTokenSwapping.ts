@@ -5,7 +5,7 @@ export async function bestTokenSwapping(
     params: SwapExactInParams,
     poolConfig: OmniPoolConfig
 ): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut } = params
+    const { symbiosis, tokenAmountIn, tokenOut, selectMode } = params
 
     const combinations = symbiosis.getTransitCombinations(tokenAmountIn.token.chainId, tokenOut.chainId, poolConfig)
     const promises = combinations.map(({ transitTokenIn, transitTokenOut }) => {
@@ -13,5 +13,5 @@ export async function bestTokenSwapping(
         return action.exactIn({ ...params, transitTokenIn, transitTokenOut })
     })
 
-    return theBest(promises, symbiosis.selectMode)
+    return theBest(promises, selectMode)
 }

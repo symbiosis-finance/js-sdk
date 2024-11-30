@@ -4,8 +4,14 @@ import { MagpieTrade } from '../trade/magpieTrade'
 import { magpieSwap } from './magpieSwap'
 import { theBest } from './utils'
 
+export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
+    const { tokenAmountIn, tokenOut } = params
+
+    return tokenAmountIn.token.chainId === tokenOut.chainId
+}
+
 export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis } = params
+    const { selectMode } = params
 
     const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
 
@@ -13,5 +19,5 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         promises.push(magpieSwap(params))
     }
 
-    return theBest(promises, symbiosis.selectMode)
+    return theBest(promises, selectMode)
 }

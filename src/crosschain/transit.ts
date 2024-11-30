@@ -2,17 +2,10 @@ import { Symbiosis } from './symbiosis'
 import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { BridgeDirection, OmniPoolConfig } from './types'
+import { BridgeDirection, ExtraFeeCollector, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
 import { OctoPoolFeeCollector__factory } from './contracts'
 import { BigNumber } from 'ethers'
-
-interface ExtraFeeCollector {
-    chainId: ChainId
-    address: string
-    feeRate: string
-    eligibleChains: ChainId[]
-}
 
 interface ExtraFeeCall {
     calldata: string
@@ -406,7 +399,7 @@ export class Transit {
         if (!token.chainFromId) {
             return undefined
         }
-        return EXTRA_FEE_COLLECTORS.find((i) => {
+        return [...EXTRA_FEE_COLLECTORS, ...this.symbiosis.extraFeeCollectors].find((i) => {
             return i.chainId === this.omniPoolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
         })
     }

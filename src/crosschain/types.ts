@@ -13,6 +13,13 @@ export enum Field {
     OUTPUT = 'OUTPUT',
 }
 
+export interface ExtraFeeCollector {
+    chainId: ChainId
+    address: string
+    feeRate: string
+    eligibleChains: ChainId[]
+}
+
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
 export type ChainConfig = {
@@ -82,7 +89,6 @@ export type OverrideConfig = {
     makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
     advisor?: AdvisorConfig
-    selectMode?: SelectMode
 }
 
 export interface MiddlewareCall {
@@ -109,6 +115,7 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
     middlewareCall?: MiddlewareCall
     revertableAddresses?: RevertableAddress[]
+    selectMode?: SelectMode
 }
 
 export type BtcTransactionData = {

@@ -30,7 +30,7 @@ const AVAX_USDC = new Token({
 export const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, from, to, symbiosis, slippage, deadline } = context
+    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode } = context
 
     // via stable pool only
     const poolConfig = symbiosis.config.omniPools[0]
@@ -48,5 +48,5 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         })
     })
 
-    return theBest(promises, symbiosis.selectMode)
+    return theBest(promises, selectMode)
 }

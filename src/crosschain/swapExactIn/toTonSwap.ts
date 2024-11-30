@@ -21,7 +21,7 @@ function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInRe
 }
 
 export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis } = context
+    const { selectMode } = context
 
     const promises = []
     // if (tokenOut.equals(GAS_TOKEN[tokenOut.chainId])) {
@@ -29,5 +29,5 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
     // }
     promises.push(...symbiosisBridgeToTon(context))
 
-    return theBest(promises, symbiosis.selectMode)
+    return theBest(promises, selectMode)
 }

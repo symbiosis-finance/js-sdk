@@ -20,7 +20,7 @@ export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenOut, symbiosis } = context
+    const { tokenOut, selectMode } = context
 
     const promises = []
     if (isNativeAvailable(tokenOut.chainId)) {
@@ -30,5 +30,5 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
         promises.push(thorChainSwap(context))
     }
 
-    return theBest(promises, symbiosis.selectMode)
+    return theBest(promises, selectMode)
 }
