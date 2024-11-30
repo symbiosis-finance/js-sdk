@@ -25,10 +25,7 @@ export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis
         /* nothing */
     }
 
-    // 0.5%
-    const volumeFee = BigNumber.from(syBtcAmount.raw.toString()).mul(5).div(1000)
-
-    return new TokenAmount(syBtc, fee.add(volumeFee).toString())
+    return new TokenAmount(syBtc, fee.toString())
 }
 
 export function isBtcChainId(chainId: ChainId | undefined) {
