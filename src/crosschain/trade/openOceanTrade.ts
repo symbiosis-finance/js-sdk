@@ -240,13 +240,14 @@ export class OpenOceanTrade extends SymbiosisTrade {
     }
 
     private convertPriceImpact(value?: string) {
+        const minus100Percent = new Percent(`-${BIPS_BASE.toString()}`, BIPS_BASE)
         if (!value) {
-            return new Percent('0', BIPS_BASE)
+            return minus100Percent
         }
 
         const number = new BigNumber(value.split('%')[0])
         if (number.isNaN()) {
-            return new Percent('0', BIPS_BASE)
+            return minus100Percent
         }
 
         return new Percent(number.multipliedBy(100).integerValue().toString(), BIPS_BASE)
