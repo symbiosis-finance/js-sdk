@@ -92,6 +92,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.GRAVITY_MAINNET]: [WETH[ChainId.GRAVITY_MAINNET]],
     [ChainId.BSQUARED_MAINNET]: [WETH[ChainId.BSQUARED_MAINNET]],
     [ChainId.CRONOS_ZK_MAINNET]: [WETH[ChainId.CRONOS_ZK_MAINNET]],
+    [ChainId.SOLANA_MAINNET]: [WETH[ChainId.SOLANA_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -454,6 +455,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Veno USD',
         }),
     ],
+    [ChainId.SOLANA_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -618,6 +620,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.GRAVITY_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.BSQUARED_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.CRONOS_ZK_MAINNET]: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
+    [ChainId.SOLANA_MAINNET]: AddressZero,
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {
