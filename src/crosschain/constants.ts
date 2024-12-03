@@ -455,7 +455,15 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
             name: 'Veno USD',
         }),
     ],
-    [ChainId.MORPH_MAINNET]: [],
+    [ChainId.MORPH_MAINNET]: [
+        new Token({
+            chainId: ChainId.MORPH_MAINNET,
+            address: '0xc7D67A9cBB121b3b0b9c053DD9f469523243379A',
+            decimals: 18,
+            symbol: 'USDT',
+            name: 'Tether USD',
+        }),
+    ],
 }
 
 // used to construct intermediary pairs for trading
