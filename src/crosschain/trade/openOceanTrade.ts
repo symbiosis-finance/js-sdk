@@ -117,8 +117,6 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     },
 }
 
-const BASE_URL = 'https://open-api.openocean.finance/v3'
-
 export class OpenOceanTrade extends SymbiosisTrade {
     private readonly chain: OpenOceanChain
     private readonly endpoint: string
@@ -137,7 +135,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         }
         this.chain = chain
         this.symbiosis = params.symbiosis
-        this.endpoint = `${BASE_URL}/${this.chain.slug}`
+        this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${this.chain.slug}`
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -155,7 +153,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
             toTokenAddress = this.chain.nativeTokenAddress
         }
 
-        const url = new URL(`${this.endpoint}/swap_quote`)
+        const url = new URL(`${this.endpoint}/swap`)
         url.searchParams.set('inTokenAddress', fromTokenAddress)
         url.searchParams.set('outTokenAddress', toTokenAddress)
         url.searchParams.set('amount', this.tokenAmountIn.toFixed())
@@ -164,7 +162,12 @@ export class OpenOceanTrade extends SymbiosisTrade {
         url.searchParams.set('account', this.to)
         url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
 
-        const response = await this.symbiosis.fetch(url.toString())
+        const response = await this.symbiosis.fetch(url.toString(), {
+            headers: {
+                apikey: this.symbiosis.openOceanConfig.apiKey,
+                'Content-Type': 'application/json',
+            },
+        })
 
         if (!response.ok) {
             const text = await response.text()

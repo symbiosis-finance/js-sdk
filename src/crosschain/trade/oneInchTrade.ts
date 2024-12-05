@@ -82,7 +82,7 @@ export class OneInchTrade extends SymbiosisTrade {
 
         let json: any
         try {
-            json = await this.symbiosis.makeOneInchRequest(`${this.tokenAmountIn.token.chainId}/swap`, searchParams)
+            json = await OneInchTrade.request(this.symbiosis, `${this.tokenAmountIn.token.chainId}/swap`, searchParams)
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Unknown error'
 
@@ -126,12 +126,32 @@ export class OneInchTrade extends SymbiosisTrade {
         return this
     }
 
+    private static async request(symbiosis: Symbiosis, method: string, urlParams?: URLSearchParams) {
+        const requestUrl = new URL(method, symbiosis.oneInchConfig.apiUrl)
+
+        if (urlParams) {
+            requestUrl.search = urlParams.toString()
+        }
+
+        const response = await fetch(requestUrl.toString(), {
+            headers: { Authorization: `Bearer ${symbiosis.oneInchConfig.apiKey}` },
+        })
+
+        if (!response.ok) {
+            const text = await response.text()
+
+            throw new Error(text)
+        }
+
+        return response.json()
+    }
+
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
         try {
             const json = await symbiosis.dataProvider.get(
                 ['makeOneInchRequest', chainId.toString()],
                 async () => {
-                    return symbiosis.makeOneInchRequest(`${chainId}/liquidity-sources`)
+                    return OneInchTrade.request(symbiosis, `${chainId}/liquidity-sources`)
                 },
                 60 * 60 // 1h
             )

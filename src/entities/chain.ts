@@ -669,6 +669,16 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
+        id: ChainId.MORPH_MAINNET,
+        name: 'Morph',
+        disabled: false,
+        explorer: 'https://explorer.morphl2.io',
+        icons: {
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940',
+        },
+    }),
+    new Chain({
         id: ChainId.SOLANA_MAINNET,
         name: 'Solana',
         disabled: false,

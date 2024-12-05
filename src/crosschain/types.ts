@@ -1,5 +1,4 @@
 import { ChainId, TokenConstructor } from '../constants'
-import { MakeOneInchRequestFn } from './oneInchRequest'
 import { Percent, Token, TokenAmount } from '../entities'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { SymbiosisKind, SymbiosisTradeType } from './trade'
@@ -83,12 +82,23 @@ export type FeeConfig = {
 
 export type SelectMode = 'fastest' | 'best_return'
 
+export type OneInchConfig = {
+    apiUrl: string
+    apiKey: string
+}
+
+export type OpenOceanConfig = {
+    apiUrl: string
+    apiKey: string
+}
+
 export type OverrideConfig = {
     chains?: OverrideChainConfig[]
     limits?: SwapLimit[]
-    makeOneInchRequest?: MakeOneInchRequestFn
     fetch?: typeof fetch
     advisor?: AdvisorConfig
+    oneInchConfig: OneInchConfig
+    openOceanConfig: OpenOceanConfig
 }
 
 export interface MiddlewareCall {
