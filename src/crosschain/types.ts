@@ -13,6 +13,13 @@ export enum Field {
     OUTPUT = 'OUTPUT',
 }
 
+export interface ExtraFeeCollector {
+    chainId: ChainId
+    address: string
+    feeRate: string
+    eligibleChains: ChainId[]
+}
+
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
 export type ChainConfig = {
@@ -73,6 +80,9 @@ export type FeeConfig = {
     token: Token
     value: string
 }
+
+export type SelectMode = 'fastest' | 'best_return'
+
 export type OverrideConfig = {
     chains?: OverrideChainConfig[]
     limits?: SwapLimit[]
@@ -105,6 +115,7 @@ export interface SwapExactInParams {
     oneInchProtocols?: OneInchProtocols
     middlewareCall?: MiddlewareCall
     revertableAddresses?: RevertableAddress[]
+    selectMode?: SelectMode
 }
 
 export type BtcTransactionData = {
@@ -164,4 +175,5 @@ export type SwapExactInResult = {
     amountInUsd?: TokenAmount
     timeLog?: ProfilerItem[]
     routeType?: string
+    poolAddress?: string
 } & SwapExactInTransactionPayload

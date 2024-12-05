@@ -131,6 +131,15 @@ export class ZappingThor extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(thorTokenIn.chainId, this.omniPoolConfig)
 
+        this.symbiosis.extraFeeCollectors = [
+            {
+                chainId: ChainId.BOBA_BNB,
+                address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
+                feeRate: '1000000000000000', // 0.1%
+                eligibleChains: [thorTokenIn.chainId],
+            },
+        ]
+
         const result = await this.doExactIn({
             tokenAmountIn,
             tokenOut: thorTokenIn,

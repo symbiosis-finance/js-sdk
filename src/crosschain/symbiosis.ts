@@ -46,6 +46,7 @@ import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
     ChainConfig,
     Config,
+    ExtraFeeCollector,
     FeeConfig,
     OmniPoolConfig,
     OverrideConfig,
@@ -96,6 +97,7 @@ export class Symbiosis {
     public readonly configName: ConfigName
     public readonly clientId: string
     private readonly configCache: ConfigCache
+    public extraFeeCollectors: ExtraFeeCollector[]
 
     private signature: string | undefined
 
@@ -204,6 +206,7 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
+        this.extraFeeCollectors = []
     }
 
     public async getTonClient(): Promise<TonClient> {

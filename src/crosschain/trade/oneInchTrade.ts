@@ -128,7 +128,13 @@ export class OneInchTrade extends SymbiosisTrade {
 
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
         try {
-            const json = await symbiosis.makeOneInchRequest(`${chainId}/liquidity-sources`)
+            const json = await symbiosis.dataProvider.get(
+                ['makeOneInchRequest', chainId.toString()],
+                async () => {
+                    return symbiosis.makeOneInchRequest(`${chainId}/liquidity-sources`)
+                },
+                60 * 60 // 1h
+            )
 
             return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
                 if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {
@@ -183,6 +189,12 @@ export class OneInchTrade extends SymbiosisTrade {
                 minReceivedOffset: 196,
             },
             {
+                // clipperSwap(address,address,address,address,uint256,uint256,uint256,bytes32,bytes32)
+                sigHash: '84bd6d29',
+                offset: 132, // +
+                minReceivedOffset: 164,
+            },
+            {
                 // swap(address,(address,address,address,address,uint256,uint256,uint256),bytes,bytes)
                 sigHash: '12aa3caf',
                 offset: 196, // +/-
@@ -201,10 +213,22 @@ export class OneInchTrade extends SymbiosisTrade {
                 minReceivedOffset: 132,
             },
             {
+                // unoswap(address,uint256,uint256,uint256[])
+                sigHash: '0502b1c5',
+                offset: 68,
+                minReceivedOffset: 100,
+            },
+            {
                 // uniswapV3SwapTo(address,uint256,uint256,uint256[])
                 sigHash: 'bc80f1a8',
                 offset: 68,
                 minReceivedOffset: 100,
+            },
+            {
+                // uniswapV3Swap(uint256,uint256,uint256[])
+                sigHash: 'e449022e',
+                offset: 36,
+                minReceivedOffset: 68,
             },
         ]
 

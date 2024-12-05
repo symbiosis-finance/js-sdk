@@ -110,7 +110,8 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         )
         tokenAmountOutMin = syBtcAmount.subtract(btcForwarderFeeMax)
     } else {
-        const sameChain = tokenOut.chainId === syBtc.chainId
+        // const sameChain = tokenOut.chainId === syBtc.chainId
+        const sameChain = false
         const buildTailFunc = sameChain ? buildOnchainTail : buildTail
 
         const { tail: initialTail } = await buildTailFunc(context, syBtcAmount)

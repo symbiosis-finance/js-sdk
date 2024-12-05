@@ -668,6 +668,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
         },
     }),
+    new Chain({
+        id: ChainId.MORPH_MAINNET,
+        name: 'Morph',
+        disabled: false,
+        explorer: 'https://explorer.morphl2.io',
+        icons: {
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

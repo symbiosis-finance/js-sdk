@@ -2,10 +2,18 @@ import { aggregatorsSwap } from './aggregatorsSwap'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { MagpieTrade } from '../trade/magpieTrade'
 import { magpieSwap } from './magpieSwap'
-import { theBestOutput } from './utils'
+import { theBest } from './utils'
 import { isOctoPoolSwapSupported, octoPoolSwap } from './octoPoolSwap'
 
+export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
+    const { tokenAmountIn, tokenOut } = params
+
+    return tokenAmountIn.token.chainId === tokenOut.chainId
+}
+
 export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    const { selectMode } = params
+
     const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
 
     if (MagpieTrade.isAvailable(params.tokenAmountIn.token.chainId)) {
@@ -15,5 +23,5 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         promises.push(octoPoolSwap(params))
     }
 
-    return theBestOutput(promises)
+    return theBest(promises, selectMode)
 }

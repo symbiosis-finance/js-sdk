@@ -20,6 +20,14 @@ const TON_ADDRESSES_MAP = [
         ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs', // USDT
     },
     {
+        evm: '0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293',
+        ton: 'EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5', // UXLINK
+    },
+    {
+        evm: '0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400',
+        ton: 'EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7', // CATI
+    },
+    {
         evm: '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C', // TON testnet
         ton: 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4',
     },

@@ -1,11 +1,16 @@
-import { SwapExactInResult } from '../types'
+import { SelectMode, SwapExactInResult } from '../types'
 import { Error, ErrorCode } from '../error'
 
-export async function theBestOutput(promises: Promise<SwapExactInResult>[]) {
+export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
     if (promises.length === 0) {
         throw new Error(`No route`, ErrorCode.NO_TRANSIT_TOKEN)
     }
 
+    if (mode === 'fastest') {
+        return Promise.any(promises)
+    }
+
+    // best_return
     const results = await Promise.allSettled(promises)
 
     let result: SwapExactInResult | undefined

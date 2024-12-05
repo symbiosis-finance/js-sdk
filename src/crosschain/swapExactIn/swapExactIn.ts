@@ -1,14 +1,24 @@
-import { isTronChainId, tronAddressToEvm, isTonChainId } from '../chainUtils'
+import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
-import { onchainSwap } from './onchainSwap'
+import { isOnchainSwapSupported, onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
 import { toTonSwap } from './toTonSwap'
 import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
+import { Token } from '../../entities'
+import { ChainId } from '../../constants'
+
+const syBTC = new Token({
+    name: 'Symbiosis BTC',
+    symbol: 'syBTC',
+    address: '0xED0c95EBe5a3E687cB2224687024FeC6518E683e',
+    chainId: ChainId.ZKSYNC_MAINNET,
+    decimals: 8,
+})
 
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -33,11 +43,15 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return unwrap(params)
     }
 
-    if (isFeeCollectorSwapSupported(params)) {
-        return feeCollectorSwap(params)
-    }
+    if (isOnchainSwapSupported(params)) {
+        if (tokenAmountIn.token.equals(syBTC) || tokenOut.equals(syBTC)) {
+            return crosschainSwap(params)
+        }
 
-    if (tokenAmountIn.token.chainId === tokenOut.chainId) {
+        if (isFeeCollectorSwapSupported(params)) {
+            return feeCollectorSwap(params)
+        }
+
         return onchainSwap(params)
     }
 

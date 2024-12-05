@@ -1,11 +1,10 @@
 import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { unwrapBtc } from './unwrapBtc'
-import { zappingBtcOnChain } from './zappingBtcOnChain'
-import { theBestOutput } from '../utils'
+import { theBest } from '../utils'
 import { ZappingBtc } from '../../swapping'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, to } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to, selectMode } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
@@ -20,10 +19,10 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
 
-        if (tokenAmountIn.token.chainId === syBtc.chainId) {
-            promises.push(zappingBtcOnChain(context))
-            return
-        }
+        // if (tokenAmountIn.token.chainId === syBtc.chainId) {
+        //     promises.push(zappingBtcOnChain(context))
+        //     return
+        // }
 
         symbiosis.config.omniPools
             .filter((poolConfig) => poolConfig.generalPurpose)
@@ -52,5 +51,5 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             })
     })
 
-    return theBestOutput(promises)
+    return theBest(promises, selectMode)
 }
