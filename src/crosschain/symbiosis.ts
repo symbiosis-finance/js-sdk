@@ -49,6 +49,8 @@ import {
     ExtraFeeCollector,
     FeeConfig,
     OmniPoolConfig,
+    OneInchConfig,
+    OpenOceanConfig,
     OverrideConfig,
     SwapExactInParams,
     SwapExactInResult,
@@ -60,7 +62,6 @@ import { config as dev } from './config/dev'
 import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
-import { makeOneInchRequestFactory, MakeOneInchRequestFn } from './oneInchRequest'
 import { delay } from '../utils'
 import {
     waitForBtcCommitTxMined,
@@ -103,7 +104,8 @@ export class Symbiosis {
 
     public feesConfig?: FeeConfig[]
 
-    public readonly makeOneInchRequest: MakeOneInchRequestFn
+    public readonly oneInchConfig: OneInchConfig
+    public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
 
@@ -190,10 +192,22 @@ export class Symbiosis {
         if (overrideConfig?.advisor) {
             this.config.advisor = overrideConfig.advisor
         }
+        this.oneInchConfig = {
+            apiUrl: 'https://api.1inch.dev/swap/v5.2/',
+            apiKey: '<PUT_YOUR_API_KEY_HERE>',
+        }
+        if (overrideConfig?.oneInchConfig) {
+            this.oneInchConfig = overrideConfig.oneInchConfig
+        }
+        this.openOceanConfig = {
+            apiUrl: 'https://open-api.openocean.finance/v4',
+            apiKey: '<PUT_YOUR_API_KEY_HERE>',
+        }
+        if (overrideConfig?.openOceanConfig) {
+            this.openOceanConfig = overrideConfig.openOceanConfig
+        }
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
-
-        this.makeOneInchRequest = overrideConfig?.makeOneInchRequest ?? makeOneInchRequestFactory(this.fetch)
 
         this.configCache = new ConfigCache(configName)
 
