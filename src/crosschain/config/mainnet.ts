@@ -1201,8 +1201,8 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0xF660558a4757Fb5953d269FF32E228Ae3d5f6c68',
-            dexFee: 0,
+            router: '0xF660558a4757Fb5953d269FF32E228Ae3d5f6c68', // silkswap
+            dexFee: 30,
             metaRouter: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
             metaRouterGateway: '0xcd7C056b39DdFB568E451923ABEDb9B6a7Aeb885',
             bridge: '0x1ac4C50080871D7a24DD705dE9eFe5FF14bC0Ea2',
