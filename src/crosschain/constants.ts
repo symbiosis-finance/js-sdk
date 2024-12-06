@@ -557,6 +557,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.MORPH_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MORPH_MAINNET],
     ],
+    [ChainId.SOLANA_MAINNET]: [
+        WETH[ChainId.SOLANA_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.SOLANA_MAINNET],
+    ],
 }
 
 /**

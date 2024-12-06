@@ -594,8 +594,8 @@ export const chains: Chain[] = [
         disabled: false,
         explorer: 'https://taikoscan.io',
         icons: {
-            small: 'https://taikoscan.io/assets/taiko/images/svg/logos/chain-light.svg?v=24.5.4.0',
-            large: 'https://taikoscan.io/assets/taiko/images/svg/logos/chain-light.svg?v=24.5.4.0',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/31525.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/31525.png',
         },
     }),
     new Chain({
