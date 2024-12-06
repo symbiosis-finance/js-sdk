@@ -194,14 +194,14 @@ export class Symbiosis {
         }
         this.oneInchConfig = {
             apiUrl: 'https://api.1inch.dev/swap/v5.2/',
-            apiKey: '<PUT_YOUR_API_KEY_HERE>',
+            apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.oneInchConfig) {
             this.oneInchConfig = overrideConfig.oneInchConfig
         }
         this.openOceanConfig = {
             apiUrl: 'https://open-api.openocean.finance/v4',
-            apiKey: '<PUT_YOUR_API_KEY_HERE>',
+            apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.openOceanConfig) {
             this.openOceanConfig = overrideConfig.openOceanConfig

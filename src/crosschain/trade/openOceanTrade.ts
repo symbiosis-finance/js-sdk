@@ -162,9 +162,11 @@ export class OpenOceanTrade extends SymbiosisTrade {
         url.searchParams.set('account', this.to)
         url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
 
+        const apiKeys = this.symbiosis.openOceanConfig.apiKeys
+        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
         const response = await this.symbiosis.fetch(url.toString(), {
             headers: {
-                apikey: this.symbiosis.openOceanConfig.apiKey,
+                apikey: apiKey,
                 'Content-Type': 'application/json',
             },
         })

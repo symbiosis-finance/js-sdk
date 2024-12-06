@@ -133,8 +133,10 @@ export class OneInchTrade extends SymbiosisTrade {
             requestUrl.search = urlParams.toString()
         }
 
+        const apiKeys = symbiosis.oneInchConfig.apiKeys
+        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
         const response = await fetch(requestUrl.toString(), {
-            headers: { Authorization: `Bearer ${symbiosis.oneInchConfig.apiKey}` },
+            headers: { Authorization: `Bearer ${apiKey}` },
         })
 
         if (!response.ok) {
