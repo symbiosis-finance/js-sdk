@@ -248,16 +248,6 @@ export function isWTon(symbiosis: Symbiosis, token: Token) {
     return wton.equals(token)
 }
 
-export function isUsdt(symbiosis: Symbiosis, token: Token) {
-    const usdt = symbiosis
-        .tokens()
-        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'usdt')
-    if (!usdt) {
-        return false
-    }
-    return usdt.equals(token)
-}
-
 export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise<TonTransactionData> {
     const {
         symbiosis,
@@ -316,7 +306,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
                 },
             ],
         }
-    } else if (isUsdt(symbiosis, amountIn.token)) {
+    } else {
         const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
@@ -347,8 +337,6 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             ],
         }
     }
-
-    throw new Error('No TON transaction request. Unsupported token')
 }
 
 interface SynthesizeParams {
@@ -399,7 +387,7 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
                 },
             ],
         }
-    } else if (isUsdt(symbiosis, amountIn.token)) {
+    } else {
         const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
@@ -430,8 +418,6 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
             ],
         }
     }
-
-    throw new Error('No TON transaction request. Unsupported token')
 }
 
 export function tonAdvisorMock(feeToken: Token) {
