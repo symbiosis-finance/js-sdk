@@ -24,31 +24,29 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
         //     return
         // }
 
-        symbiosis.config.omniPools
-            .filter((poolConfig) => poolConfig.generalPurpose)
-            .forEach((poolConfig) => {
-                const combinations = symbiosis.getTransitCombinations(
-                    tokenAmountIn.token.chainId,
-                    syBtc.chainId,
-                    poolConfig
-                )
-                combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
-                    const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
-                    const { from, slippage, deadline } = context
+        symbiosis.config.omniPools.forEach((poolConfig) => {
+            const combinations = symbiosis.getTransitCombinations(
+                tokenAmountIn.token.chainId,
+                syBtc.chainId,
+                poolConfig
+            )
+            combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
+                const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
+                const { from, slippage, deadline } = context
 
-                    const promise = zappingBtc.exactIn({
-                        tokenAmountIn,
-                        syBtc,
-                        from,
-                        to,
-                        slippage,
-                        deadline,
-                        transitTokenIn,
-                        transitTokenOut,
-                    })
-                    promises.push(promise)
+                const promise = zappingBtc.exactIn({
+                    tokenAmountIn,
+                    syBtc,
+                    from,
+                    to,
+                    slippage,
+                    deadline,
+                    transitTokenIn,
+                    transitTokenOut,
                 })
+                promises.push(promise)
             })
+        })
     })
 
     return theBest(promises, selectMode)
