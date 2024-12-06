@@ -662,7 +662,7 @@ export const chains: Chain[] = [
         id: ChainId.CRONOS_ZK_MAINNET,
         name: 'Cronos zkEVM',
         disabled: false,
-        explorer: 'https://explorer.zkevm.cronos.org/',
+        explorer: 'https://explorer.zkevm.cronos.org',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
@@ -676,6 +676,16 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940',
             large: 'https://coin-images.coingecko.com/asset_platforms/images/22185/small/morph.jpg?1729659940',
+        },
+    }),
+    new Chain({
+        id: ChainId.SOLANA_MAINNET,
+        name: 'Solana',
+        disabled: false,
+        explorer: 'https://explorer.solana.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
         },
     }),
 ]
