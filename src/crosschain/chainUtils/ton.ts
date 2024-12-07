@@ -216,9 +216,9 @@ export class Bridge implements Contract {
 }
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
-export const MIN_META_SYNTH_JETTONS = toNano('0.1')
+export const MIN_META_SYNTH_JETTONS = toNano('0.2')
 export const MIN_SYNTH_TONS = toNano('0.015')
-export const MIN_SYNTH_JETTONS = toNano('0.1')
+export const MIN_SYNTH_JETTONS = toNano('0.2')
 export const NOTIFICATION_PAYMENT = toNano('0.05')
 
 interface MetaSynthesizeParams {
