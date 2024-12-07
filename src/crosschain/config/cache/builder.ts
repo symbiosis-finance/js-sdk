@@ -25,8 +25,11 @@ import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
-import { isTronChainId, isBtcChainId, isTonChainId } from '../../chainUtils'
+import { getTonTokenAddress, isBtcChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import fs from 'fs'
+import { TonClient } from '@ton/ton'
+import { getHttpEndpoint } from '@orbs-network/ton-access'
+import { Address, beginCell } from '@ton/core'
 
 export type Id = number
 
@@ -123,6 +126,7 @@ export class Builder {
             }
         }
     }
+
     private async checkPortalTokensWhitelisted() {
         console.log('checkPortalTokensWhitelisted')
         const chains = this.config.chains
@@ -130,7 +134,36 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
-            if (isTonChainId(chain.id)) {
+            if (isTonChainId(chain.id) && chain.tonPortal) {
+                const endpoint = await getHttpEndpoint({ network: 'mainnet' })
+                const client = new TonClient({ endpoint })
+                const address = Address.parse(chain.tonPortal)
+
+                const contract = await client.getContractState(address)
+                if (!contract) {
+                    throw new Error('Contract is not deployed or does not exist')
+                }
+
+                for (let j = 0; j < chain.stables.length; j++) {
+                    const token = chain.stables[j]
+
+                    const tonTokenAddress = getTonTokenAddress(token.address)
+
+                    try {
+                        const cell = beginCell().storeAddress(Address.parse(tonTokenAddress)).endCell()
+
+                        const result = await client.runMethod(address, 'is_whitelisted_jetton_wallet', [
+                            {
+                                type: 'slice',
+                                cell,
+                            },
+                        ])
+                        console.log('Getter Result:', result.stack)
+                    } catch (error) {
+                        console.error('Failed to call get method:', error)
+                    }
+                }
+
                 continue
             }
             const portal = this.portal(chain.id)
