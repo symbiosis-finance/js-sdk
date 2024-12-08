@@ -1,4 +1,3 @@
-import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
 import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
@@ -12,7 +11,6 @@ type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trad
 
 interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
-    dataProvider: DataProvider
     from: string
     clientId: string
     deadline: number
@@ -38,8 +36,7 @@ export class AggregatorTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        const { dataProvider, from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } =
-            this.params
+        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
 
         const trades: (Trade | undefined)[] = []
 
@@ -53,7 +50,6 @@ export class AggregatorTrade extends SymbiosisTrade {
 
         let tradesCount = 0
         if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
-            const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -61,8 +57,6 @@ export class AggregatorTrade extends SymbiosisTrade {
                 from,
                 to,
                 slippage,
-                oracle,
-                dataProvider,
                 protocols: oneInchProtocols,
             })
 

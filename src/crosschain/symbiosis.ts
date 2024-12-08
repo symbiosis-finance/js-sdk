@@ -5,7 +5,6 @@ import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
-import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
     Bridge,
     Bridge__factory,
@@ -19,8 +18,6 @@ import {
     OmniPool__factory,
     OmniPoolOracle,
     OmniPoolOracle__factory,
-    OneInchOracle,
-    OneInchOracle__factory,
     Portal,
     Portal__factory,
     SymBtc,
@@ -164,7 +161,7 @@ export class Symbiosis {
         } else {
             throw new Error('Unknown config name')
         }
-        this.dataProvider = new DataProvider(this)
+        this.dataProvider = new DataProvider()
 
         if (overrideConfig?.chains) {
             const { chains } = overrideConfig
@@ -339,16 +336,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
-    }
-
-    public oneInchOracle(chainId: ChainId, signer?: Signer): OneInchOracle {
-        const address = ONE_INCH_ORACLE_MAP[chainId]
-        if (!address) {
-            throw new Error(`Could not find oneInch off-chain oracle on chain ${chainId}`)
-        }
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return OneInchOracle__factory.connect(address, signerOrProvider)
     }
 
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
