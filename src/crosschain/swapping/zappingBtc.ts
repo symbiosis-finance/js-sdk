@@ -46,7 +46,7 @@ export class ZappingBtc extends BaseSwapping {
 
     protected async doPostTransitAction(): Promise<void> {
         const amount = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
-        this.minBtcFee = await getToBtcFee(amount, this.synthesis, this.symbiosis.dataProvider)
+        this.minBtcFee = await getToBtcFee(amount, this.synthesis, this.symbiosis.cache)
     }
 
     public async exactIn({

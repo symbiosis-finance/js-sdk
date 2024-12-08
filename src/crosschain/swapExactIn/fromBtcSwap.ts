@@ -9,7 +9,7 @@ import { MetaRouter__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { BigNumber } from 'ethers'
-import { DataProvider } from '../dataProvider'
+import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
 import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
@@ -56,7 +56,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const btcAmountRaw = tokenAmountIn.raw.toString()
     let syBtcAmount = new TokenAmount(syBtc, btcAmountRaw)
 
-    const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.dataProvider)
+    const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.cache)
     const btcPortalFee = new TokenAmount(syBtc, btcPortalFeeRaw)
     syBtcAmount = syBtcAmount.subtract(btcPortalFee)
 
@@ -397,8 +397,8 @@ function encodeTail(tail: string): string {
     return Buffer.from(tail.slice(2), 'hex').toString('base64')
 }
 
-async function getBtcPortalFee(forwarderUrl: string, dataProvider: DataProvider): Promise<string> {
-    let fee = await dataProvider.get(
+async function getBtcPortalFee(forwarderUrl: string, cache: Cache): Promise<string> {
+    let fee = await cache.get(
         ['getMinBtcFee'],
         async () => {
             // kind of the state: 0=finalized 1=pending 2=best
@@ -421,7 +421,7 @@ async function getBtcPortalFee(forwarderUrl: string, dataProvider: DataProvider)
     )
 
     try {
-        const fastestFee = await dataProvider.get(['getFastestFee'], getFastestFee, 60) // 1 minute
+        const fastestFee = await cache.get(['getFastestFee'], getFastestFee, 60) // 1 minute
         const recommendedFee = fastestFee * 200 // 200 vByte
         if (recommendedFee > fee) {
             fee = recommendedFee

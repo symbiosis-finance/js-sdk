@@ -173,8 +173,8 @@ export class OneInchTrade extends SymbiosisTrade {
 
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
         try {
-            const json = await symbiosis.dataProvider.get(
-                ['getProtocols', chainId.toString()],
+            const json = await symbiosis.cache.get(
+                ['oneInchGetProtocols', chainId.toString()],
                 async () => {
                     return OneInchTrade.request(symbiosis, `${chainId}/liquidity-sources`)
                 },
@@ -303,7 +303,7 @@ export class OneInchTrade extends SymbiosisTrade {
 
         const tokens = [wrappedToken(tokenAmountIn.token), wrappedToken(tokenAmountOut.token)]
 
-        const aggregated = await this.symbiosis.dataProvider.get(
+        const aggregated = await this.symbiosis.cache.get(
             ['getOneInchRateToEth', ...tokens.map((i) => i.address)],
             async () => {
                 const calls = tokens.map((token) => ({

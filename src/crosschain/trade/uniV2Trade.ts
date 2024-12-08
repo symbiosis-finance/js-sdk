@@ -76,7 +76,7 @@ export class UniV2Trade extends SymbiosisTrade {
         }
         this.router = router
 
-        const pairs = await this.symbiosis.dataProvider.get(
+        const pairs = await this.symbiosis.cache.get(
             ['getPairs', chainId.toString(), this.tokenAmountIn.token.address, this.tokenOut.address],
             async () => {
                 return UniV2Trade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)

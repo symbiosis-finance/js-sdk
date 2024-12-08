@@ -57,7 +57,7 @@ import {
     waitForComplete,
     waitFromTonTxMined,
 } from './waitForComplete'
-import { DataProvider } from './dataProvider'
+import { Cache } from './cache'
 import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
@@ -80,7 +80,7 @@ const defaultFetch: typeof fetch = (url, init) => {
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
-    public readonly dataProvider: DataProvider
+    public readonly cache: Cache
     public readonly config: Config
     public readonly configName: ConfigName
     public readonly clientId: string
@@ -161,7 +161,7 @@ export class Symbiosis {
         } else {
             throw new Error('Unknown config name')
         }
-        this.dataProvider = new DataProvider()
+        this.cache = new Cache()
 
         if (overrideConfig?.chains) {
             const { chains } = overrideConfig
@@ -211,7 +211,7 @@ export class Symbiosis {
     }
 
     public async getTonClient(): Promise<TonClient> {
-        return this.dataProvider.get(
+        return this.cache.get(
             ['tonClient'],
             async () => {
                 const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
