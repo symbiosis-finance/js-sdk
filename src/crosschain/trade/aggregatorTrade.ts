@@ -8,7 +8,7 @@ import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 
-type TradeType = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
+type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
 function timeLimitPromise<T>(name: string): Promise<T> {
     return new Promise((_resolve, reject) => {
@@ -38,7 +38,7 @@ class TradeNotInitializedError extends Error {
 }
 
 export class AggregatorTrade extends SymbiosisTrade {
-    protected trade: TradeType | undefined
+    protected trade: Trade | undefined
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
@@ -53,7 +53,8 @@ export class AggregatorTrade extends SymbiosisTrade {
         const { dataProvider, from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } =
             this.params
 
-        const aggregators: Promise<TradeType>[] = []
+        const trades: Trade[] = []
+
         if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade({
@@ -68,7 +69,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 protocols: oneInchProtocols,
             })
 
-            aggregators.push(timeLimited('1inch', oneInchTrade.init()))
+            timeLimited('1inch', oneInchTrade.init()).then(trades.push).catch(console.error)
         }
 
         if (OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
@@ -80,7 +81,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
             })
 
-            aggregators.push(timeLimited('OpenOcean', openOceanTrade.init()))
+            timeLimited('OpenOcean', openOceanTrade.init()).then(trades.push).catch(console.error)
         }
 
         if (IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
@@ -92,7 +93,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            aggregators.push(timeLimited('izumi', izumiTrade.init()))
+            timeLimited('izumi', izumiTrade.init()).then(trades.push).catch(console.error)
         }
 
         if (UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
@@ -104,7 +105,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            aggregators.push(timeLimited('UniV3', uniV3Trade.init()))
+            timeLimited('UniV3', uniV3Trade.init()).then(trades.push).catch(console.error)
         }
 
         if (UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
@@ -117,32 +118,56 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
             })
 
-            aggregators.push(timeLimited('UniV2', uniV2Trade.init()))
+            timeLimited('UniV2', uniV2Trade.init()).then(trades.push).catch(console.error)
         }
+        this.trade = await new Promise((resolve, reject) => {
+            const startTime = Date.now()
+            const intervalId = setInterval(() => {
+                console.log('tick 50')
+                if (Date.now() - startTime < 500) {
+                    return
+                }
 
-        const tradesResults = await Promise.allSettled(aggregators)
+                const oneInch = trades.find((trade) => trade.constructor.name === OneInchTrade.name)
+                const openOcean = trades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
 
-        // Find the best trade with the lowest price impact
-        let bestTrade: TradeType | undefined
-        for (const trade of tradesResults) {
-            if (trade.status === 'rejected') {
-                console.error(`AggregatorTrade rejected: ${JSON.stringify(trade.reason?.toString())}`)
-                continue
-            }
+                if (oneInch || openOcean) {
+                    console.log('oneInch || openOcean', trades)
+                    resolve(this.selectTheBestTrade(trades))
+                    clearInterval(intervalId)
+                } else {
+                    console.log('no', trades.length)
+                }
+            }, 50)
 
-            if (!bestTrade) {
-                bestTrade = trade.value
-                continue
-            }
-
-            if (trade.value.amountOut.greaterThan(bestTrade.amountOut)) {
-                bestTrade = trade.value
-            }
-        }
-
-        this.trade = bestTrade
+            setTimeout(() => {
+                console.log('timeout', trades)
+                const bestTrade = this.selectTheBestTrade(trades)
+                if (bestTrade) {
+                    resolve(bestTrade)
+                } else {
+                    reject()
+                }
+                clearInterval(intervalId)
+            }, 2000)
+        })
 
         return this
+    }
+
+    private selectTheBestTrade(trades: Trade[]) {
+        let bestTrade: Trade | undefined = undefined
+        for (const trade of trades) {
+            if (!bestTrade) {
+                bestTrade = trade
+                continue
+            }
+
+            if (trade.amountOut.greaterThan(bestTrade.amountOut)) {
+                bestTrade = trade
+            }
+        }
+        return bestTrade
     }
 
     get amountOut(): TokenAmount {
@@ -196,7 +221,7 @@ export class AggregatorTrade extends SymbiosisTrade {
     }
 
     private assertTradeInitialized(msg?: string): asserts this is {
-        trade: TradeType
+        trade: Trade
     } {
         if (!this.trade) {
             throw new TradeNotInitializedError(msg)
