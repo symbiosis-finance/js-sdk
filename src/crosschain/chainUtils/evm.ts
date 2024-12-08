@@ -4,7 +4,7 @@ import { BigNumber, Signer, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { BigintIsh, ChainId, ONE } from '../../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
-import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES, ONE_INCH_CHAINS } from '../constants'
+import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../constants'
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
 import flatMap from 'lodash.flatmap'
@@ -29,10 +29,6 @@ interface GetExternalIdParams {
 export function isEvmChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId)
-}
-
-export const canOneInch = (chainId: ChainId) => {
-    return ONE_INCH_CHAINS.includes(chainId)
 }
 
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {

@@ -20,7 +20,6 @@ import {
     TronTransactionData,
 } from './chainUtils'
 import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
-import { DataProvider } from './dataProvider'
 import { OmniLiquidity } from './omniLiquidity'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import {
@@ -40,7 +39,6 @@ type ZappingExactInParams = {
 }
 
 export class Zapping {
-    protected dataProvider: DataProvider
     protected multicallRouter: MulticallRouter
 
     private from!: string
@@ -60,8 +58,6 @@ export class Zapping {
     private readonly poolOracle!: OmniPoolOracle
 
     public constructor(private readonly symbiosis: Symbiosis, private readonly omniPoolConfig: OmniPoolConfig) {
-        this.dataProvider = new DataProvider(symbiosis)
-
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
 
@@ -309,7 +305,6 @@ export class Zapping {
             from,
             to,
             slippage: this.slippage / 100,
-            dataProvider: this.dataProvider,
             symbiosis: this.symbiosis,
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,

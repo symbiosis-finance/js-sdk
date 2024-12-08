@@ -1,4 +1,3 @@
-import { DataProvider } from '../dataProvider'
 import { AggregatorTrade } from '../trade'
 import { preparePayload } from './preparePayload'
 import { SwapExactInParams, SwapExactInResult } from '../types'
@@ -13,13 +12,11 @@ export async function aggregatorsSwap({
     tokenOut,
     oneInchProtocols,
 }: SwapExactInParams): Promise<SwapExactInResult> {
-    const dataProvider = new DataProvider(symbiosis)
     const aggregatorTrade = new AggregatorTrade({
         symbiosis,
         to,
         from,
         clientId: symbiosis.clientId,
-        dataProvider,
         slippage,
         tokenAmountIn,
         tokenOut,

@@ -203,7 +203,6 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
         ...context,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
-        dataProvider: symbiosis.dataProvider,
         tokenAmountIn: sBtcAmount,
         deadline,
     })

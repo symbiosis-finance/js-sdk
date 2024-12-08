@@ -1,30 +1,8 @@
-import { ChainId } from '../constants'
 import { Token } from '../entities'
-import { OneInchOracle } from './contracts'
-import { Symbiosis } from './symbiosis'
-import { getRateToEth, OneInchTrade } from './trade'
 import { getTokenPriceUsd } from './coingecko'
 
 export class DataProvider {
     private cache = new Map<string, any>()
-
-    constructor(private readonly symbiosis: Symbiosis) {}
-
-    async getOneInchProtocols(chainId: ChainId) {
-        return this.fromCache(['getOneInchProtocols', chainId], () => {
-            return OneInchTrade.getProtocols(this.symbiosis, chainId)
-        })
-    }
-
-    async getOneInchRateToEth(tokens: Token[], oracle: OneInchOracle) {
-        return this.fromCache(
-            ['getOneInchRateToEth', ...tokens.map((i) => i.address)],
-            () => {
-                return getRateToEth(tokens, oracle)
-            },
-            60 // 1 minute
-        )
-    }
 
     async getTokenPrice(token: Token) {
         return this.fromCache(
