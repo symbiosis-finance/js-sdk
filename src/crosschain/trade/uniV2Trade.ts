@@ -6,40 +6,48 @@ import { Router } from '../../router'
 import { BIPS_BASE } from '../constants'
 import {
     AdaRouter,
+    AdaRouter__factory,
     AvaxRouter,
+    AvaxRouter__factory,
     DragonswapRouter,
+    DragonswapRouter__factory,
     KavaRouter,
+    KavaRouter__factory,
     KimRouter,
+    KimRouter__factory,
     Pair__factory,
     UniLikeRouter,
+    UniLikeRouter__factory,
 } from '../contracts'
-import { DataProvider } from '../dataProvider'
 import { getMulticall } from '../multicall'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { Symbiosis } from '../symbiosis'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
-    router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
-    dexFee: number
+    symbiosis: Symbiosis
     deadline: number
 }
 
-export class UniV2Trade extends SymbiosisTrade {
-    public trade!: Trade
-    private pairs!: Pair[]
+type UniV2Router = UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
 
-    private readonly router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
-    private readonly dexFee: number
+export class UniV2Trade extends SymbiosisTrade {
+    private router!: UniV2Router
+
+    private readonly symbiosis: Symbiosis
     private readonly deadline: number
+
+    static isSupported(symbiosis: Symbiosis, chainId: ChainId): boolean {
+        return symbiosis.chainConfig(chainId).router !== AddressZero
+    }
 
     public constructor(params: UniV2TradeParams) {
         super(params)
 
-        const { router, dexFee, deadline } = params
-        this.router = router
-        this.dexFee = dexFee
+        const { symbiosis, deadline } = params
+        this.symbiosis = symbiosis
         this.deadline = deadline
     }
 
@@ -47,17 +55,36 @@ export class UniV2Trade extends SymbiosisTrade {
         return 'uni-v2'
     }
 
-    public async init(dataProvider?: DataProvider) {
-        if (this.router.address === AddressZero) {
-            throw new Error('Router address is zero')
-        }
-        if (dataProvider) {
-            this.pairs = await dataProvider.getPairs(this.tokenAmountIn.token, this.tokenOut)
-        } else {
-            this.pairs = await UniV2Trade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
-        }
+    public async init() {
+        const { chainId } = this.tokenAmountIn.token
 
-        const [trade] = Trade.bestTradeExactIn(this.pairs, this.tokenAmountIn, this.tokenOut, {
+        let router: UniV2Router = this.uniV2Router(chainId)
+        if (chainId === ChainId.AVAX_MAINNET) {
+            router = this.avaxRouter(chainId)
+        }
+        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
+            router = this.adaRouter(chainId)
+        }
+        if ([ChainId.KAVA_MAINNET].includes(chainId)) {
+            router = this.kavaRouter(chainId)
+        }
+        if ([ChainId.MODE_MAINNET].includes(chainId)) {
+            router = this.kimRouter(chainId)
+        }
+        if ([ChainId.SEI_EVM_MAINNET].includes(chainId)) {
+            router = this.dragonSwapRouter(chainId)
+        }
+        this.router = router
+
+        const pairs = await this.symbiosis.dataProvider.get(
+            ['getPairs', chainId.toString(), this.tokenAmountIn.token.address, this.tokenOut.address],
+            async () => {
+                return UniV2Trade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
+            },
+            60 // 1 minute
+        )
+
+        const [trade] = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
             maxHops: 3,
             maxNumResults: 1,
         })
@@ -65,9 +92,10 @@ export class UniV2Trade extends SymbiosisTrade {
         if (!trade) {
             throw new Error('Cannot create trade')
         }
-        this.trade = trade
 
-        const priceImpact = computeTradePriceBreakdown(this.trade, this.dexFee).priceImpactWithoutFee
+        const dexFee = this.symbiosis.dexFee(chainId)
+
+        const priceImpact = computeTradePriceBreakdown(trade, dexFee).priceImpactWithoutFee
         if (!priceImpact) {
             throw new Error('Cannot calculate priceImpact')
         }
@@ -129,7 +157,7 @@ export class UniV2Trade extends SymbiosisTrade {
         }
     }
 
-    static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token): Promise<Pair[]> {
+    private static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token): Promise<Pair[]> {
         const allPairCombinations = getAllPairCombinations(tokenIn, tokenOut)
         return await UniV2Trade.allPairs(provider, allPairCombinations)
     }
@@ -183,5 +211,41 @@ export class UniV2Trade extends SymbiosisTrade {
         })
 
         return Array.from(validPairs.values())
+    }
+
+    private uniV2Router(chainId: ChainId): UniLikeRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return UniLikeRouter__factory.connect(address, provider)
+    }
+
+    private avaxRouter(chainId: ChainId): AvaxRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return AvaxRouter__factory.connect(address, provider)
+    }
+
+    private adaRouter(chainId: ChainId): AdaRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return AdaRouter__factory.connect(address, provider)
+    }
+
+    private kavaRouter(chainId: ChainId): KavaRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return KavaRouter__factory.connect(address, provider)
+    }
+
+    private kimRouter(chainId: ChainId): KimRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return KimRouter__factory.connect(address, provider)
+    }
+
+    private dragonSwapRouter(chainId: ChainId): DragonswapRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return DragonswapRouter__factory.connect(address, provider)
+    }
+
+    private getRouterConfig(chainId: ChainId) {
+        const address = this.symbiosis.chainConfig(chainId).router
+        const provider = this.symbiosis.getProvider(chainId)
+        return { address, provider }
     }
 }

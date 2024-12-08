@@ -7,18 +7,10 @@ import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
-    AdaRouter,
-    AdaRouter__factory,
-    AvaxRouter,
-    AvaxRouter__factory,
     Bridge,
     Bridge__factory,
     Fabric,
     Fabric__factory,
-    KavaRouter,
-    KavaRouter__factory,
-    KimRouter,
-    KimRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -37,8 +29,6 @@ import {
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
-    UniLikeRouter,
-    UniLikeRouter__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
@@ -321,41 +311,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(symBtcConfig.chainId)
 
         return SymBtc__factory.connect(symBtcConfig.address, signerOrProvider)
-    }
-
-    public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return UniLikeRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public avaxRouter(chainId: ChainId, signer?: Signer): AvaxRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return AvaxRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public adaRouter(chainId: ChainId, signer?: Signer): AdaRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return AdaRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public kavaRouter(chainId: ChainId, signer?: Signer): KavaRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return KavaRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public kimRouter(chainId: ChainId, signer?: Signer): KimRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return KimRouter__factory.connect(address, signerOrProvider)
     }
 
     public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {

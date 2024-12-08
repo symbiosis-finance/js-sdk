@@ -1,19 +1,9 @@
-import { ChainId } from '../../constants'
 import { DataProvider } from '../dataProvider'
 import { Symbiosis } from '../symbiosis'
 import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { IzumiTrade } from './izumiTrade'
-import {
-    AdaRouter,
-    AvaxRouter,
-    DragonswapRouter,
-    DragonswapRouter__factory,
-    KavaRouter,
-    KimRouter,
-    UniLikeRouter,
-} from '../contracts'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
@@ -49,15 +39,6 @@ class TradeNotInitializedError extends Error {
 
 export class AggregatorTrade extends SymbiosisTrade {
     protected trade: TradeType | undefined
-
-    static isAvailable(chainId: ChainId): boolean {
-        return (
-            OneInchTrade.isAvailable(chainId) ||
-            OpenOceanTrade.isAvailable(chainId) ||
-            IzumiTrade.isSupported(chainId) ||
-            UniV3Trade.isSupported(chainId)
-        )
-    }
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
@@ -126,7 +107,18 @@ export class AggregatorTrade extends SymbiosisTrade {
             aggregators.push(timeLimited('UniV3', uniV3Trade.init()))
         }
 
-        aggregators.push(timeLimited('UniV2', this.buildUniV2Trade()))
+        if (UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
+            const uniV2Trade = new UniV2Trade({
+                symbiosis,
+                tokenAmountIn,
+                tokenOut,
+                to,
+                slippage,
+                deadline,
+            })
+
+            aggregators.push(timeLimited('UniV2', uniV2Trade.init()))
+        }
 
         const tradesResults = await Promise.allSettled(aggregators)
 
@@ -151,46 +143,6 @@ export class AggregatorTrade extends SymbiosisTrade {
         this.trade = bestTrade
 
         return this
-    }
-
-    private async buildUniV2Trade(): Promise<UniV2Trade> {
-        const { symbiosis, tokenAmountIn, tokenOut, to, slippage, deadline } = this.params
-        const { chainId } = tokenAmountIn.token
-        let router: UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter =
-            symbiosis.uniLikeRouter(chainId)
-
-        if (chainId === ChainId.AVAX_MAINNET) {
-            router = symbiosis.avaxRouter(chainId)
-        }
-        if ([ChainId.MILKOMEDA_DEVNET, ChainId.MILKOMEDA_MAINNET].includes(chainId)) {
-            router = symbiosis.adaRouter(chainId)
-        }
-        if ([ChainId.KAVA_MAINNET].includes(chainId)) {
-            router = symbiosis.kavaRouter(chainId)
-        }
-        if ([ChainId.MODE_MAINNET].includes(chainId)) {
-            router = symbiosis.kimRouter(chainId)
-        }
-        if ([ChainId.SEI_EVM_MAINNET].includes(chainId)) {
-            const address = symbiosis.chainConfig(chainId).router
-            const provider = symbiosis.getProvider(chainId)
-            router = DragonswapRouter__factory.connect(address, provider)
-        }
-
-        const dexFee = symbiosis.dexFee(chainId)
-        const trade = new UniV2Trade({
-            tokenAmountIn,
-            tokenOut,
-            to,
-            slippage,
-            deadline,
-            router,
-            dexFee,
-        })
-
-        await trade.init()
-
-        return trade
     }
 
     get amountOut(): TokenAmount {
