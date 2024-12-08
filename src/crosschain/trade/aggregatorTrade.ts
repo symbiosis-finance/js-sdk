@@ -126,7 +126,11 @@ export class AggregatorTrade extends SymbiosisTrade {
         this.trade = await new Promise((resolve, reject) => {
             const startTime = Date.now()
             const intervalId = setInterval(() => {
-                const timeout = Date.now() - startTime >= 2000
+                const diff = Date.now() - startTime
+                if (diff < 500) {
+                    return
+                }
+                const timeout = diff >= 2000
                 const allTradesFinished = trades.length === tradesCount
                 const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
 
