@@ -127,9 +127,6 @@ export class AggregatorTrade extends SymbiosisTrade {
             const startTime = Date.now()
             const intervalId = setInterval(() => {
                 const diff = Date.now() - startTime
-                if (diff < 500) {
-                    return
-                }
                 const timeout = diff >= 2000
                 const allTradesFinished = trades.length === tradesCount
                 const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
@@ -143,14 +140,14 @@ export class AggregatorTrade extends SymbiosisTrade {
                     }
                     clearInterval(intervalId)
                     return
-                }
+                } else if (diff >= 500) {
+                    const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
+                    const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
 
-                const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
-                const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
-
-                if (oneInch || openOcean) {
-                    resolve(this.selectTheBestTrade(successTrades))
-                    clearInterval(intervalId)
+                    if (oneInch || openOcean) {
+                        resolve(this.selectTheBestTrade(successTrades))
+                        clearInterval(intervalId)
+                    }
                 }
             }, 50)
         })
