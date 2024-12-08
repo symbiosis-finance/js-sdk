@@ -10,18 +10,6 @@ import { Percent, Token, TokenAmount } from '../../entities'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
-function timeLimitPromise<T>(name: string): Promise<T> {
-    return new Promise((_resolve, reject) => {
-        setTimeout(() => {
-            reject(new Error(`timeLimitPromise: ${name}`))
-        }, 2000)
-    })
-}
-
-async function timeLimited<T>(name: string, fn: Promise<T>): Promise<T> {
-    return Promise.race([fn, timeLimitPromise<T>(name)])
-}
-
 interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     dataProvider: DataProvider
@@ -53,8 +41,17 @@ export class AggregatorTrade extends SymbiosisTrade {
         const { dataProvider, from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } =
             this.params
 
-        const trades: Trade[] = []
+        const trades: (Trade | undefined)[] = []
 
+        function successTrade(trade: Trade) {
+            trades.push(trade)
+        }
+
+        function failTrade() {
+            trades.push(undefined)
+        }
+
+        let tradesCount = 0
         if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oracle = symbiosis.oneInchOracle(this.params.tokenAmountIn.token.chainId)
             const oneInchTrade = new OneInchTrade({
@@ -69,7 +66,8 @@ export class AggregatorTrade extends SymbiosisTrade {
                 protocols: oneInchProtocols,
             })
 
-            timeLimited('1inch', oneInchTrade.init()).then(trades.push).catch(console.error)
+            tradesCount += 1
+            oneInchTrade.init().then(successTrade).catch(failTrade)
         }
 
         if (OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
@@ -81,7 +79,8 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
             })
 
-            timeLimited('OpenOcean', openOceanTrade.init()).then(trades.push).catch(console.error)
+            tradesCount += 1
+            openOceanTrade.init().then(successTrade).catch(failTrade)
         }
 
         if (IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
@@ -93,7 +92,8 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            timeLimited('izumi', izumiTrade.init()).then(trades.push).catch(console.error)
+            tradesCount += 1
+            izumiTrade.init().then(successTrade).catch(failTrade)
         }
 
         if (UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
@@ -105,7 +105,8 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            timeLimited('UniV3', uniV3Trade.init()).then(trades.push).catch(console.error)
+            tradesCount += 1
+            uniV3Trade.init().then(successTrade).catch(failTrade)
         }
 
         if (UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
@@ -118,38 +119,36 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
             })
 
-            timeLimited('UniV2', uniV2Trade.init()).then(trades.push).catch(console.error)
+            tradesCount += 1
+            uniV2Trade.init().then(successTrade).catch(failTrade)
         }
+
         this.trade = await new Promise((resolve, reject) => {
             const startTime = Date.now()
             const intervalId = setInterval(() => {
-                console.log('tick 50')
-                if (Date.now() - startTime < 500) {
+                const timeout = Date.now() - startTime >= 2000
+                const allTradesFinished = trades.length === tradesCount
+                const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
+
+                if (allTradesFinished || timeout) {
+                    const theBestTrade = this.selectTheBestTrade(successTrades)
+                    if (theBestTrade) {
+                        resolve(theBestTrade)
+                    } else {
+                        reject(new Error('Aggregator trade failed'))
+                    }
+                    clearInterval(intervalId)
                     return
                 }
 
-                const oneInch = trades.find((trade) => trade.constructor.name === OneInchTrade.name)
-                const openOcean = trades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
+                const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
+                const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
 
                 if (oneInch || openOcean) {
-                    console.log('oneInch || openOcean', trades)
-                    resolve(this.selectTheBestTrade(trades))
+                    resolve(this.selectTheBestTrade(successTrades))
                     clearInterval(intervalId)
-                } else {
-                    console.log('no', trades.length)
                 }
             }, 50)
-
-            setTimeout(() => {
-                console.log('timeout', trades)
-                const bestTrade = this.selectTheBestTrade(trades)
-                if (bestTrade) {
-                    resolve(bestTrade)
-                } else {
-                    reject()
-                }
-                clearInterval(intervalId)
-            }, 2000)
         })
 
         return this
