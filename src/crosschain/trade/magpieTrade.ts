@@ -1,9 +1,9 @@
 import { ChainId } from '../../constants'
-import { Percent, TokenAmount } from '../../entities'
+import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade'
 import { getMinAmount } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
-import { getTokenAmountUsd } from '../coingecko'
+import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
 
@@ -139,13 +139,7 @@ export class MagpieTrade extends SymbiosisTrade {
 
         const amountOutMinRaw = getMinAmount(this.slippage, quote.amountOut)
         const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
-
-        let priceImpact = new Percent('0', BIPS_BASE)
-        try {
-            priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
-        } catch {
-            /* empty */
-        }
+        const priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
 
         this.out = {
             amountOut,
@@ -197,16 +191,30 @@ export class MagpieTrade extends SymbiosisTrade {
         return response.json()
     }
 
+    private async getTokenPrice(token: Token) {
+        return this.symbiosis.cache.get(
+            ['getTokenPriceUsd', token.chainId.toString(), token.address],
+            () => {
+                return getTokenPriceUsd(token)
+            },
+            600 // 10 minutes
+        )
+    }
+
     private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
-        const [tokenInPrice, tokenOutPrice] = await Promise.all([
-            this.symbiosis.dataProvider.getTokenPrice(tokenAmountIn.token),
-            this.symbiosis.dataProvider.getTokenPrice(tokenAmountOut.token),
-        ])
-        const tokenAmountInUsd = getTokenAmountUsd(this.tokenAmountIn, tokenInPrice)
-        const tokenAmountOutUsd = getTokenAmountUsd(this.amountOut, tokenOutPrice)
+        try {
+            const [tokenInPrice, tokenOutPrice] = await Promise.all([
+                this.getTokenPrice(tokenAmountIn.token),
+                this.getTokenPrice(tokenAmountOut.token),
+            ])
+            const tokenAmountInUsd = getTokenAmountUsd(tokenAmountIn, tokenInPrice)
+            const tokenAmountOutUsd = getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
 
-        const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
+            const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
 
-        return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
+            return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
+        } catch {
+            return new Percent('0', BIPS_BASE)
+        }
     }
 }
