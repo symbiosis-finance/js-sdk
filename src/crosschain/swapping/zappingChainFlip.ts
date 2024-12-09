@@ -5,14 +5,14 @@ import { OneInchProtocols } from '../trade/oneInchTrade'
 import { Error } from '../error'
 import { OmniPoolConfig, SwapExactInResult } from '../types'
 import { Symbiosis } from '../symbiosis'
-import { SwapSDK } from '@chainflip/sdk/swap'
+import { Asset, Chain, QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
 import { ChainId } from '../../constants'
 import { Address, getAddressEncoder, isAddress } from '@solana/addresses'
 import { BigNumber } from 'ethers'
 
 export interface ZappingChainFlipExactInParams {
     tokenAmountIn: TokenAmount
-    chainFlipTokenIn: Token
+    config: ChainFlipConfig
     from: string
     to: string
     slippage: number
@@ -20,16 +20,47 @@ export interface ZappingChainFlipExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
-const SOLANA_CHAIN_ID = 5
-const SOL_TOKEN_ID = 9
-const ARBITRUM_USDC_VAULT = '0x79001a5e762f3befc8e5871b42f6734e00498920'
+export enum ChainFlipChainId {
+    Ethereum = 1,
+    Polkadot = 2,
+    Bitcoin = 3,
+    Arbitrum = 4,
+    Solana = 5,
+}
+
+export enum ChainFlipAssetId {
+    ETH = 1,
+    FLIP = 2,
+    USDC = 3,
+    DOT = 4,
+    BTC = 5,
+    arbETH = 6,
+    arbUSDC = 7,
+    USDT = 8,
+    SOL = 9,
+    solUSDC = 10,
+}
+
+export interface ChainFlipToken {
+    chainId: ChainFlipChainId
+    assetId: ChainFlipAssetId
+    chain: Chain
+    asset: Asset
+}
+
+export interface ChainFlipConfig {
+    vaultAddress: string
+    tokenIn: Token
+    src: ChainFlipToken
+    dest: ChainFlipToken
+}
 
 export class ZappingChainFlip extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected solanaAddress!: string
     protected chainFlipSdk: SwapSDK
-    protected chainFlipTokenIn!: Token
-    protected quote!: any
+    protected quoteResponse!: QuoteResponse
+    protected config!: ChainFlipConfig
 
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
         super(symbiosis, omniPoolConfig)
@@ -40,26 +71,23 @@ export class ZappingChainFlip extends BaseSwapping {
     }
 
     protected async doPostTransitAction() {
-        if (!this.chainFlipTokenIn.equals(this.transit.amountOut.token)) {
-            throw new Error('Incorrect chainFlipTokenIn')
-        }
-
+        const { src, dest } = this.config
         const quoteResponse = await this.chainFlipSdk.getQuote({
             amount: this.transit.amountOut.raw.toString(),
-            srcChain: 'Arbitrum',
-            srcAsset: 'USDC',
-            destChain: 'Solana',
-            destAsset: 'SOL',
+            srcChain: src.chain,
+            srcAsset: src.asset,
+            destChain: dest.chain,
+            destAsset: dest.asset,
         })
 
         console.log({ quote: quoteResponse })
 
-        this.quote = quoteResponse.quote
+        this.quoteResponse = quoteResponse
     }
 
     public async exactIn({
         tokenAmountIn,
-        chainFlipTokenIn,
+        config,
         from,
         to,
         slippage,
@@ -68,9 +96,10 @@ export class ZappingChainFlip extends BaseSwapping {
         if (!isAddress(to)) {
             throw new Error('Solana address is not valid')
         }
-        this.solanaAddress = to
-        this.chainFlipTokenIn = chainFlipTokenIn
 
+        const chainFlipTokenIn = config.tokenIn
+        this.config = config
+        this.solanaAddress = to
         this.multicallRouter = this.symbiosis.multicallRouter(chainFlipTokenIn.chainId)
 
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
@@ -87,11 +116,14 @@ export class ZappingChainFlip extends BaseSwapping {
             transitTokenOut,
         })
         const SOL = GAS_TOKEN[ChainId.SOLANA_MAINNET]
-        const amountOut = new TokenAmount(SOL, this.quote['egressAmount'])
+
+        const { egressAmount, includedFees } = this.quoteResponse.quote
+
+        const amountOut = new TokenAmount(SOL, egressAmount)
 
         let usdcFee = 0
         let solFee = 0
-        this.quote['includedFees'].forEach(({ asset, amount }) => {
+        includedFees.forEach(({ asset, amount }) => {
             if (asset === 'USDC') {
                 usdcFee += parseInt(amount)
             }
@@ -157,20 +189,22 @@ export class ZappingChainFlip extends BaseSwapping {
             offsets.push(this.tradeC.callDataOffset!)
         }
 
+        const { dest, tokenIn, vaultAddress } = this.config
+
         const encoder = getAddressEncoder()
         const bytes = encoder.encode(this.solanaAddress as Address)
         const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
-            SOLANA_CHAIN_ID, // dstChain
+            dest.chainId, // dstChain
             bytes, // dstAddress
-            SOL_TOKEN_ID, // dstToken (SOL)
-            this.chainFlipTokenIn.address, // srcToken (USDC Arbi)
+            dest.assetId, // dstToken (SOL)
+            tokenIn.address, // srcToken (Arbitrum.USDC address)
             BigNumber.from(0), // amount (will be patched)
             [], //cfParameters
         ])
 
         callDatas.push(chainFlipData)
-        receiveSides.push(ARBITRUM_USDC_VAULT)
-        path.push(this.chainFlipTokenIn.address) // USDC Arbi
+        receiveSides.push(vaultAddress)
+        path.push(tokenIn.address) // Arbitrum.USDC address
         offsets.push(164)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
