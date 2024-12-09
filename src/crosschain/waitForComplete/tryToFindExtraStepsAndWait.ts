@@ -7,6 +7,7 @@ import { Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
+import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -18,7 +19,7 @@ interface ThorStatusResponse {
     }
 }
 
-type ExtraStep = 'thorChain' | 'burnRequestBtc' | 'burnRequestTon' | 'swapEthToTon'
+type ExtraStep = 'thorChain' | 'burnRequestBtc' | 'burnRequestTon' | 'swapEthToTon' | 'chainFlip'
 
 export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
@@ -66,10 +67,46 @@ export async function tryToFindExtraStepsAndWait(
             outHash,
         }
     }
+    const chainFlipSwap = await findChainFlipSwap(receipt)
+    if (chainFlipSwap) {
+        const outHash = await waitForChainFlipSwap(receipt.transactionHash)
+        return {
+            extraStep: 'chainFlip',
+            outHash,
+        }
+    }
 
     return {
         outHash: txHash,
     }
+}
+
+export async function findChainFlipSwap(receipt: TransactionReceipt) {
+    const swapTokenTopic0 = '0x834b524d9f8ccbd31b00b671c896697b96eb4398c0f56e9386a21f5df61e3ce3'
+    const log = receipt.logs.find((log) => {
+        return log.topics[0] === swapTokenTopic0
+    })
+
+    return !!log
+}
+
+export async function waitForChainFlipSwap(txHash: string): Promise<string> {
+    const chainFlipSdk = new SwapSDK({
+        network: 'mainnet',
+    })
+    const response = await longPolling({
+        pollingFunction: async (): Promise<SwapStatusResponse> => {
+            return chainFlipSdk.getStatus({ id: txHash })
+        },
+        successCondition: (response) => {
+            return response.state === 'COMPLETE'
+        },
+        error: new TxNotFound(txHash),
+        exceedDelay: 3_600_000, // 1 hour
+        pollingInterval: 10 * 1000, // 10 seconds
+    })
+
+    return response.broadcastTransactionRef
 }
 
 export async function findThorChainDeposit(receipt: TransactionReceipt) {
