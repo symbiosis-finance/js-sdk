@@ -5,20 +5,11 @@ import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
-import { ONE_INCH_ORACLE_MAP } from './constants'
 import {
-    AdaRouter,
-    AdaRouter__factory,
-    AvaxRouter,
-    AvaxRouter__factory,
     Bridge,
     Bridge__factory,
     Fabric,
     Fabric__factory,
-    KavaRouter,
-    KavaRouter__factory,
-    KimRouter,
-    KimRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -27,8 +18,6 @@ import {
     OmniPool__factory,
     OmniPoolOracle,
     OmniPoolOracle__factory,
-    OneInchOracle,
-    OneInchOracle__factory,
     Portal,
     Portal__factory,
     SymBtc,
@@ -37,8 +26,6 @@ import {
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
-    UniLikeRouter,
-    UniLikeRouter__factory,
 } from './contracts'
 import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
@@ -70,7 +57,7 @@ import {
     waitForComplete,
     waitFromTonTxMined,
 } from './waitForComplete'
-import { DataProvider } from './dataProvider'
+import { Cache } from './cache'
 import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
@@ -93,7 +80,7 @@ const defaultFetch: typeof fetch = (url, init) => {
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
 
-    public readonly dataProvider: DataProvider
+    public readonly cache: Cache
     public readonly config: Config
     public readonly configName: ConfigName
     public readonly clientId: string
@@ -174,7 +161,7 @@ export class Symbiosis {
         } else {
             throw new Error('Unknown config name')
         }
-        this.dataProvider = new DataProvider(this)
+        this.cache = new Cache()
 
         if (overrideConfig?.chains) {
             const { chains } = overrideConfig
@@ -194,14 +181,14 @@ export class Symbiosis {
         }
         this.oneInchConfig = {
             apiUrl: 'https://api.1inch.dev/swap/v5.2/',
-            apiKey: '<PUT_YOUR_API_KEY_HERE>',
+            apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.oneInchConfig) {
             this.oneInchConfig = overrideConfig.oneInchConfig
         }
         this.openOceanConfig = {
             apiUrl: 'https://open-api.openocean.finance/v4',
-            apiKey: '<PUT_YOUR_API_KEY_HERE>',
+            apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.openOceanConfig) {
             this.openOceanConfig = overrideConfig.openOceanConfig
@@ -224,7 +211,7 @@ export class Symbiosis {
     }
 
     public async getTonClient(): Promise<TonClient> {
-        return this.dataProvider.get(
+        return this.cache.get(
             ['tonClient'],
             async () => {
                 const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
@@ -323,41 +310,6 @@ export class Symbiosis {
         return SymBtc__factory.connect(symBtcConfig.address, signerOrProvider)
     }
 
-    public uniLikeRouter(chainId: ChainId, signer?: Signer): UniLikeRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return UniLikeRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public avaxRouter(chainId: ChainId, signer?: Signer): AvaxRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return AvaxRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public adaRouter(chainId: ChainId, signer?: Signer): AdaRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return AdaRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public kavaRouter(chainId: ChainId, signer?: Signer): KavaRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return KavaRouter__factory.connect(address, signerOrProvider)
-    }
-
-    public kimRouter(chainId: ChainId, signer?: Signer): KimRouter {
-        const address = this.chainConfig(chainId).router
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return KimRouter__factory.connect(address, signerOrProvider)
-    }
-
     public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {
         const address = this.chainConfig(chainId).multicallRouter
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -384,16 +336,6 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return OmniPoolOracle__factory.connect(oracle, signerOrProvider)
-    }
-
-    public oneInchOracle(chainId: ChainId, signer?: Signer): OneInchOracle {
-        const address = ONE_INCH_ORACLE_MAP[chainId]
-        if (!address) {
-            throw new Error(`Could not find oneInch off-chain oracle on chain ${chainId}`)
-        }
-        const signerOrProvider = signer || this.getProvider(chainId)
-
-        return OneInchOracle__factory.connect(address, signerOrProvider)
     }
 
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {

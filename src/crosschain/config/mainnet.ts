@@ -26,7 +26,7 @@ export const config: Config = {
             chainId: ChainId.BOBA_BNB,
             address: '0xA267C428b16728831Be52b144F78b8F054411f55',
             oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
-            generalPurpose: true,
+            generalPurpose: false,
         },
         {
             // ladys
@@ -72,6 +72,22 @@ export const config: Config = {
             oracle: '0xe717C95007cA64334c9facFFC1975310C3B98EE8',
             generalPurpose: false,
             chainExceptions: [ChainId.ETH_MAINNET, ChainId.BSC_MAINNET],
+        },
+        {
+            // CATI
+            chainId: ChainId.BOBA_BNB,
+            address: '0x8A71e95adFB7355d060D70b59954B065e3BD35EE',
+            oracle: '0x6B8521C0F46B76A55af7333Bc025e7B9480087C8',
+            generalPurpose: false,
+            chainExceptions: [],
+        },
+        {
+            // UXLINK
+            chainId: ChainId.BOBA_BNB,
+            address: '0x539E9071D542d6Ec7415Cb9DAa4aD20be1307CcB',
+            oracle: '0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514',
+            generalPurpose: false,
+            chainExceptions: [],
         },
     ],
     revertableAddress: {
@@ -1671,28 +1687,28 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                     },
                 },
-                // {
-                //     name: 'UXLINK Token',
-                //     symbol: 'UXLINK',
-                //     address: '0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293',
-                //     chainId: ChainId.TON_MAINNET,
-                //     decimals: 9,
-                //     icons: {
-                //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                //         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                //     },
-                // },
-                // {
-                //     name: 'Catizen',
-                //     symbol: 'CATI',
-                //     address: '0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400',
-                //     chainId: ChainId.TON_MAINNET,
-                //     decimals: 9,
-                //     icons: {
-                //         large: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
-                //         small: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
-                //     },
-                // },
+                {
+                    name: 'UXLINK Token',
+                    symbol: 'UXLINK',
+                    address: '0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293',
+                    chainId: ChainId.TON_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                    },
+                },
+                {
+                    name: 'Catizen',
+                    symbol: 'CATI',
+                    address: '0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400',
+                    chainId: ChainId.TON_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
+                        small: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,

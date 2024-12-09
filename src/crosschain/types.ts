@@ -84,12 +84,12 @@ export type SelectMode = 'fastest' | 'best_return'
 
 export type OneInchConfig = {
     apiUrl: string
-    apiKey: string
+    apiKeys: string[]
 }
 
 export type OpenOceanConfig = {
     apiUrl: string
-    apiKey: string
+    apiKeys: string[]
 }
 
 export type OverrideConfig = {
@@ -97,8 +97,8 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     fetch?: typeof fetch
     advisor?: AdvisorConfig
-    oneInchConfig: OneInchConfig
-    openOceanConfig: OpenOceanConfig
+    oneInchConfig?: OneInchConfig
+    openOceanConfig?: OpenOceanConfig
 }
 
 export interface MiddlewareCall {

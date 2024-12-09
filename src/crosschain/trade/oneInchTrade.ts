@@ -1,13 +1,22 @@
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
-import { TokenAmount } from '../../entities'
-import { OneInchOracle } from '../contracts'
-import { DataProvider } from '../dataProvider'
+import { Percent, TokenAmount, wrappedToken } from '../../entities'
+import { OneInchOracle__factory } from '../contracts'
 import { Symbiosis } from '../symbiosis'
-import { canOneInch, getMinAmount } from '../chainUtils'
-import { getTradePriceImpact } from './getTradePriceImpact'
+import { getMinAmount } from '../chainUtils'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { Error } from '../error'
+import { getMulticall } from '../multicall'
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatUnits } from '@ethersproject/units'
+import JSBI from 'jsbi'
+import { BIPS_BASE } from '../constants'
 
 export type OneInchProtocols = string[]
+
+interface GetTradePriceImpactParams {
+    tokenAmountIn: TokenAmount
+    tokenAmountOut: TokenAmount
+}
 
 interface Protocol {
     id: string
@@ -19,30 +28,46 @@ interface Protocol {
 interface OneInchTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
-    oracle: OneInchOracle
-    dataProvider: DataProvider
     protocols?: OneInchProtocols
 }
 
+const ONE_INCH_CHAINS: ChainId[] = [
+    ChainId.ETH_MAINNET,
+    ChainId.BSC_MAINNET,
+    ChainId.MATIC_MAINNET,
+    ChainId.OPTIMISM_MAINNET,
+    ChainId.ARBITRUM_MAINNET,
+    ChainId.AVAX_MAINNET,
+    ChainId.ZKSYNC_MAINNET,
+    ChainId.BASE_MAINNET,
+]
+
+const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
+    [ChainId.ETH_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.BSC_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.MATIC_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.OPTIMISM_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.ARBITRUM_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.AVAX_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+    [ChainId.ZKSYNC_MAINNET]: '0xC762d56614D3411eC6fABD56cb075D904b801613',
+    [ChainId.BASE_MAINNET]: '0x52cbE0f49CcdD4Dc6E9C13BAb024EABD2842045B',
+}
+
 export class OneInchTrade extends SymbiosisTrade {
-    private readonly oracle: OneInchOracle
     private readonly symbiosis: Symbiosis
     private readonly from: string
-    private readonly dataProvider: DataProvider
     private readonly protocols: OneInchProtocols
 
     static isAvailable(chainId: ChainId): boolean {
-        return canOneInch(chainId)
+        return ONE_INCH_CHAINS.includes(chainId)
     }
 
     public constructor(params: OneInchTradeParams) {
         super(params)
 
-        const { symbiosis, from, oracle, dataProvider, protocols } = params
-        this.oracle = oracle
+        const { symbiosis, from, protocols } = params
         this.symbiosis = symbiosis
         this.from = from
-        this.dataProvider = dataProvider
         this.protocols = protocols || []
     }
 
@@ -61,7 +86,7 @@ export class OneInchTrade extends SymbiosisTrade {
             toTokenAddress = NATIVE_TOKEN_ADDRESS
         }
 
-        const protocolsOrigin = await this.dataProvider.getOneInchProtocols(this.tokenAmountIn.token.chainId)
+        const protocolsOrigin = await OneInchTrade.getProtocols(this.symbiosis, this.tokenAmountIn.token.chainId)
         let protocols = this.protocols.filter((x) => protocolsOrigin.includes(x))
         if (protocols.length === 0) {
             protocols = protocolsOrigin
@@ -106,9 +131,7 @@ export class OneInchTrade extends SymbiosisTrade {
         const amountOutMinRaw = getMinAmount(this.slippage, amountOutRaw)
         const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
-        const priceImpact = await getTradePriceImpact({
-            dataProvider: this.dataProvider,
-            oracle: this.oracle,
+        const priceImpact = await this.getTradePriceImpact({
             tokenAmountIn: this.tokenAmountIn,
             tokenAmountOut: amountOut,
         })
@@ -133,8 +156,10 @@ export class OneInchTrade extends SymbiosisTrade {
             requestUrl.search = urlParams.toString()
         }
 
+        const apiKeys = symbiosis.oneInchConfig.apiKeys
+        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
         const response = await fetch(requestUrl.toString(), {
-            headers: { Authorization: `Bearer ${symbiosis.oneInchConfig.apiKey}` },
+            headers: { Authorization: `Bearer ${apiKey}` },
         })
 
         if (!response.ok) {
@@ -148,12 +173,12 @@ export class OneInchTrade extends SymbiosisTrade {
 
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
         try {
-            const json = await symbiosis.dataProvider.get(
-                ['makeOneInchRequest', chainId.toString()],
+            const json = await symbiosis.cache.get(
+                ['oneInchGetProtocols', chainId.toString()],
                 async () => {
                     return OneInchTrade.request(symbiosis, `${chainId}/liquidity-sources`)
                 },
-                60 * 60 // 1h
+                4 * 60 * 60 // 4h
             )
 
             return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
@@ -265,5 +290,67 @@ export class OneInchTrade extends SymbiosisTrade {
             amountOffset: method.offset,
             minReceivedOffset: method.minReceivedOffset,
         }
+    }
+
+    private async getTradePriceImpact({ tokenAmountIn, tokenAmountOut }: GetTradePriceImpactParams): Promise<Percent> {
+        const chainId = tokenAmountIn.token.chainId
+        const provider = this.symbiosis.getProvider(chainId)
+        const oracleAddress = ONE_INCH_ORACLE_MAP[chainId]
+        if (!oracleAddress) {
+            throw new Error(`Could not find oneInch off-chain oracle on chain ${chainId}`)
+        }
+        const oracleInterface = OneInchOracle__factory.createInterface()
+
+        const tokens = [wrappedToken(tokenAmountIn.token), wrappedToken(tokenAmountOut.token)]
+
+        const aggregated = await this.symbiosis.cache.get(
+            ['getOneInchRateToEth', ...tokens.map((i) => i.address)],
+            async () => {
+                const calls = tokens.map((token) => ({
+                    target: oracleAddress,
+                    callData: oracleInterface.encodeFunctionData(
+                        'getRateToEth',
+                        [token.address, true] // use wrapper
+                    ),
+                }))
+
+                const multicall = await getMulticall(provider)
+                return multicall.callStatic.tryAggregate(false, calls)
+            },
+            10 * 60 // 10 minutes
+        )
+
+        const denominator = BigNumber.from(10).pow(18) // eth decimals
+
+        const data = aggregated.map(([success, returnData], i): BigNumber | undefined => {
+            if (!success || returnData === '0x') return
+            const result = oracleInterface.decodeFunctionResult('getRateToEth', returnData)
+
+            const numerator = BigNumber.from(10).pow(tokens[i].decimals)
+
+            return BigNumber.from(result.weightedRate).mul(numerator).div(denominator)
+        })
+
+        if (!data[0] || !data[1]) {
+            throw new Error('OneInch oracle: cannot to receive rate to ETH')
+        }
+        const multiplierPow = 18
+        const multiplier = BigNumber.from(10).pow(multiplierPow)
+
+        const spot = data[1].mul(multiplier).div(data[0]) // with e18
+
+        // calc real rate
+        const inBn = BigNumber.from(tokenAmountIn.raw.toString()).mul(
+            BigNumber.from(10).pow(tokenAmountOut.token.decimals)
+        )
+        const outBn = BigNumber.from(tokenAmountOut.raw.toString()).mul(
+            BigNumber.from(10).pow(tokenAmountIn.token.decimals)
+        )
+        const real = inBn.mul(multiplier).div(outBn)
+
+        const impact = real.mul(multiplier).div(spot)
+        const impactNumber = 1 - Number.parseFloat(formatUnits(impact, multiplierPow))
+
+        return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
     }
 }

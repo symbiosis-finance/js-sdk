@@ -1,13 +1,13 @@
 import { TokenAmount } from '../../entities'
-import { DataProvider } from '../dataProvider'
+import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { BigNumber } from 'ethers'
 import { Synthesis } from '../contracts'
 import { ChainId } from '../../constants'
 
-export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis, dataProvider: DataProvider) => {
+export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis, cache: Cache) => {
     const syBtc = syBtcAmount.token
-    let fee = await dataProvider.get(
+    let fee = await cache.get(
         ['syntToMinFeeBTC', synthesis.address, syBtc.address],
         async () => {
             return synthesis.syntToMinFeeBTC(syBtc.address)
@@ -16,7 +16,7 @@ export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis
     )
 
     try {
-        const fastestFee = await dataProvider.get(['getFastestFee'], getFastestFee, 60) // 1 minute
+        const fastestFee = await cache.get(['getFastestFee'], getFastestFee, 60) // 1 minute
         const recommendedFee = BigNumber.from(fastestFee * 300) // 300 vByte
         if (recommendedFee.gt(fee)) {
             fee = recommendedFee

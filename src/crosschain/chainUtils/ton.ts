@@ -216,9 +216,9 @@ export class Bridge implements Contract {
 }
 
 export const MIN_META_SYNTH_TONS = toNano('0.02')
-export const MIN_META_SYNTH_JETTONS = toNano('0.1')
+export const MIN_META_SYNTH_JETTONS = toNano('0.2')
 export const MIN_SYNTH_TONS = toNano('0.015')
-export const MIN_SYNTH_JETTONS = toNano('0.1')
+export const MIN_SYNTH_JETTONS = toNano('0.2')
 export const NOTIFICATION_PAYMENT = toNano('0.05')
 
 interface MetaSynthesizeParams {
@@ -246,16 +246,6 @@ export function isWTon(symbiosis: Symbiosis, token: Token) {
         return false
     }
     return wton.equals(token)
-}
-
-export function isUsdt(symbiosis: Symbiosis, token: Token) {
-    const usdt = symbiosis
-        .tokens()
-        .find((token) => isTonChainId(token.chainId) && token.symbol?.toLowerCase() === 'usdt')
-    if (!usdt) {
-        return false
-    }
-    return usdt.equals(token)
 }
 
 export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise<TonTransactionData> {
@@ -316,7 +306,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
                 },
             ],
         }
-    } else if (isUsdt(symbiosis, amountIn.token)) {
+    } else {
         const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
@@ -347,8 +337,6 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             ],
         }
     }
-
-    throw new Error('No TON transaction request. Unsupported token')
 }
 
 interface SynthesizeParams {
@@ -399,7 +387,7 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
                 },
             ],
         }
-    } else if (isUsdt(symbiosis, amountIn.token)) {
+    } else {
         const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
@@ -430,8 +418,6 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
             ],
         }
     }
-
-    throw new Error('No TON transaction request. Unsupported token')
 }
 
 export function tonAdvisorMock(feeToken: Token) {

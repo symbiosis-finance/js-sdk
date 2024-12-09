@@ -1,11 +1,16 @@
 import { ChainId } from '../../constants'
-import { Percent, TokenAmount } from '../../entities'
+import { Percent, Token, TokenAmount } from '../../entities'
 import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade'
 import { getMinAmount } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
-import { getTokenAmountUsd } from '../coingecko'
+import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
+
+interface MagpieQuoteRequest {
+    fromTokenAddress: string
+    toTokenAddress: string
+}
 
 interface MagpieQuoteResponse {
     id: string
@@ -124,20 +129,17 @@ export class MagpieTrade extends SymbiosisTrade {
             toTokenAddress = MAGPIE_NATIVE
         }
 
-        const quote: MagpieQuoteResponse = await this.getQuote(fromTokenAddress, toTokenAddress)
-        const tx: MagpieTransactionResponse = await this.getTransaction(quote.id, this.to, this.from)
+        const quote: MagpieQuoteResponse = await this.getQuote({
+            fromTokenAddress,
+            toTokenAddress,
+        })
+        const tx: MagpieTransactionResponse = await this.getTransaction(quote.id)
 
         const amountOut = new TokenAmount(this.tokenOut, quote.amountOut)
 
         const amountOutMinRaw = getMinAmount(this.slippage, quote.amountOut)
         const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
-
-        let priceImpact = new Percent('0', BIPS_BASE)
-        try {
-            priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
-        } catch {
-            /* empty */
-        }
+        const priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
 
         this.out = {
             amountOut,
@@ -153,13 +155,16 @@ export class MagpieTrade extends SymbiosisTrade {
         return this
     }
 
-    private async getQuote(fromTokenAddress: string, toTokenAddress: string): Promise<MagpieQuoteResponse> {
+    private async getQuote({ fromTokenAddress, toTokenAddress }: MagpieQuoteRequest): Promise<MagpieQuoteResponse> {
         const url = new URL(`${BASE_URL}/aggregator/quote`)
         url.searchParams.set('network', this.chain!.slug)
         url.searchParams.set('fromTokenAddress', fromTokenAddress)
         url.searchParams.set('toTokenAddress', toTokenAddress)
         url.searchParams.set('sellAmount', this.tokenAmountIn.raw.toString())
         url.searchParams.set('slippage', (this.slippage / 10000).toString())
+        url.searchParams.set('fromAddress', this.from)
+        url.searchParams.set('toAddress', this.to)
+        url.searchParams.set('gasless', 'false')
 
         const quoteResponse = await this.symbiosis.fetch(url.toString())
 
@@ -171,15 +176,9 @@ export class MagpieTrade extends SymbiosisTrade {
         return quoteResponse.json()
     }
 
-    private async getTransaction(
-        quoteId: string,
-        toAddress: string,
-        fromAddress: string
-    ): Promise<MagpieTransactionResponse> {
+    private async getTransaction(quoteId: string): Promise<MagpieTransactionResponse> {
         const url = new URL(`${BASE_URL}/aggregator/transaction`)
         url.searchParams.set('quoteId', quoteId)
-        url.searchParams.set('toAddress', toAddress)
-        url.searchParams.set('fromAddress', fromAddress)
         url.searchParams.set('estimateGas', 'false')
 
         const response = await this.symbiosis.fetch(url.toString())
@@ -192,16 +191,30 @@ export class MagpieTrade extends SymbiosisTrade {
         return response.json()
     }
 
+    private async getTokenPrice(token: Token) {
+        return this.symbiosis.cache.get(
+            ['getTokenPriceUsd', token.chainId.toString(), token.address],
+            () => {
+                return getTokenPriceUsd(token)
+            },
+            600 // 10 minutes
+        )
+    }
+
     private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
-        const [tokenInPrice, tokenOutPrice] = await Promise.all([
-            this.symbiosis.dataProvider.getTokenPrice(tokenAmountIn.token),
-            this.symbiosis.dataProvider.getTokenPrice(tokenAmountOut.token),
-        ])
-        const tokenAmountInUsd = getTokenAmountUsd(this.tokenAmountIn, tokenInPrice)
-        const tokenAmountOutUsd = getTokenAmountUsd(this.amountOut, tokenOutPrice)
+        try {
+            const [tokenInPrice, tokenOutPrice] = await Promise.all([
+                this.getTokenPrice(tokenAmountIn.token),
+                this.getTokenPrice(tokenAmountOut.token),
+            ])
+            const tokenAmountInUsd = getTokenAmountUsd(tokenAmountIn, tokenInPrice)
+            const tokenAmountOutUsd = getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
 
-        const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
+            const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
 
-        return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
+            return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
+        } catch {
+            return new Percent('0', BIPS_BASE)
+        }
     }
 }

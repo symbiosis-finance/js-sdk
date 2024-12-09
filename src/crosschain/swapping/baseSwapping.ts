@@ -4,7 +4,6 @@ import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
-import { DataProvider } from '../dataProvider'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { Transit } from '../transit'
@@ -65,8 +64,6 @@ export abstract class BaseSwapping {
     protected transit!: Transit
     protected tradeC: SymbiosisTrade | undefined
 
-    protected dataProvider: DataProvider
-
     protected readonly symbiosis: Symbiosis
     protected synthesisV2!: Synthesis
 
@@ -81,7 +78,6 @@ export abstract class BaseSwapping {
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
         this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
-        this.dataProvider = new DataProvider(symbiosis)
         this.profiler = new Profiler()
     }
 
@@ -443,7 +439,6 @@ export abstract class BaseSwapping {
             to,
             slippage: this.slippage['A'],
             symbiosis: this.symbiosis,
-            dataProvider: this.dataProvider,
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
@@ -484,7 +479,6 @@ export abstract class BaseSwapping {
             to: this.tradeCTo(),
             slippage: this.slippage['C'],
             symbiosis: this.symbiosis,
-            dataProvider: this.dataProvider,
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,

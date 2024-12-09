@@ -45,8 +45,8 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
     const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
     const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const [fee, approveAddress] = await symbiosis.dataProvider.get(
-        ['feeCollector.fee', 'feeCollector.onchainGateway'],
+    const [fee, approveAddress] = await symbiosis.cache.get(
+        ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
         () => {
             return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
         },
@@ -192,7 +192,7 @@ async function getBurnCall({
     bitcoinAddress: Buffer
 }): Promise<Call> {
     const synthesis = symbiosis.synthesis(amountIn.token.chainId)
-    const fee = await getToBtcFee(amountIn, synthesis, symbiosis.dataProvider)
+    const fee = await getToBtcFee(amountIn, synthesis, symbiosis.cache)
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
         fee.raw.toString(), // _stableBridgingFee must be >= minBtcFee
         '0', // _amount will be patched
