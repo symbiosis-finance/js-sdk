@@ -12,6 +12,7 @@ import { Error } from '../error'
 import { isBtcChainId } from './btc'
 import { isTronChainId } from './tron'
 import { isTonChainId } from './ton'
+import { isSolanaChainId } from './solana'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -28,7 +29,7 @@ interface GetExternalIdParams {
 
 export function isEvmChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
-    return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId)
+    return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId) && !isSolanaChainId(chainId)
 }
 
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
