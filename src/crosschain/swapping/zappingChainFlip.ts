@@ -72,17 +72,13 @@ export class ZappingChainFlip extends BaseSwapping {
 
     protected async doPostTransitAction() {
         const { src, dest } = this.config
-        const quoteResponse = await this.chainFlipSdk.getQuote({
+        this.quoteResponse = await this.chainFlipSdk.getQuote({
             amount: this.transit.amountOut.raw.toString(),
             srcChain: src.chain,
             srcAsset: src.asset,
             destChain: dest.chain,
             destAsset: dest.asset,
         })
-
-        console.log({ quote: quoteResponse })
-
-        this.quoteResponse = quoteResponse
     }
 
     public async exactIn({

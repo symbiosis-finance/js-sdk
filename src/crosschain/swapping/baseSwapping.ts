@@ -176,8 +176,6 @@ export abstract class BaseSwapping {
         this.transit = transit as Transit
         this.tradeC = tradeC as SymbiosisTrade | undefined
 
-        await this.doPostTransitAction()
-
         if (this.tradeC) {
             routes.push({
                 provider: this.tradeC.tradeType,
@@ -202,6 +200,8 @@ export abstract class BaseSwapping {
             this.tradeC.applyAmountIn(this.transit.amountOut)
         }
         this.profiler.tick('PATCHING')
+
+        await this.doPostTransitAction()
 
         const tokenAmountOut = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const tokenAmountOutMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin

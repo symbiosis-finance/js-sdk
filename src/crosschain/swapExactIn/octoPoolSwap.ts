@@ -25,7 +25,6 @@ export async function octoPoolSwap({
     slippage,
     deadline,
 }: SwapExactInParams): Promise<SwapExactInResult> {
-    debugger
     const tokenInPool = symbiosis.getOmniPoolByToken(tokenAmountIn.token)
     const tokenOutPool = symbiosis.getOmniPoolByToken(tokenOut)
     if (!tokenInPool || !tokenOutPool) {
