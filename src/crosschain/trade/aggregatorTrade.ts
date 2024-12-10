@@ -6,6 +6,7 @@ import { IzumiTrade } from './izumiTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
+import { utils } from 'ethers'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -48,8 +49,13 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(undefined)
         }
 
+        const clientId = utils.parseBytes32String(symbiosis.clientId)
+        const isOneInchClient = clientId === '1inch'
+        const isOpenOceanClient = clientId === 'openocean'
+        const isOtherClient = !isOneInchClient && !isOpenOceanClient
+
         let tradesCount = 0
-        if (OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (!isOpenOceanClient && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -64,7 +70,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             oneInchTrade.init().then(successTrade).catch(failTrade)
         }
 
-        if (OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (!isOneInchClient && OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
             const openOceanTrade = new OpenOceanTrade({
                 symbiosis,
                 to,
@@ -77,7 +83,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             openOceanTrade.init().then(successTrade).catch(failTrade)
         }
 
-        if (IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
+        if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
             const izumiTrade = new IzumiTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -90,7 +96,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             izumiTrade.init().then(successTrade).catch(failTrade)
         }
 
-        if (UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
+        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
             const uniV3Trade = new UniV3Trade({
                 symbiosis,
                 tokenAmountIn,
@@ -103,7 +109,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             uniV3Trade.init().then(successTrade).catch(failTrade)
         }
 
-        if (UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
+        if (isOtherClient && UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
             const uniV2Trade = new UniV2Trade({
                 symbiosis,
                 tokenAmountIn,
