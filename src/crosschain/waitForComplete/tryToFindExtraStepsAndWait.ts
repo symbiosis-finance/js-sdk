@@ -106,6 +106,10 @@ export async function waitForChainFlipSwap(txHash: string): Promise<string> {
         pollingInterval: 10 * 1000, // 10 seconds
     })
 
+    if (response.state !== 'COMPLETE') {
+        throw new TxNotFound(txHash)
+    }
+
     return response.broadcastTransactionRef
 }
 
