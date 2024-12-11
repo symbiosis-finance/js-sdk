@@ -237,6 +237,12 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
         quoter: '0x33531bDBFE34fa6Fd5963D0423f7699775AacaaF',
         baseTokens: [],
     },
+    [ChainId.MORPH_MAINNET]: {
+        swap: '0x3EF68D3f7664b2805D4E88381b64868a56f88bC4',
+        factory: '0x8c7d3063579BdB0b90997e18A770eaE32E1eBb08',
+        quoter: '0x33531bDBFE34fa6Fd5963D0423f7699775AacaaF',
+        baseTokens: [],
+    },
 }
 
 interface IzumiTradeParams extends SymbiosisTradeParams {
