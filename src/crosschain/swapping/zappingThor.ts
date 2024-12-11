@@ -6,7 +6,7 @@ import fetch from 'isomorphic-unfetch'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { Error, ErrorCode } from '../error'
 import { BigNumber } from 'ethers'
-import { getMinAmount } from '../chainUtils'
+import { getMinAmount, isEvmChainId } from '../chainUtils'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
 import { SwapExactInResult } from '../types'
 
@@ -91,6 +91,7 @@ export class ZappingThor extends BaseSwapping {
     protected thorTokenOut = 'BTC.BTC'
     protected thorVault!: string
     protected thorQuote!: ThorQuote
+    protected evmTo!: string
 
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
@@ -122,6 +123,11 @@ export class ZappingThor extends BaseSwapping {
         this.bitcoinAddress = to
         this.thorTokenIn = thorTokenIn
 
+        this.evmTo = from
+        if (!isEvmChainId(tokenAmountIn.token.chainId)) {
+            this.evmTo = this.symbiosis.config.revertableAddress.default
+        }
+
         // check if there is "Available" ThorChain pool at the moment
         await ZappingThor.getThorPools(thorTokenIn)
 
@@ -144,7 +150,7 @@ export class ZappingThor extends BaseSwapping {
             tokenAmountIn,
             tokenOut: thorTokenIn,
             from,
-            to: from,
+            to: this.evmTo,
             slippage,
             deadline,
             transitTokenIn,
@@ -223,7 +229,7 @@ export class ZappingThor extends BaseSwapping {
 
         url.searchParams.set('from_asset', toThorToken(this.thorTokenIn))
         url.searchParams.set('to_asset', this.thorTokenOut)
-        url.searchParams.set('refund_address', this.from)
+        url.searchParams.set('refund_address', this.evmTo)
         url.searchParams.set('amount', toThorAmount(amount).toString())
         url.searchParams.set('destination', this.bitcoinAddress)
         url.searchParams.set('streaming_interval', '1')
@@ -308,7 +314,7 @@ export class ZappingThor extends BaseSwapping {
             receiveSides,
             path,
             offsets,
-            this.from,
+            this.evmTo,
         ])
     }
 }

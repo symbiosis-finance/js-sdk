@@ -11,6 +11,7 @@ import { Error } from '../error'
 import { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import {
+    buildMetaSynthesize,
     DetailedSlippage,
     getExternalId,
     getInternalId,
@@ -174,6 +175,8 @@ export abstract class BaseSwapping {
 
         this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
         this.transit = transit as Transit
+        // this call is necessary because buildMulticall depends on the result of doPostTransitAction
+        await this.doPostTransitAction()
         this.tradeC = tradeC as SymbiosisTrade | undefined
 
         if (this.tradeC) {
@@ -399,12 +402,29 @@ export abstract class BaseSwapping {
     }
 
     protected async getTonTransactionRequest(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _fee: TokenAmount,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _feeV2: TokenAmount | undefined
+        fee: TokenAmount,
+        feeV2: TokenAmount | undefined
     ): Promise<TonTransactionData> {
-        throw new Error('getTonTransactionRequest not implemented')
+        let secondSwapCallData = this.secondSwapCalldata()
+        if (secondSwapCallData.length === 0) {
+            secondSwapCallData = ''
+        }
+        return buildMetaSynthesize({
+            symbiosis: this.symbiosis,
+            fee,
+            amountIn: this.transit.getBridgeAmountIn(),
+            secondDexRouter: this.secondDexRouter(),
+            secondSwapCallData: secondSwapCallData as string,
+            swapTokens: this.swapTokens().map(tronAddressToEvm),
+            from: this.from,
+            to: this.to,
+            revertableAddress: this.getRevertableAddress('AB'),
+            chainIdOut: this.omniPoolConfig.chainId,
+            validUntil: this.deadline,
+            finalReceiveSide: tronAddressToEvm(this.transit.isV2() ? this.finalReceiveSideV2() : AddressZero),
+            finalCallData: this.transit.isV2() ? this.finalCalldataV2(feeV2) : '',
+            finalOffset: this.transit.isV2() ? this.finalOffsetV2() : 0,
+        })
     }
 
     protected calculatePriceImpact(): Percent {

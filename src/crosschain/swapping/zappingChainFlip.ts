@@ -9,6 +9,7 @@ import { Asset, Chain, QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
 import { ChainId } from '../../constants'
 import { Address, getAddressEncoder, isAddress } from '@solana/addresses'
 import { BigNumber } from 'ethers'
+import { isEvmChainId } from '../chainUtils'
 
 export interface ZappingChainFlipExactInParams {
     tokenAmountIn: TokenAmount
@@ -61,6 +62,7 @@ export class ZappingChainFlip extends BaseSwapping {
     protected chainFlipSdk: SwapSDK
     protected quoteResponse!: QuoteResponse
     protected config!: ChainFlipConfig
+    protected evmTo!: string
 
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
         super(symbiosis, omniPoolConfig)
@@ -101,11 +103,15 @@ export class ZappingChainFlip extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(chainFlipTokenIn.chainId, this.omniPoolConfig)
 
+        this.evmTo = from
+        if (!isEvmChainId(tokenAmountIn.token.chainId)) {
+            this.evmTo = this.symbiosis.config.revertableAddress.default
+        }
         const result = await this.doExactIn({
             tokenAmountIn,
             tokenOut: chainFlipTokenIn,
             from,
-            to: from,
+            to: this.evmTo,
             slippage,
             deadline,
             transitTokenIn,
@@ -188,10 +194,10 @@ export class ZappingChainFlip extends BaseSwapping {
         const { dest, tokenIn, vaultAddress } = this.config
 
         const encoder = getAddressEncoder()
-        const bytes = encoder.encode(this.solanaAddress as Address)
+        const dstAddress = encoder.encode(this.solanaAddress as Address)
         const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
             dest.chainId, // dstChain
-            bytes, // dstAddress
+            dstAddress, // dstAddress
             dest.assetId, // dstToken (SOL)
             tokenIn.address, // srcToken (Arbitrum.USDC address)
             BigNumber.from(0), // amount (will be patched)
@@ -209,7 +215,7 @@ export class ZappingChainFlip extends BaseSwapping {
             receiveSides,
             path,
             offsets,
-            this.from,
+            this.evmTo,
         ])
     }
 }
