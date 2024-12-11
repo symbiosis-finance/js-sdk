@@ -12,6 +12,7 @@ export type SymbiosisTradeType =
     | 'octopool'
     | 'symbiosis'
     | 'thorchain-bridge'
+    | 'chainflip-bridge'
 
 export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 
