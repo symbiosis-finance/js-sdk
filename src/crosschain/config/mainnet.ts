@@ -736,8 +736,8 @@ export const config: Config = {
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
-            rpc: 'https://mainnet.optimism.io',
-            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://rpc.ankr.com/optimism'],
+            rpc: 'https://optimism-rpc.publicnode.com',
+            spareRpcs: ['https://op-pokt.nodies.app', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1229,8 +1229,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MODE_MAINNET,
-            rpc: 'https://mainnet.mode.network',
-            spareRpcs: ['https://1rpc.io/mode', 'https://mode.drpc.org'],
+            rpc: 'https://1rpc.io/mode',
+            spareRpcs: ['https://mode.gateway.tenderly.co', 'https://mode.drpc.org'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1595,8 +1595,8 @@ export const config: Config = {
         },
         {
             id: ChainId.GRAVITY_MAINNET,
-            rpc: 'https://rpc.gravity.xyz',
-            spareRpcs: ['https://rpc.ankr.com/gravity'],
+            rpc: 'https://rpc.ankr.com/gravity',
+            spareRpcs: ['https://1625.rpc.thirdweb.com', 'https://rpc.gravity.xyz'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1782,7 +1782,6 @@ export const config: Config = {
             rpc: 'https://solana-rpc.publicnode.com',
             spareRpcs: [],
             filterBlockOffset: 1000,
-            stables: [],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x0000000000000000000000000000000000000000',
@@ -1792,6 +1791,19 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
+            stables: [
+                {
+                    name: 'USDC',
+                    symbol: 'USDC',
+                    address: '0x0000000000000000000000000000000000000003', // according to ChainFlipAssetId
+                    chainId: ChainId.SOLANA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
         },
     ],
 }

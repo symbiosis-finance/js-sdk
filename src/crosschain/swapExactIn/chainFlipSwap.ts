@@ -10,13 +10,21 @@ import {
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
 
-const SOL: ChainFlipToken = {
+const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
     assetId: ChainFlipAssetId.SOL,
     chain: 'Solana',
     asset: 'SOL',
 }
-const USDC: ChainFlipToken = {
+
+const CF_SOL_USDC: ChainFlipToken = {
+    chainId: ChainFlipChainId.Solana,
+    assetId: ChainFlipAssetId.USDC,
+    chain: 'Solana',
+    asset: 'USDC',
+}
+
+const CF_ARB_USDC: ChainFlipToken = {
     chainId: ChainFlipChainId.Arbitrum,
     assetId: ChainFlipAssetId.USDC,
     chain: 'Arbitrum',
@@ -39,8 +47,14 @@ const CONFIGS: ChainFlipConfig[] = [
     {
         vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
         tokenIn: ARB_USDC,
-        src: USDC,
-        dest: SOL,
+        src: CF_ARB_USDC,
+        dest: CF_SOL_SOL,
+    },
+    {
+        vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
+        tokenIn: ARB_USDC,
+        src: CF_ARB_USDC,
+        dest: CF_SOL_USDC,
     },
 ]
 

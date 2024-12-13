@@ -25,7 +25,7 @@ import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
-import { isTronChainId, isBtcChainId, isTonChainId } from '../../chainUtils'
+import { isTronChainId, isBtcChainId, isTonChainId, isSolanaChainId } from '../../chainUtils'
 import fs from 'fs'
 
 export type Id = number
@@ -105,7 +105,7 @@ export class Builder {
             const chain = chains[i]
             const bridge = this.bridge(chain.id)
 
-            if (isTonChainId(chain.id)) {
+            if (isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
                 continue
             }
 
@@ -130,7 +130,7 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
-            if (isTonChainId(chain.id)) {
+            if (isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
                 continue
             }
             const portal = this.portal(chain.id)
@@ -170,7 +170,7 @@ export class Builder {
             const chain = chains[i]
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtcChainId(chain.id) || isTonChainId(chain.id)) {
+            if (isBtcChainId(chain.id) || isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
                 continue
             }
 
