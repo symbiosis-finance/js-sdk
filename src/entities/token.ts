@@ -115,6 +115,11 @@ export const WETH = {
         address: '',
         decimals: 8,
     }),
+    [ChainId.SOLANA_MAINNET]: new Token({
+        chainId: ChainId.SOLANA_MAINNET,
+        address: '',
+        decimals: 9,
+    }),
     // << FAKE
     [ChainId.TRON_MAINNET]: new Token({
         chainId: ChainId.TRON_MAINNET,

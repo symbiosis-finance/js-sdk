@@ -11,6 +11,7 @@ import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
+import { isToSolanaSwapSupported, toSolanaSwap } from './toSolanaSwap'
 
 const syBTC = new Token({
     name: 'Symbiosis BTC',
@@ -61,6 +62,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
+    }
+
+    if (isToSolanaSwapSupported(params)) {
+        return toSolanaSwap(params)
     }
 
     if (isBridgeSupported(params)) {

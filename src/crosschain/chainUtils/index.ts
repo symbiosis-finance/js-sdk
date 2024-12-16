@@ -9,3 +9,4 @@ export {
     type TronTransactionData,
 } from './tron'
 export * from './evm'
+export * from './solana'

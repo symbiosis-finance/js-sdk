@@ -1,8 +1,6 @@
 import { BaseSwapping } from './baseSwapping'
 import { Swapping } from './swapping'
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { isTonChainId } from '../chainUtils'
-import { SwappingFromTon } from './swappingFromTon'
 
 export class SwappingMiddleware extends BaseSwapping {
     protected middlewareAddress!: string
@@ -10,14 +8,10 @@ export class SwappingMiddleware extends BaseSwapping {
     protected middlewareOffset!: number
 
     public async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
-        const { middlewareCall, tokenAmountIn } = params
+        const { middlewareCall } = params
         if (!middlewareCall) {
             const { symbiosis, omniPoolConfig } = this
-            let swapping: Swapping | SwappingFromTon = new Swapping(symbiosis, omniPoolConfig)
-
-            if (isTonChainId(tokenAmountIn.token.chainId)) {
-                swapping = new SwappingFromTon(symbiosis, omniPoolConfig)
-            }
+            const swapping = new Swapping(symbiosis, omniPoolConfig)
             return swapping.doExactIn(params)
         }
 

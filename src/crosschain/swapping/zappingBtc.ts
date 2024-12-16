@@ -2,11 +2,12 @@ import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 import { BaseSwapping } from './baseSwapping'
 import { MulticallRouter, Synthesis } from '../contracts'
 import { OneInchProtocols } from '../trade/oneInchTrade'
-import { Network, networks, address, initEccLib } from 'bitcoinjs-lib'
+import { address, initEccLib, Network, networks } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { getToBtcFee } from '../chainUtils/btc'
 import { SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
+import { isEvmChainId } from '../chainUtils'
 
 initEccLib(ecc)
 
@@ -43,6 +44,7 @@ export class ZappingBtc extends BaseSwapping {
     protected sBtc!: Token
     protected minBtcFee!: TokenAmount
     protected synthesis!: Synthesis
+    protected evmTo!: string
 
     protected async doPostTransitAction(): Promise<void> {
         const amount = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
@@ -75,11 +77,15 @@ export class ZappingBtc extends BaseSwapping {
 
         this.synthesis = this.symbiosis.synthesis(syBtc.chainId)
 
+        this.evmTo = from
+        if (!isEvmChainId(tokenAmountIn.token.chainId)) {
+            this.evmTo = this.symbiosis.config.revertableAddress.default
+        }
         const result = await this.doExactIn({
             tokenAmountIn,
             tokenOut: syBtc,
             from,
-            to: from,
+            to: this.evmTo,
             slippage,
             deadline,
             transitTokenIn,
@@ -160,7 +166,7 @@ export class ZappingBtc extends BaseSwapping {
             receiveSides,
             path,
             offsets,
-            this.from,
+            this.evmTo,
         ])
     }
 }
