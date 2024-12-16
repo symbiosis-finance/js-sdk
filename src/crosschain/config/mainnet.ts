@@ -1455,17 +1455,6 @@ export const config: Config = {
             filterBlockOffset: 2000,
             stables: [
                 {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
-                    address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',
-                    chainId: ChainId.SEI_EVM_MAINNET,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
-                    },
-                },
-                {
                     name: 'USDT',
                     symbol: 'USDT',
                     address: '0xB75D0B03c06A926e488e2659DF1A861F860bD3d1',
@@ -1474,6 +1463,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
+                    },
+                },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',
+                    chainId: ChainId.SEI_EVM_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
                     },
                 },
             ],
@@ -1595,7 +1595,7 @@ export const config: Config = {
         },
         {
             id: ChainId.GRAVITY_MAINNET,
-            rpc: 'https://rpc.ankr.com/gravity',
+            rpc: 'https://rpc.gravity.xyz',
             spareRpcs: ['https://1625.rpc.thirdweb.com', 'https://rpc.gravity.xyz'],
             filterBlockOffset: 1000,
             stables: [
@@ -1622,7 +1622,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x0000000000000000000000000000000000000000',
+            router: '0x18E621B64d7808c3C47bccbbD7485d23F257D26f',
             dexFee: 0,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
