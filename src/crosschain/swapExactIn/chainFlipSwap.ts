@@ -1,5 +1,4 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { theBest } from './utils'
 import {
     ChainFlipAssetId,
     ChainFlipChainId,
@@ -9,6 +8,7 @@ import {
 } from '../swapping/zappingChainFlip'
 import { Token } from '../../entities'
 import { ChainId } from '../../constants'
+import { theBest } from './utils'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
@@ -61,23 +61,27 @@ const CONFIGS: ChainFlipConfig[] = [
 export const CHAIN_FLIP_TOKENS = CONFIGS.map((i) => i.tokenIn)
 
 export async function chainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode } = context
+    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
 
     // via stable pool only
     const poolConfig = symbiosis.config.omniPools[0]
 
-    const promises = CONFIGS.map((config) => {
-        const zappingChainFlip = new ZappingChainFlip(symbiosis, poolConfig)
+    const CF_CONFIG = CONFIGS.find((config) => tokenOut.name?.toLowerCase() === config.dest.asset.toLowerCase())
 
-        return zappingChainFlip.exactIn({
-            tokenAmountIn,
-            config,
-            from,
-            to,
-            slippage,
-            deadline,
-        })
+    if (!CF_CONFIG) {
+        throw new Error('ChainFlipSwap: No config found for tokenOut')
+    }
+
+    const zappingChainFlip = new ZappingChainFlip(symbiosis, poolConfig)
+
+    const promise = zappingChainFlip.exactIn({
+        tokenAmountIn,
+        config: CF_CONFIG,
+        from,
+        to,
+        slippage,
+        deadline,
     })
 
-    return theBest(promises, selectMode)
+    return theBest([promise], selectMode)
 }
