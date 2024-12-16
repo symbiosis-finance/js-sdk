@@ -736,8 +736,8 @@ export const config: Config = {
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
-            rpc: 'https://optimism-rpc.publicnode.com',
-            spareRpcs: ['https://op-pokt.nodies.app', 'https://rpc.ankr.com/optimism'],
+            rpc: 'https://mainnet.optimism.io',
+            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1229,8 +1229,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MODE_MAINNET,
-            rpc: 'https://1rpc.io/mode',
-            spareRpcs: ['https://mode.gateway.tenderly.co', 'https://mode.drpc.org'],
+            rpc: 'https://mainnet.mode.network',
+            spareRpcs: ['https://1rpc.io/mode', 'https://mode.drpc.org'],
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -1596,7 +1596,7 @@ export const config: Config = {
         {
             id: ChainId.GRAVITY_MAINNET,
             rpc: 'https://rpc.gravity.xyz',
-            spareRpcs: ['https://1625.rpc.thirdweb.com', 'https://rpc.gravity.xyz'],
+            spareRpcs: ['https://rpc.ankr.com/gravity'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1782,6 +1782,7 @@ export const config: Config = {
             rpc: 'https://solana-rpc.publicnode.com',
             spareRpcs: [],
             filterBlockOffset: 1000,
+            stables: [],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x0000000000000000000000000000000000000000',
