@@ -5,19 +5,19 @@ name: ci
 
 steps:
   - name: install
-    image: node:22.1.0
+    image: node:lts
     commands:
       - npm i --silent
 
   - name: test
-    image: node:22.1.0
+    image: node:lts
     environment:
         NODE_ENV: production
     commands:
         - npm run test
 
   - name: build/npm-package
-    image: node:22.1.0
+    image: node:lts
     environment:
       NODE_ENV: production
     commands:
