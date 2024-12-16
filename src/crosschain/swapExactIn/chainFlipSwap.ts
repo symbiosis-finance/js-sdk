@@ -6,7 +6,7 @@ import {
     ChainFlipToken,
     ZappingChainFlip,
 } from '../swapping/zappingChainFlip'
-import { Token } from '../../entities'
+import { GAS_TOKEN, Token } from '../../entities'
 import { ChainId } from '../../constants'
 import { theBest } from './utils'
 
@@ -43,16 +43,30 @@ const ARB_USDC = new Token({
     },
 })
 
+export const SOL_USDC = new Token({
+    name: 'USDC',
+    symbol: 'USDC',
+    address: '0x0000000000000000000000000000000000000003', // according to ChainFlipAssetId
+    chainId: ChainId.SOLANA_MAINNET,
+    decimals: 6,
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+    },
+})
+
 const CONFIGS: ChainFlipConfig[] = [
     {
         vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
         tokenIn: ARB_USDC,
+        tokenOut: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         src: CF_ARB_USDC,
         dest: CF_SOL_SOL,
     },
     {
         vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
         tokenIn: ARB_USDC,
+        tokenOut: SOL_USDC,
         src: CF_ARB_USDC,
         dest: CF_SOL_USDC,
     },
@@ -66,7 +80,7 @@ export async function chainFlipSwap(context: SwapExactInParams): Promise<SwapExa
     // via stable pool only
     const poolConfig = symbiosis.config.omniPools[0]
 
-    const CF_CONFIG = CONFIGS.find((config) => tokenOut.name?.toLowerCase() === config.dest.asset.toLowerCase())
+    const CF_CONFIG = CONFIGS.find((config) => config.tokenOut.equals(tokenOut))
 
     if (!CF_CONFIG) {
         throw new Error('ChainFlipSwap: No config found for tokenOut')

@@ -13,7 +13,7 @@ const SOLANA_ADDRESSES_MAP = [
 ]
 
 export function getSolanaTokenAddress(evmAddress: string) {
-    const token = SOLANA_ADDRESSES_MAP.find((token) => token.evm === evmAddress)
+    const token = SOLANA_ADDRESSES_MAP.find((token) => token.evm.toLowerCase() === evmAddress.toLowerCase())
 
     if (!token) {
         throw new Error(`Solana address was not found by evm address ${evmAddress}`)
