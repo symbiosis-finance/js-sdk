@@ -33,8 +33,8 @@
                 { "index": 27, "tokenId": 160 },
                 { "index": 28, "tokenId": 158 },
                 { "index": 29, "tokenId": 121 },
-                { "index": 30, "tokenId": 168 },
-                { "index": 31, "tokenId": 169 },
+                { "index": 30, "tokenId": 169 },
+                { "index": 31, "tokenId": 168 },
                 { "index": 32, "tokenId": 172 },
                 { "index": 33, "tokenId": 171 },
                 { "index": 34, "tokenId": 175 },
@@ -1233,20 +1233,6 @@
         },
         {
             "decimals": 6,
-            "symbol": "USDC",
-            "name": "USD Coin",
-            "chainId": 1329,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png"
-            },
-            "deprecated": false,
-            "address": "0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1",
-            "id": 75
-        },
-        {
-            "decimals": 6,
             "symbol": "USDT",
             "name": "USDT",
             "chainId": 1329,
@@ -1257,6 +1243,20 @@
             },
             "deprecated": false,
             "address": "0xB75D0B03c06A926e488e2659DF1A861F860bD3d1",
+            "id": 75
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 1329,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png"
+            },
+            "deprecated": false,
+            "address": "0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1",
             "id": 76
         },
         {
@@ -2687,22 +2687,6 @@
         },
         {
             "decimals": 6,
-            "symbol": "sUSDC",
-            "name": "Synthetic USDС From Sei",
-            "chainId": 56288,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png"
-            },
-            "chainFromId": 1329,
-            "deprecated": false,
-            "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
-            "id": 168,
-            "originalId": 75
-        },
-        {
-            "decimals": 6,
             "symbol": "sUSDT",
             "name": "Synthetic USDT From Sei",
             "chainId": 56288,
@@ -2714,6 +2698,22 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0x6d13035F5F1ae26a22CBB25A3f7666e0C335E6bC",
+            "id": 168,
+            "originalId": 75
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "Synthetic USDС From Sei",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png"
+            },
+            "chainFromId": 1329,
+            "deprecated": false,
+            "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
             "id": 169,
             "originalId": 76
         },
