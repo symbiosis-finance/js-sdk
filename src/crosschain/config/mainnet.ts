@@ -1791,19 +1791,7 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
-            stables: [
-                {
-                    name: 'USDC',
-                    symbol: 'USDC',
-                    address: '0x0000000000000000000000000000000000000003', // according to ChainFlipAssetId
-                    chainId: ChainId.SOLANA_MAINNET,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
-                    },
-                },
-            ],
+            stables: [],
         },
     ],
 }
