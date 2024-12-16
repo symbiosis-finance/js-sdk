@@ -19,7 +19,7 @@ const CF_SOL_SOL: ChainFlipToken = {
 
 const CF_SOL_USDC: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
-    assetId: ChainFlipAssetId.USDC,
+    assetId: ChainFlipAssetId.solUSDC,
     chain: 'Solana',
     asset: 'USDC',
 }
