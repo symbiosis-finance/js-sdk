@@ -52,6 +52,7 @@ export interface ChainFlipToken {
 export interface ChainFlipConfig {
     vaultAddress: string
     tokenIn: Token
+    tokenOut: Token
     src: ChainFlipToken
     dest: ChainFlipToken
 }
@@ -121,7 +122,7 @@ export class ZappingChainFlip extends BaseSwapping {
 
         const { egressAmount, includedFees } = this.quoteResponse.quote
 
-        const amountOut = new TokenAmount(SOL, egressAmount)
+        const amountOut = new TokenAmount(config.tokenOut, egressAmount)
 
         let usdcFee = 0
         let solFee = 0
@@ -198,7 +199,7 @@ export class ZappingChainFlip extends BaseSwapping {
         const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
             dest.chainId, // dstChain
             dstAddress, // dstAddress
-            dest.assetId, // dstToken (SOL)
+            dest.assetId, // dstToken
             tokenIn.address, // srcToken (Arbitrum.USDC address)
             BigNumber.from(0), // amount (will be patched)
             [], //cfParameters
