@@ -10,6 +10,8 @@ import { parseUnits } from '@ethersproject/units'
 
 export const TON_TOKEN_DECIMALS = 9
 
+export const TON_EVM_ADDRESS = '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C'
+
 const TON_ADDRESSES_MAP = [
     {
         evm: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',

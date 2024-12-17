@@ -13,6 +13,7 @@ export type SymbiosisTradeType =
     | 'symbiosis'
     | 'thorchain-bridge'
     | 'chainflip-bridge'
+    | 'stonfi'
 
 export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 

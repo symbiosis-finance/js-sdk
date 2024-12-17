@@ -178,10 +178,10 @@ export type SwapExactInResult = {
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
     priceImpact: Percent
-    approveTo: string
     routes: RouteItem[]
     fees: FeeItem[]
 
+    approveTo?: string
     amountInUsd?: TokenAmount
     timeLog?: ProfilerItem[]
     routeType?: string
