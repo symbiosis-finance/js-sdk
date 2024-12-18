@@ -30,6 +30,11 @@ export function isBridgeSupported(context: SwapExactInParams): boolean {
         return false
     }
 
+    // one of the tokens should be synthetic
+    if (!wrappedInToken.isSynthetic && !wrappedOutToken.isSynthetic) {
+        return false
+    }
+
     try {
         const representation = symbiosis.getRepresentation(wrappedInToken, wrappedOutToken.chainId)
         return !!representation && representation.equals(wrappedOutToken)
