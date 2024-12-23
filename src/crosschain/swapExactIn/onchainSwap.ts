@@ -26,9 +26,9 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         promises.push(octoPoolSwap(params))
     }
 
-    if (await isStonfiSwapSupported(params)) {
-        promises.push(stonfiSwap(params))
-    }
+    // if (await isStonfiSwapSupported(params)) {
+    //     promises.push(stonfiSwap(params))
+    // }
 
     if (await isDedustSwapSupported(params)) {
         promises.push(dedustSwap(params))

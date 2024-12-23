@@ -3,7 +3,7 @@ import { StonApiClient } from '@ston-fi/api'
 import { SenderArguments } from '@ton/core'
 
 import { Percent, Token, TokenAmount } from '../../entities'
-import { getTonTokenAddress, TON_EVM_ADDRESS } from '../chainUtils'
+import { getTonTokenAddress, TON_EVM_ADDRESS, TON_REFERRAL_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
@@ -88,6 +88,7 @@ export class StonfiTrade extends SymbiosisTrade {
                 offerAmount: tokenAmountIn.raw.toString(),
                 askJettonAddress: getTonTokenAddress(tokenOut.address),
                 minAskAmount: minAskUnits,
+                referralAddress: TON_REFERRAL_ADDRESS,
                 queryId,
             })
         } else if (tokenOut.address === TON_EVM_ADDRESS) {
@@ -97,6 +98,7 @@ export class StonfiTrade extends SymbiosisTrade {
                 offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
                 offerAmount: tokenAmountIn.raw.toString(),
                 minAskAmount: minAskUnits,
+                referralAddress: TON_REFERRAL_ADDRESS,
                 proxyTon,
                 queryId,
             })
@@ -108,6 +110,7 @@ export class StonfiTrade extends SymbiosisTrade {
                 offerAmount: tokenAmountIn.raw.toString(),
                 askJettonAddress: getTonTokenAddress(tokenOut.address),
                 minAskAmount: minAskUnits,
+                referralAddress: TON_REFERRAL_ADDRESS,
                 queryId,
             })
         }

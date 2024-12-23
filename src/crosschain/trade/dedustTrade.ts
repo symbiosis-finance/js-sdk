@@ -12,7 +12,7 @@ import {
 } from '@dedust/sdk'
 
 import { Percent, Token, TokenAmount } from '../../entities'
-import { getTonTokenAddress, TON_EVM_ADDRESS } from '../chainUtils'
+import { getTonTokenAddress, TON_EVM_ADDRESS, TON_REFERRAL_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
@@ -191,7 +191,7 @@ export class DedustTrade extends SymbiosisTrade {
                     beginCell()
                         .storeUint(0, 32) // deadline
                         .storeAddress(Address.parse(this.from)) // recipientAddress
-                        .storeAddress(null) // referralAddress
+                        .storeAddress(TON_REFERRAL_ADDRESS) // referralAddress
                         .storeMaybeRef(null) // fulfillPayload
                         .storeMaybeRef(null) // rejectPayload
                         .endCell()
@@ -215,7 +215,10 @@ export class DedustTrade extends SymbiosisTrade {
                 .storeMaybeRef(
                     VaultJetton.createSwapPayload({
                         poolAddress,
-                        swapParams: { recipientAddress: Address.parse(this.from) },
+                        swapParams: {
+                            recipientAddress: Address.parse(this.from),
+                            referralAddress: TON_REFERRAL_ADDRESS,
+                        },
                     })
                 )
                 .endCell(),
