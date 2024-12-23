@@ -1,15 +1,14 @@
 import { DEX, pTON } from '@ston-fi/sdk'
+import { StonApiClient } from '@ston-fi/api'
 import { SenderArguments } from '@ton/core'
 
-import { Token, TokenAmount } from '../../entities'
-import { calculatePriceImpact, getTonTokenAddress, TON_EVM_ADDRESS } from '../chainUtils'
+import { Percent, Token, TokenAmount } from '../../entities'
+import { getTonTokenAddress, TON_EVM_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { StonApiClient } from '@ston-fi/api'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
-    tokenAmountInMin: TokenAmount
     deadline: number
     from: string
 }
@@ -37,48 +36,49 @@ export class StonfiTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        const txParams = await this.quote(this.tokenAmountIn, this.tokenOut)
-
         const quote = await this.stonClient.simulateSwap({
-            offerAddress: getTonTokenAddress(this.tokenAmountIn.token.address),
+            offerAddress: getTonTokenAddress(this.tokenAmountIn.token.address, true),
             offerUnits: this.tokenAmountIn.raw.toString(),
-            askAddress: getTonTokenAddress(this.tokenOut.address),
-            slippageTolerance: this.slippage.toString(), // 0.01 is 1%
+            askAddress: getTonTokenAddress(this.tokenOut.address, true),
+            slippageTolerance: (this.slippage / 10000).toString(), // 0.01 is 1%
         })
 
-        console.log('quote', quote)
+        const txParams = await this.buildCalldata(this.tokenAmountIn, this.tokenOut, quote.minAskUnits)
 
-        const amountOut = new TokenAmount(this.tokenOut, quote.swapRate)
-        const priceImpact = calculatePriceImpact(this.tokenAmountIn, amountOut)
+        const amountOut = new TokenAmount(this.tokenOut, quote.askUnits)
+        const amountOutMin = new TokenAmount(this.tokenOut, quote.minAskUnits)
+
+        if (!txParams) {
+            throw new Error('Failed to build TON swap via Stonfi DEX')
+        }
 
         this.out = {
             amountOut,
-            amountOutMin: amountOut,
+            amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
-            priceImpact,
-            routerAddress: txParams.to.toString(),
-            callData: txParams.body?.toBoc().toString('base64') ?? '',
+            priceImpact: new Percent(BigInt(Math.ceil(-quote.priceImpact * 10000)), '10000'),
+            routerAddress: txParams?.to.toString() ?? '',
+            callData: txParams?.body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,
+            value: txParams.value,
         }
 
         return this
     }
 
-    public async quote(tokenAmountIn: TokenAmount, tokenOut: Token): Promise<SenderArguments> {
+    public async buildCalldata(
+        tokenAmountIn: TokenAmount,
+        tokenOut: Token,
+        minAskUnits: string
+    ): Promise<SenderArguments | null> {
         const client = await this.symbiosis.getTonClient()
-        const router = client.open(
-            DEX.v2_1.Router.create(
-                'kQALh-JBBIKK7gr0o4AVf9JZnEsFndqO0qTCyT-D-yBsWk0v' // CPI Router v2.1.0
-            )
-        )
+        const router = client.open(new DEX.v1.Router())
         const queryId = Math.floor(Math.random() * 100_000)
 
-        const proxyTon = pTON.v2_1.create(
-            'kQACS30DNoUQ7NfApPvzh7eBmSZ9L4ygJ-lkNWtba8TQT-Px' // pTON v2.1.0
-        )
+        const proxyTon = new pTON.v1()
 
-        let txParams: SenderArguments
+        let txParams: SenderArguments | null = null
 
         // TON -> jetton
         if (tokenAmountIn.token.address === TON_EVM_ADDRESS) {
@@ -87,7 +87,7 @@ export class StonfiTrade extends SymbiosisTrade {
                 proxyTon: proxyTon,
                 offerAmount: tokenAmountIn.raw.toString(),
                 askJettonAddress: getTonTokenAddress(tokenOut.address),
-                minAskAmount: '1', // [TODO]: get min amount
+                minAskAmount: minAskUnits,
                 queryId,
             })
         } else if (tokenOut.address === TON_EVM_ADDRESS) {
@@ -96,7 +96,7 @@ export class StonfiTrade extends SymbiosisTrade {
                 userWalletAddress: this.from,
                 offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
                 offerAmount: tokenAmountIn.raw.toString(),
-                minAskAmount: '1', // [TODO]: get min amount
+                minAskAmount: minAskUnits,
                 proxyTon,
                 queryId,
             })
@@ -107,7 +107,7 @@ export class StonfiTrade extends SymbiosisTrade {
                 offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
                 offerAmount: tokenAmountIn.raw.toString(),
                 askJettonAddress: getTonTokenAddress(tokenOut.address),
-                minAskAmount: '1', // [TODO]: get min amount
+                minAskAmount: minAskUnits,
                 queryId,
             })
         }

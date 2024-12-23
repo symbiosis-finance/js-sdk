@@ -16,6 +16,7 @@ const TON_ADDRESSES_MAP = [
     {
         evm: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
         ton: 'EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I', // TON
+        stonFi: 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c', // stonfi TON
     },
     {
         evm: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe',
@@ -39,13 +40,20 @@ const TON_ADDRESSES_MAP = [
     },
 ]
 
-export function getTonTokenAddress(address: string) {
+export function getTonTokenAddress(address: string, isStonFi: boolean = false): string {
     const found = TON_ADDRESSES_MAP.find((item) => {
         return item.evm.toLowerCase() === address.toLowerCase()
     })
+
     if (!found) {
         throw new Error(`TON address was not found by evm address ${address}`)
     }
+
+    // TON doesn't has contract address in TON, Stonfi use their own proxy contract
+    if (found.evm === TON_EVM_ADDRESS && isStonFi && found.stonFi) {
+        return found.stonFi
+    }
+
     return found.ton
 }
 

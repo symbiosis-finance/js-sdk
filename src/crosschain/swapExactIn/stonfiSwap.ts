@@ -1,16 +1,27 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { StonfiTrade } from '../trade'
-import { isTonChainId } from '../chainUtils'
+import { getTonTokenAddress, isTonChainId } from '../chainUtils'
+import { StonApiClient } from '@ston-fi/api'
 
-export function isStonfiSwapSupported(context: SwapExactInParams): boolean {
+export async function isStonfiSwapSupported(context: SwapExactInParams): Promise<boolean> {
+    const stonClient = new StonApiClient()
     const { tokenAmountIn, tokenOut } = context
 
-    // [TODO]: Check with stonfi dex
-    if (isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)) {
-        return true
+    if (!isTonChainId(tokenAmountIn.token.chainId) || !isTonChainId(tokenOut.chainId)) {
+        return false
     }
 
-    return false
+    try {
+        await Promise.all([
+            stonClient.getAsset(getTonTokenAddress(tokenAmountIn.token.address, true)),
+            stonClient.getAsset(getTonTokenAddress(tokenOut.address, true)),
+        ])
+
+        return true
+    } catch (error) {
+        console.error('Stonfi swap not supported these pair of tokens', error)
+        return false
+    }
 }
 
 export async function stonfiSwap({
@@ -22,19 +33,9 @@ export async function stonfiSwap({
     slippage,
     deadline,
 }: SwapExactInParams): Promise<SwapExactInResult> {
-    console.log('stonfiSwap --->', {
-        tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
-    })
-
     const trade = new StonfiTrade({
         symbiosis,
         tokenAmountIn,
-        tokenAmountInMin: tokenAmountIn,
         tokenOut,
         from,
         to,
@@ -50,12 +51,13 @@ export async function stonfiSwap({
         tokenAmountOutMin: trade.amountOutMin,
         priceImpact: trade.priceImpact,
         transactionType: 'ton',
+        approveTo: '0x0000000000000000000000000000000000000000',
         transactionRequest: {
             validUntil: trade.deadline,
             messages: [
                 {
                     address: trade.routerAddress,
-                    amount: tokenAmountIn.raw.toString(),
+                    amount: trade.value?.toString() ?? '0',
                     payload: trade.callData,
                 },
             ],

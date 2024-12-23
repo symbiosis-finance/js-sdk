@@ -14,6 +14,7 @@ export type SymbiosisTradeType =
     | 'thorchain-bridge'
     | 'chainflip-bridge'
     | 'stonfi'
+    | 'dedust'
 
 export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 
@@ -34,6 +35,7 @@ export interface SymbiosisTradeOutResult {
     callDataOffset: number
     minReceivedOffset: number
     functionSelector?: string
+    value?: bigint
 }
 
 class OutNotInitializedError extends Error {
@@ -78,6 +80,11 @@ export abstract class SymbiosisTrade {
     get routerAddress(): string {
         this.assertOutInitialized('routerAddress')
         return this.out.routerAddress
+    }
+
+    get value(): bigint | undefined {
+        this.assertOutInitialized('value')
+        return this.out.value
     }
 
     get route(): Token[] {

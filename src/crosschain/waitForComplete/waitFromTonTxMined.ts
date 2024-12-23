@@ -13,20 +13,29 @@ class waitFromTonTxCompleteError extends Error {
 
 const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
 
-export async function waitFromTonTxMined(
-    symbiosis: Symbiosis,
-    chainId: ChainId,
+interface WaitFromTonTxMinedParams {
+    symbiosis: Symbiosis
+    chainId: ChainId
     tonAddress: string
-): Promise<Transaction | undefined> {
+    tonContractAddress?: string
+}
+
+export async function waitFromTonTxMined({
+    symbiosis,
+    chainId,
+    tonAddress,
+    tonContractAddress,
+}: WaitFromTonTxMinedParams): Promise<Transaction | undefined> {
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
 
     if (!tonChainConfig) {
         throw new Error('Ton chain config not found')
     }
 
-    const tonPortal = tonChainConfig.tonPortal
-    if (!tonPortal) {
-        throw new Error(`Ton portal not found for chain ${chainId}`)
+    const trackTonContractAddress = tonContractAddress ?? tonChainConfig.tonPortal
+
+    if (!trackTonContractAddress) {
+        throw new Error(`Ton contract address not specified`)
     }
 
     const client = await symbiosis.getTonClient()
@@ -35,7 +44,10 @@ export async function waitFromTonTxMined(
 
     return await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 20, archival: true })
+            const txs = await client.getTransactions(Address.parse(trackTonContractAddress), {
+                limit: 10,
+                archival: true,
+            })
             const filtered = txs.filter((tx) => {
                 if (tx.now < now) {
                     return false
