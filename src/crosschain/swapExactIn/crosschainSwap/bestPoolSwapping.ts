@@ -14,13 +14,17 @@ interface OptimalRoute {
 export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, selectMode } = params
     const optimalRoute = getOptimalRoute(symbiosis, tokenAmountIn.token, tokenOut)
+
+    const promises: Promise<SwapExactInResult>[] = []
     if (optimalRoute) {
         try {
-            const result = await symbiosis.newSwapping(optimalRoute.pool).exactIn({
+            const optimalPromise = symbiosis.newSwapping(optimalRoute.pool).exactIn({
                 ...params,
                 transitTokenIn: optimalRoute.transitTokenIn,
                 transitTokenOut: optimalRoute.transitTokenOut,
             })
+            promises.push(optimalPromise)
+            const result = await optimalPromise
 
             const threshold = new Percent('-1', '100') // -1%
             if (result.priceImpact.greaterThan(threshold)) {
@@ -33,9 +37,11 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
 
     const { omniPools } = symbiosis.config
 
-    const promises = omniPools
-        .filter((poolConfig) => poolConfig.generalPurpose || poolConfig.chainExceptions?.includes(tokenOut.chainId))
-        .map((poolConfig) => bestTokenSwapping(params, poolConfig))
+    promises.push(
+        ...omniPools
+            .filter((poolConfig) => poolConfig.generalPurpose)
+            .map((poolConfig) => bestTokenSwapping(params, poolConfig))
+    )
 
     return theBest(promises, selectMode)
 }

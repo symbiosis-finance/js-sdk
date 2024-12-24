@@ -55,7 +55,6 @@ export const config: Config = {
             address: '0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E',
             oracle: '0x4CD678FF53538E6b084464da0020422738B46038',
             generalPurpose: false,
-            chainExceptions: [ChainId.FRAXTAL_MAINNET],
         },
         {
             // G
@@ -63,7 +62,6 @@ export const config: Config = {
             address: '0x8D2209E88f68324c6241bCAA7d24538ebe94e2Ee',
             oracle: '0xA7614e3427f52b04EeD23c7371a382640bD6C463',
             generalPurpose: false,
-            chainExceptions: [ChainId.GRAVITY_MAINNET],
         },
         {
             // WTON
@@ -71,7 +69,6 @@ export const config: Config = {
             address: '0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23',
             oracle: '0xe717C95007cA64334c9facFFC1975310C3B98EE8',
             generalPurpose: false,
-            chainExceptions: [ChainId.ETH_MAINNET, ChainId.BSC_MAINNET],
         },
         {
             // CATI
@@ -79,7 +76,6 @@ export const config: Config = {
             address: '0x8A71e95adFB7355d060D70b59954B065e3BD35EE',
             oracle: '0x6B8521C0F46B76A55af7333Bc025e7B9480087C8',
             generalPurpose: false,
-            chainExceptions: [],
         },
         {
             // UXLINK
@@ -87,7 +83,6 @@ export const config: Config = {
             address: '0x539E9071D542d6Ec7415Cb9DAa4aD20be1307CcB',
             oracle: '0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514',
             generalPurpose: false,
-            chainExceptions: [],
         },
     ],
     revertableAddress: {
