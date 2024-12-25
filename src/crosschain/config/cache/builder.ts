@@ -137,6 +137,10 @@ export class Builder {
             if (portal.address !== AddressZero) {
                 for (let j = 0; j < chain.stables.length; j++) {
                     const token = chain.stables[j]
+
+                    if (token.address === '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7') {
+                        continue
+                    }
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const promise = new Promise((resolve, _reject) => {
                         ;(async () => {

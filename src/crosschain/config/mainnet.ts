@@ -98,7 +98,7 @@ export const config: Config = {
                 {
                     name: 'Bitcoin',
                     symbol: 'BTC',
-                    address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
+                    address: '0x1dfc1e32d75b3f4cb2f2b1bcecad984e99eeba05',
                     chainId: ChainId.BTC_MAINNET,
                     decimals: 8,
                     icons: {
@@ -117,10 +117,10 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
             symBtc: {
-                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-                chainId: ChainId.ZKSYNC_MAINNET,
+                address: '0xa1262496e84a9663b7AB64ed96C152A23d0B7214',
+                chainId: ChainId.BSC_MAINNET,
             },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
         },
         {
             id: ChainId.ETH_MAINNET,
@@ -331,6 +331,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
                     },
                 },
             ],
