@@ -9,6 +9,7 @@ import {
 import { GAS_TOKEN, Token } from '../../entities'
 import { ChainId } from '../../constants'
 import { theBest } from './utils'
+import { zappingSolanaOnChain } from './toSolana/zappingSolanaOnChain'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
@@ -84,6 +85,10 @@ export async function chainFlipSwap(context: SwapExactInParams): Promise<SwapExa
 
     if (!CF_CONFIG) {
         throw new Error('ChainFlipSwap: No config found for tokenOut')
+    }
+
+    if (CF_CONFIG.tokenIn.chainId === tokenAmountIn.token.chainId) {
+        return zappingSolanaOnChain(context, CF_CONFIG)
     }
 
     const zappingChainFlip = new ZappingChainFlip(symbiosis, poolConfig)
