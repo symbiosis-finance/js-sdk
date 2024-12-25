@@ -22,13 +22,29 @@ export async function isDedustSwapSupported(context: SwapExactInParams): Promise
         ])
     )
 
-    console.log('pool -->', pool)
-
     if ((await pool.getReadinessStatus()) !== ReadinessStatus.READY) {
-        throw new Error(`Pool ${tokenAmountIn.token.symbol}/${tokenOut.symbol} in Dedust does not exist.`)
-    }
+        const [poolTonOut, poolTonIn] = await Promise.all([
+            client.open(
+                await factory.getPool(PoolType.VOLATILE, [
+                    Asset.jetton(Address.parse(getTonTokenAddress(tokenAmountIn.token.address))),
+                    Asset.native(),
+                ])
+            ),
+            client.open(
+                await factory.getPool(PoolType.VOLATILE, [
+                    Asset.native(),
+                    Asset.jetton(Address.parse(getTonTokenAddress(tokenOut.address))),
+                ])
+            ),
+        ])
 
-    console.log('dedustSwap is supported')
+        if (
+            (await poolTonOut.getReadinessStatus()) !== ReadinessStatus.READY ||
+            (await poolTonIn.getReadinessStatus()) !== ReadinessStatus.READY
+        ) {
+            return false
+        }
+    }
 
     return true
 }
