@@ -34,7 +34,5 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         promises.push(dedustSwap(params))
     }
 
-    console.log('promises onchainSwap --->', promises)
-
     return theBest(promises, selectMode)
 }

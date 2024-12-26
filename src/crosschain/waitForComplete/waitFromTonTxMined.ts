@@ -1,6 +1,5 @@
 import { Address, Transaction } from '@ton/core'
 
-import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
 
@@ -13,26 +12,18 @@ class waitFromTonTxCompleteError extends Error {
 
 const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
 
-interface WaitFromTonTxMinedParams {
+export interface WaitFromTonTxMinedParams {
     symbiosis: Symbiosis
-    chainId: ChainId
     tonAddress: string
     tonContractAddress?: string
 }
 
 export async function waitFromTonTxMined({
     symbiosis,
-    chainId,
     tonAddress,
     tonContractAddress,
 }: WaitFromTonTxMinedParams): Promise<Transaction | undefined> {
-    const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
-
-    if (!tonChainConfig) {
-        throw new Error('Ton chain config not found')
-    }
-
-    const trackTonContractAddress = tonContractAddress ?? tonChainConfig.tonPortal
+    const trackTonContractAddress = tonContractAddress
 
     if (!trackTonContractAddress) {
         throw new Error(`Ton contract address not specified`)

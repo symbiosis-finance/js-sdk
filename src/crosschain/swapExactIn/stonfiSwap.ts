@@ -1,27 +1,15 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { StonfiTrade } from '../trade'
-import { getTonTokenAddress, isTonChainId } from '../chainUtils'
-import { StonApiClient } from '@ston-fi/api'
+import { isTonChainId } from '../chainUtils'
 
 export async function isStonfiSwapSupported(context: SwapExactInParams): Promise<boolean> {
-    const stonClient = new StonApiClient()
     const { tokenAmountIn, tokenOut } = context
 
-    if (!isTonChainId(tokenAmountIn.token.chainId) || !isTonChainId(tokenOut.chainId)) {
-        return false
-    }
-
-    try {
-        await Promise.all([
-            stonClient.getAsset(getTonTokenAddress(tokenAmountIn.token.address, true)),
-            stonClient.getAsset(getTonTokenAddress(tokenOut.address, true)),
-        ])
-
+    if (isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)) {
         return true
-    } catch (error) {
-        console.error('Stonfi swap not supported these pair of tokens', error)
-        return false
     }
+
+    return false
 }
 
 export async function stonfiSwap({
