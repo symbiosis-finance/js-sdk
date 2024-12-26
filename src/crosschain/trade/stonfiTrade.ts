@@ -43,8 +43,6 @@ export class StonfiTrade extends SymbiosisTrade {
             slippageTolerance: (this.slippage / 10000).toString(), // 0.01 is 1%
         })
 
-        console.log('quote -->', quote)
-
         const txParams = await this.buildCalldata(this.tokenAmountIn, this.tokenOut, quote.minAskUnits)
 
         const amountOut = new TokenAmount(this.tokenOut, quote.askUnits)
