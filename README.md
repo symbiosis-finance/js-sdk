@@ -1,6 +1,4 @@
-# symbiosis-js-sdk
-
-[![Build Status](https://drone.symbiosis.finance/api/badges/symbiosis-finance/sdk/status.svg)](https://drone.symbiosis.finance/symbiosis-finance/sdk)
+# Symbiosis SDK
 
 ## Docs
 

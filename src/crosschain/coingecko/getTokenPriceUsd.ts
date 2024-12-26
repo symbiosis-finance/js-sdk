@@ -1,7 +1,14 @@
 import TronWeb from 'tronweb'
 import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
-import { getTonTokenAddress, isBtcChainId, isTonChainId, isTronToken } from '../chainUtils'
+import {
+    getSolanaTokenAddress,
+    getTonTokenAddress,
+    isBtcChainId,
+    isSolanaChainId,
+    isTonChainId,
+    isTronToken,
+} from '../chainUtils'
 
 const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
     const address = token.equals(GAS_TOKEN[token.chainId]) ? '' : token.address
@@ -84,6 +91,8 @@ const getTokenPrice = async (token: Token, map?: Map<string, string>): Promise<n
         address = TronWeb.address.fromHex(address)
     } else if (isTonChainId(token.chainId)) {
         address = getTonTokenAddress(address)
+    } else if (isSolanaChainId(token.chainId)) {
+        address = getSolanaTokenAddress(address)
     }
 
     const vs = 'usd'

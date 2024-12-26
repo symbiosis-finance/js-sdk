@@ -83,8 +83,8 @@ export class Symbiosis {
     public readonly cache: Cache
     public readonly config: Config
     public readonly configName: ConfigName
-    public readonly clientId: string
     private readonly configCache: ConfigCache
+    public clientId: string
     public extraFeeCollectors: ExtraFeeCollector[]
 
     private signature: string | undefined
@@ -102,6 +102,10 @@ export class Symbiosis {
 
     public setFeesConfig(feesConfig: FeeConfig[]) {
         this.feesConfig = feesConfig
+    }
+
+    public setClientId(clientId: string) {
+        this.clientId = utils.formatBytes32String(clientId)
     }
 
     public async getDiscountTiers(): Promise<DiscountTier[]> {

@@ -44,13 +44,13 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
         chainId: ChainId.BOBA_BNB,
         address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
         feeRate: '3000000000000000', // 0.3%
-        eligibleChains: [ChainId.CRONOS_MAINNET],
+        eligibleChains: [ChainId.TRON_MAINNET, ChainId.CRONOS_MAINNET],
     },
     {
         chainId: ChainId.BOBA_BNB,
         address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
         feeRate: '2000000000000000', // 0.2%
-        eligibleChains: [ChainId.TRON_MAINNET],
+        eligibleChains: [],
     },
     {
         chainId: ChainId.BOBA_BNB,

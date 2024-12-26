@@ -279,6 +279,15 @@ export class Zapping {
         let synthAmount = new TokenAmount(this.synthToken, this.getPortalTokenAmountIn().raw)
 
         if (fee) {
+            if (synthAmount.lessThan(fee) || synthAmount.equalTo(fee)) {
+                throw new Error(
+                    `Amount ${synthAmount.toSignificant()} ${
+                        synthAmount.token.symbol
+                    } less than fee ${fee.toSignificant()} ${fee.token.symbol}`,
+                    ErrorCode.AMOUNT_LESS_THAN_FEE
+                )
+            }
+
             synthAmount = synthAmount.subtract(fee)
         }
 
