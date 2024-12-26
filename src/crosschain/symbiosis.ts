@@ -572,8 +572,8 @@ export class Symbiosis {
         return waitForBtcEvmTxIssued(this, revealTx, btcChainId)
     }
 
-    public async waitFromTonTxMined(chainId: ChainId, tonAddress: string) {
-        return waitFromTonTxMined(this, chainId, tonAddress)
+    public async waitFromTonTxMined(tonAddress: string, tonContractAddress: string) {
+        return waitFromTonTxMined({ symbiosis: this, tonAddress, tonContractAddress })
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {
