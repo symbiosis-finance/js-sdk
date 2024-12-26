@@ -51,7 +51,7 @@ export async function dedustSwap({
                 },
             ],
         },
-        fees: [],
+        fees: trade.fees ?? [],
         routes: [
             {
                 provider: 'dedust',

@@ -12,13 +12,15 @@ import {
     Pool,
 } from '@dedust/sdk'
 
-import { Percent, Token, TokenAmount } from '../../entities'
+import { GAS_TOKEN, Percent, Token, TokenAmount } from '../../entities'
 import { getTonTokenAddress, TON_EVM_ADDRESS, TON_REFERRAL_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
+import { ChainId } from '../../constants'
+import { FeeItem } from '../types'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -61,6 +63,7 @@ interface CallDataResult {
     to: Address
     body: Cell
     value: bigint
+    fees: FeeItem[]
 }
 
 export class DedustTrade extends SymbiosisTrade {
@@ -68,6 +71,7 @@ export class DedustTrade extends SymbiosisTrade {
     public readonly deadline: number
     public readonly to: string
     public readonly from: string
+
     public constructor(params: DedustTradeParams) {
         super(params)
 
@@ -84,7 +88,7 @@ export class DedustTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        const { expectedAmountOut, minAmountOut, to, body, value } = await this.buildCalldata(
+        const { expectedAmountOut, minAmountOut, to, body, value, fees } = await this.buildCalldata(
             this.tokenAmountIn,
             this.tokenOut
         )
@@ -102,6 +106,7 @@ export class DedustTrade extends SymbiosisTrade {
             callDataOffset: 0,
             minReceivedOffset: 0,
             value,
+            fees,
         }
 
         return this
@@ -148,9 +153,8 @@ export class DedustTrade extends SymbiosisTrade {
 
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [Asset.native(), tokenB]))
 
-            // Check if vault exits:
             if ((await tonVault.getReadinessStatus()) !== ReadinessStatus.READY) {
-                throw new Error('Vault (TON) does not exist.')
+                throw new Error('Vault (TON) Dedust does not exist.')
             }
         } else if (tokenOut.address === TON_EVM_ADDRESS) {
             const tokenA = Asset.jetton(Address.parse(getTonTokenAddress(tokenAmountIn.token.address)))
@@ -187,6 +191,8 @@ export class DedustTrade extends SymbiosisTrade {
                 ) {
                     pool = poolTonOut
                     secondPool = poolTonIn
+                } else {
+                    throw new Error('Dedust can not find pool for this trade')
                 }
             }
         }
@@ -208,30 +214,51 @@ export class DedustTrade extends SymbiosisTrade {
         let expectedAmountOut: bigint
         let minAmountOut: bigint
         let minAmountTon: bigint = BigInt(0)
+        const fees: FeeItem[] = []
 
         // multihop swap jetton -> ton -> jetton
         if (secondPool) {
-            const { amountOut: tonAmountOut, assetOut: tonOut } = await pool.getEstimatedSwapOut({
+            const {
+                amountOut: tonAmountOut,
+                assetOut: tonOut,
+                tradeFee: firstPoolTradeFee,
+            } = await pool.getEstimatedSwapOut({
                 assetIn: tokenIn,
                 amountIn: BigInt(tokenAmountIn.raw.toString()),
             })
 
             minAmountTon = (tonAmountOut * BigInt(10000 - this.slippage / 2)) / BigInt(10000)
 
-            const { amountOut: estimatedAmountOut } = await secondPool.getEstimatedSwapOut({
-                assetIn: tonOut,
-                amountIn: tonAmountOut,
-            })
+            const { amountOut: estimatedAmountOut, tradeFee: secondPoolTradeFee } =
+                await secondPool.getEstimatedSwapOut({
+                    assetIn: tonOut,
+                    amountIn: tonAmountOut,
+                })
 
+            fees.push({
+                provider: 'dedust',
+                value: new TokenAmount(GAS_TOKEN[ChainId.TON_MAINNET], firstPoolTradeFee),
+                description: 'Dedust fee',
+            })
+            fees.push({
+                provider: 'dedust',
+                value: new TokenAmount(tokenOut, secondPoolTradeFee),
+                description: 'Dedust fee',
+            })
             minAmountOut = (estimatedAmountOut * BigInt(10000 - this.slippage / 2)) / BigInt(10000)
             expectedAmountOut = estimatedAmountOut
         } else {
             // single hop swap
-            const { amountOut: estimatedAmountOut } = await pool.getEstimatedSwapOut({
+            const { amountOut: estimatedAmountOut, tradeFee } = await pool.getEstimatedSwapOut({
                 assetIn: tokenIn,
                 amountIn: BigInt(tokenAmountIn.raw.toString()),
             })
 
+            fees.push({
+                provider: 'dedust',
+                value: new TokenAmount(tokenOut, tradeFee),
+                description: 'Dedust fee',
+            })
             minAmountOut = (estimatedAmountOut * BigInt(10000 - this.slippage)) / BigInt(10000)
             expectedAmountOut = estimatedAmountOut
         }
@@ -307,6 +334,7 @@ export class DedustTrade extends SymbiosisTrade {
             to: tokenInWalletAddress ? tokenInWalletAddress : tonVault.address,
             body: txParams?.body,
             value: txParams?.value,
+            fees,
         }
     }
 

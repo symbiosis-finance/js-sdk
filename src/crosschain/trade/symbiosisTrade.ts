@@ -1,5 +1,6 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 import { BigNumber } from 'ethers'
+import { FeeItem } from '../types'
 
 export type SymbiosisTradeType =
     | 'uni-v2'
@@ -36,6 +37,7 @@ export interface SymbiosisTradeOutResult {
     minReceivedOffset: number
     functionSelector?: string
     value?: bigint
+    fees?: FeeItem[]
 }
 
 class OutNotInitializedError extends Error {
@@ -115,6 +117,11 @@ export abstract class SymbiosisTrade {
     get functionSelector(): string | undefined {
         this.assertOutInitialized('functionSelector')
         return this.out.functionSelector
+    }
+
+    get fees(): FeeItem[] | undefined {
+        this.assertOutInitialized('fees')
+        return this.out.fees
     }
 
     public applyAmountIn(newAmount: TokenAmount) {

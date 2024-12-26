@@ -50,7 +50,7 @@ export async function stonfiSwap({
                 },
             ],
         },
-        fees: [],
+        fees: trade.fees ?? [],
         routes: [
             {
                 provider: 'stonfi',
