@@ -843,4 +843,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.GOAT_MAINNET]: new Token({
+        chainId: ChainId.GOAT_MAINNET,
+        address: '0xbC10000000000000000000000000000000000000',
+        decimals: 18,
+        symbol: 'WGBTC',
+        isNative: false,
+        name: 'Wrapped Goat BTC',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+        },
+    }),
 }

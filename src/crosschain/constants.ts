@@ -72,6 +72,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.CRONOS_ZK_MAINNET]: [WETH[ChainId.CRONOS_ZK_MAINNET]],
     [ChainId.MORPH_MAINNET]: [WETH[ChainId.MORPH_MAINNET]],
     [ChainId.SOLANA_MAINNET]: [WETH[ChainId.SOLANA_MAINNET]],
+    [ChainId.GOAT_MAINNET]: [WETH[ChainId.GOAT_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -444,6 +445,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
         }),
     ],
     [ChainId.SOLANA_MAINNET]: [],
+    [ChainId.GOAT_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -539,6 +541,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.SOLANA_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.SOLANA_MAINNET],
     ],
+    [ChainId.GOAT_MAINNET]: [WETH[ChainId.GOAT_MAINNET], ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.GOAT_MAINNET]],
 }
 
 /**
@@ -618,6 +621,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.CRONOS_ZK_MAINNET]: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
     [ChainId.MORPH_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.SOLANA_MAINNET]: AddressZero,
+    [ChainId.GOAT_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {
