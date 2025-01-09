@@ -688,6 +688,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
         },
     }),
+    new Chain({
+        id: ChainId.GOAT_MAINNET,
+        name: 'Goat',
+        disabled: false,
+        explorer: 'https://explorer.goat.network',
+        icons: {
+            small: 'https://cdn.prod.website-files.com/6669a2e2b7f624149423b9be/6669b090137434ab4c6d11a2_favicoin%20goat.png',
+            large: 'https://cdn.prod.website-files.com/6669a2e2b7f624149423b9be/6669b090137434ab4c6d11a2_favicoin%20goat.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
