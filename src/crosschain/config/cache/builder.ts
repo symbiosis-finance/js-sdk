@@ -182,11 +182,12 @@ export class Builder {
 
             const synthesis = this.synthesis(chain.id)
             let synthesisMetaRouter
-            // TODO @allush remove ARBITRUM_MAINNET and ZKSYNC_MAINNET condition
+            // NOTE because there is separate metarouter for btc integration
             if (
                 synthesis.address !== AddressZero &&
                 chain.id !== ChainId.ARBITRUM_MAINNET &&
-                chain.id !== ChainId.ZKSYNC_MAINNET
+                chain.id !== ChainId.ZKSYNC_MAINNET &&
+                chain.id !== ChainId.BSC_MAINNET
             ) {
                 synthesisMetaRouter = (await synthesis.callStatic.metaRouter()).toLowerCase()
             }

@@ -959,6 +959,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png',
                     },
                 },
+                {
+                    name: 'UXLINK Token',
+                    symbol: 'UXLINK',
+                    address: '0x482deB2F7B9608a80eA91E71F06380E9891501C6',
+                    chainId: ChainId.MANTLE_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                    },
+                },
             ],
             router: '0xDd0840118bF9CCCc6d67b2944ddDfbdb995955FD',
             dexFee: 30,
