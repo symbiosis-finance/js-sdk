@@ -5,7 +5,7 @@ import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
 import { isBtcChainId } from '../chainUtils'
 import { isAddress } from 'ethers/lib/utils'
-import { MetaRouter__factory } from '../contracts'
+import { MetaRouter__factory, SymBtc, SymBtc__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { BigNumber } from 'ethers'
@@ -14,6 +14,9 @@ import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
 import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
 import { BIPS_BASE } from '../constants'
+import { BTC_CONFIGS, BtcConfig } from '../chainUtils/btc'
+import { theBest } from './utils'
+import { ChainId } from '../../constants'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -30,16 +33,29 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 type BuildTailResult = SwapExactInResult & { tail: string }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+    const { tokenAmountIn, selectMode } = context
+
+    if (!isBtcChainId(tokenAmountIn.token.chainId)) {
+        throw new Error(`tokenAmountIn is not BTC token`)
+    }
+
+    const promises: Promise<SwapExactInResult>[] = []
+
+    // configs except syBTC on zksync
+    const configs = BTC_CONFIGS.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+    configs.forEach((btConfig) => {
+        promises.push(fromBtcSwapInternal(context, btConfig))
+    })
+
+    return theBest(promises, selectMode)
+}
+
+async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcConfig): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, symbiosis, to } = context
 
-    const btcChainId = tokenAmountIn.token.chainId
-    const symBtcConfig = symbiosis.symBtcConfigFor(btcChainId)
+    const { btc, symBtc, forwarderUrl } = btcConfig
 
-    const syBtcChainId = symBtcConfig.chainId
-    if (!syBtcChainId) {
-        throw new Error(`syBTC chainId wasn't found`)
-    }
-    const syBtcSynth = symbiosis.getRepresentation(tokenAmountIn.token, syBtcChainId)
+    const syBtcSynth = symbiosis.getRepresentation(btc, symBtc.chainId)
     if (!syBtcSynth) {
         throw new Error(`syBTC as synth wasn't found`)
     }
@@ -52,7 +68,6 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         throw new Error(`Destination address wasn't provided`)
     }
 
-    const forwarderUrl = symbiosis.getForwarderUrl(btcChainId)
     const btcAmountRaw = tokenAmountIn.raw.toString()
     let syBtcAmount = new TokenAmount(syBtc, btcAmountRaw)
 
@@ -112,9 +127,12 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     } else {
         // const sameChain = tokenOut.chainId === syBtc.chainId
         const sameChain = false
+
+        const symBtcContract = SymBtc__factory.connect(symBtc.address, symbiosis.getProvider(symBtc.chainId))
+
         const buildTailFunc = sameChain ? buildOnchainTail : buildTail
 
-        const { tail: initialTail } = await buildTailFunc(context, syBtcAmount)
+        const { tail: initialTail } = await buildTailFunc(context, syBtcAmount, symBtcContract)
         btcForwarderFee = new TokenAmount(
             syBtc,
             await estimateWrap({
@@ -136,7 +154,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
                 ErrorCode.AMOUNT_LESS_THAN_FEE
             )
         }
-        const tailResult = await buildTailFunc(context, syBtcAmount.subtract(btcForwarderFee))
+        const tailResult = await buildTailFunc(context, syBtcAmount.subtract(btcForwarderFee), symBtcContract)
         tail = tailResult.tail
         tailFees = tailResult.fees
         tokenAmountOut = tailResult.tokenAmountOut
@@ -172,7 +190,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         routes: [
             {
                 provider: 'symbiosis',
-                tokens: [tokenAmountIn.token, syBtc],
+                tokens: [btc, syBtc],
             },
             ...routes,
         ],
@@ -180,12 +198,12 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
             {
                 provider: 'symbiosis',
                 description: 'BTC Forwarder fee',
-                value: new TokenAmount(tokenAmountIn.token, btcForwarderFee.raw),
+                value: new TokenAmount(btc, btcForwarderFee.raw),
             },
             {
                 provider: 'symbiosis',
                 description: 'BTC Portal fee',
-                value: new TokenAmount(tokenAmountIn.token, btcPortalFee.raw),
+                value: new TokenAmount(btc, btcPortalFee.raw),
             },
             {
                 provider: 'symbiosis',
@@ -197,18 +215,21 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     }
 }
 
-async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
-    const { tokenAmountIn, to, tokenOut, deadline, symbiosis } = context
+async function buildOnchainTail(
+    context: SwapExactInParams,
+    syBtcAmount: TokenAmount,
+    symBtcContract: SymBtc
+): Promise<BuildTailResult> {
+    const { to, tokenOut, deadline, symbiosis } = context
     const aggregatorTrade = new AggregatorTrade({
         ...context,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
-        tokenAmountIn: sBtcAmount,
+        tokenAmountIn: syBtcAmount,
         deadline,
     })
     await aggregatorTrade.init()
 
-    const symBtcContract = symbiosis.symBtcFor(tokenAmountIn.token.chainId)
     const tail = await symBtcContract.callStatic.packBTCTransactionTail({
         receiveSide: aggregatorTrade.routerAddress,
         receiveSideCalldata: aggregatorTrade.callData,
@@ -220,7 +241,7 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
     const payload: SwapExactInTransactionPayload = {
         transactionType: 'evm',
         transactionRequest: {
-            chainId: sBtcAmount.token.chainId,
+            chainId: syBtcAmount.token.chainId,
             from: to, // there is not from address, set user's address
             to,
             value: '0',
@@ -233,12 +254,12 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOutMin,
         priceImpact,
-        amountInUsd: sBtcAmount,
+        amountInUsd: syBtcAmount,
         approveTo: routerAddress,
         routes: [
             {
                 provider: aggregatorTrade.tradeType,
-                tokens: [sBtcAmount.token, tokenOut],
+                tokens: [syBtcAmount.token, tokenOut],
             },
         ],
         fees: [],
@@ -246,14 +267,18 @@ async function buildOnchainTail(context: SwapExactInParams, sBtcAmount: TokenAmo
     }
 }
 
-async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): Promise<BuildTailResult> {
-    const { tokenAmountIn, to, symbiosis } = context
+async function buildTail(
+    context: SwapExactInParams,
+    syBtcAmount: TokenAmount,
+    symBtcContract: SymBtc
+): Promise<BuildTailResult> {
+    const { to, symbiosis } = context
 
     const poolConfig = symbiosis.config.omniPools[2] // btc pool only
     const swapExactInResult = await bestTokenSwapping(
         {
             ...context,
-            tokenAmountIn: sBtcAmount,
+            tokenAmountIn: syBtcAmount,
             from: to, // to be able to revert a tx
         },
         poolConfig
@@ -269,7 +294,6 @@ async function buildTail(context: SwapExactInParams, sBtcAmount: TokenAmount): P
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const symBtcContract = symbiosis.symBtcFor(tokenAmountIn.token.chainId)
     const tail = await symBtcContract.callStatic.packBTCTransactionTail({
         receiveSide: tx.relayRecipient,
         receiveSideCalldata: tx.otherSideCalldata,
@@ -343,6 +367,7 @@ async function estimateWrap({
 type WrapParams = EstimateWrapParams & {
     feeLimit: string
 }
+
 async function wrap({
     forwarderUrl,
     portalFee,

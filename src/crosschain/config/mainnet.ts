@@ -94,19 +94,7 @@ export const config: Config = {
             id: ChainId.BTC_MAINNET,
             rpc: 'https://mempool.space/api',
             filterBlockOffset: 0,
-            stables: [
-                {
-                    name: 'Bitcoin',
-                    symbol: 'BTC',
-                    address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
-                    chainId: ChainId.BTC_MAINNET,
-                    decimals: 8,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    },
-                },
-            ],
+            stables: [],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x0000000000000000000000000000000000000000',
@@ -116,11 +104,6 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
-            symBtc: {
-                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-                chainId: ChainId.ZKSYNC_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
         },
         {
             id: ChainId.ETH_MAINNET,
@@ -331,6 +314,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
                     },
                 },
             ],

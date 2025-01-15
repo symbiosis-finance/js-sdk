@@ -136,6 +136,9 @@ export class ZappingThor extends BaseSwapping {
 
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(thorTokenIn.chainId, this.omniPoolConfig)
+        if (transitTokenIn.equals(transitTokenOut)) {
+            throw new Error('Same transit token')
+        }
 
         this.symbiosis.extraFeeCollectors = [
             {

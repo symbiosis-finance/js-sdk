@@ -1,24 +1,27 @@
-import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
-import { getLogWithTimeout } from '../chainUtils/evm'
+import { getLogWithTimeout } from '../chainUtils'
+import { BtcConfig } from '../chainUtils/btc'
+import { SymBtc__factory } from '../contracts'
 
 export async function waitForBtcEvmTxIssued(
     symbiosis: Symbiosis,
     revealTx: string,
-    btcChainId: ChainId
+    btcConfig: BtcConfig
 ): Promise<string> {
-    const symBtcConfig = symbiosis.symBtcConfigFor(btcChainId)
-    const symBtc = symbiosis.symBtcFor(btcChainId)
-    const synthesis = symbiosis.synthesis(symBtcConfig.chainId)
+    const { symBtc } = btcConfig
 
-    const externalId = await symBtc.getBTCExternalID(
+    const symBtcContract = SymBtc__factory.connect(symBtc.address, symbiosis.getProvider(symBtc.chainId))
+    const synthesis = symbiosis.synthesis(symBtc.chainId)
+
+    const externalId = await symBtcContract.getBTCExternalID(
         `0x${Buffer.from(revealTx, 'hex').reverse().toString('hex')}`,
         0,
         synthesis.address
     )
     const filter = synthesis.filters.BTCSynthesizeCompleted(externalId)
 
-    const log = await getLogWithTimeout({ symbiosis, chainId: symBtcConfig.chainId, filter })
+    const timeout = 1000 * 60 * 60 // 60 minutes
+    const log = await getLogWithTimeout({ symbiosis, chainId: symBtc.chainId, filter, exceedDelay: timeout })
 
     return log.transactionHash
 }

@@ -36,11 +36,6 @@ export type ChainConfig = {
     synthesis: string
     portal: string
     fabric: string
-    symBtc?: {
-        address: string
-        chainId: ChainId
-    }
-    forwarderUrl?: string
     tonPortal?: string
 }
 
