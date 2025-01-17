@@ -333,6 +333,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                     },
                 },
+                {
+                    name: 'GPT Wars',
+                    symbol: 'GPTW',
+                    address: '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
+                        small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
+                    },
+                },
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
             dexFee: 25,
@@ -1480,6 +1491,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'GPT Wars',
+                    symbol: 'GPTW',
+                    address: '0xcB0DdC112EF317271266c83D7179Bf9186b9C658',
+                    chainId: ChainId.SEI_EVM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
+                        small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
                     },
                 },
             ],

@@ -137,6 +137,12 @@ export class Builder {
             if (portal.address !== AddressZero) {
                 for (let j = 0; j < chain.stables.length; j++) {
                     const token = chain.stables[j]
+
+                    // FIXME remove skipping GPTW on BSC chain if whitelisted on portal
+                    if (token.address.toLowerCase() === '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592'.toLowerCase()) {
+                        continue
+                    }
+
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const promise = new Promise((resolve, _reject) => {
                         ;(async () => {
