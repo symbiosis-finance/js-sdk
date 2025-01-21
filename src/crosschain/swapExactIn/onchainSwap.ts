@@ -4,6 +4,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 // import { magpieSwap } from './magpieSwap'
 import { theBest } from './utils'
 import { isOctoPoolSwapSupported, octoPoolSwap } from './octoPoolSwap'
+import { isRadiumSwapSupported, radiumSwap } from './radiumSwap'
 
 export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = params
@@ -21,6 +22,10 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
     // }
     if (isOctoPoolSwapSupported(params)) {
         promises.push(octoPoolSwap(params))
+    }
+
+    if (isRadiumSwapSupported(params)) {
+        promises.push(radiumSwap(params))
     }
 
     return theBest(promises, selectMode)

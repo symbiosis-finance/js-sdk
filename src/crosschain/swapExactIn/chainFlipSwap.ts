@@ -10,6 +10,7 @@ import { GAS_TOKEN, Token } from '../../entities'
 import { ChainId } from '../../constants'
 import { theBest } from './utils'
 import { zappingSolanaOnChain } from './toSolana/zappingSolanaOnChain'
+import { SOL_USDC } from '../chainUtils'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
@@ -41,18 +42,6 @@ const ARB_USDC = new Token({
     icons: {
         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
-
-export const SOL_USDC = new Token({
-    name: 'USDC',
-    symbol: 'USDC',
-    address: '0x0000000000000000000000000000000000000003', // according to ChainFlipAssetId
-    chainId: ChainId.SOLANA_MAINNET,
-    decimals: 6,
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
     },
 })
 
