@@ -8,7 +8,7 @@ import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getSolanaTokenAddress } from '../chainUtils'
 
-interface RadiumTradeParams extends SymbiosisTradeParams {
+interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
     symbiosis: Symbiosis
 }
@@ -34,11 +34,11 @@ interface SwapTransactionsResponse {
 
 const connection = new Connection('https://solana-rpc.publicnode.com')
 
-export class RadiumTrade extends SymbiosisTrade {
+export class RaydiumTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
     private solanaPubkey: PublicKey
 
-    public constructor(params: RadiumTradeParams) {
+    public constructor(params: RaydiumTradeParams) {
         super(params)
 
         const { symbiosis, from } = params
@@ -48,7 +48,7 @@ export class RadiumTrade extends SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        return 'radium'
+        return 'raydium'
     }
 
     public async init() {
@@ -72,7 +72,7 @@ export class RadiumTrade extends SymbiosisTrade {
             ).then((res) => res.json())) as ApiSwapV1Out
 
             if (!swapResponse.success) {
-                throw new Error('Failed to get quote via radium dex')
+                throw new Error('Failed to get quote via raydium dex')
             }
 
             const instructions = await this.buildCalldata({
@@ -89,18 +89,17 @@ export class RadiumTrade extends SymbiosisTrade {
                 amountOut,
                 amountOutMin,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact: new Percent(BigInt(swapResponse.data.priceImpactPct * 100), BigInt(10000)),
+                priceImpact: new Percent(BigInt(swapResponse.data.priceImpactPct * -100), BigInt(10000)),
                 routerAddress: '',
                 callData: '',
                 callDataOffset: 0,
                 minReceivedOffset: 0,
                 instructions,
-                fees: [],
             }
 
             return this
         } catch (err) {
-            console.log('Failed to swap via Radium', err)
+            console.log('Failed to swap via Raydium', err)
             throw err
         }
     }
@@ -130,7 +129,7 @@ export class RadiumTrade extends SymbiosisTrade {
 
         if (!inputTokenAcc && !isInputSol) {
             console.error(
-                `Radium swap. Do not have input token account for ${this.tokenAmountIn.token.symbol} ${inputMint}`
+                `Raydium swap. Do not have input token account for ${this.tokenAmountIn.token.symbol} ${inputMint}`
             )
             return []
         }

@@ -1,18 +1,14 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { RadiumTrade } from '../trade'
+import { RaydiumTrade } from '../trade'
 import { isSolanaChainId } from '../chainUtils'
 
-export function isRadiumSwapSupported(context: SwapExactInParams): boolean {
+export function isRaydiumSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context
 
-    if (isSolanaChainId(tokenAmountIn.token.chainId) && isSolanaChainId(tokenOut.chainId)) {
-        return true
-    }
-
-    return false
+    return isSolanaChainId(tokenAmountIn.token.chainId) && isSolanaChainId(tokenOut.chainId)
 }
 
-export async function radiumSwap({
+export async function raydiumSwap({
     symbiosis,
     tokenAmountIn,
     tokenOut,
@@ -20,7 +16,7 @@ export async function radiumSwap({
     to,
     slippage,
 }: SwapExactInParams): Promise<SwapExactInResult> {
-    const trade = new RadiumTrade({
+    const trade = new RaydiumTrade({
         symbiosis,
         tokenAmountIn,
         tokenOut,
@@ -41,10 +37,10 @@ export async function radiumSwap({
         transactionRequest: {
             instructions: trade.instructions!,
         },
-        fees: trade.fees ?? [],
+        fees: [],
         routes: [
             {
-                provider: 'radium',
+                provider: 'raydium',
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],
