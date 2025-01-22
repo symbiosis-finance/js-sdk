@@ -12,11 +12,11 @@ import { BigNumber } from 'ethers'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
-import { bestTokenSwapping } from './crosschainSwap/bestTokenSwapping'
 import { BIPS_BASE } from '../constants'
 import { BTC_CONFIGS, BtcConfig } from '../chainUtils/btc'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
+import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -125,8 +125,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         )
         tokenAmountOutMin = syBtcAmount.subtract(btcForwarderFeeMax)
     } else {
-        // const sameChain = tokenOut.chainId === syBtc.chainId
-        const sameChain = false
+        const sameChain = tokenOut.chainId === syBtc.chainId
 
         const symBtcContract = SymBtc__factory.connect(symBtc.address, symbiosis.getProvider(symBtc.chainId))
 
@@ -272,23 +271,13 @@ async function buildTail(
     syBtcAmount: TokenAmount,
     symBtcContract: SymBtc
 ): Promise<BuildTailResult> {
-    const { to, symbiosis } = context
+    const { to } = context
 
-    const poolConfig = symbiosis.config.omniPools[2] // btc pool only
-    const swapExactInResult = await bestTokenSwapping(
-        {
-            ...context,
-            tokenAmountIn: syBtcAmount,
-            from: to, // to be able to revert a tx
-        },
-        poolConfig
-    )
-
-    // const swapExactInResult = await bestPoolSwapping({
-    //     ...context,
-    //     tokenAmountIn: sBtcAmount,
-    //     from: to, // to be able to revert a tx
-    // })
+    const swapExactInResult = await bestPoolSwapping({
+        ...context,
+        tokenAmountIn: syBtcAmount,
+        from: to, // to be able to revert a tx
+    })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)

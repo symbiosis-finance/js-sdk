@@ -334,6 +334,9 @@ export class OneInchTrade extends SymbiosisTrade {
         if (!data[0] || !data[1]) {
             throw new Error('OneInch oracle: cannot to receive rate to ETH')
         }
+        if (data[0].isZero() || data[1]?.isZero()) {
+            return new Percent('0', BIPS_BASE)
+        }
         const multiplierPow = 18
         const multiplier = BigNumber.from(10).pow(multiplierPow)
 

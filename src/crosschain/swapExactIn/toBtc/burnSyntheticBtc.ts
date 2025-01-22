@@ -3,6 +3,7 @@ import { unwrapBtc } from './unwrapBtc'
 import { theBest } from '../utils'
 import { ZappingBtc } from '../../swapping'
 import { BTC_CONFIGS } from '../../chainUtils/btc'
+import { zappingBtcOnChain } from './zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, symbiosis, to, selectMode } = context
@@ -20,10 +21,10 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
 
-        // if (tokenAmountIn.token.chainId === syBtc.chainId) {
-        //     promises.push(zappingBtcOnChain(context))
-        //     return
-        // }
+        if (tokenAmountIn.token.chainId === syBtc.chainId) {
+            promises.push(zappingBtcOnChain(context, syBtc))
+            return
+        }
 
         symbiosis.config.omniPools.forEach((poolConfig) => {
             const combinations = symbiosis.getTransitCombinations(

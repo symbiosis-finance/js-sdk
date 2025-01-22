@@ -13,8 +13,8 @@ import { Symbiosis } from '../../symbiosis'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
 // TODO extract base function for making multicall swap inside onchain fee collector
-export async function zappingBtcOnChain(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, tokenOut, to, from } = params
+export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
+    const { symbiosis, tokenAmountIn, tokenOut, to, from } = params
 
     const network = BTC_NETWORKS[tokenOut.chainId]
     if (!network) {
@@ -22,15 +22,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
     }
     const bitcoinAddress = getPkScript(to, network)
 
-    const chainId = params.tokenAmountIn.token.chainId
-
-    const syBTC = symbiosis.getRepresentation(params.tokenOut, chainId)
-    if (!syBTC) {
-        throw new Error(`No syBTC found on chain ${chainId}`)
-    }
-    if (!syBTC.chainFromId) {
-        throw new Error('syBTC is not synthetic')
-    }
+    const chainId = tokenAmountIn.token.chainId
 
     const feeCollectorAddress = ZERO_FEE_COLLECTOR_ADDRESSES[chainId]
     if (!feeCollectorAddress) {
@@ -53,7 +45,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
         60 * 60 // 1 hour
     )
 
-    let inTokenAmount = params.tokenAmountIn
+    let inTokenAmount = tokenAmountIn
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
@@ -68,7 +60,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
 
     const swapCall = await getSwapCall({
         ...params,
-        tokenOut: syBTC,
+        tokenOut: syBtc,
         from: multicallRouterAddress,
         to: multicallRouterAddress,
     })
@@ -84,7 +76,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams): Promise<Swap
 
     const burnCall = await getBurnCall({
         symbiosis,
-        amountIn: new TokenAmount(syBTC, swapCall.amountOut.raw),
+        amountIn: new TokenAmount(syBtc, swapCall.amountOut.raw),
         tokenOut,
         bitcoinAddress,
     })
