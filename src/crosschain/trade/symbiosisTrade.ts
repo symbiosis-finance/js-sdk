@@ -13,6 +13,7 @@ export type SymbiosisTradeType =
     | 'symbiosis'
     | 'thorchain-bridge'
     | 'chainflip-bridge'
+    | 'raydium'
 
 export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 
@@ -33,6 +34,7 @@ export interface SymbiosisTradeOutResult {
     callDataOffset: number
     minReceivedOffset: number
     functionSelector?: string
+    instructions?: string[]
 }
 
 class OutNotInitializedError extends Error {
@@ -107,6 +109,11 @@ export abstract class SymbiosisTrade {
     get functionSelector(): string | undefined {
         this.assertOutInitialized('functionSelector')
         return this.out.functionSelector
+    }
+
+    get instructions(): string[] | undefined {
+        this.assertOutInitialized('instructions')
+        return this.out.instructions
     }
 
     public applyAmountIn(newAmount: TokenAmount) {

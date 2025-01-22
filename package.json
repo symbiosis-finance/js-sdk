@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "3.4.39",
+    "version": "3.4.42",
     "main": "dist/index.cjs.js",
     "typings": "dist/index.d.ts",
     "files": [
@@ -33,6 +33,9 @@
         "@ton/core": "^0.59.0",
         "@ton/crypto": "3.3.0",
         "@ton/ton": "^15.0.0",
+        "@raydium-io/raydium-sdk-v2": "0.1.106-alpha",
+        "@solana/spl-token": "^0.4.0",
+        "@solana/web3.js": "^1.98.0",
         "@uniswap/sdk-core": "3.1.0",
         "@uniswap/v3-sdk": "3.9.0",
         "big.js": "^5.2.2",
@@ -54,6 +57,7 @@
     "devDependencies": {
         "@typechain/ethers-v5": "^9.0.0",
         "@types/big.js": "^4.0.5",
+        "@types/bs58": "^4.0.0",
         "@types/crypto-js": "^4.2.1",
         "@types/jest": "^27.0.3",
         "@types/lodash.flatmap": "^4.5.6",

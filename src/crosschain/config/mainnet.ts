@@ -317,6 +317,17 @@ export const config: Config = {
                     },
                 },
                 {
+                    name: 'GPT Wars',
+                    symbol: 'GPTW',
+                    address: '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
+                        small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
+                    },
+                },
+                {
                     name: 'Symbiosis BTC',
                     symbol: 'syBTC',
                     address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
@@ -953,6 +964,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png',
                     },
                 },
+                {
+                    name: 'UXLINK Token',
+                    symbol: 'UXLINK',
+                    address: '0x482deB2F7B9608a80eA91E71F06380E9891501C6',
+                    chainId: ChainId.MANTLE_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                    },
+                },
             ],
             router: '0xDd0840118bF9CCCc6d67b2944ddDfbdb995955FD',
             dexFee: 30,
@@ -1463,6 +1485,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'GPT Wars',
+                    symbol: 'GPTW',
+                    address: '0xcB0DdC112EF317271266c83D7179Bf9186b9C658',
+                    chainId: ChainId.SEI_EVM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
+                        small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
                     },
                 },
             ],
