@@ -1,8 +1,9 @@
+import { TransactionRequest } from '@ethersproject/providers'
+
 import { ChainId, TokenConstructor } from '../constants'
 import { Percent, Token, TokenAmount } from '../entities'
 import { OneInchProtocols } from './trade/oneInchTrade'
 import { SymbiosisKind, SymbiosisTradeType } from './trade'
-import { TransactionRequest } from '@ethersproject/providers'
 import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
@@ -142,6 +143,10 @@ export type TonTransactionData = {
     }[]
 }
 
+export type SolanaTransactionData = {
+    instructions: string[]
+}
+
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -158,6 +163,10 @@ export type SwapExactInTransactionPayload =
     | {
           transactionType: 'ton'
           transactionRequest: TonTransactionData
+      }
+    | {
+          transactionType: 'solana'
+          transactionRequest: SolanaTransactionData
       }
 
 export type RouteItem = {
