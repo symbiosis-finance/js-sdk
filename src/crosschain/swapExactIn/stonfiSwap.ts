@@ -2,14 +2,10 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { StonfiTrade } from '../trade'
 import { isTonChainId } from '../chainUtils'
 
-export async function isStonfiSwapSupported(context: SwapExactInParams): Promise<boolean> {
+export function isStonfiSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context
 
-    if (isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)) {
-        return true
-    }
-
-    return false
+    return isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)
 }
 
 export async function stonfiSwap({

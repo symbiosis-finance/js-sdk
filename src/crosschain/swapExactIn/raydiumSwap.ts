@@ -1,31 +1,28 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
-import { isTonChainId } from '../chainUtils'
-import { DedustTrade } from '../trade/dedustTrade'
+import { RaydiumTrade } from '../trade'
+import { isSolanaChainId } from '../chainUtils'
 
-export function isDedustSwapSupported(context: SwapExactInParams): boolean {
+export function isRaydiumSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context
 
-    return isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)
+    return isSolanaChainId(tokenAmountIn.token.chainId) && isSolanaChainId(tokenOut.chainId)
 }
 
-export async function dedustSwap({
+export async function raydiumSwap({
     symbiosis,
     tokenAmountIn,
     tokenOut,
     from,
     to,
     slippage,
-    deadline,
 }: SwapExactInParams): Promise<SwapExactInResult> {
-    const trade = new DedustTrade({
+    const trade = new RaydiumTrade({
         symbiosis,
         tokenAmountIn,
-        tokenAmountInMin: tokenAmountIn,
         tokenOut,
         from,
         to,
         slippage,
-        deadline,
     })
 
     await trade.init()
@@ -35,22 +32,15 @@ export async function dedustSwap({
         tokenAmountOut: trade.amountOut,
         tokenAmountOutMin: trade.amountOutMin,
         priceImpact: trade.priceImpact,
-        transactionType: 'ton',
+        transactionType: 'solana',
         approveTo: '0x0000000000000000000000000000000000000000',
         transactionRequest: {
-            validUntil: trade.deadline,
-            messages: [
-                {
-                    address: trade.routerAddress,
-                    amount: trade.value?.toString() ?? '0',
-                    payload: trade.callData,
-                },
-            ],
+            instructions: trade.instructions!,
         },
-        fees: trade.fees ?? [],
+        fees: [],
         routes: [
             {
-                provider: 'dedust',
+                provider: 'raydium',
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],
