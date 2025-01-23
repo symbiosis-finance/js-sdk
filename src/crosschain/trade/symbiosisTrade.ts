@@ -1,5 +1,6 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 import { BigNumber } from 'ethers'
+import {FeeItem} from "../types";
 
 export type SymbiosisTradeType =
     | 'uni-v2'
@@ -37,6 +38,7 @@ export interface SymbiosisTradeOutResult {
     minReceivedOffset: number
     functionSelector?: string
     instructions?: string[]
+    fees?: FeeItem[]
     value?: bigint
 }
 
@@ -122,6 +124,11 @@ export abstract class SymbiosisTrade {
     get instructions(): string[] | undefined {
         this.assertOutInitialized('instructions')
         return this.out.instructions
+    }
+
+    get fees(): FeeItem[] | undefined {
+        this.assertOutInitialized('fees')
+        return this.out.fees
     }
 
     public applyAmountIn(newAmount: TokenAmount) {
