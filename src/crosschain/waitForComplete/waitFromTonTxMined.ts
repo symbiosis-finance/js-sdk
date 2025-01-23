@@ -14,28 +14,22 @@ const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
 
 export interface WaitFromTonTxMinedParams {
     symbiosis: Symbiosis
-    tonAddress: string
-    tonContractAddress?: string
+    address: string
+    contractAddress: string
 }
 
 export async function waitFromTonTxMined({
     symbiosis,
-    tonAddress,
-    tonContractAddress,
+    address,
+    contractAddress,
 }: WaitFromTonTxMinedParams): Promise<Transaction | undefined> {
-    const trackTonContractAddress = tonContractAddress
-
-    if (!trackTonContractAddress) {
-        throw new Error(`Ton contract address not specified`)
-    }
-
     const client = await symbiosis.getTonClient()
 
     const now = Math.floor(Date.now() / 1000)
 
     return await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(trackTonContractAddress), {
+            const txs = await client.getTransactions(Address.parse(contractAddress), {
                 limit: 10,
                 archival: true,
             })
@@ -55,7 +49,7 @@ export async function waitFromTonTxMined({
                         body.loadUint(64) // query id skip
                         body.loadCoins() // amount skip
                         const senderAddress = body.loadAddress()
-                        if (senderAddress.equals(Address.parse(tonAddress))) {
+                        if (senderAddress.equals(Address.parse(address))) {
                             return true
                         }
                     }
@@ -68,7 +62,7 @@ export async function waitFromTonTxMined({
                     return false
                 }
 
-                return Address.parse(tonAddress).equals(senderAddress)
+                return Address.parse(address).equals(senderAddress)
             })
             return filtered.length > 0 ? filtered[0] : undefined // is no reliable logic, we take just last sent tx
         },
