@@ -7,6 +7,7 @@ import { SymbiosisKind, SymbiosisTradeType } from './trade'
 import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
+import { SymbiosisTrade } from './trade/symbiosisTrade'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -189,4 +190,6 @@ export type SwapExactInResult = {
     timeLog?: ProfilerItem[]
     routeType?: string
     poolAddress?: string
+    tradeA?: SymbiosisTrade
+    tradeC?: SymbiosisTrade
 } & SwapExactInTransactionPayload

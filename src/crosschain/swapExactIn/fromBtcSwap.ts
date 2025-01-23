@@ -271,7 +271,7 @@ async function buildTail(
     syBtcAmount: TokenAmount,
     symBtcContract: SymBtc
 ): Promise<BuildTailResult> {
-    const { to } = context
+    const { to, symbiosis } = context
 
     const swapExactInResult = await bestPoolSwapping({
         ...context,
@@ -283,11 +283,37 @@ async function buildTail(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const tail = await symBtcContract.callStatic.packBTCTransactionTail({
-        receiveSide: tx.relayRecipient,
-        receiveSideCalldata: tx.otherSideCalldata,
-        receiveSideOffset: 100, // metaSynthesize struct
-    })
+    let tail = ''
+    if (swapExactInResult.tradeA) {
+        const callDatas = [tx.firstSwapCalldata, tx.otherSideCalldata]
+        const receiveSides = [tx.firstDexRouter, tx.relayRecipient]
+        const path = [...tx.approvedTokens]
+        const offsets = [swapExactInResult.tradeA.callDataOffset, 100] // metaSynthesize struct offset
+
+        const chainId = syBtcAmount.token.chainId
+        const multicallRouter = symbiosis.multicallRouter(chainId)
+
+        const multicallRouterData = multicallRouter.interface.encodeFunctionData('multicall', [
+            syBtcAmount.raw.toString(),
+            callDatas,
+            receiveSides,
+            path,
+            offsets,
+            to,
+        ])
+
+        tail = await symBtcContract.callStatic.packBTCTransactionTail({
+            receiveSide: multicallRouter.address,
+            receiveSideCalldata: multicallRouterData,
+            receiveSideOffset: 36,
+        })
+    } else {
+        tail = await symBtcContract.callStatic.packBTCTransactionTail({
+            receiveSide: tx.relayRecipient,
+            receiveSideCalldata: tx.otherSideCalldata,
+            receiveSideOffset: 100, // metaSynthesize struct
+        })
+    }
 
     return {
         ...swapExactInResult,

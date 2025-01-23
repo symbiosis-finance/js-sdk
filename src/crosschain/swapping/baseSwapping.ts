@@ -267,6 +267,8 @@ export abstract class BaseSwapping {
             timeLog: this.profiler.toString(),
             routeType: routeType.join('-'),
             poolAddress: this.omniPoolConfig.address,
+            tradeA: this.tradeA,
+            tradeC: this.tradeC,
         }
     }
 

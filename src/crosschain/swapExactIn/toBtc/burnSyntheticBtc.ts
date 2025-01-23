@@ -26,7 +26,11 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
 
-        symbiosis.config.omniPools.forEach((poolConfig) => {
+        const pools = [
+            ...symbiosis.config.omniPools.filter((i) => i.generalPurpose),
+            symbiosis.config.omniPools[2], // BTC pool
+        ]
+        pools.forEach((poolConfig) => {
             const combinations = symbiosis.getTransitCombinations(
                 tokenAmountIn.token.chainId,
                 syBtc.chainId,
