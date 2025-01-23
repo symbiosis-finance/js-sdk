@@ -8,24 +8,11 @@ export function isDedustSwapSupported(context: SwapExactInParams): boolean {
     return isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)
 }
 
-export async function dedustSwap({
-    symbiosis,
-    tokenAmountIn,
-    tokenOut,
-    from,
-    to,
-    slippage,
-    deadline,
-}: SwapExactInParams): Promise<SwapExactInResult> {
+export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    const { tokenAmountIn, tokenOut } = params
     const trade = new DedustTrade({
-        symbiosis,
-        tokenAmountIn,
+        ...params,
         tokenAmountInMin: tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
     })
 
     await trade.init()
