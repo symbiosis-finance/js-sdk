@@ -1849,5 +1849,33 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
         },
+        {
+            id: ChainId.SONIC_MAINNET,
+            rpc: 'https://rpc.soniclabs.com',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'Wrapped Ethereum',
+                    symbol: 'WETH',
+                    address: '0x50c42dEAcD8Fc9773493ED674b675bE577f2634b',
+                    chainId: ChainId.SONIC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
+            metaRouterGateway: '0xb7aF032a0C8d350705eD7E4E3802377731a0cA07',
+            bridge: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+        },
     ],
 }

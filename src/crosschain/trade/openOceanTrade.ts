@@ -115,6 +115,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'gravity',
         nativeTokenAddress: AddressZero,
     },
+    [ChainId.SONIC_MAINNET]: {
+        slug: 'sonic',
+        nativeTokenAddress: AddressZero,
+    },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {

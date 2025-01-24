@@ -698,6 +698,16 @@ export const chains: Chain[] = [
             large: 'https://cdn.prod.website-files.com/6669a2e2b7f624149423b9be/6669b090137434ab4c6d11a2_favicoin%20goat.png',
         },
     }),
+    new Chain({
+        id: ChainId.SONIC_MAINNET,
+        name: 'Sonic',
+        disabled: false,
+        explorer: 'https://sonicscan.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32684.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32684.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
