@@ -277,6 +277,7 @@ async function buildTail(
         ...context,
         tokenAmountIn: syBtcAmount,
         from: to, // to be able to revert a tx
+        tradeAContext: 'multicallRouter',
     })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!

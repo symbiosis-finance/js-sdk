@@ -108,6 +108,8 @@ export interface RevertableAddress {
     address: string
 }
 
+export type TradeAContext = 'metaRouter' | 'multicallRouter'
+
 export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
@@ -122,6 +124,7 @@ export interface SwapExactInParams {
     middlewareCall?: MiddlewareCall
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
+    tradeAContext?: TradeAContext
 }
 
 export type BtcTransactionData = {

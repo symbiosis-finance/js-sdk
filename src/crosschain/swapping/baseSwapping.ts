@@ -33,6 +33,7 @@ import {
     SwapExactInResult,
     SwapExactInTransactionPayload,
     TonTransactionData,
+    TradeAContext,
 } from '../types'
 import { Profiler } from '../../entities/profiler'
 import { createFakeAmount } from '../../utils'
@@ -93,6 +94,7 @@ export abstract class BaseSwapping {
         transitTokenIn,
         transitTokenOut,
         revertableAddresses,
+        tradeAContext,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
@@ -137,7 +139,7 @@ export abstract class BaseSwapping {
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
-            this.tradeA = this.buildTradeA()
+            this.tradeA = this.buildTradeA(tradeAContext)
             await this.tradeA.init()
             this.profiler.tick('A')
             routes.push({
@@ -443,7 +445,7 @@ export abstract class BaseSwapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
-    protected buildTradeA(): SymbiosisTrade {
+    protected buildTradeA(tradeAContext?: TradeAContext): SymbiosisTrade {
         const tokenOut = this.transitTokenIn
 
         if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
@@ -451,7 +453,11 @@ export abstract class BaseSwapping {
         }
 
         const chainId = this.tokenAmountIn.token.chainId
-        const from = this.symbiosis.chainConfig(chainId).metaRouter
+
+        let from = this.symbiosis.chainConfig(chainId).metaRouter
+        if (tradeAContext === 'multicallRouter') {
+            from = this.symbiosis.chainConfig(chainId).multicallRouter
+        }
         const to = from
 
         return new AggregatorTrade({
