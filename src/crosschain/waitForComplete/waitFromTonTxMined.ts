@@ -1,6 +1,5 @@
 import { Address, Transaction } from '@ton/core'
 
-import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
 
@@ -13,29 +12,27 @@ class waitFromTonTxCompleteError extends Error {
 
 const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
 
-export async function waitFromTonTxMined(
-    symbiosis: Symbiosis,
-    chainId: ChainId,
-    tonAddress: string
-): Promise<Transaction | undefined> {
-    const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
+export interface WaitFromTonTxMinedParams {
+    symbiosis: Symbiosis
+    address: string
+    contractAddress: string
+}
 
-    if (!tonChainConfig) {
-        throw new Error('Ton chain config not found')
-    }
-
-    const tonPortal = tonChainConfig.tonPortal
-    if (!tonPortal) {
-        throw new Error(`Ton portal not found for chain ${chainId}`)
-    }
-
+export async function waitFromTonTxMined({
+    symbiosis,
+    address,
+    contractAddress,
+}: WaitFromTonTxMinedParams): Promise<Transaction | undefined> {
     const client = await symbiosis.getTonClient()
 
     const now = Math.floor(Date.now() / 1000)
 
     return await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 20, archival: true })
+            const txs = await client.getTransactions(Address.parse(contractAddress), {
+                limit: 10,
+                archival: true,
+            })
             const filtered = txs.filter((tx) => {
                 if (tx.now < now) {
                     return false
@@ -52,7 +49,7 @@ export async function waitFromTonTxMined(
                         body.loadUint(64) // query id skip
                         body.loadCoins() // amount skip
                         const senderAddress = body.loadAddress()
-                        if (senderAddress.equals(Address.parse(tonAddress))) {
+                        if (senderAddress.equals(Address.parse(address))) {
                             return true
                         }
                     }
@@ -65,7 +62,7 @@ export async function waitFromTonTxMined(
                     return false
                 }
 
-                return Address.parse(tonAddress).equals(senderAddress)
+                return Address.parse(address).equals(senderAddress)
             })
             return filtered.length > 0 ? filtered[0] : undefined // is no reliable logic, we take just last sent tx
         },

@@ -855,4 +855,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
         },
     }),
+    [ChainId.SONIC_MAINNET]: new Token({
+        chainId: ChainId.SONIC_MAINNET,
+        address: '0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38',
+        decimals: 18,
+        symbol: 'WS',
+        isNative: false,
+        name: 'Wrapped Sonic',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32684.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32684.png',
+        },
+    }),
 }
