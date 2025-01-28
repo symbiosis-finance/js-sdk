@@ -1877,5 +1877,33 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
         },
+        {
+            id: ChainId.ABSTRACT_MAINNET,
+            rpc: 'https://api.mainnet.abs.xyz',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'Wrapped Ethereum',
+                    symbol: 'WETH',
+                    address: '0x3439153eb7af838ad19d56e1571fbd09333c2809',
+                    chainId: ChainId.ABSTRACT_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x2E818E50b913457015E1277B43E469b63AC5D3d7',
+            metaRouterGateway: '0x664376638fE57642342009f49E1Ca4caf74b26D3',
+            bridge: '0xAcb35C2D11FEA8849cd9f5Ff6fBC56bB5296641B',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x8Dc71561414CDcA6DcA7C1dED1ABd04AF474D189',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
+        },
     ],
 }
