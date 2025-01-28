@@ -708,6 +708,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32684.png',
         },
     }),
+    new Chain({
+        id: ChainId.ABSTRACT_MAINNET,
+        name: 'Abstract',
+        disabled: false,
+        explorer: 'https://abscan.org',
+        icons: {
+            small: 'https://s3.coinmarketcap.com/dexer/token/d51628b923d63af38ff8900885c6399b.jpg',
+            large: 'https://s3.coinmarketcap.com/dexer/token/d51628b923d63af38ff8900885c6399b.jpg',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
