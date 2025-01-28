@@ -1,4 +1,5 @@
 import { fetchData, longPolling } from './utils'
+import { BtcConfig } from '../chainUtils/btc'
 
 interface WrapTx {
     feeLimit: number
@@ -10,6 +11,7 @@ interface WrapTx {
         to: string
     }
 }
+
 interface AddressInfo {
     legacyAddress: string
     revealAddress: string
@@ -57,18 +59,19 @@ class WaitForCommitBtcTxError extends Error {
 }
 
 interface WaitForBtcCommitTxMinedParams {
-    forwarderUrl: string
+    btcConfig: BtcConfig
     commitTx: string
     confirmations: number
     onConfirmation: (count: number) => void
 }
 
 export async function waitForBtcCommitTxMined({
-    forwarderUrl,
+    btcConfig,
     commitTx,
     confirmations,
     onConfirmation,
 }: WaitForBtcCommitTxMinedParams): Promise<string | undefined> {
+    const { forwarderUrl } = btcConfig
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
     txInfoUrl.searchParams.append('txid', commitTx)
 

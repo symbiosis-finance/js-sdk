@@ -103,7 +103,9 @@ export class ZappingChainFlip extends BaseSwapping {
 
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(chainFlipTokenIn.chainId, this.omniPoolConfig)
-
+        if (transitTokenIn.equals(transitTokenOut)) {
+            throw new Error('Same transit token')
+        }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
             this.evmTo = this.symbiosis.config.revertableAddress.default

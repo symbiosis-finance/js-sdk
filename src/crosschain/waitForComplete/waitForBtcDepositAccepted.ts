@@ -1,4 +1,6 @@
 import { fetchData, longPolling } from './utils'
+import { BtcConfig } from '../chainUtils/btc'
+import { BtcDepositAcceptedResult } from './types'
 
 interface WrapTx {
     feeLimit: number
@@ -10,6 +12,7 @@ interface WrapTx {
         to: string
     }
 }
+
 interface AddressInfo {
     legacyAddress: string
     revealAddress: string
@@ -38,23 +41,25 @@ export class WaitWrapBtcTxToCompleteError extends Error {
 }
 
 export async function waitForBtcDepositAccepted(
-    forwarderUrl: string,
-    btcAddress: string
-): Promise<{ commitTx: string; revealTx: string } | undefined> {
-    const addressInfoUrl = new URL(`${forwarderUrl}/address?address=${btcAddress}`)
-    const addressInfo = await longPolling<TransactionBtcInfo>({
+    btcConfig: BtcConfig,
+    depositAddress: string
+): Promise<BtcDepositAcceptedResult | undefined> {
+    const { forwarderUrl } = btcConfig
+    const addressInfoUrl = new URL(`${forwarderUrl}/address?address=${depositAddress}`)
+    return longPolling<BtcDepositAcceptedResult | undefined>({
         pollingFunction: async () => {
             const addressResponse: BtcAddressResponse = await fetchData(addressInfoUrl)
             if (addressResponse.transactions.length === 0) {
                 return
             }
-            return addressResponse.transactions[0]
+            const { commitTx, revealTx } = addressResponse.transactions[0]
+            return {
+                commitTx,
+                revealTx,
+                btcConfig,
+            }
         },
         successCondition: (txInfo) => !!txInfo,
         error: new WaitWrapBtcTxToCompleteError('getting TransactionBtcInfo timeout exceed'),
     })
-
-    const { commitTx, revealTx } = addressInfo
-
-    return { commitTx, revealTx }
 }

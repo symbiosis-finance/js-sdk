@@ -7,6 +7,7 @@ import { SymbiosisKind, SymbiosisTradeType } from './trade'
 import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
+import { SymbiosisTrade } from './trade/symbiosisTrade'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -37,11 +38,6 @@ export type ChainConfig = {
     synthesis: string
     portal: string
     fabric: string
-    symBtc?: {
-        address: string
-        chainId: ChainId
-    }
-    forwarderUrl?: string
     tonPortal?: string
 }
 
@@ -112,6 +108,8 @@ export interface RevertableAddress {
     address: string
 }
 
+export type TradeAContext = 'metaRouter' | 'multicallRouter'
+
 export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
@@ -126,6 +124,7 @@ export interface SwapExactInParams {
     middlewareCall?: MiddlewareCall
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
+    tradeAContext?: TradeAContext
 }
 
 export type BtcTransactionData = {
@@ -194,4 +193,6 @@ export type SwapExactInResult = {
     timeLog?: ProfilerItem[]
     routeType?: string
     poolAddress?: string
+    tradeA?: SymbiosisTrade
+    tradeC?: SymbiosisTrade
 } & SwapExactInTransactionPayload

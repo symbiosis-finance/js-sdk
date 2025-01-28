@@ -8,6 +8,7 @@ import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
+import { BtcConfig, getBtcConfig } from '../chainUtils/btc'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -48,8 +49,8 @@ export async function tryToFindExtraStepsAndWait(
         if (!btc) {
             throw new Error('BTC token not found')
         }
-        const forwarderUrl = symbiosis.getForwarderUrl(btc.chainId)
-        const outHash = await waitUnwrapBtcTxComplete(forwarderUrl, burnSerial)
+        const btcConfig = getBtcConfig(btc)
+        const outHash = await waitUnwrapBtcTxComplete(btcConfig, burnSerial)
 
         return {
             extraStep: 'burnRequestBtc',
@@ -199,7 +200,8 @@ interface UnwrapSerialBTCResponse {
     outputIdx: string
 }
 
-async function waitUnwrapBtcTxComplete(forwarderUrl: string, burnSerialBtc: BigNumber): Promise<string> {
+async function waitUnwrapBtcTxComplete(btcConfig: BtcConfig, burnSerialBtc: BigNumber): Promise<string> {
+    const { forwarderUrl } = btcConfig
     const unwrapInfoUrl = new URL(`${forwarderUrl}/unwrap?serial=${burnSerialBtc.toString()}`)
 
     const result = await longPolling<UnwrapSerialBTCResponse>({

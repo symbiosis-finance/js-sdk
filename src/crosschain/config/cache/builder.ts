@@ -25,8 +25,9 @@ import { config as dev } from '../dev'
 import type { ConfigName } from '../../symbiosis'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
-import { isTronChainId, isBtcChainId, isTonChainId, isSolanaChainId } from '../../chainUtils'
+import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import fs from 'fs'
+import { BTC_CONFIGS } from '../../chainUtils/btc'
 
 export type Id = number
 
@@ -123,6 +124,7 @@ export class Builder {
             }
         }
     }
+
     private async checkPortalTokensWhitelisted() {
         console.log('checkPortalTokensWhitelisted')
         const chains = this.config.chains
@@ -137,6 +139,11 @@ export class Builder {
             if (portal.address !== AddressZero) {
                 for (let j = 0; j < chain.stables.length; j++) {
                     const token = chain.stables[j]
+
+                    // syBTC on BNB chain
+                    if (token.address === '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7') {
+                        continue
+                    }
 
                     // FIXME remove skipping GPTW on BSC chain if whitelisted on portal
                     if (token.address.toLowerCase() === '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592'.toLowerCase()) {
@@ -290,6 +297,10 @@ export class Builder {
         for (idCounter; idCounter < stables.length; idCounter++) {
             realTokensWithId.push({ ...stables[idCounter], id: idCounter })
         }
+
+        BTC_CONFIGS.forEach((btcConfig) => {
+            realTokensWithId.push({ ...btcConfig.btc, id: idCounter++ })
+        })
 
         const tokens: TokenInfo[] = realTokensWithId
 

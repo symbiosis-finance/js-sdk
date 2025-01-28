@@ -11,6 +11,7 @@ import { Error, ErrorCode } from '../error'
 
 export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.ZKSYNC_MAINNET]: '0x35e3dc1f3383bD348EC651EdD73fE1d7a7dA5AAa',
+    [ChainId.BSC_MAINNET]: '0x628613064b1902a1A422825cf11B687C6f17961E',
 }
 
 export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
