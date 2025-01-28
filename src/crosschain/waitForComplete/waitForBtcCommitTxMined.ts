@@ -62,41 +62,29 @@ class WaitForCommitBtcTxError extends Error {
 interface WaitForBtcCommitTxMinedParams {
     btcConfig: BtcConfig
     commitTx: string
-    confirmations: number
-    onConfirmed: (blockHeight: number) => void
 }
 
 export async function waitForBtcCommitTxMined({
     btcConfig,
     commitTx,
-    confirmations,
-    onConfirmed,
-}: WaitForBtcCommitTxMinedParams): Promise<string | undefined> {
+}: WaitForBtcCommitTxMinedParams): Promise<number | undefined> {
     const { forwarderUrl } = btcConfig
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
     txInfoUrl.searchParams.append('txid', commitTx)
 
-    let confirmed = false
     const txResponse = await longPolling<TxResponse>({
         pollingFunction: async () => {
             return fetchData(txInfoUrl)
         },
         successCondition: (response) => {
-            const blockHeight = response?.block?.blockHeight || 0
-            console.log('successCondition', { confirmed, blockHeight })
-            if (!confirmed && blockHeight > 0) {
-                onConfirmed(blockHeight)
-                confirmed = true
-            }
-            const currentConfirmations = response?.block?.confirmations || 0
-            return currentConfirmations >= confirmations
+            return (response?.block?.confirmations || 0) > 0
         },
         error: new WaitForCommitBtcTxError('getting TxResponse timeout exceed'),
     })
 
-    if (!txResponse || !txResponse.txInfo) {
+    if (!txResponse || !txResponse.block) {
         return
     }
 
-    return txResponse.txInfo.commitTx
+    return txResponse.block.blockHeight
 }

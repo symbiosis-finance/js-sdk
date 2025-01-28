@@ -20,7 +20,7 @@ export async function waitForBtcEvmTxIssued(
     )
     const filter = synthesis.filters.BTCSynthesizeCompleted(externalId)
 
-    const timeout = 1000 * 60 * 60 // 60 minutes
+    const timeout = 1000 * 60 * 60 * 2 // 2h
     const log = await getLogWithTimeout({ symbiosis, chainId: symBtc.chainId, filter, exceedDelay: timeout })
 
     return log.transactionHash
