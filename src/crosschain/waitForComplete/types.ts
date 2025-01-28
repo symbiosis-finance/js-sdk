@@ -17,6 +17,5 @@ export interface BridgeTxInfo {
 
 export interface BtcDepositAcceptedResult {
     commitTx: string
-    revealTx: string
     btcConfig: BtcConfig
 }

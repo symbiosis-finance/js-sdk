@@ -67,7 +67,7 @@ interface WaitForBtcCommitTxMinedParams {
 export async function waitForBtcCommitTxMined({
     btcConfig,
     commitTx,
-}: WaitForBtcCommitTxMinedParams): Promise<number | undefined> {
+}: WaitForBtcCommitTxMinedParams): Promise<{ blockHeight: number; revealTx: string } | undefined> {
     const { forwarderUrl } = btcConfig
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
     txInfoUrl.searchParams.append('txid', commitTx)
@@ -82,9 +82,12 @@ export async function waitForBtcCommitTxMined({
         error: new WaitForCommitBtcTxError('getting TxResponse timeout exceed'),
     })
 
-    if (!txResponse || !txResponse.block) {
+    if (!txResponse || !txResponse.block || !txResponse.txInfo.revealTx) {
         return
     }
 
-    return txResponse.block.blockHeight
+    return {
+        blockHeight: txResponse.block.blockHeight,
+        revealTx: txResponse.txInfo.revealTx,
+    }
 }

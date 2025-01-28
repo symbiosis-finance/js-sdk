@@ -52,10 +52,9 @@ export async function waitForBtcDepositAccepted(
             if (addressResponse.transactions.length === 0) {
                 return
             }
-            const { commitTx, revealTx } = addressResponse.transactions[0]
+            const { commitTx } = addressResponse.transactions[0]
             return {
                 commitTx,
-                revealTx,
                 btcConfig,
             }
         },
