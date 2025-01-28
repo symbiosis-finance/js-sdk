@@ -1,5 +1,14 @@
+import {
+    AddressLookupTableAccount,
+    Connection,
+    PublicKey,
+    SystemProgram,
+    TransactionMessage,
+    VersionedTransaction,
+} from '@solana/web3.js'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
+import { SymbiosisTrade } from '../trade/symbiosisTrade'
 
 export function isSolanaChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
@@ -71,4 +80,41 @@ function getSolanaToken({
             small: `https://s2.coinmarketcap.com/static/img/coins/64x64/${cmcId}.png`,
         },
     })
+}
+
+export function getSolanaConnection() {
+    return new Connection('https://solana-rpc.publicnode.com')
+}
+
+const FEE_SOL_COLLECTOR = '7niUN8QFTN8V3y47fqLpAPs5Hq9T79BrSq8CAVjq6YJX'
+export const SOL_FEE_AMOUNT = 50000 // 0.00005 sol (9 decimals)
+
+export async function addSolanaFee(from: string, trade: SymbiosisTrade) {
+    const connection = getSolanaConnection()
+    const transferSolInstruction = SystemProgram.transfer({
+        fromPubkey: new PublicKey(from),
+        toPubkey: new PublicKey(FEE_SOL_COLLECTOR),
+        lamports: SOL_FEE_AMOUNT,
+    })
+
+    if (!trade.instructions) {
+        throw new Error('Theres is no instructions in solana trade')
+    }
+    const txBuffer = Buffer.from(trade.instructions, 'base64')
+    const transaction = VersionedTransaction.deserialize(txBuffer)
+
+    // Get Address Lookup Table
+    const lookupTableAccount = await connection
+        .getAddressLookupTable(transaction.message.addressTableLookups[0].accountKey)
+        .then((res) => res.value as AddressLookupTableAccount)
+
+    const message = TransactionMessage.decompile(transaction.message, {
+        addressLookupTableAccounts: [lookupTableAccount],
+    })
+
+    message.instructions.unshift(transferSolInstruction)
+
+    transaction.message = message.compileToV0Message([lookupTableAccount])
+
+    return Buffer.from(transaction.serialize()).toString('base64')
 }
