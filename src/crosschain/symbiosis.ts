@@ -532,10 +532,10 @@ export class Symbiosis {
     public async waitForBtcCommitTxMined(
         btcConfig: BtcConfig,
         commitTx: string,
-        onConfirmation: (count: number) => void,
+        onConfirmed: (blockHeight: number) => void,
         confirmations: number = 2
     ) {
-        return waitForBtcCommitTxMined({ btcConfig, commitTx, confirmations, onConfirmation })
+        return waitForBtcCommitTxMined({ btcConfig, commitTx, confirmations, onConfirmed })
     }
 
     public async waitForBtcEvmTxIssued(btcConfig: BtcConfig, revealTx: string) {
