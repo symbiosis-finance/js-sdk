@@ -37,7 +37,7 @@ export interface SymbiosisTradeOutResult {
     callDataOffset: number
     minReceivedOffset: number
     functionSelector?: string
-    instructions?: string[]
+    instructions?: string
     fees?: FeeItem[]
     value?: bigint
 }
@@ -121,7 +121,7 @@ export abstract class SymbiosisTrade {
         return this.out.functionSelector
     }
 
-    get instructions(): string[] | undefined {
+    get instructions(): string | undefined {
         this.assertOutInitialized('instructions')
         return this.out.instructions
     }

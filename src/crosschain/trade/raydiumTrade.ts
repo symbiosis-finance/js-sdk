@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
 import { API_URLS } from '@raydium-io/raydium-sdk-v2'
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -6,7 +6,7 @@ import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/sp
 import { Percent, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getSolanaTokenAddress } from '../chainUtils'
+import { getSolanaConnection, getSolanaTokenAddress } from '../chainUtils'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -31,8 +31,6 @@ interface SwapTransactionsResponse {
     success: boolean
     data: { transaction: string }[]
 }
-
-const connection = new Connection('https://solana-rpc.publicnode.com')
 
 export class RaydiumTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
@@ -75,7 +73,7 @@ export class RaydiumTrade extends SymbiosisTrade {
                 throw new Error('Failed to get quote via raydium dex')
             }
 
-            const instructions = await this.buildCalldata({
+            const instructionsResponse = await this.buildCalldata({
                 inputMint,
                 outputMint,
                 txVersion,
@@ -94,7 +92,7 @@ export class RaydiumTrade extends SymbiosisTrade {
                 callData: '',
                 callDataOffset: 0,
                 minReceivedOffset: 0,
-                instructions,
+                instructions: instructionsResponse[0], // all instructions will be in the first array element
             }
 
             return this
@@ -155,6 +153,7 @@ export class RaydiumTrade extends SymbiosisTrade {
     }
 
     async fetchTokenAccountData(publicKey: PublicKey) {
+        const connection = getSolanaConnection()
         const solAccountResp = await connection.getAccountInfo(publicKey)
         const tokenAccountResp = await connection.getTokenAccountsByOwner(publicKey, {
             programId: TOKEN_PROGRAM_ID,
