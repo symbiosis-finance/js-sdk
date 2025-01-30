@@ -8,7 +8,6 @@ import {
 } from '@solana/web3.js'
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
-import { SymbiosisTrade } from '../trade/symbiosisTrade'
 
 export function isSolanaChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
@@ -87,9 +86,12 @@ export function getSolanaConnection() {
 }
 
 const FEE_SOL_COLLECTOR = '7niUN8QFTN8V3y47fqLpAPs5Hq9T79BrSq8CAVjq6YJX'
-export const SOL_FEE_AMOUNT = 50000 // 0.00005 sol (9 decimals)
+const SOL_FEE_AMOUNT = 50000 // 0.00005 sol (9 decimals)
 
-export async function addSolanaFee(from: string, trade: SymbiosisTrade) {
+export async function addSolanaFee(from: string, instructions?: string) {
+    if (!instructions) {
+        throw new Error('Theres is no instructions in solana trade')
+    }
     const connection = getSolanaConnection()
     const transferSolInstruction = SystemProgram.transfer({
         fromPubkey: new PublicKey(from),
@@ -97,10 +99,7 @@ export async function addSolanaFee(from: string, trade: SymbiosisTrade) {
         lamports: SOL_FEE_AMOUNT,
     })
 
-    if (!trade.instructions) {
-        throw new Error('Theres is no instructions in solana trade')
-    }
-    const txBuffer = Buffer.from(trade.instructions, 'base64')
+    const txBuffer = Buffer.from(instructions, 'base64')
     const transaction = VersionedTransaction.deserialize(txBuffer)
 
     // Get Address Lookup Table
@@ -116,5 +115,8 @@ export async function addSolanaFee(from: string, trade: SymbiosisTrade) {
 
     transaction.message = message.compileToV0Message([lookupTableAccount])
 
-    return Buffer.from(transaction.serialize()).toString('base64')
+    return {
+        instructions: Buffer.from(transaction.serialize()).toString('base64'),
+        fee: SOL_FEE_AMOUNT,
+    }
 }
