@@ -94,19 +94,7 @@ export const config: Config = {
             id: ChainId.BTC_MAINNET,
             rpc: 'https://mempool.space/api',
             filterBlockOffset: 0,
-            stables: [
-                {
-                    name: 'Bitcoin',
-                    symbol: 'BTC',
-                    address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
-                    chainId: ChainId.BTC_MAINNET,
-                    decimals: 8,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    },
-                },
-            ],
+            stables: [],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x0000000000000000000000000000000000000000',
@@ -116,17 +104,12 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
-            symBtc: {
-                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-                chainId: ChainId.ZKSYNC_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
         },
         {
             id: ChainId.ETH_MAINNET,
             rpc: 'https://ethereum-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/eth', 'https://eth.llamarpc.com', 'https://eth-pokt.nodies.app'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -253,7 +236,7 @@ export const config: Config = {
             id: ChainId.BSC_MAINNET,
             rpc: 'https://bsc-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/bsc', 'https://binance.llamarpc.com'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -344,6 +327,17 @@ export const config: Config = {
                         small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
                     },
                 },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                    },
+                },
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
             dexFee: 25,
@@ -359,7 +353,7 @@ export const config: Config = {
             id: ChainId.AVAX_MAINNET,
             rpc: 'https://avalanche-c-chain-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/avalanche', 'https://avalanche.drpc.org', 'https://avax.meowrpc.com'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -399,7 +393,7 @@ export const config: Config = {
             id: ChainId.MATIC_MAINNET,
             rpc: 'https://polygon-bor-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/polygon', 'https://polygon.llamarpc.com', 'https://polygon.meowrpc.com'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin (PoS) (USDC.e)',
@@ -481,7 +475,7 @@ export const config: Config = {
                 'https://rpc.ankr.com/kava_evm',
                 'https://evm.kava-rpc.com',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Tether USDt',
@@ -565,7 +559,7 @@ export const config: Config = {
             id: ChainId.ZKSYNC_MAINNET,
             rpc: 'https://mainnet.era.zksync.io',
             spareRpcs: ['https://rpc.ankr.com/zksync_era', 'https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -649,7 +643,7 @@ export const config: Config = {
             id: ChainId.ARBITRUM_MAINNET,
             rpc: 'https://arb1.arbitrum.io/rpc',
             spareRpcs: ['https://rpc.ankr.com/arbitrum', 'https://arbitrum.llamarpc.com', 'https://1rpc.io/arb'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -744,7 +738,7 @@ export const config: Config = {
             id: ChainId.OPTIMISM_MAINNET,
             rpc: 'https://mainnet.optimism.io',
             spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://rpc.ankr.com/optimism'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -787,7 +781,7 @@ export const config: Config = {
                 'https://rpc.ankr.com/arbitrumnova',
                 'https://arbitrum-nova.drpc.org',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -830,7 +824,7 @@ export const config: Config = {
                 'https://zkevm-rpc.com',
                 'https://polygon-zkevm-mainnet.public.blastapi.io',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -881,7 +875,7 @@ export const config: Config = {
             id: ChainId.LINEA_MAINNET,
             rpc: 'https://rpc.linea.build',
             spareRpcs: ['https://1rpc.io/linea', 'https://linea.drpc.org', 'https://linea.decubate.com'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -935,7 +929,7 @@ export const config: Config = {
                 'https://mantle-mainnet.public.blastapi.io',
                 'https://rpc.ankr.com/mantle',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -996,7 +990,7 @@ export const config: Config = {
             id: ChainId.BASE_MAINNET,
             rpc: 'https://base-rpc.publicnode.com',
             spareRpcs: ['https://mainnet.base.org', 'https://base.llamarpc.com', 'https://rpc.ankr.com/base'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1045,7 +1039,7 @@ export const config: Config = {
         {
             id: ChainId.TRON_MAINNET,
             rpc: 'https://api.trongrid.io',
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Tether USDt',
@@ -1077,7 +1071,7 @@ export const config: Config = {
                 'https://scroll.blockpi.network/v1/rpc/public',
                 'https://scroll-mainnet.public.blastapi.io',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1138,7 +1132,7 @@ export const config: Config = {
             id: ChainId.MANTA_MAINNET,
             rpc: 'https://pacific-rpc.manta.network/http',
             spareRpcs: ['https://1rpc.io/manta', 'https://manta-pacific.drpc.org'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1192,7 +1186,7 @@ export const config: Config = {
                 'https://metis-pokt.nodies.app',
                 'https://metis-mainnet.public.blastapi.io',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1220,7 +1214,7 @@ export const config: Config = {
             id: ChainId.BAHAMUT_MAINNET,
             rpc: 'https://bahamut-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/bahamut', 'https://rpc1.bahamut.io', 'https://rpc2.bahamut.io'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
@@ -1248,7 +1242,7 @@ export const config: Config = {
             id: ChainId.MODE_MAINNET,
             rpc: 'https://mainnet.mode.network',
             spareRpcs: ['https://1rpc.io/mode', 'https://mode.drpc.org'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1276,7 +1270,7 @@ export const config: Config = {
             id: ChainId.RSK_MAINNET,
             rpc: 'https://public-node.rsk.co',
             spareRpcs: ['https://go.getblock.io/a4cf9dc5a3e347aaa1bb46315f2b874d', 'https://mycrypto.rsk.co'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Tether USD',
@@ -1319,7 +1313,7 @@ export const config: Config = {
                 'https://rpc.ankr.com/blast',
                 'https://blastl2-mainnet.public.blastapi.io',
             ],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped ETH',
@@ -1374,7 +1368,7 @@ export const config: Config = {
         {
             id: ChainId.ZKLINK_MAINNET,
             rpc: 'https://rpc.zklink.io',
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped ETH',
@@ -1413,7 +1407,7 @@ export const config: Config = {
             id: ChainId.CORE_MAINNET,
             rpc: 'https://rpc.coredao.org',
             spareRpcs: ['https://rpc.ankr.com/core', 'https://1rpc.io/core'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Core Wrapped BTC Token',
@@ -1441,7 +1435,7 @@ export const config: Config = {
             id: ChainId.TAIKO_MAINNET,
             rpc: 'https://rpc.mainnet.taiko.xyz',
             spareRpcs: ['https://rpc.ankr.com/taiko', 'https://taiko.blockpi.network/v1/rpc/public'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
@@ -1469,7 +1463,7 @@ export const config: Config = {
             id: ChainId.SEI_EVM_MAINNET,
             rpc: 'https://evm-rpc.sei-apis.com',
             spareRpcs: [],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USDT',
@@ -1519,7 +1513,7 @@ export const config: Config = {
             id: ChainId.ZETACHAIN_MAINNET,
             rpc: 'https://zetachain-evm.blockpi.network/v1/rpc/public',
             spareRpcs: ['https://zetachain-mainnet-archive.allthatnode.com:8545'],
-            filterBlockOffset: 2000,
+            filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'pufETH',
@@ -1876,6 +1870,34 @@ export const config: Config = {
             portal: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+        },
+        {
+            id: ChainId.ABSTRACT_MAINNET,
+            rpc: 'https://api.mainnet.abs.xyz',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'Wrapped Ethereum',
+                    symbol: 'WETH',
+                    address: '0x3439153eb7af838ad19d56e1571fbd09333c2809',
+                    chainId: ChainId.ABSTRACT_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x2E818E50b913457015E1277B43E469b63AC5D3d7',
+            metaRouterGateway: '0x664376638fE57642342009f49E1Ca4caf74b26D3',
+            bridge: '0xAcb35C2D11FEA8849cd9f5Ff6fBC56bB5296641B',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x8Dc71561414CDcA6DcA7C1dED1ABd04AF474D189',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x4c398CB4b7D4d31a54D254d8Aed09B9e8353E80E',
         },
     ],
 }

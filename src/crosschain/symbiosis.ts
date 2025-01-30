@@ -20,8 +20,6 @@ import {
     OmniPoolOracle__factory,
     Portal,
     Portal__factory,
-    SymBtc,
-    SymBtc__factory,
     Synthesis,
     Synthesis__factory,
     TonBridge,
@@ -61,10 +59,10 @@ import { Cache } from './cache'
 import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
-import { isBtcChainId } from './chainUtils'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { getHttpEndpoint, Network } from '@orbs-network/ton-access'
 import { TonClient } from '@ton/ton'
+import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -295,25 +293,6 @@ export class Symbiosis {
         return Fabric__factory.connect(address, signerOrProvider)
     }
 
-    public symBtcConfigFor(btcChainId: ChainId) {
-        if (!isBtcChainId(btcChainId)) {
-            throw new Error(`This chain ${btcChainId} is not BTC chain`)
-        }
-        const symBtcConfig = this.chainConfig(btcChainId).symBtc
-        if (!symBtcConfig) {
-            throw new Error(`This chain ${btcChainId} doesn't have symBtc contract`)
-        }
-        return symBtcConfig
-    }
-
-    public symBtcFor(btcChainId: ChainId, signer?: Signer): SymBtc {
-        const symBtcConfig = this.symBtcConfigFor(btcChainId)
-
-        const signerOrProvider = signer || this.getProvider(symBtcConfig.chainId)
-
-        return SymBtc__factory.connect(symBtcConfig.address, signerOrProvider)
-    }
-
     public multicallRouter(chainId: ChainId, signer?: Signer): MulticallRouter {
         const address = this.chainConfig(chainId).multicallRouter
         const signerOrProvider = signer || this.getProvider(chainId)
@@ -542,34 +521,20 @@ export class Symbiosis {
         return waitForComplete({ symbiosis: this, chainId, txId, txTon })
     }
 
-    public getForwarderUrl(btcChainId: ChainId): string {
-        if (!isBtcChainId(btcChainId)) {
-            throw new Error(`This chain ${btcChainId} is not BTC chain`)
-        }
-        const forwarderUrl = this.chainConfig(btcChainId).forwarderUrl
-        if (!forwarderUrl) {
-            throw new Error(`This chain ${btcChainId} doesn't have forwardsUrl`)
-        }
-        return forwarderUrl
+    public async waitForBtcDepositAccepted(depositAddress: string) {
+        return Promise.any(
+            BTC_CONFIGS.map((btcConfig) => {
+                return waitForBtcDepositAccepted(btcConfig, depositAddress)
+            })
+        )
     }
 
-    public async waitForBtcDepositAccepted(btcChainId: ChainId, depositAddress: string) {
-        const forwarderUrl = this.getForwarderUrl(btcChainId)
-        return waitForBtcDepositAccepted(forwarderUrl, depositAddress)
+    public async waitForBtcCommitTxMined(btcConfig: BtcConfig, commitTx: string) {
+        return waitForBtcCommitTxMined({ btcConfig, commitTx })
     }
 
-    public async waitForBtcCommitTxMined(
-        btcChainId: ChainId,
-        commitTx: string,
-        onConfirmation: (count: number) => void,
-        confirmations: number = 2
-    ) {
-        const forwarderUrl = this.getForwarderUrl(btcChainId)
-        return waitForBtcCommitTxMined({ forwarderUrl, commitTx, confirmations, onConfirmation })
-    }
-
-    public async waitForBtcEvmTxIssued(btcChainId: ChainId, revealTx: string) {
-        return waitForBtcEvmTxIssued(this, revealTx, btcChainId)
+    public async waitForBtcEvmTxIssued(btcConfig: BtcConfig, revealTx: string) {
+        return waitForBtcEvmTxIssued(this, revealTx, btcConfig)
     }
 
     public async waitFromTonTxMined(address: string, contractAddress: string) {

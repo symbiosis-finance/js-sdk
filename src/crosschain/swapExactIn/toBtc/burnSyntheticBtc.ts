@@ -2,14 +2,16 @@ import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { unwrapBtc } from './unwrapBtc'
 import { theBest } from '../utils'
 import { ZappingBtc } from '../../swapping'
+import { BTC_CONFIGS } from '../../chainUtils/btc'
+import { zappingBtcOnChain } from './zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, to, selectMode } = context
+    const { tokenAmountIn, symbiosis, to, selectMode } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    symbiosis.config.chains.forEach((chain) => {
-        const syBtc = symbiosis.getRepresentation(tokenOut, chain.id)
+    BTC_CONFIGS.forEach(({ btc, symBtc }) => {
+        const syBtc = symbiosis.getRepresentation(btc, symBtc.chainId)
         if (!syBtc) {
             return
         }
@@ -19,12 +21,16 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
 
-        // if (tokenAmountIn.token.chainId === syBtc.chainId) {
-        //     promises.push(zappingBtcOnChain(context))
-        //     return
-        // }
+        if (tokenAmountIn.token.chainId === syBtc.chainId) {
+            promises.push(zappingBtcOnChain(context, syBtc))
+            return
+        }
 
-        symbiosis.config.omniPools.forEach((poolConfig) => {
+        const pools = [
+            ...symbiosis.config.omniPools.filter((i) => i.generalPurpose),
+            symbiosis.config.omniPools[2], // BTC pool
+        ]
+        pools.forEach((poolConfig) => {
             const combinations = symbiosis.getTransitCombinations(
                 tokenAmountIn.token.chainId,
                 syBtc.chainId,

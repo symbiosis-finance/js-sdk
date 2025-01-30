@@ -7,40 +7,40 @@
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 101 },
-                { "index": 1, "tokenId": 111 },
-                { "index": 2, "tokenId": 118 },
-                { "index": 3, "tokenId": 119 },
+                { "index": 0, "tokenId": 105 },
+                { "index": 1, "tokenId": 115 },
+                { "index": 2, "tokenId": 122 },
+                { "index": 3, "tokenId": 123 },
                 { "index": 4, "tokenId": 27 },
-                { "index": 5, "tokenId": 124 },
-                { "index": 10, "tokenId": 110 },
-                { "index": 11, "tokenId": 125 },
-                { "index": 12, "tokenId": 132 },
-                { "index": 13, "tokenId": 138 },
-                { "index": 14, "tokenId": 140 },
-                { "index": 15, "tokenId": 142 },
-                { "index": 16, "tokenId": 131 },
-                { "index": 17, "tokenId": 117 },
-                { "index": 18, "tokenId": 148 },
-                { "index": 19, "tokenId": 123 },
-                { "index": 20, "tokenId": 153 },
-                { "index": 21, "tokenId": 146 },
-                { "index": 22, "tokenId": 122 },
-                { "index": 23, "tokenId": 155 },
-                { "index": 24, "tokenId": 157 },
-                { "index": 25, "tokenId": 161 },
-                { "index": 26, "tokenId": 143 },
-                { "index": 27, "tokenId": 166 },
-                { "index": 28, "tokenId": 164 },
-                { "index": 29, "tokenId": 126 },
-                { "index": 30, "tokenId": 175 },
-                { "index": 31, "tokenId": 174 },
-                { "index": 32, "tokenId": 178 },
-                { "index": 33, "tokenId": 177 },
-                { "index": 34, "tokenId": 181 },
-                { "index": 35, "tokenId": 185 },
-                { "index": 36, "tokenId": 188 },
-                { "index": 37, "tokenId": 189 }
+                { "index": 5, "tokenId": 128 },
+                { "index": 10, "tokenId": 114 },
+                { "index": 11, "tokenId": 129 },
+                { "index": 12, "tokenId": 136 },
+                { "index": 13, "tokenId": 142 },
+                { "index": 14, "tokenId": 144 },
+                { "index": 15, "tokenId": 146 },
+                { "index": 16, "tokenId": 135 },
+                { "index": 17, "tokenId": 121 },
+                { "index": 18, "tokenId": 152 },
+                { "index": 19, "tokenId": 127 },
+                { "index": 20, "tokenId": 157 },
+                { "index": 21, "tokenId": 150 },
+                { "index": 22, "tokenId": 126 },
+                { "index": 23, "tokenId": 159 },
+                { "index": 24, "tokenId": 161 },
+                { "index": 25, "tokenId": 165 },
+                { "index": 26, "tokenId": 147 },
+                { "index": 27, "tokenId": 170 },
+                { "index": 28, "tokenId": 168 },
+                { "index": 29, "tokenId": 130 },
+                { "index": 30, "tokenId": 179 },
+                { "index": 31, "tokenId": 178 },
+                { "index": 32, "tokenId": 182 },
+                { "index": 33, "tokenId": 181 },
+                { "index": 34, "tokenId": 185 },
+                { "index": 35, "tokenId": 189 },
+                { "index": 36, "tokenId": 192 },
+                { "index": 37, "tokenId": 193 }
             ]
         },
         {
@@ -50,26 +50,27 @@
             "generalPurpose": true,
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 127 },
-                { "index": 2, "tokenId": 144 },
-                { "index": 3, "tokenId": 133 },
-                { "index": 5, "tokenId": 120 },
-                { "index": 6, "tokenId": 112 },
-                { "index": 7, "tokenId": 139 },
-                { "index": 8, "tokenId": 141 },
-                { "index": 9, "tokenId": 103 },
-                { "index": 10, "tokenId": 145 },
-                { "index": 11, "tokenId": 149 },
-                { "index": 12, "tokenId": 152 },
-                { "index": 13, "tokenId": 156 },
-                { "index": 14, "tokenId": 160 },
-                { "index": 15, "tokenId": 163 },
-                { "index": 16, "tokenId": 165 },
-                { "index": 17, "tokenId": 168 },
-                { "index": 18, "tokenId": 170 },
-                { "index": 19, "tokenId": 173 },
-                { "index": 20, "tokenId": 179 },
-                { "index": 22, "tokenId": 191 }
+                { "index": 1, "tokenId": 131 },
+                { "index": 2, "tokenId": 148 },
+                { "index": 3, "tokenId": 137 },
+                { "index": 5, "tokenId": 124 },
+                { "index": 6, "tokenId": 116 },
+                { "index": 7, "tokenId": 143 },
+                { "index": 8, "tokenId": 145 },
+                { "index": 9, "tokenId": 107 },
+                { "index": 10, "tokenId": 149 },
+                { "index": 11, "tokenId": 153 },
+                { "index": 12, "tokenId": 156 },
+                { "index": 13, "tokenId": 160 },
+                { "index": 14, "tokenId": 164 },
+                { "index": 15, "tokenId": 167 },
+                { "index": 16, "tokenId": 169 },
+                { "index": 17, "tokenId": 172 },
+                { "index": 18, "tokenId": 174 },
+                { "index": 19, "tokenId": 177 },
+                { "index": 20, "tokenId": 183 },
+                { "index": 22, "tokenId": 195 },
+                { "index": 23, "tokenId": 196 }
             ]
         },
         {
@@ -79,15 +80,15 @@
             "generalPurpose": false,
             "id": 2,
             "tokens": [
-                { "index": 0, "tokenId": 104 },
-                { "index": 1, "tokenId": 113 },
-                { "index": 2, "tokenId": 128 },
-                { "index": 3, "tokenId": 167 },
-                { "index": 4, "tokenId": 169 },
-                { "index": 5, "tokenId": 172 },
-                { "index": 7, "tokenId": 130 },
-                { "index": 8, "tokenId": 183 },
-                { "index": 9, "tokenId": 190 }
+                { "index": 0, "tokenId": 108 },
+                { "index": 1, "tokenId": 117 },
+                { "index": 2, "tokenId": 132 },
+                { "index": 3, "tokenId": 171 },
+                { "index": 4, "tokenId": 173 },
+                { "index": 5, "tokenId": 176 },
+                { "index": 7, "tokenId": 134 },
+                { "index": 8, "tokenId": 187 },
+                { "index": 9, "tokenId": 194 }
             ]
         },
         {
@@ -97,8 +98,8 @@
             "generalPurpose": false,
             "id": 3,
             "tokens": [
-                { "index": 0, "tokenId": 105 },
-                { "index": 1, "tokenId": 135 }
+                { "index": 0, "tokenId": 109 },
+                { "index": 1, "tokenId": 139 }
             ]
         },
         {
@@ -108,12 +109,12 @@
             "generalPurpose": false,
             "id": 4,
             "tokens": [
-                { "index": 0, "tokenId": 102 },
-                { "index": 1, "tokenId": 134 },
-                { "index": 2, "tokenId": 114 },
-                { "index": 3, "tokenId": 129 },
-                { "index": 4, "tokenId": 147 },
-                { "index": 5, "tokenId": 158 }
+                { "index": 0, "tokenId": 106 },
+                { "index": 1, "tokenId": 138 },
+                { "index": 2, "tokenId": 118 },
+                { "index": 3, "tokenId": 133 },
+                { "index": 4, "tokenId": 151 },
+                { "index": 5, "tokenId": 162 }
             ]
         },
         {
@@ -123,10 +124,10 @@
             "generalPurpose": false,
             "id": 5,
             "tokens": [
-                { "index": 0, "tokenId": 107 },
-                { "index": 1, "tokenId": 121 },
-                { "index": 2, "tokenId": 136 },
-                { "index": 3, "tokenId": 180 }
+                { "index": 0, "tokenId": 111 },
+                { "index": 1, "tokenId": 125 },
+                { "index": 2, "tokenId": 140 },
+                { "index": 3, "tokenId": 184 }
             ]
         },
         {
@@ -136,10 +137,10 @@
             "generalPurpose": false,
             "id": 6,
             "tokens": [
-                { "index": 0, "tokenId": 108 },
-                { "index": 1, "tokenId": 115 },
-                { "index": 2, "tokenId": 182 },
-                { "index": 3, "tokenId": 154 }
+                { "index": 0, "tokenId": 112 },
+                { "index": 1, "tokenId": 119 },
+                { "index": 2, "tokenId": 186 },
+                { "index": 3, "tokenId": 158 }
             ]
         },
         {
@@ -149,9 +150,9 @@
             "generalPurpose": false,
             "id": 7,
             "tokens": [
-                { "index": 1, "tokenId": 109 },
-                { "index": 2, "tokenId": 116 },
-                { "index": 4, "tokenId": 184 }
+                { "index": 1, "tokenId": 113 },
+                { "index": 2, "tokenId": 120 },
+                { "index": 4, "tokenId": 188 }
             ]
         },
         {
@@ -161,8 +162,8 @@
             "generalPurpose": false,
             "id": 8,
             "tokens": [
-                { "index": 0, "tokenId": 187 },
-                { "index": 1, "tokenId": 150 }
+                { "index": 0, "tokenId": 191 },
+                { "index": 1, "tokenId": 154 }
             ]
         },
         {
@@ -172,27 +173,13 @@
             "generalPurpose": false,
             "id": 9,
             "tokens": [
-                { "index": 0, "tokenId": 186 },
-                { "index": 1, "tokenId": 137 },
-                { "index": 2, "tokenId": 151 }
+                { "index": 0, "tokenId": 190 },
+                { "index": 1, "tokenId": 141 },
+                { "index": 2, "tokenId": 155 }
             ]
         }
     ],
     "tokens": [
-        {
-            "decimals": 8,
-            "symbol": "BTC",
-            "name": "Bitcoin",
-            "chainId": 3652501241,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
-            },
-            "deprecated": false,
-            "address": "0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74",
-            "id": 0
-        },
         {
             "decimals": 6,
             "symbol": "USDC",
@@ -205,7 +192,7 @@
             },
             "deprecated": false,
             "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            "id": 1
+            "id": 0
         },
         {
             "decimals": 18,
@@ -219,7 +206,7 @@
             },
             "deprecated": false,
             "address": "0xd38BB40815d2B0c2d2c866e0c72c5728ffC76dd9",
-            "id": 2
+            "id": 1
         },
         {
             "decimals": 18,
@@ -233,7 +220,7 @@
             },
             "deprecated": false,
             "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-            "id": 3
+            "id": 2
         },
         {
             "decimals": 6,
@@ -247,7 +234,7 @@
             },
             "deprecated": false,
             "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-            "id": 4
+            "id": 3
         },
         {
             "decimals": 8,
@@ -261,7 +248,7 @@
             },
             "deprecated": false,
             "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-            "id": 5
+            "id": 4
         },
         {
             "decimals": 18,
@@ -275,7 +262,7 @@
             },
             "deprecated": false,
             "address": "0x12970E6868f88f6557B76120662c1B3E50A646bf",
-            "id": 6
+            "id": 5
         },
         {
             "decimals": 18,
@@ -289,7 +276,7 @@
             },
             "deprecated": false,
             "address": "0xD9A442856C234a39a81a089C06451EBAa4306a72",
-            "id": 7
+            "id": 6
         },
         {
             "decimals": 18,
@@ -303,7 +290,7 @@
             },
             "deprecated": false,
             "address": "0x853d955aCEf822Db058eb8505911ED77F175b99e",
-            "id": 8
+            "id": 7
         },
         {
             "decimals": 18,
@@ -317,7 +304,7 @@
             },
             "deprecated": false,
             "address": "0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649",
-            "id": 9
+            "id": 8
         },
         {
             "decimals": 9,
@@ -331,7 +318,7 @@
             },
             "deprecated": false,
             "address": "0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1",
-            "id": 10
+            "id": 9
         },
         {
             "decimals": 18,
@@ -345,7 +332,7 @@
             },
             "deprecated": false,
             "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-            "id": 11
+            "id": 10
         },
         {
             "decimals": 18,
@@ -359,7 +346,7 @@
             },
             "deprecated": true,
             "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
-            "id": 12
+            "id": 11
         },
         {
             "decimals": 18,
@@ -373,7 +360,7 @@
             },
             "deprecated": false,
             "address": "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
-            "id": 13
+            "id": 12
         },
         {
             "decimals": 18,
@@ -387,7 +374,7 @@
             },
             "deprecated": false,
             "address": "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
-            "id": 14
+            "id": 13
         },
         {
             "decimals": 18,
@@ -401,7 +388,7 @@
             },
             "deprecated": false,
             "address": "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
-            "id": 15
+            "id": 14
         },
         {
             "decimals": 18,
@@ -415,7 +402,7 @@
             },
             "deprecated": false,
             "address": "0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649",
-            "id": 16
+            "id": 15
         },
         {
             "decimals": 9,
@@ -429,7 +416,7 @@
             },
             "deprecated": false,
             "address": "0x76A797A59Ba2C17726896976B7B3747BfD1d220f",
-            "id": 17
+            "id": 16
         },
         {
             "decimals": 18,
@@ -443,6 +430,20 @@
             },
             "deprecated": false,
             "address": "0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592",
+            "id": 17
+        },
+        {
+            "decimals": 8,
+            "symbol": "syBTC",
+            "name": "Symbiosis BTC",
+            "chainId": 56,
+            "isNative": false,
+            "icons": {
+                "large": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200",
+                "small": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200"
+            },
+            "deprecated": false,
+            "address": "0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7",
             "id": 18
         },
         {
@@ -1525,6 +1526,48 @@
         },
         {
             "decimals": 18,
+            "symbol": "WETH",
+            "name": "Wrapped Ethereum",
+            "chainId": 2741,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "deprecated": false,
+            "address": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809",
+            "id": 96
+        },
+        {
+            "decimals": 8,
+            "symbol": "BTC",
+            "name": "Bitcoin",
+            "chainId": 3652501241,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "deprecated": false,
+            "address": "0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74",
+            "id": 97
+        },
+        {
+            "decimals": 8,
+            "symbol": "BTC",
+            "name": "Bitcoin",
+            "chainId": 3652501241,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "deprecated": false,
+            "address": "0x1DfC1e32d75b3f4Cb2F2B1BCEcAD984E99eeba05",
+            "id": 98
+        },
+        {
+            "decimals": 18,
             "symbol": "SIS",
             "name": "Symbiosis",
             "chainId": 56,
@@ -1536,8 +1579,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
-            "id": 96,
-            "originalId": 2
+            "id": 99,
+            "originalId": 1
         },
         {
             "decimals": 18,
@@ -1552,8 +1595,24 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592",
-            "id": 97,
+            "id": 100,
             "originalId": 79
+        },
+        {
+            "decimals": 8,
+            "symbol": "syBTC",
+            "name": "syBTC",
+            "chainId": 56,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 3652501241,
+            "deprecated": false,
+            "address": "0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7",
+            "id": 101,
+            "originalId": 98
         },
         {
             "decimals": 6,
@@ -1568,8 +1627,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xe6E5f3d264117E030C21920356641DbD5B3d660c",
-            "id": 98,
-            "originalId": 1
+            "id": 102,
+            "originalId": 0
         },
         {
             "decimals": 18,
@@ -1584,8 +1643,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x63d71E79AdF0886c989A23b04a0E86F1489b6BC3",
-            "id": 99,
-            "originalId": 3
+            "id": 103,
+            "originalId": 2
         },
         {
             "decimals": 6,
@@ -1600,8 +1659,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7bD3ffe9f0C9CF08FD60e102FEa455A6EA580276",
-            "id": 100,
-            "originalId": 4
+            "id": 104,
+            "originalId": 3
         },
         {
             "decimals": 6,
@@ -1616,8 +1675,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7d6EC42b5d9566931560411a8652Cea00b90d982",
-            "id": 101,
-            "originalId": 1
+            "id": 105,
+            "originalId": 0
         },
         {
             "decimals": 18,
@@ -1632,8 +1691,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4E985A18B4Ac70a1C3d986a5f55CB4c5BC8f65AE",
-            "id": 102,
-            "originalId": 2
+            "id": 106,
+            "originalId": 1
         },
         {
             "decimals": 18,
@@ -1648,8 +1707,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1CE4E75E2Bd6bbbACDE1E10D6813228138337E86",
-            "id": 103,
-            "originalId": 3
+            "id": 107,
+            "originalId": 2
         },
         {
             "decimals": 8,
@@ -1664,8 +1723,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE6Bb73E4dACD20653Bb8BdC427C9b4766fC159f5",
-            "id": 104,
-            "originalId": 5
+            "id": 108,
+            "originalId": 4
         },
         {
             "decimals": 18,
@@ -1680,8 +1739,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7405b3cf567003317800114511474e52937e1a5e",
-            "id": 105,
-            "originalId": 6
+            "id": 109,
+            "originalId": 5
         },
         {
             "decimals": 18,
@@ -1696,8 +1755,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1acF9c15a25752132b14bb4f5e1A47bC88a4CB7E",
-            "id": 106,
-            "originalId": 7
+            "id": 110,
+            "originalId": 6
         },
         {
             "decimals": 18,
@@ -1712,8 +1771,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xcde7866D581Ca2a4425d5BDE8074413FBbf958F4",
-            "id": 107,
-            "originalId": 8
+            "id": 111,
+            "originalId": 7
         },
         {
             "decimals": 18,
@@ -1728,8 +1787,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5E6576FeAf298f8c253Ef8C010a9d51090AfBb6",
-            "id": 108,
-            "originalId": 9
+            "id": 112,
+            "originalId": 8
         },
         {
             "decimals": 9,
@@ -1744,8 +1803,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x45Bb4E28609f1c6EA05c738F4e7229e5b3bC8657",
-            "id": 109,
-            "originalId": 10
+            "id": 113,
+            "originalId": 9
         },
         {
             "decimals": 18,
@@ -1760,8 +1819,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB",
-            "id": 110,
-            "originalId": 11
+            "id": 114,
+            "originalId": 10
         },
         {
             "decimals": 18,
@@ -1776,8 +1835,8 @@
             "chainFromId": 56,
             "deprecated": true,
             "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
-            "id": 111,
-            "originalId": 12
+            "id": 115,
+            "originalId": 11
         },
         {
             "decimals": 18,
@@ -1792,8 +1851,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x424190072b7Db5352bB91cC70DabD82F547AE003",
-            "id": 112,
-            "originalId": 13
+            "id": 116,
+            "originalId": 12
         },
         {
             "decimals": 18,
@@ -1808,8 +1867,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x814f76A3f2FF408ad6BCEB5412B60D9fC3B6C0EA",
-            "id": 113,
-            "originalId": 14
+            "id": 117,
+            "originalId": 13
         },
         {
             "decimals": 18,
@@ -1824,8 +1883,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 114,
-            "originalId": 15
+            "id": 118,
+            "originalId": 14
         },
         {
             "decimals": 18,
@@ -1840,8 +1899,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0xe2c3145649EF1988fBa03274bE4C9FAB118CaBd5",
-            "id": 115,
-            "originalId": 16
+            "id": 119,
+            "originalId": 15
         },
         {
             "decimals": 9,
@@ -1856,8 +1915,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x42B7f88dc7DE1679FbAD6A6FF32A5ea36aA2E129",
-            "id": 116,
-            "originalId": 17
+            "id": 120,
+            "originalId": 16
         },
         {
             "decimals": 6,
@@ -1872,7 +1931,7 @@
             "chainFromId": 43114,
             "deprecated": false,
             "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0",
-            "id": 117,
+            "id": 121,
             "originalId": 19
         },
         {
@@ -1888,7 +1947,7 @@
             "chainFromId": 43114,
             "deprecated": true,
             "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
-            "id": 118,
+            "id": 122,
             "originalId": 20
         },
         {
@@ -1904,7 +1963,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x59AA2e5F628659918A4890A2a732E6C8bD334E7A",
-            "id": 119,
+            "id": 123,
             "originalId": 21
         },
         {
@@ -1920,7 +1979,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x93A973297E492d4E7a2b4aBaB3bFB4f140D1E3Bb",
-            "id": 120,
+            "id": 124,
             "originalId": 22
         },
         {
@@ -1936,7 +1995,7 @@
             "chainFromId": 137,
             "deprecated": false,
             "address": "0x7Fd2eab338fBC3a2d724F92468fE6A9f72f18A12",
-            "id": 121,
+            "id": 125,
             "originalId": 23
         },
         {
@@ -1952,7 +2011,7 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 122,
+            "id": 126,
             "originalId": 24
         },
         {
@@ -1968,7 +2027,7 @@
             "chainFromId": 2222,
             "deprecated": false,
             "address": "0xCdc9C3e0fc1909205aC96EC98795aCAa29a6A1E3",
-            "id": 123,
+            "id": 127,
             "originalId": 25
         },
         {
@@ -1984,7 +2043,7 @@
             "chainFromId": 288,
             "deprecated": false,
             "address": "0x1a3d48492Cd334AD140587091AC382E5695a4934",
-            "id": 124,
+            "id": 128,
             "originalId": 26
         },
         {
@@ -2000,7 +2059,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xC6CC7E50A0F20268DB1BAb041ff18b2c7E97a9d3",
-            "id": 125,
+            "id": 129,
             "originalId": 28
         },
         {
@@ -2016,7 +2075,7 @@
             "chainFromId": 324,
             "deprecated": true,
             "address": "0x3a2213CaEbcf1727D7b3422B8Ef8Dd5654877f42",
-            "id": 126,
+            "id": 130,
             "originalId": 29
         },
         {
@@ -2032,7 +2091,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0xE3dB9aD5A3c6387beCe39fAfc26Dbb2b594fb7ff",
-            "id": 127,
+            "id": 131,
             "originalId": 30
         },
         {
@@ -2048,7 +2107,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x83a9e719C9b6d0108D64073DC35aCFD40FC9C672",
-            "id": 128,
+            "id": 132,
             "originalId": 31
         },
         {
@@ -2064,7 +2123,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x2E752d64cCc7B1e8F3F8b58F8218C3e0F21A9F3C",
-            "id": 129,
+            "id": 133,
             "originalId": 32
         },
         {
@@ -2080,7 +2139,7 @@
             "chainFromId": 324,
             "deprecated": false,
             "address": "0x0a5CF42021F48d2cE026Ca133404b00F99dc82f3",
-            "id": 130,
+            "id": 134,
             "originalId": 33
         },
         {
@@ -2096,7 +2155,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f",
-            "id": 131,
+            "id": 135,
             "originalId": 34
         },
         {
@@ -2112,7 +2171,7 @@
             "chainFromId": 42161,
             "deprecated": true,
             "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462",
-            "id": 132,
+            "id": 136,
             "originalId": 35
         },
         {
@@ -2128,7 +2187,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x4994b8bb0b58708Cc6A66079d22db35c95650B4b",
-            "id": 133,
+            "id": 137,
             "originalId": 36
         },
         {
@@ -2144,7 +2203,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x94F3F6C21e7D2D63d4ea484713B110e64A722fD7",
-            "id": 134,
+            "id": 138,
             "originalId": 37
         },
         {
@@ -2160,7 +2219,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x355b105634AD4184fd6Cc264C594615F861BE5AA",
-            "id": 135,
+            "id": 139,
             "originalId": 38
         },
         {
@@ -2176,7 +2235,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0x5ffc6ac1437C51D94362069E464C646E011c3337",
-            "id": 136,
+            "id": 140,
             "originalId": 39
         },
         {
@@ -2192,7 +2251,7 @@
             "chainFromId": 42161,
             "deprecated": false,
             "address": "0xF59229fFfE067a652b944D6F5Da23c19Dc306E44",
-            "id": 137,
+            "id": 141,
             "originalId": 40
         },
         {
@@ -2208,7 +2267,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C",
-            "id": 138,
+            "id": 142,
             "originalId": 41
         },
         {
@@ -2224,7 +2283,7 @@
             "chainFromId": 10,
             "deprecated": false,
             "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084",
-            "id": 139,
+            "id": 143,
             "originalId": 42
         },
         {
@@ -2240,7 +2299,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677",
-            "id": 140,
+            "id": 144,
             "originalId": 43
         },
         {
@@ -2256,7 +2315,7 @@
             "chainFromId": 42170,
             "deprecated": false,
             "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C",
-            "id": 141,
+            "id": 145,
             "originalId": 44
         },
         {
@@ -2272,7 +2331,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012",
-            "id": 142,
+            "id": 146,
             "originalId": 45
         },
         {
@@ -2288,7 +2347,7 @@
             "chainFromId": 1101,
             "deprecated": true,
             "address": "0xC28C38B2Af831b222b6933E52637B5145a6774Ad",
-            "id": 143,
+            "id": 147,
             "originalId": 46
         },
         {
@@ -2304,7 +2363,7 @@
             "chainFromId": 1101,
             "deprecated": false,
             "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6",
-            "id": 144,
+            "id": 148,
             "originalId": 47
         },
         {
@@ -2320,7 +2379,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x6ca6FCbD2fe65F0CB7671f5F0638867fdC991462",
-            "id": 145,
+            "id": 149,
             "originalId": 48
         },
         {
@@ -2336,7 +2395,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0xD2f5B8525758857aF3553142F59e2b35CbFa0aBE",
-            "id": 146,
+            "id": 150,
             "originalId": 49
         },
         {
@@ -2352,7 +2411,7 @@
             "chainFromId": 59144,
             "deprecated": false,
             "address": "0x32478a5EE4F9854A26aC4606aa107CfD3E5F8775",
-            "id": 147,
+            "id": 151,
             "originalId": 50
         },
         {
@@ -2368,7 +2427,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
-            "id": 148,
+            "id": 152,
             "originalId": 51
         },
         {
@@ -2384,7 +2443,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0xA6e6c78746F873dB8545B7571DD1C5d87cC95763",
-            "id": 149,
+            "id": 153,
             "originalId": 52
         },
         {
@@ -2400,7 +2459,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0xd05A1e0Baf4dA057d80F965f313A0E578bDc7Ad8",
-            "id": 150,
+            "id": 154,
             "originalId": 53
         },
         {
@@ -2416,7 +2475,7 @@
             "chainFromId": 5000,
             "deprecated": false,
             "address": "0x67ADD30c2Fec2ed09C487Fe08Fe8770E097Caa3B",
-            "id": 151,
+            "id": 155,
             "originalId": 54
         },
         {
@@ -2432,7 +2491,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0x8eFFD39D090C756Db49A8154Db7BD05f59A62193",
-            "id": 152,
+            "id": 156,
             "originalId": 55
         },
         {
@@ -2448,7 +2507,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0xDD1a897f92c14cDA3aB7023b094615A7068d01fA",
-            "id": 153,
+            "id": 157,
             "originalId": 56
         },
         {
@@ -2464,7 +2523,7 @@
             "chainFromId": 8453,
             "deprecated": false,
             "address": "0x6538515Db6666FD3bE5feCaCE8C4EBc9AFF8b7de",
-            "id": 154,
+            "id": 158,
             "originalId": 57
         },
         {
@@ -2480,7 +2539,7 @@
             "chainFromId": 728126428,
             "deprecated": false,
             "address": "0x2dF311E049a839E1011507ccE20Afb6f871a81a1",
-            "id": 155,
+            "id": 159,
             "originalId": 58
         },
         {
@@ -2496,7 +2555,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0xC66d177BDa9ef1d9278948FcD86C2C4420ca708C",
-            "id": 156,
+            "id": 160,
             "originalId": 59
         },
         {
@@ -2512,7 +2571,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x616152a28eAb796789050407DF0f566307bFffDA",
-            "id": 157,
+            "id": 161,
             "originalId": 60
         },
         {
@@ -2528,7 +2587,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x1adD5ac0E2b68f020dC8a3bC0BaE1A1bFc873F49",
-            "id": 158,
+            "id": 162,
             "originalId": 61
         },
         {
@@ -2544,7 +2603,7 @@
             "chainFromId": 534352,
             "deprecated": false,
             "address": "0x32699d39c059dc61F2D26B9778830f49c5d200Ca",
-            "id": 159,
+            "id": 163,
             "originalId": 62
         },
         {
@@ -2560,7 +2619,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x3e54f3F0C9FA63282B92C84a3b710FD2968F177E",
-            "id": 160,
+            "id": 164,
             "originalId": 63
         },
         {
@@ -2576,7 +2635,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0x60F58f1AbD788eaEFa00838d9a69639F62cC16B8",
-            "id": 161,
+            "id": 165,
             "originalId": 64
         },
         {
@@ -2592,7 +2651,7 @@
             "chainFromId": 169,
             "deprecated": false,
             "address": "0xeC4f77C7EfCf5A1Ff26eA8e19d4236A375b3Dfe4",
-            "id": 162,
+            "id": 166,
             "originalId": 65
         },
         {
@@ -2608,7 +2667,7 @@
             "chainFromId": 1088,
             "deprecated": false,
             "address": "0x04E7379CdF5b3427E5B3A557B0E98DD92E70584f",
-            "id": 163,
+            "id": 167,
             "originalId": 66
         },
         {
@@ -2624,7 +2683,7 @@
             "chainFromId": 5165,
             "deprecated": false,
             "address": "0xf2CF7f859FE187BAa9b2F197Cd6C1698A4BC0905",
-            "id": 164,
+            "id": 168,
             "originalId": 67
         },
         {
@@ -2640,7 +2699,7 @@
             "chainFromId": 34443,
             "deprecated": false,
             "address": "0x467fAC56cB149D06A8b268A5Cb8638Fc7B2d8F73",
-            "id": 165,
+            "id": 169,
             "originalId": 68
         },
         {
@@ -2656,7 +2715,7 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0xA5De76FEda5bC1c824Ee1FfcCE82c8BbAe1f558F",
-            "id": 166,
+            "id": 170,
             "originalId": 69
         },
         {
@@ -2672,7 +2731,7 @@
             "chainFromId": 30,
             "deprecated": false,
             "address": "0x4A95D151d5b16B90481F98432Cf3D3B62deef1Fe",
-            "id": 167,
+            "id": 171,
             "originalId": 70
         },
         {
@@ -2688,7 +2747,7 @@
             "chainFromId": 81457,
             "deprecated": false,
             "address": "0xB4A492d5d61d4539a70AE3E7BF564250159d1c57",
-            "id": 168,
+            "id": 172,
             "originalId": 71
         },
         {
@@ -2704,7 +2763,7 @@
             "chainFromId": 4200,
             "deprecated": false,
             "address": "0xc1Aca13EE7Ee4F9211BBC7bb0Da0fCA58405993B",
-            "id": 169,
+            "id": 173,
             "originalId": 72
         },
         {
@@ -2720,7 +2779,7 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x997D45FFC15bC54A52EBDeeFa0E6fc856fC97a55",
-            "id": 170,
+            "id": 174,
             "originalId": 73
         },
         {
@@ -2736,7 +2795,7 @@
             "chainFromId": 810180,
             "deprecated": false,
             "address": "0x42481B8ccE6947178B54D80BFD82B38F6E5b0F61",
-            "id": 171,
+            "id": 175,
             "originalId": 74
         },
         {
@@ -2752,7 +2811,7 @@
             "chainFromId": 1116,
             "deprecated": false,
             "address": "0x5dC2326bb71725a5bBC18Fb39A2582C5560B67f0",
-            "id": 172,
+            "id": 176,
             "originalId": 75
         },
         {
@@ -2768,7 +2827,7 @@
             "chainFromId": 167000,
             "deprecated": false,
             "address": "0x3C717a1F4a8e79D93635E812648253A38Bb27557",
-            "id": 173,
+            "id": 177,
             "originalId": 76
         },
         {
@@ -2784,7 +2843,7 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0x6d13035F5F1ae26a22CBB25A3f7666e0C335E6bC",
-            "id": 174,
+            "id": 178,
             "originalId": 77
         },
         {
@@ -2800,7 +2859,7 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
-            "id": 175,
+            "id": 179,
             "originalId": 78
         },
         {
@@ -2816,7 +2875,7 @@
             "chainFromId": 7000,
             "deprecated": false,
             "address": "0x1F39B97acAd7e3C46010c608ea300ceC1FD51EcA",
-            "id": 176,
+            "id": 180,
             "originalId": 80
         },
         {
@@ -2832,7 +2891,7 @@
             "chainFromId": 7000,
             "deprecated": false,
             "address": "0x15FD72412E6bD2768C3C0E2166545A25dC932e0e",
-            "id": 177,
+            "id": 181,
             "originalId": 81
         },
         {
@@ -2848,7 +2907,7 @@
             "chainFromId": 25,
             "deprecated": false,
             "address": "0xBF73aF83aE56Ce393737faFcC4778Aa5751d1552",
-            "id": 178,
+            "id": 182,
             "originalId": 82
         },
         {
@@ -2864,7 +2923,7 @@
             "chainFromId": 252,
             "deprecated": false,
             "address": "0xe51753e4ceee1496aEe26AEFfCa97494C41Fc10E",
-            "id": 179,
+            "id": 183,
             "originalId": 83
         },
         {
@@ -2880,7 +2939,7 @@
             "chainFromId": 252,
             "deprecated": false,
             "address": "0x8B6b4b3c037622a81233027c47a733535d0f080B",
-            "id": 180,
+            "id": 184,
             "originalId": 84
         },
         {
@@ -2896,7 +2955,7 @@
             "chainFromId": 1625,
             "deprecated": false,
             "address": "0xC1FeD2fB83F7CacA0CfC772767Ae33ef6b04899e",
-            "id": 181,
+            "id": 185,
             "originalId": 85
         },
         {
@@ -2912,7 +2971,7 @@
             "chainFromId": 1625,
             "deprecated": false,
             "address": "0x7cE9911e690d80c421069A683163FA2946E6b400",
-            "id": 182,
+            "id": 186,
             "originalId": 86
         },
         {
@@ -2928,7 +2987,7 @@
             "chainFromId": 223,
             "deprecated": false,
             "address": "0x2C11Ba8b608841C9Cf29f60645029421dc120fBe",
-            "id": 183,
+            "id": 187,
             "originalId": 87
         },
         {
@@ -2944,7 +3003,7 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x8d17D04A595eCFbBFc8bF8016949161AA034A75B",
-            "id": 184,
+            "id": 188,
             "originalId": 88
         },
         {
@@ -2960,7 +3019,7 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x651c4CA3f3df776F2db9eD1658e850151b7E1208",
-            "id": 185,
+            "id": 189,
             "originalId": 89
         },
         {
@@ -2976,7 +3035,7 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x1156C5A852AECb32B91E203F0169154C7d65286a",
-            "id": 186,
+            "id": 190,
             "originalId": 90
         },
         {
@@ -2992,7 +3051,7 @@
             "chainFromId": 85918,
             "deprecated": false,
             "address": "0x34d46b31f863222c7c8B810F18f5D26a3d89AD30",
-            "id": 187,
+            "id": 191,
             "originalId": 91
         },
         {
@@ -3008,7 +3067,7 @@
             "chainFromId": 388,
             "deprecated": false,
             "address": "0x1D041D63c056628734f1a6DA3eE9F1828e6d2861",
-            "id": 188,
+            "id": 192,
             "originalId": 92
         },
         {
@@ -3024,7 +3083,7 @@
             "chainFromId": 2818,
             "deprecated": false,
             "address": "0x84B77C905c1C3B0eABE3b8D19387ec4145AdB0D0",
-            "id": 189,
+            "id": 193,
             "originalId": 93
         },
         {
@@ -3040,7 +3099,7 @@
             "chainFromId": 2345,
             "deprecated": false,
             "address": "0x4253EB69aE8Bb4c35c7Cac788BcF24221e9C1865",
-            "id": 190,
+            "id": 194,
             "originalId": 94
         },
         {
@@ -3056,8 +3115,24 @@
             "chainFromId": 146,
             "deprecated": false,
             "address": "0x6e85e76B0EEF58bC598791Ee5f67DBffcAE13414",
-            "id": 191,
+            "id": 195,
             "originalId": 95
+        },
+        {
+            "decimals": 18,
+            "symbol": "sWETH",
+            "name": "Synthetic Wrapped Ether (Abstract)",
+            "chainId": 56288,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
+            },
+            "chainFromId": 2741,
+            "deprecated": false,
+            "address": "0x186eb780f4AEd38280cB53BED8b3dcC22bA9DBb5",
+            "id": 196,
+            "originalId": 96
         },
         {
             "decimals": 18,
@@ -3072,8 +3147,8 @@
             "chainFromId": 56,
             "deprecated": false,
             "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 192,
-            "originalId": 96
+            "id": 197,
+            "originalId": 99
         },
         {
             "decimals": 6,
@@ -3088,8 +3163,8 @@
             "chainFromId": 40,
             "deprecated": false,
             "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 193,
-            "originalId": 98
+            "id": 198,
+            "originalId": 102
         },
         {
             "decimals": 8,
@@ -3104,8 +3179,8 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0xED0c95EBe5a3E687cB2224687024FeC6518E683e",
-            "id": 194,
-            "originalId": 0
+            "id": 199,
+            "originalId": 97
         },
         {
             "decimals": 6,
@@ -3120,8 +3195,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 195,
-            "originalId": 1
+            "id": 200,
+            "originalId": 0
         },
         {
             "decimals": 18,
@@ -3136,8 +3211,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5b3562A0fa9eC3e718C96FfE349e1280D2Be591",
-            "id": 196,
-            "originalId": 3
+            "id": 201,
+            "originalId": 2
         },
         {
             "decimals": 6,
@@ -3152,8 +3227,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xDeF886C55a79830C47108eeb9c37e78a49684e41",
-            "id": 197,
-            "originalId": 4
+            "id": 202,
+            "originalId": 3
         },
         {
             "decimals": 8,
@@ -3168,8 +3243,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x6B6301dcBA742E2320dD083A8d8fDbaB9527484B",
-            "id": 198,
-            "originalId": 5
+            "id": 203,
+            "originalId": 4
         },
         {
             "decimals": 18,
@@ -3184,8 +3259,8 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 199,
-            "originalId": 7
+            "id": 204,
+            "originalId": 6
         }
     ]
 }

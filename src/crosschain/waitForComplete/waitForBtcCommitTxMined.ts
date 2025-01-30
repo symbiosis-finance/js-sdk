@@ -1,4 +1,5 @@
 import { fetchData, longPolling } from './utils'
+import { BtcConfig } from '../chainUtils/btc'
 
 interface WrapTx {
     feeLimit: number
@@ -10,6 +11,7 @@ interface WrapTx {
         to: string
     }
 }
+
 interface AddressInfo {
     legacyAddress: string
     revealAddress: string
@@ -28,6 +30,7 @@ interface TransactionBtcInfo {
 interface Block {
     blockHash: string
     blockTime: number
+    blockHeight: number
     confirmations: number
 }
 
@@ -57,18 +60,15 @@ class WaitForCommitBtcTxError extends Error {
 }
 
 interface WaitForBtcCommitTxMinedParams {
-    forwarderUrl: string
+    btcConfig: BtcConfig
     commitTx: string
-    confirmations: number
-    onConfirmation: (count: number) => void
 }
 
 export async function waitForBtcCommitTxMined({
-    forwarderUrl,
+    btcConfig,
     commitTx,
-    confirmations,
-    onConfirmation,
-}: WaitForBtcCommitTxMinedParams): Promise<string | undefined> {
+}: WaitForBtcCommitTxMinedParams): Promise<{ blockHeight: number; revealTx: string } | undefined> {
+    const { forwarderUrl } = btcConfig
     const txInfoUrl = new URL(`${forwarderUrl}/tx`)
     txInfoUrl.searchParams.append('txid', commitTx)
 
@@ -77,16 +77,17 @@ export async function waitForBtcCommitTxMined({
             return fetchData(txInfoUrl)
         },
         successCondition: (response) => {
-            const currentConfirmations = response?.block?.confirmations || 0
-            onConfirmation(currentConfirmations)
-            return currentConfirmations >= confirmations
+            return (response?.block?.confirmations || 0) > 0
         },
         error: new WaitForCommitBtcTxError('getting TxResponse timeout exceed'),
     })
 
-    if (!txResponse || !txResponse.txInfo) {
+    if (!txResponse || !txResponse.block || !txResponse.txInfo.revealTx) {
         return
     }
 
-    return txResponse.txInfo.commitTx
+    return {
+        blockHeight: txResponse.block.blockHeight,
+        revealTx: txResponse.txInfo.revealTx,
+    }
 }
