@@ -1,6 +1,6 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { RaydiumTrade } from '../trade'
-import { isSolanaChainId } from '../chainUtils'
+import { addSolanaFee, isSolanaChainId } from '../chainUtils'
 
 export function isRaydiumSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context
@@ -27,6 +27,8 @@ export async function raydiumSwap({
 
     await trade.init()
 
+    const { instructions, fee } = await addSolanaFee(from, trade.instructions)
+
     return {
         kind: 'onchain-swap',
         tokenAmountOut: trade.amountOut,
@@ -35,9 +37,15 @@ export async function raydiumSwap({
         transactionType: 'solana',
         approveTo: '0x0000000000000000000000000000000000000000',
         transactionRequest: {
-            instructions: trade.instructions!,
+            instructions,
         },
-        fees: [],
+        fees: [
+            {
+                provider: 'symbiosis',
+                value: fee,
+                description: 'Symbiosis on-chain fee',
+            },
+        ],
         routes: [
             {
                 provider: 'raydium',

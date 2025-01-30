@@ -143,7 +143,7 @@ export type TonTransactionData = {
 }
 
 export type SolanaTransactionData = {
-    instructions: string[]
+    instructions: string
 }
 
 export type SwapExactInTransactionPayload =
