@@ -3,7 +3,7 @@ import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
-import { isBtcChainId } from '../chainUtils'
+import { isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
 import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory, SymBtc, SymBtc__factory } from '../contracts'
 import { TransactionRequest } from '@ethersproject/providers'
@@ -64,8 +64,12 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         throw new Error(`syBTC as original wasn't found`)
     }
 
+    if (!isEvmChainId(tokenOut.chainId) && !isTronChainId(tokenOut.chainId)) {
+        throw new Error(`Only EVM chains are allowed to swap from BTC`)
+    }
+
     if (!isAddress(to)) {
-        throw new Error(`Destination address wasn't provided`)
+        throw new Error(`Incorrect destination address was provided`)
     }
 
     const btcAmountRaw = tokenAmountIn.raw.toString()

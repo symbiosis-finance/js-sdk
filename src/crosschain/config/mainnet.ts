@@ -441,8 +441,8 @@ export const config: Config = {
         },
         {
             id: ChainId.TELOS_MAINNET,
-            rpc: 'https://mainnet15.telos.net/evm',
-            spareRpcs: ['https://rpc3.telos.net/evm', 'https://rpc.ankr.com/telos'],
+            rpc: 'https://rpc.telos.net',
+            spareRpcs: ['https://rpc.ankr.com/telos'],
             filterBlockOffset: 3000,
             stables: [
                 {

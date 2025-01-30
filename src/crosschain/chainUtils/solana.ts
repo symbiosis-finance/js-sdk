@@ -7,7 +7,7 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js'
 import { ChainId } from '../../constants'
-import { Token } from '../../entities'
+import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 
 export function isSolanaChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
@@ -85,8 +85,8 @@ export function getSolanaConnection() {
     return new Connection('https://solana-rpc.publicnode.com')
 }
 
-const FEE_SOL_COLLECTOR = '7niUN8QFTN8V3y47fqLpAPs5Hq9T79BrSq8CAVjq6YJX'
-const SOL_FEE_AMOUNT = 50000 // 0.00005 sol (9 decimals)
+const SOL_FEE_COLLECTOR = '7niUN8QFTN8V3y47fqLpAPs5Hq9T79BrSq8CAVjq6YJX'
+const SOL_FEE_AMOUNT = 2000000 // 0.002 SOL (9 decimals)
 
 export async function addSolanaFee(from: string, instructions?: string) {
     if (!instructions) {
@@ -95,7 +95,7 @@ export async function addSolanaFee(from: string, instructions?: string) {
     const connection = getSolanaConnection()
     const transferSolInstruction = SystemProgram.transfer({
         fromPubkey: new PublicKey(from),
-        toPubkey: new PublicKey(FEE_SOL_COLLECTOR),
+        toPubkey: new PublicKey(SOL_FEE_COLLECTOR),
         lamports: SOL_FEE_AMOUNT,
     })
 
@@ -117,6 +117,6 @@ export async function addSolanaFee(from: string, instructions?: string) {
 
     return {
         instructions: Buffer.from(transaction.serialize()).toString('base64'),
-        fee: SOL_FEE_AMOUNT,
+        fee: new TokenAmount(GAS_TOKEN[ChainId.SOLANA_MAINNET], BigInt(SOL_FEE_AMOUNT)),
     }
 }

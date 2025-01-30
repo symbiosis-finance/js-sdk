@@ -1,8 +1,6 @@
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { RaydiumTrade } from '../trade'
 import { addSolanaFee, isSolanaChainId } from '../chainUtils'
-import { GAS_TOKEN, TokenAmount } from '../../entities'
-import { ChainId } from '../../constants'
 
 export function isRaydiumSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context
@@ -44,7 +42,7 @@ export async function raydiumSwap({
         fees: [
             {
                 provider: 'symbiosis',
-                value: new TokenAmount(GAS_TOKEN[ChainId.SOLANA_MAINNET], BigInt(fee)),
+                value: fee,
                 description: 'Symbiosis on-chain fee',
             },
         ],
