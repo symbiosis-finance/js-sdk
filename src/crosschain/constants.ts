@@ -75,6 +75,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.GOAT_MAINNET]: [WETH[ChainId.GOAT_MAINNET]],
     [ChainId.SONIC_MAINNET]: [WETH[ChainId.SONIC_MAINNET]],
     [ChainId.ABSTRACT_MAINNET]: [WETH[ChainId.ABSTRACT_MAINNET]],
+    [ChainId.GNOSIS_MAINNET]: [WETH[ChainId.GNOSIS_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -450,6 +451,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.GOAT_MAINNET]: [],
     [ChainId.SONIC_MAINNET]: [],
     [ChainId.ABSTRACT_MAINNET]: [],
+    [ChainId.GNOSIS_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -554,6 +556,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.ABSTRACT_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.ABSTRACT_MAINNET],
     ],
+    [ChainId.GNOSIS_MAINNET]: [
+        WETH[ChainId.GNOSIS_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.GNOSIS_MAINNET],
+    ],
 }
 
 /**
@@ -636,6 +642,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.GOAT_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.SONIC_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.ABSTRACT_MAINNET]: '0xBf63C7944B1635c79a0f0eE7e07b1702837AD1F9',
+    [ChainId.GNOSIS_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {

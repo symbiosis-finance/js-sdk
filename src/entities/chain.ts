@@ -718,6 +718,16 @@ export const chains: Chain[] = [
             large: 'https://s3.coinmarketcap.com/dexer/token/d51628b923d63af38ff8900885c6399b.jpg',
         },
     }),
+    new Chain({
+        id: ChainId.GNOSIS_MAINNET,
+        name: 'Gnosis',
+        disabled: false,
+        explorer: 'https://gnosisscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1659.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1659.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

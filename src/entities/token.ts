@@ -879,4 +879,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.GNOSIS_MAINNET]: new Token({
+        chainId: ChainId.GNOSIS_MAINNET,
+        address: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+        decimals: 18,
+        symbol: 'WXDAI',
+        isNative: false,
+        name: 'Wrapped xDAI',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9021.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9021.png',
+        },
+    }),
 }

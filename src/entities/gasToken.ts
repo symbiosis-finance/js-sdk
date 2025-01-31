@@ -115,4 +115,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.GOAT_MAINNET]: GAS(ChainId.GOAT_MAINNET, 'BTC', 1),
     [ChainId.SONIC_MAINNET]: GAS(ChainId.SONIC_MAINNET, 'S', 32684),
     [ChainId.ABSTRACT_MAINNET]: GAS(ChainId.ABSTRACT_MAINNET, 'ETH', 1027),
+    [ChainId.GNOSIS_MAINNET]: GAS(ChainId.GNOSIS_MAINNET, 'xDAI', 8635),
 }

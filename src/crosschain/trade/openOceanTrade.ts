@@ -58,6 +58,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'optimism',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
+    [ChainId.GNOSIS_MAINNET]: {
+        slug: 'xdai',
+        nativeTokenAddress: AddressZero,
+    },
     // --- OpenOcean supported only chains
     [ChainId.KAVA_MAINNET]: {
         slug: 'kava',
