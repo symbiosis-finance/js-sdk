@@ -26,7 +26,6 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.MERLIN_MAINNET]: 'merlin-chain',
     [ChainId.ZKLINK_MAINNET]: 'zklink-nova',
     [ChainId.TON_MAINNET]: 'the-open-network',
-    [ChainId.TON_TESTNET]: 'the-open-network',
     [ChainId.BTC_MAINNET]: 'bitcoin',
     [ChainId.TRON_MAINNET]: 'tron',
     [ChainId.TAIKO_MAINNET]: 'taiko',
@@ -38,6 +37,11 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.CRONOS_ZK_MAINNET]: 'cronos-zkevm',
     [ChainId.MORPH_MAINNET]: 'morph-l2',
     [ChainId.SOLANA_MAINNET]: 'solana',
+    [ChainId.GNOSIS_MAINNET]: 'xdai',
+    [ChainId.SONIC_MAINNET]: 'sonic',
+    [ChainId.CORE_MAINNET]: 'core',
+    [ChainId.ABSTRACT_MAINNET]: 'abstract',
+    [ChainId.BAHAMUT_MAINNET]: 'bahamut',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -66,7 +70,6 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.MERLIN_MAINNET]: 'bitcoin',
     [ChainId.ZKLINK_MAINNET]: 'ethereum',
     [ChainId.TON_MAINNET]: 'the-open-network',
-    [ChainId.TON_TESTNET]: 'the-open-network',
     [ChainId.BTC_MAINNET]: 'bitcoin',
     [ChainId.TRON_MAINNET]: 'tron',
     [ChainId.TAIKO_MAINNET]: 'ethereum',
@@ -79,4 +82,9 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.CRONOS_ZK_MAINNET]: 'cronos-zkevm-cro',
     [ChainId.MORPH_MAINNET]: 'weth',
     [ChainId.SOLANA_MAINNET]: 'solana',
+    [ChainId.GNOSIS_MAINNET]: 'xdai',
+    [ChainId.SONIC_MAINNET]: 'sonic-3',
+    [ChainId.CORE_MAINNET]: 'coredaoorg',
+    [ChainId.ABSTRACT_MAINNET]: 'ethereum',
+    [ChainId.BAHAMUT_MAINNET]: 'fasttoken',
 }
