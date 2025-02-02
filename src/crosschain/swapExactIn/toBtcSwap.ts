@@ -6,6 +6,7 @@ import { theBest } from './utils'
 import { isBtcChainId } from '../chainUtils'
 
 function isThorChainAvailable(chainId: ChainId) {
+    return false
     return chainId === ChainId.BTC_MAINNET
 }
 
