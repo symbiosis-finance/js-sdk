@@ -93,5 +93,33 @@ function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token):
             // next
         }
     }
-    return optimal
+
+    if (optimal) {
+        return optimal
+    }
+
+    const possibleRoutes: OptimalRoute[] = []
+    for (let i = 0; i < omniPools.length; i++) {
+        try {
+            const pool = omniPools[i]
+            const transitTokenIn = symbiosis.transitToken(tokenIn.chainId, pool)
+            const transitTokenOut = symbiosis.transitToken(tokenOut.chainId, pool)
+
+            if (transitTokenIn && transitTokenOut) {
+                possibleRoutes.push({
+                    transitTokenIn,
+                    transitTokenOut,
+                    pool,
+                })
+            }
+        } catch {
+            // next
+        }
+    }
+
+    if (possibleRoutes.length === 1) {
+        return possibleRoutes[0]
+    }
+
+    return undefined
 }

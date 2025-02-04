@@ -156,6 +156,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -596,6 +597,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0xBBeB516fb02a01611cBBE0453Fe3c580D7281011',
@@ -618,6 +620,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Symbiosis BTC',
                     symbol: 'syBTC',
                     address: '0xED0c95EBe5a3E687cB2224687024FeC6518E683e',
