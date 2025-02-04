@@ -21,6 +21,11 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
 
+        // allow only to unwrap deprecated syBTC
+        if (syBtc.deprecated) {
+            return
+        }
+
         if (tokenAmountIn.token.chainId === syBtc.chainId) {
             promises.push(zappingBtcOnChain(context, syBtc))
             return

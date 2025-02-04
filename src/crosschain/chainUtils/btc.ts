@@ -17,6 +17,7 @@ export type BtcConfig = {
 export const BTC_CONFIGS: BtcConfig[] = [
     {
         btc: new Token({
+            deprecated: true,
             name: 'Bitcoin',
             symbol: 'BTC',
             address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
