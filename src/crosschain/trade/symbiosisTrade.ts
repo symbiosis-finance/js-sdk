@@ -17,7 +17,7 @@ export type SymbiosisTradeType =
     | 'raydium'
     | 'stonfi'
     | 'dedust'
-
+    | 'jupiter'
 export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 
 export interface SymbiosisTradeParams {

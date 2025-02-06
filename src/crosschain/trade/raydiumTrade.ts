@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js'
-import { ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
+import { ApiSwapV1Out, parseTokenAccountResp, TokenAccount } from '@raydium-io/raydium-sdk-v2'
 import { API_URLS } from '@raydium-io/raydium-sdk-v2'
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
@@ -32,17 +32,26 @@ interface SwapTransactionsResponse {
     data: { transaction: string }[]
 }
 
+interface BuildSwapInstructionsParams {
+    inputMint: string
+    outputMint: string
+    txVersion: string
+    quoteResponse: ApiSwapV1Out
+}
+
 export class RaydiumTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
-    private solanaPubkey: PublicKey
+    private solanaToPubkey: PublicKey
+    private solanaFromPubkey: PublicKey
 
     public constructor(params: RaydiumTradeParams) {
         super(params)
 
-        const { symbiosis, from } = params
+        const { symbiosis, to, from } = params
 
         this.symbiosis = symbiosis
-        this.solanaPubkey = new PublicKey(from)
+        this.solanaFromPubkey = new PublicKey(from)
+        this.solanaToPubkey = new PublicKey(to)
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -61,7 +70,7 @@ export class RaydiumTrade extends SymbiosisTrade {
                 : getSolanaTokenAddress(this.tokenOut.address)
 
             // get quote
-            const swapResponse = (await fetch(
+            const quoteResponse = (await fetch(
                 `${
                     API_URLS.SWAP_HOST
                 }/compute/swap-base-in?inputMint=${inputMint}&outputMint=${outputMint}&amount=${this.tokenAmountIn.raw.toString()}&slippageBps=${
@@ -69,25 +78,25 @@ export class RaydiumTrade extends SymbiosisTrade {
                 }&txVersion=${txVersion}`
             ).then((res) => res.json())) as ApiSwapV1Out
 
-            if (!swapResponse.success) {
+            if (!quoteResponse.success) {
                 throw new Error('Failed to get quote via raydium dex')
             }
 
-            const instructionsResponse = await this.buildCalldata({
+            const instructionsResponse = await this.buildInstructions({
                 inputMint,
                 outputMint,
                 txVersion,
-                swapResponse,
+                quoteResponse,
             })
 
-            const amountOut = new TokenAmount(this.tokenOut, swapResponse.data.outputAmount)
-            const amountOutMin = new TokenAmount(this.tokenOut, swapResponse.data.otherAmountThreshold)
+            const amountOut = new TokenAmount(this.tokenOut, quoteResponse.data.outputAmount)
+            const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.data.otherAmountThreshold)
 
             this.out = {
                 amountOut,
                 amountOutMin,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact: new Percent(BigInt(swapResponse.data.priceImpactPct * -100), BigInt(10000)),
+                priceImpact: new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000)),
                 routerAddress: '',
                 callData: '',
                 callDataOffset: 0,
@@ -102,17 +111,7 @@ export class RaydiumTrade extends SymbiosisTrade {
         }
     }
 
-    async buildCalldata({
-        inputMint,
-        outputMint,
-        txVersion,
-        swapResponse,
-    }: {
-        inputMint: string
-        outputMint: string
-        txVersion: string
-        swapResponse: ApiSwapV1Out
-    }) {
+    async buildInstructions({ inputMint, outputMint, txVersion, quoteResponse }: BuildSwapInstructionsParams) {
         const isInputSol = this.tokenAmountIn.token.isNative
         const isOutputSol = this.tokenOut.isNative
 
@@ -120,10 +119,17 @@ export class RaydiumTrade extends SymbiosisTrade {
             res.json()
         )) as PriorityFeeResponse
 
-        const { tokenAccounts } = await this.fetchTokenAccountData(this.solanaPubkey)
+        const { tokenAccounts: tokenAccountsFrom } = await this.fetchTokenAccountData(this.solanaFromPubkey)
 
-        const inputTokenAcc = tokenAccounts.find((a) => a.mint.toBase58() === inputMint)?.publicKey
-        const outputTokenAcc = tokenAccounts.find((a) => a.mint.toBase58() === outputMint)?.publicKey
+        let tokenAccountsTo: TokenAccount[] = tokenAccountsFrom
+        //[TODO]: Doesn't work with custom recipient case error: (REQ_OWNER_ACCOUNT_ERROR)
+        if (!this.solanaFromPubkey.equals(this.solanaToPubkey)) {
+            const { tokenAccounts } = await this.fetchTokenAccountData(this.solanaToPubkey)
+            tokenAccountsTo = tokenAccounts
+        }
+
+        const inputTokenAcc = tokenAccountsFrom.find((a) => a.mint.toBase58() === inputMint)?.publicKey
+        const outputTokenAcc = tokenAccountsTo?.find((a) => a.mint.toBase58() === outputMint)?.publicKey
 
         if (!inputTokenAcc && !isInputSol) {
             console.error(
@@ -139,9 +145,9 @@ export class RaydiumTrade extends SymbiosisTrade {
             },
             body: JSON.stringify({
                 computeUnitPriceMicroLamports: String(priorityFee.data.default.h),
-                swapResponse,
+                swapResponse: quoteResponse,
                 txVersion,
-                wallet: this.solanaPubkey,
+                wallet: this.solanaToPubkey,
                 wrapSol: isInputSol,
                 unwrapSol: isOutputSol,
                 inputAccount: isInputSol ? undefined : inputTokenAcc,
@@ -154,19 +160,21 @@ export class RaydiumTrade extends SymbiosisTrade {
 
     async fetchTokenAccountData(publicKey: PublicKey) {
         const connection = getSolanaConnection()
-        const solAccountResp = await connection.getAccountInfo(publicKey)
-        const tokenAccountResp = await connection.getTokenAccountsByOwner(publicKey, {
-            programId: TOKEN_PROGRAM_ID,
-        })
-        const token2022Req = await connection.getTokenAccountsByOwner(publicKey, {
-            programId: TOKEN_2022_PROGRAM_ID,
-        })
+        const [solAccountResp, tokenAccountResp, token2022Resp] = await Promise.all([
+            connection.getAccountInfo(publicKey),
+            connection.getTokenAccountsByOwner(publicKey, {
+                programId: TOKEN_PROGRAM_ID,
+            }),
+            connection.getTokenAccountsByOwner(publicKey, {
+                programId: TOKEN_2022_PROGRAM_ID,
+            }),
+        ])
         const tokenAccountData = parseTokenAccountResp({
             owner: publicKey,
             solAccountResp,
             tokenAccountResp: {
                 context: tokenAccountResp.context,
-                value: [...tokenAccountResp.value, ...token2022Req.value],
+                value: [...tokenAccountResp.value, ...token2022Resp.value],
             },
         })
         return tokenAccountData
