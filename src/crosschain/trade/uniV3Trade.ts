@@ -23,6 +23,8 @@ import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
 import invariant from 'tiny-invariant'
 import { IV3SwapRouter } from '../contracts/UniV3Router'
 import { Error } from '../error'
+import { BIPS_BASE } from '../constants'
+import { getMinAmount } from '../chainUtils'
 
 interface Deployment {
     factory: string
@@ -161,7 +163,6 @@ export class UniV3Trade extends SymbiosisTrade {
         }
 
         const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
-        const amountOutMin = new TokenAmount(this.tokenOut, bestAmountOut.toString())
 
         const trade = Trade.createUncheckedTrade({
             route: bestSwapRoute,
@@ -170,7 +171,7 @@ export class UniV3Trade extends SymbiosisTrade {
             tradeType: TradeType.EXACT_INPUT,
         })
 
-        const slippageTolerance = new PercentUni((this.slippage * 100).toFixed(0), '1000000')
+        const slippageTolerance = new PercentUni(this.slippage, BIPS_BASE)
 
         const options: SwapOptions = {
             slippageTolerance,
@@ -179,12 +180,15 @@ export class UniV3Trade extends SymbiosisTrade {
         }
         const methodParameters = UniV3Trade.swapCallParameters([trade], options, swap)
 
+        const amountOutMinRaw = getMinAmount(this.slippage, bestAmountOut)
+        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+
         const priceImpact = new Percent(
             JSBI.multiply(trade.priceImpact.numerator, JSBI.BigInt('-1')),
             trade.priceImpact.denominator
         )
         const callData = methodParameters.calldata
-        const { amountOffset, minReceivedOffset } = UniV3Trade.getOffsets(callData)
+        const { amountOffset, minReceivedOffset, minReceivedOffset2 } = UniV3Trade.getOffsets(callData)
 
         this.out = {
             amountOut,
@@ -194,6 +198,7 @@ export class UniV3Trade extends SymbiosisTrade {
             callData,
             callDataOffset: amountOffset,
             minReceivedOffset,
+            minReceivedOffset2,
             priceImpact,
         }
         return this
@@ -206,12 +211,14 @@ export class UniV3Trade extends SymbiosisTrade {
                 sigHash: '04e45aaf',
                 offset: 4 + 5 * 32,
                 minReceivedOffset: 4 + 6 * 32,
+                minReceivedOffset2: undefined,
             },
             {
                 // multicall
                 sigHash: 'ac9650d8',
                 offset: 328,
-                minReceivedOffset: 360, // I'm not sure
+                minReceivedOffset: 360,
+                minReceivedOffset2: 488,
             },
         ]
 
@@ -228,6 +235,7 @@ export class UniV3Trade extends SymbiosisTrade {
         return {
             amountOffset: method.offset,
             minReceivedOffset: method.minReceivedOffset,
+            minReceivedOffset2: method.minReceivedOffset2,
         }
     }
 
