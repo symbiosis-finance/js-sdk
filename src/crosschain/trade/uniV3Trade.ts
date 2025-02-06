@@ -28,6 +28,7 @@ interface Deployment {
     factory: string
     quoter: string
     swap: string
+    initCodeHash?: string
     baseTokens: Token[]
 }
 
@@ -62,6 +63,21 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
     //         }),
     //     ],
     // },
+    [ChainId.BERACHAIN_MAINNET]: {
+        factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
+        quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
+        swap: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
+        initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
+        baseTokens: [
+            new Token({
+                name: 'USDC',
+                symbol: 'USDC',
+                address: '0x549943e04f40284185054145c6E4e9568C1D3241',
+                chainId: ChainId.BERACHAIN_MAINNET,
+                decimals: 6,
+            }),
+        ],
+    },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {
@@ -98,7 +114,7 @@ export class UniV3Trade extends SymbiosisTrade {
         }
         const provider = this.symbiosis.getProvider(chainId)
 
-        const { quoter, swap, factory } = addresses
+        const { quoter, swap, factory, initCodeHash } = addresses
 
         const currencyIn = toUniCurrency(this.tokenAmountIn.token)
         const currencyOut = toUniCurrency(this.tokenOut)
@@ -107,7 +123,7 @@ export class UniV3Trade extends SymbiosisTrade {
         const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
 
         const promises = POSSIBLE_FEES.map(async (fee) => {
-            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee)
+            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee, initCodeHash)
             if (!pool) {
                 return
             }
