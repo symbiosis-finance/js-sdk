@@ -135,7 +135,10 @@ export abstract class BaseSwapping {
             }
             this.revertableAddresses = { AB: AB.address, BC: BC.address }
         } else {
-            this.revertableAddresses = { AB: this.from, BC: this.from }
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.from,
+            }
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
@@ -637,7 +640,7 @@ export abstract class BaseSwapping {
         const externalId = getExternalId({
             internalId,
             contractAddress: portalAddress,
-            revertableAddress: this.getRevertableAddress('BC'),
+            revertableAddress: this.getRevertableAddress('AB'),
             chainId: chainIdOut,
         })
 
