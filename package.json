@@ -33,7 +33,7 @@
         "@solana/addresses": "^2.0.0",
         "@ton/core": "^0.59.0",
         "@ton/crypto": "3.3.0",
-        "@ton/ton": "^15.0.0",
+        "@ton/ton": "~15.1.0",
         "@raydium-io/raydium-sdk-v2": "0.1.106-alpha",
         "@solana/spl-token": "^0.4.0",
         "@solana/web3.js": "^1.98.0",

@@ -37,6 +37,7 @@ import {
 } from '../types'
 import { Profiler } from '../../entities/profiler'
 import { createFakeAmount } from '../../utils'
+import { ChainId } from '../../constants'
 
 type MetaRouteParams = {
     amount: string
@@ -117,6 +118,12 @@ export abstract class BaseSwapping {
         if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
             this.revertableAddresses = {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
+            }
+        } else if (this.tokenAmountIn.token.chainId === ChainId.ABSTRACT_MAINNET) {
+            //AB could be Smart account not EOA
+            this.revertableAddresses = {
+                AB: this.from,
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
         } else if (isTonChainId(this.tokenAmountIn.token.chainId) || isTonChainId(this.tokenOut.chainId)) {
