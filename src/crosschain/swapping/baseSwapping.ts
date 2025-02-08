@@ -120,10 +120,12 @@ export abstract class BaseSwapping {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
-        } else if (this.tokenAmountIn.token.chainId === ChainId.ABSTRACT_MAINNET) {
-            //AB could be Smart account not EOA
+        } else if (
+            this.tokenAmountIn.token.chainId === ChainId.ABSTRACT_MAINNET ||
+            this.tokenOut.chainId === ChainId.ABSTRACT_MAINNET
+        ) {
             this.revertableAddresses = {
-                AB: this.from,
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
         } else if (isTonChainId(this.tokenAmountIn.token.chainId) || isTonChainId(this.tokenOut.chainId)) {
