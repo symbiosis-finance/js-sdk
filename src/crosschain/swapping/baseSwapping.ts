@@ -37,6 +37,7 @@ import {
 } from '../types'
 import { Profiler } from '../../entities/profiler'
 import { createFakeAmount } from '../../utils'
+import { ChainId } from '../../constants'
 
 type MetaRouteParams = {
     amount: string
@@ -115,6 +116,14 @@ export abstract class BaseSwapping {
         this.synthesisV2 = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
 
         if (isTronToken(this.tokenAmountIn.token) || isTronToken(this.tokenOut)) {
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
+            }
+        } else if (
+            this.tokenAmountIn.token.chainId === ChainId.ABSTRACT_MAINNET ||
+            this.tokenOut.chainId === ChainId.ABSTRACT_MAINNET
+        ) {
             this.revertableAddresses = {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
