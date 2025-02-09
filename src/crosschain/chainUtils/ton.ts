@@ -448,10 +448,17 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
     }
 }
 
+// TODO implement fee estimation
 export function tonAdvisorMock(feeToken: Token) {
     let feeRaw = '0.1' // wton
     if (feeToken.symbol?.toLowerCase().includes('usdt')) {
         feeRaw = '0.5'
+    }
+    if (feeToken.symbol?.toLowerCase().includes('uxlink')) {
+        feeRaw = '1'
+    }
+    if (feeToken.symbol?.toLowerCase().includes('cati')) {
+        feeRaw = '1'
     }
     return {
         fee: new TokenAmount(feeToken, parseUnits(feeRaw, feeToken.decimals).toString()),
