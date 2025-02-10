@@ -5,7 +5,7 @@ import { Portal__factory, Synthesis__factory } from './contracts'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
 import { TokenAmount } from '../entities'
-import {getExternalId, isEvmChainId, isTronChainId} from './chainUtils'
+import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils'
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
@@ -43,6 +43,7 @@ export interface PendingRequest {
 export interface SourceChainData {
     fromAddress: string
     sourceChainId: ChainId
+    sourceTransactionHash: string
 }
 
 export type SynthesizeRequestFinder = (externalId: string) => Promise<SourceChainData | undefined>
@@ -77,8 +78,9 @@ export const findSourceChainData = async (
     })
     const results = await Promise.allSettled(promises)
 
-    let sourceChainId = undefined
-    let fromAddress = undefined
+    let sourceChainId: ChainId | undefined = undefined
+    let sourceTransactionHash: string | undefined = undefined
+    let fromAddress: string | undefined = undefined
     let error = undefined
     for (let i = 0; i < results.length; i++) {
         const item = results[i]
@@ -91,6 +93,7 @@ export const findSourceChainData = async (
         if (item.value) {
             sourceChainId = chainId
             fromAddress = item.value.args.from
+            sourceTransactionHash = item.value.transactionHash
             break
         }
     }
@@ -102,15 +105,17 @@ export const findSourceChainData = async (
         const data = await synthesizeRequestFinder(externalId)
         sourceChainId = data?.sourceChainId
         fromAddress = data?.fromAddress
+        sourceTransactionHash = data?.sourceTransactionHash
     }
 
-    if (!fromAddress || !sourceChainId) {
+    if (!fromAddress || !sourceChainId || !sourceTransactionHash) {
         return
     }
 
     return {
         sourceChainId,
         fromAddress,
+        sourceTransactionHash,
     }
 }
 
@@ -199,6 +204,7 @@ export class RevertRequest {
         let fromTokenAmount = new TokenAmount(token, amount)
         const originalFromTokenAmount = fromTokenAmount
 
+        let transactionHash = this.transactionHash
         if (type === 'synthesize') {
             const isV2 = await isSynthesizeV2(this.symbiosis, this.chainId, receipt.transactionHash)
             if (isV2) {
@@ -220,8 +226,9 @@ export class RevertRequest {
                     synthesizeRequestFinder
                 )
                 if (data) {
-                    const { sourceChainId, fromAddress } = data
+                    const { sourceChainId, fromAddress, sourceTransactionHash } = data
                     from = fromAddress
+                    transactionHash = sourceTransactionHash
                     const sourceChainToken = this.symbiosis.transitToken(sourceChainId, omniPoolConfig)
                     chainIdFrom = sourceChainToken.chainId
                     fromTokenAmount = new TokenAmount(
@@ -273,7 +280,7 @@ export class RevertRequest {
         return {
             internalId: id,
             externalId,
-            transactionHash: this.transactionHash,
+            transactionHash,
             state,
             type,
             from,
