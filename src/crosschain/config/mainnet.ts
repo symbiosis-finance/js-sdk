@@ -212,6 +212,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Wrapped TON',
                     symbol: 'WTON',
                     address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
@@ -307,6 +308,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Wrapped TON',
                     symbol: 'WTON',
                     address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
@@ -1691,6 +1693,7 @@ export const config: Config = {
             filterBlockOffset: 0,
             stables: [
                 {
+                    deprecated: true,
                     name: 'TON Coin',
                     symbol: 'TON',
                     address: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
@@ -1730,8 +1733,8 @@ export const config: Config = {
                     chainId: ChainId.TON_MAINNET,
                     decimals: 9,
                     icons: {
-                        large: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
-                        small: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
                     },
                 },
             ],
