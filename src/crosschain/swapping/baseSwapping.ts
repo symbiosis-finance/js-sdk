@@ -37,6 +37,7 @@ import {
 } from '../types'
 import { Profiler } from '../../entities/profiler'
 import { createFakeAmount } from '../../utils'
+import { ChainId } from '../../constants'
 
 type MetaRouteParams = {
     amount: string
@@ -119,6 +120,14 @@ export abstract class BaseSwapping {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
                 BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
             }
+        } else if (
+            this.tokenAmountIn.token.chainId === ChainId.ABSTRACT_MAINNET ||
+            this.tokenOut.chainId === ChainId.ABSTRACT_MAINNET
+        ) {
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.symbiosis.getRevertableAddress(this.tokenOut.chainId),
+            }
         } else if (isTonChainId(this.tokenAmountIn.token.chainId) || isTonChainId(this.tokenOut.chainId)) {
             this.revertableAddresses = {
                 AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
@@ -135,7 +144,10 @@ export abstract class BaseSwapping {
             }
             this.revertableAddresses = { AB: AB.address, BC: BC.address }
         } else {
-            this.revertableAddresses = { AB: this.from, BC: this.from }
+            this.revertableAddresses = {
+                AB: this.symbiosis.getRevertableAddress(this.tokenAmountIn.token.chainId),
+                BC: this.from,
+            }
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
@@ -637,7 +649,7 @@ export abstract class BaseSwapping {
         const externalId = getExternalId({
             internalId,
             contractAddress: portalAddress,
-            revertableAddress: this.getRevertableAddress('BC'),
+            revertableAddress: this.getRevertableAddress('AB'),
             chainId: chainIdOut,
         })
 

@@ -891,4 +891,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9021.png',
         },
     }),
+    [ChainId.BERACHAIN_MAINNET]: new Token({
+        chainId: ChainId.BERACHAIN_MAINNET,
+        address: '0x6969696969696969696969696969696969696969',
+        decimals: 18,
+        symbol: 'WBERA',
+        isNative: false,
+        name: 'Wrapped BERA',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35608.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35608.png',
+        },
+    }),
 }

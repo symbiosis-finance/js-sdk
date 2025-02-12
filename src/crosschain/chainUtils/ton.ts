@@ -40,6 +40,22 @@ const TON_ADDRESSES_MAP = [
         evm: '0x46deec715e419a1f0f5959b5c8450894959d2dbf',
         ton: 'EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a', // USDT testnet
     },
+    {
+        evm: '0x32cc2d7bc18283f40d20bb03e432cd603ac33ffc',
+        ton: 'EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT', //NOT
+    },
+    {
+        evm: '0xde78fc6b46c51048513f8e9a6d44060199c1bf0c',
+        ton: 'EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS', // DOGS
+    },
+    {
+        evm: '0xdf48a1e91b6410970fa3d5ffed3eed49e3cf08ff',
+        ton: 'EQB420yQsZobGcy0VYDfSKHpG2QQlw-j1f_tPu1J488I__PX', // PX
+    },
+    {
+        evm: '0x744a45f2b710aa4234b89adb630e99d79b01bd4f',
+        ton: 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO', // Ston.fi
+    },
 ]
 
 export function getTonTokenAddress(address: string, isStonFi: boolean = false): string {
@@ -432,10 +448,17 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
     }
 }
 
+// TODO implement fee estimation
 export function tonAdvisorMock(feeToken: Token) {
     let feeRaw = '0.1' // wton
     if (feeToken.symbol?.toLowerCase().includes('usdt')) {
         feeRaw = '0.5'
+    }
+    if (feeToken.symbol?.toLowerCase().includes('uxlink')) {
+        feeRaw = '1'
+    }
+    if (feeToken.symbol?.toLowerCase().includes('cati')) {
+        feeRaw = '1'
     }
     return {
         fee: new TokenAmount(feeToken, parseUnits(feeRaw, feeToken.decimals).toString()),

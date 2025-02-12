@@ -36,6 +36,7 @@ export interface SymbiosisTradeOutResult {
     callData: string
     callDataOffset: number
     minReceivedOffset: number
+    minReceivedOffset2?: number
     functionSelector?: string
     instructions?: string
     fees?: FeeItem[]
@@ -111,6 +112,11 @@ export abstract class SymbiosisTrade {
         return this.out.minReceivedOffset
     }
 
+    get minReceivedOffset2(): number {
+        this.assertOutInitialized('minReceivedOffset2')
+        return this.out.minReceivedOffset2 || 0
+    }
+
     get priceImpact(): Percent {
         this.assertOutInitialized('priceImpact')
         return this.out.priceImpact
@@ -151,6 +157,12 @@ export abstract class SymbiosisTrade {
             const minReceivedFromCallDataRaw = SymbiosisTrade.getAmountFromCallData(callData, this.minReceivedOffset)
             const newMinReceived = proportionallyBn(minReceivedFromCallDataRaw)
             callData = SymbiosisTrade.patchCallData(callData, this.minReceivedOffset, newMinReceived)
+        }
+        // NOTE: probably there is better solution
+        if (this.minReceivedOffset2 > 0) {
+            const minReceived2FromCallDataRaw = SymbiosisTrade.getAmountFromCallData(callData, this.minReceivedOffset2)
+            const newMinReceived2 = proportionallyBn(minReceived2FromCallDataRaw)
+            callData = SymbiosisTrade.patchCallData(callData, this.minReceivedOffset2, newMinReceived2)
         }
         if (this.callDataOffset > 0) {
             const amountInFromCallDataRaw = SymbiosisTrade.getAmountFromCallData(callData, this.callDataOffset)

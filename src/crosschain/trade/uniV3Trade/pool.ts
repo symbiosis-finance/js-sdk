@@ -9,13 +9,15 @@ export async function getPool(
     factory: UniV3Factory,
     tokenA: Token,
     tokenB: Token,
-    fee: FeeAmount
+    fee: FeeAmount,
+    initCodeHash?: string
 ): Promise<Pool | undefined> {
     const currentPoolAddress = computePoolAddress({
         factoryAddress: factory.address,
         tokenA,
         tokenB,
         fee,
+        initCodeHashManualOverride: initCodeHash,
     })
 
     const poolContract = new ethers.Contract(currentPoolAddress, IUniswapV3PoolABI.abi, factory.provider)

@@ -212,6 +212,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Wrapped TON',
                     symbol: 'WTON',
                     address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
@@ -307,6 +308,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Wrapped TON',
                     symbol: 'WTON',
                     address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
@@ -1691,6 +1693,7 @@ export const config: Config = {
             filterBlockOffset: 0,
             stables: [
                 {
+                    deprecated: true,
                     name: 'TON Coin',
                     symbol: 'TON',
                     address: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
@@ -1730,8 +1733,8 @@ export const config: Config = {
                     chainId: ChainId.TON_MAINNET,
                     decimals: 9,
                     icons: {
-                        large: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
-                        small: 'https://cache.tonapi.io/imgproxy/iIz6D6Kwtvu_NN3OS1Zf0y9gyCE0fvXxHZzjKEsxeHk/rs:fill:200:200:1/g:no/aHR0cHM6Ly9jYXRpemVuLmFpL0NBVElfVE9LRU4ucG5n.webp',
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
                     },
                 },
             ],
@@ -1932,6 +1935,34 @@ export const config: Config = {
                 },
             ],
             router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.BERACHAIN_MAINNET,
+            rpc: 'https://rpc.berachain.com',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'Wrapped ETH',
+                    symbol: 'WETH',
+                    address: '0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590',
+                    chainId: ChainId.BERACHAIN_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+            ],
+            router: '0xd91dd58387Ccd9B66B390ae2d7c66dBD46BC6022',
             dexFee: 0,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',

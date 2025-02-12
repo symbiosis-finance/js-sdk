@@ -5,7 +5,7 @@ import { Portal__factory, Synthesis__factory } from './contracts'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
 import { TokenAmount } from '../entities'
-import { getExternalId } from './chainUtils'
+import {getExternalId, isEvmChainId, isTronChainId} from './chainUtils'
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
@@ -44,6 +44,7 @@ export interface SourceChainData {
     fromAddress: string
     sourceChainId: ChainId
 }
+
 export type SynthesizeRequestFinder = (externalId: string) => Promise<SourceChainData | undefined>
 
 export const findSourceChainData = async (
@@ -64,9 +65,12 @@ export const findSourceChainData = async (
     if (!foundSynthesizeCompleted) return undefined
     const externalId = foundSynthesizeCompleted.topics?.[1]
 
-    const chains = symbiosis.chains().filter((chain) => {
-        return chain.id !== chainIdFrom && chain.id !== chainIdTo
-    })
+    const chains = symbiosis
+        .chains()
+        .filter((chain) => isEvmChainId(chain.id) || isTronChainId(chain.id))
+        .filter((chain) => {
+            return chain.id !== chainIdFrom && chain.id !== chainIdTo
+        })
 
     const promises = chains.map((chain) => {
         return findSynthesizeRequestOnChain(symbiosis, chain.id, revertableAddress, externalId, omniPoolConfig)
