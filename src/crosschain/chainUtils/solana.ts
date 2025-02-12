@@ -103,17 +103,20 @@ export async function addSolanaFee(from: string, instructions?: string) {
     const transaction = VersionedTransaction.deserialize(txBuffer)
 
     // Get Address Lookup Table
-    const lookupTableAccount = await connection
-        .getAddressLookupTable(transaction.message.addressTableLookups[0].accountKey)
-        .then((res) => res.value as AddressLookupTableAccount)
+    const lookupTableAccounts = await Promise.all(
+        transaction.message.addressTableLookups.map(async (lookup) => {
+            const response = await connection.getAddressLookupTable(lookup.accountKey)
+            return response.value as AddressLookupTableAccount
+        })
+    )
 
     const message = TransactionMessage.decompile(transaction.message, {
-        addressLookupTableAccounts: [lookupTableAccount],
+        addressLookupTableAccounts: lookupTableAccounts,
     })
 
     message.instructions.unshift(transferSolInstruction)
 
-    transaction.message = message.compileToV0Message([lookupTableAccount])
+    transaction.message = message.compileToV0Message(lookupTableAccounts)
 
     return {
         instructions: Buffer.from(transaction.serialize()).toString('base64'),
