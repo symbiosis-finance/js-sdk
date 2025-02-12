@@ -17,11 +17,6 @@ export function onChainSolanaSwap({
     to,
     slippage,
 }: SwapExactInParams): Promise<SwapExactInResult>[] {
-    // TODO: clarify how to handle custom recipient
-    if (from !== to) {
-        throw new Error("Can't swap to custom recipient")
-    }
-
     const raydiumTradeInstance = new RaydiumTrade({
         symbiosis,
         tokenAmountIn,
@@ -44,14 +39,7 @@ export function onChainSolanaSwap({
     return tradeInstances.map(async (instance) => {
         const trade = await instance.init()
 
-        let instructions = trade.instructions
-        let fee: TokenAmount | null = null
-        // TODO: jupiter has error with lookup table, native jupiter mechanic only subtract from output amount in custom token
-        if (trade.tradeType === 'raydium') {
-            const { instructions: patchedInstructions, fee: solanaFee } = await addSolanaFee(from, trade.instructions)
-            instructions = patchedInstructions
-            fee = solanaFee
-        }
+        const { instructions, fee } = await addSolanaFee(from, trade.instructions)
 
         return {
             kind: 'onchain-swap',

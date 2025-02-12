@@ -107,7 +107,10 @@ export class JupiterTrade extends SymbiosisTrade {
                 amountOut,
                 amountOutMin,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact: new Percent(BigInt(+quoteResponse.priceImpactPct * -100), BigInt(10000)),
+                priceImpact: new Percent(
+                    BigInt(+Number(quoteResponse.priceImpactPct).toFixed(4) * -10000),
+                    BigInt(10000)
+                ),
                 routerAddress: '',
                 callData: '',
                 callDataOffset: 0,

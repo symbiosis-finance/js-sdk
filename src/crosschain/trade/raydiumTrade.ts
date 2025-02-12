@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js'
-import { ApiSwapV1Out, parseTokenAccountResp, TokenAccount } from '@raydium-io/raydium-sdk-v2'
+import { ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
 import { API_URLS } from '@raydium-io/raydium-sdk-v2'
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
@@ -42,15 +42,13 @@ interface BuildSwapInstructionsParams {
 export class RaydiumTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
     private solanaToPubkey: PublicKey
-    private solanaFromPubkey: PublicKey
 
     public constructor(params: RaydiumTradeParams) {
         super(params)
 
-        const { symbiosis, to, from } = params
+        const { symbiosis, to } = params
 
         this.symbiosis = symbiosis
-        this.solanaFromPubkey = new PublicKey(from)
         this.solanaToPubkey = new PublicKey(to)
     }
 
@@ -119,17 +117,10 @@ export class RaydiumTrade extends SymbiosisTrade {
             res.json()
         )) as PriorityFeeResponse
 
-        const { tokenAccounts: tokenAccountsFrom } = await this.fetchTokenAccountData(this.solanaFromPubkey)
-
-        let tokenAccountsTo: TokenAccount[] = tokenAccountsFrom
-        //[TODO]: Doesn't work with custom recipient case error: (REQ_OWNER_ACCOUNT_ERROR)
-        if (!this.solanaFromPubkey.equals(this.solanaToPubkey)) {
-            const { tokenAccounts } = await this.fetchTokenAccountData(this.solanaToPubkey)
-            tokenAccountsTo = tokenAccounts
-        }
+        const { tokenAccounts: tokenAccountsFrom } = await this.fetchTokenAccountData(this.solanaToPubkey)
 
         const inputTokenAcc = tokenAccountsFrom.find((a) => a.mint.toBase58() === inputMint)?.publicKey
-        const outputTokenAcc = tokenAccountsTo?.find((a) => a.mint.toBase58() === outputMint)?.publicKey
+        const outputTokenAcc = tokenAccountsFrom.find((a) => a.mint.toBase58() === outputMint)?.publicKey
 
         if (!inputTokenAcc && !isInputSol) {
             console.error(
