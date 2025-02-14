@@ -131,6 +131,14 @@ export class AggregatorTrade extends SymbiosisTrade {
                 const allTradesFinished = trades.length === tradesCount
                 const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
 
+                console.log(
+                    'all trades',
+                    'uni v2',
+                    trades[0]?.amountOut.toSignificant(),
+                    'uni v3',
+                    trades[1]?.amountOut.toSignificant()
+                )
+
                 if (allTradesFinished || timeout) {
                     const theBestTrade = this.selectTheBestTrade(successTrades)
                     if (theBestTrade) {
@@ -152,6 +160,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             }, 50)
         })
 
+        console.log('after init', this.trade?.amountOut.toSignificant())
         return this
     }
 

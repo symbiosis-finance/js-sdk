@@ -72,11 +72,18 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
         baseTokens: [
             new Token({
-                name: 'USDC',
-                symbol: 'USDC',
-                address: '0x549943e04f40284185054145c6E4e9568C1D3241',
+                name: 'Wrapped Bera',
+                symbol: 'WBERA',
+                address: '0x6969696969696969696969696969696969696969',
                 chainId: ChainId.BERACHAIN_MAINNET,
-                decimals: 6,
+                decimals: 18,
+            }),
+            new Token({
+                name: 'Honey',
+                symbol: 'HONEY',
+                address: '0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce',
+                chainId: ChainId.BERACHAIN_MAINNET,
+                decimals: 18,
             }),
         ],
     },
@@ -116,7 +123,7 @@ export class UniV3Trade extends SymbiosisTrade {
         }
         const provider = this.symbiosis.getProvider(chainId)
 
-        const { quoter, swap, factory, initCodeHash } = addresses
+        const { quoter, swap, factory, initCodeHash, baseTokens } = addresses
 
         const currencyIn = toUniCurrency(this.tokenAmountIn.token)
         const currencyOut = toUniCurrency(this.tokenOut)
@@ -124,8 +131,66 @@ export class UniV3Trade extends SymbiosisTrade {
         const factoryContract = UniV3Factory__factory.connect(factory, provider)
         const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
 
+        console.time('start honey')
+        // Try routes through base tokens
+        const [beraPromises, honeyPromises] = baseTokens.map((baseToken) => {
+            return POSSIBLE_FEES.flatMap((fee1) =>
+                POSSIBLE_FEES.map(async (fee2) => {
+                    try {
+                        const baseUniToken = toUniCurrency(baseToken)
+                        const [pool1, pool2] = await Promise.all([
+                            getPool(factoryContract, currencyIn.wrapped, baseUniToken.wrapped, fee1, initCodeHash),
+                            getPool(factoryContract, baseUniToken.wrapped, currencyOut.wrapped, fee2, initCodeHash),
+                        ])
+
+                        if (!pool1 || !pool2) return
+
+                        const swapRoute = new Route([pool1, pool2], currencyIn, currencyOut)
+                        const result = await getOutputQuote(
+                            quoterContract,
+                            toUniCurrencyAmount(this.tokenAmountIn),
+                            swapRoute
+                        )
+
+                        console.log('fee-->', fee1, fee2, result.toString())
+                        return {
+                            route: swapRoute,
+                            amountOut: JSBI.BigInt(result.toString()),
+                        }
+                    } catch (e) {
+                        console.error('Error finding multi-hop route:', e)
+                        return
+                    }
+                })
+            )
+        })
+
+        const [beraResults, honeyResults] = await Promise.all([
+            Promise.allSettled(beraPromises),
+            Promise.allSettled(honeyPromises),
+        ])
+
+        const beraRoutes = beraResults.filter((i) => i.status === 'fulfilled').filter((i) => !!i.value)
+        console.log(
+            'BERA routes --->',
+            beraResults.filter((i) => i.status === 'fulfilled').filter((i) => !!i.value),
+            'amount out --->',
+            beraRoutes.map((i) => i.value?.amountOut.toString())
+        )
+        const honeyRoutes = honeyResults.filter((i) => i.status === 'fulfilled').filter((i) => !!i.value)
+        console.log(
+            'HONEY routes --->',
+            honeyResults.filter((i) => i.status === 'fulfilled').filter((i) => !!i.value),
+            'amount out --->',
+            honeyRoutes.map((i) => i.value?.amountOut.toString())
+        )
+
+        console.timeEnd('start honey')
+
         const promises = POSSIBLE_FEES.map(async (fee) => {
             const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee, initCodeHash)
+            console.log('pool found', pool, currencyIn.wrapped, currencyOut.wrapped)
+
             if (!pool) {
                 return
             }

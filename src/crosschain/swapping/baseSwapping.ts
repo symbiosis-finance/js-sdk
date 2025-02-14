@@ -181,11 +181,16 @@ export abstract class BaseSwapping {
                 }
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
 
+                console.log('fakeTradeCAmountIn', fakeTradeCAmountIn.toSignificant())
+
                 return this.buildTradeC(fakeTradeCAmountIn).init()
             })()
         )
 
         const [transit, tradeC] = await Promise.all(promises)
+
+        console.log('transit', transit?.amountOut.token.name, transit?.amountOut.toSignificant())
+        console.log('tradeC', tradeC?.amountOut.toSignificant())
 
         this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
         this.transit = transit as Transit
@@ -222,6 +227,8 @@ export abstract class BaseSwapping {
 
         const tokenAmountOut = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const tokenAmountOutMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
+
+        console.log('trade c', this.tradeC?.amountOut.toSignificant())
 
         let payload: SwapExactInTransactionPayload
 
