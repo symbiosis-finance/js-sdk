@@ -152,8 +152,8 @@ export class UniV3Trade extends SymbiosisTrade {
                             swapRoute
                         )
 
-                        console.log('fee-->', fee1, fee2, result.toString())
                         return {
+                            fee: fee1 + fee2,
                             route: swapRoute,
                             amountOut: JSBI.BigInt(result.toString()),
                         }
