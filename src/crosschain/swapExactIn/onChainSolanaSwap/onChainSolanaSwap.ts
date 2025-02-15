@@ -1,7 +1,6 @@
 import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { addSolanaFee, isSolanaChainId } from '../../chainUtils'
 import { JupiterTrade, RaydiumTrade } from '../../trade'
-import { TokenAmount } from '../../../entities'
 
 export function isOnChainSolanaSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context
