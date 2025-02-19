@@ -2,6 +2,7 @@ import { Address, Transaction } from '@ton/core'
 
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
+import { JettonWallet } from '@ton/ton'
 
 class waitFromTonTxCompleteError extends Error {
     constructor(message: string) {
@@ -16,12 +17,14 @@ export interface WaitFromTonTxMinedParams {
     symbiosis: Symbiosis
     address: string
     contractAddress: string
+    recipientAddress: string
 }
 
 export async function waitFromTonTxMined({
     symbiosis,
     address,
     contractAddress,
+    recipientAddress,
 }: WaitFromTonTxMinedParams): Promise<Transaction | undefined> {
     const client = await symbiosis.getTonClient()
 
@@ -33,6 +36,15 @@ export async function waitFromTonTxMined({
                 limit: 10,
                 archival: true,
             })
+            console.log('address ---->', address)
+            console.log('conrtact address ---->', contractAddress)
+            const recipientAddr = Address.parse(recipientAddress)
+            const minterAddr = Address.parse(contractAddress)
+
+            const jettonMasterContract = await client.getContractState(minterAddr)
+
+            console.log('jettonWalletCode ---->', jettonMasterContract)
+
             const filtered = txs.filter((tx) => {
                 if (tx.now < now) {
                     return false
@@ -41,12 +53,18 @@ export async function waitFromTonTxMined({
                 // 1. case for jetton transfer
                 const bodyInMsg = tx.inMessage?.body
 
+                console.log('tx ---->', tx)
+
+                console.log('bodyInMsg ---->', bodyInMsg)
+
                 if (bodyInMsg) {
                     const body = bodyInMsg.beginParse()
                     const opcode = body.loadUint(32).toString(16)
+                    const query_id = body.loadUint(64)
+
+                    console.log('query_id ---->', query_id)
 
                     if (opcode === TRANSFER_NOTIFICATION_OPCODE) {
-                        body.loadUint(64) // query id skip
                         body.loadCoins() // amount skip
                         const senderAddress = body.loadAddress()
                         if (senderAddress.equals(Address.parse(address))) {
