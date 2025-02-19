@@ -33,11 +33,11 @@ const SOLANA_ADDRESSES_MAP = [
     },
     {
         evm: '0x0000000000000000000000000000000000000007',
-        solana: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // WIF
+        solana: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', // WIF
     },
     {
         evm: '0x0000000000000000000000000000000000000008',
-        solana: '7niUN8QFTN8V3y47fqLpAPs5Hq9T79BrSq8CAVjq6YJX', // RAY
+        solana: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
     },
 ]
 
@@ -51,7 +51,12 @@ export const SOLANA_SUPPORTED_TOKENS = [
     SOL_USDC,
     getSolanaToken({ name: 'TRUMP', evmAddress: '0x0000000000000000000000000000000000000004', cmcId: '35336' }),
     getSolanaToken({ name: 'MELANIA', evmAddress: '0x0000000000000000000000000000000000000005', cmcId: '35347' }),
-    getSolanaToken({ name: 'BONK', evmAddress: '0x0000000000000000000000000000000000000006', cmcId: '23095' }),
+    getSolanaToken({
+        name: 'BONK',
+        evmAddress: '0x0000000000000000000000000000000000000006',
+        cmcId: '23095',
+        decimals: 5,
+    }),
     getSolanaToken({ name: 'WIF', evmAddress: '0x0000000000000000000000000000000000000007', cmcId: '28752' }),
     getSolanaToken({ name: 'RAY', evmAddress: '0x0000000000000000000000000000000000000008', cmcId: '8526' }),
 ]
