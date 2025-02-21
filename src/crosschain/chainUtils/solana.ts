@@ -39,6 +39,10 @@ const SOLANA_ADDRESSES_MAP = [
         evm: '0x0000000000000000000000000000000000000008',
         solana: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
     },
+    {
+        evm: '0x0000000000000000000000000000000000000009',
+        solana: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', // JUP
+    },
 ]
 
 export const SOL_USDC = getSolanaToken({
@@ -59,6 +63,7 @@ export const SOLANA_SUPPORTED_TOKENS = [
     }),
     getSolanaToken({ name: 'WIF', evmAddress: '0x0000000000000000000000000000000000000007', cmcId: '28752' }),
     getSolanaToken({ name: 'RAY', evmAddress: '0x0000000000000000000000000000000000000008', cmcId: '8526' }),
+    getSolanaToken({ name: 'JUP', evmAddress: '0x0000000000000000000000000000000000000009', cmcId: '29210' }),
 ]
 
 export function getSolanaTokenAddress(evmAddress: string) {
