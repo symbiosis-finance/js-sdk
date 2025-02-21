@@ -738,6 +738,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24647.png',
         },
     }),
+    new Chain({
+        id: ChainId.UNICHAIN_MAINNET,
+        name: 'Unichain',
+        disabled: false,
+        explorer: 'https://uniscan.xyz',
+        icons: {
+            small: 'https://uniscan.xyz/assets/generic/html/favicon.ico?v=25.1.4.0',
+            large: 'https://uniscan.xyz/assets/generic/html/favicon.ico?v=25.1.4.0',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

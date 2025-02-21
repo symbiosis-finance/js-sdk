@@ -65,21 +65,19 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
     //         }),
     //     ],
     // },
-    [ChainId.BERACHAIN_MAINNET]: {
-        factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
-        quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
-        swap: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
-        initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
-        baseTokens: [
-            new Token({
-                name: 'USDC',
-                symbol: 'USDC',
-                address: '0x549943e04f40284185054145c6E4e9568C1D3241',
-                chainId: ChainId.BERACHAIN_MAINNET,
-                decimals: 6,
-            }),
-        ],
-    },
+    // [ChainId.BERACHAIN_MAINNET]: {
+    //     factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
+    //     quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
+    //     swap: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
+    //     initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
+    //     baseTokens: [],
+    // },
+    // [ChainId.UNICHAIN_MAINNET]: {
+    //     factory: '0x1f98400000000000000000000000000000000003',
+    //     quoter: '0x385a5cf5f83e99f7bb2852b6a19c3538b9fa7658',
+    //     swap: '0x73855d06de49d0fe4a9c42636ba96c62da12ff9c',
+    //     baseTokens: [],
+    // },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {

@@ -43,6 +43,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.ABSTRACT_MAINNET]: 'abstract',
     [ChainId.BAHAMUT_MAINNET]: 'bahamut',
     [ChainId.BERACHAIN_MAINNET]: 'berachain',
+    [ChainId.UNICHAIN_MAINNET]: 'unichain',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -89,4 +90,5 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.ABSTRACT_MAINNET]: 'ethereum',
     [ChainId.BAHAMUT_MAINNET]: 'fasttoken',
     [ChainId.BERACHAIN_MAINNET]: 'berachain-bera',
+    [ChainId.UNICHAIN_MAINNET]: 'ethereum',
 }
