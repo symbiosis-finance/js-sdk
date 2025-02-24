@@ -2,7 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
 import { theBest } from './utils'
 import { isSolanaChainId } from '../chainUtils/solana'
-import { chainFlipSwap } from './chainFlipSwap'
+import { solanaChainFlipSwap } from './swapChainFlip'
 
 function isChainFlipAvailable(chainId: ChainId) {
     return isSolanaChainId(chainId)
@@ -19,7 +19,7 @@ export async function toSolanaSwap(context: SwapExactInParams): Promise<SwapExac
 
     const promises = []
     if (isChainFlipAvailable(tokenOut.chainId)) {
-        promises.push(chainFlipSwap(context))
+        promises.push(solanaChainFlipSwap(context))
     }
 
     return theBest(promises, selectMode)

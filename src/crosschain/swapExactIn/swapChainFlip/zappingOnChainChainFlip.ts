@@ -1,6 +1,8 @@
-import { BigNumber, BytesLike, utils } from 'ethers'
+import { SwapSDK } from '@chainflip/sdk/swap'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { FEE_COLLECTOR_ADDRESSES } from '../../swapExactIn'
+import { BigNumber, BytesLike, utils } from 'ethers'
+
+import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { Percent, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { tronAddressToEvm } from '../../chainUtils'
@@ -8,9 +10,9 @@ import { Error, ErrorCode } from '../../error'
 import { ChainFlipVault__factory, FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
-import { ChainFlipConfig } from '../../swapping/zappingChainFlip'
-import { SwapSDK } from '@chainflip/sdk/swap'
-import { Address, getAddressEncoder } from '@solana/addresses'
+
+import { getChainFlipFee, getDestinationAddress } from './utils'
+import { ChainFlipConfig } from './types'
 
 type MulticallItem = {
     data: BytesLike
@@ -20,7 +22,7 @@ type MulticallItem = {
     isNative: boolean
 }
 
-export async function zappingSolanaOnChain(
+export async function ZappingOnChainChainFlip(
     params: SwapExactInParams,
     config: ChainFlipConfig
 ): Promise<SwapExactInResult> {
@@ -102,7 +104,7 @@ export async function zappingSolanaOnChain(
     const depositCall = await getDepositCall({
         amountIn: depositAmount,
         config,
-        solanaAddress: to,
+        receiverAddress: to,
     })
     fees.push(...depositCall.fees)
     routes.push(...depositCall.routes)
@@ -205,11 +207,11 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
 async function getDepositCall({
     amountIn,
     config,
-    solanaAddress,
+    receiverAddress,
 }: {
     amountIn: TokenAmount
     config: ChainFlipConfig
-    solanaAddress: string
+    receiverAddress: string
 }): Promise<Call> {
     // get quote
 
@@ -225,8 +227,9 @@ async function getDepositCall({
         destChain: dest.chain,
         destAsset: dest.asset,
     })
-    const encoder = getAddressEncoder()
-    const dstAddress = encoder.encode(solanaAddress as Address)
+
+    const dstAddress = getDestinationAddress(receiverAddress, tokenOut.chainId)
+
     const data = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
         dest.chainId, // dstChain
         dstAddress, // dstAddress
@@ -236,17 +239,37 @@ async function getDepositCall({
         [], //cfParameters
     ])
 
+    const { includedFees, egressAmount } = quoteResponse.quote
+
+    const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
+
     return {
         amountIn,
-        amountOut: new TokenAmount(tokenOut, quoteResponse.quote.egressAmount),
+        amountOut: new TokenAmount(tokenOut, egressAmount),
         to: vaultAddress,
         data,
         value: '0',
         offset: 164,
-        fees: [],
+        fees: [
+            {
+                provider: 'chainflip-bridge',
+                description: 'ChainFlip fee',
+                value: usdcFeeToken,
+            },
+            {
+                provider: 'chainflip-bridge',
+                description: 'ChainFlip fee',
+                value: solFeeToken,
+            },
+            {
+                provider: 'chainflip-bridge',
+                description: 'ChainFlip fee',
+                value: btcFeeToken,
+            },
+        ],
         routes: [
             {
-                provider: 'symbiosis',
+                provider: 'chainflip-bridge',
                 tokens: [amountIn.token, tokenOut],
             },
         ],
