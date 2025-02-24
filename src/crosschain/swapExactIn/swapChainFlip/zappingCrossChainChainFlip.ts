@@ -1,15 +1,18 @@
-import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
-import { BaseSwapping } from './baseSwapping'
-import { ChainFlipVault__factory, MulticallRouter } from '../contracts'
-import { OneInchProtocols } from '../trade/oneInchTrade'
-import { Error } from '../error'
-import { OmniPoolConfig, SwapExactInResult } from '../types'
-import { Symbiosis } from '../symbiosis'
-import { Asset, Chain, QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
-import { ChainId } from '../../constants'
-import { Address, getAddressEncoder, isAddress } from '@solana/addresses'
+import { QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
+import { isAddress } from '@solana/addresses'
 import { BigNumber } from 'ethers'
-import { isEvmChainId } from '../chainUtils'
+
+import { TokenAmount } from '../../../entities'
+import { BaseSwapping } from '../../swapping/baseSwapping'
+import { ChainFlipVault__factory, MulticallRouter } from '../../contracts'
+import { OneInchProtocols } from '../../trade/oneInchTrade'
+import { Error } from '../../error'
+import { OmniPoolConfig, SwapExactInResult } from '../../types'
+import { Symbiosis } from '../../symbiosis'
+import { isEvmChainId } from '../../chainUtils'
+
+import { getChainFlipFee, getDestinationAddress } from './utils'
+import { ChainFlipConfig } from './types'
 
 export interface ZappingChainFlipExactInParams {
     tokenAmountIn: TokenAmount
@@ -21,45 +24,9 @@ export interface ZappingChainFlipExactInParams {
     oneInchProtocols?: OneInchProtocols
 }
 
-export enum ChainFlipChainId {
-    Ethereum = 1,
-    Polkadot = 2,
-    Bitcoin = 3,
-    Arbitrum = 4,
-    Solana = 5,
-}
-
-export enum ChainFlipAssetId {
-    ETH = 1,
-    FLIP = 2,
-    USDC = 3,
-    DOT = 4,
-    BTC = 5,
-    arbETH = 6,
-    arbUSDC = 7,
-    USDT = 8,
-    SOL = 9,
-    solUSDC = 10,
-}
-
-export interface ChainFlipToken {
-    chainId: ChainFlipChainId
-    assetId: ChainFlipAssetId
-    chain: Chain
-    asset: Asset
-}
-
-export interface ChainFlipConfig {
-    vaultAddress: string
-    tokenIn: Token
-    tokenOut: Token
-    src: ChainFlipToken
-    dest: ChainFlipToken
-}
-
-export class ZappingChainFlip extends BaseSwapping {
+export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
-    protected solanaAddress!: string
+    protected receiverAddress!: string
     protected chainFlipSdk: SwapSDK
     protected quoteResponse!: QuoteResponse
     protected config!: ChainFlipConfig
@@ -98,7 +65,6 @@ export class ZappingChainFlip extends BaseSwapping {
 
         const chainFlipTokenIn = config.tokenIn
         this.config = config
-        this.solanaAddress = to
         this.multicallRouter = this.symbiosis.multicallRouter(chainFlipTokenIn.chainId)
 
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
@@ -120,22 +86,10 @@ export class ZappingChainFlip extends BaseSwapping {
             transitTokenIn,
             transitTokenOut,
         })
-        const SOL = GAS_TOKEN[ChainId.SOLANA_MAINNET]
 
         const { egressAmount, includedFees } = this.quoteResponse.quote
-
+        const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
         const amountOut = new TokenAmount(config.tokenOut, egressAmount)
-
-        let usdcFee = 0
-        let solFee = 0
-        includedFees.forEach(({ asset, amount }) => {
-            if (asset === 'USDC') {
-                usdcFee += parseInt(amount)
-            }
-            if (asset === 'SOL') {
-                solFee += parseInt(amount)
-            }
-        })
 
         return {
             ...result,
@@ -153,12 +107,17 @@ export class ZappingChainFlip extends BaseSwapping {
                 {
                     provider: 'chainflip-bridge',
                     description: 'ChainFlip fee',
-                    value: new TokenAmount(chainFlipTokenIn, usdcFee.toString()),
+                    value: usdcFeeToken,
                 },
                 {
                     provider: 'chainflip-bridge',
                     description: 'ChainFlip fee',
-                    value: new TokenAmount(SOL, solFee.toString()),
+                    value: solFeeToken,
+                },
+                {
+                    provider: 'chainflip-bridge',
+                    description: 'ChainFlip fee',
+                    value: btcFeeToken,
                 },
             ],
         }
@@ -196,8 +155,9 @@ export class ZappingChainFlip extends BaseSwapping {
 
         const { dest, tokenIn, vaultAddress } = this.config
 
-        const encoder = getAddressEncoder()
-        const dstAddress = encoder.encode(this.solanaAddress as Address)
+        // SOL or BTC address
+        const dstAddress = getDestinationAddress(this.to, this.tokenOut.chainId)
+
         const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
             dest.chainId, // dstChain
             dstAddress, // dstAddress

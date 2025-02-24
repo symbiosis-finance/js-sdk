@@ -1,16 +1,12 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import {
-    ChainFlipAssetId,
-    ChainFlipChainId,
-    ChainFlipConfig,
-    ChainFlipToken,
-    ZappingChainFlip,
-} from '../swapping/zappingChainFlip'
-import { GAS_TOKEN, Token } from '../../entities'
-import { ChainId } from '../../constants'
-import { theBest } from './utils'
-import { zappingSolanaOnChain } from './toSolana/zappingSolanaOnChain'
-import { SOL_USDC } from '../chainUtils'
+import { SwapExactInParams, SwapExactInResult } from '../../types'
+import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types'
+import { GAS_TOKEN } from '../../../entities'
+import { ChainId } from '../../../constants'
+import { theBest } from '../utils'
+import { SOL_USDC } from '../../chainUtils'
+import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
+import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
+import { ARB_USDC } from './utils'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
@@ -33,18 +29,6 @@ const CF_ARB_USDC: ChainFlipToken = {
     asset: 'USDC',
 }
 
-const ARB_USDC = new Token({
-    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-    chainId: ChainId.ARBITRUM_MAINNET,
-    decimals: 6,
-    name: 'USDC',
-    symbol: 'USDC',
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
-
 const CONFIGS: ChainFlipConfig[] = [
     {
         vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
@@ -62,9 +46,9 @@ const CONFIGS: ChainFlipConfig[] = [
     },
 ]
 
-export const CHAIN_FLIP_TOKENS = CONFIGS.map((i) => i.tokenIn)
+export const CHAIN_FLIP_SOL_TOKENS = CONFIGS.map((i) => i.tokenIn)
 
-export async function chainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
+export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
 
     // via stable pool only
@@ -77,10 +61,10 @@ export async function chainFlipSwap(context: SwapExactInParams): Promise<SwapExa
     }
 
     if (CF_CONFIG.tokenIn.chainId === tokenAmountIn.token.chainId) {
-        return zappingSolanaOnChain(context, CF_CONFIG)
+        return ZappingOnChainChainFlip(context, CF_CONFIG)
     }
 
-    const zappingChainFlip = new ZappingChainFlip(symbiosis, poolConfig)
+    const zappingChainFlip = new ZappingCrossChainChainFlip(symbiosis, poolConfig)
 
     const promise = zappingChainFlip.exactIn({
         tokenAmountIn,

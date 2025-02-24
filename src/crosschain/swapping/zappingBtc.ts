@@ -2,11 +2,10 @@ import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 import { BaseSwapping } from './baseSwapping'
 import { MulticallRouter, Synthesis } from '../contracts'
 import { OneInchProtocols } from '../trade/oneInchTrade'
-import { address, initEccLib, Network, networks } from 'bitcoinjs-lib'
+import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { getToBtcFee } from '../chainUtils/btc'
+import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../chainUtils/btc'
 import { SwapExactInResult } from '../types'
-import { ChainId } from '../../constants'
 import { isEvmChainId } from '../chainUtils'
 
 initEccLib(ecc)
@@ -21,20 +20,6 @@ interface ZappingBtcExactInParams {
     oneInchProtocols?: OneInchProtocols
     transitTokenIn: Token
     transitTokenOut: Token
-}
-
-export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
-    [ChainId.BTC_MAINNET]: networks.bitcoin,
-    [ChainId.BTC_MUTINY]: networks.testnet,
-    [ChainId.BTC_TESTNET4]: networks.testnet,
-}
-
-export function getPkScript(addr: string, btcChain: Network): Buffer {
-    return address.toOutputScript(addr, btcChain)
-}
-
-export function getAddress(pkScript: string, btcChain: Network): string {
-    return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
 }
 
 export class ZappingBtc extends BaseSwapping {

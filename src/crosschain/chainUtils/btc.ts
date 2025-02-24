@@ -1,7 +1,9 @@
+import { address, Network, networks } from 'bitcoinjs-lib'
+import { BigNumber } from 'ethers'
+
 import { Token, TokenAmount } from '../../entities'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
-import { BigNumber } from 'ethers'
 import { Synthesis } from '../contracts'
 import { ChainId } from '../../constants'
 
@@ -88,4 +90,18 @@ export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis
 export function isBtcChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
+}
+
+export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
+    [ChainId.BTC_MAINNET]: networks.bitcoin,
+    [ChainId.BTC_MUTINY]: networks.testnet,
+    [ChainId.BTC_TESTNET4]: networks.testnet,
+}
+
+export function getPkScript(addr: string, btcChain: Network): Buffer {
+    return address.toOutputScript(addr, btcChain)
+}
+
+export function getAddress(pkScript: string, btcChain: Network): string {
+    return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
 }
