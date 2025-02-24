@@ -28,6 +28,9 @@ export async function getPool(
             poolContract.liquidity(),
             poolContract.slot0(),
         ])
+        if (liquidity.isZero()) {
+            return
+        }
         const tokens = {
             [tokenA.address]: tokenA,
             [tokenB.address]: tokenB,
