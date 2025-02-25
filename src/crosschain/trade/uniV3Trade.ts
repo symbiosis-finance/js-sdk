@@ -131,53 +131,62 @@ export class UniV3Trade extends SymbiosisTrade {
         const factoryContract = UniV3Factory__factory.connect(factory, provider)
         const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
 
-        const poolPromises = POSSIBLE_FEES.map((fee) => {
-            return getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee, initCodeHash)
-        })
-        const pools = (await Promise.all(poolPromises)).filter(Boolean) as Pool[]
-
-        const routes = pools.map((pool) => {
+        const routePromises = POSSIBLE_FEES.map(async (fee) => {
+            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee, initCodeHash)
             return new Route([pool], currencyIn, currencyOut)
         })
 
-        for (const baseToken of baseTokens) {
-            const baseCurrency = toUniCurrency(baseToken).wrapped
-            if (baseCurrency.equals(currencyIn.wrapped) || baseCurrency.equals(currencyOut.wrapped)) {
-                continue
-            }
-            for (let i = 0; i < POSSIBLE_FEES.length; i++) {
-                const extraPoolPromises: Promise<Pool | undefined>[] = []
-                const baseFee = POSSIBLE_FEES[i]
-                extraPoolPromises.push(
-                    getPool(factoryContract, currencyIn.wrapped, baseCurrency, baseFee, initCodeHash)
-                )
-                extraPoolPromises.push(
-                    getPool(factoryContract, baseCurrency, currencyOut.wrapped, baseFee, initCodeHash)
-                )
-
-                const extraPools = (await Promise.all(extraPoolPromises)).filter(Boolean) as Pool[]
-
-                if (extraPools.length < 2) {
-                    continue
+        const extraRoutePromises = baseTokens
+            .map((baseToken) => {
+                const baseCurrency = toUniCurrency(baseToken).wrapped
+                if (baseCurrency.equals(currencyIn.wrapped) || baseCurrency.equals(currencyOut.wrapped)) {
+                    return
                 }
-                const newRoute = new Route(extraPools, currencyIn, currencyOut)
-                routes.push(newRoute)
-            }
-        }
 
-        const results = await Promise.allSettled(
+                return POSSIBLE_FEES.map(async (baseFee) => {
+                    const results = await Promise.allSettled([
+                        getPool(factoryContract, currencyIn.wrapped, baseCurrency, baseFee, initCodeHash),
+                        getPool(factoryContract, baseCurrency, currencyOut.wrapped, baseFee, initCodeHash),
+                    ])
+                    const extraPools = results
+                        .map((result) => {
+                            if (result.status === 'rejected') {
+                                return
+                            }
+                            return result.value
+                        })
+                        .filter(Boolean) as Pool[]
+                    if (extraPools.length < 2) {
+                        return
+                    }
+                    return new Route(extraPools, currencyIn, currencyOut)
+                })
+            })
+            .flat()
+
+        const routesResults = await Promise.allSettled([...routePromises, ...extraRoutePromises])
+        const routes = routesResults
+            .map((result) => {
+                if (result.status === 'rejected') {
+                    return
+                }
+                return result.value
+            })
+            .filter(Boolean) as Route<Currency, Currency>[]
+
+        const quotaResults = await Promise.allSettled(
             routes.map(async (route) => {
                 const quota = await getOutputQuote(quoterContract, toUniCurrencyAmount(this.tokenAmountIn), route)
                 return {
-                    swapRoute: route,
+                    route,
                     amountOut: JSBI.BigInt(quota.toString()),
                 }
             })
         )
 
-        let bestSwapRoute: Route<Currency, Currency> | undefined = undefined
+        let bestRoute: Route<Currency, Currency> | undefined = undefined
         let bestAmountOut: JSBI | undefined = undefined
-        for (const result of results) {
+        for (const result of quotaResults) {
             if (result.status === 'rejected') {
                 console.error(`UniV3Trade rejected: ${JSON.stringify(result.reason?.toString())}`)
                 continue
@@ -187,20 +196,20 @@ export class UniV3Trade extends SymbiosisTrade {
                 continue
             }
 
-            const { amountOut, swapRoute } = result.value
+            const { amountOut, route } = result.value
             if (!bestAmountOut || JSBI.greaterThan(amountOut, bestAmountOut)) {
                 bestAmountOut = amountOut
-                bestSwapRoute = swapRoute
+                bestRoute = route
             }
         }
-        if (!bestAmountOut || !bestSwapRoute) {
+        if (!bestAmountOut || !bestRoute) {
             throw new Error('Route not found')
         }
 
         const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
 
         const trade = Trade.createUncheckedTrade({
-            route: bestSwapRoute,
+            route: bestRoute,
             inputAmount: CurrencyAmount.fromRawAmount(currencyIn, this.tokenAmountIn.raw.toString()),
             outputAmount: CurrencyAmount.fromRawAmount(currencyOut, bestAmountOut),
             tradeType: TradeType.EXACT_INPUT,
