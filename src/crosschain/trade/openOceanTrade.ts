@@ -123,6 +123,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'sonic',
         nativeTokenAddress: AddressZero,
     },
+    [ChainId.BERACHAIN_MAINNET]: {
+        slug: 'bera',
+        nativeTokenAddress: AddressZero,
+    },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {

@@ -9,6 +9,7 @@ import {
     MethodParameters,
     Multicall,
     Payments,
+    Pool,
     Route,
     SelfPermit,
     SwapOptions,
@@ -65,19 +66,27 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
     //         }),
     //     ],
     // },
-    // [ChainId.BERACHAIN_MAINNET]: {
-    //     factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
-    //     quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
-    //     swap: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
-    //     initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
-    //     baseTokens: [],
-    // },
-    // [ChainId.UNICHAIN_MAINNET]: {
-    //     factory: '0x1f98400000000000000000000000000000000003',
-    //     quoter: '0x385a5cf5f83e99f7bb2852b6a19c3538b9fa7658',
-    //     swap: '0x73855d06de49d0fe4a9c42636ba96c62da12ff9c',
-    //     baseTokens: [],
-    // },
+    [ChainId.UNICHAIN_MAINNET]: {
+        factory: '0x1f98400000000000000000000000000000000003',
+        quoter: '0x385a5cf5f83e99f7bb2852b6a19c3538b9fa7658',
+        swap: '0x73855d06de49d0fe4a9c42636ba96c62da12ff9c',
+        baseTokens: [
+            new Token({
+                name: 'USD Coin',
+                symbol: 'USDC',
+                address: '0x078D782b760474a361dDA0AF3839290b0EF57AD6',
+                chainId: ChainId.UNICHAIN_MAINNET,
+                decimals: 6,
+            }),
+            new Token({
+                name: 'Wrapped ETH',
+                symbol: 'WETH',
+                address: '0x4200000000000000000000000000000000000006',
+                chainId: ChainId.UNICHAIN_MAINNET,
+                decimals: 18,
+            }),
+        ],
+    },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {
@@ -114,7 +123,7 @@ export class UniV3Trade extends SymbiosisTrade {
         }
         const provider = this.symbiosis.getProvider(chainId)
 
-        const { quoter, swap, factory, initCodeHash } = addresses
+        const { quoter, swap: routerAddress, factory, initCodeHash, baseTokens } = addresses
 
         const currencyIn = toUniCurrency(this.tokenAmountIn.token)
         const currencyOut = toUniCurrency(this.tokenOut)
@@ -122,25 +131,62 @@ export class UniV3Trade extends SymbiosisTrade {
         const factoryContract = UniV3Factory__factory.connect(factory, provider)
         const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
 
-        const promises = POSSIBLE_FEES.map(async (fee) => {
+        const routePromises = POSSIBLE_FEES.map(async (fee) => {
             const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee, initCodeHash)
-            if (!pool) {
-                return
-            }
-            const swapRoute = new Route([pool], currencyIn, currencyOut)
-            const result = await getOutputQuote(quoterContract, toUniCurrencyAmount(this.tokenAmountIn), swapRoute)
-            return {
-                fee,
-                swapRoute,
-                amountOut: JSBI.BigInt(result.toString()),
-            }
+            return new Route([pool], currencyIn, currencyOut)
         })
 
-        const results = await Promise.allSettled(promises)
+        const extraRoutePromises = baseTokens
+            .map((baseToken) => {
+                const baseCurrency = toUniCurrency(baseToken).wrapped
+                if (baseCurrency.equals(currencyIn.wrapped) || baseCurrency.equals(currencyOut.wrapped)) {
+                    return
+                }
 
-        let bestSwapRoute: Route<Currency, Currency> | undefined = undefined
+                return POSSIBLE_FEES.map(async (baseFee) => {
+                    const results = await Promise.allSettled([
+                        getPool(factoryContract, currencyIn.wrapped, baseCurrency, baseFee, initCodeHash),
+                        getPool(factoryContract, baseCurrency, currencyOut.wrapped, baseFee, initCodeHash),
+                    ])
+                    const extraPools = results
+                        .map((result) => {
+                            if (result.status === 'rejected') {
+                                return
+                            }
+                            return result.value
+                        })
+                        .filter(Boolean) as Pool[]
+                    if (extraPools.length < 2) {
+                        return
+                    }
+                    return new Route(extraPools, currencyIn, currencyOut)
+                })
+            })
+            .flat()
+
+        const routesResults = await Promise.allSettled([...routePromises, ...extraRoutePromises])
+        const routes = routesResults
+            .map((result) => {
+                if (result.status === 'rejected') {
+                    return
+                }
+                return result.value
+            })
+            .filter(Boolean) as Route<Currency, Currency>[]
+
+        const quotaResults = await Promise.allSettled(
+            routes.map(async (route) => {
+                const quota = await getOutputQuote(quoterContract, toUniCurrencyAmount(this.tokenAmountIn), route)
+                return {
+                    route,
+                    amountOut: JSBI.BigInt(quota.toString()),
+                }
+            })
+        )
+
+        let bestRoute: Route<Currency, Currency> | undefined = undefined
         let bestAmountOut: JSBI | undefined = undefined
-        for (const result of results) {
+        for (const result of quotaResults) {
             if (result.status === 'rejected') {
                 console.error(`UniV3Trade rejected: ${JSON.stringify(result.reason?.toString())}`)
                 continue
@@ -150,20 +196,20 @@ export class UniV3Trade extends SymbiosisTrade {
                 continue
             }
 
-            const { amountOut, swapRoute } = result.value
+            const { amountOut, route } = result.value
             if (!bestAmountOut || JSBI.greaterThan(amountOut, bestAmountOut)) {
                 bestAmountOut = amountOut
-                bestSwapRoute = swapRoute
+                bestRoute = route
             }
         }
-        if (!bestAmountOut || !bestSwapRoute) {
+        if (!bestAmountOut || !bestRoute) {
             throw new Error('Route not found')
         }
 
         const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
 
         const trade = Trade.createUncheckedTrade({
-            route: bestSwapRoute,
+            route: bestRoute,
             inputAmount: CurrencyAmount.fromRawAmount(currencyIn, this.tokenAmountIn.raw.toString()),
             outputAmount: CurrencyAmount.fromRawAmount(currencyOut, bestAmountOut),
             tradeType: TradeType.EXACT_INPUT,
@@ -176,7 +222,7 @@ export class UniV3Trade extends SymbiosisTrade {
             deadline: this.deadline,
             recipient: this.to,
         }
-        const methodParameters = UniV3Trade.swapCallParameters([trade], options, swap)
+        const methodParameters = UniV3Trade.swapCallParameters([trade], options, routerAddress)
 
         const amountOutMinRaw = getMinAmount(this.slippage, bestAmountOut)
         const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
@@ -191,7 +237,7 @@ export class UniV3Trade extends SymbiosisTrade {
         this.out = {
             amountOut,
             amountOutMin,
-            routerAddress: swap,
+            routerAddress,
             route: [this.tokenAmountIn.token, this.tokenOut],
             callData,
             callDataOffset: amountOffset,
@@ -209,6 +255,13 @@ export class UniV3Trade extends SymbiosisTrade {
                 sigHash: '04e45aaf',
                 offset: 4 + 5 * 32,
                 minReceivedOffset: 4 + 6 * 32,
+                minReceivedOffset2: undefined,
+            },
+            {
+                // exactInput
+                sigHash: 'b858183f',
+                offset: 4 + 4 * 32,
+                minReceivedOffset: 4 + 5 * 32,
                 minReceivedOffset2: undefined,
             },
             {
