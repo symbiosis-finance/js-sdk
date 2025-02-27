@@ -30,7 +30,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected quoteResponse!: QuoteResponse
     protected config!: ChainFlipConfig
     protected evmTo!: string
-    protected dstAddress: Buffer<ArrayBufferLike> | ReadonlyUint8Array
+    protected dstAddress: string | ReadonlyUint8Array
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
         const { symbiosis, to, tokenOut } = context
