@@ -41,19 +41,17 @@ export function getChainFlipFee(includedFees: QuoteResponse['quote']['includedFe
     let solFee = 0
     let btcFee = 0
 
-    includedFees
-        .filter((fee) => fee.type === 'EGRESS')
-        .forEach(({ asset, amount }) => {
-            if (asset === 'USDC') {
-                usdcFee += parseInt(amount)
-            }
-            if (asset === 'SOL') {
-                solFee += parseInt(amount)
-            }
-            if (asset === 'BTC') {
-                btcFee += parseInt(amount)
-            }
-        })
+    includedFees.forEach(({ asset, amount }) => {
+        if (asset === 'USDC') {
+            usdcFee += parseInt(amount)
+        }
+        if (asset === 'SOL') {
+            solFee += parseInt(amount)
+        }
+        if (asset === 'BTC') {
+            btcFee += parseInt(amount)
+        }
+    })
 
     return {
         usdcFeeToken: new TokenAmount(ARB_USDC, usdcFee.toString()),

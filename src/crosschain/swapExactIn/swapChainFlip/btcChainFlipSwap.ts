@@ -50,7 +50,7 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
         return ZappingOnChainChainFlip(context, CF_CONFIG)
     }
 
-    const zappingChainFlip = new ZappingCrossChainChainFlip(symbiosis, poolConfig)
+    const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
 
     const promise = zappingChainFlip.exactIn({
         tokenAmountIn,
