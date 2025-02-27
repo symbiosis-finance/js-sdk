@@ -20,11 +20,7 @@ export const ARB_USDC = new Token({
 
 export function getDestinationAddress(address: string, chainId: ChainId) {
     if (isBtcChainId(chainId)) {
-        const network = BTC_NETWORKS[chainId]
-        if (!network) {
-            throw new Error(`Unknown BTC network ${chainId}`)
-        }
-        return getPkScript(address, network)
+        return `0x${Buffer.from(address).toString('hex')}`
     }
     if (isSolanaChainId(chainId)) {
         const encoder = getAddressEncoder()
