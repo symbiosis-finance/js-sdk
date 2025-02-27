@@ -2,12 +2,12 @@ import { Symbiosis } from './symbiosis'
 import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { BridgeDirection, ExtraFeeCollector, OmniPoolConfig } from './types'
+import { BridgeDirection, VolumeFeeCollector, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
 import { OctoPoolFeeCollector__factory } from './contracts'
 import { BigNumber } from 'ethers'
 
-interface ExtraFeeCall {
+interface VolumeFeeCall {
     calldata: string
     receiveSide: string
     path: string
@@ -21,7 +21,7 @@ interface CreateOctoPoolTradeParams {
     to: string
 }
 
-const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
+const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
     {
         chainId: ChainId.BOBA_BNB,
         address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
@@ -58,12 +58,18 @@ const EXTRA_FEE_COLLECTORS: ExtraFeeCollector[] = [
         feeRate: '1000000000000000', // 0.1%
         eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
     },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
+        feeRate: '500000000000000', // 0.05%
+        eligibleChains: [ChainId.BASE_MAINNET],
+    },
 ]
 
 export interface TransitOutResult {
     trade: OctoPoolTrade
-    preCall?: ExtraFeeCall
-    postCall?: ExtraFeeCall
+    preCall?: VolumeFeeCall
+    postCall?: VolumeFeeCall
     amountOut: TokenAmount
     amountOutMin: TokenAmount
 }
@@ -120,12 +126,12 @@ export class Transit {
         return this.out.trade
     }
 
-    get preCall(): ExtraFeeCall | undefined {
+    get preCall(): VolumeFeeCall | undefined {
         this.assertOutInitialized('preCall')
         return this.out.preCall
     }
 
-    get postCall(): ExtraFeeCall | undefined {
+    get postCall(): VolumeFeeCall | undefined {
         this.assertOutInitialized('postCall')
         return this.out.postCall
     }
@@ -286,16 +292,16 @@ export class Transit {
     ): {
         amountOut: TokenAmount
         amountOutMin: TokenAmount
-        postCall: ExtraFeeCall | undefined
+        postCall: VolumeFeeCall | undefined
     } {
         let tradeAmountOutNew = tradeAmountOut
         let tradeAmountOutMinNew = tradeAmountOutMin
-        let postCall: ExtraFeeCall | undefined = undefined
-        const postFeeCollector = this.getExtraFeeCollector(tradeAmountOut.token)
+        let postCall: VolumeFeeCall | undefined = undefined
+        const postFeeCollector = this.getVolumeFeeCollector(tradeAmountOut.token)
         if (postFeeCollector) {
             postCall = Transit.buildFeeCall(tradeAmountOut, postFeeCollector)
-            tradeAmountOutNew = Transit.applyExtraFee(tradeAmountOut, postFeeCollector)
-            tradeAmountOutMinNew = Transit.applyExtraFee(tradeAmountOutMin, postFeeCollector)
+            tradeAmountOutNew = Transit.applyVolumeFee(tradeAmountOut, postFeeCollector)
+            tradeAmountOutMinNew = Transit.applyVolumeFee(tradeAmountOutMin, postFeeCollector)
         }
 
         if (this.direction === 'mint') {
@@ -339,7 +345,7 @@ export class Transit {
     ): {
         tradeAmountIn: TokenAmount
         tradeAmountInMin: TokenAmount
-        preCall: ExtraFeeCall | undefined
+        preCall: VolumeFeeCall | undefined
     } {
         if (this.direction === 'burn') {
             return {
@@ -364,12 +370,12 @@ export class Transit {
             tradeAmountInMin = tradeAmountInMin.subtract(this.fee1)
         }
 
-        const preFeeCollector = this.getExtraFeeCollector(tradeAmountIn.token)
-        let preCall: ExtraFeeCall | undefined
+        const preFeeCollector = this.getVolumeFeeCollector(tradeAmountIn.token)
+        let preCall: VolumeFeeCall | undefined
         if (preFeeCollector) {
             preCall = Transit.buildFeeCall(tradeAmountIn, preFeeCollector)
-            tradeAmountIn = Transit.applyExtraFee(tradeAmountIn, preFeeCollector)
-            tradeAmountInMin = Transit.applyExtraFee(tradeAmountInMin, preFeeCollector)
+            tradeAmountIn = Transit.applyVolumeFee(tradeAmountIn, preFeeCollector)
+            tradeAmountInMin = Transit.applyVolumeFee(tradeAmountInMin, preFeeCollector)
         }
 
         return {
@@ -395,31 +401,31 @@ export class Transit {
         return sToken
     }
 
-    private getExtraFeeCollector(token: Token): ExtraFeeCollector | undefined {
+    private getVolumeFeeCollector(token: Token): VolumeFeeCollector | undefined {
         if (!token.chainFromId) {
             return undefined
         }
-        return [...EXTRA_FEE_COLLECTORS, ...this.symbiosis.extraFeeCollectors].find((i) => {
+        return [...VOLUME_FEE_COLLECTORS, ...this.symbiosis.volumeFeeCollectors].find((i) => {
             return i.chainId === this.omniPoolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
         })
     }
 
-    private static buildFeeCall(tokenAmount: TokenAmount, extraFeeCollector: ExtraFeeCollector): ExtraFeeCall {
+    private static buildFeeCall(tokenAmount: TokenAmount, volumeFeeCollector: VolumeFeeCollector): VolumeFeeCall {
         const calldata = OctoPoolFeeCollector__factory.createInterface().encodeFunctionData('collectFee', [
             tokenAmount.raw.toString(),
             tokenAmount.token.address,
         ])
         return {
             calldata,
-            receiveSide: extraFeeCollector.address,
+            receiveSide: volumeFeeCollector.address,
             path: tokenAmount.token.address,
             offset: 36,
         }
     }
 
-    private static applyExtraFee(amount: TokenAmount, feeCollector: ExtraFeeCollector): TokenAmount {
+    private static applyVolumeFee(amount: TokenAmount, volumeFeeCollector: VolumeFeeCollector): TokenAmount {
         const feeRateBase = BigNumber.from(10).pow(18)
-        const feeRate = BigNumber.from(feeCollector.feeRate)
+        const feeRate = BigNumber.from(volumeFeeCollector.feeRate)
 
         const amountBn = BigNumber.from(amount.raw.toString())
         const raw = amountBn.sub(amountBn.mul(feeRate).div(feeRateBase))

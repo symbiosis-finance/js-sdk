@@ -14,7 +14,7 @@ export enum Field {
     OUTPUT = 'OUTPUT',
 }
 
-export interface ExtraFeeCollector {
+export interface VolumeFeeCollector {
     chainId: ChainId
     address: string
     feeRate: string
