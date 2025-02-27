@@ -9,6 +9,7 @@ export enum ErrorCode {
     'AMOUNT_TOO_LOW',
     'MIN_TON_AMOUNT_IN',
     'THORCHAIN_NOT_SUPPORTED_ADDRESS',
+    'MIN_CHAINFLIP_AMOUNT_IN',
 }
 
 export class Error {

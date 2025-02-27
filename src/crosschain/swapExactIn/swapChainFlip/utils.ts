@@ -1,9 +1,8 @@
 import { Address, getAddressEncoder } from '@solana/addresses'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 
-import { BTC_NETWORKS, getPkScript, isBtcChainId } from '../../chainUtils/btc'
 import { ChainId } from '../../../constants'
-import { isSolanaChainId } from '../../chainUtils'
+import { isBtcChainId, isSolanaChainId } from '../../chainUtils'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 
 export const ARB_USDC = new Token({
@@ -20,15 +19,11 @@ export const ARB_USDC = new Token({
 
 export function getDestinationAddress(address: string, chainId: ChainId) {
     if (isBtcChainId(chainId)) {
-        const network = BTC_NETWORKS[chainId]
-        if (!network) {
-            throw new Error(`Unknown BTC network ${chainId}`)
-        }
-        return getPkScript(address, network)
+        return `0x${Buffer.from(address).toString('hex')}`
     }
     if (isSolanaChainId(chainId)) {
         const encoder = getAddressEncoder()
-        return encoder.encode(address as Address)
+        return `0x${Buffer.from(encoder.encode(address as Address)).toString('hex')}`
     }
     throw new Error(`Unknown chain ${chainId}`)
 }

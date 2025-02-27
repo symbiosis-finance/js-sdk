@@ -1,12 +1,11 @@
 import { QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
 import { BigNumber } from 'ethers'
-import { ReadonlyUint8Array } from '@solana/codecs-core/dist/types/readonly-uint8array'
 
 import { TokenAmount } from '../../../entities'
-import { BaseSwapping } from '../../swapping/baseSwapping'
+import { BaseSwapping } from '../../swapping'
 import { ChainFlipVault__factory, MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
-import { Error } from '../../error'
+import { Error, ErrorCode } from '../../error'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
@@ -30,7 +29,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected quoteResponse!: QuoteResponse
     protected config!: ChainFlipConfig
     protected evmTo!: string
-    protected dstAddress: Buffer<ArrayBufferLike> | ReadonlyUint8Array
+    protected dstAddress: string
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
         const { symbiosis, to, tokenOut } = context
@@ -45,13 +44,18 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
     protected async doPostTransitAction() {
         const { src, dest } = this.config
-        this.quoteResponse = await this.chainFlipSdk.getQuote({
-            amount: this.transit.amountOut.raw.toString(),
-            srcChain: src.chain,
-            srcAsset: src.asset,
-            destChain: dest.chain,
-            destAsset: dest.asset,
-        })
+        try {
+            this.quoteResponse = await this.chainFlipSdk.getQuote({
+                amount: this.transit.amountOut.raw.toString(),
+                srcChain: src.chain,
+                srcAsset: src.asset,
+                destChain: dest.chain,
+                destAsset: dest.asset,
+            })
+        } catch (e) {
+            console.error(e)
+            throw new Error('The min swap amount is $10', ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
+        }
     }
 
     public async exactIn({

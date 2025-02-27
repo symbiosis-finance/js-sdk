@@ -213,20 +213,24 @@ async function getDepositCall({
     config: ChainFlipConfig
     receiverAddress: string
 }): Promise<Call> {
-    // get quote
-
     const { src, dest, tokenIn, vaultAddress, tokenOut } = config
     const chainFlipSdk = new SwapSDK({
         network: 'mainnet',
     })
 
-    const quoteResponse = await chainFlipSdk.getQuote({
-        amount: amountIn.raw.toString(),
-        srcChain: src.chain,
-        srcAsset: src.asset,
-        destChain: dest.chain,
-        destAsset: dest.asset,
-    })
+    let quoteResponse
+    try {
+        quoteResponse = await chainFlipSdk.getQuote({
+            amount: amountIn.raw.toString(),
+            srcChain: src.chain,
+            srcAsset: src.asset,
+            destChain: dest.chain,
+            destAsset: dest.asset,
+        })
+    } catch (e) {
+        console.error(e)
+        throw new Error('The min swap amount is $10', ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
+    }
 
     const dstAddress = getDestinationAddress(receiverAddress, tokenOut.chainId)
 

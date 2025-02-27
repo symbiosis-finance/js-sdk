@@ -100,14 +100,14 @@ export async function waitForChainFlipSwap(txHash: string): Promise<string> {
             return chainFlipSdk.getStatus({ id: txHash })
         },
         successCondition: (response) => {
-            return response.state === 'COMPLETE'
+            return response.state === 'COMPLETE' || response.state === 'BROADCASTED'
         },
         error: new TxNotFound(txHash),
         exceedDelay: 3_600_000, // 1 hour
         pollingInterval: 10 * 1000, // 10 seconds
     })
 
-    if (response.state !== 'COMPLETE') {
+    if (response.state !== 'COMPLETE' && response.state !== 'BROADCASTED') {
         throw new TxNotFound(txHash)
     }
 
