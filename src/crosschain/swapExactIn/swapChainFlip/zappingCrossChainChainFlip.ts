@@ -1,14 +1,13 @@
 import { QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
-import { isAddress } from '@solana/addresses'
 import { BigNumber } from 'ethers'
+import { ReadonlyUint8Array } from '@solana/codecs-core/dist/types/readonly-uint8array'
 
 import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping/baseSwapping'
 import { ChainFlipVault__factory, MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
 import { Error } from '../../error'
-import { OmniPoolConfig, SwapExactInResult } from '../../types'
-import { Symbiosis } from '../../symbiosis'
+import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
 import { getChainFlipFee, getDestinationAddress } from './utils'
@@ -31,9 +30,13 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected quoteResponse!: QuoteResponse
     protected config!: ChainFlipConfig
     protected evmTo!: string
+    protected dstAddress: Buffer<ArrayBufferLike> | ReadonlyUint8Array
 
-    public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
+    public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
+        const { symbiosis, to, tokenOut } = context
         super(symbiosis, omniPoolConfig)
+
+        this.dstAddress = getDestinationAddress(to, tokenOut.chainId)
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
@@ -55,14 +58,9 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         tokenAmountIn,
         config,
         from,
-        to,
         slippage,
         deadline,
     }: ZappingChainFlipExactInParams): Promise<SwapExactInResult> {
-        if (!isAddress(to)) {
-            throw new Error('Solana address is not valid')
-        }
-
         const chainFlipTokenIn = config.tokenIn
         this.config = config
         this.multicallRouter = this.symbiosis.multicallRouter(chainFlipTokenIn.chainId)
@@ -155,12 +153,9 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
         const { dest, tokenIn, vaultAddress } = this.config
 
-        // SOL or BTC address
-        const dstAddress = getDestinationAddress(this.to, this.tokenOut.chainId)
-
         const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
             dest.chainId, // dstChain
-            dstAddress, // dstAddress
+            this.dstAddress, // dstAddress
             dest.assetId, // dstToken
             tokenIn.address, // srcToken (Arbitrum.USDC address)
             BigNumber.from(0), // amount (will be patched)
