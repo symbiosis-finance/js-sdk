@@ -64,7 +64,7 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
         return ZappingOnChainChainFlip(context, CF_CONFIG)
     }
 
-    const zappingChainFlip = new ZappingCrossChainChainFlip(symbiosis, poolConfig)
+    const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
 
     const promise = zappingChainFlip.exactIn({
         tokenAmountIn,
