@@ -91,6 +91,7 @@ export class Symbiosis {
 
     public readonly oneInchConfig: OneInchConfig
     public readonly openOceanConfig: OpenOceanConfig
+    private readonly tonRpc?: string
 
     public readonly fetch: typeof fetch
 
@@ -196,6 +197,10 @@ export class Symbiosis {
             this.openOceanConfig = overrideConfig.openOceanConfig
         }
 
+        if (overrideConfig?.tonRpc) {
+            this.tonRpc = overrideConfig.tonRpc
+        }
+
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
         this.configCache = new ConfigCache(configName)
@@ -217,8 +222,12 @@ export class Symbiosis {
             ['tonClient'],
             async () => {
                 const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
-                const endpoint = await getHttpEndpoint({ network })
-                return new TonClient({ endpoint })
+
+                const endpoint = this.tonRpc ?? (await getHttpEndpoint({ network }))
+
+                return new TonClient({
+                    endpoint,
+                })
             },
             60 // 1 minute
         )
