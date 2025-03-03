@@ -6,27 +6,13 @@ import { theBest } from '../utils'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
 import { ChainFlipAssetId, ChainFlipConfig, ChainFlipChainId, ChainFlipToken } from './types'
-import { ARB_USDC, ETH_USDC } from './utils'
+import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
 
 const CF_BTC_BTC: ChainFlipToken = {
     chainId: ChainFlipChainId.Bitcoin,
     assetId: ChainFlipAssetId.BTC,
     chain: 'Bitcoin',
     asset: 'BTC',
-}
-
-const CF_ARB_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Arbitrum,
-    assetId: ChainFlipAssetId.USDC,
-    chain: 'Arbitrum',
-    asset: 'USDC',
-}
-
-const CF_ETH_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Ethereum,
-    assetId: ChainFlipAssetId.USDC,
-    chain: 'Ethereum',
-    asset: 'USDC',
 }
 
 const CONFIGS: ChainFlipConfig[] = [

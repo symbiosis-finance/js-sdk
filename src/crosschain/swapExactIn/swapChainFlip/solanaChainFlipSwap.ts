@@ -6,7 +6,7 @@ import { theBest } from '../utils'
 import { SOL_USDC } from '../../chainUtils'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
-import { ARB_USDC, ETH_USDC } from './utils'
+import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
@@ -19,20 +19,6 @@ const CF_SOL_USDC: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
     assetId: ChainFlipAssetId.solUSDC,
     chain: 'Solana',
-    asset: 'USDC',
-}
-
-const CF_ARB_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Arbitrum,
-    assetId: ChainFlipAssetId.USDC,
-    chain: 'Arbitrum',
-    asset: 'USDC',
-}
-
-const CF_ETH_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Ethereum,
-    assetId: ChainFlipAssetId.USDC,
-    chain: 'Ethereum',
     asset: 'USDC',
 }
 
@@ -71,16 +57,11 @@ export const CHAIN_FLIP_SOL_TOKENS = CONFIGS.map((i) => i.tokenIn)
 
 export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
-    console.log('tokenOut', tokenOut)
 
     // via stable pool only
     const poolConfig = symbiosis.config.omniPools[0]
 
-    console.log('poolConfig', poolConfig)
-
     const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
-
-    console.log('CF_CONFIG', CF_CONFIGS)
 
     if (!CF_CONFIGS.length) {
         throw new Error('ChainFlipSwap: No config found for tokenOut')
