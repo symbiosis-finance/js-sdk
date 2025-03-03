@@ -60,7 +60,6 @@ import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
-import { getHttpEndpoint, Network } from '@orbs-network/ton-access'
 import { TonClient } from '@ton/ton'
 import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
 
@@ -91,7 +90,6 @@ export class Symbiosis {
 
     public readonly oneInchConfig: OneInchConfig
     public readonly openOceanConfig: OpenOceanConfig
-    private readonly tonRpc?: string
 
     public readonly fetch: typeof fetch
 
@@ -197,10 +195,6 @@ export class Symbiosis {
             this.openOceanConfig = overrideConfig.openOceanConfig
         }
 
-        if (overrideConfig?.tonRpc) {
-            this.tonRpc = overrideConfig.tonRpc
-        }
-
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
         this.configCache = new ConfigCache(configName)
@@ -221,9 +215,17 @@ export class Symbiosis {
         return this.cache.get(
             ['tonClient'],
             async () => {
-                const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
+                let endpoint: string | undefined
 
-                const endpoint = this.tonRpc ?? (await getHttpEndpoint({ network }))
+                if (this.configName === 'mainnet') {
+                    endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_MAINNET)?.rpc
+                } else {
+                    endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_TESTNET)?.rpc
+                }
+
+                if (!endpoint) {
+                    throw new Error('Ton rpc is not set')
+                }
 
                 return new TonClient({
                     endpoint,

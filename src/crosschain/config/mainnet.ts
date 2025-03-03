@@ -1689,7 +1689,7 @@ export const config: Config = {
         },
         {
             id: ChainId.TON_MAINNET,
-            rpc: 'https://toncenter.com/api/v2/jsonRPC',
+            rpc: 'https://rpc.ankr.com/http/ton_api_v2',
             filterBlockOffset: 0,
             stables: [
                 {
