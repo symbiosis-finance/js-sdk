@@ -54,7 +54,11 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             })
         } catch (e) {
             console.error(e)
-            throw new Error('The min swap amount is $10', ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
+            if ((e as unknown as { status: number }).status === 400) {
+                throw new Error('The min swap amount is $10', ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
+            } else {
+                throw new Error('Chainflip error')
+            }
         }
     }
 
