@@ -95,7 +95,6 @@ export type OverrideConfig = {
     advisor?: AdvisorConfig
     oneInchConfig?: OneInchConfig
     openOceanConfig?: OpenOceanConfig
-    tonRpc?: string
 }
 
 export interface MiddlewareCall {
