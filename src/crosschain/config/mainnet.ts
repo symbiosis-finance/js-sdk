@@ -1289,6 +1289,17 @@ export const config: Config = {
                     },
                 },
                 {
+                    name: 'Bridged USDC (Stargate)',
+                    symbol: 'USDC.e',
+                    address: '0x74c9f2b00581f1b11aa7ff05aa9f608b7389de67',
+                    chainId: ChainId.RSK_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
                     name: 'Wrapped RBTC',
                     symbol: 'WRBTC',
                     address: '0x542fda317318ebf1d3deaf76e0b632741a7e677d',
