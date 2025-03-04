@@ -31,7 +31,7 @@ import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
     ChainConfig,
     Config,
-    ExtraFeeCollector,
+    VolumeFeeCollector,
     FeeConfig,
     OmniPoolConfig,
     OneInchConfig,
@@ -60,7 +60,6 @@ import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
-import { getHttpEndpoint, Network } from '@orbs-network/ton-access'
 import { TonClient } from '@ton/ton'
 import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
 
@@ -83,7 +82,7 @@ export class Symbiosis {
     public readonly configName: ConfigName
     private readonly configCache: ConfigCache
     public clientId: string
-    public extraFeeCollectors: ExtraFeeCollector[]
+    public volumeFeeCollectors: VolumeFeeCollector[]
 
     private signature: string | undefined
 
@@ -209,16 +208,28 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
-        this.extraFeeCollectors = []
+        this.volumeFeeCollectors = []
     }
 
     public async getTonClient(): Promise<TonClient> {
         return this.cache.get(
             ['tonClient'],
             async () => {
-                const network: Network = this.configName === 'mainnet' ? 'mainnet' : 'testnet'
-                const endpoint = await getHttpEndpoint({ network })
-                return new TonClient({ endpoint })
+                let endpoint: string | undefined
+
+                if (this.configName === 'mainnet') {
+                    endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_MAINNET)?.rpc
+                } else {
+                    endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_TESTNET)?.rpc
+                }
+
+                if (!endpoint) {
+                    throw new Error('Ton rpc is not set')
+                }
+
+                return new TonClient({
+                    endpoint,
+                })
             },
             60 // 1 minute
         )
