@@ -67,15 +67,17 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
         throw new Error('ChainFlipSwap: No config found for tokenOut')
     }
 
-    if (CF_CONFIGS.some((config) => config.tokenIn.chainId === tokenAmountIn.token.chainId)) {
-        const promises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
+    const promises: Promise<SwapExactInResult>[] = []
 
-        return theBest(promises, selectMode)
+    if (CF_CONFIGS.some((config) => config.tokenIn.chainId === tokenAmountIn.token.chainId)) {
+        const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
+
+        promises.push(...onChainPromises)
     }
 
     const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
 
-    const promises = CF_CONFIGS.map((config) =>
+    const crossChainPromises = CF_CONFIGS.map((config) =>
         zappingChainFlip.exactIn({
             tokenAmountIn,
             config,
@@ -85,6 +87,8 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
             deadline,
         })
     )
+
+    promises.push(...crossChainPromises)
 
     return theBest(promises, selectMode)
 }

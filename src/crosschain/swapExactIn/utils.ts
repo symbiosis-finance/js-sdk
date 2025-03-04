@@ -31,6 +31,10 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
     }
 
     if (!result) {
+        const specificError = errors.find((error) => error.code === ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
+        if (specificError) {
+            throw specificError
+        }
         throw AggregateError(errors, 'Build route error')
     }
 

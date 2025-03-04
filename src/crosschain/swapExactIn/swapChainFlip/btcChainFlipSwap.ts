@@ -46,14 +46,16 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
         throw new Error('ChainFlipSwap: No config found for tokenOut')
     }
 
+    const promises: Promise<SwapExactInResult>[] = []
+
     if (CF_CONFIGS.some((config) => config.tokenIn.chainId === tokenAmountIn.token.chainId)) {
-        const promises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
-        return theBest(promises, selectMode)
+        const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
+        promises.push(...onChainPromises)
     }
 
     const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
 
-    const promises = CF_CONFIGS.map((config) =>
+    const crossChainPromises = CF_CONFIGS.map((config) =>
         zappingChainFlip.exactIn({
             tokenAmountIn,
             config,
@@ -63,6 +65,8 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
             deadline,
         })
     )
+
+    promises.push(...crossChainPromises)
 
     return theBest(promises, selectMode)
 }
