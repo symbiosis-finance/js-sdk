@@ -2,7 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
 import { theBest } from './utils'
 import { isBtcChainId } from '../chainUtils'
-import { btcChainFlipSwap } from './swapChainFlip/btcChainFlipSwap'
+import { btcChainFlipSwap } from './swapChainFlip'
 import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { thorChainSwap } from './thorChainSwap'
 
