@@ -2,7 +2,7 @@ import { Symbiosis } from './symbiosis'
 import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { BridgeDirection, VolumeFeeCollector, OmniPoolConfig } from './types'
+import { BridgeDirection, OmniPoolConfig, VolumeFeeCollector } from './types'
 import { OctoPoolTrade } from './trade'
 import { OctoPoolFeeCollector__factory } from './contracts'
 import { BigNumber } from 'ethers'
@@ -63,6 +63,7 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
         feeRate: '500000000000000', // 0.05%
         eligibleChains: [ChainId.BASE_MAINNET],
+        default: true,
     },
 ]
 
@@ -403,10 +404,17 @@ export class Transit {
 
     private getVolumeFeeCollector(token: Token): VolumeFeeCollector | undefined {
         if (!token.chainFromId) {
-            return undefined
+            return
         }
-        return [...VOLUME_FEE_COLLECTORS, ...this.symbiosis.volumeFeeCollectors].find((i) => {
+        const chainEligibleFeeCollector = [...VOLUME_FEE_COLLECTORS].find((i) => {
             return i.chainId === this.omniPoolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
+        })
+        if (chainEligibleFeeCollector) {
+            return chainEligibleFeeCollector
+        }
+        // get default volume fee collector
+        return [...VOLUME_FEE_COLLECTORS].find((i) => {
+            return i.chainId === this.omniPoolConfig.chainId && i.default
         })
     }
 
