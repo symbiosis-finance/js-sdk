@@ -57,19 +57,18 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
         feeRate: '1000000000000000', // 0.1%
         eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
+        default: true,
     },
     {
         chainId: ChainId.BOBA_BNB,
         address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
         feeRate: '500000000000000', // 0.05%
-        eligibleChains: [ChainId.BASE_MAINNET],
-        default: true,
+        eligibleChains: [],
     },
 ]
 
 export interface TransitOutResult {
     trade: OctoPoolTrade
-    preCall?: VolumeFeeCall
     postCall?: VolumeFeeCall
     amountOut: TokenAmount
     amountOutMin: TokenAmount
@@ -127,18 +126,13 @@ export class Transit {
         return this.out.trade
     }
 
-    get preCall(): VolumeFeeCall | undefined {
-        this.assertOutInitialized('preCall')
-        return this.out.preCall
-    }
-
     get postCall(): VolumeFeeCall | undefined {
         this.assertOutInitialized('postCall')
         return this.out.postCall
     }
 
     public async init(): Promise<Transit> {
-        const { tradeAmountIn, tradeAmountInMin, preCall } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
+        const { tradeAmountIn, tradeAmountInMin } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         const tradeTokenOut = this.getTradeTokenOut()
 
         const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
@@ -156,7 +150,6 @@ export class Transit {
             amountOut,
             amountOutMin,
             trade,
-            preCall,
             postCall,
         }
         return this
@@ -173,13 +166,6 @@ export class Transit {
         const receiveSides = []
         const paths = []
         const offsets = []
-
-        if (this.preCall) {
-            calldatas.push(this.preCall.calldata)
-            receiveSides.push(this.preCall.receiveSide)
-            paths.push(this.preCall.path)
-            offsets.push(this.preCall.offset)
-        }
 
         // octopool swap
         calldatas.push(this.trade.callData)
@@ -233,14 +219,13 @@ export class Transit {
             this.fee2 = fee2
         }
 
-        const { tradeAmountIn: newAmountIn, preCall } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
+        const { tradeAmountIn: newAmountIn } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         this.trade.applyAmountIn(newAmountIn)
 
         const { amountOut, amountOutMin, postCall } = this.getAmountsOut(this.trade.amountOut, this.trade.amountOutMin)
 
         this.out = {
             trade: this.trade,
-            preCall,
             postCall,
             amountOut,
             amountOutMin,
@@ -346,13 +331,11 @@ export class Transit {
     ): {
         tradeAmountIn: TokenAmount
         tradeAmountInMin: TokenAmount
-        preCall: VolumeFeeCall | undefined
     } {
         if (this.direction === 'burn') {
             return {
                 tradeAmountIn: amountIn,
                 tradeAmountInMin: amountInMin,
-                preCall: undefined,
             }
         }
 
@@ -371,18 +354,9 @@ export class Transit {
             tradeAmountInMin = tradeAmountInMin.subtract(this.fee1)
         }
 
-        const preFeeCollector = this.getVolumeFeeCollector(tradeAmountIn.token)
-        let preCall: VolumeFeeCall | undefined
-        if (preFeeCollector) {
-            preCall = Transit.buildFeeCall(tradeAmountIn, preFeeCollector)
-            tradeAmountIn = Transit.applyVolumeFee(tradeAmountIn, preFeeCollector)
-            tradeAmountInMin = Transit.applyVolumeFee(tradeAmountInMin, preFeeCollector)
-        }
-
         return {
             tradeAmountIn,
             tradeAmountInMin,
-            preCall,
         }
     }
 

@@ -114,7 +114,7 @@ describe('Transit#ExtraFee', async () => {
         expect(quoteSpy).toHaveBeenCalledOnce()
         expect(createOctoPoolTradeSpy).toHaveBeenCalledOnce()
         expect(transit.calls()).toBeDefined()
-        expect(transit.calls()?.calldatas.length).toEqual(3)
+        expect(transit.calls()?.calldatas.length).toEqual(2)
         // const multicallRouterOnHostChain = '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4'
         // expect(createOctoPoolTradeSpy).toHaveBeenCalledWith({
         //     to: multicallRouterOnHostChain,
