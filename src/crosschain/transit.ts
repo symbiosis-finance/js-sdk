@@ -85,6 +85,7 @@ export class Transit {
     public feeToken1: Token
     public feeToken2: Token | undefined
 
+    protected volumeFeeCollector?: VolumeFeeCollector
     protected out?: TransitOutResult
 
     public constructor(
@@ -144,7 +145,7 @@ export class Transit {
             to,
         })
 
-        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(trade.amountOut, trade.amountOutMin)
+        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(trade)
 
         this.out = {
             amountOut,
@@ -222,7 +223,7 @@ export class Transit {
         const { tradeAmountIn: newAmountIn } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         this.trade.applyAmountIn(newAmountIn)
 
-        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(this.trade.amountOut, this.trade.amountOutMin)
+        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(this.trade)
 
         this.out = {
             trade: this.trade,
@@ -272,29 +273,27 @@ export class Transit {
         return this.tokenOut
     }
 
-    private getAmountsOut(
-        tradeAmountOut: TokenAmount,
-        tradeAmountOutMin: TokenAmount
-    ): {
+    private getAmountsOut(trade: OctoPoolTrade): {
         amountOut: TokenAmount
         amountOutMin: TokenAmount
         postCall: VolumeFeeCall | undefined
     } {
+        const { tokenAmountIn: tradeAmountIn, amountOut: tradeAmountOut, amountOutMin: tradeAmountOutMin } = trade
         let tradeAmountOutNew = tradeAmountOut
         let tradeAmountOutMinNew = tradeAmountOutMin
         let postCall: VolumeFeeCall | undefined = undefined
-        const postFeeCollector = this.getVolumeFeeCollector(tradeAmountOut.token)
-        if (postFeeCollector) {
-            postCall = Transit.buildFeeCall(tradeAmountOut, postFeeCollector)
-            tradeAmountOutNew = Transit.applyVolumeFee(tradeAmountOut, postFeeCollector)
-            tradeAmountOutMinNew = Transit.applyVolumeFee(tradeAmountOutMin, postFeeCollector)
+        const volumeFeeCollector = this.getVolumeFeeCollector(tradeAmountIn.token, tradeAmountOut.token)
+        if (volumeFeeCollector) {
+            postCall = Transit.buildFeeCall(tradeAmountOut, volumeFeeCollector)
+            tradeAmountOutNew = Transit.applyVolumeFee(tradeAmountOut, volumeFeeCollector)
+            tradeAmountOutMinNew = Transit.applyVolumeFee(tradeAmountOutMin, volumeFeeCollector)
         }
 
         if (this.direction === 'mint') {
             return {
                 postCall,
-                amountOut: tradeAmountOut,
-                amountOutMin: tradeAmountOutMin,
+                amountOut: tradeAmountOutNew,
+                amountOutMin: tradeAmountOutMinNew,
             }
         }
 
@@ -376,12 +375,13 @@ export class Transit {
         return sToken
     }
 
-    private getVolumeFeeCollector(token: Token): VolumeFeeCollector | undefined {
-        if (!token.chainFromId) {
-            return
-        }
+    private getVolumeFeeCollector(tokenIn: Token, tokenOut: Token): VolumeFeeCollector | undefined {
         const chainEligibleFeeCollector = [...VOLUME_FEE_COLLECTORS].find((i) => {
-            return i.chainId === this.omniPoolConfig.chainId && i.eligibleChains.includes(token.chainFromId as ChainId)
+            return (
+                i.chainId === this.omniPoolConfig.chainId &&
+                (i.eligibleChains.includes(tokenIn.chainFromId || tokenIn.chainId) ||
+                    i.eligibleChains.includes(tokenOut.chainFromId || tokenOut.chainId))
+            )
         })
         if (chainEligibleFeeCollector) {
             return chainEligibleFeeCollector
