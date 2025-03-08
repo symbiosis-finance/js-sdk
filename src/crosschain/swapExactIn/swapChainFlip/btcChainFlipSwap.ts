@@ -5,7 +5,7 @@ import { theBest } from '../utils'
 
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
-import { ChainFlipAssetId, ChainFlipConfig, ChainFlipChainId, ChainFlipToken } from './types'
+import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types'
 import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
 
 const CF_BTC_BTC: ChainFlipToken = {
@@ -53,10 +53,9 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
         promises.push(...onChainPromises)
     }
 
-    const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
-
-    const crossChainPromises = CF_CONFIGS.map((config) =>
-        zappingChainFlip.exactIn({
+    const crossChainPromises = CF_CONFIGS.map((config) => {
+        const zapping = new ZappingCrossChainChainFlip(context, poolConfig)
+        return zapping.exactIn({
             tokenAmountIn,
             config,
             from,
@@ -64,7 +63,7 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
             slippage,
             deadline,
         })
-    )
+    })
 
     promises.push(...crossChainPromises)
 

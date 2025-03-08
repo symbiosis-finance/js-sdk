@@ -75,10 +75,9 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
         promises.push(...onChainPromises)
     }
 
-    const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
-
-    const crossChainPromises = CF_CONFIGS.map((config) =>
-        zappingChainFlip.exactIn({
+    const crossChainPromises = CF_CONFIGS.map((config) => {
+        const zapping = new ZappingCrossChainChainFlip(context, poolConfig)
+        return zapping.exactIn({
             tokenAmountIn,
             config,
             from,
@@ -86,7 +85,7 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
             slippage,
             deadline,
         })
-    )
+    })
 
     promises.push(...crossChainPromises)
 
