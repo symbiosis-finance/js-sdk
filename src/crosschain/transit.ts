@@ -57,13 +57,13 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
         feeRate: '1000000000000000', // 0.1%
         eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
-        default: true,
     },
     {
         chainId: ChainId.BOBA_BNB,
         address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
         feeRate: '500000000000000', // 0.05%
         eligibleChains: [],
+        default: true,
     },
 ]
 
