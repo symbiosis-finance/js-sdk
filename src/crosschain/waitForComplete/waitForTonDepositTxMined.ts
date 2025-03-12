@@ -1,4 +1,4 @@
-import { Address, Cell, Transaction } from '@ton/core'
+import { Address, Cell } from '@ton/core'
 import { Maybe } from '@ton/ton/dist/utils/maybe'
 import { solidityKeccak256 } from 'ethers/lib/utils'
 
@@ -6,6 +6,7 @@ import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
 import { AddressZero } from '@ethersproject/constants'
+import { ParsedTransaction } from '@ton/ton/dist/client/TonClient4'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -85,15 +86,21 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     const client = await symbiosis.getTonClient()
 
-    const tx = await longPolling<Transaction>({
+    const tx = await longPolling<ParsedTransaction>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 10, archival: true })
-            return txs.find((tx) => {
-                return tx.outMessages.values().find((msg) => {
+            const lastBlock = await client.getLastBlock()
+            const txs = await client.getAccountTransactionsParsed(
+                Address.parse(tonPortal),
+                BigInt(lastBlock.last.seqno),
+                Buffer.from(lastBlock.last.rootHash, 'hex'),
+                10 // 10 transactions
+            )
+            return txs.transactions.find((tx) => {
+                return tx.outMessages.find((msg) => {
                     if (msg.info.type !== 'external-out') {
                         return false
                     }
-                    const burnCompletedEvent = parseBurnCompletedBody(msg.body)
+                    const burnCompletedEvent = parseBurnCompletedBody(Cell.fromBase64(msg.body))
                     if (!burnCompletedEvent) {
                         return false
                     }
@@ -108,5 +115,5 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
-    return tx.hash().toString('hex')
+    return tx.hash
 }
