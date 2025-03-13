@@ -127,6 +127,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'bera',
         nativeTokenAddress: AddressZero,
     },
+    [ChainId.UNICHAIN_MAINNET]: {
+        slug: 'unichain',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {
