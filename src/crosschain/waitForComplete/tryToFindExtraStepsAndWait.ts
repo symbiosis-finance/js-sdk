@@ -6,7 +6,7 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
-import { waitForTonTxComplete } from './waitToTonDepositTxMined'
+import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
 import { BtcConfig, getBtcConfig } from '../chainUtils/btc'
 
