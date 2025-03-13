@@ -63,14 +63,14 @@ function _getExternalIdTon({
     return solidityKeccak256(['bytes32', 'address', 'uint256'], [internalId, receiveSide, chainId])
 }
 
-class WaitToTonTxCompleteError extends Error {
+class WaitForTonTxCompleteError extends Error {
     constructor(message: string) {
         super(message)
-        this.name = 'WaitToTonTxCompleteError'
+        this.name = 'WaitForTonTxCompleteError'
     }
 }
 
-export async function waitToTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
+export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
     if (!tonChainConfig) {
         throw new Error('Ton chain config not found')
@@ -130,7 +130,7 @@ export async function waitToTonTxComplete(symbiosis: Symbiosis, internalId: stri
         successCondition: (tx) => {
             return tx !== undefined
         },
-        error: new WaitToTonTxCompleteError('Ton transaction not found on TON chain'),
+        error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
     return txRaw?.tx.hash().toString('hex')
