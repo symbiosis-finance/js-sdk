@@ -19,6 +19,7 @@ export interface VolumeFeeCollector {
     address: string
     feeRate: string
     eligibleChains: ChainId[]
+    default?: boolean
 }
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'

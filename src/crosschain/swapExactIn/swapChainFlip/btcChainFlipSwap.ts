@@ -5,8 +5,8 @@ import { theBest } from '../utils'
 
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
-import { ChainFlipAssetId, ChainFlipConfig, ChainFlipChainId, ChainFlipToken } from './types'
-import { ARB_USDC } from './utils'
+import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types'
+import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
 
 const CF_BTC_BTC: ChainFlipToken = {
     chainId: ChainFlipChainId.Bitcoin,
@@ -15,19 +15,19 @@ const CF_BTC_BTC: ChainFlipToken = {
     asset: 'BTC',
 }
 
-const CF_ARB_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Arbitrum,
-    assetId: ChainFlipAssetId.USDC,
-    chain: 'Arbitrum',
-    asset: 'USDC',
-}
-
 const CONFIGS: ChainFlipConfig[] = [
     {
         vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
         tokenIn: ARB_USDC,
         tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_ARB_USDC,
+        dest: CF_BTC_BTC,
+    },
+    {
+        vaultAddress: '0xF5e10380213880111522dd0efD3dbb45b9f62Bcc',
+        tokenIn: ETH_USDC,
+        tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
+        src: CF_ETH_USDC,
         dest: CF_BTC_BTC,
     },
 ]
@@ -40,26 +40,32 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
     // via stable pool only
     const poolConfig = symbiosis.config.omniPools[0]
 
-    const CF_CONFIG = CONFIGS.find((config) => config.tokenOut.equals(tokenOut))
+    const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
 
-    if (!CF_CONFIG) {
+    if (!CF_CONFIGS.length) {
         throw new Error('ChainFlipSwap: No config found for tokenOut')
     }
 
-    if (CF_CONFIG.tokenIn.chainId === tokenAmountIn.token.chainId) {
-        return ZappingOnChainChainFlip(context, CF_CONFIG)
+    const promises: Promise<SwapExactInResult>[] = []
+
+    if (CF_CONFIGS.some((config) => config.tokenIn.chainId === tokenAmountIn.token.chainId)) {
+        const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
+        promises.push(...onChainPromises)
     }
 
-    const zappingChainFlip = new ZappingCrossChainChainFlip(context, poolConfig)
-
-    const promise = zappingChainFlip.exactIn({
-        tokenAmountIn,
-        config: CF_CONFIG,
-        from,
-        to,
-        slippage,
-        deadline,
+    const crossChainPromises = CF_CONFIGS.map((config) => {
+        const zapping = new ZappingCrossChainChainFlip(context, poolConfig)
+        return zapping.exactIn({
+            tokenAmountIn,
+            config,
+            from,
+            to,
+            slippage,
+            deadline,
+        })
     })
 
-    return theBest([promise], selectMode)
+    promises.push(...crossChainPromises)
+
+    return theBest(promises, selectMode)
 }
