@@ -1,5 +1,4 @@
 import { Contract, EventFilter } from 'ethers'
-import type { Transaction } from '@ton/core'
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
@@ -10,6 +9,7 @@ import { isTonChainId } from '../chainUtils'
 
 import { BridgeTxInfo, BridgeRequestType } from './types'
 import { getTxTonBridgeInfo } from './getTxTonBridgeInfo'
+import { Transaction } from '@ton/core'
 
 export interface WaitForCompleteParams {
     symbiosis: Symbiosis

@@ -59,7 +59,7 @@ import { SwappingMiddleware } from './swapping'
 import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
-import { TonClient } from '@ton/ton'
+import { TonClient4 } from '@ton/ton'
 import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
@@ -208,7 +208,7 @@ export class Symbiosis {
         )
     }
 
-    public async getTonClient(): Promise<TonClient> {
+    public async getTonClient(): Promise<TonClient4> {
         return this.cache.get(
             ['tonClient'],
             async () => {
@@ -224,7 +224,7 @@ export class Symbiosis {
                     throw new Error('Ton rpc is not set')
                 }
 
-                return new TonClient({
+                return new TonClient4({
                     endpoint,
                 })
             },
