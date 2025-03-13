@@ -31,20 +31,11 @@ export async function waitFromTonTxMined({
     return await longPolling<ParsedTransaction | undefined>({
         pollingFunction: async () => {
             const lastBlock = await client.getLastBlock()
-            const accountInfo = await client.getAccount(lastBlock.last.seqno, Address.parse(contractAddress))
-
-            // If there are no transactions yet
-            if (!accountInfo.account.last) {
-                return undefined
-            }
-
-            const lt = BigInt(accountInfo.account.last.lt)
-            const hash = Buffer.from(accountInfo.account.last.hash, 'hex')
 
             const txsData = await client.getAccountTransactionsParsed(
                 Address.parse(contractAddress),
-                lt,
-                hash,
+                BigInt(lastBlock.last.seqno),
+                Buffer.from(lastBlock.last.rootHash, 'hex'),
                 10 // 10 transactions
             )
 

@@ -1,5 +1,5 @@
 import { Contract, EventFilter } from 'ethers'
-import type { Transaction } from '@ton/core'
+import type { ParsedTransaction } from '@ton/ton/dist/client/TonClient4'
 import { ChainId } from '../../constants'
 import { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
@@ -15,7 +15,7 @@ export interface WaitForCompleteParams {
     symbiosis: Symbiosis
     chainId: ChainId
     txId: string
-    txTon?: Transaction
+    txTon?: ParsedTransaction
 }
 
 /**

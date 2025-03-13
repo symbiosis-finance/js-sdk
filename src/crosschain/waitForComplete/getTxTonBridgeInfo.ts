@@ -1,6 +1,7 @@
-import { Cell, Slice, Transaction } from '@ton/core'
+import { Cell, Slice } from '@ton/core'
 import { ChainId } from '../../constants'
 import { BridgeTxInfo } from './types'
+import { ParsedTransaction } from '@ton/ton/dist/client/TonClient4'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const ORACLE_REQUEST_OPCODE = 0x7b425851
@@ -15,7 +16,7 @@ interface OracleRequestEvent {
 }
 
 // [TODO]: Do all logic via tx hash only
-export function getTxTonBridgeInfo(tx: Transaction): BridgeTxInfo {
+export function getTxTonBridgeInfo(tx: ParsedTransaction): BridgeTxInfo {
     let internalId: string | undefined
     let externalId: string | undefined
     let externalChainId: ChainId | undefined
@@ -24,7 +25,7 @@ export function getTxTonBridgeInfo(tx: Transaction): BridgeTxInfo {
         if (outMsg?.info.type !== 'external-out') {
             continue
         }
-        const parsedOracleRequest = parseOracleRequestBody(outMsg.body)
+        const parsedOracleRequest = parseOracleRequestBody(Cell.fromBase64(outMsg.body))
         internalId = parsedOracleRequest?.internalId
         externalId = parsedOracleRequest?.externalId
         externalChainId = parsedOracleRequest?.externalChainId

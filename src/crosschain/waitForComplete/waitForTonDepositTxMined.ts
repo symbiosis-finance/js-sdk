@@ -95,6 +95,7 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
                 Buffer.from(lastBlock.last.rootHash, 'hex'),
                 10 // 10 transactions
             )
+
             return txs.transactions.find((tx) => {
                 return tx.outMessages.find((msg) => {
                     if (msg.info.type !== 'external-out') {
