@@ -1,4 +1,4 @@
-import { Address, Cell } from '@ton/core'
+import { Address, Cell, Transaction } from '@ton/core'
 import { Maybe } from '@ton/ton/dist/utils/maybe'
 import { solidityKeccak256 } from 'ethers/lib/utils'
 
@@ -6,7 +6,6 @@ import { ChainId } from '../../constants'
 import { longPolling } from './utils'
 import { Symbiosis } from '../symbiosis'
 import { AddressZero } from '@ethersproject/constants'
-import { ParsedTransaction } from '@ton/ton/dist/client/TonClient4'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -64,14 +63,14 @@ function _getExternalIdTon({
     return solidityKeccak256(['bytes32', 'address', 'uint256'], [internalId, receiveSide, chainId])
 }
 
-class WaitForTonTxCompleteError extends Error {
+class WaitToTonTxCompleteError extends Error {
     constructor(message: string) {
         super(message)
-        this.name = 'WaitForTonTxCompleteError'
+        this.name = 'WaitToTonTxCompleteError'
     }
 }
 
-export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
+export async function waitToTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
     if (!tonChainConfig) {
         throw new Error('Ton chain config not found')
@@ -86,22 +85,40 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     const client = await symbiosis.getTonClient()
 
-    const tx = await longPolling<ParsedTransaction>({
+    const txRaw = await longPolling<
+        | {
+              block: {
+                  workchain: number
+                  seqno: number
+                  shard: string
+                  rootHash: string
+                  fileHash: string
+              }
+              tx: Transaction
+          }
+        | undefined
+    >({
         pollingFunction: async () => {
             const lastBlock = await client.getLastBlock()
-            const txs = await client.getAccountTransactionsParsed(
+            const accountInfo = await client.getAccount(lastBlock.last.seqno, Address.parse(tonPortal))
+
+            if (!accountInfo.account.last) {
+                return undefined
+            }
+
+            const txsRaw = await client.getAccountTransactions(
                 Address.parse(tonPortal),
-                BigInt(lastBlock.last.seqno),
-                Buffer.from(lastBlock.last.rootHash, 'hex'),
-                10 // 10 transactions
+                BigInt(accountInfo.account.last.lt),
+                Buffer.from(accountInfo.account.last.hash, 'base64')
             )
 
-            return txs.transactions.find((tx) => {
-                return tx.outMessages.find((msg) => {
+            return txsRaw.find(({ tx }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                return Array.from(tx.outMessages).find(([_, msg]) => {
                     if (msg.info.type !== 'external-out') {
                         return false
                     }
-                    const burnCompletedEvent = parseBurnCompletedBody(Cell.fromBase64(msg.body))
+                    const burnCompletedEvent = parseBurnCompletedBody(msg.body)
                     if (!burnCompletedEvent) {
                         return false
                     }
@@ -113,8 +130,8 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         successCondition: (tx) => {
             return tx !== undefined
         },
-        error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
+        error: new WaitToTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
-    return tx.hash
+    return txRaw?.tx.hash().toString('hex')
 }

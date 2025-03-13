@@ -6,7 +6,7 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
-import { waitForTonTxComplete } from './waitForTonDepositTxMined'
+import { waitToTonTxComplete } from './waitToTonDepositTxMined'
 import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
 import { BtcConfig, getBtcConfig } from '../chainUtils/btc'
 
@@ -62,7 +62,7 @@ export async function tryToFindExtraStepsAndWait(
     if (burnRequestTon) {
         const { internalId, chainId } = burnRequestTon
 
-        const outHash = await waitForTonTxComplete(symbiosis, internalId, +chainId)
+        const outHash = await waitToTonTxComplete(symbiosis, internalId, +chainId)
         return {
             extraStep: 'burnRequestTon',
             outHash,
