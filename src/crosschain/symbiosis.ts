@@ -216,8 +216,6 @@ export class Symbiosis {
 
                 if (this.configName === 'mainnet') {
                     endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_MAINNET)?.rpc
-                    // For testing purposes
-                    // endpoint = await getHttpV4Endpoint()
                 } else {
                     endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_TESTNET)?.rpc
                 }
