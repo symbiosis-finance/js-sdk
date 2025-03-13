@@ -63,6 +63,11 @@ export async function tryToFindExtraStepsAndWait(
         const { internalId, chainId } = burnRequestTon
 
         const outHash = await waitForTonTxComplete(symbiosis, internalId, +chainId)
+
+        if (!outHash) {
+            throw new Error('Failed to find Burn request in TON')
+        }
+
         return {
             extraStep: 'burnRequestTon',
             outHash,
