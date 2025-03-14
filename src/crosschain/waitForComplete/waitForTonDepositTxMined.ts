@@ -1,11 +1,11 @@
-import { Address, Cell, Transaction } from '@ton/core'
-import { Maybe } from '@ton/ton/dist/utils/maybe'
-import { solidityKeccak256 } from 'ethers/lib/utils'
+import {Address, Cell, Transaction} from '@ton/core'
+import {Maybe} from '@ton/ton/dist/utils/maybe'
+import {solidityKeccak256} from 'ethers/lib/utils'
 
-import { ChainId } from '../../constants'
-import { longPolling } from './utils'
-import { Symbiosis } from '../symbiosis'
-import { AddressZero } from '@ethersproject/constants'
+import {ChainId} from '../../constants'
+import {longPolling} from './utils'
+import {Symbiosis} from '../symbiosis'
+import {AddressZero} from '@ethersproject/constants' // The event is defined by its opcode, i.e. first 32 bits of the body
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -85,19 +85,16 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     const client = await symbiosis.getTonClient()
 
-    const txRaw = await longPolling<
-        | {
-              block: {
-                  workchain: number
-                  seqno: number
-                  shard: string
-                  rootHash: string
-                  fileHash: string
-              }
-              tx: Transaction
-          }
-        | undefined
-    >({
+    const txRaw = await longPolling<{
+        block: {
+            workchain: number
+            seqno: number
+            shard: string
+            rootHash: string
+            fileHash: string
+        }
+        tx: Transaction
+    }>({
         pollingFunction: async () => {
             const lastBlock = await client.getLastBlock()
             const accountInfo = await client.getAccount(lastBlock.last.seqno, Address.parse(tonPortal))
@@ -133,5 +130,5 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
-    return txRaw?.tx.hash().toString('hex')
+    return txRaw.tx.hash().toString('hex')
 }
