@@ -2,7 +2,7 @@ import { SwapExactInParams, SwapExactInResult } from '../types'
 import { ChainId } from '../../constants'
 import { theBest } from './utils'
 import { isBtcChainId } from '../chainUtils'
-import { btcChainFlipSwap } from './swapChainFlip/btcChainFlipSwap'
+import { btcChainFlipSwap } from './swapChainFlip'
 import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { thorChainSwap } from './thorChainSwap'
 
@@ -15,6 +15,7 @@ function isNativeAvailable(chainId: ChainId) {
 }
 
 function isChainFlipAvailable(chainId: ChainId) {
+    return false // enable when migration to v1.8 is completed
     return isBtcChainId(chainId)
 }
 
