@@ -1,9 +1,8 @@
-import { QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
-import { BigNumber } from 'ethers'
+import { Quote, SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
 
 import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping'
-import { ChainFlipVault__factory, MulticallRouter } from '../../contracts'
+import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
 import { Error, ErrorCode } from '../../error'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
@@ -25,8 +24,8 @@ export interface ZappingChainFlipExactInParams {
 export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected chainFlipSdk: SwapSDK
-    protected quoteResponse!: QuoteResponse
-    protected chainFlipData!: string
+    protected chainFlipQuote!: Quote
+    protected chainFlipVaultSwapResponse!: VaultSwapResponse
     protected config!: ChainFlipConfig
     protected evmTo!: string
     protected dstAddress: string
@@ -46,8 +45,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected async doPostTransitAction() {
         const { src, dest } = this.config
         try {
-            debugger
-            const quotes = await this.chainFlipSdk.getQuoteV2({
+            const { quotes } = await this.chainFlipSdk.getQuoteV2({
                 amount: this.transit.amountOut.raw.toString(),
                 srcChain: src.chain,
                 srcAsset: src.asset,
@@ -56,21 +54,24 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                 isVaultSwap: true,
             })
             const quote = quotes.find((quote) => quote.type === 'REGULAR')
+            if (!quote) {
+                throw new Error('There is no REGULAR quote found')
+            }
 
-            this.quoteResponse = quote
+            this.chainFlipQuote = quote
 
             // Encode vault swap transaction data
-            this.chainFlipData = await this.chainFlipSdk.encodeVaultSwapData({
+            this.chainFlipVaultSwapResponse = await this.chainFlipSdk.encodeVaultSwapData({
                 quote,
                 // srcAddress: wallet.address,
                 destAddress: this.dstAddress,
                 fillOrKillParams: {
-                    slippageTolerancePercent: this.quoteResponse.recommendedSlippageTolerancePercent,
+                    slippageTolerancePercent: this.chainFlipQuote.recommendedSlippageTolerancePercent,
                     refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
                     retryDurationBlocks: 100,
                 },
             })
-            console.log({ chainFlipData: this.chainFlipData })
+            console.log({ chainFlipVaultSwapResponse: this.chainFlipVaultSwapResponse })
         } catch (e) {
             console.error(e)
             if ((e as unknown as { status: number }).status === 400) {
@@ -112,7 +113,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             transitTokenOut,
         })
 
-        const { egressAmount, includedFees } = this.quoteResponse.quote
+        const { egressAmount, includedFees } = this.chainFlipQuote
         const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
         const amountOut = new TokenAmount(config.tokenOut, egressAmount)
 
@@ -178,21 +179,14 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             offsets.push(this.tradeC.callDataOffset!)
         }
 
-        const { dest, tokenIn, vaultAddress } = this.config
-
-        const chainFlipDataOld = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
-            dest.chainId, // dstChain
-            this.dstAddress, // dstAddress
-            dest.assetId, // dstToken
-            tokenIn.address, // srcToken (Arbitrum.USDC address)
-            BigNumber.from(0), // amount (will be patched)
-            [], //cfParameters
-        ])
-        console.log({ chainFlipData: this.chainFlipData, chainFlipDataOld })
-
-        callDatas.push(this.chainFlipData)
-        receiveSides.push(vaultAddress)
-        path.push(tokenIn.address) // Arbitrum.USDC address
+        const { chain } = this.chainFlipVaultSwapResponse
+        if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
+            throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
+        }
+        const { calldata, to, sourceTokenAddress } = this.chainFlipVaultSwapResponse
+        callDatas.push(calldata)
+        receiveSides.push(to)
+        path.push(sourceTokenAddress!)
         offsets.push(164)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
