@@ -24,9 +24,9 @@ export interface ZappingChainFlipExactInParams {
 
 export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
-    protected receiverAddress!: string
     protected chainFlipSdk: SwapSDK
     protected quoteResponse!: QuoteResponse
+    protected chainFlipData!: string
     protected config!: ChainFlipConfig
     protected evmTo!: string
     protected dstAddress: string
@@ -39,19 +39,38 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
+            enabledFeatures: { dca: true },
         })
     }
 
     protected async doPostTransitAction() {
         const { src, dest } = this.config
         try {
-            this.quoteResponse = await this.chainFlipSdk.getQuote({
+            debugger
+            const quotes = await this.chainFlipSdk.getQuoteV2({
                 amount: this.transit.amountOut.raw.toString(),
                 srcChain: src.chain,
                 srcAsset: src.asset,
                 destChain: dest.chain,
                 destAsset: dest.asset,
+                isVaultSwap: true,
             })
+            const quote = quotes.find((quote) => quote.type === 'REGULAR')
+
+            this.quoteResponse = quote
+
+            // Encode vault swap transaction data
+            this.chainFlipData = await this.chainFlipSdk.encodeVaultSwapData({
+                quote,
+                // srcAddress: wallet.address,
+                destAddress: this.dstAddress,
+                fillOrKillParams: {
+                    slippageTolerancePercent: this.quoteResponse.recommendedSlippageTolerancePercent,
+                    refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+                    retryDurationBlocks: 100,
+                },
+            })
+            console.log({ chainFlipData: this.chainFlipData })
         } catch (e) {
             console.error(e)
             if ((e as unknown as { status: number }).status === 400) {
@@ -161,7 +180,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
         const { dest, tokenIn, vaultAddress } = this.config
 
-        const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
+        const chainFlipDataOld = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
             dest.chainId, // dstChain
             this.dstAddress, // dstAddress
             dest.assetId, // dstToken
@@ -169,8 +188,9 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             BigNumber.from(0), // amount (will be patched)
             [], //cfParameters
         ])
+        console.log({ chainFlipData: this.chainFlipData, chainFlipDataOld })
 
-        callDatas.push(chainFlipData)
+        callDatas.push(this.chainFlipData)
         receiveSides.push(vaultAddress)
         path.push(tokenIn.address) // Arbitrum.USDC address
         offsets.push(164)

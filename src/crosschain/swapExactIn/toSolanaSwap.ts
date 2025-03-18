@@ -5,7 +5,6 @@ import { isSolanaChainId } from '../chainUtils'
 import { solanaChainFlipSwap } from './swapChainFlip'
 
 function isChainFlipAvailable(chainId: ChainId) {
-    return false // enable when migration to v1.8 is completed
     return isSolanaChainId(chainId)
 }
 
