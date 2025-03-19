@@ -17,14 +17,12 @@ const CF_BTC_BTC: ChainFlipToken = {
 
 const CONFIGS: ChainFlipConfig[] = [
     {
-        vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920',
         tokenIn: ARB_USDC,
         tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_ARB_USDC,
         dest: CF_BTC_BTC,
     },
     {
-        vaultAddress: '0xF5e10380213880111522dd0efD3dbb45b9f62Bcc',
         tokenIn: ETH_USDC,
         tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_ETH_USDC,

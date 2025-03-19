@@ -15,7 +15,6 @@ function isNativeAvailable(chainId: ChainId) {
 }
 
 function isChainFlipAvailable(chainId: ChainId) {
-    return false // enable when migration to v1.8 is completed
     return isBtcChainId(chainId)
 }
 

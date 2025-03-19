@@ -8,7 +8,7 @@ import { Error, ErrorCode } from '../../error'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
-import { getChainFlipFee, getDestinationAddress } from './utils'
+import { getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
 
 export interface ZappingChainFlipExactInParams {
@@ -31,10 +31,10 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected dstAddress: string
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
-        const { symbiosis, to, tokenOut } = context
+        const { symbiosis, to } = context
         super(symbiosis, omniPoolConfig)
 
-        this.dstAddress = getDestinationAddress(to, tokenOut.chainId)
+        this.dstAddress = to
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
@@ -63,7 +63,6 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             // Encode vault swap transaction data
             this.chainFlipVaultSwapResponse = await this.chainFlipSdk.encodeVaultSwapData({
                 quote,
-                // srcAddress: wallet.address,
                 destAddress: this.dstAddress,
                 fillOrKillParams: {
                     slippageTolerancePercent: this.chainFlipQuote.recommendedSlippageTolerancePercent,
@@ -71,7 +70,6 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                     retryDurationBlocks: 100,
                 },
             })
-            console.log({ chainFlipVaultSwapResponse: this.chainFlipVaultSwapResponse })
         } catch (e) {
             console.error(e)
             if ((e as unknown as { status: number }).status === 400) {

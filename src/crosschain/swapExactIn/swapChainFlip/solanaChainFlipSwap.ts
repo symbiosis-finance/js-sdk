@@ -24,28 +24,24 @@ const CF_SOL_USDC: ChainFlipToken = {
 
 const CONFIGS: ChainFlipConfig[] = [
     {
-        vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920', // ARB
         tokenIn: ARB_USDC,
         tokenOut: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         src: CF_ARB_USDC,
         dest: CF_SOL_SOL,
     },
     {
-        vaultAddress: '0x79001a5e762f3befc8e5871b42f6734e00498920', // ARB
         tokenIn: ARB_USDC,
         tokenOut: SOL_USDC,
         src: CF_ARB_USDC,
         dest: CF_SOL_USDC,
     },
     {
-        vaultAddress: '0xF5e10380213880111522dd0efD3dbb45b9f62Bcc', // ETH
         tokenIn: ETH_USDC,
         tokenOut: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         src: CF_ETH_USDC,
         dest: CF_SOL_SOL,
     },
     {
-        vaultAddress: '0xF5e10380213880111522dd0efD3dbb45b9f62Bcc', // ETH
         tokenIn: ETH_USDC,
         tokenOut: SOL_USDC,
         src: CF_ETH_USDC,

@@ -44,17 +44,6 @@ export const CF_ETH_USDC: ChainFlipToken = {
     asset: 'USDC',
 }
 
-export function getDestinationAddress(address: string, chainId: ChainId) {
-    if (isBtcChainId(chainId)) {
-        return `0x${Buffer.from(address).toString('hex')}`
-    }
-    if (isSolanaChainId(chainId)) {
-        const encoder = getAddressEncoder()
-        return `0x${Buffer.from(encoder.encode(address as Address)).toString('hex')}`
-    }
-    throw new Error(`Unknown chain ${chainId}`)
-}
-
 export function getChainFlipFee(includedFees: QuoteResponse['quote']['includedFees']) {
     const SOL = GAS_TOKEN[ChainId.SOLANA_MAINNET]
     const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
