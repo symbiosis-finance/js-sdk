@@ -1,8 +1,6 @@
-import { Address, getAddressEncoder } from '@solana/addresses'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 
 import { ChainId } from '../../../constants'
-import { isBtcChainId, isSolanaChainId } from '../../chainUtils'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import { ChainFlipAssetId, ChainFlipChainId, ChainFlipToken } from './types'
 
