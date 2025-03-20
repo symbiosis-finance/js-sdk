@@ -84,13 +84,13 @@ export const config: Config = {
             oracle: '0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514',
             generalPurpose: false,
         },
-        {
-            // PINEYE
-            chainId: ChainId.BOBA_BNB,
-            address: '0xD122cD767d076B77a873Ca1CDEeE74f2552B367A',
-            oracle: '0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D',
-            generalPurpose: false,
-        },
+        // {
+        //     // PINEYE
+        //     chainId: ChainId.BOBA_BNB,
+        //     address: '0xD122cD767d076B77a873Ca1CDEeE74f2552B367A',
+        //     oracle: '0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D',
+        //     generalPurpose: false,
+        // },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -348,17 +348,17 @@ export const config: Config = {
                         small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
                     },
                 },
-                {
-                    name: 'PinEye',
-                    symbol: 'PINEYE',
-                    address: '0x4b3a2187648902082db0a44e8235d57F3f23DD10',
-                    chainId: ChainId.BSC_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                    },
-                },
+                // {
+                //     name: 'PinEye',
+                //     symbol: 'PINEYE',
+                //     address: '0x4b3a2187648902082db0a44e8235d57F3f23DD10',
+                //     chainId: ChainId.BSC_MAINNET,
+                //     decimals: 18,
+                //     icons: {
+                //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
+                //         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
+                //     },
+                // },
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
             dexFee: 25,
@@ -1766,17 +1766,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
                     },
                 },
-                {
-                    name: 'PinEye',
-                    symbol: 'PINEYE',
-                    address: '0x0d2d353642cFFC051A2694C51B6C00e787EB4590',
-                    chainId: ChainId.TON_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                    },
-                },
+                // {
+                //     name: 'PinEye',
+                //     symbol: 'PINEYE',
+                //     address: '0x0d2d353642cFFC051A2694C51B6C00e787EB4590',
+                //     chainId: ChainId.TON_MAINNET,
+                //     decimals: 9,
+                //     icons: {
+                //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
+                //         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
+                //     },
+                // },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
