@@ -56,6 +56,10 @@ const TON_ADDRESSES_MAP = [
         evm: '0x744a45f2b710aa4234b89adb630e99d79b01bd4f',
         ton: 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO', // Ston.fi
     },
+    {
+        evm: '0x0d2d353642cFFC051A2694C51B6C00e787EB4590',
+        ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU', // PINEYE
+    },
 ]
 
 export function getTonTokenAddress(address: string, isStonFi: boolean = false): string {
