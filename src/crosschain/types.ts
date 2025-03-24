@@ -40,6 +40,7 @@ export type ChainConfig = {
     portal: string
     fabric: string
     tonPortal?: string
+    partnerFeeCollector?: string
 }
 
 export type AdvisorConfig = {
@@ -126,6 +127,7 @@ export interface SwapExactInParams {
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
+    partnerAddress?: string
 }
 
 export type BtcTransactionData = {

@@ -6,14 +6,14 @@ import { onchainSwap } from '../onchainSwap'
 import { tronAddressToEvm } from '../../chainUtils'
 import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../../chainUtils/btc'
 import { Error, ErrorCode } from '../../error'
-import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
+import { FeeCollector__factory, MulticallRouterV2__factory, PartnerFeeCollector__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { Symbiosis } from '../../symbiosis'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
 // TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut, to, from } = params
+    const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
 
     const network = BTC_NETWORKS[tokenOut.chainId]
     if (!network) {
@@ -73,23 +73,36 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         value = BigNumber.from(swapCall.value).add(fee).toString()
     }
 
-    const burnCall = await getBurnCall({
+    const calls: Call[] = [swapCall]
+
+    let burnCallAmountIn = new TokenAmount(syBtc, swapCall.amountOut.raw)
+
+    const partnerFeeCall = await getPartnerFeeCall({
         symbiosis,
         amountIn: new TokenAmount(syBtc, swapCall.amountOut.raw),
+        partnerAddress,
+    })
+
+    if (partnerFeeCall) {
+        calls.push(partnerFeeCall)
+        burnCallAmountIn = new TokenAmount(syBtc, partnerFeeCall.amountOut.raw)
+    }
+
+    const burnCall = await getBurnCall({
+        symbiosis,
+        amountIn: burnCallAmountIn,
         tokenOut,
         bitcoinAddress,
     })
+    calls.push(burnCall)
 
     const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
         inTokenAmount.raw.toString(),
-        [swapCall.data, burnCall.data],
-        [swapCall.to, burnCall.to],
-        [
-            swapCall.amountIn.token.isNative ? AddressZero : swapCall.amountIn.token.address,
-            burnCall.amountIn.token.address,
-        ],
-        [swapCall.offset, burnCall.offset],
-        [swapCall.amountIn.token.isNative, burnCall.amountIn.token.isNative],
+        [...calls.map((i) => i.data)],
+        [...calls.map((i) => i.to)],
+        [...calls.map((i) => (i.amountIn.token.isNative ? AddressZero : i.amountIn.token.address))],
+        [...calls.map((i) => i.offset)],
+        [...calls.map((i) => i.amountIn.token.isNative)],
         from,
     ])
 
@@ -151,10 +164,7 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
         data = result.transactionRequest.data as BytesLike
         routerAddress = result.transactionRequest.to as string
     } else {
-        // BTC
-        value = ''
-        data = ''
-        routerAddress = ''
+        throw new Error('Swap call is possible on EVM or Tron chains')
     }
 
     return {
@@ -168,6 +178,71 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
         data,
         value,
         offset: 0,
+    }
+}
+
+async function getPartnerFeeCall({
+    symbiosis,
+    amountIn,
+    partnerAddress,
+}: {
+    symbiosis: Symbiosis
+    amountIn: TokenAmount
+    partnerAddress?: string
+}): Promise<Call | undefined> {
+    const token = amountIn.token
+    const { chainId } = token
+    const partnerFeeCollectorAddress = symbiosis.chainConfig(chainId).partnerFeeCollector
+    if (!partnerFeeCollectorAddress || !partnerAddress) {
+        return
+    }
+    const partnerFeeCollector = PartnerFeeCollector__factory.connect(
+        partnerFeeCollectorAddress,
+        symbiosis.getProvider(chainId)
+    )
+    const WAD = BigNumber.from(10).pow(18)
+    const { isActive, feeRate } = await symbiosis.cache.get(
+        ['partnerFeeCollector', partnerFeeCollectorAddress, chainId.toString(), partnerAddress],
+        () => partnerFeeCollector.callStatic.partners(partnerAddress),
+        60 * 60 // 1 hour
+    )
+    if (!isActive || feeRate.isZero()) {
+        return
+    }
+    const fixedFee = await symbiosis.cache.get(
+        ['partnerFeeCollector', partnerFeeCollectorAddress, chainId.toString(), partnerAddress, token.address],
+        () => partnerFeeCollector.callStatic.stableFees(partnerAddress, token.address),
+        60 * 60 // 1 hour
+    )
+
+    const amountInBn = BigNumber.from(amountIn.raw.toString())
+    const percentageFee = amountInBn.mul(feeRate).div(WAD)
+    const totalFee = percentageFee.add(fixedFee)
+
+    const fee = new TokenAmount(amountIn.token, totalFee.toString())
+    const amountOut = new TokenAmount(amountIn.token, amountInBn.sub(totalFee).toString())
+
+    const data = partnerFeeCollector.interface.encodeFunctionData('collectFee', [
+        amountIn.raw.toString(),
+        amountIn.token.address,
+        partnerAddress,
+    ])
+
+    return {
+        amountIn,
+        amountOut,
+        to: partnerFeeCollectorAddress,
+        data,
+        value: '0',
+        offset: 36,
+        fees: [
+            {
+                provider: 'symbiosis',
+                description: 'Partner fee',
+                value: fee,
+            },
+        ],
+        routes: [],
     }
 }
 
