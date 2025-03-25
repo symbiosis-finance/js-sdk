@@ -2,703 +2,513 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
-import { Listener, Provider } from "@ethersproject/providers";
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+    BaseContract,
+    BigNumber,
+    BigNumberish,
+    BytesLike,
+    CallOverrides,
+    ContractTransaction,
+    Overrides,
+    PopulatedTransaction,
+    Signer,
+    utils,
+} from 'ethers'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import { Listener, Provider } from '@ethersproject/providers'
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface PartnerFeeCollectorInterface extends utils.Interface {
-  contractName: "PartnerFeeCollector";
-  functions: {
-    "WAD()": FunctionFragment;
-    "activatePartner(address,uint256)": FunctionFragment;
-    "changeDefaultPartner(address,uint256)": FunctionFragment;
-    "claimFee(address)": FunctionFragment;
-    "collectFee(uint256,address,address)": FunctionFragment;
-    "collectedFees(address,address)": FunctionFragment;
-    "deactivatePartner(address)": FunctionFragment;
-    "defaultPartner()": FunctionFragment;
-    "initialize(address,uint256)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "partners(address)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "setFeeRate(address,uint256)": FunctionFragment;
-    "setStableFee(address,address,uint256)": FunctionFragment;
-    "stableFees(address,address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-  };
+    contractName: 'PartnerFeeCollector'
+    functions: {
+        'WAD()': FunctionFragment
+        'activatePartner(address,uint256)': FunctionFragment
+        'changeDefaultPartner(address,uint256)': FunctionFragment
+        'claimFee(address)': FunctionFragment
+        'collectFee(uint256,address,address)': FunctionFragment
+        'collectedFees(address,address)': FunctionFragment
+        'deactivatePartner(address)': FunctionFragment
+        'defaultPartner()': FunctionFragment
+        'fixedFee(address,address)': FunctionFragment
+        'initialize(address,uint256)': FunctionFragment
+        'owner()': FunctionFragment
+        'partners(address)': FunctionFragment
+        'renounceOwnership()': FunctionFragment
+        'setFeeRate(address,uint256)': FunctionFragment
+        'setFixedFee(address,address,uint256)': FunctionFragment
+        'transferOwnership(address)': FunctionFragment
+    }
 
-  encodeFunctionData(functionFragment: "WAD", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "activatePartner",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeDefaultPartner",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "claimFee", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "collectFee",
-    values: [BigNumberish, string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collectedFees",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deactivatePartner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "defaultPartner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "partners", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFeeRate",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStableFee",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stableFees",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
+    encodeFunctionData(functionFragment: 'WAD', values?: undefined): string
+    encodeFunctionData(functionFragment: 'activatePartner', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'changeDefaultPartner', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'claimFee', values: [string]): string
+    encodeFunctionData(functionFragment: 'collectFee', values: [BigNumberish, string, string]): string
+    encodeFunctionData(functionFragment: 'collectedFees', values: [string, string]): string
+    encodeFunctionData(functionFragment: 'deactivatePartner', values: [string]): string
+    encodeFunctionData(functionFragment: 'defaultPartner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'fixedFee', values: [string, string]): string
+    encodeFunctionData(functionFragment: 'initialize', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    encodeFunctionData(functionFragment: 'partners', values: [string]): string
+    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
+    encodeFunctionData(functionFragment: 'setFeeRate', values: [string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setFixedFee', values: [string, string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
 
-  decodeFunctionResult(functionFragment: "WAD", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "activatePartner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeDefaultPartner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "claimFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "collectFee", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "collectedFees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "deactivatePartner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "defaultPartner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "partners", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setFeeRate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setStableFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "stableFees", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
+    decodeFunctionResult(functionFragment: 'WAD', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'activatePartner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'changeDefaultPartner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'claimFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'collectFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'collectedFees', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'deactivatePartner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'defaultPartner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'fixedFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'partners', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFeeRate', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFixedFee', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
 
-  events: {
-    "FeeCollected(address,address,uint256,uint256)": EventFragment;
-    "FeesClaimed(address,address,uint256)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "PartnerActivated(address,uint256)": EventFragment;
-    "PartnerDeactivated(address)": EventFragment;
-    "PartnerFeeRateUpdated(address,uint256)": EventFragment;
-    "PartnerStableFeeUpdated(address,address,uint256)": EventFragment;
-  };
+    events: {
+        'FeeClaimed(address,address,uint256)': EventFragment
+        'FeeCollected(address,address,uint256,uint256)': EventFragment
+        'OwnershipTransferred(address,address)': EventFragment
+        'PartnerActivated(address,uint256)': EventFragment
+        'PartnerDeactivated(address)': EventFragment
+        'PartnerFeeRateUpdated(address,uint256)': EventFragment
+        'PartnerFixedFeeUpdated(address,address,uint256)': EventFragment
+    }
 
-  getEvent(nameOrSignatureOrTopic: "FeeCollected"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesClaimed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PartnerActivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PartnerDeactivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PartnerFeeRateUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PartnerStableFeeUpdated"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: 'FeeClaimed'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'FeeCollected'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'PartnerActivated'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'PartnerDeactivated'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'PartnerFeeRateUpdated'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'PartnerFixedFeeUpdated'): EventFragment
 }
 
+export type FeeClaimedEvent = TypedEvent<
+    [string, string, BigNumber],
+    { partner: string; token: string; amount: BigNumber }
+>
+
+export type FeeClaimedEventFilter = TypedEventFilter<FeeClaimedEvent>
+
 export type FeeCollectedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
-  { token: string; partner: string; amount: BigNumber; fee: BigNumber }
->;
+    [string, string, BigNumber, BigNumber],
+    { partner: string; token: string; amount: BigNumber; fee: BigNumber }
+>
 
-export type FeeCollectedEventFilter = TypedEventFilter<FeeCollectedEvent>;
+export type FeeCollectedEventFilter = TypedEventFilter<FeeCollectedEvent>
 
-export type FeesClaimedEvent = TypedEvent<
-  [string, string, BigNumber],
-  { partner: string; token: string; amount: BigNumber }
->;
+export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
 
-export type FeesClaimedEventFilter = TypedEventFilter<FeesClaimedEvent>;
+export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
 
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
+export type PartnerActivatedEvent = TypedEvent<[string, BigNumber], { partner: string; feeRate: BigNumber }>
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
+export type PartnerActivatedEventFilter = TypedEventFilter<PartnerActivatedEvent>
 
-export type PartnerActivatedEvent = TypedEvent<
-  [string, BigNumber],
-  { partner: string; feeRate: BigNumber }
->;
+export type PartnerDeactivatedEvent = TypedEvent<[string], { partner: string }>
 
-export type PartnerActivatedEventFilter =
-  TypedEventFilter<PartnerActivatedEvent>;
+export type PartnerDeactivatedEventFilter = TypedEventFilter<PartnerDeactivatedEvent>
 
-export type PartnerDeactivatedEvent = TypedEvent<[string], { partner: string }>;
+export type PartnerFeeRateUpdatedEvent = TypedEvent<[string, BigNumber], { partner: string; feeRate: BigNumber }>
 
-export type PartnerDeactivatedEventFilter =
-  TypedEventFilter<PartnerDeactivatedEvent>;
+export type PartnerFeeRateUpdatedEventFilter = TypedEventFilter<PartnerFeeRateUpdatedEvent>
 
-export type PartnerFeeRateUpdatedEvent = TypedEvent<
-  [string, BigNumber],
-  { partner: string; feeRate: BigNumber }
->;
+export type PartnerFixedFeeUpdatedEvent = TypedEvent<
+    [string, string, BigNumber],
+    { partner: string; token: string; fee: BigNumber }
+>
 
-export type PartnerFeeRateUpdatedEventFilter =
-  TypedEventFilter<PartnerFeeRateUpdatedEvent>;
-
-export type PartnerStableFeeUpdatedEvent = TypedEvent<
-  [string, string, BigNumber],
-  { partner: string; token: string; fee: BigNumber }
->;
-
-export type PartnerStableFeeUpdatedEventFilter =
-  TypedEventFilter<PartnerStableFeeUpdatedEvent>;
+export type PartnerFixedFeeUpdatedEventFilter = TypedEventFilter<PartnerFixedFeeUpdatedEvent>
 
 export interface PartnerFeeCollector extends BaseContract {
-  contractName: "PartnerFeeCollector";
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+    contractName: 'PartnerFeeCollector'
+    connect(signerOrProvider: Signer | Provider | string): this
+    attach(addressOrName: string): this
+    deployed(): Promise<this>
 
-  interface: PartnerFeeCollectorInterface;
+    interface: PartnerFeeCollectorInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    queryFilter<TEvent extends TypedEvent>(
+        event: TypedEventFilter<TEvent>,
+        fromBlockOrBlockhash?: string | number | undefined,
+        toBlock?: string | number | undefined
+    ): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
+    listeners(eventName?: string): Array<Listener>
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+    removeAllListeners(eventName?: string): this
+    off: OnEvent<this>
+    on: OnEvent<this>
+    once: OnEvent<this>
+    removeListener: OnEvent<this>
 
-  functions: {
-    WAD(overrides?: CallOverrides): Promise<[BigNumber]>;
+    functions: {
+        WAD(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        activatePartner(
+            partner: string,
+            feeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        changeDefaultPartner(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        claimFee(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        collectFee(
+            amount: BigNumberish,
+            token: string,
+            partner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        collectedFees(arg0: string, arg1: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        deactivatePartner(
+            partner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        defaultPartner(overrides?: CallOverrides): Promise<[string]>
+
+        fixedFee(arg0: string, arg1: string, overrides?: CallOverrides): Promise<[BigNumber]>
+
+        initialize(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        owner(overrides?: CallOverrides): Promise<[string]>
+
+        partners(
+            arg0: string,
+            overrides?: CallOverrides
+        ): Promise<[boolean, BigNumber] & { isActive: boolean; feeRate: BigNumber }>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+
+        setFeeRate(
+            partner: string,
+            feeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setFixedFee(
+            partner: string,
+            token: string,
+            newFixedFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+    }
+
+    WAD(overrides?: CallOverrides): Promise<BigNumber>
 
     activatePartner(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        partner: string,
+        feeRate: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     changeDefaultPartner(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _defaultPartner: string,
+        _defaultFeeRate: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    claimFee(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    claimFee(token: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     collectFee(
-      amount: BigNumberish,
-      token: string,
-      partner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        amount: BigNumberish,
+        token: string,
+        partner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    collectedFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    collectedFees(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
 
     deactivatePartner(
-      partner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        partner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    defaultPartner(overrides?: CallOverrides): Promise<[string]>;
+    defaultPartner(overrides?: CallOverrides): Promise<string>
+
+    fixedFee(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
 
     initialize(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        _defaultPartner: string,
+        _defaultFeeRate: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    owner(overrides?: CallOverrides): Promise<string>
 
     partners(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, BigNumber] & { isActive: boolean; feeRate: BigNumber }
-    >;
+        arg0: string,
+        overrides?: CallOverrides
+    ): Promise<[boolean, BigNumber] & { isActive: boolean; feeRate: BigNumber }>
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
     setFeeRate(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+        partner: string,
+        feeRate: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
-    setStableFee(
-      partner: string,
-      token: string,
-      stableFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    stableFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    setFixedFee(
+        partner: string,
+        token: string,
+        newFixedFee: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  WAD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  activatePartner(
-    partner: string,
-    feeRate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  changeDefaultPartner(
-    _defaultPartner: string,
-    _defaultFeeRate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  claimFee(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  collectFee(
-    amount: BigNumberish,
-    token: string,
-    partner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  collectedFees(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  deactivatePartner(
-    partner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  defaultPartner(overrides?: CallOverrides): Promise<string>;
-
-  initialize(
-    _defaultPartner: string,
-    _defaultFeeRate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  partners(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<[boolean, BigNumber] & { isActive: boolean; feeRate: BigNumber }>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setFeeRate(
-    partner: string,
-    feeRate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setStableFee(
-    partner: string,
-    token: string,
-    stableFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  stableFees(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    WAD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    activatePartner(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    changeDefaultPartner(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    claimFee(token: string, overrides?: CallOverrides): Promise<void>;
-
-    collectFee(
-      amount: BigNumberish,
-      token: string,
-      partner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    collectedFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    deactivatePartner(
-      partner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    defaultPartner(overrides?: CallOverrides): Promise<string>;
-
-    initialize(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    partners(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, BigNumber] & { isActive: boolean; feeRate: BigNumber }
-    >;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    setFeeRate(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setStableFee(
-      partner: string,
-      token: string,
-      stableFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    stableFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
-
-  filters: {
-    "FeeCollected(address,address,uint256,uint256)"(
-      token?: string | null,
-      partner?: string | null,
-      amount?: null,
-      fee?: null
-    ): FeeCollectedEventFilter;
-    FeeCollected(
-      token?: string | null,
-      partner?: string | null,
-      amount?: null,
-      fee?: null
-    ): FeeCollectedEventFilter;
-
-    "FeesClaimed(address,address,uint256)"(
-      partner?: string | null,
-      token?: null,
-      amount?: null
-    ): FeesClaimedEventFilter;
-    FeesClaimed(
-      partner?: string | null,
-      token?: null,
-      amount?: null
-    ): FeesClaimedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-
-    "PartnerActivated(address,uint256)"(
-      partner?: string | null,
-      feeRate?: null
-    ): PartnerActivatedEventFilter;
-    PartnerActivated(
-      partner?: string | null,
-      feeRate?: null
-    ): PartnerActivatedEventFilter;
-
-    "PartnerDeactivated(address)"(
-      partner?: string | null
-    ): PartnerDeactivatedEventFilter;
-    PartnerDeactivated(partner?: string | null): PartnerDeactivatedEventFilter;
-
-    "PartnerFeeRateUpdated(address,uint256)"(
-      partner?: string | null,
-      feeRate?: null
-    ): PartnerFeeRateUpdatedEventFilter;
-    PartnerFeeRateUpdated(
-      partner?: string | null,
-      feeRate?: null
-    ): PartnerFeeRateUpdatedEventFilter;
-
-    "PartnerStableFeeUpdated(address,address,uint256)"(
-      partner?: string | null,
-      token?: string | null,
-      fee?: null
-    ): PartnerStableFeeUpdatedEventFilter;
-    PartnerStableFeeUpdated(
-      partner?: string | null,
-      token?: string | null,
-      fee?: null
-    ): PartnerStableFeeUpdatedEventFilter;
-  };
-
-  estimateGas: {
-    WAD(overrides?: CallOverrides): Promise<BigNumber>;
-
-    activatePartner(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    changeDefaultPartner(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    claimFee(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collectFee(
-      amount: BigNumberish,
-      token: string,
-      partner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collectedFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    deactivatePartner(
-      partner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    defaultPartner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    initialize(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    partners(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setFeeRate(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setStableFee(
-      partner: string,
-      token: string,
-      stableFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    stableFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    WAD(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    activatePartner(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeDefaultPartner(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    claimFee(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collectFee(
-      amount: BigNumberish,
-      token: string,
-      partner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collectedFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    deactivatePartner(
-      partner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    defaultPartner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    initialize(
-      _defaultPartner: string,
-      _defaultFeeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    partners(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setFeeRate(
-      partner: string,
-      feeRate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setStableFee(
-      partner: string,
-      token: string,
-      stableFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    stableFees(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+        newOwner: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    callStatic: {
+        WAD(overrides?: CallOverrides): Promise<BigNumber>
+
+        activatePartner(partner: string, feeRate: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        changeDefaultPartner(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
+
+        claimFee(token: string, overrides?: CallOverrides): Promise<void>
+
+        collectFee(amount: BigNumberish, token: string, partner: string, overrides?: CallOverrides): Promise<void>
+
+        collectedFees(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        deactivatePartner(partner: string, overrides?: CallOverrides): Promise<void>
+
+        defaultPartner(overrides?: CallOverrides): Promise<string>
+
+        fixedFee(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        initialize(_defaultPartner: string, _defaultFeeRate: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        owner(overrides?: CallOverrides): Promise<string>
+
+        partners(
+            arg0: string,
+            overrides?: CallOverrides
+        ): Promise<[boolean, BigNumber] & { isActive: boolean; feeRate: BigNumber }>
+
+        renounceOwnership(overrides?: CallOverrides): Promise<void>
+
+        setFeeRate(partner: string, feeRate: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        setFixedFee(partner: string, token: string, newFixedFee: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+    }
+
+    filters: {
+        'FeeClaimed(address,address,uint256)'(
+            partner?: string | null,
+            token?: null,
+            amount?: null
+        ): FeeClaimedEventFilter
+        FeeClaimed(partner?: string | null, token?: null, amount?: null): FeeClaimedEventFilter
+
+        'FeeCollected(address,address,uint256,uint256)'(
+            partner?: string | null,
+            token?: string | null,
+            amount?: null,
+            fee?: null
+        ): FeeCollectedEventFilter
+        FeeCollected(partner?: string | null, token?: string | null, amount?: null, fee?: null): FeeCollectedEventFilter
+
+        'OwnershipTransferred(address,address)'(
+            previousOwner?: string | null,
+            newOwner?: string | null
+        ): OwnershipTransferredEventFilter
+        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+
+        'PartnerActivated(address,uint256)'(partner?: string | null, feeRate?: null): PartnerActivatedEventFilter
+        PartnerActivated(partner?: string | null, feeRate?: null): PartnerActivatedEventFilter
+
+        'PartnerDeactivated(address)'(partner?: string | null): PartnerDeactivatedEventFilter
+        PartnerDeactivated(partner?: string | null): PartnerDeactivatedEventFilter
+
+        'PartnerFeeRateUpdated(address,uint256)'(
+            partner?: string | null,
+            feeRate?: null
+        ): PartnerFeeRateUpdatedEventFilter
+        PartnerFeeRateUpdated(partner?: string | null, feeRate?: null): PartnerFeeRateUpdatedEventFilter
+
+        'PartnerFixedFeeUpdated(address,address,uint256)'(
+            partner?: string | null,
+            token?: string | null,
+            fee?: null
+        ): PartnerFixedFeeUpdatedEventFilter
+        PartnerFixedFeeUpdated(
+            partner?: string | null,
+            token?: string | null,
+            fee?: null
+        ): PartnerFixedFeeUpdatedEventFilter
+    }
+
+    estimateGas: {
+        WAD(overrides?: CallOverrides): Promise<BigNumber>
+
+        activatePartner(
+            partner: string,
+            feeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        changeDefaultPartner(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        claimFee(token: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        collectFee(
+            amount: BigNumberish,
+            token: string,
+            partner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        collectedFees(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        deactivatePartner(
+            partner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        defaultPartner(overrides?: CallOverrides): Promise<BigNumber>
+
+        fixedFee(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        initialize(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        owner(overrides?: CallOverrides): Promise<BigNumber>
+
+        partners(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+
+        setFeeRate(
+            partner: string,
+            feeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setFixedFee(
+            partner: string,
+            token: string,
+            newFixedFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+    }
+
+    populateTransaction: {
+        WAD(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        activatePartner(
+            partner: string,
+            feeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        changeDefaultPartner(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        claimFee(
+            token: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        collectFee(
+            amount: BigNumberish,
+            token: string,
+            partner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        collectedFees(arg0: string, arg1: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        deactivatePartner(
+            partner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        defaultPartner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        fixedFee(arg0: string, arg1: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        initialize(
+            _defaultPartner: string,
+            _defaultFeeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        partners(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+
+        setFeeRate(
+            partner: string,
+            feeRate: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setFixedFee(
+            partner: string,
+            token: string,
+            newFixedFee: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferOwnership(
+            newOwner: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+    }
 }

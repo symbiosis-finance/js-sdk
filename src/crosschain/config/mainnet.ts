@@ -246,7 +246,7 @@ export const config: Config = {
             rpc: 'https://bsc-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/bsc', 'https://binance.llamarpc.com'],
             filterBlockOffset: 1000,
-            partnerFeeCollector: '0xfA8075668C56088130CAC2208620fC13ea72b20e',
+            partnerFeeCollector: '0xc6a2C8D42086B13A577e1c300663451Ae405b767',
             stables: [
                 {
                     name: 'USD Coin',

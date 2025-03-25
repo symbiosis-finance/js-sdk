@@ -121,8 +121,8 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         priceImpact: swapCall.priceImpact!,
         amountInUsd: swapCall.amountInUsd!,
         approveTo: approveAddress,
-        routes: [...swapCall.routes, ...burnCall.routes],
-        fees: [...swapCall.fees, ...burnCall.fees],
+        routes: [...calls.map((i) => i.routes).flat()],
+        fees: [...calls.map((i) => i.fees).flat()],
         kind: 'crosschain-swap',
         transactionType: 'evm',
         transactionRequest: {
@@ -211,7 +211,7 @@ async function getPartnerFeeCall({
     }
     const fixedFee = await symbiosis.cache.get(
         ['partnerFeeCollector', partnerFeeCollectorAddress, chainId.toString(), partnerAddress, token.address],
-        () => partnerFeeCollector.callStatic.stableFees(partnerAddress, token.address),
+        () => partnerFeeCollector.callStatic.fixedFee(partnerAddress, token.address),
         60 * 60 // 1 hour
     )
 

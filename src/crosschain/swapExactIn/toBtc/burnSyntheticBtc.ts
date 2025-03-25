@@ -43,7 +43,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             )
             combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
                 const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
-                const { from, slippage, deadline } = context
+                const { from, slippage, deadline, partnerAddress } = context
 
                 const promise = zappingBtc.exactIn({
                     tokenAmountIn,
@@ -54,6 +54,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                     deadline,
                     transitTokenIn,
                     transitTokenOut,
+                    partnerAddress,
                 })
                 promises.push(promise)
             })
