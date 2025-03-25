@@ -5,7 +5,7 @@ import { OneInchProtocols } from '../trade/oneInchTrade'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../chainUtils/btc'
-import { SwapExactInResult } from '../types'
+import { FeeItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
 import { BigNumber } from 'ethers'
 
@@ -140,7 +140,7 @@ export class ZappingBtc extends BaseSwapping {
                 provider: 'symbiosis',
                 description: 'BTC fee',
                 value: this.minBtcFee,
-            },
+            } as FeeItem,
         ]
 
         if (partnerFee) {
@@ -148,7 +148,7 @@ export class ZappingBtc extends BaseSwapping {
                 provider: 'symbiosis',
                 description: 'Partner fee',
                 value: partnerFee,
-            })
+            } as FeeItem)
         }
 
         return {
