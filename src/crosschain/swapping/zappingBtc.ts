@@ -95,6 +95,7 @@ export class ZappingBtc extends BaseSwapping {
 
         let amountOut = result.tokenAmountOut
         let amountOutMin = result.tokenAmountOutMin
+        let partnerFee = new TokenAmount(syBtc, '0')
 
         if (this.partnerFeeCollector && partnerAddress) {
             const WAD = BigNumber.from(10).pow(18)
@@ -120,6 +121,7 @@ export class ZappingBtc extends BaseSwapping {
                 const amountInBn = BigNumber.from(amountIn.raw.toString())
                 const percentageFee = amountInBn.mul(feeRate).div(WAD)
                 const totalFee = percentageFee.add(fixedFee)
+                partnerFee = new TokenAmount(amountIn.token, totalFee.toString())
                 amountOut = new TokenAmount(amountIn.token, amountInBn.sub(totalFee).toString())
 
                 const amountInMinBn = BigNumber.from(result.tokenAmountOutMin.raw.toString())
@@ -132,18 +134,28 @@ export class ZappingBtc extends BaseSwapping {
         const tokenAmountOut = new TokenAmount(btc, amountOut.subtract(this.minBtcFee).raw)
         const tokenAmountOutMin = new TokenAmount(btc, amountOutMin.subtract(this.minBtcFee).raw)
 
+        const fees = [
+            ...result.fees,
+            {
+                provider: 'symbiosis',
+                description: 'BTC fee',
+                value: this.minBtcFee,
+            },
+        ]
+
+        if (partnerFee) {
+            fees.push({
+                provider: 'symbiosis',
+                description: 'Partner fee',
+                value: partnerFee,
+            })
+        }
+
         return {
             ...result,
             tokenAmountOut,
             tokenAmountOutMin,
-            fees: [
-                ...result.fees,
-                {
-                    provider: 'symbiosis',
-                    description: 'BTC fee',
-                    value: this.minBtcFee,
-                },
-            ],
+            fees,
             routes: [
                 ...result.routes,
                 {
