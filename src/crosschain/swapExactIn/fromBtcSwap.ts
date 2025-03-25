@@ -1,14 +1,15 @@
+import { TransactionRequest } from '@ethersproject/providers'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { BigNumber } from 'ethers'
+import { isAddress } from 'ethers/lib/utils'
+
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload } from '../types'
 import { Percent, TokenAmount } from '../../entities'
 
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
 import { isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory, SymBtc, SymBtc__factory } from '../contracts'
-import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { BigNumber } from 'ethers'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
@@ -33,10 +34,14 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 type BuildTailResult = SwapExactInResult & { tail: string }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, selectMode } = context
+    const { tokenAmountIn, selectMode, refundAddress } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         throw new Error(`tokenAmountIn is not BTC token`)
+    }
+
+    if (!refundAddress) {
+        throw new Error(`Refund address is required`)
     }
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -51,7 +56,11 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 }
 
 async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcConfig): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, to } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress } = context
+
+    if (!refundAddress) {
+        throw new Error(`Refund address is required`)
+    }
 
     const { btc, symBtc, forwarderUrl } = btcConfig
 
@@ -113,6 +122,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
                 tail,
                 to,
                 amount: btcAmountRaw,
+                refundAddress,
             })
         )
         if (btcForwarderFee.greaterThan(syBtcAmount)) {
@@ -145,6 +155,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
                 tail: initialTail,
                 to,
                 amount: btcAmountRaw,
+                refundAddress,
             })
         )
         btcForwarderFeeMax = new TokenAmount(
@@ -175,6 +186,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         to,
         feeLimit: btcForwarderFeeMax.raw.toString(),
         amount: btcAmountRaw,
+        refundAddress,
     })
 
     return {
@@ -339,6 +351,7 @@ type EstimateWrapParams = {
     tail: string
     to: string
     amount: string
+    refundAddress: string
 }
 
 async function estimateWrap({
@@ -348,6 +361,7 @@ async function estimateWrap({
     tail,
     to,
     amount,
+    refundAddress,
 }: EstimateWrapParams): Promise<string> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
@@ -364,6 +378,7 @@ async function estimateWrap({
             tail: encodeTail(tail),
             to,
         },
+        refundAddress,
     })
 
     const requestOptions = {
@@ -386,6 +401,7 @@ async function estimateWrap({
 
 type WrapParams = EstimateWrapParams & {
     feeLimit: string
+    refundAddress: string
 }
 
 async function wrap({
@@ -396,6 +412,7 @@ async function wrap({
     to,
     feeLimit,
     amount,
+    refundAddress,
 }: WrapParams): Promise<DepositAddressResult> {
     const raw = JSON.stringify({
         info: {
@@ -407,6 +424,7 @@ async function wrap({
         },
         feeLimit: Number(feeLimit),
         amount: Number(amount),
+        refundAddress,
     })
 
     const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)

@@ -126,6 +126,7 @@ export interface SwapExactInParams {
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
+    refundAddress?: string
 }
 
 export type BtcTransactionData = {
