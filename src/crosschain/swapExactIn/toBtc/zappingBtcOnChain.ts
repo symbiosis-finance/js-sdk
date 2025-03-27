@@ -1,15 +1,15 @@
-import {BigNumber, BytesLike, utils} from 'ethers'
-import {AddressZero} from '@ethersproject/constants/lib/addresses'
-import {ZERO_FEE_COLLECTOR_ADDRESSES} from '../../swapExactIn'
-import {Percent, Token, TokenAmount} from '../../../entities'
-import {onchainSwap} from '../onchainSwap'
-import {tronAddressToEvm} from '../../chainUtils'
-import {BTC_NETWORKS, getPkScript, getToBtcFee} from '../../chainUtils/btc'
-import {Error, ErrorCode} from '../../error'
-import {FeeCollector__factory, MulticallRouterV2__factory, PartnerFeeCollector__factory} from '../../contracts'
-import {BIPS_BASE, MULTICALL_ROUTER_V2} from '../../constants'
-import {Symbiosis} from '../../symbiosis'
-import {FeeItem, RouteItem, SwapExactInParams, SwapExactInResult} from '../../types' // TODO extract base function for making multicall swap inside onchain fee collector
+import { BigNumber, BytesLike, utils } from 'ethers'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../../swapExactIn'
+import { Percent, Token, TokenAmount } from '../../../entities'
+import { onchainSwap } from '../onchainSwap'
+import { tronAddressToEvm } from '../../chainUtils'
+import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../../chainUtils/btc'
+import { Error, ErrorCode } from '../../error'
+import { FeeCollector__factory, MulticallRouterV2__factory, PartnerFeeCollector__factory } from '../../contracts'
+import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
+import { Symbiosis } from '../../symbiosis'
+import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types' // TODO extract base function for making multicall swap inside onchain fee collector
 
 // TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
@@ -115,14 +115,13 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     ])
 
     return {
-        tokenAmountOut: burnCall.amountOut,
-        tokenAmountOutMin: burnCall.amountOutMin,
-        priceImpact: swapCall.priceImpact,
-        amountInUsd: swapCall.amountInUsd,
-        approveTo,
-        routes: [...calls.map((i) => i.routes).flat()],
-        fees: [...calls.map((i) => i.fees).flat()],
         kind: 'crosschain-swap',
+        tokenAmountOut: burnCall.amountOut,
+        tokenAmountOutMin: burnCall.amountOut,
+        priceImpact: swapCall.priceImpact,
+        approveTo,
+        routes: calls.map((i) => i.routes).flat(),
+        fees: calls.map((i) => i.fees).flat(),
         transactionType: 'evm',
         transactionRequest: {
             chainId,
@@ -136,7 +135,6 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
 export type Call = {
     amountIn: TokenAmount
     amountOut: TokenAmount
-    amountOutMin: TokenAmount
     to: string
     data: BytesLike
     value: string
@@ -147,7 +145,7 @@ export type Call = {
 
 export type SwapCall = Call & {
     priceImpact: Percent
-    amountInUsd: TokenAmount
+    amountOutMin: TokenAmount
 }
 
 async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
@@ -170,18 +168,10 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
         throw new Error('Swap call is possible on EVM or Tron chains')
     }
 
-    const {
-        routes,
-        fees,
-        tokenAmountOut: amountOut,
-        tokenAmountOutMin: amountOutMin,
-        priceImpact,
-        amountInUsd,
-    } = result
+    const { routes, fees, tokenAmountOut: amountOut, tokenAmountOutMin: amountOutMin, priceImpact } = result
 
     return {
         priceImpact: priceImpact || new Percent('0', BIPS_BASE),
-        amountInUsd: amountInUsd || params.tokenAmountIn,
         // Call type params
         amountIn: params.tokenAmountIn,
         amountOut,
@@ -245,7 +235,6 @@ export async function getPartnerFeeCall({
     return {
         amountIn,
         amountOut,
-        amountOutMin: amountOut,
         to: partnerFeeCollectorAddress,
         data,
         value: '0',
@@ -286,7 +275,6 @@ async function getBurnCall({
     return {
         amountIn,
         amountOut,
-        amountOutMin: amountOut,
         to: synthesis.address,
         data,
         value: '0',

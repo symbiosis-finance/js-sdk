@@ -16,7 +16,7 @@ import { BTC_CONFIGS, BtcConfig } from '../chainUtils/btc'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
-import { Call, getPartnerFeeCall } from './toBtc/zappingBtcOnChain'
+import {Call, getPartnerFeeCall, SwapCall} from './toBtc/zappingBtcOnChain'
 import { BIPS_BASE } from '../constants'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -266,7 +266,7 @@ async function buildTail(
     return { tail, fees, routes, priceImpact, amountOut, amountOutMin }
 }
 
-async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<Call[]> {
+async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<SwapCall[]> {
     const { to, tokenOut, symbiosis } = context
 
     if (syBtcAmount.token.equals(tokenOut)) {
@@ -296,11 +296,12 @@ async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAm
                 },
             ],
             value: '0',
+            priceImpact: aggregatorTrade.priceImpact,
         },
     ]
 }
 
-async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<Call[]> {
+async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<SwapCall[]> {
     const { to } = context
 
     const swapExactInResult = await bestPoolSwapping({
@@ -314,50 +315,43 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
+    const calls: SwapCall[] = []
+    let amountIn = syBtcAmount
+    let amountOut = syBtcAmount
+    let amountOutMin = syBtcAmount
     if (swapExactInResult.tradeA) {
-        return [
-            {
-                to: tx.firstDexRouter,
-                data: tx.firstSwapCalldata,
-                offset: swapExactInResult.tradeA.callDataOffset,
-                fees: swapExactInResult.tradeA.fees || [],
-                routes: [
-                    {
-                        provider: swapExactInResult.tradeA.tradeType,
-                        tokens: [swapExactInResult.tradeA.tokenAmountIn.token, swapExactInResult.tradeA.tokenOut],
-                    },
-                ],
-                value: '0',
-                amountIn: swapExactInResult.tradeA.tokenAmountIn,
-                amountOut: swapExactInResult.tradeA.amountOut,
-                amountOutMin: swapExactInResult.tradeA.amountOutMin,
-            },
-            {
-                to: tx.relayRecipient,
-                data: tx.otherSideCalldata,
-                offset: 100, // metaSynthesize struct
-                fees: [],
-                routes: [],
-                value: '0',
-                amountIn: swapExactInResult.tradeA.amountOut,
-                amountOut: swapExactInResult.tradeA.amountOut,
-                amountOutMin: swapExactInResult.tradeA.amountOutMin,
-            },
-        ]
-    }
-    return [
-        {
-            to: tx.relayRecipient,
-            data: tx.otherSideCalldata,
-            offset: 100, // metaSynthesize struct
+        calls.push({
+            to: tx.firstDexRouter,
+            data: tx.firstSwapCalldata,
+            offset: swapExactInResult.tradeA.callDataOffset,
             fees: [],
             routes: [],
             value: '0',
-            amountIn: syBtcAmount,
-            amountOut: syBtcAmount,
-            amountOutMin: syBtcAmount,
-        },
-    ]
+            amountIn: swapExactInResult.tradeA.tokenAmountIn,
+            amountOut: swapExactInResult.tradeA.amountOut,
+            amountOutMin: swapExactInResult.tradeA.amountOutMin,
+            priceImpact: new Percent('0', BIPS_BASE),
+        })
+
+        amountIn = swapExactInResult.tradeA.amountOut
+        amountOut = swapExactInResult.tokenAmountOut
+        amountOutMin = swapExactInResult.tokenAmountOutMin
+    }
+
+    calls.push({
+        to: tx.relayRecipient,
+        data: tx.otherSideCalldata,
+        offset: 100, // metaSynthesize struct
+        fees: swapExactInResult.fees,
+        routes: swapExactInResult.routes,
+        value: '0',
+        amountIn,
+        amountOut,
+        amountOutMin,
+        priceImpact: swapExactInResult.priceImpact,
+    })
+
+    return calls
 }
 
 interface DepositAddressResult {
