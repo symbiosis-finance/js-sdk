@@ -76,7 +76,6 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
 
     const fees: FeeItem[] = []
 
-    debugger
     // >> PORTAL FEE
     const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.cache)
     const btcPortalFee = new TokenAmount(syBtc, btcPortalFeeRaw)
@@ -250,7 +249,7 @@ async function buildTail(
 
     const multicallRouter = symbiosis.multicallRouter(chainId)
     const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
-        syBtcAmount.raw.toString(),
+        '0', // will be patched
         [...calls.map((i) => i.data)],
         [...calls.map((i) => i.to)],
         [...calls.map((i) => (i.amountIn.token.isNative ? AddressZero : i.amountIn.token.address))],
@@ -268,28 +267,19 @@ async function buildTail(
 }
 
 async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<Call[]> {
-    const { to, tokenOut, deadline, symbiosis } = context
+    const { to, tokenOut, symbiosis } = context
 
     if (syBtcAmount.token.equals(tokenOut)) {
         return []
     }
     const aggregatorTrade = new AggregatorTrade({
         ...context,
+        tokenAmountIn: syBtcAmount,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
-        tokenAmountIn: syBtcAmount,
-        deadline,
     })
     await aggregatorTrade.init()
 
-    console.log({
-        'aggregatorTrade.amountOut': `${aggregatorTrade.amountOut.toSignificant()} ${
-            aggregatorTrade.amountOut.token.symbol
-        }`,
-        'aggregatorTrade.amountOutMin': `${aggregatorTrade.amountOutMin.toSignificant()} ${
-            aggregatorTrade.amountOutMin.token.symbol
-        }`,
-    })
     return [
         {
             to: aggregatorTrade.routerAddress,
@@ -306,7 +296,7 @@ async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAm
                 },
             ],
             value: '0',
-        } as Call,
+        },
     ]
 }
 
@@ -325,14 +315,18 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
     if (swapExactInResult.tradeA) {
-        console.log('approvedTokens', tx.approvedTokens)
         return [
             {
                 to: tx.firstDexRouter,
                 data: tx.firstSwapCalldata,
                 offset: swapExactInResult.tradeA.callDataOffset,
-                fees: [],
-                routes: [],
+                fees: swapExactInResult.tradeA.fees || [],
+                routes: [
+                    {
+                        provider: swapExactInResult.tradeA.tradeType,
+                        tokens: [swapExactInResult.tradeA.tokenAmountIn.token, swapExactInResult.tradeA.tokenOut],
+                    },
+                ],
                 value: '0',
                 amountIn: swapExactInResult.tradeA.tokenAmountIn,
                 amountOut: swapExactInResult.tradeA.amountOut,
