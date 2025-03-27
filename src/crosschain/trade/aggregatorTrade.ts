@@ -7,6 +7,7 @@ import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { utils } from 'ethers'
+import { FeeItem } from '../types'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -218,6 +219,11 @@ export class AggregatorTrade extends SymbiosisTrade {
     public applyAmountIn(newAmount: TokenAmount) {
         this.assertTradeInitialized('applyAmountIn')
         this.trade.applyAmountIn(newAmount)
+    }
+
+    get fees(): FeeItem[] | undefined {
+        this.assertTradeInitialized('fees')
+        return this.trade.fees
     }
 
     private assertTradeInitialized(msg?: string): asserts this is {

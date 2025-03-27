@@ -1,15 +1,15 @@
-import { BigNumber, BytesLike, utils } from 'ethers'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../../swapExactIn'
-import { Percent, Token, TokenAmount } from '../../../entities'
-import { onchainSwap } from '../onchainSwap'
-import { tronAddressToEvm } from '../../chainUtils'
-import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../../chainUtils/btc'
-import { Error, ErrorCode } from '../../error'
-import { FeeCollector__factory, MulticallRouterV2__factory, PartnerFeeCollector__factory } from '../../contracts'
-import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
-import { Symbiosis } from '../../symbiosis'
-import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import {BigNumber, BytesLike, utils} from 'ethers'
+import {AddressZero} from '@ethersproject/constants/lib/addresses'
+import {ZERO_FEE_COLLECTOR_ADDRESSES} from '../../swapExactIn'
+import {Percent, Token, TokenAmount} from '../../../entities'
+import {onchainSwap} from '../onchainSwap'
+import {tronAddressToEvm} from '../../chainUtils'
+import {BTC_NETWORKS, getPkScript, getToBtcFee} from '../../chainUtils/btc'
+import {Error, ErrorCode} from '../../error'
+import {FeeCollector__factory, MulticallRouterV2__factory, PartnerFeeCollector__factory} from '../../contracts'
+import {BIPS_BASE, MULTICALL_ROUTER_V2} from '../../constants'
+import {Symbiosis} from '../../symbiosis'
+import {FeeItem, RouteItem, SwapExactInParams, SwapExactInResult} from '../../types' // TODO extract base function for making multicall swap inside onchain fee collector
 
 // TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
@@ -36,7 +36,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
     const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const [fee, approveAddress] = await symbiosis.cache.get(
+    const [fee, approveTo] = await symbiosis.cache.get(
         ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
         () => {
             return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
@@ -114,13 +114,12 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         multicallCalldata,
     ])
 
-    const tokenAmountOut = burnCall.amountOut
     return {
-        tokenAmountOut,
-        tokenAmountOutMin: tokenAmountOut,
-        priceImpact: swapCall.priceImpact!,
-        amountInUsd: swapCall.amountInUsd!,
-        approveTo: approveAddress,
+        tokenAmountOut: burnCall.amountOut,
+        tokenAmountOutMin: burnCall.amountOutMin,
+        priceImpact: swapCall.priceImpact,
+        amountInUsd: swapCall.amountInUsd,
+        approveTo,
         routes: [...calls.map((i) => i.routes).flat()],
         fees: [...calls.map((i) => i.fees).flat()],
         kind: 'crosschain-swap',
@@ -134,9 +133,10 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     }
 }
 
-type Call = {
+export type Call = {
     amountIn: TokenAmount
     amountOut: TokenAmount
+    amountOutMin: TokenAmount
     to: string
     data: BytesLike
     value: string
@@ -145,7 +145,10 @@ type Call = {
     routes: RouteItem[]
 }
 
-type SwapCall = Call & SwapExactInResult
+export type SwapCall = Call & {
+    priceImpact: Percent
+    amountInUsd: TokenAmount
+}
 
 async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
     // Get onchain swap transaction what will be executed by fee collector
@@ -167,21 +170,32 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
         throw new Error('Swap call is possible on EVM or Tron chains')
     }
 
+    const {
+        routes,
+        fees,
+        tokenAmountOut: amountOut,
+        tokenAmountOutMin: amountOutMin,
+        priceImpact,
+        amountInUsd,
+    } = result
+
     return {
-        ...result,
-        priceImpact: result.priceImpact || new Percent('0', BIPS_BASE),
-        amountInUsd: result.amountInUsd || params.tokenAmountIn,
+        priceImpact: priceImpact || new Percent('0', BIPS_BASE),
+        amountInUsd: amountInUsd || params.tokenAmountIn,
         // Call type params
         amountIn: params.tokenAmountIn,
-        amountOut: result.tokenAmountOut,
+        amountOut,
+        amountOutMin,
         to: routerAddress,
         data,
         value,
         offset: 0,
+        routes,
+        fees,
     }
 }
 
-async function getPartnerFeeCall({
+export async function getPartnerFeeCall({
     symbiosis,
     amountIn,
     partnerAddress,
@@ -231,6 +245,7 @@ async function getPartnerFeeCall({
     return {
         amountIn,
         amountOut,
+        amountOutMin: amountOut,
         to: partnerFeeCollectorAddress,
         data,
         value: '0',
@@ -267,9 +282,11 @@ async function getBurnCall({
         symbiosis.clientId, // _clientID
     ])
 
+    const amountOut = new TokenAmount(tokenOut, amountIn.subtract(fee).raw)
     return {
         amountIn,
-        amountOut: new TokenAmount(tokenOut, amountIn.subtract(fee).raw),
+        amountOut,
+        amountOutMin: amountOut,
         to: synthesis.address,
         data,
         value: '0',
