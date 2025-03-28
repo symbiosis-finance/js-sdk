@@ -1,4 +1,4 @@
-import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
+import { FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
 import { Percent, TokenAmount } from '../../entities'
 
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
@@ -16,8 +16,8 @@ import { BTC_CONFIGS, BtcConfig } from '../chainUtils/btc'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
-import {Call, getPartnerFeeCall, SwapCall} from './toBtc/zappingBtcOnChain'
 import { BIPS_BASE } from '../constants'
+import { getPartnerFeeCall } from '../partnerFee/partnerFeeCall'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -114,20 +114,17 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
 
     const { tail: initialTail } = await buildTail(context, btcConfig, syBtcAmount)
 
-    const btcForwarderFee = new TokenAmount(
-        syBtc,
-        await estimateWrap({
-            forwarderUrl,
-            portalFee: btcPortalFeeRaw,
-            stableBridgingFee: mintFeeRaw,
-            tail: initialTail,
-            to,
-            amount: btcAmountRaw,
-        })
-    )
+    const btcForwarderFeeRaw = await estimateWrap({
+        forwarderUrl,
+        portalFee: btcPortalFeeRaw,
+        stableBridgingFee: mintFeeRaw,
+        tail: initialTail,
+        to,
+        amount: btcAmountRaw,
+    })
     const btcForwarderFeeMax = new TokenAmount(
-        btcForwarderFee.token,
-        BigNumber.from(btcForwarderFee.raw.toString()).mul(200).div(100).toString() // +100% of fee
+        syBtc,
+        btcForwarderFeeRaw.mul(200).div(100).toString() // +100% of fee
     )
     if (btcForwarderFeeMax.greaterThan(syBtcAmount)) {
         throw new Error(
@@ -142,9 +139,9 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         value: new TokenAmount(btc, btcForwarderFeeMax.raw),
     })
 
-    console.log('Should be minted not less that', `${syBtcAmount.subtract(btcForwarderFeeMax).toSignificant()} syBTC`)
+    console.log('Should be minted not less than', `${syBtcAmount.subtract(btcForwarderFeeMax).toSignificant()} syBTC`)
 
-    // TODO patch amounts instead calling quote again
+    // >> TODO patch amounts instead calling quote again
     const {
         tail,
         fees: swapFees,
@@ -153,18 +150,8 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         priceImpact,
         routes,
     } = await buildTail(context, btcConfig, syBtcAmount)
-    for (const swapFee of swapFees) {
-        fees.push(swapFee)
-        if (swapFee.value.token.equals(syBtcAmount.token)) {
-            if (swapFee.value.greaterThan(syBtcAmount)) {
-                throw new Error(
-                    `Amount ${syBtcAmount.toSignificant()} less than swapFee ${swapFee.value.toSignificant()}`,
-                    ErrorCode.AMOUNT_LESS_THAN_FEE
-                )
-            }
-            syBtcAmount = syBtcAmount.subtract(swapFee.value)
-        }
-    }
+    fees.push(...swapFees)
+    // <<
 
     const { validUntil, revealAddress } = await wrap({
         forwarderUrl,
@@ -217,7 +204,7 @@ async function buildTail(
     const { symBtc } = btcConfig
     const chainId = syBtcAmount.token.chainId
 
-    const calls: Call[] = []
+    const calls: MultiCallItem[] = []
     const fees: FeeItem[] = []
     const routes: RouteItem[] = []
 
@@ -266,7 +253,7 @@ async function buildTail(
     return { tail, fees, routes, priceImpact, amountOut, amountOutMin }
 }
 
-async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<SwapCall[]> {
+async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<MultiCallItem[]> {
     const { to, tokenOut, symbiosis } = context
 
     if (syBtcAmount.token.equals(tokenOut)) {
@@ -301,7 +288,7 @@ async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAm
     ]
 }
 
-async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<SwapCall[]> {
+async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<MultiCallItem[]> {
     const { to } = context
 
     const swapExactInResult = await bestPoolSwapping({
@@ -315,7 +302,7 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const calls: SwapCall[] = []
+    const calls: MultiCallItem[] = []
     let amountIn = syBtcAmount
     let amountOut = syBtcAmount
     let amountOutMin = syBtcAmount
@@ -376,7 +363,7 @@ async function estimateWrap({
     tail,
     to,
     amount,
-}: EstimateWrapParams): Promise<string> {
+}: EstimateWrapParams): Promise<BigNumber> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
@@ -409,7 +396,7 @@ async function estimateWrap({
 
     const { revealTxFee } = await response.json()
 
-    return revealTxFee
+    return BigNumber.from(revealTxFee)
 }
 
 type WrapParams = EstimateWrapParams & {

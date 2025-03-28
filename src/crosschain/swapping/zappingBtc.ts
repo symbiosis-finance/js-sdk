@@ -1,13 +1,14 @@
 import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 import { BaseSwapping } from './baseSwapping'
-import { MulticallRouter, PartnerFeeCollector, PartnerFeeCollector__factory, Synthesis } from '../contracts'
+import { MulticallRouter, Synthesis } from '../contracts'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../chainUtils/btc'
-import { FeeItem, SwapExactInResult } from '../types'
+import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
-import { BigNumber } from 'ethers'
+import { getPartnerFeeCall } from '../partnerFee/partnerFeeCall'
+import { BytesLike } from 'ethers'
 
 initEccLib(ecc)
 
@@ -32,12 +33,19 @@ export class ZappingBtc extends BaseSwapping {
     protected minBtcFee!: TokenAmount
     protected synthesis!: Synthesis
     protected evmTo!: string
-    protected partnerFeeCollector?: PartnerFeeCollector
+    protected partnerFeeCall?: MultiCallItem
     protected partnerAddress?: string
 
     protected async doPostTransitAction(): Promise<void> {
         const amount = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
+        const amountMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
         this.minBtcFee = await getToBtcFee(amount, this.synthesis, this.symbiosis.cache)
+        this.partnerFeeCall = await getPartnerFeeCall({
+            symbiosis: this.symbiosis,
+            amountIn: amount,
+            amountInMin: amountMin,
+            partnerAddress: this.partnerAddress,
+        })
     }
 
     public async exactIn({
@@ -67,14 +75,6 @@ export class ZappingBtc extends BaseSwapping {
 
         this.partnerAddress = partnerAddress
 
-        const partnerFeeCollectorAddress = this.symbiosis.chainConfig(chainId).partnerFeeCollector
-        if (partnerFeeCollectorAddress) {
-            this.partnerFeeCollector = PartnerFeeCollector__factory.connect(
-                partnerFeeCollectorAddress,
-                this.symbiosis.getProvider(chainId)
-            )
-        }
-
         this.multicallRouter = this.symbiosis.multicallRouter(chainId)
         this.synthesis = this.symbiosis.synthesis(chainId)
 
@@ -97,37 +97,11 @@ export class ZappingBtc extends BaseSwapping {
         let amountOutMin = result.tokenAmountOutMin
         let partnerFee = new TokenAmount(syBtc, '0')
 
-        if (this.partnerFeeCollector && partnerAddress) {
-            const WAD = BigNumber.from(10).pow(18)
-            const { isActive, feeRate } = await this.symbiosis.cache.get(
-                ['partnerFeeCollector', this.partnerFeeCollector.address, chainId.toString(), partnerAddress],
-                () => this.partnerFeeCollector!.callStatic.partners(partnerAddress),
-                60 * 60 // 1 hour
-            )
-            if (isActive && !feeRate.isZero()) {
-                const fixedFee = await this.symbiosis.cache.get(
-                    [
-                        'partnerFeeCollector',
-                        this.partnerFeeCollector.address,
-                        chainId.toString(),
-                        partnerAddress,
-                        syBtc.address,
-                    ],
-                    () => this.partnerFeeCollector!.callStatic.fixedFee(partnerAddress, syBtc.address),
-                    60 * 60 // 1 hour
-                )
-
-                const amountIn = result.tokenAmountOut
-                const amountInBn = BigNumber.from(amountIn.raw.toString())
-                const percentageFee = amountInBn.mul(feeRate).div(WAD)
-                const totalFee = percentageFee.add(fixedFee)
-                partnerFee = new TokenAmount(amountIn.token, totalFee.toString())
-                amountOut = new TokenAmount(amountIn.token, amountInBn.sub(totalFee).toString())
-
-                const amountInMinBn = BigNumber.from(result.tokenAmountOutMin.raw.toString())
-                const percentageFeeMin = amountInMinBn.mul(feeRate).div(WAD)
-                const totalFeeMin = percentageFeeMin.add(fixedFee)
-                amountOutMin = new TokenAmount(amountIn.token, amountInMinBn.sub(totalFeeMin).toString())
+        if (this.partnerFeeCall) {
+            amountOut = this.partnerFeeCall.amountOut
+            amountOutMin = this.partnerFeeCall.amountOutMin
+            if (this.partnerFeeCall.fees.length > 0) {
+                partnerFee = this.partnerFeeCall.fees[0].value
             }
         }
 
@@ -183,7 +157,7 @@ export class ZappingBtc extends BaseSwapping {
     }
 
     private buildMulticall() {
-        const callDatas = []
+        const callDatas: BytesLike[] = []
         const receiveSides = []
         const path = []
         const offsets = []
@@ -196,17 +170,11 @@ export class ZappingBtc extends BaseSwapping {
             offsets.push(this.tradeC.callDataOffset!)
         }
 
-        if (this.partnerFeeCollector && this.partnerAddress) {
-            const data = this.partnerFeeCollector.interface.encodeFunctionData('collectFee', [
-                '0', // _amount will be patched
-                this.syBtc.address,
-                this.partnerAddress,
-            ])
-
-            callDatas.push(data)
-            receiveSides.push(this.partnerFeeCollector.address)
-            path.push(this.syBtc.address)
-            offsets.push(36)
+        if (this.partnerFeeCall) {
+            callDatas.push(this.partnerFeeCall.data)
+            receiveSides.push(this.partnerFeeCall.to)
+            path.push(this.partnerFeeCall.amountIn.token.address)
+            offsets.push(this.partnerFeeCall.offset)
         }
 
         const burnCalldata = this.synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
