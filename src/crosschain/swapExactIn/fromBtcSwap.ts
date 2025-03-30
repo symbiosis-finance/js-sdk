@@ -126,7 +126,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         syBtc,
         btcForwarderFeeRaw.mul(200).div(100).toString() // +100% of fee
     )
-    if (btcForwarderFeeMax.greaterThan(syBtcAmount)) {
+    if (syBtcAmount.lessThan(btcForwarderFeeMax)) {
         throw new Error(
             `Amount ${syBtcAmount.toSignificant()} less than btcForwarderFeeMax ${btcForwarderFeeMax.toSignificant()}`,
             ErrorCode.AMOUNT_LESS_THAN_FEE
@@ -139,7 +139,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         value: new TokenAmount(btc, btcForwarderFeeMax.raw),
     })
 
-    console.log('Should be minted not less than', `${syBtcAmount.subtract(btcForwarderFeeMax).toSignificant()} syBTC`)
+    console.log('Should be minted not less than', `${syBtcAmount.toSignificant()} syBTC`)
 
     // >> TODO patch amounts instead calling quote again
     const {
@@ -304,8 +304,6 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
 
     const calls: MultiCallItem[] = []
     let amountIn = syBtcAmount
-    let amountOut = syBtcAmount
-    let amountOutMin = syBtcAmount
     if (swapExactInResult.tradeA) {
         calls.push({
             to: tx.firstDexRouter,
@@ -314,15 +312,13 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
             fees: [],
             routes: [],
             value: '0',
-            amountIn: swapExactInResult.tradeA.tokenAmountIn,
+            amountIn,
             amountOut: swapExactInResult.tradeA.amountOut,
             amountOutMin: swapExactInResult.tradeA.amountOutMin,
             priceImpact: new Percent('0', BIPS_BASE),
         })
 
         amountIn = swapExactInResult.tradeA.amountOut
-        amountOut = swapExactInResult.tokenAmountOut
-        amountOutMin = swapExactInResult.tokenAmountOutMin
     }
 
     calls.push({
@@ -333,8 +329,8 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
         routes: swapExactInResult.routes,
         value: '0',
         amountIn,
-        amountOut,
-        amountOutMin,
+        amountOut: swapExactInResult.tokenAmountOut,
+        amountOutMin: swapExactInResult.tokenAmountOutMin,
         priceImpact: swapExactInResult.priceImpact,
     })
 

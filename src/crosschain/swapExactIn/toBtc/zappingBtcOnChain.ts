@@ -60,6 +60,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     const calls: MultiCallItem[] = []
     let value = fee.toString()
     let burnCallAmountIn = tokenAmountIn
+    let burnCallAmountInMin = tokenAmountIn
     let priceImpact = new Percent('0', BIPS_BASE)
     if (!tokenAmountIn.token.equals(syBtc)) {
         const swapCall = await getSwapCall({
@@ -70,6 +71,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         })
         calls.push(swapCall)
         burnCallAmountIn = swapCall.amountOut
+        burnCallAmountInMin = swapCall.amountOutMin
         priceImpact = swapCall.priceImpact
 
         if (swapCall.amountIn.token.isNative) {
@@ -84,17 +86,20 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     const partnerFeeCall = await getPartnerFeeCall({
         symbiosis,
         amountIn: burnCallAmountIn,
+        amountInMin: burnCallAmountInMin,
         partnerAddress,
     })
 
     if (partnerFeeCall) {
         calls.push(partnerFeeCall)
         burnCallAmountIn = partnerFeeCall.amountOut
+        burnCallAmountInMin = partnerFeeCall.amountOutMin
     }
 
     const burnCall = await getBurnCall({
         symbiosis,
         amountIn: burnCallAmountIn,
+        amountInMin: burnCallAmountInMin,
         tokenOut,
         bitcoinAddress,
     })
@@ -121,7 +126,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     return {
         kind: 'crosschain-swap',
         tokenAmountOut: burnCall.amountOut,
-        tokenAmountOutMin: burnCall.amountOut,
+        tokenAmountOutMin: burnCall.amountOutMin,
         priceImpact,
         approveTo,
         routes: calls.map((i) => i.routes).flat(),
@@ -175,11 +180,13 @@ async function getSwapCall(params: SwapExactInParams): Promise<MultiCallItem> {
 async function getBurnCall({
     symbiosis,
     amountIn,
+    amountInMin,
     tokenOut,
     bitcoinAddress,
 }: {
     symbiosis: Symbiosis
     amountIn: TokenAmount
+    amountInMin: TokenAmount
     tokenOut: Token
     bitcoinAddress: Buffer
 }): Promise<MultiCallItem> {
@@ -194,11 +201,12 @@ async function getBurnCall({
     ])
 
     const amountOut = new TokenAmount(tokenOut, amountIn.subtract(fee).raw)
+    const amountOutMin = new TokenAmount(tokenOut, amountInMin.subtract(fee).raw)
     return {
         priceImpact: new Percent('0', BIPS_BASE),
         amountIn,
         amountOut,
-        amountOutMin: amountOut,
+        amountOutMin,
         to: synthesis.address,
         data,
         value: '0',
