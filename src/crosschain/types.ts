@@ -8,6 +8,7 @@ import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
+import { BytesLike } from 'ethers'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -40,6 +41,7 @@ export type ChainConfig = {
     portal: string
     fabric: string
     tonPortal?: string
+    partnerFeeCollector?: string
 }
 
 export type AdvisorConfig = {
@@ -126,6 +128,7 @@ export interface SwapExactInParams {
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
+    partnerAddress?: string
 }
 
 export type BtcTransactionData = {
@@ -197,3 +200,16 @@ export type SwapExactInResult = {
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
 } & SwapExactInTransactionPayload
+
+export type MultiCallItem = {
+    to: string
+    data: BytesLike
+    offset: number
+    value: string
+    amountIn: TokenAmount // is used as approveToken as well
+    amountOut: TokenAmount
+    amountOutMin: TokenAmount
+    priceImpact: Percent
+    fees: FeeItem[]
+    routes: RouteItem[]
+}
