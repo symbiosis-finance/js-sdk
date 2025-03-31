@@ -8,7 +8,7 @@ import { Error, ErrorCode } from '../../error'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
-import { getChainFlipFee } from './utils'
+import {ChainFlipBrokerAccount, getChainFlipFee} from './utils'
 import { ChainFlipConfig } from './types'
 
 export interface ZappingChainFlipExactInParams {
@@ -69,6 +69,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                     refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
                     retryDurationBlocks: 100,
                 },
+                brokerAccount: ChainFlipBrokerAccount,
             })
         } catch (e) {
             console.error(e)
