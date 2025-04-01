@@ -17,7 +17,8 @@ import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { BIPS_BASE } from '../constants'
-import { getPartnerFeeCall } from '../partnerFee/partnerFeeCall'
+import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
+import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -217,6 +218,14 @@ async function buildTail(
         syBtcAmount = partnerFeeCall.amountOut // override
         calls.push(partnerFeeCall)
         fees.push(...partnerFeeCall.fees)
+    }
+    const volumeFeeCall = await getVolumeFeeCall({
+        amountIn: syBtcAmount,
+    })
+    if (volumeFeeCall) {
+        syBtcAmount = volumeFeeCall.amountOut // override
+        calls.push(volumeFeeCall)
+        fees.push(...volumeFeeCall.fees)
     }
 
     const isOnChain = tokenOut.chainId === chainId

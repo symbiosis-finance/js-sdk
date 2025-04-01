@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
-        "@chainflip/sdk": "~1.8.2",
+        "@chainflip/sdk": "~1.8.3",
         "@dedust/sdk": "^0.8.7",
         "@raydium-io/raydium-sdk-v2": "0.1.106-alpha",
         "@solana/addresses": "^2.0.0",

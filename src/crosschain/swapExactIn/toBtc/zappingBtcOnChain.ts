@@ -10,7 +10,8 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contrac
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { Symbiosis } from '../../symbiosis'
 import { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
-import { getPartnerFeeCall } from '../../partnerFee/partnerFeeCall' // TODO extract base function for making multicall swap inside onchain fee collector
+import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
+import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
@@ -59,8 +60,8 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
 
     const calls: MultiCallItem[] = []
     let value = fee.toString()
-    let burnCallAmountIn = tokenAmountIn
-    let burnCallAmountInMin = tokenAmountIn
+    let amountIn = tokenAmountIn
+    let amountInMin = tokenAmountIn
     let priceImpact = new Percent('0', BIPS_BASE)
     if (!tokenAmountIn.token.equals(syBtc)) {
         const swapCall = await getSwapCall({
@@ -70,8 +71,8 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
             to: multicallRouterAddress,
         })
         calls.push(swapCall)
-        burnCallAmountIn = swapCall.amountOut
-        burnCallAmountInMin = swapCall.amountOutMin
+        amountIn = swapCall.amountOut
+        amountInMin = swapCall.amountOutMin
         priceImpact = swapCall.priceImpact
 
         if (swapCall.amountIn.token.isNative) {
@@ -85,21 +86,30 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
 
     const partnerFeeCall = await getPartnerFeeCall({
         symbiosis,
-        amountIn: burnCallAmountIn,
-        amountInMin: burnCallAmountInMin,
+        amountIn,
+        amountInMin,
         partnerAddress,
     })
-
     if (partnerFeeCall) {
         calls.push(partnerFeeCall)
-        burnCallAmountIn = partnerFeeCall.amountOut
-        burnCallAmountInMin = partnerFeeCall.amountOutMin
+        amountIn = partnerFeeCall.amountOut
+        amountInMin = partnerFeeCall.amountOutMin
+    }
+
+    const volumeFeeCall = await getVolumeFeeCall({
+        amountIn,
+        amountInMin,
+    })
+    if (volumeFeeCall) {
+        calls.push(volumeFeeCall)
+        amountIn = volumeFeeCall.amountOut
+        amountInMin = volumeFeeCall.amountOutMin
     }
 
     const burnCall = await getBurnCall({
         symbiosis,
-        amountIn: burnCallAmountIn,
-        amountInMin: burnCallAmountInMin,
+        amountIn,
+        amountInMin,
         tokenOut,
         bitcoinAddress,
     })

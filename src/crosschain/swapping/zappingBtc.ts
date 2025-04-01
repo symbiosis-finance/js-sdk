@@ -7,8 +7,9 @@ import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../chainUtils/btc'
 import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
-import { getPartnerFeeCall } from '../partnerFee/partnerFeeCall'
+import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
+import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 
 initEccLib(ecc)
 
@@ -35,6 +36,7 @@ export class ZappingBtc extends BaseSwapping {
     protected evmTo!: string
     protected partnerFeeCall?: MultiCallItem
     protected partnerAddress?: string
+    protected volumeFeeCall?: MultiCallItem
 
     protected async doPostTransitAction(): Promise<void> {
         const amount = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
@@ -45,6 +47,10 @@ export class ZappingBtc extends BaseSwapping {
             amountIn: amount,
             amountInMin: amountMin,
             partnerAddress: this.partnerAddress,
+        })
+        this.volumeFeeCall = await getVolumeFeeCall({
+            amountIn: amount,
+            amountInMin: amountMin,
         })
     }
 
@@ -96,12 +102,19 @@ export class ZappingBtc extends BaseSwapping {
         let amountOut = result.tokenAmountOut
         let amountOutMin = result.tokenAmountOutMin
         let partnerFee = new TokenAmount(syBtc, '0')
-
         if (this.partnerFeeCall) {
             amountOut = this.partnerFeeCall.amountOut
             amountOutMin = this.partnerFeeCall.amountOutMin
             if (this.partnerFeeCall.fees.length > 0) {
                 partnerFee = this.partnerFeeCall.fees[0].value
+            }
+        }
+        let volumeFee = new TokenAmount(syBtc, '0')
+        if (this.volumeFeeCall) {
+            amountOut = this.volumeFeeCall.amountOut
+            amountOutMin = this.volumeFeeCall.amountOutMin
+            if (this.volumeFeeCall.fees.length > 0) {
+                volumeFee = this.volumeFeeCall.fees[0].value
             }
         }
 
@@ -122,6 +135,14 @@ export class ZappingBtc extends BaseSwapping {
                 provider: 'symbiosis',
                 description: 'Partner fee',
                 value: partnerFee,
+            } as FeeItem)
+        }
+
+        if (volumeFee) {
+            fees.push({
+                provider: 'symbiosis',
+                description: 'Volume fee',
+                value: volumeFee,
             } as FeeItem)
         }
 
@@ -175,6 +196,13 @@ export class ZappingBtc extends BaseSwapping {
             receiveSides.push(this.partnerFeeCall.to)
             path.push(this.partnerFeeCall.amountIn.token.address)
             offsets.push(this.partnerFeeCall.offset)
+        }
+
+        if (this.volumeFeeCall) {
+            callDatas.push(this.volumeFeeCall.data)
+            receiveSides.push(this.volumeFeeCall.to)
+            path.push(this.volumeFeeCall.amountIn.token.address)
+            offsets.push(this.volumeFeeCall.offset)
         }
 
         const burnCalldata = this.synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [

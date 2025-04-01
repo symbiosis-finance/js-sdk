@@ -11,7 +11,7 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contrac
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
-import {ChainFlipBrokerAccount, getChainFlipFee} from './utils'
+import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
 
 type MulticallItem = {
@@ -251,6 +251,7 @@ async function getDepositCall({
             retryDurationBlocks: 100,
         },
         brokerAccount: ChainFlipBrokerAccount,
+        brokerCommissionBps: ChainFlipBrokerFeeBps,
     })
     const { chain } = vaultSwapData
     if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
