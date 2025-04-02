@@ -85,11 +85,33 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
 
     const client = await symbiosis.getTonClient()
 
-    const tx = await longPolling<Transaction>({
+    const txRaw = await longPolling<{
+        block: {
+            workchain: number
+            seqno: number
+            shard: string
+            rootHash: string
+            fileHash: string
+        }
+        tx: Transaction
+    }>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(tonPortal), { limit: 10, archival: true })
-            return txs.find((tx) => {
-                return tx.outMessages.values().find((msg) => {
+            const lastBlock = await client.getLastBlock()
+            const accountInfo = await client.getAccount(lastBlock.last.seqno, Address.parse(tonPortal))
+
+            if (!accountInfo.account.last) {
+                return undefined
+            }
+
+            const txsRaw = await client.getAccountTransactions(
+                Address.parse(tonPortal),
+                BigInt(accountInfo.account.last.lt),
+                Buffer.from(accountInfo.account.last.hash, 'base64')
+            )
+
+            return txsRaw.find(({ tx }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                return Array.from(tx.outMessages).find(([_, msg]) => {
                     if (msg.info.type !== 'external-out') {
                         return false
                     }
@@ -108,5 +130,5 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
-    return tx.hash().toString('hex')
+    return txRaw.tx.hash().toString('hex')
 }

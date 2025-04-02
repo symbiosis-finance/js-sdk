@@ -31,7 +31,6 @@ export interface ChainFlipToken {
 }
 
 export interface ChainFlipConfig {
-    vaultAddress: string
     tokenIn: Token
     tokenOut: Token
     src: ChainFlipToken

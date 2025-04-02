@@ -1,10 +1,11 @@
-import { Address, getAddressEncoder } from '@solana/addresses'
 import { QuoteResponse } from '@chainflip/sdk/swap'
 
 import { ChainId } from '../../../constants'
-import { isBtcChainId, isSolanaChainId } from '../../chainUtils'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import { ChainFlipAssetId, ChainFlipChainId, ChainFlipToken } from './types'
+
+export const ChainFlipBrokerAccount = 'cFJZvt5AiEGwUiFFNxhDuLRcgC1WBR6tE7gaQQfe8dqbzoYkx'
+export const ChainFlipBrokerFeeBps = 10
 
 export const ARB_USDC = new Token({
     address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
@@ -42,17 +43,6 @@ export const CF_ETH_USDC: ChainFlipToken = {
     assetId: ChainFlipAssetId.USDC,
     chain: 'Ethereum',
     asset: 'USDC',
-}
-
-export function getDestinationAddress(address: string, chainId: ChainId) {
-    if (isBtcChainId(chainId)) {
-        return `0x${Buffer.from(address).toString('hex')}`
-    }
-    if (isSolanaChainId(chainId)) {
-        const encoder = getAddressEncoder()
-        return `0x${Buffer.from(encoder.encode(address as Address)).toString('hex')}`
-    }
-    throw new Error(`Unknown chain ${chainId}`)
 }
 
 export function getChainFlipFee(includedFees: QuoteResponse['quote']['includedFees']) {

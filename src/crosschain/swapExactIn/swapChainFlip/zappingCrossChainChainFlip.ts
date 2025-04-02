@@ -1,15 +1,14 @@
-import { QuoteResponse, SwapSDK } from '@chainflip/sdk/swap'
-import { BigNumber } from 'ethers'
+import { Quote, SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
 
 import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping'
-import { ChainFlipVault__factory, MulticallRouter } from '../../contracts'
+import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
 import { Error, ErrorCode } from '../../error'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
-import { getChainFlipFee, getDestinationAddress } from './utils'
+import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
 
 export interface ZappingChainFlipExactInParams {
@@ -24,33 +23,54 @@ export interface ZappingChainFlipExactInParams {
 
 export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
-    protected receiverAddress!: string
     protected chainFlipSdk: SwapSDK
-    protected quoteResponse!: QuoteResponse
+    protected chainFlipQuote!: Quote
+    protected chainFlipVaultSwapResponse!: VaultSwapResponse
     protected config!: ChainFlipConfig
     protected evmTo!: string
     protected dstAddress: string
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
-        const { symbiosis, to, tokenOut } = context
+        const { symbiosis, to } = context
         super(symbiosis, omniPoolConfig)
 
-        this.dstAddress = getDestinationAddress(to, tokenOut.chainId)
+        this.dstAddress = to
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
+            enabledFeatures: { dca: true },
         })
     }
 
     protected async doPostTransitAction() {
         const { src, dest } = this.config
         try {
-            this.quoteResponse = await this.chainFlipSdk.getQuote({
+            const { quotes } = await this.chainFlipSdk.getQuoteV2({
                 amount: this.transit.amountOut.raw.toString(),
                 srcChain: src.chain,
                 srcAsset: src.asset,
                 destChain: dest.chain,
                 destAsset: dest.asset,
+                isVaultSwap: true,
+            })
+            const quote = quotes.find((quote) => quote.type === 'REGULAR')
+            if (!quote) {
+                throw new Error('There is no REGULAR quote found')
+            }
+
+            this.chainFlipQuote = quote
+
+            // Encode vault swap transaction data
+            this.chainFlipVaultSwapResponse = await this.chainFlipSdk.encodeVaultSwapData({
+                quote,
+                destAddress: this.dstAddress,
+                fillOrKillParams: {
+                    slippageTolerancePercent: this.chainFlipQuote.recommendedSlippageTolerancePercent,
+                    refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+                    retryDurationBlocks: 100,
+                },
+                brokerAccount: ChainFlipBrokerAccount,
+                brokerCommissionBps: ChainFlipBrokerFeeBps,
             })
         } catch (e) {
             console.error(e)
@@ -93,7 +113,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             transitTokenOut,
         })
 
-        const { egressAmount, includedFees } = this.quoteResponse.quote
+        const { egressAmount, includedFees } = this.chainFlipQuote
         const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
         const amountOut = new TokenAmount(config.tokenOut, egressAmount)
 
@@ -159,20 +179,14 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             offsets.push(this.tradeC.callDataOffset!)
         }
 
-        const { dest, tokenIn, vaultAddress } = this.config
-
-        const chainFlipData = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
-            dest.chainId, // dstChain
-            this.dstAddress, // dstAddress
-            dest.assetId, // dstToken
-            tokenIn.address, // srcToken (Arbitrum.USDC address)
-            BigNumber.from(0), // amount (will be patched)
-            [], //cfParameters
-        ])
-
-        callDatas.push(chainFlipData)
-        receiveSides.push(vaultAddress)
-        path.push(tokenIn.address) // Arbitrum.USDC address
+        const { chain } = this.chainFlipVaultSwapResponse
+        if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
+            throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
+        }
+        const { calldata, to, sourceTokenAddress } = this.chainFlipVaultSwapResponse
+        callDatas.push(calldata)
+        receiveSides.push(to)
+        path.push(sourceTokenAddress!)
         offsets.push(164)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [

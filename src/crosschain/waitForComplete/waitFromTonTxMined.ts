@@ -10,7 +10,7 @@ class waitFromTonTxCompleteError extends Error {
     }
 }
 
-const TRANSFER_NOTIFICATION_OPCODE = '7362d09c'
+const TRANSFER_NOTIFICATION_OPCODE = 0x7362d09c
 
 export interface WaitFromTonTxMinedParams {
     symbiosis: Symbiosis
@@ -29,21 +29,34 @@ export async function waitFromTonTxMined({
 
     return await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
-            const txs = await client.getTransactions(Address.parse(contractAddress), {
-                limit: 10,
-                archival: true,
-            })
-            const filtered = txs.filter((tx) => {
-                if (tx.now < now) {
+            const lastBlock = await client.getLastBlock()
+            const accountInfo = await client.getAccount(lastBlock.last.seqno, Address.parse(contractAddress))
+
+            if (!accountInfo.account.last) {
+                return undefined
+            }
+
+            const txsRaw = await client.getAccountTransactions(
+                Address.parse(contractAddress),
+                BigInt(accountInfo.account.last.lt),
+                Buffer.from(accountInfo.account.last.hash, 'base64')
+            )
+
+            const filtered = txsRaw.filter((txRaw) => {
+                if (txRaw.tx.now < now) {
+                    return false
+                }
+
+                if (!txRaw.tx.inMessage?.body) {
                     return false
                 }
 
                 // 1. case for jetton transfer
-                const bodyInMsg = tx.inMessage?.body
+                const bodyInMsg = txRaw.tx.inMessage.body
 
                 if (bodyInMsg) {
                     const body = bodyInMsg.beginParse()
-                    const opcode = body.loadUint(32).toString(16)
+                    const opcode = body.loadUint(32)
 
                     if (opcode === TRANSFER_NOTIFICATION_OPCODE) {
                         body.loadUint(64) // query id skip
@@ -56,7 +69,13 @@ export async function waitFromTonTxMined({
                 }
 
                 // 2. case for TON transfer
-                const senderAddress = tx.inMessage?.info.src
+                const messageInfo = txRaw.tx.inMessage?.info
+
+                if (!messageInfo || messageInfo.type !== 'internal') {
+                    return false
+                }
+
+                const senderAddress = messageInfo.src
 
                 if (!Address.isAddress(senderAddress)) {
                     return false
@@ -64,7 +83,7 @@ export async function waitFromTonTxMined({
 
                 return Address.parse(address).equals(senderAddress)
             })
-            return filtered.length > 0 ? filtered[0] : undefined // is no reliable logic, we take just last sent tx
+            return filtered.length > 0 ? filtered[0].tx : undefined // is no reliable logic, we take just last sent tx
         },
         successCondition: (tx) => {
             return tx !== undefined

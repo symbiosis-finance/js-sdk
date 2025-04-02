@@ -9,11 +9,12 @@ import { Error, ErrorCode } from '../../error'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { Symbiosis } from '../../symbiosis'
-import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
+import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 
-// TODO extract base function for making multicall swap inside onchain fee collector
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut, to, from } = params
+    const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
 
     const network = BTC_NETWORKS[tokenOut.chainId]
     if (!network) {
@@ -36,7 +37,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
     const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const [fee, approveAddress] = await symbiosis.cache.get(
+    const [fee, approveTo] = await symbiosis.cache.get(
         ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
         () => {
             return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
@@ -57,39 +58,70 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
     }
 
-    const swapCall = await getSwapCall({
-        ...params,
-        tokenOut: syBtc,
-        from: multicallRouterAddress,
-        to: multicallRouterAddress,
-    })
-
+    const calls: MultiCallItem[] = []
     let value = fee.toString()
-    if (swapCall.amountIn.token.isNative) {
-        /**
-         * To maintain consistency with any potential fees charged by the aggregator,
-         * we calculate the total value by adding the fee to the value obtained from the aggregator.
-         */
-        value = BigNumber.from(swapCall.value).add(fee).toString()
+    let amountIn = tokenAmountIn
+    let amountInMin = tokenAmountIn
+    let priceImpact = new Percent('0', BIPS_BASE)
+    if (!tokenAmountIn.token.equals(syBtc)) {
+        const swapCall = await getSwapCall({
+            ...params,
+            tokenOut: syBtc,
+            from: multicallRouterAddress,
+            to: multicallRouterAddress,
+        })
+        calls.push(swapCall)
+        amountIn = swapCall.amountOut
+        amountInMin = swapCall.amountOutMin
+        priceImpact = swapCall.priceImpact
+
+        if (swapCall.amountIn.token.isNative) {
+            /**
+             * To maintain consistency with any potential fees charged by the aggregator,
+             * we calculate the total value by adding the fee to the value obtained from the aggregator.
+             */
+            value = BigNumber.from(swapCall.value).add(fee).toString()
+        }
+    }
+
+    const partnerFeeCall = await getPartnerFeeCall({
+        symbiosis,
+        amountIn,
+        amountInMin,
+        partnerAddress,
+    })
+    if (partnerFeeCall) {
+        calls.push(partnerFeeCall)
+        amountIn = partnerFeeCall.amountOut
+        amountInMin = partnerFeeCall.amountOutMin
+    }
+
+    const volumeFeeCall = await getVolumeFeeCall({
+        amountIn,
+        amountInMin,
+    })
+    if (volumeFeeCall) {
+        calls.push(volumeFeeCall)
+        amountIn = volumeFeeCall.amountOut
+        amountInMin = volumeFeeCall.amountOutMin
     }
 
     const burnCall = await getBurnCall({
         symbiosis,
-        amountIn: new TokenAmount(syBtc, swapCall.amountOut.raw),
+        amountIn,
+        amountInMin,
         tokenOut,
         bitcoinAddress,
     })
+    calls.push(burnCall)
 
     const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
         inTokenAmount.raw.toString(),
-        [swapCall.data, burnCall.data],
-        [swapCall.to, burnCall.to],
-        [
-            swapCall.amountIn.token.isNative ? AddressZero : swapCall.amountIn.token.address,
-            burnCall.amountIn.token.address,
-        ],
-        [swapCall.offset, burnCall.offset],
-        [swapCall.amountIn.token.isNative, burnCall.amountIn.token.isNative],
+        [...calls.map((i) => i.data)],
+        [...calls.map((i) => i.to)],
+        [...calls.map((i) => (i.amountIn.token.isNative ? AddressZero : i.amountIn.token.address))],
+        [...calls.map((i) => i.offset)],
+        [...calls.map((i) => i.amountIn.token.isNative)],
         from,
     ])
 
@@ -101,16 +133,14 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         multicallCalldata,
     ])
 
-    const tokenAmountOut = burnCall.amountOut
     return {
-        tokenAmountOut,
-        tokenAmountOutMin: tokenAmountOut,
-        priceImpact: swapCall.priceImpact!,
-        amountInUsd: swapCall.amountInUsd!,
-        approveTo: approveAddress,
-        routes: [...swapCall.routes, ...burnCall.routes],
-        fees: [...swapCall.fees, ...burnCall.fees],
         kind: 'crosschain-swap',
+        tokenAmountOut: burnCall.amountOut,
+        tokenAmountOutMin: burnCall.amountOutMin,
+        priceImpact,
+        approveTo,
+        routes: calls.map((i) => i.routes).flat(),
+        fees: calls.map((i) => i.fees).flat(),
         transactionType: 'evm',
         transactionRequest: {
             chainId,
@@ -121,20 +151,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     }
 }
 
-type Call = {
-    amountIn: TokenAmount
-    amountOut: TokenAmount
-    to: string
-    data: BytesLike
-    value: string
-    offset: number
-    fees: FeeItem[]
-    routes: RouteItem[]
-}
-
-type SwapCall = Call & SwapExactInResult
-
-async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
+async function getSwapCall(params: SwapExactInParams): Promise<MultiCallItem> {
     // Get onchain swap transaction what will be executed by fee collector
     const result = await onchainSwap(params)
 
@@ -151,37 +168,38 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
         data = result.transactionRequest.data as BytesLike
         routerAddress = result.transactionRequest.to as string
     } else {
-        // BTC
-        value = ''
-        data = ''
-        routerAddress = ''
+        throw new Error('Swap call is possible on EVM or Tron chains')
     }
 
+    const { routes, fees, tokenAmountOut: amountOut, tokenAmountOutMin: amountOutMin, priceImpact } = result
+
     return {
-        ...result,
-        priceImpact: result.priceImpact || new Percent('0', BIPS_BASE),
-        amountInUsd: result.amountInUsd || params.tokenAmountIn,
-        // Call type params
+        priceImpact,
         amountIn: params.tokenAmountIn,
-        amountOut: result.tokenAmountOut,
+        amountOut,
+        amountOutMin,
         to: routerAddress,
         data,
         value,
         offset: 0,
+        routes,
+        fees,
     }
 }
 
 async function getBurnCall({
     symbiosis,
     amountIn,
+    amountInMin,
     tokenOut,
     bitcoinAddress,
 }: {
     symbiosis: Symbiosis
     amountIn: TokenAmount
+    amountInMin: TokenAmount
     tokenOut: Token
     bitcoinAddress: Buffer
-}): Promise<Call> {
+}): Promise<MultiCallItem> {
     const synthesis = symbiosis.synthesis(amountIn.token.chainId)
     const fee = await getToBtcFee(amountIn, synthesis, symbiosis.cache)
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
@@ -192,9 +210,13 @@ async function getBurnCall({
         symbiosis.clientId, // _clientID
     ])
 
+    const amountOut = new TokenAmount(tokenOut, amountIn.subtract(fee).raw)
+    const amountOutMin = new TokenAmount(tokenOut, amountInMin.subtract(fee).raw)
     return {
+        priceImpact: new Percent('0', BIPS_BASE),
         amountIn,
-        amountOut: new TokenAmount(tokenOut, amountIn.subtract(fee).raw),
+        amountOut,
+        amountOutMin,
         to: synthesis.address,
         data,
         value: '0',

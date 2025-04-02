@@ -114,16 +114,7 @@ describe('Transit#ExtraFee', async () => {
         expect(quoteSpy).toHaveBeenCalledOnce()
         expect(createOctoPoolTradeSpy).toHaveBeenCalledOnce()
         expect(transit.calls()).toBeDefined()
-        expect(transit.calls()?.calldatas.length).toEqual(3)
-        // const multicallRouterOnHostChain = '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4'
-        // expect(createOctoPoolTradeSpy).toHaveBeenCalledWith({
-        //     to: multicallRouterOnHostChain,
-        //     // 100 - 0.2% extra fee for Tron
-        //     tokenAmountIn: new TokenAmount(tradeTokenIn, '99800000000000000000'),
-        //     // 90 - 0.2% extra fee for Tron
-        //     tokenAmountInMin: new TokenAmount(tradeTokenIn, '89820000000000000000'),
-        //     tokenOut: tradeTokenOut,
-        // })
+        expect(transit.calls()?.calldatas.length).toEqual(2)
 
         // 80 (mock quote)
         expect(transit.trade.amountOut.token).toEqual(tradeTokenOut)
@@ -133,13 +124,13 @@ describe('Transit#ExtraFee', async () => {
         expect(transit.trade.amountOutMin.token).toEqual(tradeTokenOut)
         expect(transit.trade.amountOutMin.raw.toString()).toEqual('71280000000000000000')
 
-        // 80000000000000000000 - 0.1% of SEI extra fee
+        // 80000000000000000000 - 0.2% of SEI extra fee (because we select max fee tron/sei)
         expect(transit.amountOut.token.equals(tokenOut)).toBeTruthy()
-        expect(transit.amountOut.raw.toString()).toEqual('79920000000000000000')
+        expect(transit.amountOut.raw.toString()).toEqual('79840000000000000000')
 
-        // 80000000000000000000 * (90/100) - 1% (slippage) - 0.1% of SEI extra fee
+        // 80000000000000000000 * (90/100) - 1% (slippage) - 0.2% of SEI extra fee (because we select max fee tron/sei)
         expect(transit.amountOutMin.token.equals(tokenOut)).toBeTruthy()
-        expect(transit.amountOutMin.raw.toString()).toEqual('71208720000000000000')
+        expect(transit.amountOutMin.raw.toString()).toEqual('71137440000000000000')
     })
 
     test('WITH FEES SET', async () => {
@@ -165,13 +156,13 @@ describe('Transit#ExtraFee', async () => {
         expect(transit.trade.amountOutMin.token).toEqual(tradeTokenOut)
         expect(transit.trade.amountOutMin.raw.toString()).toEqual('70399999999999999999')
 
-        // 80 (trade.amountOut) - 0.1% (SEI extraFee) - 20 (fee2)
+        // 80 (trade.amountOut) - 0.2% (SEI extraFee) - 20 (fee2) (because we select max fee tron/sei)
         expect(transit.amountOut.token.equals(tokenOut)).toBeTruthy()
-        expect(transit.amountOut.raw.toString()).toEqual('59920000000000000000')
+        expect(transit.amountOut.raw.toString()).toEqual('59840000000000000000')
 
-        // 70399999999999999999 (trade.amountOutMin) - 0.1% (SEI extraFee) - 20 (fee2)
+        // 70399999999999999999 (trade.amountOutMin) - 0.1% (SEI extraFee) - 20 (fee2) (because we select max fee tron/sei)
         expect(transit.amountOutMin.token.equals(tokenOut)).toBeTruthy()
-        expect(transit.amountOutMin.raw.toString()).toEqual('50329600000000000000')
+        expect(transit.amountOutMin.raw.toString()).toEqual('50259200000000000000')
     })
 
     test('PATCHED FEES', async () => {

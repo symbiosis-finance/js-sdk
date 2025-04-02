@@ -7,11 +7,11 @@ import { Percent, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { tronAddressToEvm } from '../../chainUtils'
 import { Error, ErrorCode } from '../../error'
-import { ChainFlipVault__factory, FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
+import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
-import { getChainFlipFee, getDestinationAddress } from './utils'
+import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
 
 type MulticallItem = {
@@ -213,20 +213,23 @@ async function getDepositCall({
     config: ChainFlipConfig
     receiverAddress: string
 }): Promise<Call> {
-    const { src, dest, tokenIn, vaultAddress, tokenOut } = config
+    const { src, dest, tokenOut } = config
     const chainFlipSdk = new SwapSDK({
         network: 'mainnet',
+        enabledFeatures: { dca: true },
     })
 
-    let quoteResponse
+    let quote
     try {
-        quoteResponse = await chainFlipSdk.getQuote({
+        const { quotes } = await chainFlipSdk.getQuoteV2({
             amount: amountIn.raw.toString(),
             srcChain: src.chain,
             srcAsset: src.asset,
             destChain: dest.chain,
             destAsset: dest.asset,
+            isVaultSwap: true,
         })
+        quote = quotes.find((quote) => quote.type === 'REGULAR')
     } catch (e) {
         console.error(e)
         if ((e as unknown as { status: number }).status === 400) {
@@ -235,27 +238,36 @@ async function getDepositCall({
             throw new Error('Chainflip error')
         }
     }
+    if (!quote) {
+        throw new Error('There is no REGULAR quote found')
+    }
 
-    const dstAddress = getDestinationAddress(receiverAddress, tokenOut.chainId)
+    const vaultSwapData = await chainFlipSdk.encodeVaultSwapData({
+        quote,
+        destAddress: receiverAddress,
+        fillOrKillParams: {
+            slippageTolerancePercent: quote.recommendedSlippageTolerancePercent,
+            refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+            retryDurationBlocks: 100,
+        },
+        brokerAccount: ChainFlipBrokerAccount,
+        brokerCommissionBps: ChainFlipBrokerFeeBps,
+    })
+    const { chain } = vaultSwapData
+    if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
+        throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
+    }
+    const { calldata, to } = vaultSwapData
 
-    const data = ChainFlipVault__factory.createInterface().encodeFunctionData('xSwapToken', [
-        dest.chainId, // dstChain
-        dstAddress, // dstAddress
-        dest.assetId, // dstToken
-        tokenIn.address, // srcToken (Arbitrum.USDC address)
-        BigNumber.from(0), // amount (will be patched)
-        [], //cfParameters
-    ])
-
-    const { includedFees, egressAmount } = quoteResponse.quote
+    const { includedFees, egressAmount } = quote
 
     const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
 
     return {
         amountIn,
         amountOut: new TokenAmount(tokenOut, egressAmount),
-        to: vaultAddress,
-        data,
+        to,
+        data: calldata,
         value: '0',
         offset: 164,
         fees: [
