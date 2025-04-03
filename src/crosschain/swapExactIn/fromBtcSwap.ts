@@ -369,6 +369,17 @@ type EstimateWrapParams = {
     amount: string
     refundAddress?: string
 }
+type EstimateWrapBodyParams = {
+    amount: number
+    info: {
+        portalFee: number
+        op: number
+        stableBridgingFee: number
+        tail: string
+        to: string
+    }
+    refundAddress?: string
+}
 
 async function estimateWrap({
     forwarderUrl,
@@ -385,7 +396,7 @@ async function estimateWrap({
         'Content-Type': 'application/json',
     })
 
-    const body = {
+    const body: EstimateWrapBodyParams = {
         amount: Number(amount),
         info: {
             portalFee: Number(portalFee),
@@ -396,7 +407,7 @@ async function estimateWrap({
         },
     }
     if (refundAddress) {
-        body['refundAddress'] = refundAddress
+        body.refundAddress = refundAddress
     }
 
     const requestOptions = {
@@ -420,6 +431,9 @@ async function estimateWrap({
 type WrapParams = EstimateWrapParams & {
     feeLimit: string
 }
+type WrapBodyParams = EstimateWrapBodyParams & {
+    feeLimit: number
+}
 
 async function wrap({
     forwarderUrl,
@@ -431,7 +445,7 @@ async function wrap({
     amount,
     refundAddress,
 }: WrapParams): Promise<DepositAddressResult> {
-    const body = {
+    const body: WrapBodyParams = {
         info: {
             portalFee: Number(portalFee),
             op: 0, // 0 - is wrap operation
@@ -443,7 +457,7 @@ async function wrap({
         amount: Number(amount),
     }
     if (refundAddress) {
-        body['refundAddress'] = refundAddress
+        body.refundAddress = refundAddress
     }
 
     const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)
