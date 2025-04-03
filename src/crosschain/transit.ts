@@ -44,7 +44,7 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         chainId: ChainId.BOBA_BNB,
         address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
         feeRate: '3000000000000000', // 0.3%
-        eligibleChains: [ChainId.CRONOS_MAINNET],
+        eligibleChains: [],
     },
     {
         chainId: ChainId.BOBA_BNB,
