@@ -30,6 +30,7 @@ export const config: Config = {
         [ChainId.TRON_TESTNET]: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
+    refundAddress: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     chains: [
         {
             // NOTE host chain is better to be first in the config

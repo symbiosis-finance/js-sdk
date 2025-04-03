@@ -5,7 +5,7 @@ import { BigNumber, BytesLike, utils } from 'ethers'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { Percent, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
-import { tronAddressToEvm } from '../../chainUtils'
+import { isEvmChainId, tronAddressToEvm } from '../../chainUtils'
 import { Error, ErrorCode } from '../../error'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
@@ -29,6 +29,11 @@ export async function ZappingOnChainChainFlip(
     const { symbiosis, to, from, tokenAmountIn } = params
 
     const chainId = params.tokenAmountIn.token.chainId
+
+    let evmTo = from
+    if (!isEvmChainId(chainId)) {
+        evmTo = symbiosis.config.refundAddress
+    }
 
     const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
     if (!feeCollectorAddress) {
@@ -105,6 +110,7 @@ export async function ZappingOnChainChainFlip(
         amountIn: depositAmount,
         config,
         receiverAddress: to,
+        refundAddress: evmTo,
     })
     fees.push(...depositCall.fees)
     routes.push(...depositCall.routes)
@@ -123,7 +129,7 @@ export async function ZappingOnChainChainFlip(
         multicallItems.map((i) => i.path),
         multicallItems.map((i) => i.offset),
         multicallItems.map((i) => i.isNative),
-        from,
+        evmTo,
     ])
 
     const data = feeCollector.interface.encodeFunctionData('onswap', [
@@ -208,10 +214,12 @@ async function getDepositCall({
     amountIn,
     config,
     receiverAddress,
+    refundAddress,
 }: {
     amountIn: TokenAmount
     config: ChainFlipConfig
     receiverAddress: string
+    refundAddress: string
 }): Promise<Call> {
     const { src, dest, tokenOut } = config
     const chainFlipSdk = new SwapSDK({
@@ -228,6 +236,7 @@ async function getDepositCall({
             destChain: dest.chain,
             destAsset: dest.asset,
             isVaultSwap: true,
+            brokerCommissionBps: ChainFlipBrokerFeeBps,
         })
         quote = quotes.find((quote) => quote.type === 'REGULAR')
     } catch (e) {
@@ -247,7 +256,7 @@ async function getDepositCall({
         destAddress: receiverAddress,
         fillOrKillParams: {
             slippageTolerancePercent: quote.recommendedSlippageTolerancePercent,
-            refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+            refundAddress,
             retryDurationBlocks: 100,
         },
         brokerAccount: ChainFlipBrokerAccount,

@@ -1,14 +1,15 @@
+import { TransactionRequest } from '@ethersproject/providers'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { BigNumber } from 'ethers'
+import { isAddress } from 'ethers/lib/utils'
+
 import { FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
 import { Percent, TokenAmount } from '../../entities'
 
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Error, ErrorCode } from '../error'
 import { isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { isAddress } from 'ethers/lib/utils'
 import { MetaRouter__factory, SymBtc__factory } from '../contracts'
-import { TransactionRequest } from '@ethersproject/providers'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { BigNumber } from 'ethers'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
@@ -19,6 +20,7 @@ import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { BIPS_BASE } from '../constants'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
+import { validate } from 'bitcoin-address-validation'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -51,7 +53,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 }
 
 async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcConfig): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, to } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress } = context
 
     const { btc, symBtc, forwarderUrl } = btcConfig
 
@@ -70,6 +72,10 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
 
     if (!isAddress(to)) {
         throw new Error(`Incorrect destination address was provided`)
+    }
+
+    if (refundAddress && !validate(refundAddress)) {
+        throw new Error(`Incorrect refund address was provided`)
     }
 
     const btcAmountRaw = tokenAmountIn.raw.toString()
@@ -122,6 +128,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         tail: initialTail,
         to,
         amount: btcAmountRaw,
+        refundAddress,
     })
     const btcForwarderFeeMax = new TokenAmount(
         syBtc,
@@ -162,6 +169,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         to,
         feeLimit: btcForwarderFeeMax.raw.toString(),
         amount: btcAmountRaw,
+        refundAddress,
     })
 
     return {
@@ -359,6 +367,7 @@ type EstimateWrapParams = {
     tail: string
     to: string
     amount: string
+    refundAddress?: string
 }
 
 async function estimateWrap({
@@ -368,6 +377,7 @@ async function estimateWrap({
     tail,
     to,
     amount,
+    refundAddress,
 }: EstimateWrapParams): Promise<BigNumber> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
@@ -375,7 +385,7 @@ async function estimateWrap({
         'Content-Type': 'application/json',
     })
 
-    const raw = JSON.stringify({
+    const body = {
         amount: Number(amount),
         info: {
             portalFee: Number(portalFee),
@@ -384,12 +394,15 @@ async function estimateWrap({
             tail: encodeTail(tail),
             to,
         },
-    })
+    }
+    if (refundAddress) {
+        body['refundAddress'] = refundAddress
+    }
 
     const requestOptions = {
         method: 'POST',
         headers: myHeaders,
-        body: raw,
+        body: JSON.stringify(body),
     }
 
     const response = await fetch(`${estimateWrapApiUrl}`, requestOptions)
@@ -416,8 +429,9 @@ async function wrap({
     to,
     feeLimit,
     amount,
+    refundAddress,
 }: WrapParams): Promise<DepositAddressResult> {
-    const raw = JSON.stringify({
+    const body = {
         info: {
             portalFee: Number(portalFee),
             op: 0, // 0 - is wrap operation
@@ -427,7 +441,10 @@ async function wrap({
         },
         feeLimit: Number(feeLimit),
         amount: Number(amount),
-    })
+    }
+    if (refundAddress) {
+        body['refundAddress'] = refundAddress
+    }
 
     const wrapApiUrl = new URL(`${forwarderUrl}/wrap`)
     const myHeaders = new Headers({
@@ -437,7 +454,7 @@ async function wrap({
     const requestOptions = {
         method: 'POST',
         headers: myHeaders,
-        body: raw,
+        body: JSON.stringify(body),
     }
 
     const response = await fetch(`${wrapApiUrl}`, requestOptions)
