@@ -52,6 +52,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                 destChain: dest.chain,
                 destAsset: dest.asset,
                 isVaultSwap: true,
+                brokerCommissionBps: ChainFlipBrokerFeeBps,
             })
             const quote = quotes.find((quote) => quote.type === 'REGULAR')
             if (!quote) {
@@ -66,7 +67,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                 destAddress: this.dstAddress,
                 fillOrKillParams: {
                     slippageTolerancePercent: this.chainFlipQuote.recommendedSlippageTolerancePercent,
-                    refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+                    refundAddress: this.evmTo,
                     retryDurationBlocks: 100,
                 },
                 brokerAccount: ChainFlipBrokerAccount,
@@ -100,7 +101,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.revertableAddress.default
+            this.evmTo = this.symbiosis.config.refundAddress
         }
         const result = await this.doExactIn({
             tokenAmountIn,

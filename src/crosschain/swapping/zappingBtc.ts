@@ -86,7 +86,7 @@ export class ZappingBtc extends BaseSwapping {
 
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.revertableAddress.default
+            this.evmTo = this.symbiosis.config.refundAddress
         }
         const result = await this.doExactIn({
             tokenAmountIn,

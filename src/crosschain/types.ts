@@ -68,6 +68,7 @@ export type Config = {
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
     limits: SwapLimit[]
     chains: ChainConfig[]
+    refundAddress: string
 }
 
 export type OverrideChainConfig = {
