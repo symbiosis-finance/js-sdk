@@ -110,6 +110,7 @@ export async function ZappingOnChainChainFlip(
         amountIn: depositAmount,
         config,
         receiverAddress: to,
+        refundAddress: evmTo,
     })
     fees.push(...depositCall.fees)
     routes.push(...depositCall.routes)
@@ -213,10 +214,12 @@ async function getDepositCall({
     amountIn,
     config,
     receiverAddress,
+    refundAddress,
 }: {
     amountIn: TokenAmount
     config: ChainFlipConfig
     receiverAddress: string
+    refundAddress: string
 }): Promise<Call> {
     const { src, dest, tokenOut } = config
     const chainFlipSdk = new SwapSDK({
@@ -253,7 +256,7 @@ async function getDepositCall({
         destAddress: receiverAddress,
         fillOrKillParams: {
             slippageTolerancePercent: quote.recommendedSlippageTolerancePercent,
-            refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+            refundAddress,
             retryDurationBlocks: 100,
         },
         brokerAccount: ChainFlipBrokerAccount,
