@@ -1,19 +1,21 @@
 import { Percent, TokenAmount } from '../../entities'
-import { MultiCallItem, VolumeFeeCollector } from '../types'
+import { MultiCallItem } from '../types'
 import { OctoPoolFeeCollector__factory } from '../contracts'
 import { BIPS_BASE } from '../constants'
 import { BigNumber } from 'ethers'
+import { Symbiosis } from '../symbiosis'
 
 export async function getVolumeFeeCall({
-    feeCollector,
+    symbiosis,
     amountIn,
     amountInMin,
 }: {
-    feeCollector: VolumeFeeCollector
+    symbiosis: Symbiosis
     amountIn: TokenAmount
     amountInMin?: TokenAmount
 }): Promise<MultiCallItem | undefined> {
-    if (feeCollector.chainId !== amountIn.token.chainId) {
+    const feeCollector = symbiosis.getVolumeFeeCollector([amountIn.token])
+    if (!feeCollector) {
         return
     }
 

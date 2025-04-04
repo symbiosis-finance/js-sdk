@@ -49,6 +49,7 @@ export class ZappingBtc extends BaseSwapping {
             partnerAddress: this.partnerAddress,
         })
         this.volumeFeeCall = await getVolumeFeeCall({
+            symbiosis: this.symbiosis,
             amountIn: amount,
             amountInMin: amountMin,
         })

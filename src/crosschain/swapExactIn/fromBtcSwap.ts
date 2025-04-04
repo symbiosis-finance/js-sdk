@@ -228,6 +228,7 @@ async function buildTail(
         fees.push(...partnerFeeCall.fees)
     }
     const volumeFeeCall = await getVolumeFeeCall({
+        symbiosis,
         amountIn: syBtcAmount,
     })
     if (volumeFeeCall) {

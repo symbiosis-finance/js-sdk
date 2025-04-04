@@ -3,64 +3,8 @@ import { Symbiosis } from '../../src/crosschain/symbiosis'
 import { Token } from '../../src/entities'
 import { ChainId } from '../../src/constants'
 import { config as mainnet } from '../../src/crosschain/config/mainnet'
-import { VolumeFeeCollector } from '../../src/crosschain/types'
 
-const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
-    // BNB chain
-    {
-        chainId: ChainId.BSC_MAINNET,
-        address: '0x3743c756b64ECd0770f1d4f47696A73d2A46dcbe',
-        feeRate: '2000000000000000', // 0.2%
-        eligibleChains: [],
-    },
-    // BOBA BNB
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
-        feeRate: '6000000000000000', // 0.6%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
-        feeRate: '5000000000000000', // 0.5%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x5f5829F7CDca871b16ed76E498EeE35D4250738A',
-        feeRate: '4000000000000000', // 0.4%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
-        feeRate: '3000000000000000', // 0.3%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
-        feeRate: '2000000000000000', // 0.2%
-        eligibleChains: [ChainId.TRON_MAINNET],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
-        feeRate: '1000000000000000', // 0.1%
-        eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
-        feeRate: '500000000000000', // 0.05%
-        eligibleChains: [],
-        default: true,
-    },
-]
-const symbiosis = new Symbiosis('mainnet', 'test', {
-    volumeFeeCollectors: VOLUME_FEE_COLLECTORS,
-})
+const symbiosis = new Symbiosis('mainnet', 'test')
 
 describe('#getRepresentation', () => {
     test('by real', () => {
@@ -385,7 +329,7 @@ describe('#transitToken', () => {
 })
 
 describe('#getVolumeFeeCollector', () => {
-    test('1', () => {
+    test('not fee collectors on this chain', () => {
         const token = new Token({
             chainId: ChainId.ETH_MAINNET,
             symbol: 'USDC',
@@ -395,5 +339,72 @@ describe('#getVolumeFeeCollector', () => {
 
         const i = symbiosis.getVolumeFeeCollector([token])
         expect(i).toBe(undefined)
+    })
+    test('default', () => {
+        const token = new Token({
+            chainId: ChainId.BOBA_BNB,
+            symbol: 'USDC',
+            decimals: 18,
+            address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
+        })
+
+        const i = symbiosis.getVolumeFeeCollector([token])
+        expect(i).not.toBe(undefined)
+        expect(i?.address).toEqual('0x0f68eE6BD92dE3eD499142812C89F825e65d7241')
+        expect(i?.feeRate).toEqual('500000000000000')
+        expect(i?.default).toEqual(true)
+    })
+    test('from tron', () => {
+        const token = new Token({
+            chainId: ChainId.BOBA_BNB,
+            chainFromId: ChainId.TRON_MAINNET,
+            symbol: 'sUSDT',
+            decimals: 6,
+            address: '0x2dF311E049a839E1011507ccE20Afb6f871a81a1',
+        })
+
+        const i = symbiosis.getVolumeFeeCollector([token])
+        expect(i).not.toBe(undefined)
+        expect(i?.address).toEqual('0x56aE0251a9059fb35C21BffBe127d8E769A34D0D')
+        expect(i?.feeRate).toEqual('2000000000000000')
+        expect(i?.default).toEqual(undefined)
+    })
+    test('from btc', () => {
+        const token = new Token({
+            chainId: ChainId.BSC_MAINNET,
+            chainFromId: ChainId.BTC_MAINNET,
+            symbol: 'syBTC',
+            decimals: 8,
+            address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
+        })
+
+        const i = symbiosis.getVolumeFeeCollector([token])
+        expect(i).not.toBe(undefined)
+        expect(i?.address).toEqual('0x3743c756b64ECd0770f1d4f47696A73d2A46dcbe')
+        expect(i?.feeRate).toEqual('2000000000000000')
+        expect(i?.default).toEqual(undefined)
+    })
+    test('different chains tokens', () => {
+        const token1 = new Token({
+            chainId: ChainId.BOBA_BNB,
+            chainFromId: ChainId.TRON_MAINNET,
+            symbol: 'sUSDT',
+            decimals: 6,
+            address: '0x2dF311E049a839E1011507ccE20Afb6f871a81a1',
+        })
+        const token2 = new Token({
+            chainId: ChainId.BSC_MAINNET,
+            chainFromId: ChainId.BTC_MAINNET,
+            symbol: 'syBTC',
+            decimals: 8,
+            address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
+        })
+
+        expect(() => symbiosis.getVolumeFeeCollector([token1, token2])).toThrowError(
+            `should be on the same chain' tokens`
+        )
+    })
+    test('no tokens', () => {
+        expect(symbiosis.getVolumeFeeCollector([])).toEqual(undefined)
     })
 })

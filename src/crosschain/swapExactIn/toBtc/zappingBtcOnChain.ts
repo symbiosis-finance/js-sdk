@@ -97,6 +97,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     }
 
     const volumeFeeCall = await getVolumeFeeCall({
+        symbiosis,
         amountIn,
         amountInMin,
     })
