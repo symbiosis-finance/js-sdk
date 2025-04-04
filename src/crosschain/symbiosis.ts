@@ -38,6 +38,7 @@ import {
     OverrideConfig,
     SwapExactInParams,
     SwapExactInResult,
+    VolumeFeeCollector,
 } from './types'
 import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
@@ -87,6 +88,7 @@ export class Symbiosis {
     public feesConfig?: FeeConfig[]
 
     public readonly oneInchConfig: OneInchConfig
+    public readonly volumeFeeCollectors: VolumeFeeCollector[]
     public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
@@ -193,6 +195,11 @@ export class Symbiosis {
             this.openOceanConfig = overrideConfig.openOceanConfig
         }
 
+        this.volumeFeeCollectors = []
+        if (overrideConfig?.volumeFeeCollectors) {
+            this.volumeFeeCollectors = overrideConfig.volumeFeeCollectors
+        }
+
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
         this.configCache = new ConfigCache(configName)
@@ -206,6 +213,40 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
+    }
+
+    public getVolumeFeeCollector(tokens: Token[]): VolumeFeeCollector | undefined {
+        if (tokens.length === 0) {
+            return
+        }
+        const chainId = tokens[0].chainId
+        for (const token of tokens) {
+            if (token.chainId !== chainId) {
+                throw new Error(`should be on the same chain' tokens`)
+            }
+        }
+        const feeCollectors = this.volumeFeeCollectors.filter((i) => i.chainId === chainId)
+        if (feeCollectors.length === 0) {
+            return
+        }
+        const chainIds = tokens.reduce((acc, token) => {
+            if (!acc.includes(token.chainId)) {
+                acc.push(token.chainId)
+            }
+            if (token.chainFromId && !acc.includes(token.chainFromId)) {
+                acc.push(token.chainFromId)
+            }
+            return acc
+        }, [] as ChainId[])
+
+        const chainEligibleFeeCollector = feeCollectors.find((i) => {
+            return i.eligibleChains.filter((x) => chainIds.includes(x))
+        })
+        if (chainEligibleFeeCollector) {
+            return chainEligibleFeeCollector
+        }
+        // get default volume fee collector
+        return feeCollectors.find((i) => i.default)
     }
 
     public async getTonClient(): Promise<TonClient4> {

@@ -99,6 +99,7 @@ export type OverrideConfig = {
     advisor?: AdvisorConfig
     oneInchConfig?: OneInchConfig
     openOceanConfig?: OpenOceanConfig
+    volumeFeeCollectors?: VolumeFeeCollector[]
 }
 
 export interface MiddlewareCall {

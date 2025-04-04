@@ -2,24 +2,17 @@ import { Percent, TokenAmount } from '../../entities'
 import { MultiCallItem, VolumeFeeCollector } from '../types'
 import { OctoPoolFeeCollector__factory } from '../contracts'
 import { BIPS_BASE } from '../constants'
-import { ChainId } from '../../constants'
 import { BigNumber } from 'ethers'
 
-const DEFAULT_BTC_VOLUME_FEE_COLLECTOR: VolumeFeeCollector = {
-    chainId: ChainId.BSC_MAINNET,
-    address: '0x3743c756b64ECd0770f1d4f47696A73d2A46dcbe',
-    feeRate: '2000000000000000', // 0.2%
-    eligibleChains: [],
-}
-
 export async function getVolumeFeeCall({
+    feeCollector,
     amountIn,
     amountInMin,
 }: {
+    feeCollector: VolumeFeeCollector
     amountIn: TokenAmount
     amountInMin?: TokenAmount
 }): Promise<MultiCallItem | undefined> {
-    const feeCollector = DEFAULT_BTC_VOLUME_FEE_COLLECTOR
     if (feeCollector.chainId !== amountIn.token.chainId) {
         return
     }
