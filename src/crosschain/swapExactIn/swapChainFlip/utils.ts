@@ -5,7 +5,7 @@ import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import { ChainFlipAssetId, ChainFlipChainId, ChainFlipToken } from './types'
 
 export const ChainFlipBrokerAccount = 'cFJZvt5AiEGwUiFFNxhDuLRcgC1WBR6tE7gaQQfe8dqbzoYkx'
-export const ChainFlipBrokerFeeBps = 10
+export const ChainFlipBrokerFeeBps = 20
 
 export const ARB_USDC = new Token({
     address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
