@@ -12,6 +12,7 @@ import { Symbiosis } from '../../symbiosis'
 import { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
+import { ChainId } from '../../../constants'
 
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
@@ -95,13 +96,13 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         amountIn = partnerFeeCall.amountOut
         amountInMin = partnerFeeCall.amountOutMin
     }
-
-    const volumeFeeCall = await getVolumeFeeCall({
-        symbiosis,
-        amountIn,
-        amountInMin,
-    })
-    if (volumeFeeCall) {
+    const volumeFeeCollector = symbiosis.getVolumeFeeCollector(amountIn.token.chainId, [ChainId.BTC_MAINNET])
+    if (volumeFeeCollector) {
+        const volumeFeeCall = await getVolumeFeeCall({
+            feeCollector: volumeFeeCollector,
+            amountIn,
+            amountInMin,
+        })
         calls.push(volumeFeeCall)
         amountIn = volumeFeeCall.amountOut
         amountInMin = volumeFeeCall.amountOutMin

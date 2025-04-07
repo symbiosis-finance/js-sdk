@@ -10,6 +10,7 @@ import { isEvmChainId } from '../chainUtils'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
+import { ChainId } from '../../constants'
 
 initEccLib(ecc)
 
@@ -48,11 +49,14 @@ export class ZappingBtc extends BaseSwapping {
             amountInMin: amountMin,
             partnerAddress: this.partnerAddress,
         })
-        this.volumeFeeCall = await getVolumeFeeCall({
-            symbiosis: this.symbiosis,
-            amountIn: amount,
-            amountInMin: amountMin,
-        })
+        const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(amount.token.chainId, [ChainId.BTC_MAINNET])
+        if (volumeFeeCollector) {
+            this.volumeFeeCall = await getVolumeFeeCall({
+                feeCollector: volumeFeeCollector,
+                amountIn: amount,
+                amountInMin: amountMin,
+            })
+        }
     }
 
     public async exactIn({

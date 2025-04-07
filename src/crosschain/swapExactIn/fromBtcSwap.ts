@@ -227,11 +227,13 @@ async function buildTail(
         calls.push(partnerFeeCall)
         fees.push(...partnerFeeCall.fees)
     }
-    const volumeFeeCall = await getVolumeFeeCall({
-        symbiosis,
-        amountIn: syBtcAmount,
-    })
-    if (volumeFeeCall) {
+
+    const feeCollector = symbiosis.getVolumeFeeCollector(syBtcAmount.token.chainId, [ChainId.BTC_MAINNET])
+    if (feeCollector) {
+        const volumeFeeCall = await getVolumeFeeCall({
+            feeCollector,
+            amountIn: syBtcAmount,
+        })
         syBtcAmount = volumeFeeCall.amountOut // override
         calls.push(volumeFeeCall)
         fees.push(...volumeFeeCall.fees)

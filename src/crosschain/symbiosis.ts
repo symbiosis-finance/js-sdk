@@ -269,32 +269,13 @@ export class Symbiosis {
         )
     }
 
-    public getVolumeFeeCollector(tokens: Token[]): VolumeFeeCollector | undefined {
-        if (tokens.length === 0) {
-            return
-        }
-        const chainId = tokens[0].chainId
-        for (const token of tokens) {
-            if (token.chainId !== chainId) {
-                throw new Error(`should be on the same chain' tokens`)
-            }
-        }
+    public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {
         const feeCollectors = this.volumeFeeCollectors.filter((i) => i.chainId === chainId)
         if (feeCollectors.length === 0) {
             return
         }
-        const chainIds = tokens.reduce((acc, token) => {
-            if (!acc.includes(token.chainId)) {
-                acc.push(token.chainId)
-            }
-            if (token.chainFromId && !acc.includes(token.chainFromId)) {
-                acc.push(token.chainFromId)
-            }
-            return acc
-        }, [] as ChainId[])
-
         const chainEligibleFeeCollector = feeCollectors.find((i) => {
-            return i.eligibleChains.filter((x) => chainIds.includes(x)).length > 0
+            return i.eligibleChains.filter((j) => involvedChainIds.includes(j)).length > 0
         })
         if (chainEligibleFeeCollector) {
             return chainEligibleFeeCollector

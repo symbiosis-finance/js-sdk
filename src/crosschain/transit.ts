@@ -236,7 +236,15 @@ export class Transit {
         let tradeAmountOutNew = tradeAmountOut
         let tradeAmountOutMinNew = tradeAmountOutMin
         let postCall: VolumeFeeCall | undefined = undefined
-        const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector([tradeAmountIn.token, tradeAmountOut.token])
+
+        const involvedChainIds = [tradeAmountIn.token.chainId, tradeAmountOut.token.chainId]
+        if (tradeAmountIn.token.chainFromId) {
+            involvedChainIds.push(tradeAmountIn.token.chainFromId)
+        }
+        if (tradeAmountOut.token.chainFromId) {
+            involvedChainIds.push(tradeAmountOut.token.chainFromId)
+        }
+        const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(tradeAmountIn.token.chainId, involvedChainIds)
         if (volumeFeeCollector) {
             postCall = Transit.buildFeeCall(tradeAmountOut, volumeFeeCollector)
             tradeAmountOutNew = Transit.applyVolumeFee(tradeAmountOut, volumeFeeCollector)
@@ -328,7 +336,6 @@ export class Transit {
         }
         return sToken
     }
-
 
     private static buildFeeCall(tokenAmount: TokenAmount, volumeFeeCollector: VolumeFeeCollector): VolumeFeeCall {
         const calldata = OctoPoolFeeCollector__factory.createInterface().encodeFunctionData('collectFee', [
