@@ -744,8 +744,18 @@ export const chains: Chain[] = [
         disabled: false,
         explorer: 'https://uniscan.xyz',
         icons: {
-            small: 'https://uniscan.xyz/assets/generic/html/favicon.ico?v=25.1.4.0',
-            large: 'https://uniscan.xyz/assets/generic/html/favicon.ico?v=25.1.4.0',
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/22206/thumb/unichain.png?1739323630',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/22206/thumb/unichain.png?1739323630',
+        },
+    }),
+    new Chain({
+        id: ChainId.SONEIUM_MAINNET,
+        name: 'Soneium',
+        disabled: false,
+        explorer: 'https://soneium.blockscout.com/',
+        icons: {
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/22200/thumb/soneium-removebg-preview.png?1737099934',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/22200/thumb/soneium-removebg-preview.png?1737099934',
         },
     }),
 ]

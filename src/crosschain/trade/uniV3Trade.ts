@@ -87,6 +87,35 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
             }),
         ],
     },
+    [ChainId.SONEIUM_MAINNET]: {
+        factory: '0x137841043180BBA8EF52828F9030D1b7fE065F95',
+        quoter: '0x60eb4B04932797374a291380349008dc8cc40426',
+        swap: '0x0dC73Fe1341365929Ed8a89Dd47097A9FDD254D0',
+        initCodeHash: '0xf54c8516b0255aaf493382e8534bab492d4325d4c84374ac39f7fa643a5cfbcd',
+        baseTokens: [
+            new Token({
+                name: 'ASTR',
+                symbol: 'ASTR',
+                address: '0x2CAE934a1e84F693fbb78CA5ED3B0A6893259441',
+                chainId: ChainId.SONEIUM_MAINNET,
+                decimals: 18,
+            }),
+            new Token({
+                name: 'USD Coin',
+                symbol: 'USDC',
+                address: '0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369',
+                chainId: ChainId.SONEIUM_MAINNET,
+                decimals: 6,
+            }),
+            new Token({
+                name: 'Wrapped ETH',
+                symbol: 'WETH',
+                address: '0x4200000000000000000000000000000000000006',
+                chainId: ChainId.SONEIUM_MAINNET,
+                decimals: 18,
+            }),
+        ],
+    },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {

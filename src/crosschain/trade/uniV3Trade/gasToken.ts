@@ -6,7 +6,7 @@ import { toUniToken } from './toUniTypes'
 
 export class GasToken extends NativeCurrency {
     protected constructor(chainId: number) {
-        super(chainId, 18, 'RBTC', 'RBTC')
+        super(chainId, 18, 'GAS', 'GAS')
     }
 
     public get wrapped(): Token {
