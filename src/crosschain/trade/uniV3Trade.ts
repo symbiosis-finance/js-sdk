@@ -88,10 +88,9 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         ],
     },
     [ChainId.SONEIUM_MAINNET]: {
-        factory: '0x137841043180BBA8EF52828F9030D1b7fE065F95',
-        quoter: '0x60eb4B04932797374a291380349008dc8cc40426',
-        swap: '0x0dC73Fe1341365929Ed8a89Dd47097A9FDD254D0',
-        initCodeHash: '0xf54c8516b0255aaf493382e8534bab492d4325d4c84374ac39f7fa643a5cfbcd',
+        factory: '0x3E4ff8662820E3dec3DACDb66ef1FFad5Dc5Ab83',
+        quoter: '0x715BE426a0c8E0A14aBc0130f08F06aa41B1f218',
+        swap: '0xd2DdF58Bcc188F335061e41C73ED2A8894c2dD98',
         baseTokens: [
             new Token({
                 name: 'ASTR',
