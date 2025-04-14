@@ -62,6 +62,8 @@ import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
 import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
+import { getHttpV4Endpoint } from '@orbs-network/ton-access'
+import { isTonChainId } from './chainUtils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -288,23 +290,18 @@ export class Symbiosis {
         return this.cache.get(
             ['tonClient'],
             async () => {
-                let endpoint: string | undefined
-
-                if (this.configName === 'mainnet') {
-                    endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_MAINNET)?.rpc
-                } else {
-                    endpoint = this.config.chains.find((chain) => chain.id === ChainId.TON_TESTNET)?.rpc
-                }
-
-                if (!endpoint) {
-                    throw new Error('Ton rpc is not set')
+                let endpoint = this.config.chains.find((chain) => isTonChainId(chain.id))?.rpc
+                if (!endpoint || endpoint.length === 0) {
+                    endpoint = await getHttpV4Endpoint({
+                        network: this.configName === 'mainnet' ? 'mainnet' : 'testnet',
+                    })
                 }
 
                 return new TonClient4({
                     endpoint,
                 })
             },
-            60 // 1 minute
+            600 // 10 minutes
         )
     }
 
