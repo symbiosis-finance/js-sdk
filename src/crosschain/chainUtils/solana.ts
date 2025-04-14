@@ -78,7 +78,7 @@ export function getSolanaTokenAddress(evmAddress: string) {
         throw new Error(`Solana address was not found by evm address ${evmAddress}`)
     }
 
-    return token?.solana
+    return token.solana
 }
 
 function getSolanaToken({
