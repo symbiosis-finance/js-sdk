@@ -14,102 +14,20 @@ export function isSolanaChainId(chainId: ChainId | undefined) {
     return [ChainId.SOLANA_MAINNET].includes(chainId)
 }
 
-const SOLANA_ADDRESSES_MAP = [
-    {
-        evm: '0x0000000000000000000000000000000000000003',
-        solana: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000004',
-        solana: '6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN', // TRUMP
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000005',
-        solana: 'FUAfBo2jgks6gB4Z4LfZkqSZgzNucisEHqnNebaRxM1P', // MELANIA
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000006',
-        solana: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', // BONK
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000007',
-        solana: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', // WIF
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000008',
-        solana: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000009',
-        solana: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', // JUP
-    },
-    {
-        evm: '0x0000000000000000000000000000000000000010',
-        solana: 'GbbesPbaYh5uiAZSYNXTc7w9jty1rpg3P9L4JeN4LkKc', // TRX
-    },
-]
-
-export const SOL_USDC = getSolanaToken({
+export const SOL_USDC = new Token({
     name: 'USDC',
-    evmAddress: '0x0000000000000000000000000000000000000003', // according to ChainFlipAssetId
-    cmcId: '3408',
+    symbol: 'USDC',
+    address: '0x0000000000000000000000000000000000000003',
+    chainId: ChainId.SOLANA_MAINNET,
+    decimals: 6,
+    icons: {
+        large: `https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png`,
+        small: `https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png`,
+    },
+    attributes: {
+        solana: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    },
 })
-
-export const SOLANA_SUPPORTED_TOKENS = [
-    SOL_USDC,
-    getSolanaToken({ name: 'TRUMP', evmAddress: '0x0000000000000000000000000000000000000004', cmcId: '35336' }),
-    getSolanaToken({ name: 'MELANIA', evmAddress: '0x0000000000000000000000000000000000000005', cmcId: '35347' }),
-    getSolanaToken({
-        name: 'BONK',
-        evmAddress: '0x0000000000000000000000000000000000000006',
-        cmcId: '23095',
-        decimals: 5,
-    }),
-    getSolanaToken({ name: 'WIF', evmAddress: '0x0000000000000000000000000000000000000007', cmcId: '28752' }),
-    getSolanaToken({ name: 'RAY', evmAddress: '0x0000000000000000000000000000000000000008', cmcId: '8526' }),
-    getSolanaToken({ name: 'JUP', evmAddress: '0x0000000000000000000000000000000000000009', cmcId: '29210' }),
-    getSolanaToken({ name: 'TRX', evmAddress: '0x0000000000000000000000000000000000000010', cmcId: '1958' }),
-]
-
-export function getSolanaTokenAddress(evmAddress: string) {
-    const token = SOLANA_ADDRESSES_MAP.find((token) => token.evm.toLowerCase() === evmAddress.toLowerCase())
-
-    if (!token) {
-        throw new Error(`Solana address was not found by evm address ${evmAddress}`)
-    }
-
-    return token.solana
-}
-
-function getSolanaToken({
-    name,
-    decimals = 6,
-    evmAddress,
-    cmcId,
-}: {
-    name: string
-    decimals?: number
-    evmAddress: string
-    cmcId: string
-}) {
-    const token = SOLANA_ADDRESSES_MAP.find((token) => token.evm.toLowerCase() === evmAddress.toLowerCase())
-
-    if (!token) {
-        throw new Error(`Solana address was not found by evm address ${evmAddress}`)
-    }
-
-    return new Token({
-        name,
-        symbol: name,
-        address: evmAddress,
-        chainId: ChainId.SOLANA_MAINNET,
-        decimals,
-        icons: {
-            large: `https://s2.coinmarketcap.com/static/img/coins/64x64/${cmcId}.png`,
-            small: `https://s2.coinmarketcap.com/static/img/coins/64x64/${cmcId}.png`,
-        },
-    })
-}
 
 export function getSolanaConnection() {
     return new Connection('https://solana-rpc.publicnode.com')

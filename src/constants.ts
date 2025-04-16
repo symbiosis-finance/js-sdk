@@ -19,6 +19,10 @@ export type TokenConstructor = {
     icons?: Icons
     userToken?: boolean
     deprecated?: boolean
+    attributes?: {
+        solana?: string
+        ton?: string
+    }
 }
 
 export type ChainConstructor = {

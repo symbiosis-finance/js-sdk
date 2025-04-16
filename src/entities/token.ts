@@ -20,6 +20,10 @@ export class Token {
     public readonly isNative: boolean
     public readonly userToken?: boolean
     public readonly deprecated: boolean
+    public readonly attributes?: {
+        solana?: string
+        ton?: string
+    }
 
     /**
      * Constructs an instance of the base class `Token`.
@@ -37,6 +41,7 @@ export class Token {
         this.chainFromId = params.chainFromId
         this.userToken = params.userToken
         this.deprecated = !!params.deprecated
+        this.attributes = params.attributes
 
         if (isTronChainId(params.chainId)) {
             this.address = tronAddressToEvm(params.address)
