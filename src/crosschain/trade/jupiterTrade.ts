@@ -4,7 +4,6 @@ import { NATIVE_MINT } from '@solana/spl-token'
 import { Percent, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getSolanaTokenAddress } from '../chainUtils'
 
 interface JupiterTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -82,10 +81,10 @@ export class JupiterTrade extends SymbiosisTrade {
         try {
             const inputMint = this.tokenAmountIn.token.isNative
                 ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenAmountIn.token.address)
+                : this.tokenAmountIn.token.attributes?.solana
             const outputMint = this.tokenOut.isNative
                 ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenOut.address)
+                : this.tokenOut.attributes?.solana
 
             // get quote
             const quoteResponse = (await fetch(

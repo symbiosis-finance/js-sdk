@@ -6,7 +6,7 @@ import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/sp
 import { Percent, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getSolanaConnection, getSolanaTokenAddress } from '../chainUtils'
+import { getSolanaConnection } from '../chainUtils'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -62,10 +62,12 @@ export class RaydiumTrade extends SymbiosisTrade {
         try {
             const inputMint = this.tokenAmountIn.token.isNative
                 ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenAmountIn.token.address)
-            const outputMint = this.tokenOut.isNative
-                ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenOut.address)
+                : this.tokenAmountIn.token.attributes?.solana
+            const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.attributes?.solana
+
+            if (!inputMint || !outputMint) {
+                throw new Error('Solana address not found')
+            }
 
             // get quote
             const quoteResponse = (await fetch(

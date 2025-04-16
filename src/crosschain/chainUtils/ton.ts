@@ -62,6 +62,7 @@ const TON_ADDRESSES_MAP = [
     },
 ]
 
+// TODO: remove this
 export function getTonTokenAddress(address: string, isStonFi: boolean = false): string {
     const found = TON_ADDRESSES_MAP.find((item) => {
         return item.evm.toLowerCase() === address.toLowerCase()
