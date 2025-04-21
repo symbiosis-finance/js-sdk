@@ -1734,6 +1734,9 @@ export const config: Config = {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                     },
+                    attributes: {
+                        ton: 'EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I',
+                    },
                 },
                 {
                     name: 'USDt',
@@ -1744,6 +1747,9 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                    attributes: {
+                        ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
                     },
                 },
                 {
@@ -1756,6 +1762,9 @@ export const config: Config = {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
                     },
+                    attributes: {
+                        ton: 'EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5',
+                    },
                 },
                 {
                     name: 'Catizen',
@@ -1767,6 +1776,9 @@ export const config: Config = {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
                     },
+                    attributes: {
+                        ton: 'EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7',
+                    },
                 },
                 {
                     name: 'PinEye',
@@ -1777,6 +1789,9 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
+                    },
+                    attributes: {
+                        ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU',
                     },
                 },
             ],
