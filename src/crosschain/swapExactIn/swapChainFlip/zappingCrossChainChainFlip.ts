@@ -31,10 +31,11 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected dstAddress: string
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
-        const { symbiosis, to } = context
+        const { symbiosis, to, partnerAddress } = context
         super(symbiosis, omniPoolConfig)
 
         this.dstAddress = to
+        this.partnerAddress = partnerAddress
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
@@ -112,6 +113,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             deadline,
             transitTokenIn,
             transitTokenOut,
+            partnerAddress: this.partnerAddress,
         })
 
         const { egressAmount, includedFees } = this.chainFlipQuote

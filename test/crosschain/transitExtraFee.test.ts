@@ -81,18 +81,19 @@ describe('Transit#ExtraFee', async () => {
     const quoteSpy = vi.spyOn(OctoPoolTrade.prototype, 'quote').mockResolvedValue(quote)
     const createOctoPoolTradeSpy = vi.spyOn(Transit.prototype, 'createOctoPoolTrade')
 
-    const newTransit = (fee1?: TokenAmount, fee2?: TokenAmount): Transit => {
-        return new Transit(
+    const newTransit = (fee1?: TokenAmount, fee2?: TokenAmount, partnerAddress?: string): Transit => {
+        return new Transit({
             symbiosis,
-            tokenAmountIn,
-            tokenAmountInMin,
+            amountIn: tokenAmountIn,
+            amountInMin: tokenAmountInMin,
             tokenOut,
             slippage,
             deadline,
             omniPoolConfig,
             fee1,
-            fee2
-        )
+            fee2,
+            partnerAddress,
+        })
     }
 
     beforeEach(() => {
@@ -131,6 +132,15 @@ describe('Transit#ExtraFee', async () => {
         // 80000000000000000000 * (90/100) - 1% (slippage) - 0.2% of SEI extra fee (because we select max fee tron/sei)
         expect(transit.amountOutMin.token.equals(tokenOut)).toBeTruthy()
         expect(transit.amountOutMin.raw.toString()).toEqual('71137440000000000000')
+    })
+
+    test('WITH PARTNER FEE', async () => {
+        const transit = await newTransit(undefined, undefined, '0x04fDE790D26Da69AA9178249EAD6863977684e9D').init()
+
+        expect(quoteSpy).toHaveBeenCalledOnce()
+        expect(createOctoPoolTradeSpy).toHaveBeenCalledOnce()
+        expect(transit.calls()).toBeDefined()
+        expect(transit.calls()?.calldatas.length).toEqual(3)
     })
 
     test('WITH FEES SET', async () => {

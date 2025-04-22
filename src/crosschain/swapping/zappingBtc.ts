@@ -7,7 +7,7 @@ import ecc from '@bitcoinerlab/secp256k1'
 import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../chainUtils/btc'
 import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
-import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
+import { getPartnerFeeCall, getPartnerFeeCallParams } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { ChainId } from '../../constants'
@@ -36,22 +36,30 @@ export class ZappingBtc extends BaseSwapping {
     protected synthesis!: Synthesis
     protected evmTo!: string
     protected partnerFeeCall?: MultiCallItem
-    protected partnerAddress?: string
     protected volumeFeeCall?: MultiCallItem
 
     protected async doPostTransitAction(): Promise<void> {
         const amount = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const amountMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
         this.minBtcFee = await getToBtcFee(amount, this.synthesis, this.symbiosis.cache)
-        this.partnerFeeCall = await getPartnerFeeCall({
-            symbiosis: this.symbiosis,
-            amountIn: amount,
-            amountInMin: amountMin,
-            partnerAddress: this.partnerAddress,
-        })
+
+        if (this.partnerAddress) {
+            const partnerFeeCallParams = await getPartnerFeeCallParams({
+                symbiosis: this.symbiosis,
+                partnerAddress: this.partnerAddress,
+                token: amount.token,
+            })
+            if (partnerFeeCallParams) {
+                this.partnerFeeCall = getPartnerFeeCall({
+                    partnerFeeCallParams,
+                    amountIn: amount,
+                    amountInMin: amountMin,
+                })
+            }
+        }
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(amount.token.chainId, [ChainId.BTC_MAINNET])
         if (volumeFeeCollector) {
-            this.volumeFeeCall = await getVolumeFeeCall({
+            this.volumeFeeCall = getVolumeFeeCall({
                 feeCollector: volumeFeeCollector,
                 amountIn: amount,
                 amountInMin: amountMin,
@@ -102,6 +110,7 @@ export class ZappingBtc extends BaseSwapping {
             deadline,
             transitTokenIn,
             transitTokenOut,
+            partnerAddress: undefined, // do not charge partnerFee twice
         })
 
         let amountOut = result.tokenAmountOut

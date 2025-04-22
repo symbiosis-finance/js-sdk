@@ -18,7 +18,7 @@ import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { BIPS_BASE } from '../constants'
-import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
+import { getPartnerFeeCall, getPartnerFeeCallParams } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { validate } from 'bitcoin-address-validation'
 
@@ -217,20 +217,26 @@ async function buildTail(
     const fees: FeeItem[] = []
     const routes: RouteItem[] = []
 
-    const partnerFeeCall = await getPartnerFeeCall({
-        symbiosis,
-        amountIn: syBtcAmount,
-        partnerAddress,
-    })
-    if (partnerFeeCall) {
-        syBtcAmount = partnerFeeCall.amountOut // override
-        calls.push(partnerFeeCall)
-        fees.push(...partnerFeeCall.fees)
+    if (partnerAddress) {
+        const partnerFeeCallParams = await getPartnerFeeCallParams({
+            symbiosis,
+            partnerAddress,
+            token: syBtcAmount.token,
+        })
+        if (partnerFeeCallParams) {
+            const partnerFeeCall = getPartnerFeeCall({
+                partnerFeeCallParams,
+                amountIn: syBtcAmount,
+            })
+            syBtcAmount = partnerFeeCall.amountOut // override
+            calls.push(partnerFeeCall)
+            fees.push(...partnerFeeCall.fees)
+        }
     }
 
     const feeCollector = symbiosis.getVolumeFeeCollector(syBtcAmount.token.chainId, [ChainId.BTC_MAINNET])
     if (feeCollector) {
-        const volumeFeeCall = await getVolumeFeeCall({
+        const volumeFeeCall = getVolumeFeeCall({
             feeCollector,
             amountIn: syBtcAmount,
         })
@@ -316,6 +322,7 @@ async function buildCrossChainSwap(context: SwapExactInParams, syBtcAmount: Toke
         tokenAmountIn: syBtcAmount,
         from: to, // to be able to revert a tx
         tradeAContext: 'multicallRouter',
+        partnerAddress: undefined, // don't need to call partner fee twice
     })
 
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!

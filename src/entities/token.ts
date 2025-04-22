@@ -713,7 +713,7 @@ export const WETH = {
     }),
     [ChainId.SEPOLIA_TESTNET]: new Token({
         chainId: ChainId.SEPOLIA_TESTNET,
-        address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
+        address: '0xb16f35c0ae2912430dac15764477e179d9b9ebea',
         decimals: 18,
         symbol: 'WETH',
         isNative: false,
@@ -925,6 +925,18 @@ export const WETH = {
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.MONAD_TESTNET]: new Token({
+        chainId: ChainId.MONAD_TESTNET,
+        address: '0x760AfE86e5de5fa0Ee542fc7B7B713e1c5425701',
+        decimals: 18,
+        symbol: 'WMON',
+        isNative: false,
+        name: 'Wrapped MON',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35888.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35888.png',
         },
     }),
 }

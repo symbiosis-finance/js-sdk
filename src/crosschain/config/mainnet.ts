@@ -555,6 +555,7 @@ export const config: Config = {
             rpc: 'https://boba-bnb.gateway.tenderly.co',
             spareRpcs: ['https://replica.bnb.boba.network'],
             filterBlockOffset: 3000,
+            partnerFeeCollector: '0x68B4fE890A2cFF636A42Ff2b3D86D6F5A168C8f6',
             stables: [
                 {
                     name: 'USD Coin',
