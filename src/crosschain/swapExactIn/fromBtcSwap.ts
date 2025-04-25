@@ -53,7 +53,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 }
 
 async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcConfig): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress, generateBtcDepositAddress } = context
 
     const { btc, symBtc, forwarderUrl } = btcConfig
 
@@ -161,16 +161,22 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
     fees.push(...swapFees)
     // <<
 
-    const { validUntil, revealAddress } = await wrap({
-        forwarderUrl,
-        portalFee: btcPortalFeeRaw,
-        stableBridgingFee: mintFeeRaw,
-        tail,
-        to,
-        feeLimit: btcForwarderFeeMax.raw.toString(),
-        amount: btcAmountRaw,
-        refundAddress,
-    })
+    let validUntil = ''
+    let revealAddress = ''
+    if (generateBtcDepositAddress) {
+        const wrapResponse = await wrap({
+            forwarderUrl,
+            portalFee: btcPortalFeeRaw,
+            stableBridgingFee: mintFeeRaw,
+            tail,
+            to,
+            feeLimit: btcForwarderFeeMax.raw.toString(),
+            amount: btcAmountRaw,
+            refundAddress,
+        })
+        validUntil = wrapResponse.validUntil
+        revealAddress = wrapResponse.revealAddress
+    }
 
     return {
         kind: 'from-btc-swap',

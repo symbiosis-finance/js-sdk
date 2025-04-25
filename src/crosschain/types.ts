@@ -132,6 +132,7 @@ export interface SwapExactInParams {
     tradeAContext?: TradeAContext
     partnerAddress?: string
     refundAddress?: string
+    generateBtcDepositAddress?: boolean
 }
 
 export type BtcTransactionData = {
