@@ -129,6 +129,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         to,
         amount: btcAmountRaw,
         refundAddress,
+        clientId: symbiosis.clientId,
     })
     const btcForwarderFeeMax = new TokenAmount(
         syBtc,
@@ -173,6 +174,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
             feeLimit: btcForwarderFeeMax.raw.toString(),
             amount: btcAmountRaw,
             refundAddress,
+            clientId: symbiosis.clientId,
         })
         validUntil = wrapResponse.validUntil
         revealAddress = wrapResponse.revealAddress
@@ -377,6 +379,7 @@ type EstimateWrapParams = {
     to: string
     amount: string
     refundAddress?: string
+    clientId?: string
 }
 type EstimateWrapBodyParams = {
     amount: number
@@ -388,6 +391,7 @@ type EstimateWrapBodyParams = {
         to: string
     }
     refundAddress?: string
+    clientId?: string
 }
 
 async function estimateWrap({
@@ -398,6 +402,7 @@ async function estimateWrap({
     to,
     amount,
     refundAddress,
+    clientId,
 }: EstimateWrapParams): Promise<BigNumber> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
@@ -414,6 +419,7 @@ async function estimateWrap({
             tail: encodeTail(tail),
             to,
         },
+        clientId,
     }
     if (refundAddress) {
         body.refundAddress = refundAddress
@@ -453,6 +459,7 @@ async function wrap({
     feeLimit,
     amount,
     refundAddress,
+    clientId,
 }: WrapParams): Promise<DepositAddressResult> {
     const body: WrapBodyParams = {
         info: {
@@ -462,6 +469,7 @@ async function wrap({
             tail: encodeTail(tail),
             to,
         },
+        clientId,
         feeLimit: Number(feeLimit),
         amount: Number(amount),
     }
