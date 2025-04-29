@@ -1,5 +1,5 @@
 import { ChainId } from '../../constants'
-import { BtcConfig } from '../chainUtils/btc'
+import { BtcConfig } from '../types'
 
 export type BridgeRequestType =
     | 'SynthesizeRequest'

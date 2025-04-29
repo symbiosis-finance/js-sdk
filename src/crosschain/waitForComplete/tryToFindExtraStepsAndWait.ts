@@ -8,7 +8,7 @@ import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
-import { BtcConfig, getBtcConfig } from '../chainUtils/btc'
+import { BtcConfig } from '../types'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -49,7 +49,7 @@ export async function tryToFindExtraStepsAndWait(
         if (!btc) {
             throw new Error('BTC token not found')
         }
-        const btcConfig = getBtcConfig(btc)
+        const btcConfig = symbiosis.getBtcConfig(btc)
         const outHash = await waitUnwrapBtcTxComplete(btcConfig, burnSerial)
 
         return {

@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils'
 
-import { FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
+import { BtcConfig, FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
 import { Percent, TokenAmount } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
@@ -13,7 +13,6 @@ import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
-import { BTC_CONFIGS, BtcConfig } from '../chainUtils/btc'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
@@ -35,7 +34,7 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, selectMode } = context
+    const { tokenAmountIn, selectMode, symbiosis } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         throw new Error(`tokenAmountIn is not BTC token`)
@@ -44,7 +43,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const promises: Promise<SwapExactInResult>[] = []
 
     // configs except syBTC on zksync
-    const configs = BTC_CONFIGS.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+    const configs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
     configs.forEach((btConfig) => {
         promises.push(fromBtcSwapInternal(context, btConfig))
     })
@@ -53,7 +52,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 }
 
 async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcConfig): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress } = context
+    const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress, generateBtcDepositAddress } = context
 
     const { btc, symBtc, forwarderUrl } = btcConfig
 
@@ -129,6 +128,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         to,
         amount: btcAmountRaw,
         refundAddress,
+        clientId: symbiosis.clientId,
     })
     const btcForwarderFeeMax = new TokenAmount(
         syBtc,
@@ -161,16 +161,23 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
     fees.push(...swapFees)
     // <<
 
-    const { validUntil, revealAddress } = await wrap({
-        forwarderUrl,
-        portalFee: btcPortalFeeRaw,
-        stableBridgingFee: mintFeeRaw,
-        tail,
-        to,
-        feeLimit: btcForwarderFeeMax.raw.toString(),
-        amount: btcAmountRaw,
-        refundAddress,
-    })
+    let validUntil = ''
+    let revealAddress = ''
+    if (generateBtcDepositAddress) {
+        const wrapResponse = await wrap({
+            forwarderUrl,
+            portalFee: btcPortalFeeRaw,
+            stableBridgingFee: mintFeeRaw,
+            tail,
+            to,
+            feeLimit: btcForwarderFeeMax.raw.toString(),
+            amount: btcAmountRaw,
+            refundAddress,
+            clientId: symbiosis.clientId,
+        })
+        validUntil = wrapResponse.validUntil
+        revealAddress = wrapResponse.revealAddress
+    }
 
     return {
         kind: 'from-btc-swap',
@@ -371,6 +378,7 @@ type EstimateWrapParams = {
     to: string
     amount: string
     refundAddress?: string
+    clientId?: string
 }
 type EstimateWrapBodyParams = {
     amount: number
@@ -382,6 +390,7 @@ type EstimateWrapBodyParams = {
         to: string
     }
     refundAddress?: string
+    clientId?: string
 }
 
 async function estimateWrap({
@@ -392,6 +401,7 @@ async function estimateWrap({
     to,
     amount,
     refundAddress,
+    clientId,
 }: EstimateWrapParams): Promise<BigNumber> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
@@ -408,6 +418,7 @@ async function estimateWrap({
             tail: encodeTail(tail),
             to,
         },
+        clientId,
     }
     if (refundAddress) {
         body.refundAddress = refundAddress
@@ -447,6 +458,7 @@ async function wrap({
     feeLimit,
     amount,
     refundAddress,
+    clientId,
 }: WrapParams): Promise<DepositAddressResult> {
     const body: WrapBodyParams = {
         info: {
@@ -456,6 +468,7 @@ async function wrap({
             tail: encodeTail(tail),
             to,
         },
+        clientId,
         feeLimit: Number(feeLimit),
         amount: Number(amount),
     }

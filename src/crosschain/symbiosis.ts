@@ -29,6 +29,7 @@ import { Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
+    BtcConfig,
     ChainConfig,
     Config,
     FeeConfig,
@@ -61,7 +62,6 @@ import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
-import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { isTonChainId } from './chainUtils'
 
@@ -161,6 +161,14 @@ export class Symbiosis {
         this.clientId = utils.formatBytes32String(clientId)
     }
 
+    public getBtcConfig(btc: Token): BtcConfig {
+        const config = this.config.btcConfigs.find((i) => i.btc.equals(btc))
+        if (!config) {
+            throw new Error('BTC config not found')
+        }
+        return config
+    }
+
     public async getDiscountTiers(): Promise<DiscountTier[]> {
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/discount/tiers`)
 
@@ -235,6 +243,9 @@ export class Symbiosis {
         }
         if (overrideConfig?.advisor) {
             this.config.advisor = overrideConfig.advisor
+        }
+        if (overrideConfig?.btcConfigs) {
+            this.config.btcConfigs = overrideConfig.btcConfigs
         }
         this.oneInchConfig = {
             apiUrl: 'https://api.1inch.dev/swap/v5.2/',
@@ -604,7 +615,7 @@ export class Symbiosis {
 
     public async waitForBtcDepositAccepted(depositAddress: string) {
         return Promise.any(
-            BTC_CONFIGS.map((btcConfig) => {
+            this.config.btcConfigs.map((btcConfig) => {
                 return waitForBtcDepositAccepted(btcConfig, depositAddress)
             })
         )

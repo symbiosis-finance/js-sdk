@@ -31,6 +31,7 @@ export const config: Config = {
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
     refundAddress: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
+    btcConfigs: [],
     chains: [
         {
             // NOTE host chain is better to be first in the config
