@@ -62,6 +62,15 @@ export type SwapLimit = {
     max: string
 }
 
+export type BtcConfig = {
+    btc: Token
+    symBtc: {
+        address: string
+        chainId: ChainId
+    }
+    forwarderUrl: string
+}
+
 export type Config = {
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
@@ -69,6 +78,7 @@ export type Config = {
     limits: SwapLimit[]
     chains: ChainConfig[]
     refundAddress: string
+    btcConfigs: BtcConfig[]
 }
 
 export type OverrideChainConfig = {
@@ -93,6 +103,7 @@ export type OpenOceanConfig = {
 }
 
 export type OverrideConfig = {
+    btcConfigs?: BtcConfig[]
     chains?: OverrideChainConfig[]
     limits?: SwapLimit[]
     fetch?: typeof fetch
@@ -133,6 +144,7 @@ export interface SwapExactInParams {
     partnerAddress?: string
     refundAddress?: string
     generateBtcDepositAddress?: boolean
+    forwarderUrl?: string
 }
 
 export type BtcTransactionData = {

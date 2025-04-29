@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils'
 
-import { FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
+import { BtcConfig, FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
 import { Percent, TokenAmount } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
@@ -13,7 +13,6 @@ import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
-import { BTC_CONFIGS, BtcConfig } from '../chainUtils/btc'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
@@ -35,7 +34,7 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, selectMode } = context
+    const { tokenAmountIn, selectMode, symbiosis } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         throw new Error(`tokenAmountIn is not BTC token`)
@@ -44,7 +43,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const promises: Promise<SwapExactInResult>[] = []
 
     // configs except syBTC on zksync
-    const configs = BTC_CONFIGS.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+    const configs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
     configs.forEach((btConfig) => {
         promises.push(fromBtcSwapInternal(context, btConfig))
     })

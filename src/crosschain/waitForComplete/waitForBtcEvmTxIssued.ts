@@ -1,7 +1,7 @@
 import { Symbiosis } from '../symbiosis'
 import { getLogWithTimeout } from '../chainUtils'
-import { BtcConfig } from '../chainUtils/btc'
 import { SymBtc__factory } from '../contracts'
+import { BtcConfig } from '../types'
 
 export async function waitForBtcEvmTxIssued(
     symbiosis: Symbiosis,

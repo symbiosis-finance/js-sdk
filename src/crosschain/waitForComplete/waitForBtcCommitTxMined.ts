@@ -1,5 +1,5 @@
 import { fetchData, longPolling } from './utils'
-import { BtcConfig } from '../chainUtils/btc'
+import { BtcConfig } from '../types'
 
 interface WrapTx {
     feeLimit: number
