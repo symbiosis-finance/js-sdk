@@ -1,7 +1,6 @@
 import { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
 import { ZappingBtc } from '../../swapping'
-import { BTC_CONFIGS } from '../../chainUtils/btc'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
@@ -9,7 +8,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    BTC_CONFIGS.forEach(({ btc, symBtc }) => {
+    symbiosis.config.btcConfigs.forEach(({ btc, symBtc }) => {
         const syBtc = symbiosis.getRepresentation(btc, symBtc.chainId)
         if (!syBtc) {
             return

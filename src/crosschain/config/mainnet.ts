@@ -1,5 +1,6 @@
 import { ChainId } from '../../constants'
 import { Config } from '../types'
+import { Token } from '../../entities'
 
 export const config: Config = {
     advisor: {
@@ -97,6 +98,45 @@ export const config: Config = {
         default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     },
     refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+    btcConfigs: [
+        {
+            btc: new Token({
+                deprecated: true,
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
+                chainId: ChainId.ZKSYNC_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
+        },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x1dfc1e32d75b3f4cb2f2b1bcecad984e99eeba05',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0xa1262496e84a9663b7AB64ed96C152A23d0B7214',
+                chainId: ChainId.BSC_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
+        },
+    ],
     chains: [
         {
             id: ChainId.BTC_MAINNET,
@@ -375,7 +415,7 @@ export const config: Config = {
         {
             id: ChainId.AVAX_MAINNET,
             rpc: 'https://avalanche-c-chain-rpc.publicnode.com',
-            spareRpcs: ['https://rpc.ankr.com/avalanche', 'https://avalanche.drpc.org', 'https://avax.meowrpc.com'],
+            spareRpcs: ['https://rpc.ankr.com/avalanche', 'https://api.avax.network/ext/bc/C/rpc'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -761,8 +801,8 @@ export const config: Config = {
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
-            rpc: 'https://mainnet.optimism.io',
-            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://rpc.ankr.com/optimism'],
+            rpc: 'https://optimism-rpc.publicnode.com',
+            spareRpcs: ['https://mainnet.optimism.io', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -948,12 +988,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MANTLE_MAINNET,
-            rpc: 'https://rpc.mantle.xyz',
-            spareRpcs: [
-                'https://mantle-rpc.publicnode.com',
-                'https://mantle-mainnet.public.blastapi.io',
-                'https://rpc.ankr.com/mantle',
-            ],
+            rpc: 'https://mantle-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.mantle.xyz', 'https://rpc.ankr.com/mantle'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1014,7 +1050,7 @@ export const config: Config = {
         {
             id: ChainId.BASE_MAINNET,
             rpc: 'https://base-rpc.publicnode.com',
-            spareRpcs: ['https://mainnet.base.org', 'https://base.llamarpc.com', 'https://rpc.ankr.com/base'],
+            spareRpcs: ['https://mainnet.base.org', 'https://rpc.ankr.com/base'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1091,11 +1127,7 @@ export const config: Config = {
         {
             id: ChainId.SCROLL_MAINNET,
             rpc: 'https://rpc.scroll.io',
-            spareRpcs: [
-                'https://rpc.ankr.com/scroll',
-                'https://scroll.blockpi.network/v1/rpc/public',
-                'https://scroll-mainnet.public.blastapi.io',
-            ],
+            spareRpcs: ['https://scroll-rpc.publicnode.com', 'https://rpc.ankr.com/scroll'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1155,8 +1187,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MANTA_MAINNET,
-            rpc: 'https://pacific-rpc.manta.network/http',
-            spareRpcs: ['https://1rpc.io/manta', 'https://manta-pacific.drpc.org'],
+            rpc: 'https://manta-atlantic-rpc.publicnode.com',
+            spareRpcs: ['https://pacific-rpc.manta.network/http'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1238,7 +1270,7 @@ export const config: Config = {
         {
             id: ChainId.BAHAMUT_MAINNET,
             rpc: 'https://bahamut-eu-1.nodes.guru',
-            spareRpcs: ['https://rpc.ankr.com/bahamut'],
+            spareRpcs: ['https://bahamut-rpc.publicnode.com', 'https://rpc.ankr.com/bahamut'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1344,11 +1376,7 @@ export const config: Config = {
         {
             id: ChainId.BLAST_MAINNET,
             rpc: 'https://blast-rpc.publicnode.com',
-            spareRpcs: [
-                'https://rpc.blast.io',
-                'https://rpc.ankr.com/blast',
-                'https://blastl2-mainnet.public.blastapi.io',
-            ],
+            spareRpcs: ['https://rpc.blast.io', 'https://rpc.ankr.com/blast'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1470,7 +1498,7 @@ export const config: Config = {
         {
             id: ChainId.TAIKO_MAINNET,
             rpc: 'https://rpc.mainnet.taiko.xyz',
-            spareRpcs: ['https://rpc.ankr.com/taiko', 'https://taiko.blockpi.network/v1/rpc/public'],
+            spareRpcs: ['https://taiko-rpc.publicnode.com', 'https://rpc.ankr.com/taiko'],
             filterBlockOffset: 1000,
             stables: [
                 {

@@ -27,7 +27,6 @@ import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import fs from 'fs'
-import { BTC_CONFIGS } from '../../chainUtils/btc'
 
 export type Id = number
 
@@ -298,7 +297,7 @@ export class Builder {
             realTokensWithId.push({ ...stables[idCounter], id: idCounter })
         }
 
-        BTC_CONFIGS.forEach((btcConfig) => {
+        this.config.btcConfigs.forEach((btcConfig) => {
             realTokensWithId.push({ ...btcConfig.btc, id: idCounter++ })
         })
 
