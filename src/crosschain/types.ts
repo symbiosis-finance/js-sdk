@@ -144,7 +144,6 @@ export interface SwapExactInParams {
     partnerAddress?: string
     refundAddress?: string
     generateBtcDepositAddress?: boolean
-    forwarderUrl?: string
 }
 
 export type BtcTransactionData = {
