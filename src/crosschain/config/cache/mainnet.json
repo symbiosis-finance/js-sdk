@@ -1403,13 +1403,13 @@
         },
         {
             "decimals": 18,
-            "symbol": "FRAX",
-            "name": "Frax",
+            "symbol": "frxUSD",
+            "name": "Frax USD",
             "chainId": 252,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png"
             },
             "deprecated": false,
             "address": "0xFc00000000000000000000000000000000000001",
@@ -3094,8 +3094,8 @@
             "chainId": 56288,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png"
             },
             "chainFromId": 252,
             "deprecated": false,
