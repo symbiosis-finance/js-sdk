@@ -1187,8 +1187,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MANTA_MAINNET,
-            rpc: 'https://manta-atlantic-rpc.publicnode.com',
-            spareRpcs: ['https://pacific-rpc.manta.network/http'],
+            rpc: 'https://pacific-rpc.manta.network/http',
+            spareRpcs: ['https://manta-atlantic-rpc.publicnode.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
