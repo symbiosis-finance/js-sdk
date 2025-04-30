@@ -1658,14 +1658,14 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Frax',
-                    symbol: 'FRAX',
+                    name: 'Frax USD',
+                    symbol: 'frxUSD',
                     address: '0xfc00000000000000000000000000000000000001',
                     chainId: ChainId.FRAXTAL_MAINNET,
                     decimals: 18,
                     icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png',
                     },
                 },
             ],

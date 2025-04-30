@@ -790,14 +790,14 @@ export const WETH = {
     }),
     [ChainId.FRAXTAL_MAINNET]: new Token({
         chainId: ChainId.FRAXTAL_MAINNET,
-        address: '0xfc00000000000000000000000000000000000006',
+        address: '0xFc00000000000000000000000000000000000002',
         decimals: 18,
-        symbol: 'wfrxETH',
+        symbol: 'WFRAX',
         isNative: false,
-        name: 'Wrapped frxETH',
+        name: 'Wrapped FRAX',
         icons: {
-            small: 'https://fraxscan.com/token/images/wfrxeth_32.png',
-            large: 'https://fraxscan.com/token/images/wfrxeth_32.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
         },
     }),
     [ChainId.GRAVITY_MAINNET]: new Token({
