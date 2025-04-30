@@ -79,7 +79,7 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.SEI_EVM_MAINNET]: 'sei-network',
     [ChainId.ZETACHAIN_MAINNET]: 'zetachain',
     [ChainId.CRONOS_MAINNET]: 'crypto-com-chain',
-    [ChainId.FRAXTAL_MAINNET]: 'frax-ether',
+    [ChainId.FRAXTAL_MAINNET]: 'frax-share',
     [ChainId.GRAVITY_MAINNET]: 'g-token',
     [ChainId.BSQUARED_MAINNET]: 'bitcoin',
     [ChainId.CRONOS_ZK_MAINNET]: 'cronos-zkevm-cro',

@@ -1669,7 +1669,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x39cd4db6460d8B5961F73E997E86DdbB7Ca4D5F6',
+            router: '0x000000008096D9dED037d4dB3fe57764B996BC86',
             dexFee: 30,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
