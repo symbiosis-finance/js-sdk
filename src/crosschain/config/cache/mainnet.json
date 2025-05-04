@@ -1468,6 +1468,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
             },
             "deprecated": true,
+            "attributes": { "ton": "EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I" },
             "address": "0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C",
             "id": 90
         },
@@ -1482,6 +1483,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
             },
             "deprecated": false,
+            "attributes": { "ton": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" },
             "address": "0x9328Eb759596C38a25f59028B146Fecdc3621Dfe",
             "id": 91
         },
@@ -1496,6 +1498,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
             },
             "deprecated": false,
+            "attributes": { "ton": "EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5" },
             "address": "0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293",
             "id": 92
         },
@@ -1510,6 +1513,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png"
             },
             "deprecated": false,
+            "attributes": { "ton": "EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7" },
             "address": "0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400",
             "id": 93
         },
@@ -1524,6 +1528,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png"
             },
             "deprecated": false,
+            "attributes": { "ton": "EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU" },
             "address": "0x0d2d353642cFFC051A2694C51B6C00e787EB4590",
             "id": 94
         },
@@ -3163,6 +3168,7 @@
             },
             "chainFromId": 85918,
             "deprecated": true,
+            "attributes": { "ton": "EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I" },
             "address": "0x8d17D04A595eCFbBFc8bF8016949161AA034A75B",
             "id": 198,
             "originalId": 90
@@ -3179,6 +3185,7 @@
             },
             "chainFromId": 85918,
             "deprecated": false,
+            "attributes": { "ton": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" },
             "address": "0x651c4CA3f3df776F2db9eD1658e850151b7E1208",
             "id": 199,
             "originalId": 91
@@ -3195,6 +3202,7 @@
             },
             "chainFromId": 85918,
             "deprecated": false,
+            "attributes": { "ton": "EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5" },
             "address": "0x1156C5A852AECb32B91E203F0169154C7d65286a",
             "id": 200,
             "originalId": 92
@@ -3211,6 +3219,7 @@
             },
             "chainFromId": 85918,
             "deprecated": false,
+            "attributes": { "ton": "EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7" },
             "address": "0x34d46b31f863222c7c8B810F18f5D26a3d89AD30",
             "id": 201,
             "originalId": 93
@@ -3227,6 +3236,7 @@
             },
             "chainFromId": 85918,
             "deprecated": false,
+            "attributes": { "ton": "EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU" },
             "address": "0x79e04bdB3f05822d107BBa6a687639A203b16599",
             "id": 202,
             "originalId": 94

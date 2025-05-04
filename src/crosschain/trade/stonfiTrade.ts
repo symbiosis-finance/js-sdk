@@ -3,7 +3,7 @@ import { StonApiClient } from '@ston-fi/api'
 import { SenderArguments } from '@ton/core'
 
 import { Percent, Token, TokenAmount } from '../../entities'
-import { getTonTokenAddress, TON_EVM_ADDRESS, TON_REFERRAL_ADDRESS } from '../chainUtils'
+import { isTonEvmAddress, TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
@@ -36,10 +36,22 @@ export class StonfiTrade extends SymbiosisTrade {
     }
 
     public async init() {
+        if (!isTonEvmAddress(this.tokenAmountIn.token.address) && !this.tokenAmountIn.token.attributes?.ton) {
+            throw new Error(`No TON token address for token ${this.tokenAmountIn.token.symbol}`)
+        }
+
+        if (!isTonEvmAddress(this.tokenOut.address) && !this.tokenOut.attributes?.ton) {
+            throw new Error(`No TON token address for token ${this.tokenOut.symbol}`)
+        }
+
         const quote = await this.stonClient.simulateSwap({
-            offerAddress: getTonTokenAddress(this.tokenAmountIn.token.address, true),
+            offerAddress: isTonEvmAddress(this.tokenAmountIn.token.address)
+                ? TON_STONFI_PROXY_ADDRESS
+                : this.tokenAmountIn.token.attributes!.ton!,
             offerUnits: this.tokenAmountIn.raw.toString(),
-            askAddress: getTonTokenAddress(this.tokenOut.address, true),
+            askAddress: isTonEvmAddress(this.tokenOut.address)
+                ? TON_STONFI_PROXY_ADDRESS
+                : this.tokenOut.attributes!.ton!,
             slippageTolerance: (this.slippage / 10000).toString(), // 0.01 is 1%
         })
 
@@ -87,22 +99,30 @@ export class StonfiTrade extends SymbiosisTrade {
 
         let txParams: SenderArguments | null = null
 
+        if (!isTonEvmAddress(tokenAmountIn.token.address) && !tokenAmountIn.token.attributes?.ton) {
+            throw new Error(`No TON token address for token ${tokenAmountIn.token.symbol}`)
+        }
+
+        if (!isTonEvmAddress(tokenOut.address) && !tokenOut.attributes?.ton) {
+            throw new Error(`No TON token address for token ${tokenOut.symbol}`)
+        }
+
         // TON -> jetton
-        if (tokenAmountIn.token.address === TON_EVM_ADDRESS) {
+        if (isTonEvmAddress(tokenAmountIn.token.address)) {
             txParams = await router.getSwapTonToJettonTxParams({
                 userWalletAddress: this.from,
                 proxyTon: proxyTon,
                 offerAmount: tokenAmountIn.raw.toString(),
-                askJettonAddress: getTonTokenAddress(tokenOut.address),
+                askJettonAddress: tokenOut.attributes!.ton!,
                 minAskAmount: minAskUnits,
                 referralAddress: TON_REFERRAL_ADDRESS,
                 queryId,
             })
-        } else if (tokenOut.address === TON_EVM_ADDRESS) {
+        } else if (isTonEvmAddress(tokenOut.address)) {
             // jetton -> TON
             txParams = await router.getSwapJettonToTonTxParams({
                 userWalletAddress: this.from,
-                offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
+                offerJettonAddress: tokenAmountIn.token.attributes!.ton!,
                 offerAmount: tokenAmountIn.raw.toString(),
                 minAskAmount: minAskUnits,
                 referralAddress: TON_REFERRAL_ADDRESS,
@@ -113,9 +133,9 @@ export class StonfiTrade extends SymbiosisTrade {
             // jetton -> jetton
             txParams = await router.getSwapJettonToJettonTxParams({
                 userWalletAddress: this.from,
-                offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
+                offerJettonAddress: tokenAmountIn.token.attributes!.ton!,
                 offerAmount: tokenAmountIn.raw.toString(),
-                askJettonAddress: getTonTokenAddress(tokenOut.address),
+                askJettonAddress: tokenOut.attributes!.ton!,
                 minAskAmount: minAskUnits,
                 referralAddress: TON_REFERRAL_ADDRESS,
                 queryId,
