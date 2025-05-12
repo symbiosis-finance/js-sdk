@@ -75,6 +75,7 @@ export abstract class BaseSwapping {
 
     protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
+    protected partnerAddress?: string
 
     private profiler: Profiler
 
@@ -96,10 +97,12 @@ export abstract class BaseSwapping {
         transitTokenOut,
         revertableAddresses,
         tradeAContext,
+        partnerAddress,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
+        this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -266,6 +269,13 @@ export abstract class BaseSwapping {
                 description: 'Cross-chain fee',
                 save: save2,
             })
+        }
+
+        if (this.transit.partnerFeeCall) {
+            fees.push(...this.transit.partnerFeeCall.fees)
+        }
+        if (this.transit.volumeFeeCall) {
+            fees.push(...this.transit.volumeFeeCall.fees)
         }
 
         return {
@@ -488,15 +498,16 @@ export abstract class BaseSwapping {
     protected buildTransit(amountIn: TokenAmount, amountInMin: TokenAmount): Transit {
         this.symbiosis.validateLimits(amountIn)
 
-        return new Transit(
-            this.symbiosis,
+        return new Transit({
+            symbiosis: this.symbiosis,
             amountIn,
             amountInMin,
-            this.transitTokenOut,
-            this.slippage['B'],
-            this.deadline,
-            this.omniPoolConfig
-        )
+            tokenOut: this.transitTokenOut,
+            slippage: this.slippage['B'],
+            deadline: this.deadline,
+            omniPoolConfig: this.omniPoolConfig,
+            partnerAddress: this.partnerAddress,
+        })
     }
 
     protected tradeCTo() {
