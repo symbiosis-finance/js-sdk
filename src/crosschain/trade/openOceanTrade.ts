@@ -131,6 +131,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'unichain',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
+    [ChainId.OPBNB_MAINNET]: {
+        slug: 'opbnb',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {

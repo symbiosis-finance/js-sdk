@@ -45,6 +45,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.BERACHAIN_MAINNET]: 'berachain',
     [ChainId.UNICHAIN_MAINNET]: 'unichain',
     [ChainId.SONEIUM_MAINNET]: 'soneium',
+    [ChainId.OPBNB_MAINNET]: 'opbnb',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -93,4 +94,5 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.BERACHAIN_MAINNET]: 'berachain-bera',
     [ChainId.UNICHAIN_MAINNET]: 'ethereum',
     [ChainId.SONEIUM_MAINNET]: 'ethereum',
+    [ChainId.OPBNB_MAINNET]: 'binancecoin',
 }

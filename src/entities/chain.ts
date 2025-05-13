@@ -758,6 +758,16 @@ export const chains: Chain[] = [
             large: 'https://coin-images.coingecko.com/asset_platforms/images/22200/thumb/soneium-removebg-preview.png?1737099934',
         },
     }),
+    new Chain({
+        id: ChainId.OPBNB_MAINNET,
+        name: 'opBNB',
+        disabled: false,
+        explorer: 'https://opbnb.bscscan.com',
+        icons: {
+            small: 'https://icons.llamao.fi/icons/chains/rsz_opbnb?w=48&h=48',
+            large: 'https://icons.llamao.fi/icons/chains/rsz_opbnb?w=48&h=48',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
