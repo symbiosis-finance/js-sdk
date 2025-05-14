@@ -4,11 +4,11 @@ import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping'
 import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
-import { Error, ErrorCode } from '../../error'
+import { Error } from '../../error'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
-import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, getChainFlipFee } from './utils'
+import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
 
 export interface ZappingChainFlipExactInParams {
@@ -43,6 +43,8 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     }
 
     protected async doPostTransitAction() {
+        checkMinAmount(this.transit.amountOut)
+
         const { src, dest } = this.config
         try {
             const { quotes } = await this.chainFlipSdk.getQuoteV2({
@@ -75,11 +77,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             })
         } catch (e) {
             console.error(e)
-            if ((e as unknown as { status: number }).status === 400) {
-                throw new Error('The min swap amount is $10', ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
-            } else {
-                throw new Error('Chainflip error')
-            }
+            throw new Error('Chainflip error')
         }
     }
 
