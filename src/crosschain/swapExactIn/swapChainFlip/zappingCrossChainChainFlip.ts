@@ -182,10 +182,11 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
             throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
         }
-        const { calldata, to, sourceTokenAddress } = this.chainFlipVaultSwapResponse
+        const { tokenIn } = this.config
+        const { calldata, to } = this.chainFlipVaultSwapResponse
         callDatas.push(calldata)
         receiveSides.push(to)
-        path.push(sourceTokenAddress!)
+        path.push(tokenIn.address)
         offsets.push(164)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [
