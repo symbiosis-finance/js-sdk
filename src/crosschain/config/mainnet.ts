@@ -136,6 +136,24 @@ export const config: Config = {
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
         },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0xc17d768bf4Fdc6f20a4a0D8BE8767840D106D077',
+                chainId: ChainId.RSK_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
+        },
     ],
     chains: [
         {
@@ -1362,15 +1380,26 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32702.png',
                     },
                 },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba',
+                    chainId: ChainId.RSK_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x7057ab3fb2bee9c18e0cde4240de4ff7f159e365',
             metaRouterGateway: '0xfffdb2a69abcbbf55ecb2f6b348e0bd3d0f9f2e1',
             bridge: '0xda8057acb94905eb6025120cb2c38415fd81bfeb',
-            synthesis: '0x0000000000000000000000000000000000000000',
+            synthesis: '0xf8504d2ca2f0bbad9d36927e3d32e278abadada0',
             portal: '0x5aa5f7f84ed0e5db0a4a85c3947ea16b53352fd4',
-            fabric: '0x0000000000000000000000000000000000000000',
+            fabric: '0x7775b274f0c3fa919b756b22a4d9674e55927ab8',
             multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9',
         },
         {
