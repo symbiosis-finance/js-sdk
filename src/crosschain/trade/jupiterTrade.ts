@@ -81,10 +81,8 @@ export class JupiterTrade extends SymbiosisTrade {
         try {
             const inputMint = this.tokenAmountIn.token.isNative
                 ? NATIVE_MINT.toBase58()
-                : this.tokenAmountIn.token.attributes?.solana
-            const outputMint = this.tokenOut.isNative
-                ? NATIVE_MINT.toBase58()
-                : this.tokenOut.attributes?.solana
+                : this.tokenAmountIn.token.solAddress
+            const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
 
             // get quote
             const quoteResponse = (await fetch(
