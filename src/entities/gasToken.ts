@@ -88,20 +88,8 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.ZKLINK_MAINNET]: GAS(ChainId.ZKLINK_MAINNET, 'ETH', 1027),
     [ChainId.SEPOLIA_TESTNET]: GAS(ChainId.SEPOLIA_TESTNET, 'ETH', 1027),
     [ChainId.CORE_MAINNET]: GAS(ChainId.CORE_MAINNET, 'CORE', 23254),
-    [ChainId.TON_MAINNET]: TOKEN_AS_GAS(
-        ChainId.TON_MAINNET,
-        '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
-        'TON',
-        11419,
-        9
-    ),
-    [ChainId.TON_TESTNET]: TOKEN_AS_GAS(
-        ChainId.TON_TESTNET,
-        '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C',
-        'TON',
-        11419,
-        9
-    ),
+    [ChainId.TON_MAINNET]: GAS(ChainId.TON_MAINNET, 'TON', 11419, 9),
+    [ChainId.TON_TESTNET]: GAS(ChainId.TON_TESTNET, 'TON', 11419, 9),
     [ChainId.TAIKO_MAINNET]: GAS(ChainId.TAIKO_MAINNET, 'ETH', 1027),
     [ChainId.SEI_EVM_MAINNET]: GAS(ChainId.SEI_EVM_MAINNET, 'SEI', 23149),
     [ChainId.ZETACHAIN_MAINNET]: GAS(ChainId.ZETACHAIN_MAINNET, 'ZETA', 21259),

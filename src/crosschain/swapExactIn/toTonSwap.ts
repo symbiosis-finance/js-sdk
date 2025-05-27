@@ -24,9 +24,7 @@ export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactIn
     const { selectMode } = context
 
     const promises = []
-    // if (tokenOut.equals(GAS_TOKEN[tokenOut.chainId])) {
-    //     promises.push(...nativeBridgeToTon(context))
-    // }
+
     promises.push(...symbiosisBridgeToTon(context))
 
     return theBest(promises, selectMode)
