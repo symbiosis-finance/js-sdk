@@ -1463,7 +1463,7 @@
             "symbol": "TON",
             "name": "TON Coin",
             "chainId": 85918,
-            "isNative": false,
+            "isNative": true,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
@@ -3176,7 +3176,7 @@
             "symbol": "sTON",
             "name": "Synthetic TON From TON",
             "chainId": 56288,
-            "isNative": false,
+            "isNative": true,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
