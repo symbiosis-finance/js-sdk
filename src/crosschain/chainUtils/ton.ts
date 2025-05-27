@@ -241,11 +241,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
         throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
-    const tonTokenAddress = amountIn.token.attributes?.ton
-
-    if (!tonTokenAddress) {
-        throw new Error(`No TON token address for token ${amountIn.token.symbol}`)
-    }
+    const tonTokenAddress = amountIn.token.tonAddress
 
     const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
@@ -278,10 +274,8 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             ],
         }
     } else {
-        const tonTokenAddress = amountIn.token.attributes?.ton
-        if (!tonTokenAddress) {
-            throw new Error(`No TON token address for token ${amountIn.token.symbol}`)
-        }
+        const tonTokenAddress = amountIn.token.tonAddress
+
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
         const tonClient = await symbiosis.getTonClient()
@@ -335,10 +329,7 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
         throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
-    const tonTokenAddress = amountIn.token.attributes?.ton
-    if (!tonTokenAddress) {
-        throw new Error(`No TON token address for token ${amountIn.token.symbol}`)
-    }
+    const tonTokenAddress = amountIn.token.tonAddress
 
     const synthesizeMessage = Bridge.synthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
@@ -365,10 +356,8 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
             ],
         }
     } else {
-        const tonTokenAddress = amountIn.token.attributes?.ton
-        if (!tonTokenAddress) {
-            throw new Error(`No TON token address for token ${amountIn.token.symbol}`)
-        }
+        const tonTokenAddress = amountIn.token.tonAddress
+
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
         const tonClient = await symbiosis.getTonClient()
