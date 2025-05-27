@@ -45,6 +45,19 @@ export const CF_ETH_USDC: ChainFlipToken = {
     asset: 'USDC',
 }
 
+export function checkMinAmount(amountIn: TokenAmount) {
+    let minThreshold: TokenAmount | undefined = undefined
+    if (amountIn.token.equals(ARB_USDC)) {
+        minThreshold = new TokenAmount(ARB_USDC, '15000000') //  15 USDC
+    } else if (amountIn.token.equals(ETH_USDC)) {
+        minThreshold = new TokenAmount(ARB_USDC, '25000000') //  25 USDC
+    }
+
+    if (minThreshold && amountIn.lessThan(minThreshold)) {
+        throw new Error(`Amount should be greater than ${minThreshold.toSignificant()} ${minThreshold.token.symbol}`)
+    }
+}
+
 export function getChainFlipFee(includedFees: QuoteResponse['quote']['includedFees']) {
     const SOL = GAS_TOKEN[ChainId.SOLANA_MAINNET]
     const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]

@@ -218,11 +218,11 @@ export class Symbiosis {
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         this.configName = configName
         if (configName === 'mainnet') {
-            this.config = mainnet
+            this.config = structuredClone(mainnet)
         } else if (configName === 'testnet') {
-            this.config = testnet
+            this.config = structuredClone(testnet)
         } else if (configName === 'dev') {
-            this.config = dev
+            this.config = structuredClone(dev)
         } else {
             throw new Error('Unknown config name')
         }

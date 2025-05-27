@@ -182,8 +182,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped BNB',
         icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
         },
     }),
     [ChainId.BSC_TESTNET]: new Token({
@@ -194,8 +194,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped BNB',
         icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
         },
     }),
     [ChainId.MATIC_MAINNET]: new Token({
@@ -790,14 +790,14 @@ export const WETH = {
     }),
     [ChainId.FRAXTAL_MAINNET]: new Token({
         chainId: ChainId.FRAXTAL_MAINNET,
-        address: '0xfc00000000000000000000000000000000000006',
+        address: '0xFc00000000000000000000000000000000000002',
         decimals: 18,
-        symbol: 'wfrxETH',
+        symbol: 'WFRAX',
         isNative: false,
-        name: 'Wrapped frxETH',
+        name: 'Wrapped FRAX',
         icons: {
-            small: 'https://fraxscan.com/token/images/wfrxeth_32.png',
-            large: 'https://fraxscan.com/token/images/wfrxeth_32.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
         },
     }),
     [ChainId.GRAVITY_MAINNET]: new Token({
@@ -930,6 +930,18 @@ export const WETH = {
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.OPBNB_MAINNET]: new Token({
+        chainId: ChainId.OPBNB_MAINNET,
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'WBNB',
+        isNative: false,
+        name: 'Wrapped BNB',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
         },
     }),
 }
