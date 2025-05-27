@@ -13,7 +13,7 @@ import {
 } from '@dedust/sdk'
 
 import { GAS_TOKEN, Percent, Token, TokenAmount } from '../../entities'
-import { isTonEvmAddress, TON_REFERRAL_ADDRESS } from '../chainUtils'
+import { TON_REFERRAL_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
@@ -146,32 +146,24 @@ export class DedustTrade extends SymbiosisTrade {
         let pool: OpenedContract<Pool>
         let secondPool: OpenedContract<Pool> | null = null // only for multihop
 
-        if (!isTonEvmAddress(tokenOut.address) && !tokenOut.attributes?.ton) {
-            throw new Error(`No TON token address for token ${tokenOut.symbol}`)
-        }
-
-        if (!isTonEvmAddress(tokenAmountIn.token.address) && !tokenAmountIn.token.attributes?.ton) {
-            throw new Error(`No TON token address for token ${tokenAmountIn.token.symbol}`)
-        }
-
         // TON -> jetton
-        if (isTonEvmAddress(tokenAmountIn.token.address)) {
+        if (tokenAmountIn.token.isNative) {
             const tonVault = client.open(await factory.getNativeVault())
-            const tokenB = Asset.jetton(Address.parse(tokenOut.attributes!.ton!))
+            const tokenB = Asset.jetton(Address.parse(tokenOut.tonAddress))
 
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [Asset.native(), tokenB]))
 
             if ((await tonVault.getReadinessStatus()) !== ReadinessStatus.READY) {
                 throw new Error('Vault (TON) Dedust does not exist.')
             }
-        } else if (isTonEvmAddress(tokenOut.address)) {
-            const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.attributes!.ton!))
+        } else if (tokenOut.isNative) {
+            const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
 
             // jetton -> TON
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [tokenA, Asset.native()]))
         } else {
-            const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.attributes!.ton!))
-            const tokenB = Asset.jetton(Address.parse(tokenOut.attributes!.ton!))
+            const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
+            const tokenB = Asset.jetton(Address.parse(tokenOut.tonAddress))
 
             // jetton -> jetton
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [tokenA, tokenB]))
@@ -181,14 +173,14 @@ export class DedustTrade extends SymbiosisTrade {
                 const [poolTonOut, poolTonIn] = await Promise.all([
                     client.open(
                         await factory.getPool(PoolType.VOLATILE, [
-                            Asset.jetton(Address.parse(tokenAmountIn.token.attributes!.ton!)),
+                            Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress)),
                             Asset.native(),
                         ])
                     ),
                     client.open(
                         await factory.getPool(PoolType.VOLATILE, [
                             Asset.native(),
-                            Asset.jetton(Address.parse(tokenOut.attributes!.ton!)),
+                            Asset.jetton(Address.parse(tokenOut.tonAddress)),
                         ])
                     ),
                 ])
@@ -212,13 +204,9 @@ export class DedustTrade extends SymbiosisTrade {
         const client = await this.symbiosis.getTonClient()
         const factory = client.open(Factory.createFromAddress(MAINNET_FACTORY_ADDR))
         const tonVault = client.open(await factory.getNativeVault())
-        const isTonIn = isTonEvmAddress(tokenAmountIn.token.address)
+        const isTonIn = tokenAmountIn.token.isNative
 
-        if (!isTonEvmAddress(tokenAmountIn.token.address) && !tokenAmountIn.token.attributes?.ton) {
-            throw new Error(`No TON token address for token ${tokenAmountIn.token.symbol}`)
-        }
-
-        const tokenIn = isTonIn ? Asset.native() : Asset.jetton(Address.parse(tokenAmountIn.token.attributes!.ton!))
+        const tokenIn = isTonIn ? Asset.native() : Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
 
         const { pool, secondPool } = await this.findPool(tokenAmountIn, tokenOut)
 
@@ -290,7 +278,7 @@ export class DedustTrade extends SymbiosisTrade {
                 value: BigInt(tokenAmountIn.raw.toString()),
                 minAmountOut,
             })
-        } else if (isTonEvmAddress(tokenOut.address) && tokenIn.address) {
+        } else if (tokenOut.isNative && tokenIn.address) {
             const tokenInVault = client.open(await factory.getJettonVault(tokenIn.address))
             const tokenInRoot = client.open(JettonRoot.createFromAddress(tokenIn.address))
             tokenInWalletAddress = client.open(await tokenInRoot.getWallet(Address.parse(this.from))).address

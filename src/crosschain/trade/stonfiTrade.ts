@@ -3,7 +3,7 @@ import { StonApiClient } from '@ston-fi/api'
 import { SenderArguments } from '@ton/core'
 
 import { Percent, Token, TokenAmount } from '../../entities'
-import { isTonEvmAddress, TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
+import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
@@ -36,22 +36,12 @@ export class StonfiTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        if (!isTonEvmAddress(this.tokenAmountIn.token.address) && !this.tokenAmountIn.token.attributes?.ton) {
-            throw new Error(`No TON token address for token ${this.tokenAmountIn.token.symbol}`)
-        }
-
-        if (!isTonEvmAddress(this.tokenOut.address) && !this.tokenOut.attributes?.ton) {
-            throw new Error(`No TON token address for token ${this.tokenOut.symbol}`)
-        }
-
         const quote = await this.stonClient.simulateSwap({
-            offerAddress: isTonEvmAddress(this.tokenAmountIn.token.address)
+            offerAddress: this.tokenAmountIn.token.isNative
                 ? TON_STONFI_PROXY_ADDRESS
-                : this.tokenAmountIn.token.attributes!.ton!,
+                : this.tokenAmountIn.token.tonAddress,
             offerUnits: this.tokenAmountIn.raw.toString(),
-            askAddress: isTonEvmAddress(this.tokenOut.address)
-                ? TON_STONFI_PROXY_ADDRESS
-                : this.tokenOut.attributes!.ton!,
+            askAddress: this.tokenOut.isNative ? TON_STONFI_PROXY_ADDRESS : this.tokenOut.tonAddress,
             slippageTolerance: (this.slippage / 10000).toString(), // 0.01 is 1%
         })
 
@@ -99,30 +89,23 @@ export class StonfiTrade extends SymbiosisTrade {
 
         let txParams: SenderArguments | null = null
 
-        if (!isTonEvmAddress(tokenAmountIn.token.address) && !tokenAmountIn.token.attributes?.ton) {
-            throw new Error(`No TON token address for token ${tokenAmountIn.token.symbol}`)
-        }
-
-        if (!isTonEvmAddress(tokenOut.address) && !tokenOut.attributes?.ton) {
-            throw new Error(`No TON token address for token ${tokenOut.symbol}`)
-        }
 
         // TON -> jetton
-        if (isTonEvmAddress(tokenAmountIn.token.address)) {
+        if (tokenAmountIn.token.isNative) {
             txParams = await router.getSwapTonToJettonTxParams({
                 userWalletAddress: this.from,
                 proxyTon: proxyTon,
                 offerAmount: tokenAmountIn.raw.toString(),
-                askJettonAddress: tokenOut.attributes!.ton!,
+                askJettonAddress: tokenOut.tonAddress,
                 minAskAmount: minAskUnits,
                 referralAddress: TON_REFERRAL_ADDRESS,
                 queryId,
             })
-        } else if (isTonEvmAddress(tokenOut.address)) {
+        } else if (tokenOut.isNative) {
             // jetton -> TON
             txParams = await router.getSwapJettonToTonTxParams({
                 userWalletAddress: this.from,
-                offerJettonAddress: tokenAmountIn.token.attributes!.ton!,
+                offerJettonAddress: tokenAmountIn.token.tonAddress,
                 offerAmount: tokenAmountIn.raw.toString(),
                 minAskAmount: minAskUnits,
                 referralAddress: TON_REFERRAL_ADDRESS,
@@ -133,9 +116,9 @@ export class StonfiTrade extends SymbiosisTrade {
             // jetton -> jetton
             txParams = await router.getSwapJettonToJettonTxParams({
                 userWalletAddress: this.from,
-                offerJettonAddress: tokenAmountIn.token.attributes!.ton!,
+                offerJettonAddress: tokenAmountIn.token.tonAddress,
                 offerAmount: tokenAmountIn.raw.toString(),
-                askJettonAddress: tokenOut.attributes!.ton!,
+                askJettonAddress: tokenOut.tonAddress,
                 minAskAmount: minAskUnits,
                 referralAddress: TON_REFERRAL_ADDRESS,
                 queryId,

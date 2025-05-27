@@ -85,6 +85,20 @@ export class Token {
     get chainFrom(): Chain | undefined {
         return getChainById(this.chainFromId)
     }
+
+    get tonAddress(): string {
+        if (!this.attributes?.ton) {
+            throw new Error(`${this.name} has no ton address`)
+        }
+        return this.attributes.ton
+    }
+
+    get solAddress(): string {
+        if (!this.attributes?.solana) {
+            throw new Error(`${this.name} has no solana address`)
+        }
+        return this.attributes.solana
+    }
 }
 /**
  * Compares two currencies for equality

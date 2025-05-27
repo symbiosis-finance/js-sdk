@@ -14,11 +14,6 @@ export const TON_REFERRAL_ADDRESS = Address.parse('UQD35aoXN2UbZ1ZrjjjKsLNH-ISdp
 
 export const TON_STONFI_PROXY_ADDRESS = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c'
 
-export function isTonEvmAddress(address: string) {
-    const TON_GAS_TOKEN_EVM_ADDRESS = '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C'
-    return address === TON_GAS_TOKEN_EVM_ADDRESS
-}
-
 export function isTonChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
     return [ChainId.TON_MAINNET, ChainId.TON_TESTNET].includes(chainId)

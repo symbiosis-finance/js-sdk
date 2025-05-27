@@ -1758,6 +1758,7 @@ export const config: Config = {
                     address: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
                     chainId: ChainId.TON_MAINNET,
                     decimals: 9,
+                    isNative: true,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
