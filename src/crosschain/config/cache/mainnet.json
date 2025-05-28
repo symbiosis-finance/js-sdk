@@ -1463,7 +1463,7 @@
             "symbol": "TON",
             "name": "TON Coin",
             "chainId": 85918,
-            "isNative": true,
+            "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
