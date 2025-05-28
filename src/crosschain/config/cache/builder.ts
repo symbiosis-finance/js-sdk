@@ -343,6 +343,7 @@ export class Builder {
 
                 const token: TokenInfo = {
                     ...realTokensWithId[j],
+                    isNative: false,
                     id: idCounter++,
                     symbol: await erc20.symbol(),
                     name: await erc20.name(),

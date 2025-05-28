@@ -82,9 +82,9 @@ const getTokenPrice = async (token: Token, map?: Map<string, string>): Promise<n
     let address = token.address.toLowerCase()
     if (isTronToken(token)) {
         address = TronWeb.address.fromHex(address)
-    } else if (isTonChainId(token.chainId) && token.tonAddress) {
+    } else if (isTonChainId(token.chainId)) {
         address = token.tonAddress
-    } else if (isSolanaChainId(token.chainId) && token.solAddress) {
+    } else if (isSolanaChainId(token.chainId)) {
         address = token.solAddress
     }
 
