@@ -7,6 +7,19 @@ import { getFastestFee } from '../mempool'
 import { Synthesis } from '../contracts'
 import { ChainId } from '../../constants'
 
+export const getThreshold = async (syBtcAmount: TokenAmount, synthesis: Synthesis, cache: Cache) => {
+    const syBtc = syBtcAmount.token
+
+    const threshold = await cache.get(
+        ['tokenThreshold', synthesis.address, syBtc.address],
+        async () => {
+            return synthesis.tokenThreshold(syBtc.address)
+        },
+        24 * 60 * 60 // 24 hours
+    )
+    return new TokenAmount(syBtc, threshold.toString())
+}
+
 export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis, cache: Cache) => {
     const syBtc = syBtcAmount.token
     let fee = await cache.get(
