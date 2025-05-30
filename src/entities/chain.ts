@@ -768,6 +768,16 @@ export const chains: Chain[] = [
             large: 'https://icons.llamao.fi/icons/chains/rsz_opbnb?w=48&h=48',
         },
     }),
+    new Chain({
+        id: ChainId.HYPERLIQUID_MAINNET,
+        name: 'HyperLiquid',
+        disabled: false,
+        explorer: 'https://purrsec.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
