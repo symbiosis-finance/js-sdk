@@ -103,6 +103,10 @@ export abstract class Router {
         const deadline = `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
         const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
+        const hasReferrer = [ChainId.MODE_MAINNET, ChainId.HYPERLIQUID_MAINNET].includes(
+            trade.outputAmount.token.chainId
+        )
+
         let methodName: string
         let args: (string | string[] | Route[])[]
         let value: string
@@ -116,7 +120,7 @@ export abstract class Router {
                     args = [amountOut, path, to, deadline]
                     if (useFeeOnTransfer) {
                         methodName = 'swapExactETHForTokensSupportingFeeOnTransferTokens'
-                        if (trade.outputAmount.token.chainId === ChainId.MODE_MAINNET) {
+                        if (hasReferrer) {
                             args = [amountOut, path, to, to, deadline]
                         }
                     }
@@ -129,7 +133,7 @@ export abstract class Router {
                     args = [amountIn, amountOut, path, to, deadline]
                     if (useFeeOnTransfer) {
                         methodName = 'swapExactTokensForETHSupportingFeeOnTransferTokens'
-                        if (trade.outputAmount.token.chainId === ChainId.MODE_MAINNET) {
+                        if (hasReferrer) {
                             args = [amountIn, amountOut, path, to, to, deadline]
                         }
                     }
@@ -142,7 +146,7 @@ export abstract class Router {
                     args = [amountIn, amountOut, path, to, deadline]
                     if (useFeeOnTransfer) {
                         methodName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-                        if (trade.outputAmount.token.chainId === ChainId.MODE_MAINNET) {
+                        if (hasReferrer) {
                             args = [amountIn, amountOut, path, to, to, deadline]
                         }
                     }
