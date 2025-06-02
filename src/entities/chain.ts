@@ -770,7 +770,7 @@ export const chains: Chain[] = [
     }),
     new Chain({
         id: ChainId.HYPERLIQUID_MAINNET,
-        name: 'HyperLiquid',
+        name: 'HyperEVM',
         disabled: false,
         explorer: 'https://www.hyperscan.com',
         icons: {
