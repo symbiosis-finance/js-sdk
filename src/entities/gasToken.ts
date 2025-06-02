@@ -110,7 +110,3 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.OPBNB_MAINNET]: GAS(ChainId.OPBNB_MAINNET, 'BNB', 1839),
     [ChainId.HYPERLIQUID_MAINNET]: GAS(ChainId.HYPERLIQUID_MAINNET, 'HYPE', 32196),
 }
-
-export function isGasToken(token: Token): boolean {
-    return token.equals(GAS_TOKEN[token.chainId])
-}

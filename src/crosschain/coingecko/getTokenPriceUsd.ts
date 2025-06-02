@@ -1,12 +1,13 @@
 import TronWeb from 'tronweb'
 import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
-import { isGasToken, Token, TokenAmount, WETH } from '../../entities'
+import { GAS_TOKEN, Token, TokenAmount, WETH } from '../../entities'
 import { isSolanaChainId, isTonChainId, isTronToken } from '../chainUtils'
 
 const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
     const isWrappedToken = WETH[token.chainId].equals(token)
+    const isGasToken = GAS_TOKEN[token.chainId].equals(token)
 
-    const address = isWrappedToken || isGasToken(token) ? '' : token.address
+    const address = isWrappedToken || isGasToken ? '' : token.address
     const raw = JSON.stringify([
         {
             address,
@@ -118,8 +119,9 @@ export const getTokenPriceUsd = async (token: Token, map?: Map<string, string>) 
         return await getTokenPriceFromAdvisor(token)
     } catch (e) {
         const isWrappedToken = WETH[token.chainId].equals(token)
+        const isGasToken = GAS_TOKEN[token.chainId].equals(token)
 
-        if (isGasToken(token) || isWrappedToken) {
+        if (isGasToken || isWrappedToken) {
             return getGasTokenPrice(token)
         }
 
