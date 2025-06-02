@@ -111,5 +111,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
 }
 
 export function isGasToken(token: Token): boolean {
-    return token.isNative || token.equals(GAS_TOKEN[token.chainId])
+    return token.equals(GAS_TOKEN[token.chainId])
 }
