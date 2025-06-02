@@ -772,7 +772,7 @@ export const chains: Chain[] = [
         id: ChainId.HYPERLIQUID_MAINNET,
         name: 'HyperLiquid',
         disabled: false,
-        explorer: 'https://purrsec.com',
+        explorer: 'https://www.hyperscan.com',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',

@@ -1,6 +1,6 @@
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
-import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router__factory } from '../contracts'
+import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import {
@@ -30,7 +30,7 @@ import { getMinAmount } from '../chainUtils'
 interface Deployment {
     factory: string
     quoter: string
-    swap: string
+    swap02: string
     initCodeHash?: string
     baseTokens: Token[]
 }
@@ -38,38 +38,10 @@ interface Deployment {
 const POSSIBLE_FEES = [FeeAmount.LOWEST, FeeAmount.LOW, FeeAmount.MEDIUM, FeeAmount.HIGH]
 
 const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
-    // [ChainId.RSK_MAINNET]: {
-    //     factory: '0xaF37EC98A00FD63689CF3060BF3B6784E00caD82',
-    //     quoter: '0xb51727c996C68E60F598A923a5006853cd2fEB31',
-    //     swap: '0x0B14ff67f0014046b4b99057Aec4509640b3947A',
-    //     baseTokens: [
-    //         new Token({
-    //             name: 'Tether USD',
-    //             symbol: 'rUSDT',
-    //             address: '0xef213441a85df4d7acbdae0cf78004e1e486bb96',
-    //             chainId: ChainId.RSK_MAINNET,
-    //             decimals: 18,
-    //         }),
-    //     ],
-    // },
-    // [ChainId.CORE_MAINNET]: {
-    //     factory: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-    //     quoter: '0x640129e6b5C31B3b12640A5b39FECdCa9F81C640',
-    //     swap: '0x734583f62Bb6ACe3c9bA9bd5A53143CA2Ce8C55A',
-    //     baseTokens: [
-    //         new Token({
-    //             name: 'Tether USD',
-    //             symbol: 'USDT',
-    //             address: '0x900101d06A7426441Ae63e9AB3B9b0F63Be145F1',
-    //             chainId: ChainId.CORE_MAINNET,
-    //             decimals: 6,
-    //         }),
-    //     ],
-    // },
     [ChainId.UNICHAIN_MAINNET]: {
         factory: '0x1f98400000000000000000000000000000000003',
         quoter: '0x385a5cf5f83e99f7bb2852b6a19c3538b9fa7658',
-        swap: '0x73855d06de49d0fe4a9c42636ba96c62da12ff9c',
+        swap02: '0x73855d06de49d0fe4a9c42636ba96c62da12ff9c',
         baseTokens: [
             new Token({
                 name: 'USD Coin',
@@ -90,7 +62,7 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
     [ChainId.SONEIUM_MAINNET]: {
         factory: '0x3E4ff8662820E3dec3DACDb66ef1FFad5Dc5Ab83',
         quoter: '0x715BE426a0c8E0A14aBc0130f08F06aa41B1f218',
-        swap: '0xd2DdF58Bcc188F335061e41C73ED2A8894c2dD98',
+        swap02: '0xd2DdF58Bcc188F335061e41C73ED2A8894c2dD98',
         baseTokens: [
             new Token({
                 name: 'ASTR',
@@ -114,6 +86,13 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
                 decimals: 18,
             }),
         ],
+    },
+    [ChainId.HYPERLIQUID_MAINNET]: {
+        factory: '0xB1c0fa0B789320044A6F623cFe5eBda9562602E3',
+        quoter: '0x03A918028f22D9E1473B7959C927AD7425A45C7C',
+        swap02: '0x4E2960a8cd19B467b82d26D83fAcb0fAE26b094D',
+        initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
+        baseTokens: [],
     },
 }
 
@@ -151,7 +130,7 @@ export class UniV3Trade extends SymbiosisTrade {
         }
         const provider = this.symbiosis.getProvider(chainId)
 
-        const { quoter, swap: routerAddress, factory, initCodeHash, baseTokens } = addresses
+        const { quoter, swap02: routerAddress, factory, initCodeHash, baseTokens } = addresses
 
         const currencyIn = toUniCurrency(this.tokenAmountIn.token)
         const currencyOut = toUniCurrency(this.tokenOut)
@@ -393,7 +372,7 @@ export class UniV3Trade extends SymbiosisTrade {
                         }
 
                         calldatas.push(
-                            UniV3Router__factory.createInterface().encodeFunctionData('exactInputSingle', [
+                            UniV3Router02__factory.createInterface().encodeFunctionData('exactInputSingle', [
                                 exactInputSingleParams,
                             ])
                         )
@@ -409,7 +388,7 @@ export class UniV3Trade extends SymbiosisTrade {
                         }
 
                         calldatas.push(
-                            UniV3Router__factory.createInterface().encodeFunctionData('exactOutputSingle', [
+                            UniV3Router02__factory.createInterface().encodeFunctionData('exactOutputSingle', [
                                 exactOutputSingleParams,
                             ])
                         )
@@ -428,7 +407,9 @@ export class UniV3Trade extends SymbiosisTrade {
                         }
 
                         calldatas.push(
-                            UniV3Router__factory.createInterface().encodeFunctionData('exactInput', [exactInputParams])
+                            UniV3Router02__factory.createInterface().encodeFunctionData('exactInput', [
+                                exactInputParams,
+                            ])
                         )
                     } else {
                         const exactOutputParams = {
@@ -439,7 +420,7 @@ export class UniV3Trade extends SymbiosisTrade {
                         }
 
                         calldatas.push(
-                            UniV3Router__factory.createInterface().encodeFunctionData('exactOutput', [
+                            UniV3Router02__factory.createInterface().encodeFunctionData('exactOutput', [
                                 exactOutputParams,
                             ])
                         )

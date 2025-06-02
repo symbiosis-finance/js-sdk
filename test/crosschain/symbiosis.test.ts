@@ -334,7 +334,7 @@ describe('#getVolumeFeeCollector', () => {
         expect(i).toBe(undefined)
     })
     test('default', () => {
-        const i = symbiosis.getVolumeFeeCollector(ChainId.BOBA_BNB,[])
+        const i = symbiosis.getVolumeFeeCollector(ChainId.BOBA_BNB, [])
         expect(i).not.toBe(undefined)
         expect(i?.address).toEqual('0x0f68eE6BD92dE3eD499142812C89F825e65d7241')
         expect(i?.feeRate).toEqual('500000000000000')

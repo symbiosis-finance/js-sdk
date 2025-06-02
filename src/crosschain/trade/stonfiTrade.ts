@@ -89,7 +89,6 @@ export class StonfiTrade extends SymbiosisTrade {
 
         let txParams: SenderArguments | null = null
 
-
         // TON -> jetton
         if (tokenAmountIn.token.isNative) {
             txParams = await router.getSwapTonToJettonTxParams({
