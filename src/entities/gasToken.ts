@@ -109,3 +109,7 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.SONEIUM_MAINNET]: GAS(ChainId.SONEIUM_MAINNET, 'ETH', 1027),
     [ChainId.OPBNB_MAINNET]: GAS(ChainId.OPBNB_MAINNET, 'BNB', 1839),
 }
+
+export function isGasToken(token: Token): boolean {
+    return token.isNative || token.equals(GAS_TOKEN[token.chainId])
+}
