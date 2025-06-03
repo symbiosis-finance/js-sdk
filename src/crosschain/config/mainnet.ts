@@ -149,7 +149,7 @@ export const config: Config = {
                 },
             }),
             symBtc: {
-                address: '0xc17d768bf4Fdc6f20a4a0D8BE8767840D106D077',
+                address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
                 chainId: ChainId.RSK_MAINNET,
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
@@ -1780,21 +1780,6 @@ export const config: Config = {
             rpc: 'https://mainnet-v4.tonhubapi.com',
             filterBlockOffset: 0,
             stables: [
-                {
-                    deprecated: true,
-                    name: 'TON Coin',
-                    symbol: 'TON',
-                    address: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
-                    chainId: ChainId.TON_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                    },
-                    attributes: {
-                        ton: 'EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I',
-                    },
-                },
                 {
                     name: 'USDt',
                     symbol: 'USDT',
