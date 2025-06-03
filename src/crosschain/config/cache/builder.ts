@@ -143,6 +143,10 @@ export class Builder {
                     if (token.address === '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7') {
                         continue
                     }
+                    // syBTC on RSK chain
+                    if (token.address === '0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba') {
+                        continue
+                    }
 
                     // FIXME remove skipping GPTW on BSC chain if whitelisted on portal
                     if (token.address.toLowerCase() === '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592'.toLowerCase()) {
