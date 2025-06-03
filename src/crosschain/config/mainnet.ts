@@ -1832,7 +1832,7 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
-            tonPortal: 'EQDpUHhVl5lJ6Y47DCd0TWdXB_kd-U-N6KyAELePNjfj15HT',
+            tonPortal: 'EQBZh9CpLZyNlwI7am0PHpVy8T8zdJxAhlG3m3xMi0BoVaUh',
         },
         {
             id: ChainId.CRONOS_ZK_MAINNET,
