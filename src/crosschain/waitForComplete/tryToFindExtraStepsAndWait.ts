@@ -7,7 +7,7 @@ import { Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
-import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
+import { SwapSDK, SwapStatusResponseV2 } from '@chainflip/sdk/swap'
 import { BtcConfig } from '../types'
 
 interface ThorStatusResponse {
@@ -96,22 +96,25 @@ export async function waitForChainFlipSwap(txHash: string): Promise<string> {
         network: 'mainnet',
     })
     const response = await longPolling({
-        pollingFunction: async (): Promise<SwapStatusResponse> => {
-            return chainFlipSdk.getStatus({ id: txHash })
+        pollingFunction: async (): Promise<SwapStatusResponseV2> => {
+            return chainFlipSdk.getStatusV2({ id: txHash })
         },
         successCondition: (response) => {
-            return response.state === 'COMPLETE' || response.state === 'BROADCASTED'
+            return response.state === 'COMPLETED' || response.state === 'SENT'
         },
         error: new TxNotFound(txHash),
         exceedDelay: 3_600_000, // 1 hour
         pollingInterval: 10 * 1000, // 10 seconds
     })
 
-    if (response.state !== 'COMPLETE' && response.state !== 'BROADCASTED') {
+    if (response.state !== 'COMPLETED' && response.state !== 'SENT') {
+        throw new TxNotFound(txHash)
+    }
+    if (!response.swapEgress?.txRef) {
         throw new TxNotFound(txHash)
     }
 
-    return response.broadcastTransactionRef
+    return response.swapEgress.txRef
 }
 
 export async function findThorChainDeposit(receipt: TransactionReceipt) {
