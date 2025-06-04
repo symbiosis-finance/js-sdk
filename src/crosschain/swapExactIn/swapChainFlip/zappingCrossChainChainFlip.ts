@@ -112,8 +112,8 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             transitTokenOut,
         })
 
-        const { egressAmount, includedFees } = this.chainFlipQuote
-        const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
+        const { egressAmount } = this.chainFlipQuote
+        const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(this.chainFlipQuote)
         const amountOut = new TokenAmount(config.tokenOut, egressAmount)
 
         return {

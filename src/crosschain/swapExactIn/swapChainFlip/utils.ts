@@ -58,7 +58,11 @@ export function checkMinAmount(amountIn: TokenAmount) {
     }
 }
 
+<<<<<<< Updated upstream
 export function getChainFlipFee(includedFees: QuoteResponse['quote']['includedFees']) {
+=======
+export function getChainFlipFee(quote: Quote) {
+>>>>>>> Stashed changes
     const SOL = GAS_TOKEN[ChainId.SOLANA_MAINNET]
     const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
 
@@ -66,7 +70,11 @@ export function getChainFlipFee(includedFees: QuoteResponse['quote']['includedFe
     let solFee = 0
     let btcFee = 0
 
+<<<<<<< Updated upstream
     includedFees.forEach(({ asset, amount }) => {
+=======
+    quote.includedFees.forEach(({ asset, amount }) => {
+>>>>>>> Stashed changes
         if (asset === 'USDC') {
             usdcFee += parseInt(amount)
         }

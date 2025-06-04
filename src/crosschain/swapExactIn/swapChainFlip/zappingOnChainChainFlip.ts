@@ -266,9 +266,9 @@ async function getDepositCall({
     }
     const { calldata, to } = vaultSwapData
 
-    const { includedFees, egressAmount } = quote
+    const { egressAmount } = quote
 
-    const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
+    const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(quote)
 
     return {
         amountIn,
