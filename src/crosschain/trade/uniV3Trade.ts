@@ -87,13 +87,13 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
             }),
         ],
     },
-    // [ChainId.HYPERLIQUID_MAINNET]: {
-    //     factory: '0xB1c0fa0B789320044A6F623cFe5eBda9562602E3',
-    //     quoter: '0x03A918028f22D9E1473B7959C927AD7425A45C7C',
-    //     swap02: '0x4E2960a8cd19B467b82d26D83fAcb0fAE26b094D',
-    //     initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
-    //     baseTokens: [],
-    // },
+    [ChainId.HYPERLIQUID_MAINNET]: {
+        factory: '0xB1c0fa0B789320044A6F623cFe5eBda9562602E3',
+        quoter: '0x03A918028f22D9E1473B7959C927AD7425A45C7C',
+        swap02: '0x6D99e7f6747AF2cDbB5164b6DD50e40D4fDe1e77',
+        initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
+        baseTokens: [],
+    },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {
