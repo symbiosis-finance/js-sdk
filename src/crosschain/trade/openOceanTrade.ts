@@ -128,7 +128,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         nativeTokenAddress: AddressZero,
     },
     [ChainId.UNICHAIN_MAINNET]: {
-        slug: 'unichain',
+        slug: 'uni',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
     [ChainId.OPBNB_MAINNET]: {
@@ -149,13 +149,14 @@ export class OpenOceanTrade extends SymbiosisTrade {
     public constructor(params: OpenOceanTradeParams) {
         super(params)
 
-        const chain = OPEN_OCEAN_NETWORKS[this.tokenAmountIn.token.chainId]
+        const chainId = this.tokenAmountIn.token.chainId
+        const chain = OPEN_OCEAN_NETWORKS[chainId]
         if (!chain) {
             throw new Error('Unsupported chain')
         }
         this.chain = chain
         this.symbiosis = params.symbiosis
-        this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${this.chain.slug}`
+        this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${chainId}`
     }
 
     get tradeType(): SymbiosisTradeType {
