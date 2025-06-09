@@ -34,7 +34,7 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, selectMode, symbiosis } = context
+    const { tokenAmountIn, tokenOut, selectMode, symbiosis } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         throw new Error(`tokenAmountIn is not BTC token`)
@@ -43,7 +43,10 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const promises: Promise<SwapExactInResult>[] = []
 
     // configs except syBTC on zksync
-    const configs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+    const allConfigs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+    // prefer to use destination chain syBTC to avoid cross-chain routing
+    const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
+    const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
     configs.forEach((btConfig) => {
         promises.push(fromBtcSwapInternal(context, btConfig))
     })
