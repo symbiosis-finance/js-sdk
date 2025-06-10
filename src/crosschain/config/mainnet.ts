@@ -92,6 +92,13 @@ export const config: Config = {
             oracle: '0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D',
             generalPurpose: false,
         },
+        {
+            // WBNB
+            chainId: ChainId.BOBA_BNB,
+            address: '0x4A277A204f0537153C2022a60D5EbA4C5c0f59BA',
+            oracle: '0x8C4C570fb2DAa7Ce5eB73d0eee132bD90012B307',
+            generalPurpose: false,
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -417,6 +424,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
+                    },
+                },
+                {
+                    name: 'Wrapped BNB',
+                    symbol: 'WBNB',
+                    address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
                     },
                 },
             ],
@@ -2142,6 +2160,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Wrapped BNB',
+                    symbol: 'WBNB',
+                    address: '0x4200000000000000000000000000000000000006',
+                    chainId: ChainId.OPBNB_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
                     },
                 },
             ],
