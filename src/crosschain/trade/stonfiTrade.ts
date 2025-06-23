@@ -81,7 +81,6 @@ export class StonfiTrade extends SymbiosisTrade {
 
     private async initRouterAndContracts(routerAddress: string) {
         const metadata = await this.stonClient.getRouter(routerAddress)
-        console.log('metadata', metadata)
         this.routerMetadata = metadata
         this.dexContracts = dexFactory(metadata)
 
