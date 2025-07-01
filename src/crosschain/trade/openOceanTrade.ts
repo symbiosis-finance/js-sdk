@@ -17,6 +17,7 @@ interface OpenOceanQuote {
     outAmount: string
     data: string
     price_impact: string
+    estimatedGas: number
 }
 
 interface OpenOceanChain {
@@ -204,7 +205,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
             )
         }
 
-        const { data, outAmount, to, price_impact: priceImpactString } = json.data as OpenOceanQuote
+        const { data, outAmount, to, price_impact: priceImpactString, estimatedGas } = json.data as OpenOceanQuote
 
         const { amountOffset, minReceivedOffset } = this.getOffsets(data)
 
@@ -222,6 +223,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
             callDataOffset: amountOffset,
             minReceivedOffset,
             priceImpact: this.convertPriceImpact(priceImpactString),
+            gasUnits: estimatedGas,
         }
 
         return this

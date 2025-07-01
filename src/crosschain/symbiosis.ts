@@ -426,11 +426,13 @@ export class Symbiosis {
         receiveSide,
         chainIdFrom,
         chainIdTo,
+        gasUnits,
     }: {
         calldata: string
         receiveSide: string
         chainIdFrom: ChainId
         chainIdTo: ChainId
+        gasUnits?: number
     }): Promise<{ price: JSBI; save: JSBI }> {
         const params = {
             chain_id_from: chainIdFrom,
@@ -439,6 +441,7 @@ export class Symbiosis {
             call_data: calldata,
             client_id: utils.parseBytes32String(this.clientId),
             signature: this.signature,
+            estimate_gas_ext: gasUnits,
         }
 
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {

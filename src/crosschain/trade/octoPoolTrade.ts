@@ -13,6 +13,10 @@ interface OctoPoolTradeParams extends SymbiosisTradeParams {
     omniPoolConfig: OmniPoolConfig
 }
 
+// metaMintSwap -> multicall (1) -> safeTransfer + fallback + safeTransfer = 25 + 120 + 25 = 170
+// https://dashboard.tenderly.co/tx/0x1d90dbef781d58e0a293f5eb12e4f25240fff2f38a411a8f92caa4a74f4c45d0/gas-usage
+const OCTO_POOL_SWAP_GAS_UNITS = 170_000
+
 export class OctoPoolTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
     public readonly tokenAmountInMin: TokenAmount
@@ -74,6 +78,10 @@ export class OctoPoolTrade extends SymbiosisTrade {
         }
 
         return this
+    }
+
+    public get gasUnits(): number {
+        return OCTO_POOL_SWAP_GAS_UNITS
     }
 
     public async quote(indexIn: number, indexOut: number, amountIn: BigNumber): Promise<BigNumber> {

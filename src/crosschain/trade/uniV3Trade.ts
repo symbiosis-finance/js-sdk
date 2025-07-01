@@ -92,7 +92,15 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         quoter: '0x03A918028f22D9E1473B7959C927AD7425A45C7C',
         swap02: '0x6D99e7f6747AF2cDbB5164b6DD50e40D4fDe1e77',
         initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
-        baseTokens: [],
+        baseTokens: [
+            new Token({
+                name: 'Wrapped HYPE',
+                symbol: 'WHYPE',
+                address: '0x5555555555555555555555555555555555555555',
+                chainId: ChainId.HYPERLIQUID_MAINNET,
+                decimals: 18,
+            }),
+        ],
     },
 }
 
@@ -100,6 +108,13 @@ interface UniV3TradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     deadline: number
 }
+
+// https://www.hyperscan.com/tx/0xdab00b39ef320a65f6bd64e1483a783d69d34a568e749d69d161a1cb17f6ccd2
+const NATIVE_TO_TOKEN_GAS_UNITS = 160000
+// https://www.hyperscan.com/tx/0x42053680d131dd5312e5c4880925c8e5cac771e2a1723eb46df008910b08bf37
+const TOKEN_TO_NATIVE_GAS_UNITS = 170000
+// https://www.hyperscan.com/tx/0x9c129b80145237aa68809f0a23bf2e29f96e33e11acf8c974e78c35c0b84f09a
+const TOKEN_TO_TOKEN_GAS_UNITS = 250000
 
 export class UniV3Trade extends SymbiosisTrade {
     private readonly symbiosis: Symbiosis
@@ -239,7 +254,17 @@ export class UniV3Trade extends SymbiosisTrade {
             trade.priceImpact.denominator
         )
         const callData = methodParameters.calldata
-        const { amountOffset, minReceivedOffset, minReceivedOffset2 } = UniV3Trade.getOffsets(callData)
+        const { amountOffset, minReceivedOffset, minReceivedOffset2, functionSelector } =
+            UniV3Trade.getOffsets(callData)
+
+        console.log('gas units uni v3', functionSelector)
+
+        let gasUnits = TOKEN_TO_TOKEN_GAS_UNITS
+        if (this.tokenAmountIn.token.isNative) {
+            gasUnits = NATIVE_TO_TOKEN_GAS_UNITS
+        } else if (this.tokenOut.isNative) {
+            gasUnits = TOKEN_TO_NATIVE_GAS_UNITS
+        }
 
         this.out = {
             amountOut,
@@ -251,6 +276,7 @@ export class UniV3Trade extends SymbiosisTrade {
             minReceivedOffset,
             minReceivedOffset2,
             priceImpact,
+            gasUnits,
         }
         return this
     }
@@ -291,6 +317,7 @@ export class UniV3Trade extends SymbiosisTrade {
         }
 
         return {
+            functionSelector: method.sigHash,
             amountOffset: method.offset,
             minReceivedOffset: method.minReceivedOffset,
             minReceivedOffset2: method.minReceivedOffset2,

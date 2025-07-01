@@ -12,6 +12,7 @@ interface VolumeFeeCall {
     receiveSide: string
     path: string
     offset: number
+    gasUnits: number
 }
 
 interface CreateOctoPoolTradeParams {
@@ -34,6 +35,8 @@ class OutNotInitializedError extends Error {
     }
 }
 
+// https://dashboard.tenderly.co/tx/0x1d90dbef781d58e0a293f5eb12e4f25240fff2f38a411a8f92caa4a74f4c45d0/gas-usage
+const COLLECT_FEE_GAS_UNITS = 75000
 export class Transit {
     public direction: BridgeDirection
     public feeToken1: Token
@@ -122,7 +125,6 @@ export class Transit {
         const paths = []
         const offsets = []
 
-        // octopool swap
         calldatas.push(this.trade.callData)
         receiveSides.push(this.trade.routerAddress)
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
@@ -141,6 +143,12 @@ export class Transit {
             paths,
             offsets,
         }
+    }
+
+    public gasUnits(): number {
+        this.assertOutInitialized('gasUnits')
+
+        return this.trade.gasUnits + (this.postCall?.gasUnits || 0) // swap + fee collect
     }
 
     public getBridgeAmountIn(): TokenAmount {
@@ -347,6 +355,7 @@ export class Transit {
             receiveSide: volumeFeeCollector.address,
             path: tokenAmount.token.address,
             offset: 36,
+            gasUnits: COLLECT_FEE_GAS_UNITS,
         }
     }
 

@@ -2119,7 +2119,7 @@ export const config: Config = {
         },
         {
             id: ChainId.SONEIUM_MAINNET,
-            rpc: 'https://rpc.soneium.org',
+            rpc: 'https://soneium-rpc.publicnode.com',
             spareRpcs: [],
             filterBlockOffset: 1000,
             stables: [

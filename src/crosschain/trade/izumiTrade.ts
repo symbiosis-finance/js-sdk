@@ -250,6 +250,13 @@ interface IzumiTradeParams extends SymbiosisTradeParams {
     deadline: number
 }
 
+// https://taikoscan.io/tx/0x166a36dd2c96b5dc775aa63d0e1d020fedfae373e62f1ae855751a7edd65de40
+const NATIVE_TO_TOKEN_GAS_UNITS = 400000
+// https://taikoscan.io/tx/0x1a62b43c43fe487f5eed4f4a2271e096bf24a0e8af98b067447e0dbe08684e1d
+const TOKEN_TO_NATIVE_GAS_UNITS = 250000
+// https://taikoscan.io/tx/0xac5636821b2c979d00fa9905b0a4a2cd1385f03a70820557955febd415dde7ed
+const TOKEN_TO_TOKEN_GAS_UNITS = 800000
+
 export class IzumiTrade extends SymbiosisTrade {
     private readonly symbiosis: Symbiosis
     private readonly deadline: number
@@ -418,6 +425,13 @@ export class IzumiTrade extends SymbiosisTrade {
         const minReceivedPosition = callData.indexOf(minReceivedCallData) + minReceivedCallData.length
         const minReceivedOffset = (minReceivedPosition - 2) / 2 // Exclude the 0x from calculating the offset
 
+        let gasUnits = TOKEN_TO_TOKEN_GAS_UNITS
+        if (this.tokenAmountIn.token.isNative) {
+            gasUnits = NATIVE_TO_TOKEN_GAS_UNITS
+        } else if (this.tokenOut.isNative) {
+            gasUnits = TOKEN_TO_NATIVE_GAS_UNITS
+        }
+
         this.out = {
             amountOut,
             amountOutMin,
@@ -427,6 +441,7 @@ export class IzumiTrade extends SymbiosisTrade {
             callDataOffset,
             minReceivedOffset,
             priceImpact,
+            gasUnits,
         }
         return this
     }

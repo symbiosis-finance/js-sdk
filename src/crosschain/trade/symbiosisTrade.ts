@@ -42,6 +42,7 @@ export interface SymbiosisTradeOutResult {
     instructions?: string
     fees?: FeeItem[]
     value?: bigint
+    gasUnits?: number
 }
 
 class OutNotInitializedError extends Error {
@@ -63,6 +64,10 @@ export abstract class SymbiosisTrade {
         this.tokenOut = tokenOut
         this.to = to
         this.slippage = slippage
+    }
+
+    public get gasUnits(): number {
+        return this.out?.gasUnits || 0
     }
 
     get tradeType(): SymbiosisTradeType {

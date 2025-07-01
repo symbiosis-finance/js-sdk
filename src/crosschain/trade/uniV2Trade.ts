@@ -35,6 +35,13 @@ interface UniV2TradeParams extends SymbiosisTradeParams {
 
 type UniV2Router = UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter | HyperSwapRouter
 
+// https://www.hyperscan.com/tx/0x42053680d131dd5312e5c4880925c8e5cac771e2a1723eb46df008910b08bf37
+const NATIVE_TO_TOKEN_GAS_UNITS = 170000
+// https://www.hyperscan.com/tx/0x00ea0090effa3fa165132adfe0dc7d314362729880ecd20af50242ff221f379a
+const TOKEN_TO_NATIVE_GAS_UNITS = 200000
+// https://www.hyperscan.com/tx/0x52b24664d085e973493951527ab01efabaab2de1eea17e014a692fdbbbe3d47f
+const TOKEN_TO_TOKEN_GAS_UNITS = 200000
+
 export class UniV2Trade extends SymbiosisTrade {
     private router!: UniV2Router
 
@@ -115,6 +122,13 @@ export class UniV2Trade extends SymbiosisTrade {
             throw new Error('Cannot build callData')
         }
 
+        let gasUnits = TOKEN_TO_TOKEN_GAS_UNITS
+        if (this.tokenAmountIn.token.isNative) {
+            gasUnits = NATIVE_TO_TOKEN_GAS_UNITS
+        } else if (this.tokenOut.isNative) {
+            gasUnits = TOKEN_TO_NATIVE_GAS_UNITS
+        }
+
         this.out = {
             amountOut: trade.outputAmount,
             amountOutMin,
@@ -125,7 +139,9 @@ export class UniV2Trade extends SymbiosisTrade {
             minReceivedOffset,
             priceImpact,
             functionSelector,
+            gasUnits,
         }
+
         return this
     }
 
