@@ -62,6 +62,9 @@ export class ConfigCache {
         } else {
             synths = this.getSynthTokens(token)
         }
+        if (synths.length === 0) {
+            synths = [token]
+        }
 
         const ids = synths.map((i) => {
             return this.getTokenInfoByToken(i).id
