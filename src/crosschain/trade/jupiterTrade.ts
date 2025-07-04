@@ -58,7 +58,7 @@ interface JupiterSwapResponse {
     simulationError: null | string
 }
 
-const JUPITER_API_URL = 'https://api.jup.ag/swap/v1'
+const JUPITER_API_URL = 'https://lite-api.jup.ag/swap/v1'
 
 export class JupiterTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
