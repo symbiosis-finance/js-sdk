@@ -1382,6 +1382,18 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'USD₮0',
+                    symbol: 'USD₮0',
+                    address: '0x779ded0c9e1022225f8e0630b35a9b54be713736',
+                    chainId: ChainId.RSK_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
+                    },
+                },
+                {
+                    deprecated: true,
                     name: 'Tether USD',
                     symbol: 'rUSDT',
                     address: '0xef213441a85df4d7acbdae0cf78004e1e486bb96',
@@ -1393,6 +1405,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Bridged USDC (Stargate)',
                     symbol: 'USDC.e',
                     address: '0x74c9f2b00581f1b11aa7ff05aa9f608b7389de67',

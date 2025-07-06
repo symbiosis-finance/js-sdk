@@ -135,6 +135,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'opbnb',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
+    // [ChainId.HYPERLIQUID_MAINNET]: {
+    //     slug: 'hyper',
+    //     nativeTokenAddress: AddressZero,
+    // },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {

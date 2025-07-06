@@ -92,7 +92,15 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         quoter: '0x03A918028f22D9E1473B7959C927AD7425A45C7C',
         swap02: '0x6D99e7f6747AF2cDbB5164b6DD50e40D4fDe1e77',
         initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
-        baseTokens: [],
+        baseTokens: [
+            new Token({
+                name: 'Wrapped HYPE',
+                symbol: 'WHYPE',
+                address: '0x5555555555555555555555555555555555555555',
+                chainId: ChainId.HYPERLIQUID_MAINNET,
+                decimals: 18,
+            }),
+        ],
     },
 }
 
