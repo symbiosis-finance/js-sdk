@@ -333,25 +333,13 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
-    // [ChainId.BOBA_BNB]: new Token({
-    //     chainId: ChainId.BOBA_BNB,
-    //     address: '0xC58aaD327D6D58D979882601ba8DDa0685B505eA',
-    //     decimals: 18,
-    //     symbol: 'WBOBA',
-    //     isNative: false,
-    //     name: 'Wrapped BOBA',
-    //     icons: {
-    //         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-    //         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-    //     },
-    // }),
     [ChainId.SYMBIOSIS_TESTNET]: new Token({
         chainId: ChainId.SYMBIOSIS_TESTNET,
         address: '0xC58aaD327D6D58D979882601ba8DDa0685B505eA',
         decimals: 18,
-        symbol: 'WTVT',
+        symbol: 'WSIS',
         isNative: false,
-        name: 'Wrapped TVT',
+        name: 'Wrapped SIS',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',

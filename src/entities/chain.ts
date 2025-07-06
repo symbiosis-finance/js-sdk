@@ -236,16 +236,6 @@ export const chains: Chain[] = [
             large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-avalanche/logo.png',
         },
     }),
-    // new Chain({
-    //     id: ChainId.BOBA_BNB,
-    //     name: 'Boba BNB',
-    //     disabled: false,
-    //     explorer: 'https://bnb.bobascan.com',
-    //     icons: {
-    //         small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
-    //         large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
-    //     },
-    // }),
     new Chain({
         id: ChainId.SYMBIOSIS_TESTNET,
         name: 'Symbiosis Testnet',

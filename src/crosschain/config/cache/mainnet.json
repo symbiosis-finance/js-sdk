@@ -1,211 +1,210 @@
 {
     "omniPools": [
         {
-            "chainId": 56288,
-            "address": "0x6148FD6C649866596C3d8a971fC313E5eCE84882",
-            "oracle": "0x7775b274f0C3fA919B756b22A4d9674e55927ab8",
+            "chainId": 719095483,
+            "address": "0x077c512570ce95d165332d86738c6175c93eb669",
+            "oracle": "0x3493CE64799EBcb61e3A6b0fD7Dd30Fb88BF605A",
             "generalPurpose": true,
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 119 },
-                { "index": 1, "tokenId": 129 },
-                { "index": 2, "tokenId": 138 },
-                { "index": 3, "tokenId": 139 },
-                { "index": 4, "tokenId": 29 },
-                { "index": 5, "tokenId": 144 },
-                { "index": 10, "tokenId": 128 },
-                { "index": 11, "tokenId": 145 },
-                { "index": 12, "tokenId": 152 },
-                { "index": 13, "tokenId": 158 },
-                { "index": 14, "tokenId": 160 },
-                { "index": 15, "tokenId": 162 },
-                { "index": 16, "tokenId": 151 },
-                { "index": 17, "tokenId": 137 },
-                { "index": 18, "tokenId": 168 },
-                { "index": 19, "tokenId": 143 },
-                { "index": 20, "tokenId": 173 },
-                { "index": 21, "tokenId": 166 },
-                { "index": 22, "tokenId": 142 },
-                { "index": 23, "tokenId": 175 },
-                { "index": 24, "tokenId": 177 },
-                { "index": 25, "tokenId": 181 },
-                { "index": 26, "tokenId": 163 },
-                { "index": 27, "tokenId": 187 },
-                { "index": 28, "tokenId": 184 },
-                { "index": 29, "tokenId": 146 },
-                { "index": 30, "tokenId": 197 },
-                { "index": 31, "tokenId": 196 },
-                { "index": 32, "tokenId": 200 },
-                { "index": 33, "tokenId": 199 },
-                { "index": 34, "tokenId": 203 },
-                { "index": 35, "tokenId": 206 },
-                { "index": 36, "tokenId": 210 },
-                { "index": 37, "tokenId": 211 },
-                { "index": 38, "tokenId": 215 },
-                { "index": 39, "tokenId": 188 },
-                { "index": 40, "tokenId": 186 }
+                { "index": 0, "tokenId": 118 },
+                { "index": 1, "tokenId": 128 },
+                { "index": 2, "tokenId": 137 },
+                { "index": 3, "tokenId": 138 },
+                { "index": 4, "tokenId": 143 },
+                { "index": 5, "tokenId": 127 },
+                { "index": 6, "tokenId": 144 },
+                { "index": 7, "tokenId": 151 },
+                { "index": 8, "tokenId": 157 },
+                { "index": 9, "tokenId": 159 },
+                { "index": 10, "tokenId": 161 },
+                { "index": 11, "tokenId": 150 },
+                { "index": 12, "tokenId": 136 },
+                { "index": 13, "tokenId": 167 },
+                { "index": 14, "tokenId": 142 },
+                { "index": 15, "tokenId": 172 },
+                { "index": 16, "tokenId": 165 },
+                { "index": 17, "tokenId": 141 },
+                { "index": 18, "tokenId": 174 },
+                { "index": 19, "tokenId": 176 },
+                { "index": 20, "tokenId": 180 },
+                { "index": 21, "tokenId": 162 },
+                { "index": 22, "tokenId": 186 },
+                { "index": 23, "tokenId": 183 },
+                { "index": 24, "tokenId": 145 },
+                { "index": 25, "tokenId": 196 },
+                { "index": 26, "tokenId": 195 },
+                { "index": 27, "tokenId": 199 },
+                { "index": 28, "tokenId": 198 },
+                { "index": 29, "tokenId": 202 },
+                { "index": 30, "tokenId": 205 },
+                { "index": 31, "tokenId": 209 },
+                { "index": 32, "tokenId": 210 },
+                { "index": 33, "tokenId": 214 },
+                { "index": 34, "tokenId": 187 },
+                { "index": 35, "tokenId": 185 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0xBcc2637DFa64999F75abB53a7265b5B4932e40eB",
-            "oracle": "0x628613064b1902a1A422825cf11B687C6f17961E",
+            "chainId": 719095483,
+            "address": "0x44bfe24f38bc43b1eb433442870f913ef1c71054",
+            "oracle": "0xA3121f0F03928d44d11E3853FC6bC385124C5510",
             "generalPurpose": true,
             "id": 1,
             "tokens": [
-                { "index": 1, "tokenId": 147 },
-                { "index": 2, "tokenId": 164 },
-                { "index": 3, "tokenId": 153 },
-                { "index": 5, "tokenId": 140 },
-                { "index": 6, "tokenId": 130 },
-                { "index": 7, "tokenId": 159 },
-                { "index": 8, "tokenId": 161 },
-                { "index": 9, "tokenId": 121 },
-                { "index": 10, "tokenId": 165 },
-                { "index": 11, "tokenId": 169 },
-                { "index": 12, "tokenId": 172 },
-                { "index": 13, "tokenId": 176 },
-                { "index": 14, "tokenId": 180 },
-                { "index": 15, "tokenId": 183 },
-                { "index": 16, "tokenId": 185 },
-                { "index": 17, "tokenId": 190 },
-                { "index": 18, "tokenId": 192 },
-                { "index": 19, "tokenId": 195 },
-                { "index": 20, "tokenId": 201 },
-                { "index": 22, "tokenId": 213 },
-                { "index": 23, "tokenId": 214 },
-                { "index": 24, "tokenId": 216 },
-                { "index": 25, "tokenId": 217 },
-                { "index": 26, "tokenId": 218 },
-                { "index": 27, "tokenId": 219 },
-                { "index": 28, "tokenId": 220 },
-                { "index": 29, "tokenId": 222 }
+                { "index": 0, "tokenId": 146 },
+                { "index": 1, "tokenId": 163 },
+                { "index": 2, "tokenId": 152 },
+                { "index": 3, "tokenId": 139 },
+                { "index": 4, "tokenId": 129 },
+                { "index": 5, "tokenId": 158 },
+                { "index": 6, "tokenId": 160 },
+                { "index": 7, "tokenId": 120 },
+                { "index": 8, "tokenId": 164 },
+                { "index": 9, "tokenId": 168 },
+                { "index": 10, "tokenId": 171 },
+                { "index": 11, "tokenId": 175 },
+                { "index": 12, "tokenId": 179 },
+                { "index": 13, "tokenId": 182 },
+                { "index": 14, "tokenId": 184 },
+                { "index": 15, "tokenId": 189 },
+                { "index": 16, "tokenId": 191 },
+                { "index": 17, "tokenId": 194 },
+                { "index": 18, "tokenId": 200 },
+                { "index": 19, "tokenId": 212 },
+                { "index": 20, "tokenId": 213 },
+                { "index": 21, "tokenId": 215 },
+                { "index": 22, "tokenId": 216 },
+                { "index": 23, "tokenId": 217 },
+                { "index": 24, "tokenId": 218 },
+                { "index": 25, "tokenId": 219 },
+                { "index": 26, "tokenId": 221 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0xA267C428b16728831Be52b144F78b8F054411f55",
-            "oracle": "0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769",
+            "chainId": 719095483,
+            "address": "0xC8Dc21Cc711AA07c3DB46104A3163104795Fbb7b",
+            "oracle": "0x0117a1d148E65f892C85E05573698c24Ac9643E5",
             "generalPurpose": false,
             "id": 2,
             "tokens": [
-                { "index": 0, "tokenId": 122 },
-                { "index": 1, "tokenId": 131 },
-                { "index": 2, "tokenId": 148 },
-                { "index": 3, "tokenId": 189 },
-                { "index": 4, "tokenId": 191 },
-                { "index": 5, "tokenId": 194 },
-                { "index": 7, "tokenId": 150 },
-                { "index": 8, "tokenId": 205 },
-                { "index": 9, "tokenId": 212 }
+                { "index": 0, "tokenId": 121 },
+                { "index": 1, "tokenId": 130 },
+                { "index": 2, "tokenId": 147 },
+                { "index": 3, "tokenId": 188 },
+                { "index": 4, "tokenId": 190 },
+                { "index": 5, "tokenId": 193 },
+                { "index": 6, "tokenId": 149 },
+                { "index": 7, "tokenId": 204 },
+                { "index": 8, "tokenId": 211 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0x7b905059Bdd00844280EBf54E00A087006B2D242",
-            "oracle": "0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5",
+            "chainId": 719095483,
+            "address": "0x341aaCa982A32e036108c4DedDAd2C487f9ACF18",
+            "oracle": "0xb18D3A3eA4e8084D8992A10ad0411994aa07B108",
             "generalPurpose": false,
             "id": 3,
             "tokens": [
-                { "index": 0, "tokenId": 123 },
-                { "index": 1, "tokenId": 155 }
+                { "index": 0, "tokenId": 122 },
+                { "index": 1, "tokenId": 154 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0xB5D99bE6089720d1aD3DB2a5a16D5765605704df",
-            "oracle": "0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E",
+            "chainId": 719095483,
+            "address": "0xdA4273d84044a2812d150ecA4812BF4b6563cfB6",
+            "oracle": "0xfd6F370ad82f2Da0CEf0115fe0A25A323BC63661",
             "generalPurpose": false,
             "id": 4,
             "tokens": [
-                { "index": 0, "tokenId": 120 },
-                { "index": 1, "tokenId": 154 },
-                { "index": 2, "tokenId": 132 },
-                { "index": 3, "tokenId": 149 },
-                { "index": 4, "tokenId": 167 },
-                { "index": 5, "tokenId": 178 }
+                { "index": 0, "tokenId": 119 },
+                { "index": 1, "tokenId": 153 },
+                { "index": 2, "tokenId": 131 },
+                { "index": 3, "tokenId": 148 },
+                { "index": 4, "tokenId": 166 },
+                { "index": 5, "tokenId": 177 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E",
-            "oracle": "0x4CD678FF53538E6b084464da0020422738B46038",
+            "chainId": 719095483,
+            "address": "0xac410d47cAAAC39804d9B35Fb71B50DBF9160B5d",
+            "oracle": "0xac410d47cAAAC39804d9B35Fb71B50DBF9160B5d",
             "generalPurpose": false,
             "id": 5,
             "tokens": [
-                { "index": 0, "tokenId": 125 },
-                { "index": 1, "tokenId": 141 },
-                { "index": 2, "tokenId": 156 },
-                { "index": 3, "tokenId": 202 }
+                { "index": 0, "tokenId": 124 },
+                { "index": 1, "tokenId": 140 },
+                { "index": 2, "tokenId": 155 },
+                { "index": 3, "tokenId": 201 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0x8D2209E88f68324c6241bCAA7d24538ebe94e2Ee",
-            "oracle": "0xA7614e3427f52b04EeD23c7371a382640bD6C463",
+            "chainId": 719095483,
+            "address": "0x1271138eAa73111bf956FE92524C9B16339BEE12",
+            "oracle": "0xdB78C71795f7Bc649c88822296aE19a638a40Af1",
             "generalPurpose": false,
             "id": 6,
             "tokens": [
-                { "index": 0, "tokenId": 126 },
-                { "index": 1, "tokenId": 133 },
-                { "index": 2, "tokenId": 204 },
-                { "index": 3, "tokenId": 174 }
+                { "index": 0, "tokenId": 125 },
+                { "index": 1, "tokenId": 132 },
+                { "index": 2, "tokenId": 203 },
+                { "index": 3, "tokenId": 173 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23",
-            "oracle": "0xe717C95007cA64334c9facFFC1975310C3B98EE8",
+            "chainId": 719095483,
+            "address": "0x852aC3dc7CC6e0c2324Dcb3B15A67350046Dd130",
+            "oracle": "0xBB76aDb2bF41Fcd4B1D2Fd48328Da5013a5Adc76",
             "generalPurpose": false,
             "id": 7,
             "tokens": [
-                { "index": 1, "tokenId": 127 },
-                { "index": 2, "tokenId": 134 }
+                { "index": 0, "tokenId": 126 },
+                { "index": 1, "tokenId": 133 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0x8A71e95adFB7355d060D70b59954B065e3BD35EE",
-            "oracle": "0x6B8521C0F46B76A55af7333Bc025e7B9480087C8",
+            "chainId": 719095483,
+            "address": "0xca6d1960682402E71aE290059E620400CE4B8073",
+            "oracle": "0x691D4020212eBB4cA3dF5019935D92766c5B4c07",
             "generalPurpose": false,
             "id": 8,
             "tokens": [
-                { "index": 0, "tokenId": 208 },
-                { "index": 1, "tokenId": 170 }
+                { "index": 0, "tokenId": 207 },
+                { "index": 1, "tokenId": 169 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0x539E9071D542d6Ec7415Cb9DAa4aD20be1307CcB",
-            "oracle": "0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514",
+            "chainId": 719095483,
+            "address": "0xB073e561303defEe529d1dd962577A21Ca4841c7",
+            "oracle": "0x5667E971Ef10f890097E1c54dDc7B465431cAcA4",
             "generalPurpose": false,
             "id": 9,
             "tokens": [
-                { "index": 0, "tokenId": 207 },
-                { "index": 1, "tokenId": 157 },
-                { "index": 2, "tokenId": 171 }
+                { "index": 0, "tokenId": 206 },
+                { "index": 1, "tokenId": 156 },
+                { "index": 2, "tokenId": 170 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0xD122cD767d076B77a873Ca1CDEeE74f2552B367A",
-            "oracle": "0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D",
+            "chainId": 719095483,
+            "address": "0x4f0303F6598154cA5B5f0d2a81e35735a68E075B",
+            "oracle": "0x4421139D168Eda48FdC7210E7c8f109B647A5705",
             "generalPurpose": false,
             "id": 10,
             "tokens": [
-                { "index": 0, "tokenId": 135 },
-                { "index": 1, "tokenId": 209 }
+                { "index": 0, "tokenId": 134 },
+                { "index": 1, "tokenId": 208 }
             ]
         },
         {
-            "chainId": 56288,
-            "address": "0x4A277A204f0537153C2022a60D5EbA4C5c0f59BA",
-            "oracle": "0x8C4C570fb2DAa7Ce5eB73d0eee132bD90012B307",
+            "chainId": 719095483,
+            "address": "0xd0B3815024e438442b22C65B26D8d6178e98b68B",
+            "oracle": "0xc9dfEAFD105f4954c8eF63d968bE3C6900080DD9",
             "generalPurpose": false,
             "id": 11,
             "tokens": [
-                { "index": 0, "tokenId": 136 },
-                { "index": 1, "tokenId": 221 }
+                { "index": 0, "tokenId": 135 },
+                { "index": 1, "tokenId": 220 }
             ]
         }
     ],
@@ -617,20 +616,6 @@
             "id": 28
         },
         {
-            "decimals": 18,
-            "symbol": "USDC",
-            "name": "USD Coin",
-            "chainId": 56288,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "deprecated": false,
-            "address": "0x9F98f9F312D23d078061962837042b8918e6aff2",
-            "id": 29
-        },
-        {
             "decimals": 6,
             "symbol": "USDC.e",
             "name": "USD Coin",
@@ -642,7 +627,7 @@
             },
             "deprecated": false,
             "address": "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
-            "id": 30
+            "id": 29
         },
         {
             "decimals": 6,
@@ -656,7 +641,7 @@
             },
             "deprecated": true,
             "address": "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4",
-            "id": 31
+            "id": 30
         },
         {
             "decimals": 18,
@@ -670,7 +655,7 @@
             },
             "deprecated": false,
             "address": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91",
-            "id": 32
+            "id": 31
         },
         {
             "decimals": 8,
@@ -684,7 +669,7 @@
             },
             "deprecated": true,
             "address": "0xBBeB516fb02a01611cBBE0453Fe3c580D7281011",
-            "id": 33
+            "id": 32
         },
         {
             "decimals": 18,
@@ -698,7 +683,7 @@
             },
             "deprecated": false,
             "address": "0xdd9f72afED3631a6C85b5369D84875e6c42f1827",
-            "id": 34
+            "id": 33
         },
         {
             "decimals": 8,
@@ -712,7 +697,7 @@
             },
             "deprecated": true,
             "address": "0xED0c95EBe5a3E687cB2224687024FeC6518E683e",
-            "id": 35
+            "id": 34
         },
         {
             "decimals": 6,
@@ -726,7 +711,7 @@
             },
             "deprecated": false,
             "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
-            "id": 36
+            "id": 35
         },
         {
             "decimals": 6,
@@ -740,7 +725,7 @@
             },
             "deprecated": true,
             "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-            "id": 37
+            "id": 36
         },
         {
             "decimals": 18,
@@ -754,7 +739,7 @@
             },
             "deprecated": false,
             "address": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-            "id": 38
+            "id": 37
         },
         {
             "decimals": 18,
@@ -768,7 +753,7 @@
             },
             "deprecated": false,
             "address": "0x9E758B8a98a42d612b3D38B66a22074DC03D7370",
-            "id": 39
+            "id": 38
         },
         {
             "decimals": 18,
@@ -782,7 +767,7 @@
             },
             "deprecated": false,
             "address": "0x3b60FF35D3f7F62d636b067dD0dC0dFdAd670E4E",
-            "id": 40
+            "id": 39
         },
         {
             "decimals": 18,
@@ -796,7 +781,7 @@
             },
             "deprecated": false,
             "address": "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
-            "id": 41
+            "id": 40
         },
         {
             "decimals": 18,
@@ -810,7 +795,7 @@
             },
             "deprecated": false,
             "address": "0x1A6B3A62391ECcaaa992ade44cd4AFe6bEC8CfF1",
-            "id": 42
+            "id": 41
         },
         {
             "decimals": 6,
@@ -824,7 +809,7 @@
             },
             "deprecated": false,
             "address": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
-            "id": 43
+            "id": 42
         },
         {
             "decimals": 18,
@@ -838,7 +823,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 44
+            "id": 43
         },
         {
             "decimals": 6,
@@ -852,7 +837,7 @@
             },
             "deprecated": false,
             "address": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b",
-            "id": 45
+            "id": 44
         },
         {
             "decimals": 18,
@@ -866,7 +851,7 @@
             },
             "deprecated": false,
             "address": "0x722E8BdD2ce80A4422E880164f2079488e115365",
-            "id": 46
+            "id": 45
         },
         {
             "decimals": 6,
@@ -880,7 +865,7 @@
             },
             "deprecated": false,
             "address": "0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035",
-            "id": 47
+            "id": 46
         },
         {
             "decimals": 6,
@@ -894,7 +879,7 @@
             },
             "deprecated": true,
             "address": "0x37eAA0eF3549a5Bb7D431be78a3D99BD360d19e5",
-            "id": 48
+            "id": 47
         },
         {
             "decimals": 18,
@@ -908,7 +893,7 @@
             },
             "deprecated": false,
             "address": "0x4F9A0e7FD2Bf6067db6994CF12E4495Df938E6e9",
-            "id": 49
+            "id": 48
         },
         {
             "decimals": 18,
@@ -922,7 +907,7 @@
             },
             "deprecated": false,
             "address": "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f",
-            "id": 50
+            "id": 49
         },
         {
             "decimals": 6,
@@ -936,7 +921,7 @@
             },
             "deprecated": false,
             "address": "0x176211869cA2b568f2A7D4EE941E073a821EE1ff",
-            "id": 51
+            "id": 50
         },
         {
             "decimals": 18,
@@ -950,7 +935,7 @@
             },
             "deprecated": false,
             "address": "0x6EF95B6f3b0F39508e3E04054Be96D5eE39eDE0d",
-            "id": 52
+            "id": 51
         },
         {
             "decimals": 6,
@@ -964,7 +949,7 @@
             },
             "deprecated": false,
             "address": "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9",
-            "id": 53
+            "id": 52
         },
         {
             "decimals": 18,
@@ -978,7 +963,7 @@
             },
             "deprecated": false,
             "address": "0xdEAddEaDdeadDEadDEADDEAddEADDEAddead1111",
-            "id": 54
+            "id": 53
         },
         {
             "decimals": 18,
@@ -992,7 +977,7 @@
             },
             "deprecated": false,
             "address": "0x1Bdd8878252DaddD3Af2ba30628813271294eDc0",
-            "id": 55
+            "id": 54
         },
         {
             "decimals": 18,
@@ -1006,7 +991,7 @@
             },
             "deprecated": false,
             "address": "0x482deB2F7B9608a80eA91E71F06380E9891501C6",
-            "id": 56
+            "id": 55
         },
         {
             "decimals": 18,
@@ -1020,7 +1005,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 57
+            "id": 56
         },
         {
             "decimals": 6,
@@ -1034,7 +1019,7 @@
             },
             "deprecated": false,
             "address": "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
-            "id": 58
+            "id": 57
         },
         {
             "decimals": 18,
@@ -1048,7 +1033,7 @@
             },
             "deprecated": false,
             "address": "0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649",
-            "id": 59
+            "id": 58
         },
         {
             "decimals": 6,
@@ -1062,7 +1047,7 @@
             },
             "deprecated": false,
             "address": "0xa614f803b6fd780986a42c78ec9c7f77e6ded13c",
-            "id": 60
+            "id": 59
         },
         {
             "decimals": 18,
@@ -1076,7 +1061,7 @@
             },
             "deprecated": false,
             "address": "0x5300000000000000000000000000000000000004",
-            "id": 61
+            "id": 60
         },
         {
             "decimals": 6,
@@ -1090,7 +1075,7 @@
             },
             "deprecated": false,
             "address": "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
-            "id": 62
+            "id": 61
         },
         {
             "decimals": 18,
@@ -1104,7 +1089,7 @@
             },
             "deprecated": false,
             "address": "0x1467b62A6AE5CdcB10A6a8173cfe187DD2C5a136",
-            "id": 63
+            "id": 62
         },
         {
             "decimals": 18,
@@ -1118,7 +1103,7 @@
             },
             "deprecated": false,
             "address": "0xc4d46E8402F476F269c379677C99F18E22Ea030e",
-            "id": 64
+            "id": 63
         },
         {
             "decimals": 18,
@@ -1132,7 +1117,7 @@
             },
             "deprecated": false,
             "address": "0x0Dc808adcE2099A9F62AA87D9670745AbA741746",
-            "id": 65
+            "id": 64
         },
         {
             "decimals": 6,
@@ -1146,7 +1131,7 @@
             },
             "deprecated": false,
             "address": "0xb73603C5d87fA094B7314C74ACE2e64D165016fb",
-            "id": 66
+            "id": 65
         },
         {
             "decimals": 18,
@@ -1160,7 +1145,7 @@
             },
             "deprecated": false,
             "address": "0xA53E005Cecd3D7C89A4AE814617cC14828b6527E",
-            "id": 67
+            "id": 66
         },
         {
             "decimals": 18,
@@ -1174,7 +1159,7 @@
             },
             "deprecated": false,
             "address": "0x420000000000000000000000000000000000000A",
-            "id": 68
+            "id": 67
         },
         {
             "decimals": 6,
@@ -1188,7 +1173,7 @@
             },
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 69
+            "id": 68
         },
         {
             "decimals": 18,
@@ -1202,7 +1187,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 70
+            "id": 69
         },
         {
             "decimals": 6,
@@ -1216,7 +1201,7 @@
             },
             "deprecated": false,
             "address": "0x779Ded0c9e1022225f8E0630b35a9b54bE713736",
-            "id": 71
+            "id": 70
         },
         {
             "decimals": 18,
@@ -1230,7 +1215,7 @@
             },
             "deprecated": true,
             "address": "0xef213441A85dF4d7ACbDaE0Cf78004e1E486bB96",
-            "id": 72
+            "id": 71
         },
         {
             "decimals": 6,
@@ -1244,7 +1229,7 @@
             },
             "deprecated": true,
             "address": "0x74c9f2b00581F1B11AA7ff05aa9F608B7389De67",
-            "id": 73
+            "id": 72
         },
         {
             "decimals": 18,
@@ -1258,7 +1243,7 @@
             },
             "deprecated": false,
             "address": "0x542fDA317318eBF1d3DEAf76E0b632741A7e677d",
-            "id": 74
+            "id": 73
         },
         {
             "decimals": 8,
@@ -1272,7 +1257,7 @@
             },
             "deprecated": false,
             "address": "0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba",
-            "id": 75
+            "id": 74
         },
         {
             "decimals": 18,
@@ -1286,7 +1271,7 @@
             },
             "deprecated": false,
             "address": "0x4300000000000000000000000000000000000004",
-            "id": 76
+            "id": 75
         },
         {
             "decimals": 18,
@@ -1300,7 +1285,7 @@
             },
             "deprecated": false,
             "address": "0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA",
-            "id": 77
+            "id": 76
         },
         {
             "decimals": 18,
@@ -1314,7 +1299,7 @@
             },
             "deprecated": false,
             "address": "0x8280a4e7D5B3B658ec4580d3Bc30f5e50454F169",
-            "id": 78
+            "id": 77
         },
         {
             "decimals": 18,
@@ -1328,7 +1313,7 @@
             },
             "deprecated": false,
             "address": "0x1B49eCf1A8323Db4abf48b2F5EFaA33F7DdAB3FC",
-            "id": 79
+            "id": 78
         },
         {
             "decimals": 8,
@@ -1342,7 +1327,7 @@
             },
             "deprecated": false,
             "address": "0x8034aB88C3512246Bf7894f57C834DdDBd1De01F",
-            "id": 80
+            "id": 79
         },
         {
             "decimals": 18,
@@ -1356,7 +1341,7 @@
             },
             "deprecated": false,
             "address": "0xA51894664A773981C6C112C43ce576f315d5b1B6",
-            "id": 81
+            "id": 80
         },
         {
             "decimals": 6,
@@ -1370,7 +1355,7 @@
             },
             "deprecated": false,
             "address": "0xB75D0B03c06A926e488e2659DF1A861F860bD3d1",
-            "id": 82
+            "id": 81
         },
         {
             "decimals": 6,
@@ -1384,7 +1369,7 @@
             },
             "deprecated": false,
             "address": "0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1",
-            "id": 83
+            "id": 82
         },
         {
             "decimals": 18,
@@ -1398,7 +1383,7 @@
             },
             "deprecated": false,
             "address": "0xcB0DdC112EF317271266c83D7179Bf9186b9C658",
-            "id": 84
+            "id": 83
         },
         {
             "decimals": 18,
@@ -1412,7 +1397,7 @@
             },
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 85
+            "id": 84
         },
         {
             "decimals": 6,
@@ -1426,7 +1411,7 @@
             },
             "deprecated": false,
             "address": "0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a",
-            "id": 86
+            "id": 85
         },
         {
             "decimals": 6,
@@ -1440,7 +1425,7 @@
             },
             "deprecated": false,
             "address": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59",
-            "id": 87
+            "id": 86
         },
         {
             "decimals": 18,
@@ -1454,7 +1439,7 @@
             },
             "deprecated": false,
             "address": "0xA8a59D73388D0c4344a7b0Ba287ddb654227c38a",
-            "id": 88
+            "id": 87
         },
         {
             "decimals": 18,
@@ -1468,7 +1453,7 @@
             },
             "deprecated": false,
             "address": "0xFc00000000000000000000000000000000000001",
-            "id": 89
+            "id": 88
         },
         {
             "decimals": 6,
@@ -1482,7 +1467,7 @@
             },
             "deprecated": false,
             "address": "0xFbDa5F676cB37624f28265A144A48B0d6e87d3b6",
-            "id": 90
+            "id": 89
         },
         {
             "decimals": 18,
@@ -1496,7 +1481,7 @@
             },
             "deprecated": false,
             "address": "0xBB859E225ac8Fb6BE1C7e38D87b767e95Fef0EbD",
-            "id": 91
+            "id": 90
         },
         {
             "decimals": 18,
@@ -1510,7 +1495,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 92
+            "id": 91
         },
         {
             "decimals": 6,
@@ -1525,7 +1510,7 @@
             "deprecated": false,
             "attributes": { "ton": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" },
             "address": "0x9328Eb759596C38a25f59028B146Fecdc3621Dfe",
-            "id": 93
+            "id": 92
         },
         {
             "decimals": 9,
@@ -1540,7 +1525,7 @@
             "deprecated": false,
             "attributes": { "ton": "EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5" },
             "address": "0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293",
-            "id": 94
+            "id": 93
         },
         {
             "decimals": 9,
@@ -1555,7 +1540,7 @@
             "deprecated": false,
             "attributes": { "ton": "EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7" },
             "address": "0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400",
-            "id": 95
+            "id": 94
         },
         {
             "decimals": 9,
@@ -1570,7 +1555,7 @@
             "deprecated": false,
             "attributes": { "ton": "EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU" },
             "address": "0x0d2d353642cFFC051A2694C51B6C00e787EB4590",
-            "id": 96
+            "id": 95
         },
         {
             "decimals": 6,
@@ -1584,7 +1569,7 @@
             },
             "deprecated": false,
             "address": "0xaa5b845F8C9c047779bEDf64829601d8B264076c",
-            "id": 97
+            "id": 96
         },
         {
             "decimals": 6,
@@ -1598,7 +1583,7 @@
             },
             "deprecated": false,
             "address": "0xe34c91815d7fc18A9e2148bcD4241d0a5848b693",
-            "id": 98
+            "id": 97
         },
         {
             "decimals": 18,
@@ -1612,7 +1597,7 @@
             },
             "deprecated": false,
             "address": "0xbC10000000000000000000000000000000000000",
-            "id": 99
+            "id": 98
         },
         {
             "decimals": 18,
@@ -1626,7 +1611,7 @@
             },
             "deprecated": false,
             "address": "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
-            "id": 100
+            "id": 99
         },
         {
             "decimals": 18,
@@ -1640,7 +1625,7 @@
             },
             "deprecated": false,
             "address": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809",
-            "id": 101
+            "id": 100
         },
         {
             "decimals": 6,
@@ -1654,7 +1639,7 @@
             },
             "deprecated": false,
             "address": "0x2a22f9c3b484c3629090FeED35F17Ff8F88f76F0",
-            "id": 102
+            "id": 101
         },
         {
             "decimals": 18,
@@ -1668,7 +1653,7 @@
             },
             "deprecated": false,
             "address": "0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1",
-            "id": 103
+            "id": 102
         },
         {
             "decimals": 18,
@@ -1682,7 +1667,7 @@
             },
             "deprecated": false,
             "address": "0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590",
-            "id": 104
+            "id": 103
         },
         {
             "decimals": 18,
@@ -1696,7 +1681,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 105
+            "id": 104
         },
         {
             "decimals": 18,
@@ -1710,7 +1695,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 106
+            "id": 105
         },
         {
             "decimals": 18,
@@ -1724,7 +1709,7 @@
             },
             "deprecated": false,
             "address": "0xE7798f023fC62146e8Aa1b36Da45fb70855a77Ea",
-            "id": 107
+            "id": 106
         },
         {
             "decimals": 18,
@@ -1738,7 +1723,7 @@
             },
             "deprecated": false,
             "address": "0x4200000000000000000000000000000000000006",
-            "id": 108
+            "id": 107
         },
         {
             "decimals": 18,
@@ -1752,7 +1737,7 @@
             },
             "deprecated": false,
             "address": "0xBe6727B535545C67d5cAa73dEa54865B92CF7907",
-            "id": 109
+            "id": 108
         },
         {
             "decimals": 8,
@@ -1766,7 +1751,7 @@
             },
             "deprecated": true,
             "address": "0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74",
-            "id": 110
+            "id": 109
         },
         {
             "decimals": 8,
@@ -1780,7 +1765,7 @@
             },
             "deprecated": false,
             "address": "0x1DfC1e32d75b3f4Cb2F2B1BCEcAD984E99eeba05",
-            "id": 111
+            "id": 110
         },
         {
             "decimals": 8,
@@ -1794,7 +1779,7 @@
             },
             "deprecated": false,
             "address": "0x334524A0ADB21425afCF77aC40580D68e30E51d8",
-            "id": 112
+            "id": 111
         },
         {
             "decimals": 18,
@@ -1809,7 +1794,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xF98b660AdF2ed7d9d9D9dAACC2fb0CAce4F21835",
-            "id": 113,
+            "id": 112,
             "originalId": 1
         },
         {
@@ -1825,8 +1810,8 @@
             "chainFromId": 1329,
             "deprecated": false,
             "address": "0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592",
-            "id": 114,
-            "originalId": 84
+            "id": 113,
+            "originalId": 83
         },
         {
             "decimals": 8,
@@ -1841,8 +1826,8 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7",
-            "id": 115,
-            "originalId": 111
+            "id": 114,
+            "originalId": 110
         },
         {
             "decimals": 6,
@@ -1857,7 +1842,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xe6E5f3d264117E030C21920356641DbD5B3d660c",
-            "id": 116,
+            "id": 115,
             "originalId": 0
         },
         {
@@ -1873,7 +1858,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x63d71E79AdF0886c989A23b04a0E86F1489b6BC3",
-            "id": 117,
+            "id": 116,
             "originalId": 2
         },
         {
@@ -1889,14 +1874,14 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x7bD3ffe9f0C9CF08FD60e102FEa455A6EA580276",
-            "id": 118,
+            "id": 117,
             "originalId": 3
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin from Ethereum",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -1904,15 +1889,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0x7d6EC42b5d9566931560411a8652Cea00b90d982",
-            "id": 119,
+            "address": "0x3E201e30F98Df0730fDe47d88363b45B5BFda6Fc",
+            "id": 118,
             "originalId": 0
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from Ethereum",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -1920,15 +1905,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0x4E985A18B4Ac70a1C3d986a5f55CB4c5BC8f65AE",
-            "id": 120,
+            "address": "0x0e4a204cae4a0b5Ae7d409f2B3D6d5F7D7937208",
+            "id": 119,
             "originalId": 1
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Ethereum)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -1936,15 +1921,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0x1CE4E75E2Bd6bbbACDE1E10D6813228138337E86",
-            "id": 121,
+            "address": "0x8a720a556a69423a885016641f09027Ab3416Cee",
+            "id": 120,
             "originalId": 2
         },
         {
             "decimals": 8,
             "symbol": "sWBTC",
             "name": "Synthetic WBTC From Ethereum",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png",
@@ -1952,15 +1937,15 @@
             },
             "chainFromId": 1,
             "deprecated": true,
-            "address": "0xE6Bb73E4dACD20653Bb8BdC427C9b4766fC159f5",
-            "id": 122,
+            "address": "0xB638F884Cd55Bd72465B87bdc7a3FCD805692e5A",
+            "id": 121,
             "originalId": 4
         },
         {
             "decimals": 18,
             "symbol": "sLADYS",
             "name": "Synthetic Milady Coin (Ethereum)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png",
@@ -1968,15 +1953,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0x7405b3cf567003317800114511474e52937e1a5e",
-            "id": 123,
+            "address": "0xc888D927e6F5F8F14234e55b0eE4fCDFde692D7a",
+            "id": 122,
             "originalId": 5
         },
         {
             "decimals": 18,
             "symbol": "spufETH",
             "name": "Synthetic pufETH From Ethereum",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
@@ -1984,15 +1969,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0x1acF9c15a25752132b14bb4f5e1A47bC88a4CB7E",
-            "id": 124,
+            "address": "0xcF218820DBd297A58A381C4304ef9B7aD29Df52F",
+            "id": 123,
             "originalId": 6
         },
         {
             "decimals": 18,
             "symbol": "sFRAX",
             "name": "Synthetic Frax (Ethereum)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
@@ -2000,15 +1985,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0xcde7866D581Ca2a4425d5BDE8074413FBbf958F4",
-            "id": 125,
+            "address": "0x659859Bdb29c11b94B0708977BCa528ED847bd4E",
+            "id": 124,
             "originalId": 7
         },
         {
             "decimals": 18,
             "symbol": "sG",
             "name": "Synthetic G (Ethereum)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
@@ -2016,15 +2001,15 @@
             },
             "chainFromId": 1,
             "deprecated": false,
-            "address": "0xE5E6576FeAf298f8c253Ef8C010a9d51090AfBb6",
-            "id": 126,
+            "address": "0xa95421ab5dD206c4Bc0D2B75838a8111931462dc",
+            "id": 125,
             "originalId": 8
         },
         {
             "decimals": 9,
             "symbol": "sWTON",
             "name": "Synthetic WTON From Ethereum",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
@@ -2032,15 +2017,15 @@
             },
             "chainFromId": 1,
             "deprecated": true,
-            "address": "0x45Bb4E28609f1c6EA05c738F4e7229e5b3bC8657",
-            "id": 127,
+            "address": "0xb227126Ca0E726c81d8F8f1Dc79969aaD0c24191",
+            "id": 126,
             "originalId": 9
         },
         {
             "decimals": 18,
             "symbol": "sUSDC",
             "name": "Synthetic Binance-Peg USD Coin from BSC",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2048,15 +2033,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0x5e19eFc6AC9C80bfAA755259c9fab2398A8E87eB",
-            "id": 128,
+            "address": "0x3dbA3872f37e0005c598cAC6164211FB4ff04202",
+            "id": 127,
             "originalId": 10
         },
         {
             "decimals": 18,
             "symbol": "sBUSD",
             "name": "Synthetic Binance-Peg BUSD Token from BSC",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png",
@@ -2064,15 +2049,15 @@
             },
             "chainFromId": 56,
             "deprecated": true,
-            "address": "0x1a25BEB8E75626ADDb983d46fbDfcE5fdC29Ae58",
-            "id": 129,
+            "address": "0xC82213d40e583F6A4A17D29dBc8044449a9161ac",
+            "id": 128,
             "originalId": 11
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Binance)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2080,15 +2065,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0x424190072b7Db5352bB91cC70DabD82F547AE003",
-            "id": 130,
+            "address": "0x2f2E880eea1f85a38b1f57bDDA41c0a50c9A93C5",
+            "id": 129,
             "originalId": 12
         },
         {
             "decimals": 18,
             "symbol": "sWBTC",
             "name": "Synthetic WBTC From BSC",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/4023.png",
@@ -2096,15 +2081,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0x814f76A3f2FF408ad6BCEB5412B60D9fC3B6C0EA",
-            "id": 131,
+            "address": "0xFEdcA68aDE5a039E93861e853f857b4d92E0B8c6",
+            "id": 130,
             "originalId": 13
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from Binance",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -2112,15 +2097,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 132,
+            "address": "0xAf3c1Ed19FCA8411d2436cD97a676f635a9c55c0",
+            "id": 131,
             "originalId": 14
         },
         {
             "decimals": 18,
             "symbol": "sG",
             "name": "Synthetic G (BNB)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
@@ -2128,15 +2113,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0xe2c3145649EF1988fBa03274bE4C9FAB118CaBd5",
-            "id": 133,
+            "address": "0x347e1AEC68c51915875D63ACfd92E4B0c9836f99",
+            "id": 132,
             "originalId": 15
         },
         {
             "decimals": 9,
             "symbol": "sWTON",
             "name": "Synthetic WTON From BNB",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
@@ -2144,15 +2129,15 @@
             },
             "chainFromId": 56,
             "deprecated": true,
-            "address": "0x42B7f88dc7DE1679FbAD6A6FF32A5ea36aA2E129",
-            "id": 134,
+            "address": "0x144c6992426755581c2cAf246e0fEBe27f550e14",
+            "id": 133,
             "originalId": 16
         },
         {
             "decimals": 18,
             "symbol": "sPINEYE",
             "name": "Synthetic PINEYE (BSC)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png",
@@ -2160,15 +2145,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0x6175C672Ed466d2A5C6FBC750C328eeC818f82a0",
-            "id": 135,
+            "address": "0x463A043e2E887238Dc70002912706f8dBA9FFa4A",
+            "id": 134,
             "originalId": 19
         },
         {
             "decimals": 18,
             "symbol": "sWBNB",
             "name": "Synthetic WBNB (BNB)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png",
@@ -2176,15 +2161,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0xFa19B49BbB8C801157A3a9bBeb542c22F434f4d6",
-            "id": 136,
+            "address": "0xDdD9d30D2B4219E7A1727eaE0CdB1809fA520d1E",
+            "id": 135,
             "originalId": 20
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Avalanche",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2192,15 +2177,15 @@
             },
             "chainFromId": 43114,
             "deprecated": false,
-            "address": "0x04967F713aca02039EA18c2E5805a863b5eC25A0",
-            "id": 137,
+            "address": "0xA6197C0fB510726824a61C2D6efa98c8529CC09F",
+            "id": 136,
             "originalId": 21
         },
         {
             "decimals": 6,
             "symbol": "sUSDC.e",
             "name": "Synthetic USD Coin from Avalanche",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2208,15 +2193,15 @@
             },
             "chainFromId": 43114,
             "deprecated": true,
-            "address": "0x6dF9C221F52537DFD63d70721EEAA0C4d4472C18",
-            "id": 138,
+            "address": "0x808F40c1446003B8c62f728DdE7fF5223371Bb7E",
+            "id": 137,
             "originalId": 22
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin from Polygon",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2224,15 +2209,15 @@
             },
             "chainFromId": 137,
             "deprecated": false,
-            "address": "0x59AA2e5F628659918A4890A2a732E6C8bD334E7A",
-            "id": 139,
+            "address": "0x6f4A41c004D8C0B272345c1b6A80069F3F7a61E1",
+            "id": 138,
             "originalId": 23
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Arbitrum Nova)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2240,15 +2225,15 @@
             },
             "chainFromId": 137,
             "deprecated": false,
-            "address": "0x93A973297E492d4E7a2b4aBaB3bFB4f140D1E3Bb",
-            "id": 140,
+            "address": "0x053905F1BdD452532c2A974b93f8e26E7f21d879",
+            "id": 139,
             "originalId": 24
         },
         {
             "decimals": 18,
             "symbol": "sFRAX",
             "name": "Synthetic Frax (Polygon)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
@@ -2256,15 +2241,15 @@
             },
             "chainFromId": 137,
             "deprecated": false,
-            "address": "0x7Fd2eab338fBC3a2d724F92468fE6A9f72f18A12",
-            "id": 141,
+            "address": "0x2d47F4Dd85663F12237aacd666A4577B7d0CF906",
+            "id": 140,
             "originalId": 25
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic syUSDC From Telos",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2272,15 +2257,15 @@
             },
             "chainFromId": 40,
             "deprecated": false,
-            "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 142,
+            "address": "0x41F582c0E6Dd862401E3286Ce0a9786Eb504D65D",
+            "id": 141,
             "originalId": 26
         },
         {
             "decimals": 6,
             "symbol": "sUSDT",
             "name": "Synthetic USDT From Kava",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -2288,15 +2273,15 @@
             },
             "chainFromId": 2222,
             "deprecated": false,
-            "address": "0xCdc9C3e0fc1909205aC96EC98795aCAa29a6A1E3",
-            "id": 143,
+            "address": "0xA651954d52fA5b2444E4fC2165e7AeeFb1Ea3b76",
+            "id": 142,
             "originalId": 27
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin from Boba ETH",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2304,15 +2289,15 @@
             },
             "chainFromId": 288,
             "deprecated": false,
-            "address": "0x1a3d48492Cd334AD140587091AC382E5695a4934",
-            "id": 144,
+            "address": "0x6C5058ef96ba60Bb85248C9B421f49F7b932e6Ea",
+            "id": 143,
             "originalId": 28
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From ZkSync Era Mainnet",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2320,15 +2305,15 @@
             },
             "chainFromId": 324,
             "deprecated": false,
-            "address": "0xC6CC7E50A0F20268DB1BAb041ff18b2c7E97a9d3",
-            "id": 145,
-            "originalId": 30
+            "address": "0x3D513d4B8492540Cfb163D6407B6B89B367dd0d4",
+            "id": 144,
+            "originalId": 29
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDC token from zkSync",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2336,15 +2321,15 @@
             },
             "chainFromId": 324,
             "deprecated": true,
-            "address": "0x3a2213CaEbcf1727D7b3422B8Ef8Dd5654877f42",
-            "id": 146,
-            "originalId": 31
+            "address": "0xaD43A7c92c5F05D5d0CE9b82364bf583A968BfDe",
+            "id": 145,
+            "originalId": 30
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (zkSync Era)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2352,15 +2337,15 @@
             },
             "chainFromId": 324,
             "deprecated": false,
-            "address": "0xE3dB9aD5A3c6387beCe39fAfc26Dbb2b594fb7ff",
-            "id": 147,
-            "originalId": 32
+            "address": "0x81b2728c2E438F6d4d8ba71F46f346F921510643",
+            "id": 146,
+            "originalId": 31
         },
         {
             "decimals": 8,
             "symbol": "sWBTC",
             "name": "Synthetic WBTC From zkSync",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png",
@@ -2368,15 +2353,15 @@
             },
             "chainFromId": 324,
             "deprecated": true,
-            "address": "0x83a9e719C9b6d0108D64073DC35aCFD40FC9C672",
-            "id": 148,
-            "originalId": 33
+            "address": "0xe8edf0614d6A686a65d9054cC972547e69AdB47b",
+            "id": 147,
+            "originalId": 32
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from zkSync Era",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -2384,15 +2369,15 @@
             },
             "chainFromId": 324,
             "deprecated": false,
-            "address": "0x2E752d64cCc7B1e8F3F8b58F8218C3e0F21A9F3C",
-            "id": 149,
-            "originalId": 34
+            "address": "0xD5BC613871675f4581E994D42F26fA8B48Bcba5C",
+            "id": 148,
+            "originalId": 33
         },
         {
             "decimals": 8,
             "symbol": "ssyBTC",
             "name": "Synthetic syBTC (zkSync)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200",
@@ -2400,7 +2385,23 @@
             },
             "chainFromId": 324,
             "deprecated": true,
-            "address": "0x0a5CF42021F48d2cE026Ca133404b00F99dc82f3",
+            "address": "0x44168a62a793b6387bB953d66F3f885A5e7Ff77c",
+            "id": 149,
+            "originalId": 34
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "Synthetic USD Coin From Arbitrum One",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+            },
+            "chainFromId": 42161,
+            "deprecated": false,
+            "address": "0x26F0173A2C094f15f65D9AC5DBE1626Fa4E1D2fB",
             "id": 150,
             "originalId": 35
         },
@@ -2408,23 +2409,7 @@
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Arbitrum One",
-            "chainId": 56288,
-            "isNative": false,
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
-            },
-            "chainFromId": 42161,
-            "deprecated": false,
-            "address": "0xeeAE2132f2e21f68D862c535D7d9857803FBcF3f",
-            "id": 151,
-            "originalId": 36
-        },
-        {
-            "decimals": 6,
-            "symbol": "sUSDC",
-            "name": "Synthetic USD Coin From Arbitrum One",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2432,15 +2417,15 @@
             },
             "chainFromId": 42161,
             "deprecated": true,
-            "address": "0xA8d058ed41B216175400E8B2CC8cD55853596462",
-            "id": 152,
-            "originalId": 37
+            "address": "0xC97E0687d6eC21DFAC0Cbf1cc7A532EcfFBf8082",
+            "id": 151,
+            "originalId": 36
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Arbitrum One)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2448,15 +2433,15 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "address": "0x4994b8bb0b58708Cc6A66079d22db35c95650B4b",
-            "id": 153,
-            "originalId": 38
+            "address": "0x43cC4EAF9A03984c82AC8b3C8D8CbAec00025F69",
+            "id": 152,
+            "originalId": 37
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from Arbitrum One",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -2464,15 +2449,15 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "address": "0x94F3F6C21e7D2D63d4ea484713B110e64A722fD7",
-            "id": 154,
-            "originalId": 39
+            "address": "0xB59B304aE579F3F6BEEafcddF799f8B2152a3DC4",
+            "id": 153,
+            "originalId": 38
         },
         {
             "decimals": 18,
             "symbol": "sLADYS",
             "name": "Synthetic Milady Coin (Arbitrum)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png",
@@ -2480,15 +2465,15 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "address": "0x355b105634AD4184fd6Cc264C594615F861BE5AA",
-            "id": 155,
-            "originalId": 40
+            "address": "0x5a9423439297D05c7fF4be3A1396Eb29feCAA19a",
+            "id": 154,
+            "originalId": 39
         },
         {
             "decimals": 18,
             "symbol": "sFRAX",
             "name": "Synthetic Frax (Arbitrum One)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
@@ -2496,15 +2481,15 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "address": "0x5ffc6ac1437C51D94362069E464C646E011c3337",
-            "id": 156,
-            "originalId": 41
+            "address": "0xBA5144823B71a32a5b5B4C70fc04e5D654A76C96",
+            "id": 155,
+            "originalId": 40
         },
         {
             "decimals": 18,
             "symbol": "sUXLINK",
             "name": "Synthetic UXLINK (Arbitrum)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
@@ -2512,15 +2497,15 @@
             },
             "chainFromId": 42161,
             "deprecated": false,
-            "address": "0xF59229fFfE067a652b944D6F5Da23c19Dc306E44",
-            "id": 157,
-            "originalId": 42
+            "address": "0x8767f4766140C6F331386976c1842Dd3F0Bf2E61",
+            "id": 156,
+            "originalId": 41
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Optimism",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2528,15 +2513,15 @@
             },
             "chainFromId": 10,
             "deprecated": false,
-            "address": "0xf072f11Bf151038BD8732cd1088b7C98762b839C",
-            "id": 158,
-            "originalId": 43
+            "address": "0xF584AD10be4c62C8B1B81f9449965d68779C6216",
+            "id": 157,
+            "originalId": 42
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Optimism)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2544,15 +2529,15 @@
             },
             "chainFromId": 10,
             "deprecated": false,
-            "address": "0x983e6839e84004E78FBfE76431D879cf9cF2f084",
-            "id": 159,
-            "originalId": 44
+            "address": "0xd26D3517642cA47B0A9B449EcAE0fA3eb9B238fa",
+            "id": 158,
+            "originalId": 43
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Arbitrum Nova",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2560,15 +2545,15 @@
             },
             "chainFromId": 42170,
             "deprecated": false,
-            "address": "0x9d152fcb9692B5b2d31b81a4A5F86Aa1BaB42677",
-            "id": 160,
-            "originalId": 45
+            "address": "0x8d2a597bBD849cAaF5954596D76Eb1e1e8EDD066",
+            "id": 159,
+            "originalId": 44
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Arbitrum Nova)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2576,15 +2561,15 @@
             },
             "chainFromId": 42170,
             "deprecated": false,
-            "address": "0xe0B51250bE54fEaF51BDdfAE0828D29BDc7fE87C",
-            "id": 161,
-            "originalId": 46
+            "address": "0xD1b5cB0952320F7C401270A779120d423a2efC7C",
+            "id": 160,
+            "originalId": 45
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Polygon zkEVM",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2592,15 +2577,15 @@
             },
             "chainFromId": 1101,
             "deprecated": false,
-            "address": "0xa5CA3277041Bf6e8D6eEC2740010B7C6d10E4012",
-            "id": 162,
-            "originalId": 47
+            "address": "0xF10a1c5aEa5d435d5b44775707Ed1F4087aEC397",
+            "id": 161,
+            "originalId": 46
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDC From Polygon zkEVM",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2608,15 +2593,15 @@
             },
             "chainFromId": 1101,
             "deprecated": true,
-            "address": "0xC28C38B2Af831b222b6933E52637B5145a6774Ad",
-            "id": 163,
-            "originalId": 48
+            "address": "0x3E21d34B1B35dEe5e480CfCAEEA428a6540FDC4b",
+            "id": 162,
+            "originalId": 47
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Polygon zkEVM)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2624,15 +2609,15 @@
             },
             "chainFromId": 1101,
             "deprecated": false,
-            "address": "0x52B50A6f8564B4895C7EdC9AD3B232bBA0108bA6",
-            "id": 164,
-            "originalId": 49
+            "address": "0x636213A477b9884D31325D3b5e2DD5752906E1B6",
+            "id": 163,
+            "originalId": 48
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Linea)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2640,15 +2625,15 @@
             },
             "chainFromId": 59144,
             "deprecated": false,
-            "address": "0x6ca6FCbD2fe65F0CB7671f5F0638867fdC991462",
-            "id": 165,
-            "originalId": 50
+            "address": "0x89c28db278Fa9c98fb84ccF5558E91fA3554e733",
+            "id": 164,
+            "originalId": 49
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Linea",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2656,15 +2641,15 @@
             },
             "chainFromId": 59144,
             "deprecated": false,
-            "address": "0xD2f5B8525758857aF3553142F59e2b35CbFa0aBE",
-            "id": 166,
-            "originalId": 51
+            "address": "0x1816814c4694C867e136C34Ab6de6a652A282571",
+            "id": 165,
+            "originalId": 50
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from Linea",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -2672,15 +2657,15 @@
             },
             "chainFromId": 59144,
             "deprecated": false,
-            "address": "0x32478a5EE4F9854A26aC4606aa107CfD3E5F8775",
-            "id": 167,
-            "originalId": 52
+            "address": "0xeCC1aC89CAc575f8D3580C201E7B4dE6f3800bb6",
+            "id": 166,
+            "originalId": 51
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USD Coin From Mantle",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2688,15 +2673,15 @@
             },
             "chainFromId": 5000,
             "deprecated": false,
-            "address": "0x85EC8DA79Bd2e54724ab8aa4a7a209B1f66D6eC0",
-            "id": 168,
-            "originalId": 53
+            "address": "0xce490fbf169F03c613bA6Ee70b993F7279026A2a",
+            "id": 167,
+            "originalId": 52
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Mantle)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2704,15 +2689,15 @@
             },
             "chainFromId": 5000,
             "deprecated": false,
-            "address": "0xA6e6c78746F873dB8545B7571DD1C5d87cC95763",
-            "id": 169,
-            "originalId": 54
+            "address": "0x3b496A073BFf01A505DA9Bc125a3E5A155cD1929",
+            "id": 168,
+            "originalId": 53
         },
         {
             "decimals": 18,
             "symbol": "sCATI",
             "name": "Synthetic CATI (Mantle)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png",
@@ -2720,15 +2705,15 @@
             },
             "chainFromId": 5000,
             "deprecated": false,
-            "address": "0xd05A1e0Baf4dA057d80F965f313A0E578bDc7Ad8",
-            "id": 170,
-            "originalId": 55
+            "address": "0xC3328f7016736fe6AFDF176011ca785460f3E79D",
+            "id": 169,
+            "originalId": 54
         },
         {
             "decimals": 18,
             "symbol": "sUXLINK",
             "name": "Synthetic UXLINK (Mantle)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
@@ -2736,15 +2721,15 @@
             },
             "chainFromId": 5000,
             "deprecated": false,
-            "address": "0x67ADD30c2Fec2ed09C487Fe08Fe8770E097Caa3B",
-            "id": 171,
-            "originalId": 56
+            "address": "0xe9eAA50fC6c276b8f3E0958Cc1B1D23CDE221bF5",
+            "id": 170,
+            "originalId": 55
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Base)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2752,15 +2737,15 @@
             },
             "chainFromId": 8453,
             "deprecated": false,
-            "address": "0x8eFFD39D090C756Db49A8154Db7BD05f59A62193",
-            "id": 172,
-            "originalId": 57
+            "address": "0x04E75d01dC22dEAe5e05e921b036DFe901b2c1c6",
+            "id": 171,
+            "originalId": 56
         },
         {
             "decimals": 6,
             "symbol": "sUSDbC",
             "name": "Synthetic USDbC From Base",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2768,15 +2753,15 @@
             },
             "chainFromId": 8453,
             "deprecated": false,
-            "address": "0xDD1a897f92c14cDA3aB7023b094615A7068d01fA",
-            "id": 173,
-            "originalId": 58
+            "address": "0xF2E9249572AE0EC1A8351e6AA313DA0c4FF5d00a",
+            "id": 172,
+            "originalId": 57
         },
         {
             "decimals": 18,
             "symbol": "sG",
             "name": "Synthetic G (Base)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
@@ -2784,15 +2769,15 @@
             },
             "chainFromId": 8453,
             "deprecated": false,
-            "address": "0x6538515Db6666FD3bE5feCaCE8C4EBc9AFF8b7de",
-            "id": 174,
-            "originalId": 59
+            "address": "0x30cD7b8034b7E2658F4760D232504131aafC0165",
+            "id": 173,
+            "originalId": 58
         },
         {
             "decimals": 6,
             "symbol": "sUSDT",
             "name": "Synthetic USDT From Tron",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -2800,15 +2785,15 @@
             },
             "chainFromId": 728126428,
             "deprecated": false,
-            "address": "0x2dF311E049a839E1011507ccE20Afb6f871a81a1",
-            "id": 175,
-            "originalId": 60
+            "address": "0x86940fCB50831d1F25E26D6ecc8964FdF7b727Df",
+            "id": 174,
+            "originalId": 59
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Scroll)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2816,15 +2801,15 @@
             },
             "chainFromId": 534352,
             "deprecated": false,
-            "address": "0xC66d177BDa9ef1d9278948FcD86C2C4420ca708C",
-            "id": 176,
-            "originalId": 61
+            "address": "0xB0849c85e3A8419f3c6E0AEb9FE726E1e893c1B9",
+            "id": 175,
+            "originalId": 60
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDC From Scroll",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2832,15 +2817,15 @@
             },
             "chainFromId": 534352,
             "deprecated": false,
-            "address": "0x616152a28eAb796789050407DF0f566307bFffDA",
-            "id": 177,
-            "originalId": 62
+            "address": "0x65cC0E72b05A623d25d4a39C841d2296C9FfA0F8",
+            "id": 176,
+            "originalId": 61
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from Scroll",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -2848,15 +2833,15 @@
             },
             "chainFromId": 534352,
             "deprecated": false,
-            "address": "0x1adD5ac0E2b68f020dC8a3bC0BaE1A1bFc873F49",
-            "id": 178,
-            "originalId": 63
+            "address": "0xFDEF7237af1044fC40cCB9d9DFD80a9f1093bd65",
+            "id": 177,
+            "originalId": 62
         },
         {
             "decimals": 18,
             "symbol": "spufETH",
             "name": "Synthetic pufETH From Scroll",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
@@ -2864,15 +2849,15 @@
             },
             "chainFromId": 534352,
             "deprecated": false,
-            "address": "0x32699d39c059dc61F2D26B9778830f49c5d200Ca",
-            "id": 179,
-            "originalId": 64
+            "address": "0xD1ebe4F110D7f84a9EAd0Cf375B98f72D3569E67",
+            "id": 178,
+            "originalId": 63
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Manta)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2880,15 +2865,15 @@
             },
             "chainFromId": 169,
             "deprecated": false,
-            "address": "0x3e54f3F0C9FA63282B92C84a3b710FD2968F177E",
-            "id": 180,
-            "originalId": 65
+            "address": "0x145a6452C9a5A6Cec2F063acD1dA367c226adE86",
+            "id": 179,
+            "originalId": 64
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDC From Manta",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2896,15 +2881,15 @@
             },
             "chainFromId": 169,
             "deprecated": false,
-            "address": "0x60F58f1AbD788eaEFa00838d9a69639F62cC16B8",
-            "id": 181,
-            "originalId": 66
+            "address": "0x508710f92986c3531167223D5996Cb95304Ad398",
+            "id": 180,
+            "originalId": 65
         },
         {
             "decimals": 18,
             "symbol": "spufETH",
             "name": "Synthetic pufETH From Manta",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
@@ -2912,15 +2897,15 @@
             },
             "chainFromId": 169,
             "deprecated": false,
-            "address": "0xeC4f77C7EfCf5A1Ff26eA8e19d4236A375b3Dfe4",
-            "id": 182,
-            "originalId": 67
+            "address": "0x734B65cC00B73415d9f15d0f88533ce1AdF28Be8",
+            "id": 181,
+            "originalId": 66
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Metis)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2928,15 +2913,15 @@
             },
             "chainFromId": 1088,
             "deprecated": false,
-            "address": "0x04E7379CdF5b3427E5B3A557B0E98DD92E70584f",
-            "id": 183,
-            "originalId": 68
+            "address": "0x59b8f8873A1042AB50c228841E0B1f27E2e87aB6",
+            "id": 182,
+            "originalId": 67
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Bahamut",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -2944,15 +2929,15 @@
             },
             "chainFromId": 5165,
             "deprecated": false,
-            "address": "0xf2CF7f859FE187BAa9b2F197Cd6C1698A4BC0905",
-            "id": 184,
-            "originalId": 69
+            "address": "0x7bba2baC84EF43D8249f1796af1E94C322938343",
+            "id": 183,
+            "originalId": 68
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Mode)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -2960,15 +2945,15 @@
             },
             "chainFromId": 34443,
             "deprecated": false,
-            "address": "0x467fAC56cB149D06A8b268A5Cb8638Fc7B2d8F73",
-            "id": 185,
-            "originalId": 70
+            "address": "0xb2aa621d3Cc139840027111972Ba56260A594Fd3",
+            "id": 184,
+            "originalId": 69
         },
         {
             "decimals": 6,
             "symbol": "sUSDT",
             "name": "Synthetic USDT From Rootstock",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -2976,15 +2961,15 @@
             },
             "chainFromId": 30,
             "deprecated": false,
-            "address": "0xc95F07a859D64F47c0cf4Aeb2c8eDBD5416dd698",
-            "id": 186,
-            "originalId": 71
+            "address": "0x864A8E6a10d0B605Adc4939051764cec3C572C89",
+            "id": 185,
+            "originalId": 70
         },
         {
             "decimals": 18,
             "symbol": "sUSDT",
             "name": "Synthetic rUSDT From RSK",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -2992,15 +2977,15 @@
             },
             "chainFromId": 30,
             "deprecated": true,
-            "address": "0xA5De76FEda5bC1c824Ee1FfcCE82c8BbAe1f558F",
-            "id": 187,
-            "originalId": 72
+            "address": "0xB69a5a865b845EA69Ca327838239AD531cad2dA2",
+            "id": 186,
+            "originalId": 71
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС.e From Rootstock",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3008,15 +2993,15 @@
             },
             "chainFromId": 30,
             "deprecated": true,
-            "address": "0x52DbBFB34525a69C60c6B74C404fFF7c4361abEa",
-            "id": 188,
-            "originalId": 73
+            "address": "0x2488Dd4F5B0286114D47cC918cE77b69DADEd335",
+            "id": 187,
+            "originalId": 72
         },
         {
             "decimals": 18,
             "symbol": "sWRBTC",
             "name": "Synthetic Wrapped RBTC (Rootstock)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32702.png",
@@ -3024,15 +3009,15 @@
             },
             "chainFromId": 30,
             "deprecated": false,
-            "address": "0x4A95D151d5b16B90481F98432Cf3D3B62deef1Fe",
-            "id": 189,
-            "originalId": 74
+            "address": "0xA6983E6E68cE86c50813042E502f2E9966A7B664",
+            "id": 188,
+            "originalId": 73
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Blast)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3040,15 +3025,15 @@
             },
             "chainFromId": 81457,
             "deprecated": false,
-            "address": "0xB4A492d5d61d4539a70AE3E7BF564250159d1c57",
-            "id": 190,
-            "originalId": 76
+            "address": "0xa400Cf285671392098eF123e84Dbc3a08A14797C",
+            "id": 189,
+            "originalId": 75
         },
         {
             "decimals": 18,
             "symbol": "sWBTC",
             "name": "Synthetic Wrapped BTC (Merlin)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png",
@@ -3056,15 +3041,15 @@
             },
             "chainFromId": 4200,
             "deprecated": false,
-            "address": "0xc1Aca13EE7Ee4F9211BBC7bb0Da0fCA58405993B",
-            "id": 191,
-            "originalId": 77
+            "address": "0x47b346125eF8747588538F5f00DD99D059c70910",
+            "id": 190,
+            "originalId": 76
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped ETH (zkLink)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3072,15 +3057,15 @@
             },
             "chainFromId": 810180,
             "deprecated": false,
-            "address": "0x997D45FFC15bC54A52EBDeeFa0E6fc856fC97a55",
-            "id": 192,
-            "originalId": 78
+            "address": "0x804Bb6BcD53AC9eE9e85eE13a820C5e07A362182",
+            "id": 191,
+            "originalId": 77
         },
         {
             "decimals": 18,
             "symbol": "spufETH",
             "name": "Synthetic pufETH From zkLink",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
@@ -3088,15 +3073,15 @@
             },
             "chainFromId": 810180,
             "deprecated": false,
-            "address": "0x42481B8ccE6947178B54D80BFD82B38F6E5b0F61",
-            "id": 193,
-            "originalId": 79
+            "address": "0xDEaC8b9716288B6c810330C5BF9a20F29a4ca1aa",
+            "id": 192,
+            "originalId": 78
         },
         {
             "decimals": 8,
             "symbol": "sWBTC",
             "name": "Synthetic Wrapped BTC (Core)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
@@ -3104,15 +3089,15 @@
             },
             "chainFromId": 1116,
             "deprecated": false,
-            "address": "0x5dC2326bb71725a5bBC18Fb39A2582C5560B67f0",
-            "id": 194,
-            "originalId": 80
+            "address": "0x68E0492ed78f52115d7FA61aAD8e4b2631574684",
+            "id": 193,
+            "originalId": 79
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Taiko)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3120,15 +3105,15 @@
             },
             "chainFromId": 167000,
             "deprecated": false,
-            "address": "0x3C717a1F4a8e79D93635E812648253A38Bb27557",
-            "id": 195,
-            "originalId": 81
+            "address": "0x779612593d45a81f5F192B4e140fECBeaB37AF5C",
+            "id": 194,
+            "originalId": 80
         },
         {
             "decimals": 6,
             "symbol": "sUSDT",
             "name": "Synthetic USDT From Sei",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -3136,15 +3121,15 @@
             },
             "chainFromId": 1329,
             "deprecated": false,
-            "address": "0x6d13035F5F1ae26a22CBB25A3f7666e0C335E6bC",
-            "id": 196,
-            "originalId": 82
+            "address": "0x26716ca54767FEf4F5dd35F1C33B5425B4E1Da70",
+            "id": 195,
+            "originalId": 81
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Sei",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3152,15 +3137,15 @@
             },
             "chainFromId": 1329,
             "deprecated": false,
-            "address": "0xFfECd35dd178D0c55c6E2227516e59314d347921",
-            "id": 197,
-            "originalId": 83
+            "address": "0x91F2dBA2E3f43964aEc2d0e27623adBac1742588",
+            "id": 196,
+            "originalId": 82
         },
         {
             "decimals": 18,
             "symbol": "spufETH",
             "name": "Synthetic pufETH From Zeta",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
@@ -3168,15 +3153,15 @@
             },
             "chainFromId": 7000,
             "deprecated": false,
-            "address": "0x1F39B97acAd7e3C46010c608ea300ceC1FD51EcA",
-            "id": 198,
-            "originalId": 85
+            "address": "0x2261b4F9EFFf9e7E509D6e721aa02C6BF80a175c",
+            "id": 197,
+            "originalId": 84
         },
         {
             "decimals": 6,
             "symbol": "sUSDC.ETH",
             "name": "Synthetic USDС.ETH (Zetachain)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3184,15 +3169,15 @@
             },
             "chainFromId": 7000,
             "deprecated": false,
-            "address": "0x15FD72412E6bD2768C3C0E2166545A25dC932e0e",
-            "id": 199,
-            "originalId": 86
+            "address": "0x0937ccCb06E83f5975c13E301B4DE87816f306A1",
+            "id": 198,
+            "originalId": 85
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Cronos",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3200,15 +3185,15 @@
             },
             "chainFromId": 25,
             "deprecated": false,
-            "address": "0xBF73aF83aE56Ce393737faFcC4778Aa5751d1552",
-            "id": 200,
-            "originalId": 87
+            "address": "0x43d63a190c363775e83316E484d5a8282ad5844c",
+            "id": 199,
+            "originalId": 86
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Fraxtal)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3216,15 +3201,15 @@
             },
             "chainFromId": 252,
             "deprecated": false,
-            "address": "0xe51753e4ceee1496aEe26AEFfCa97494C41Fc10E",
-            "id": 201,
-            "originalId": 88
+            "address": "0x2a2eE33e93Ae9bbc1b035c3f0a6aeC3E64434F6F",
+            "id": 200,
+            "originalId": 87
         },
         {
             "decimals": 18,
             "symbol": "sFRAX",
             "name": "Synthetic Frax (Fraxtal)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png",
@@ -3232,15 +3217,15 @@
             },
             "chainFromId": 252,
             "deprecated": false,
-            "address": "0x8B6b4b3c037622a81233027c47a733535d0f080B",
-            "id": 202,
-            "originalId": 89
+            "address": "0xfF9e9D10B50b993c1666b28Cfa687463650e9e60",
+            "id": 201,
+            "originalId": 88
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Gravity",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3248,15 +3233,15 @@
             },
             "chainFromId": 1625,
             "deprecated": false,
-            "address": "0xC1FeD2fB83F7CacA0CfC772767Ae33ef6b04899e",
-            "id": 203,
-            "originalId": 90
+            "address": "0x7bA13775d005A632e1eb718AAe141f973679F929",
+            "id": 202,
+            "originalId": 89
         },
         {
             "decimals": 18,
             "symbol": "swG",
             "name": "Synthetic wG (Gravity)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png",
@@ -3264,15 +3249,15 @@
             },
             "chainFromId": 1625,
             "deprecated": false,
-            "address": "0x7cE9911e690d80c421069A683163FA2946E6b400",
-            "id": 204,
-            "originalId": 91
+            "address": "0xbE9d3250467070C6F78EfBf506980C750e465f86",
+            "id": 203,
+            "originalId": 90
         },
         {
             "decimals": 18,
             "symbol": "sWBTC",
             "name": "Synthetic WBTC (bsquared)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png",
@@ -3280,15 +3265,15 @@
             },
             "chainFromId": 223,
             "deprecated": false,
-            "address": "0x2C11Ba8b608841C9Cf29f60645029421dc120fBe",
-            "id": 205,
-            "originalId": 92
+            "address": "0xD5f877135288c059b8874298B4D5Fe7034996656",
+            "id": 204,
+            "originalId": 91
         },
         {
             "decimals": 6,
             "symbol": "sUSDT",
             "name": "Synthetic USDT From TON",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
@@ -3297,15 +3282,15 @@
             "chainFromId": 85918,
             "deprecated": false,
             "attributes": { "ton": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" },
-            "address": "0x651c4CA3f3df776F2db9eD1658e850151b7E1208",
-            "id": 206,
-            "originalId": 93
+            "address": "0x0A2851e0a7a1E76360c3F66A370d8C41De84867F",
+            "id": 205,
+            "originalId": 92
         },
         {
             "decimals": 9,
             "symbol": "sUXLINK",
             "name": "Synthetic UXLINK (TON)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
@@ -3314,15 +3299,15 @@
             "chainFromId": 85918,
             "deprecated": false,
             "attributes": { "ton": "EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5" },
-            "address": "0x1156C5A852AECb32B91E203F0169154C7d65286a",
-            "id": 207,
-            "originalId": 94
+            "address": "0xfE63f5f4f15aFf3959b6bBf345D3dA956A870440",
+            "id": 206,
+            "originalId": 93
         },
         {
             "decimals": 9,
             "symbol": "sCATI",
             "name": "Synthetic CATI (TON)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png",
@@ -3331,15 +3316,15 @@
             "chainFromId": 85918,
             "deprecated": false,
             "attributes": { "ton": "EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7" },
-            "address": "0x34d46b31f863222c7c8B810F18f5D26a3d89AD30",
-            "id": 208,
-            "originalId": 95
+            "address": "0xE9CfeF795Be394E262570521d442665F8632E85C",
+            "id": 207,
+            "originalId": 94
         },
         {
             "decimals": 9,
             "symbol": "sPINEYE",
             "name": "Synthetic PINEYE (TON)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png",
@@ -3348,15 +3333,15 @@
             "chainFromId": 85918,
             "deprecated": false,
             "attributes": { "ton": "EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU" },
-            "address": "0x79e04bdB3f05822d107BBa6a687639A203b16599",
-            "id": 209,
-            "originalId": 96
+            "address": "0xC95489Bb522b8b99D9e0D77c76148775900e1DBF",
+            "id": 208,
+            "originalId": 95
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Cronos zkEVM",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3364,15 +3349,15 @@
             },
             "chainFromId": 388,
             "deprecated": false,
-            "address": "0x1D041D63c056628734f1a6DA3eE9F1828e6d2861",
-            "id": 210,
-            "originalId": 97
+            "address": "0xE927b6F5eCC185d48C9fbdD5c3D37b690F813973",
+            "id": 209,
+            "originalId": 96
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Morph",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3380,15 +3365,15 @@
             },
             "chainFromId": 2818,
             "deprecated": false,
-            "address": "0x84B77C905c1C3B0eABE3b8D19387ec4145AdB0D0",
-            "id": 211,
-            "originalId": 98
+            "address": "0x4AC98c185e2f28556d875b3576856bd9627227F3",
+            "id": 210,
+            "originalId": 97
         },
         {
             "decimals": 18,
             "symbol": "sBTC",
             "name": "Synthetic Wrapped BTC (GOAT)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
@@ -3396,15 +3381,15 @@
             },
             "chainFromId": 2345,
             "deprecated": false,
-            "address": "0x4253EB69aE8Bb4c35c7Cac788BcF24221e9C1865",
-            "id": 212,
-            "originalId": 99
+            "address": "0xDa0d9FD86a13c4D55bB9624030Fe21cA62cB28bD",
+            "id": 211,
+            "originalId": 98
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Sonic)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3412,15 +3397,15 @@
             },
             "chainFromId": 146,
             "deprecated": false,
-            "address": "0x6e85e76B0EEF58bC598791Ee5f67DBffcAE13414",
-            "id": 213,
-            "originalId": 100
+            "address": "0xF1f8f3e2d052ED9EdBe95B9eF92B24F71383a256",
+            "id": 212,
+            "originalId": 99
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Abstract)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3428,15 +3413,15 @@
             },
             "chainFromId": 2741,
             "deprecated": false,
-            "address": "0x186eb780f4AEd38280cB53BED8b3dcC22bA9DBb5",
-            "id": 214,
-            "originalId": 101
+            "address": "0x4575E4511DC2346c76E65178ADd72F2827536d3f",
+            "id": 213,
+            "originalId": 100
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic USDС From Gnosis",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3444,15 +3429,15 @@
             },
             "chainFromId": 100,
             "deprecated": false,
-            "address": "0xdd21Bd20f6C73a27a5561C208E6b2e3067611b06",
-            "id": 215,
-            "originalId": 102
+            "address": "0x970049F80F9eE1e4149527aAcbc293D92B5429dc",
+            "id": 214,
+            "originalId": 101
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Gnosis)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3460,15 +3445,15 @@
             },
             "chainFromId": 100,
             "deprecated": false,
-            "address": "0x9e8EcDE74D5B359528c4B240A5898A6f09D4B0CE",
-            "id": 216,
-            "originalId": 103
+            "address": "0xE331D12Ad72399b20111a7B82f06160A997C0D02",
+            "id": 215,
+            "originalId": 102
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Berachain)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3476,15 +3461,15 @@
             },
             "chainFromId": 80094,
             "deprecated": false,
-            "address": "0xa68a8a8B0700df25fa6838965949062f5D6eB0fc",
-            "id": 217,
-            "originalId": 104
+            "address": "0x852E89E24f6C725eD0be2291324610c122BD48f0",
+            "id": 216,
+            "originalId": 103
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Unichain)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3492,15 +3477,15 @@
             },
             "chainFromId": 130,
             "deprecated": false,
-            "address": "0x393764440D189AE7488f8Ac12D2BDE3Ac1b7B15A",
-            "id": 218,
-            "originalId": 105
+            "address": "0x19817ab5F987e680ab14ce25c8312107218d0DA2",
+            "id": 217,
+            "originalId": 104
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (Soneium)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3508,15 +3493,15 @@
             },
             "chainFromId": 1868,
             "deprecated": false,
-            "address": "0x36144e76afd5C4239226848fA3f46AB20cF1B25D",
-            "id": 219,
-            "originalId": 106
+            "address": "0xdCBBaF2B1C87c13EF1eA5C57916F5740258ac1B9",
+            "id": 218,
+            "originalId": 105
         },
         {
             "decimals": 18,
             "symbol": "sWETH",
             "name": "Synthetic Wrapped Ether (opBNB)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3524,15 +3509,15 @@
             },
             "chainFromId": 204,
             "deprecated": false,
-            "address": "0xC31269458999aD67730F90dA0Dd2667D8Cc09b4a",
-            "id": 220,
-            "originalId": 107
+            "address": "0x96458c0CFeFF68C39Cfc7F4dc2507D47591E05A7",
+            "id": 219,
+            "originalId": 106
         },
         {
             "decimals": 18,
             "symbol": "sWBNB",
             "name": "Synthetic WBNB (opBNB)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png",
@@ -3540,15 +3525,15 @@
             },
             "chainFromId": 204,
             "deprecated": false,
-            "address": "0x974D5371EfBa241886ef42fA2964d9A22016E98D",
-            "id": 221,
-            "originalId": 108
+            "address": "0x88fCCB7ce970346cBaCa335D02f0fdf878D7181a",
+            "id": 220,
+            "originalId": 107
         },
         {
             "decimals": 18,
             "symbol": "sETH",
             "name": "Synthetic Unit Ethereum (Hyperliquid)",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
@@ -3556,15 +3541,15 @@
             },
             "chainFromId": 999,
             "deprecated": false,
-            "address": "0x84C424F74c0D50faC19F1f4055c6ce743B52AF21",
-            "id": 222,
-            "originalId": 109
+            "address": "0xF0759f49432d62a155e66152656F35464CF99F58",
+            "id": 221,
+            "originalId": 108
         },
         {
             "decimals": 18,
             "symbol": "sSIS",
             "name": "Synthetic SIS token from Binance",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
@@ -3572,15 +3557,15 @@
             },
             "chainFromId": 56,
             "deprecated": false,
-            "address": "0x20259119252a5Ecca065879783ee8964884DC52d",
-            "id": 223,
-            "originalId": 113
+            "address": "0xAf3c1Ed19FCA8411d2436cD97a676f635a9c55c0",
+            "id": 222,
+            "originalId": 112
         },
         {
             "decimals": 6,
             "symbol": "sUSDC",
             "name": "Synthetic syUSDC From Telos",
-            "chainId": 56288,
+            "chainId": 719095483,
             "isNative": false,
             "icons": {
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
@@ -3588,9 +3573,9 @@
             },
             "chainFromId": 40,
             "deprecated": false,
-            "address": "0x2c679B79d8F40049d68CaA879Bf643F37E75F704",
-            "id": 224,
-            "originalId": 116
+            "address": "0x41F582c0E6Dd862401E3286Ce0a9786Eb504D65D",
+            "id": 223,
+            "originalId": 115
         },
         {
             "decimals": 8,
@@ -3605,8 +3590,8 @@
             "chainFromId": 3652501241,
             "deprecated": true,
             "address": "0xED0c95EBe5a3E687cB2224687024FeC6518E683e",
-            "id": 225,
-            "originalId": 110
+            "id": 224,
+            "originalId": 109
         },
         {
             "decimals": 6,
@@ -3621,7 +3606,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 226,
+            "id": 225,
             "originalId": 0
         },
         {
@@ -3637,7 +3622,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5b3562A0fa9eC3e718C96FfE349e1280D2Be591",
-            "id": 227,
+            "id": 226,
             "originalId": 2
         },
         {
@@ -3653,7 +3638,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xDeF886C55a79830C47108eeb9c37e78a49684e41",
-            "id": 228,
+            "id": 227,
             "originalId": 3
         },
         {
@@ -3669,7 +3654,7 @@
             "chainFromId": 1,
             "deprecated": true,
             "address": "0x6B6301dcBA742E2320dD083A8d8fDbaB9527484B",
-            "id": 229,
+            "id": 228,
             "originalId": 4
         },
         {
@@ -3685,8 +3670,8 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba",
-            "id": 230,
-            "originalId": 112
+            "id": 229,
+            "originalId": 111
         },
         {
             "decimals": 18,
@@ -3701,7 +3686,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 231,
+            "id": 230,
             "originalId": 6
         }
     ]

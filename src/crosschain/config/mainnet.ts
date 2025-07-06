@@ -11,92 +11,85 @@ export const config: Config = {
         {
             // usd
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x5E66a8afB863D7FeA298dFEFD4C6409E7A7dc920',
-            oracle: '0x2cD94CB0F4cBC4a51c3e9c4b88d03B982bE24608',
+            address: '0x077c512570ce95d165332d86738c6175c93eb669',
+            oracle: '0x3493CE64799EBcb61e3A6b0fD7Dd30Fb88BF605A',
             generalPurpose: true,
         },
         {
             // eth
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0xEF968AC1E57C3148329B10A9652bba7d26beEdFa',
-            oracle: '0x37e4889E5806CFceDa2059DcFEDA0545e40A5628',
+            address: '0x44bfe24f38bc43b1eb433442870f913ef1c71054',
+            oracle: '0xA3121f0F03928d44d11E3853FC6bC385124C5510',
             generalPurpose: true,
         },
         {
             // btc
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x750980478f4dAc19417fa8AA60eD7b255932e9b2',
-            oracle: '0x2d89aAD5ac2fbedB941BdFDfAa976387328B92E6',
+            address: '0xC8Dc21Cc711AA07c3DB46104A3163104795Fbb7b',
+            oracle: '0x0117a1d148E65f892C85E05573698c24Ac9643E5',
             generalPurpose: false,
         },
         {
             // ladys
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x87dd1F6157c6545dC6753e85D28C802B99146217',
-            oracle: '0x597A18f5Efa2bc805CDeaF3C3fFD25345612ec1b',
+            address: '0x341aaCa982A32e036108c4DedDAd2C487f9ACF18',
+            oracle: '0xb18D3A3eA4e8084D8992A10ad0411994aa07B108',
             generalPurpose: false,
         },
         {
             // sis
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0xAA6dEd1FF9F1d318A583B463E50aeF17a31156a8',
-            oracle: '0xac4b9E38b4C336c751e3516b2c244e2245b3De72',
+            address: '0xdA4273d84044a2812d150ecA4812BF4b6563cfB6',
+            oracle: '0xfd6F370ad82f2Da0CEf0115fe0A25A323BC63661',
             generalPurpose: false,
         },
-        // {
-        //     // puf
-        //     chainId: ChainId.BOBA_BNB,
-        //     address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
-        //     oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
-        //     generalPurpose: false,
-        // },
         {
             // frax
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x9a076dfB10A80665aA382BF00eDb54a49f380372',
-            oracle: '0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179',
+            address: '0xac410d47cAAAC39804d9B35Fb71B50DBF9160B5d',
+            oracle: '0xac410d47cAAAC39804d9B35Fb71B50DBF9160B5d',
             generalPurpose: false,
         },
         {
             // G
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0xe88f72606669d72D53f37c394Ad5c3454b277f64',
-            oracle: '0xC043E76aAD1a3Aa8c07D3B68b1b37D705223fbFd',
+            address: '0x1271138eAa73111bf956FE92524C9B16339BEE12',
+            oracle: '0xdB78C71795f7Bc649c88822296aE19a638a40Af1',
             generalPurpose: false,
         },
         {
             // WTON
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x89F001838338c70c95165ba266D3922eE7f10c8B',
-            oracle: '0x0B3b5A02Da945e62812c74ED32ff166482Bad2e6',
+            address: '0x852aC3dc7CC6e0c2324Dcb3B15A67350046Dd130',
+            oracle: '0xBB76aDb2bF41Fcd4B1D2Fd48328Da5013a5Adc76',
             generalPurpose: false,
         },
         {
             // CATI
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0xB4896e1431ed5B7A5ff4ba4B591199F83E065CEE',
-            oracle: '0x501A1026BC894cEb9A921F49A10a9ee3D1888F8f',
+            address: '0xca6d1960682402E71aE290059E620400CE4B8073',
+            oracle: '0x691D4020212eBB4cA3dF5019935D92766c5B4c07',
             generalPurpose: false,
         },
         {
             // UXLINK
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x4bD55f2304F96722d4F57B529aB3dbccD418579c',
-            oracle: '0xC819e9028A60656047f6CfaabB49bf05ddcd6822',
+            address: '0xB073e561303defEe529d1dd962577A21Ca4841c7',
+            oracle: '0x5667E971Ef10f890097E1c54dDc7B465431cAcA4',
             generalPurpose: false,
         },
         {
             // PINEYE
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x4813f8149cc633883B968824C3Fb5fCB764D33FB',
-            oracle: '0x2AE6d979076EEe37b372dC44376E124Bc6B46721',
+            address: '0x4f0303F6598154cA5B5f0d2a81e35735a68E075B',
+            oracle: '0x4421139D168Eda48FdC7210E7c8f109B647A5705',
             generalPurpose: false,
         },
         {
             // WBNB
             chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0xc5ed9A8CE5259Ed7802405AA35049a70F3d7CDf5',
-            oracle: '0x0539392eCEBe0F30A1E7c1f527e91FdF1F459b18',
+            address: '0xd0B3815024e438442b22C65B26D8d6178e98b68B',
+            oracle: '0xc9dfEAFD105f4954c8eF63d968bE3C6900080DD9',
             generalPurpose: false,
         },
     ],
@@ -626,34 +619,6 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3',
         },
-        // {
-        //     id: ChainId.BOBA_BNB,
-        //     rpc: 'https://boba-bnb.gateway.tenderly.co',
-        //     spareRpcs: ['https://replica.bnb.boba.network'],
-        //     filterBlockOffset: 3000,
-        //     stables: [
-        //         {
-        //             name: 'USD Coin',
-        //             address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
-        //             symbol: 'USDC',
-        //             decimals: 18,
-        //             chainId: ChainId.BOBA_BNB,
-        //             icons: {
-        //                 large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        //                 small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        //             },
-        //         },
-        //     ],
-        //     router: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-        //     dexFee: 30,
-        //     metaRouter: '0x2cBABD7329b84e2c0A317702410E7c73D0e0246d',
-        //     metaRouterGateway: '0xd666ab407c8E77DB239F473a49E309514aa55e0C',
-        //     bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
-        //     synthesis: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-        //     portal: '0x0000000000000000000000000000000000000000',
-        //     fabric: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
-        //     multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
-        // },
         {
             id: ChainId.SYMBIOSIS_TESTNET,
             rpc: 'https://symbiosis-nitro-testnet.rpc.caldera.xyz/http',
@@ -662,13 +627,13 @@ export const config: Config = {
             stables: [],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
-            metaRouter: '0xA322880201a43E67332Fe68c68265B1Da33E9adD',
-            metaRouterGateway: '0x754Af6B852DBb23de980A5e764dB428Cb5cc7923',
-            bridge: '0xaa32586Ed1978F124FD71EA67C2cF14149869267',
-            synthesis: '0x0EB4Bb54E1551Db887ADdDAbD2562da13fE57D14',
+            metaRouter: '0x98413fE76df5315b694CC3176500151b0cfb85a0',
+            metaRouterGateway: '0x3CF6f53375DA7E58937Cc06A9De091213A810bab',
+            bridge: '0x862bC094B7035BBFb3C1E5B3A66260FeB0400858',
+            synthesis: '0x93aE5FEc1bD493BB9d402De1b9Ad1FfF41099550',
             portal: '0x0000000000000000000000000000000000000000',
-            fabric: '0xFfBF0ac7B6aede2f05768196073492549E8f044d',
-            multicallRouter: '0x9fD430AB9b781dB30b172ab874d3F31CA5A30C1c',
+            fabric: '0x05081Dc46813795A3637630e956c4a047D107f02',
+            multicallRouter: '0x52375310e72788d0F88E7dF156F3E2A14ce28f6e',
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
