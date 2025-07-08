@@ -84,6 +84,50 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         feeRate: '2000000000000000', // 0.2%
         eligibleChains: [ChainId.BTC_MAINNET],
     },
+    // BOBA BNB
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
+        feeRate: '6000000000000000', // 0.6%
+        eligibleChains: [],
+    },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
+        feeRate: '5000000000000000', // 0.5%
+        eligibleChains: [],
+    },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0x5f5829F7CDca871b16ed76E498EeE35D4250738A',
+        feeRate: '4000000000000000', // 0.4%
+        eligibleChains: [],
+    },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
+        feeRate: '3000000000000000', // 0.3%
+        eligibleChains: [],
+    },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
+        feeRate: '2000000000000000', // 0.2%
+        eligibleChains: [ChainId.TRON_MAINNET],
+    },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
+        feeRate: '1000000000000000', // 0.1%
+        eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
+    },
+    {
+        chainId: ChainId.BOBA_BNB,
+        address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
+        feeRate: '500000000000000', // 0.05%
+        eligibleChains: [],
+        default: true,
+    },
 ]
 
 export class Symbiosis {
