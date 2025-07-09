@@ -117,14 +117,8 @@ export class WrapTrade extends SymbiosisTrade {
             callDataOffset: 4 + 32,
             minReceivedOffset: 0,
             priceImpact,
+            gasUnits: this.tokenAmountIn.token.isNative ? DEPOSIT_GAS_UNITS : UNWRAP_GAS_UNITS,
         }
         return this
-    }
-
-    public get gasUnits(): number {
-        if (this.tokenAmountIn.token.isNative) {
-            return DEPOSIT_GAS_UNITS
-        }
-        return UNWRAP_GAS_UNITS
     }
 }

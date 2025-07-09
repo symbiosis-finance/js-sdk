@@ -1,7 +1,7 @@
 import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
-// import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
+import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { isOnchainSwapSupported, onchainSwap } from './onchainSwap'
 import { SwapExactInParams, SwapExactInResult } from '../types'
 import { isUnwrapSupported, unwrap } from './unwrap'
@@ -35,9 +35,9 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
     }
 
     if (isOnchainSwapSupported(params)) {
-        // if (isFeeCollectorSwapSupported(params)) {
-        //     return feeCollectorSwap(params)
-        // }
+        if (isFeeCollectorSwapSupported(params)) {
+            return feeCollectorSwap(params)
+        }
 
         return onchainSwap(params)
     }
