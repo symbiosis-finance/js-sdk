@@ -2,7 +2,7 @@ import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
+import { BIPS_BASE, CROSS_CHAIN_ID, GAS_UNITS_OPERATIONS, SwapOperation } from '../constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
@@ -12,6 +12,7 @@ import { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import {
     buildMetaSynthesize,
+    calldataGasUnits,
     DetailedSlippage,
     getExternalId,
     getInternalId,
@@ -51,18 +52,6 @@ type MetaRouteParams = {
     otherSideCalldata: string
 }
 
-export function calldataGasUnits(hex: string): number {
-    const calldata = hex.startsWith('0x') ? hex.slice(2) : hex
-
-    console.log('calldataGasUnits --->', hex.length, calldata.length * 8)
-
-    return calldata.length * 8
-}
-
-// https://dashboard.tenderly.co/tx/0x1d90dbef781d58e0a293f5eb12e4f25240fff2f38a411a8f92caa4a74f4c45d0/gas-usage
-const META_UNSYNTHESIZE_GAS_UNITS = 120_000
-const META_MINT_SYNTHETIC_TOKEN_GAS_UNITS = 100_000 // getsynth 20k + synthesis 40k +  transfer 20k + store 20k
-const META_BURN_SYNTHETIC_ORACLE_REQUEST_GAS_UNITS = 5000
 export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
     public amountInUsd: TokenAmount | undefined
@@ -643,11 +632,9 @@ export abstract class BaseSwapping {
         ])
 
         const totalGasUnits =
-            META_MINT_SYNTHETIC_TOKEN_GAS_UNITS +
+            GAS_UNITS_OPERATIONS[SwapOperation.META_MINT_SYNTHETIC_TOKEN] +
             this.secondSwapGasUnits() +
             (this.transit.isV2() ? this.finalCalldataV2GasUnits() : 0)
-
-        console.log('metamint sysntehtic gas units', this.secondSwapGasUnits(), this.finalCalldataV2GasUnits())
 
         return [synthesisAddress, callData, totalGasUnits]
     }
@@ -688,7 +675,11 @@ export abstract class BaseSwapping {
             this.finalOffset(), // _finalOffset
         ])
 
-        return [portalAddress, calldata, META_UNSYNTHESIZE_GAS_UNITS + (this.tradeC?.gasUnits || 0)]
+        return [
+            portalAddress,
+            calldata,
+            GAS_UNITS_OPERATIONS[SwapOperation.META_UNSYNTHESIZE] + (this.tradeC?.gasUnits || 0),
+        ]
     }
 
     protected feeBurnCallDataV2(): [string, string, number] {
@@ -725,12 +716,12 @@ export abstract class BaseSwapping {
             this.finalOffset(), // _finalOffset
         ])
 
-        const totalGasUnits = META_UNSYNTHESIZE_GAS_UNITS + (this.tradeC?.gasUnits || 0)
+        const totalGasUnits = GAS_UNITS_OPERATIONS[SwapOperation.META_UNSYNTHESIZE] + (this.tradeC?.gasUnits || 0)
 
         return [portalAddress, calldata, totalGasUnits]
     }
 
-    protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
+    protected async getFee(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount; gasUnits?: number }> {
         const chainIdFrom = this.tokenAmountIn.token.chainId
         const chainIdTo = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata, gasUnits] =
@@ -743,15 +734,14 @@ export abstract class BaseSwapping {
             gasUnits,
         })
 
-        console.log('v1 fee', fee.toString(), 'gas units my estimation', gasUnits)
-
         return {
             fee: new TokenAmount(feeToken, fee),
             save: new TokenAmount(feeToken, save),
+            gasUnits: calldataGasUnits(calldata) + gasUnits, // initial gas + operations
         }
     }
 
-    protected async getFeeV2(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount }> {
+    protected async getFeeV2(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount; gasUnits?: number }> {
         const [receiveSide, calldata, gasUnits] = this.feeBurnCallDataV2()
 
         const { price: fee, save } = await this.symbiosis.getBridgeFee({
@@ -762,11 +752,10 @@ export abstract class BaseSwapping {
             gasUnits,
         })
 
-        console.log('v2 fee', fee.toString(), 'gas units my estimation', gasUnits)
-
         return {
             fee: new TokenAmount(feeToken, fee),
             save: new TokenAmount(feeToken, save),
+            gasUnits: calldataGasUnits(calldata) + gasUnits, // initial gas + operations
         }
     }
 
@@ -827,7 +816,7 @@ export abstract class BaseSwapping {
 
     protected secondSwapGasUnits(): number {
         if (this.transit.direction === 'mint' && this.tradeC) {
-            return this.tradeC.gasUnits || 0
+            return this.transit.gasUnits() + this.tradeC.gasUnits
         }
 
         return this.transit.gasUnits()
@@ -872,7 +861,10 @@ export abstract class BaseSwapping {
     }
 
     protected finalCalldataV2GasUnits(): number {
-        return META_BURN_SYNTHETIC_ORACLE_REQUEST_GAS_UNITS + calldataGasUnits(this.finalCalldata() as string)
+        return (
+            GAS_UNITS_OPERATIONS[SwapOperation.META_BURN_SYNTHETIC_ORACLE_REQUEST] +
+            calldataGasUnits(this.finalCalldata() as string)
+        )
     }
 
     protected finalOffsetV2(): number {

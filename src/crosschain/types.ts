@@ -214,6 +214,8 @@ export type SwapExactInResult = {
     poolAddress?: string
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
+    gasUnitsB?: number
+    gasUnitsC?: number
 } & SwapExactInTransactionPayload
 
 export type MultiCallItem = {

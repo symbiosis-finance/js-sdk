@@ -38,9 +38,7 @@ export class AggregatorTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        // const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
-        const { slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut } = this.params
-
+        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
         const trades: (Trade | undefined)[] = []
 
         function successTrade(trade: Trade) {
@@ -57,33 +55,33 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOtherClient = !isOneInchClient && !isOpenOceanClient
 
         let tradesCount = 0
-        // if (!isOpenOceanClient && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
-        //     const oneInchTrade = new OneInchTrade({
-        //         symbiosis,
-        //         tokenAmountIn,
-        //         tokenOut,
-        //         from,
-        //         to,
-        //         slippage,
-        //         protocols: oneInchProtocols,
-        //     })
+        if (!isOpenOceanClient && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
+            const oneInchTrade = new OneInchTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenOut,
+                from,
+                to,
+                slippage,
+                protocols: oneInchProtocols,
+            })
 
-        //     tradesCount += 1
-        //     oneInchTrade.init().then(successTrade).catch(failTrade)
-        // }
+            tradesCount += 1
+            oneInchTrade.init().then(successTrade).catch(failTrade)
+        }
 
-        // if (!isOneInchClient && OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
-        //     const openOceanTrade = new OpenOceanTrade({
-        //         symbiosis,
-        //         to,
-        //         tokenAmountIn,
-        //         tokenOut,
-        //         slippage,
-        //     })
+        if (!isOneInchClient && OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
+            const openOceanTrade = new OpenOceanTrade({
+                symbiosis,
+                to,
+                tokenAmountIn,
+                tokenOut,
+                slippage,
+            })
 
-        //     tradesCount += 1
-        //     openOceanTrade.init().then(successTrade).catch(failTrade)
-        // }
+            tradesCount += 1
+            openOceanTrade.init().then(successTrade).catch(failTrade)
+        }
 
         if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
             const izumiTrade = new IzumiTrade({
@@ -98,18 +96,18 @@ export class AggregatorTrade extends SymbiosisTrade {
             izumiTrade.init().then(successTrade).catch(failTrade)
         }
 
-        // if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
-        //     const uniV3Trade = new UniV3Trade({
-        //         symbiosis,
-        //         tokenAmountIn,
-        //         tokenOut,
-        //         slippage,
-        //         deadline,
-        //         to,
-        //     })
-        //     tradesCount += 1
-        //     uniV3Trade.init().then(successTrade).catch(failTrade)
-        // }
+        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
+            const uniV3Trade = new UniV3Trade({
+                symbiosis,
+                tokenAmountIn,
+                tokenOut,
+                slippage,
+                deadline,
+                to,
+            })
+            tradesCount += 1
+            uniV3Trade.init().then(successTrade).catch(failTrade)
+        }
 
         if (isOtherClient && UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
             const uniV2Trade = new UniV2Trade({
@@ -129,7 +127,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             const startTime = Date.now()
             const intervalId = setInterval(() => {
                 const diff = Date.now() - startTime
-                const timeout = diff >= 30_000
+                const timeout = diff >= 2000
                 const allTradesFinished = trades.length === tradesCount
                 const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
 
