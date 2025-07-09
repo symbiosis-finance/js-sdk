@@ -113,25 +113,10 @@
         },
         {
             "chainId": 56288,
-            "address": "0xB5D99bE6089720d1aD3DB2a5a16D5765605704df",
-            "oracle": "0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E",
-            "generalPurpose": false,
-            "id": 4,
-            "tokens": [
-                { "index": 0, "tokenId": 120 },
-                { "index": 1, "tokenId": 154 },
-                { "index": 2, "tokenId": 132 },
-                { "index": 3, "tokenId": 149 },
-                { "index": 4, "tokenId": 167 },
-                { "index": 5, "tokenId": 178 }
-            ]
-        },
-        {
-            "chainId": 56288,
             "address": "0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E",
             "oracle": "0x4CD678FF53538E6b084464da0020422738B46038",
             "generalPurpose": false,
-            "id": 5,
+            "id": 4,
             "tokens": [
                 { "index": 0, "tokenId": 125 },
                 { "index": 1, "tokenId": 141 },
@@ -144,7 +129,7 @@
             "address": "0x8D2209E88f68324c6241bCAA7d24538ebe94e2Ee",
             "oracle": "0xA7614e3427f52b04EeD23c7371a382640bD6C463",
             "generalPurpose": false,
-            "id": 6,
+            "id": 5,
             "tokens": [
                 { "index": 0, "tokenId": 126 },
                 { "index": 1, "tokenId": 133 },
@@ -157,7 +142,7 @@
             "address": "0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23",
             "oracle": "0xe717C95007cA64334c9facFFC1975310C3B98EE8",
             "generalPurpose": false,
-            "id": 7,
+            "id": 6,
             "tokens": [
                 { "index": 1, "tokenId": 127 },
                 { "index": 2, "tokenId": 134 }
@@ -168,7 +153,7 @@
             "address": "0x8A71e95adFB7355d060D70b59954B065e3BD35EE",
             "oracle": "0x6B8521C0F46B76A55af7333Bc025e7B9480087C8",
             "generalPurpose": false,
-            "id": 8,
+            "id": 7,
             "tokens": [
                 { "index": 0, "tokenId": 208 },
                 { "index": 1, "tokenId": 170 }
@@ -179,7 +164,7 @@
             "address": "0x539E9071D542d6Ec7415Cb9DAa4aD20be1307CcB",
             "oracle": "0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514",
             "generalPurpose": false,
-            "id": 9,
+            "id": 8,
             "tokens": [
                 { "index": 0, "tokenId": 207 },
                 { "index": 1, "tokenId": 157 },
@@ -191,7 +176,7 @@
             "address": "0xD122cD767d076B77a873Ca1CDEeE74f2552B367A",
             "oracle": "0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D",
             "generalPurpose": false,
-            "id": 10,
+            "id": 9,
             "tokens": [
                 { "index": 0, "tokenId": 135 },
                 { "index": 1, "tokenId": 209 }
@@ -202,10 +187,25 @@
             "address": "0x4A277A204f0537153C2022a60D5EbA4C5c0f59BA",
             "oracle": "0x8C4C570fb2DAa7Ce5eB73d0eee132bD90012B307",
             "generalPurpose": false,
-            "id": 11,
+            "id": 10,
             "tokens": [
                 { "index": 0, "tokenId": 136 },
                 { "index": 1, "tokenId": 221 }
+            ]
+        },
+        {
+            "chainId": 719095483,
+            "address": "0x2a1F28867445FCd6E9EFf47888cF407E87c3bAA1",
+            "oracle": "0x598E1a2165b23a49D6fdC914eA7c57742C292a86",
+            "generalPurpose": false,
+            "id": 11,
+            "tokens": [
+                { "index": 0, "tokenId": 225 },
+                { "index": 1, "tokenId": 228 },
+                { "index": 2, "tokenId": 226 },
+                { "index": 3, "tokenId": 227 },
+                { "index": 4, "tokenId": 229 },
+                { "index": 5, "tokenId": 230 }
             ]
         }
     ],
@@ -3593,6 +3593,118 @@
             "originalId": 116
         },
         {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Ethereum",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 1,
+            "deprecated": false,
+            "address": "0xCa8A34A57a430A3ADe9E741DB267c8Fd2DcEEea7",
+            "id": 225,
+            "originalId": 1
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Binance",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 56,
+            "deprecated": false,
+            "address": "0xA03A84EF0556c250962c92f3860FA540a6677eb1",
+            "id": 226,
+            "originalId": 14
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from zkSync Era",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 324,
+            "deprecated": false,
+            "address": "0x421fe8465197d7c6A0779e58DD8B2D966EbF35A3",
+            "id": 227,
+            "originalId": 34
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Arbitrum One",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 42161,
+            "deprecated": false,
+            "address": "0xc21544B65888FFB3dbC06a09a9848235d84af9e9",
+            "id": 228,
+            "originalId": 39
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Linea",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 59144,
+            "deprecated": false,
+            "address": "0xE1a2942b9a7bafBAF902CDaa6b0a44F6955Fd26F",
+            "id": 229,
+            "originalId": 52
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Scroll",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 534352,
+            "deprecated": false,
+            "address": "0x59d48cecB67e71F64A86785c89e23c67A9AB398D",
+            "id": 230,
+            "originalId": 63
+        },
+        {
+            "decimals": 18,
+            "symbol": "sSIS",
+            "name": "Synthetic SIS token from Binance",
+            "chainId": 719095483,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png"
+            },
+            "chainFromId": 56,
+            "deprecated": false,
+            "address": "0xA03A84EF0556c250962c92f3860FA540a6677eb1",
+            "id": 231,
+            "originalId": 113
+        },
+        {
             "decimals": 8,
             "symbol": "syBTC",
             "name": "syBTC",
@@ -3605,7 +3717,7 @@
             "chainFromId": 3652501241,
             "deprecated": true,
             "address": "0xED0c95EBe5a3E687cB2224687024FeC6518E683e",
-            "id": 225,
+            "id": 232,
             "originalId": 110
         },
         {
@@ -3621,7 +3733,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x4237e0A5b55233D5B6D6d1D9BF421723954130D8",
-            "id": 226,
+            "id": 233,
             "originalId": 0
         },
         {
@@ -3637,7 +3749,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xE5b3562A0fa9eC3e718C96FfE349e1280D2Be591",
-            "id": 227,
+            "id": 234,
             "originalId": 2
         },
         {
@@ -3653,7 +3765,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0xDeF886C55a79830C47108eeb9c37e78a49684e41",
-            "id": 228,
+            "id": 235,
             "originalId": 3
         },
         {
@@ -3669,7 +3781,7 @@
             "chainFromId": 1,
             "deprecated": true,
             "address": "0x6B6301dcBA742E2320dD083A8d8fDbaB9527484B",
-            "id": 229,
+            "id": 236,
             "originalId": 4
         },
         {
@@ -3685,7 +3797,7 @@
             "chainFromId": 3652501241,
             "deprecated": false,
             "address": "0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba",
-            "id": 230,
+            "id": 237,
             "originalId": 112
         },
         {
@@ -3701,7 +3813,7 @@
             "chainFromId": 1,
             "deprecated": false,
             "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "id": 231,
+            "id": 238,
             "originalId": 6
         }
     ]
