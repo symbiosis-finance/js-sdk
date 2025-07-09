@@ -122,6 +122,7 @@ export class UniV2Trade extends SymbiosisTrade {
             throw new Error('Cannot build callData')
         }
 
+        // [TODO]: Add gas units for functionSelector and multihop
         let gasUnits = TOKEN_TO_TOKEN_GAS_UNITS
         if (this.tokenAmountIn.token.isNative) {
             gasUnits = NATIVE_TO_TOKEN_GAS_UNITS

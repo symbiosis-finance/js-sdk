@@ -257,8 +257,7 @@ export class UniV3Trade extends SymbiosisTrade {
         const { amountOffset, minReceivedOffset, minReceivedOffset2, functionSelector } =
             UniV3Trade.getOffsets(callData)
 
-        console.log('gas units uni v3', functionSelector)
-
+        // [TODO]: Add gas units for functionSelector and multihop
         let gasUnits = TOKEN_TO_TOKEN_GAS_UNITS
         if (this.tokenAmountIn.token.isNative) {
             gasUnits = NATIVE_TO_TOKEN_GAS_UNITS
@@ -276,6 +275,7 @@ export class UniV3Trade extends SymbiosisTrade {
             minReceivedOffset,
             minReceivedOffset2,
             priceImpact,
+            functionSelector,
             gasUnits,
         }
         return this

@@ -726,36 +726,41 @@ export abstract class BaseSwapping {
         const chainIdTo = this.transit.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const [receiveSide, calldata, gasUnits] =
             this.transit.direction === 'burn' ? this.feeBurnCallData() : this.feeMintCallData() // mint or v2
+
+        const totalGasUnits = calldataGasUnits(calldata) + gasUnits // initial gas + operations
+
         const { price: fee, save } = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom,
             chainIdTo,
-            gasUnits,
+            gasUnits: totalGasUnits,
         })
 
         return {
             fee: new TokenAmount(feeToken, fee),
             save: new TokenAmount(feeToken, save),
-            gasUnits: calldataGasUnits(calldata) + gasUnits, // initial gas + operations
+            gasUnits: totalGasUnits,
         }
     }
 
     protected async getFeeV2(feeToken: Token): Promise<{ fee: TokenAmount; save: TokenAmount; gasUnits?: number }> {
         const [receiveSide, calldata, gasUnits] = this.feeBurnCallDataV2()
 
+        const totalGasUnits = calldataGasUnits(calldata) + gasUnits // initial gas + operations
+
         const { price: fee, save } = await this.symbiosis.getBridgeFee({
             receiveSide,
             calldata,
             chainIdFrom: this.omniPoolConfig.chainId,
             chainIdTo: this.tokenOut.chainId,
-            gasUnits,
+            gasUnits: totalGasUnits,
         })
 
         return {
             fee: new TokenAmount(feeToken, fee),
             save: new TokenAmount(feeToken, save),
-            gasUnits: calldataGasUnits(calldata) + gasUnits, // initial gas + operations
+            gasUnits: totalGasUnits,
         }
     }
 
