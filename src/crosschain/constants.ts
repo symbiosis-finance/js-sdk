@@ -687,3 +687,22 @@ export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {
     [ChainId.BSC_MAINNET]: '0xeB278638fFa33CC776230dE4FF88eD5142ed8c1A',
     [ChainId.RSK_MAINNET]: '0xca506793a420e901bbca8066be5661e3c52c84c2',
 }
+
+export enum SwapOperation {
+    META_SYNTHESIZE = 'meta_synthesize',
+    META_UNSYNTHESIZE = 'meta_unsynthesize',
+    META_MINT_SYNTHETIC_TOKEN = 'meta_mint_synthetic_token',
+    META_BURN_SYNTHETIC_ORACLE_REQUEST = 'meta_burn_synthetic_oracle_request',
+    COLLECT_FEE = 'collect_fee',
+    OCTO_POOL_SWAP = 'octo_pool_swap',
+}
+
+// https://dashboard.tenderly.co/tx/0x1d90dbef781d58e0a293f5eb12e4f25240fff2f38a411a8f92caa4a74f4c45d0/gas-usage
+export const GAS_UNITS_OPERATIONS: Record<SwapOperation, number> = {
+    [SwapOperation.META_SYNTHESIZE]: 120_000,
+    [SwapOperation.META_UNSYNTHESIZE]: 130_000, // all except externalCall (trade C)
+    [SwapOperation.META_MINT_SYNTHETIC_TOKEN]: 165_000, // all gas except metaMintSwap and metaBurnSyntheticToken
+    [SwapOperation.META_BURN_SYNTHETIC_ORACLE_REQUEST]: 150_000,
+    [SwapOperation.COLLECT_FEE]: 75_000,
+    [SwapOperation.OCTO_POOL_SWAP]: 200_000,
+}
