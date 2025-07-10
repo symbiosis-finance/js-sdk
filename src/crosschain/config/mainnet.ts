@@ -93,19 +93,10 @@ export const config: Config = {
             generalPurpose: false,
         },
         {
-            // TODO remove
-            // sis
-            chainId: ChainId.SYMBIOSIS_TESTNET,
-            address: '0x2a1F28867445FCd6E9EFf47888cF407E87c3bAA1',
-            oracle: '0x598E1a2165b23a49D6fdC914eA7c57742C292a86',
-            generalPurpose: false,
-        },
-        {
-            // TODO set addresses
             // sis
             chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0x0000000000000000000000000000000000000000',
-            oracle: '0x0000000000000000000000000000000000000000',
+            address: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778',
+            oracle: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
             generalPurpose: false,
         },
     ],
@@ -662,23 +653,6 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
-        },
-        {
-            // TODO remove
-            id: ChainId.SYMBIOSIS_TESTNET,
-            rpc: 'https://symbiosis-nitro-testnet.rpc.caldera.xyz/http',
-            spareRpcs: [],
-            filterBlockOffset: 1000,
-            stables: [],
-            router: '0x0000000000000000000000000000000000000000',
-            dexFee: 0,
-            metaRouter: '0xaE51660148EdC305185F491B61e6E65Dd9D0CE6D',
-            metaRouterGateway: '0x7Df660c57B700Bf18Aa1A5F535204C7201dAEbf9',
-            bridge: '0xb14A841c82430818f8db10e7aD28C07ef28F766F',
-            synthesis: '0xEED3A9Af422fFf1aa5Efb7Fb3Bdddc0B463C2faB',
-            portal: '0x0000000000000000000000000000000000000000',
-            fabric: '0x8F3D47cE743c8F25C9F602F778E6c03d42fd191B',
-            multicallRouter: '0xFA4F8950B1BC02BaFC8fB8b049D607d80F08f66B',
         },
         {
             id: ChainId.SYMBIOSIS_MAINNET,
