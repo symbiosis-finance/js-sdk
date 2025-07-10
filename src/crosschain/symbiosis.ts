@@ -3,6 +3,7 @@ import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
+import { Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
@@ -33,6 +34,7 @@ import {
     ChainConfig,
     Config,
     FeeConfig,
+    MetricParams,
     OmniPoolConfig,
     OneInchConfig,
     OpenOceanConfig,
@@ -140,6 +142,7 @@ export class Symbiosis {
     public clientId: string
 
     private signature: string | undefined
+    public metrics?: Histogram<string>
 
     public feesConfig?: FeeConfig[]
 
@@ -215,7 +218,12 @@ export class Symbiosis {
         return json['percent'] as number
     }
 
-    public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig, metrics?: any) {
+    public constructor(
+        configName: ConfigName,
+        clientId: string,
+        overrideConfig?: OverrideConfig,
+        metrics?: Histogram<string>
+    ) {
         this.configName = configName
         if (configName === 'mainnet') {
             this.config = structuredClone(mainnet)
@@ -280,6 +288,32 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
+
+        this.metrics = metrics
+    }
+
+    public createMetricTimer({ id, tokenIn, tokenOut, operation, kind, addressFrom, addressTo }: MetricParams) {
+        if (!this.metrics) {
+            console.log('Prometheus metrics are not initialized')
+            return
+        }
+
+        const endTimer = this.metrics.startTimer()
+
+        return () =>
+            endTimer({
+                id,
+                operation: operation,
+                kind,
+                chain_id_from: tokenIn?.chainId ?? '',
+                chain_id_to: tokenOut?.chainId ?? '',
+                token_in: tokenIn?.address ?? '',
+                token_out: tokenOut?.address ?? '',
+                address_from: addressFrom ?? '',
+                address_to: addressTo ?? '',
+                rpc_from: tokenIn ? this.getProvider(tokenIn?.chainId).connection.url : '',
+                rpc_to: tokenOut ? this.getProvider(tokenOut?.chainId).connection.url : '',
+            })
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {
