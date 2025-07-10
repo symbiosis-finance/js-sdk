@@ -36,13 +36,6 @@ export const config: Config = {
             oracle: '0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5',
             generalPurpose: false,
         },
-        {
-            // sis
-            chainId: ChainId.BOBA_BNB,
-            address: '0xB5D99bE6089720d1aD3DB2a5a16D5765605704df',
-            oracle: '0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E',
-            generalPurpose: false,
-        },
         // {
         //     // puf
         //     chainId: ChainId.BOBA_BNB,
@@ -97,6 +90,13 @@ export const config: Config = {
             chainId: ChainId.BOBA_BNB,
             address: '0x4A277A204f0537153C2022a60D5EbA4C5c0f59BA',
             oracle: '0x8C4C570fb2DAa7Ce5eB73d0eee132bD90012B307',
+            generalPurpose: false,
+        },
+        {
+            // sis
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778',
+            oracle: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
             generalPurpose: false,
         },
     ],
@@ -653,6 +653,22 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
+        },
+        {
+            id: ChainId.SYMBIOSIS_MAINNET,
+            rpc: 'https://symbiosis.calderachain.xyz/http',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
+            metaRouterGateway: '0x13F2C77D83258C3038cF59FD024bD94A95B2A0D8',
+            bridge: '0x1a039cE63AE35a67Bf0E9F6DbFaE969639D59eC8',
+            synthesis: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
+            multicallRouter: '0xBbAD2fe9558e55EbfA04b3B5Bff0b6c4E2ffDD2C',
         },
         {
             id: ChainId.ZKSYNC_MAINNET,

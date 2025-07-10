@@ -247,6 +247,26 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
+        id: ChainId.SYMBIOSIS_TESTNET,
+        name: 'Symbiosis Testnet',
+        disabled: false,
+        explorer: 'https://symbiosis-nitro-testnet.explorer.caldera.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SYMBIOSIS_MAINNET,
+        name: 'Symbiosis',
+        disabled: false,
+        explorer: 'https://symbiosis.calderaexplorer.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+        },
+    }),
+    new Chain({
         id: ChainId.MILKOMEDA_MAINNET,
         name: 'Milkomeda',
         disabled: false,

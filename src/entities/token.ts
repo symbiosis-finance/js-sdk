@@ -345,6 +345,30 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
+    [ChainId.SYMBIOSIS_TESTNET]: new Token({
+        chainId: ChainId.SYMBIOSIS_TESTNET,
+        address: '0x0000000000000000000000000000000000000000',
+        decimals: 18,
+        symbol: 'WTVT',
+        isNative: false,
+        name: 'Wrapped TVT',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+        },
+    }),
+    [ChainId.SYMBIOSIS_MAINNET]: new Token({
+        chainId: ChainId.SYMBIOSIS_MAINNET,
+        address: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+        decimals: 18,
+        symbol: 'WSIS',
+        isNative: false,
+        name: 'Wrapped SIS',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+        },
+    }),
     [ChainId.BOBA_RINKEBY]: new Token({
         chainId: ChainId.BOBA_RINKEBY,
         address: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
