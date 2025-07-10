@@ -97,6 +97,7 @@ export abstract class BaseSwapping {
         revertableAddresses,
         tradeAContext,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+        const id = crypto.randomUUID()
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
@@ -152,7 +153,17 @@ export abstract class BaseSwapping {
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
             this.tradeA = this.buildTradeA(tradeAContext)
+            const endTimerTradeA = this.symbiosis.createMetricTimer({
+                id,
+                operation: 'tradeA',
+                kind: 'crosschain-swap',
+                tokenIn: this.tokenAmountIn.token,
+                tokenOut: this.transitTokenIn,
+                addressFrom: this.from,
+                addressTo: this.to,
+            })
             await this.tradeA.init()
+            endTimerTradeA()
             this.profiler.tick('A')
             routes.push({
                 provider: this.tradeA.tradeType,
@@ -185,9 +196,18 @@ export abstract class BaseSwapping {
             })()
         )
 
+        const endTimerTransit = this.symbiosis.createMetricTimer({
+            id,
+            kind: 'crosschain-swap',
+            operation: this.tradeC ? 'TRANSIT + C' : 'TRANSIT',
+            tokenIn: this.transitTokenIn,
+            tokenOut: this.transitTokenOut,
+            addressFrom: this.from,
+            addressTo: this.to,
+        })
         const [transit, tradeC] = await Promise.all(promises)
-
-        this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
+        endTimerTransit()
+        this.profiler.tick(tradeC ? 'transit + c' : 'transit')
         this.transit = transit as Transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()
@@ -204,7 +224,13 @@ export abstract class BaseSwapping {
         }
         this.amountInUsd = this.transit.getBridgeAmountIn()
 
+        const endTimerAdvisor = this.symbiosis.createMetricTimer({
+            id,
+            kind: 'crosschain-swap',
+            operation: 'advisor',
+        })
         const { fee1Raw, fee2Raw } = await this.getAdvisorFees()
+        endTimerAdvisor()
         this.profiler.tick('ADVISOR')
 
         const fee1 = fee1Raw!.fee
