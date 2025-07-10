@@ -215,7 +215,7 @@ export class Symbiosis {
         return json['percent'] as number
     }
 
-    public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
+    public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig, metrics?: any) {
         this.configName = configName
         if (configName === 'mainnet') {
             this.config = structuredClone(mainnet)
