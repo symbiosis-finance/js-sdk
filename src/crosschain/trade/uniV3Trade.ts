@@ -102,6 +102,21 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
             }),
         ],
     },
+    [ChainId.BERACHAIN_MAINNET]: {
+        factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
+        quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
+        swap02: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
+        initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
+        baseTokens: [
+            new Token({
+                name: 'Wrapped BERA',
+                symbol: 'WBERA',
+                address: '0x6969696969696969696969696969696969696969',
+                chainId: ChainId.BERACHAIN_MAINNET,
+                decimals: 18,
+            }),
+        ],
+    },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {
