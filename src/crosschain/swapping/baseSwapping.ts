@@ -199,7 +199,7 @@ export abstract class BaseSwapping {
         const endTimerTransit = this.symbiosis.createMetricTimer({
             id,
             kind: 'crosschain-swap',
-            operation: this.tradeC ? 'TRANSIT + C' : 'TRANSIT',
+            operation: this.tradeC ? 'transit + c' : 'transit',
             tokenIn: this.transitTokenIn,
             tokenOut: this.transitTokenOut,
             addressFrom: this.from,
@@ -207,7 +207,7 @@ export abstract class BaseSwapping {
         })
         const [transit, tradeC] = await Promise.all(promises)
         endTimerTransit?.()
-        this.profiler.tick(tradeC ? 'transit + c' : 'transit')
+        this.profiler.tick(this.tradeC ? 'TRANSIT + C' : 'TRANSIT')
         this.transit = transit as Transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()
