@@ -303,7 +303,7 @@ export class Symbiosis {
         return () =>
             endTimer({
                 id,
-                operation: operation,
+                operation,
                 kind,
                 chain_id_from: tokenIn?.chainId ?? '',
                 chain_id_to: tokenOut?.chainId ?? '',
