@@ -35,7 +35,7 @@ export async function aggregatorsSwap({
         addressTo: to,
     })
     await aggregatorTrade.init()
-    endTimer()
+    endTimer?.()
 
     const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType, functionSelector } =
         aggregatorTrade

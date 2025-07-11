@@ -163,7 +163,7 @@ export abstract class BaseSwapping {
                 addressTo: this.to,
             })
             await this.tradeA.init()
-            endTimerTradeA()
+            endTimerTradeA?.()
             this.profiler.tick('A')
             routes.push({
                 provider: this.tradeA.tradeType,
@@ -206,7 +206,7 @@ export abstract class BaseSwapping {
             addressTo: this.to,
         })
         const [transit, tradeC] = await Promise.all(promises)
-        endTimerTransit()
+        endTimerTransit?.()
         this.profiler.tick(tradeC ? 'transit + c' : 'transit')
         this.transit = transit as Transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
@@ -230,7 +230,7 @@ export abstract class BaseSwapping {
             operation: 'advisor',
         })
         const { fee1Raw, fee2Raw } = await this.getAdvisorFees()
-        endTimerAdvisor()
+        endTimerAdvisor?.()
         this.profiler.tick('ADVISOR')
 
         const fee1 = fee1Raw!.fee
