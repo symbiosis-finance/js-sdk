@@ -25,17 +25,17 @@ export async function aggregatorsSwap({
     })
 
     const id = crypto.randomUUID()
-    const endTimer = symbiosis.createMetricTimer({
+    const endTimer = symbiosis.createMetricTimer()
+    await aggregatorTrade.init()
+    endTimer?.({
         id: id,
         kind: `onchain-swap`,
-        operation: 'aggregator-swap',
+        operation: `${aggregatorTrade.tradeType}-onchain-swap`,
         tokenIn: tokenAmountIn.token,
         tokenOut: tokenOut,
         addressFrom: from,
         addressTo: to,
     })
-    await aggregatorTrade.init()
-    endTimer?.()
 
     const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType, functionSelector } =
         aggregatorTrade

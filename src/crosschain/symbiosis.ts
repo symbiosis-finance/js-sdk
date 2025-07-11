@@ -292,7 +292,7 @@ export class Symbiosis {
         this.metrics = metrics
     }
 
-    public createMetricTimer({ id, tokenIn, tokenOut, operation, kind, addressFrom, addressTo }: MetricParams) {
+    public createMetricTimer() {
         if (!this.metrics) {
             console.log('Prometheus metrics are not initialized')
             return
@@ -300,7 +300,7 @@ export class Symbiosis {
 
         const endTimer = this.metrics.startTimer()
 
-        return () =>
+        return ({ id, tokenIn, tokenOut, operation, kind, addressFrom, addressTo }: MetricParams) =>
             endTimer({
                 id,
                 operation,
