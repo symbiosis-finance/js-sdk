@@ -232,8 +232,13 @@ export class Symbiosis {
         this.providers = new Map(
             this.config.chains.map((chain) => {
                 const rpc = isTronChainId(chain.id) ? `${chain.rpc}/jsonrpc` : chain.rpc
+                const connection: utils.ConnectionInfo = { url: rpc }
 
-                return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
+                if (chain?.headers) {
+                    connection.headers = chain.headers
+                }
+
+                return [chain.id, new StaticJsonRpcProvider(connection, chain.id)]
             })
         )
     }

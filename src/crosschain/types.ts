@@ -28,6 +28,7 @@ export type BridgeDirection = 'burn' | 'mint' | 'v2'
 export type ChainConfig = {
     id: ChainId
     rpc: string
+    headers?: Record<string, string>
     spareRpcs?: string[]
     dexFee: number
     filterBlockOffset: number
