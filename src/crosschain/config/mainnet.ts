@@ -9,39 +9,44 @@ export const config: Config = {
     limits: [],
     omniPools: [
         {
-            // usd
+            // USD
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0xC3255E317481B95A3e61844c274dE8BAF8eDF397',
             oracle: '0xbBFb7cb70f84fb6fE1Cb13e42A0B71EFDe769428',
             generalPurpose: true,
+            coinGeckoId: 'usd-coin',
         },
         {
-            // eth
+            // ETH
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0x2d877Fe148dBCB056Bf71ED5232E8d580195c0f1',
             oracle: '0x61ab82B6Cfe17E8b242E024DE7Fc936c10e35327',
             generalPurpose: true,
+            coinGeckoId: 'weth',
         },
         {
-            // btc
+            // BTC
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0xBf084Ee3E5C73129167167Bd5DB9FE8513d8F7e0',
             oracle: '0x597282d7F75Cf34450395D92a087C71F597024f5',
             generalPurpose: false,
+            coinGeckoId: 'wrapped-bitcoin',
         },
         {
-            // ladys
+            // LADYS
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0xAF8Ba1498e1EddD602Aab9cDe4BC6A3a83400165',
             oracle: '0x422A0A054Eb5a7424d9E3042862546a3F04e3596',
             generalPurpose: false,
+            coinGeckoId: 'milady-meme-coin',
         },
         {
-            // frax
+            // FRAX
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0x92114294E42A96C9eF3163DA18Ee7eFdbA6cc661',
             oracle: '0xd29bfF100F5599522D94E7aEDf2d6B65357c7516',
             generalPurpose: false,
+            coinGeckoId: 'frax',
         },
         {
             // G
@@ -49,6 +54,7 @@ export const config: Config = {
             address: '0x20C54Cc697329333fe00DeD49C7dCA8c83dcE65b',
             oracle: '0xDC636B062AB02C51b79cFaA6C5De7B7fFeAc2717',
             generalPurpose: false,
+            coinGeckoId: 'g-token',
         },
         {
             // WTON
@@ -56,6 +62,7 @@ export const config: Config = {
             address: '0x7E60A78518E7c9267ae0795E9914F19Cd7CdA168',
             oracle: '0xAa444c22297b0dBd97bBf316dC0b7C64b33aa64C',
             generalPurpose: false,
+            coinGeckoId: 'wrapped-ton',
         },
         {
             // CATI
@@ -63,6 +70,7 @@ export const config: Config = {
             address: '0x53a9dbeA6013B22A8AF3Ae8AAac8Fd31759aD287',
             oracle: '0x9C15664C49065b8E20EcE570f0818a68b71A00DA',
             generalPurpose: false,
+            coinGeckoId: 'catizen',
         },
         {
             // UXLINK
@@ -70,6 +78,7 @@ export const config: Config = {
             address: '0xcd5a0263DD8e29D9727865dcaD0f9D56C6e1Db93',
             oracle: '0x8d448bDb0c7a5fFf6A4ddf4b815bD517727E0aE5',
             generalPurpose: false,
+            coinGeckoId: 'uxlink',
         },
         {
             // PINEYE
@@ -77,6 +86,7 @@ export const config: Config = {
             address: '0xb2EF74C1120C662984f907ea08096eDAAD94D54E',
             oracle: '0x4E73aF5663c997A796FF2cc1AD8C5d406541b4F2',
             generalPurpose: false,
+            coinGeckoId: 'pineye',
         },
         {
             // WBNB
@@ -84,13 +94,15 @@ export const config: Config = {
             address: '0x095B362957B3E3638AE1eb7A957f392cD3Dc3c7C',
             oracle: '0xCCc50a096E3078508FCb14Ac0B4DF3330C32BD96',
             generalPurpose: false,
+            coinGeckoId: 'binancecoin',
         },
         {
-            // sis
+            // SIS
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778',
             oracle: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
             generalPurpose: false,
+            coinGeckoId: 'symbiosis-finance',
         },
     ],
     revertableAddress: {

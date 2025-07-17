@@ -53,6 +53,7 @@ export type OmniPoolConfig = {
     address: string
     oracle: string
     generalPurpose: boolean
+    coinGeckoId: string
 }
 
 export type SwapLimit = {

@@ -24,6 +24,7 @@ export const config: Config = {
             address: '0x2826c540065C8eD792d7100ca89628E986f2F42E', // TON octopool
             oracle: '0xaF123f922b9cAe0F525c2E5A95314D7E8E229413',
             generalPurpose: true, // maybe in prod false, eth -\-> ton
+            coinGeckoId: 'wrapped-ton',
         },
     ],
     revertableAddress: {
@@ -36,7 +37,7 @@ export const config: Config = {
         {
             // NOTE host chain is better to be first in the config
             id: ChainId.BSC_TESTNET,
-            rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
+            rpc: 'https://bsc-testnet-rpc.publicnode.com',
             filterBlockOffset: 2000,
             stables: [
                 {
@@ -63,7 +64,7 @@ export const config: Config = {
         },
         {
             id: ChainId.SEPOLIA_TESTNET,
-            rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
+            rpc: 'https://sepolia.gateway.tenderly.co',
             filterBlockOffset: 2000,
             stables: [
                 {
