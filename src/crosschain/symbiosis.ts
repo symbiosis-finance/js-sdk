@@ -152,6 +152,10 @@ export class Symbiosis {
 
     public readonly fetch: typeof fetch
 
+    public setMetrics(metrics: Histogram<string>) {
+        this.metrics = metrics
+    }
+
     public setSignature(signature: string | undefined) {
         this.signature = signature
     }
@@ -218,12 +222,7 @@ export class Symbiosis {
         return json['percent'] as number
     }
 
-    public constructor(
-        configName: ConfigName,
-        clientId: string,
-        overrideConfig?: OverrideConfig,
-        metrics?: Histogram<string>
-    ) {
+    public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         this.configName = configName
         if (configName === 'mainnet') {
             this.config = structuredClone(mainnet)
@@ -288,8 +287,6 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
             })
         )
-
-        this.metrics = metrics
     }
 
     public createMetricTimer() {
