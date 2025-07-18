@@ -190,6 +190,7 @@ export class Symbiosis {
                 const found = chains.find((i) => i.id === chainConfig.id)
                 if (found) {
                     chainConfig.rpc = found.rpc
+                    chainConfig.headers = found.headers
                 }
                 return chainConfig
             })
