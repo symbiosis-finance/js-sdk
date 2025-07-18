@@ -636,7 +636,19 @@ export const config: Config = {
             rpc: 'https://symbiosis.calderachain.xyz/http',
             spareRpcs: [],
             filterBlockOffset: 1000,
-            stables: [],
+            stables: [
+                {
+                    chainId: ChainId.SYMBIOSIS_MAINNET,
+                    address: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+                    decimals: 18,
+                    symbol: 'WSIS',
+                    name: 'Wrapped SIS',
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                    },
+                },
+            ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
