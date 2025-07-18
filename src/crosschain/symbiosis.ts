@@ -3,7 +3,7 @@ import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
-import { Histogram } from 'prom-client'
+import type { Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
