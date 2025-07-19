@@ -2,14 +2,15 @@
     "omniPools": [
         {
             "chainId": 97,
-            "address": "0x2826c540065C8eD792d7100ca89628E986f2F42E",
-            "oracle": "0xaF123f922b9cAe0F525c2E5A95314D7E8E229413",
+            "address": "0xFC385a59b2728cA437057E3cDBA4a2611B75c406",
+            "oracle": "0xfdF3dBF16a7Dc8078FE4E9D0c1ac391dfb8B19aF",
             "generalPurpose": true,
             "coinGeckoId": "wrapped-ton",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 5 },
-                { "index": 2, "tokenId": 0 }
+                { "index": 1, "tokenId": 9 },
+                { "index": 2, "tokenId": 7 },
+                { "index": 3, "tokenId": 6 }
             ]
         }
     ],
@@ -29,75 +30,153 @@
             "id": 0
         },
         {
-            "decimals": 9,
-            "symbol": "TONCOIN",
-            "name": "TONCOIN",
+            "decimals": 8,
+            "symbol": "mutSymBtc",
+            "name": "mutSymBtc",
             "chainId": 11155111,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0x331f40cc27aC106e1d5242CE633dc6436626a6F8",
+            "address": "0x41540e95B10383408cfE201974c88E6C3ef9323A",
             "id": 1
         },
         {
-            "decimals": 9,
-            "symbol": "TON",
-            "name": "TON Coin",
-            "chainId": 85919,
+            "decimals": 8,
+            "symbol": "t4SymBtc",
+            "name": "t4SymBtc",
+            "chainId": 11155111,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0x7eA393298D1077e19ec59F8e3FE8fe642738c08C",
+            "address": "0x04cd23122a21f6c5F912FC7B9aBC508302899Dfb",
             "id": 2
         },
         {
-            "decimals": 9,
-            "symbol": "USDT",
-            "name": "USDt",
-            "chainId": 85919,
+            "decimals": 8,
+            "symbol": "mSymBtc",
+            "name": "mSymBtc",
+            "chainId": 11155111,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0x46DEEc715E419a1f0F5959b5c8450894959d2DbF",
+            "address": "0xeD86914A9478a066d82b2bE3E5B99A38BAaE23ce",
             "id": 3
         },
         {
-            "decimals": 9,
-            "symbol": "WTON(Mainnet)",
-            "name": "WTON",
+            "decimals": 8,
+            "symbol": "WBTC",
+            "name": "Wrapped BTC",
             "chainId": 43113,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "deprecated": false,
-            "address": "0xCc9f8896896c6eF44f2504A6A29e6057aDBfF179",
+            "address": "0x9374Ea7A11c5B185A6631effF22c015E71c67581",
             "id": 4
         },
         {
-            "decimals": 9,
-            "symbol": "sWTON",
-            "name": "sWTON",
+            "decimals": 8,
+            "symbol": "muBTC",
+            "name": "Bitcoin Mutiny",
+            "chainId": 2782866891,
+            "isNative": false,
+            "icons": {
+                "large": "https://faucet.mutinynet.com/favicon.svg",
+                "small": "https://faucet.mutinynet.com/favicon.svg"
+            },
+            "deprecated": false,
+            "address": "0x41540e95B10383408cfE201974c88E6C3ef9323A",
+            "id": 5
+        },
+        {
+            "decimals": 8,
+            "symbol": "sMutSymBtc",
+            "name": "synthetic sBTC from Sepolia Mutinynet",
             "chainId": 97,
             "isNative": false,
             "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 11155111,
+            "deprecated": false,
+            "address": "0x742175079E67dAD92CA5a315f5C37CF26e207615",
+            "id": 6,
+            "originalId": 1
+        },
+        {
+            "decimals": 8,
+            "symbol": "st4SymBtc",
+            "name": "st4SymBtc from Sepolia",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 11155111,
+            "deprecated": false,
+            "address": "0xD8D16bab99BDA6c0aE108Def47a47048fa49F427",
+            "id": 7,
+            "originalId": 2
+        },
+        {
+            "decimals": 8,
+            "symbol": "sBTC",
+            "name": "sBTC",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 11155111,
+            "deprecated": false,
+            "address": "0xf945220F1A99a3B207277eBad23490DBd6F5433f",
+            "id": 8,
+            "originalId": 3
+        },
+        {
+            "decimals": 8,
+            "symbol": "sBTC",
+            "name": "Synthetic BTC from Fuji",
+            "chainId": 97,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
             },
             "chainFromId": 43113,
             "deprecated": false,
-            "address": "0x4950b13CbC3A33164fdd782E75271891D0d9F1D9",
-            "id": 5,
+            "address": "0xD2347db16c570495Af15a859800e86541D046c2e",
+            "id": 9,
+            "originalId": 4
+        },
+        {
+            "decimals": 8,
+            "symbol": "sBTC",
+            "name": "Synthetic BTC",
+            "chainId": 11155111,
+            "isNative": false,
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png"
+            },
+            "chainFromId": 43113,
+            "deprecated": false,
+            "address": "0xD058A1425301a400C4e901E78006655CB07F325A",
+            "id": 10,
             "originalId": 4
         }
     ]
