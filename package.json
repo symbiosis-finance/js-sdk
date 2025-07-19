@@ -46,6 +46,7 @@
         "bitcoin-address-validation": "^2.2.3",
         "bitcoinjs-lib": "^6.1.5",
         "decimal.js-light": "^2.5.0",
+        "fetch-retry": "^6.0.0",
         "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
