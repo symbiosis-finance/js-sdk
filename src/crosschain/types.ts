@@ -25,6 +25,14 @@ export interface VolumeFeeCollector {
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
+export type DepositoryConfig = {
+    depository: string
+    swapUnlocker: string
+    withdrawUnlocker: string
+    branchedUnlocker: string
+    btcRefundUnlocker?: string
+}
+
 export type ChainConfig = {
     id: ChainId
     rpc: string
@@ -43,6 +51,7 @@ export type ChainConfig = {
     fabric: string
     tonPortal?: string
     partnerFeeCollector?: string
+    depository?: DepositoryConfig
 }
 
 export type AdvisorConfig = {
