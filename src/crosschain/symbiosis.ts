@@ -7,8 +7,14 @@ import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
+    BranchedUnlocker,
+    BranchedUnlocker__factory,
     Bridge,
     Bridge__factory,
+    BtcRefundUnlocker,
+    BtcRefundUnlocker__factory,
+    Depository,
+    Depository__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -21,10 +27,14 @@ import {
     OmniPoolOracle__factory,
     Portal,
     Portal__factory,
+    SwapUnlocker,
+    SwapUnlocker__factory,
     Synthesis,
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
+    WithdrawUnlocker,
+    WithdrawUnlocker__factory,
 } from './contracts'
 import { aggregatorErrorToText, Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
@@ -75,6 +85,14 @@ export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 export type DiscountTier = {
     amount: string
     discount: number
+}
+
+export type DepositoryContracts = {
+    depository: Depository
+    branchedUnlocker: BranchedUnlocker
+    swapUnlocker: SwapUnlocker
+    withdrawUnlocker: WithdrawUnlocker
+    btcRefundUnlocker?: BtcRefundUnlocker
 }
 
 const defaultFetch: typeof fetch = (url, init) => {
@@ -471,6 +489,22 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return MetaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts {
+        const config = this.chainConfig(chainId)
+        const signerOrProvider = signer || this.getProvider(chainId)
+        const depository = config.depository!
+
+        return {
+            depository: Depository__factory.connect(depository.depository, signerOrProvider),
+            swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
+            withdrawUnlocker: WithdrawUnlocker__factory.connect(depository.withdrawUnlocker, signerOrProvider),
+            btcRefundUnlocker: depository.btcRefundUnlocker
+                ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
+                : undefined,
+            branchedUnlocker: BranchedUnlocker__factory.connect(depository.branchedUnlocker, signerOrProvider),
+        }
     }
 
     public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
