@@ -788,6 +788,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
         },
     }),
+    new Chain({
+        id: ChainId.KATANA_MAINNET,
+        name: 'Katana',
+        disabled: false,
+        explorer: 'https://explorer.katanarpc.com',
+        icons: {
+            small: 'https://katana.network/meta/favicon.ico',
+            large: 'https://katana.network/meta/favicon.ico',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
