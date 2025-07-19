@@ -4,7 +4,7 @@ import { MulticallRouter, Synthesis } from '../contracts'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { BTC_NETWORKS, getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
+import { getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
 import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
@@ -82,13 +82,9 @@ export class ZappingBtc extends BaseSwapping {
         if (!syBtc.chainFromId) {
             throw new Error('syBtc is not synthetic')
         }
-        const network = BTC_NETWORKS[syBtc.chainFromId]
-        if (!network) {
-            throw new Error('Unknown BTC network')
-        }
         const btc = GAS_TOKEN[syBtc.chainFromId]
 
-        this.bitcoinAddress = getPkScript(to, network)
+        this.bitcoinAddress = getPkScript(to, syBtc.chainFromId)
         this.syBtc = syBtc
 
         const chainId = syBtc.chainId
