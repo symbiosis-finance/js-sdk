@@ -4,7 +4,7 @@ import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../../swapExactIn'
 import { Percent, Token, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { tronAddressToEvm } from '../../chainUtils'
-import { BTC_NETWORKS, getPkScript, getThreshold, getToBtcFee } from '../../chainUtils/btc'
+import { getPkScript, getThreshold, getToBtcFee } from '../../chainUtils/btc'
 import { Error, ErrorCode } from '../../error'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
@@ -17,11 +17,7 @@ import { ChainId } from '../../../constants'
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
 
-    const network = BTC_NETWORKS[tokenOut.chainId]
-    if (!network) {
-        throw new Error(`Unknown BTC network ${tokenOut.chainId}`)
-    }
-    const bitcoinAddress = getPkScript(to, network)
+    const bitcoinAddress = getPkScript(to, tokenOut.chainId)
 
     const chainId = tokenAmountIn.token.chainId
 
