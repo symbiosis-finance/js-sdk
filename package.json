@@ -54,9 +54,7 @@
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
         "toformat": "^2.0.0",
-        "tronweb": "^5.3.0"
-    },
-    "peerDependencies": {
+        "tronweb": "^5.3.0",
         "ethers": "^5.2.0"
     },
     "devDependencies": {
