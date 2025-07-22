@@ -9,6 +9,7 @@ import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { BytesLike } from 'ethers'
+import { ConfigCacheData } from './config/cache/builder'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -123,6 +124,8 @@ export type OverrideConfig = {
     oneInchConfig?: OneInchConfig
     openOceanConfig?: OpenOceanConfig
     volumeFeeCollectors?: VolumeFeeCollector[]
+    config?: Config
+    configCache?: ConfigCacheData
 }
 
 export interface MiddlewareCall {

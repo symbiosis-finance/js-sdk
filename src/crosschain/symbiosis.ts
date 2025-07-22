@@ -213,36 +213,39 @@ export class Symbiosis {
 
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         this.configName = configName
-        if (configName === 'mainnet') {
-            this.config = structuredClone(mainnet)
-        } else if (configName === 'testnet') {
-            this.config = structuredClone(testnet)
-        } else if (configName === 'dev') {
-            this.config = structuredClone(dev)
+        if (overrideConfig?.config) {
+            this.config = structuredClone(overrideConfig.config)
         } else {
-            throw new Error('Unknown config name')
-        }
-        this.cache = new Cache()
+            if (configName === 'mainnet') {
+                this.config = structuredClone(mainnet)
+            } else if (configName === 'testnet') {
+                this.config = structuredClone(testnet)
+            } else if (configName === 'dev') {
+                this.config = structuredClone(dev)
+            } else {
+                throw new Error('Unknown config name')
+            }
 
-        if (overrideConfig?.chains) {
-            const { chains } = overrideConfig
-            this.config.chains = this.config.chains.map((chainConfig) => {
-                const found = chains.find((i) => i.id === chainConfig.id)
-                if (found) {
-                    chainConfig.rpc = found.rpc
-                    chainConfig.headers = found.headers
-                }
-                return chainConfig
-            })
-        }
-        if (overrideConfig?.limits) {
-            this.config.limits = overrideConfig.limits
-        }
-        if (overrideConfig?.advisor) {
-            this.config.advisor = overrideConfig.advisor
-        }
-        if (overrideConfig?.btcConfigs) {
-            this.config.btcConfigs = overrideConfig.btcConfigs
+            if (overrideConfig?.chains) {
+                const { chains } = overrideConfig
+                this.config.chains = this.config.chains.map((chainConfig) => {
+                    const found = chains.find((i) => i.id === chainConfig.id)
+                    if (found) {
+                        chainConfig.rpc = found.rpc
+                        chainConfig.headers = found.headers
+                    }
+                    return chainConfig
+                })
+            }
+            if (overrideConfig?.limits) {
+                this.config.limits = overrideConfig.limits
+            }
+            if (overrideConfig?.advisor) {
+                this.config.advisor = overrideConfig.advisor
+            }
+            if (overrideConfig?.btcConfigs) {
+                this.config.btcConfigs = overrideConfig.btcConfigs
+            }
         }
         this.oneInchConfig = {
             apiUrl: 'https://api.1inch.dev/swap/v5.2/',
@@ -266,8 +269,8 @@ export class Symbiosis {
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
-        this.configCache = new ConfigCache(configName)
-
+        this.cache = new Cache()
+        this.configCache = new ConfigCache(overrideConfig?.configCache || configName)
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
