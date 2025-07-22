@@ -11,6 +11,7 @@ import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { BytesLike } from 'ethers'
 import { Cache } from './cache'
 import { Logger } from 'pino'
+import { ConfigCacheData } from './config/cache/builder'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -126,6 +127,8 @@ export type OverrideConfig = {
     openOceanConfig?: OpenOceanConfig
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
+    config?: Config
+    configCache?: ConfigCacheData
 }
 
 export interface MiddlewareCall {
