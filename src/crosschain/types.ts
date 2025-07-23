@@ -117,6 +117,8 @@ export type OpenOceanConfig = {
     apiKeys: string[]
 }
 
+export type * from './config/cache/builder'
+
 export type OverrideConfig = {
     btcConfigs?: BtcConfig[]
     chains?: OverrideChainConfig[]
