@@ -233,11 +233,8 @@ export type MultiCallItem = {
 }
 
 export type MetricParams = {
-    id: string
     operation: string
     kind: string
     tokenIn?: Token
     tokenOut?: Token
-    addressFrom?: string
-    addressTo?: string
 }

@@ -259,17 +259,13 @@ export class Symbiosis {
 
         const endTimer = this.metrics.startTimer()
 
-        return ({ id, tokenIn, tokenOut, operation, kind, addressFrom, addressTo }: MetricParams) =>
+        return ({ tokenIn, tokenOut, operation, kind }: MetricParams) =>
             endTimer({
-                id,
                 operation,
                 kind,
+                client_id: this.clientId,
                 chain_id_from: tokenIn?.chainId ?? '',
                 chain_id_to: tokenOut?.chainId ?? '',
-                token_in: tokenIn?.address ?? '',
-                token_out: tokenOut?.address ?? '',
-                address_from: addressFrom ?? '',
-                address_to: addressTo ?? '',
                 rpc_from: tokenIn ? this.getProvider(tokenIn?.chainId).connection.url : '',
                 rpc_to: tokenOut ? this.getProvider(tokenOut?.chainId).connection.url : '',
             })
