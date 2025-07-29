@@ -231,3 +231,13 @@ export type MultiCallItem = {
     fees: FeeItem[]
     routes: RouteItem[]
 }
+
+export type MetricParams = {
+    id: string
+    operation: string
+    kind: string
+    tokenIn?: Token
+    tokenOut?: Token
+    addressFrom?: string
+    addressTo?: string
+}
