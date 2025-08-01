@@ -1606,8 +1606,8 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
+                    name: 'USD Coin via Noble',
+                    symbol: 'USDC.n',
                     address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',
                     chainId: ChainId.SEI_EVM_MAINNET,
                     decimals: 6,

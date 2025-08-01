@@ -1387,8 +1387,8 @@
         },
         {
             "decimals": 6,
-            "symbol": "USDC",
-            "name": "USD Coin",
+            "symbol": "USDC.n",
+            "name": "USD Coin via Noble",
             "chainId": 1329,
             "isNative": false,
             "icons": {
