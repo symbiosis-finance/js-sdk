@@ -237,16 +237,6 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
-        id: ChainId.BOBA_BNB,
-        name: 'Boba BNB',
-        disabled: false,
-        explorer: 'https://bnb.bobascan.com',
-        icons: {
-            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
-            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
-        },
-    }),
-    new Chain({
         id: ChainId.SYMBIOSIS_TESTNET,
         name: 'Symbiosis Testnet',
         disabled: false,
@@ -796,6 +786,16 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.KATANA_MAINNET,
+        name: 'Katana',
+        disabled: false,
+        explorer: 'https://explorer.katanarpc.com',
+        icons: {
+            small: 'https://katana.network/meta/favicon.ico',
+            large: 'https://katana.network/meta/favicon.ico',
         },
     }),
 ]

@@ -3,6 +3,7 @@ import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
+import type { Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
@@ -33,6 +34,7 @@ import {
     ChainConfig,
     Config,
     FeeConfig,
+    MetricParams,
     OmniPoolConfig,
     OneInchConfig,
     OpenOceanConfig,
@@ -84,50 +86,6 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         feeRate: '2000000000000000', // 0.2%
         eligibleChains: [ChainId.BTC_MAINNET],
     },
-    // BOBA BNB
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
-        feeRate: '6000000000000000', // 0.6%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
-        feeRate: '5000000000000000', // 0.5%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x5f5829F7CDca871b16ed76E498EeE35D4250738A',
-        feeRate: '4000000000000000', // 0.4%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
-        feeRate: '3000000000000000', // 0.3%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
-        feeRate: '2000000000000000', // 0.2%
-        eligibleChains: [ChainId.TRON_MAINNET],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
-        feeRate: '1000000000000000', // 0.1%
-        eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
-        feeRate: '500000000000000', // 0.05%
-        eligibleChains: [],
-        default: true,
-    },
 ]
 
 export class Symbiosis {
@@ -140,6 +98,7 @@ export class Symbiosis {
     public clientId: string
 
     private signature: string | undefined
+    public metrics?: Histogram<string>
 
     public feesConfig?: FeeConfig[]
 
@@ -148,6 +107,10 @@ export class Symbiosis {
     public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
+
+    public setMetrics(metrics: Histogram<string>) {
+        this.metrics = metrics
+    }
 
     public setSignature(signature: string | undefined) {
         this.signature = signature
@@ -234,6 +197,7 @@ export class Symbiosis {
                 const found = chains.find((i) => i.id === chainConfig.id)
                 if (found) {
                     chainConfig.rpc = found.rpc
+                    chainConfig.headers = found.headers
                 }
                 return chainConfig
             })
@@ -276,10 +240,35 @@ export class Symbiosis {
         this.providers = new Map(
             this.config.chains.map((chain) => {
                 const rpc = isTronChainId(chain.id) ? `${chain.rpc}/jsonrpc` : chain.rpc
+                const connection: utils.ConnectionInfo = { url: rpc }
 
-                return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
+                if (chain?.headers) {
+                    connection.headers = chain.headers
+                }
+
+                return [chain.id, new StaticJsonRpcProvider(connection, chain.id)]
             })
         )
+    }
+
+    public createMetricTimer() {
+        if (!this.metrics) {
+            console.log('Prometheus metrics are not initialized')
+            return
+        }
+
+        const endTimer = this.metrics.startTimer()
+
+        return ({ tokenIn, tokenOut, operation, kind }: MetricParams) =>
+            endTimer({
+                operation,
+                kind,
+                client_id: this.clientId,
+                chain_id_from: tokenIn?.chainId ?? '',
+                chain_id_to: tokenOut?.chainId ?? '',
+                rpc_from: tokenIn ? this.getProvider(tokenIn?.chainId).connection.url : '',
+                rpc_to: tokenOut ? this.getProvider(tokenOut?.chainId).connection.url : '',
+            })
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {

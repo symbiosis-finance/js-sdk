@@ -8,7 +8,6 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.MATIC_MAINNET]: 'polygon-pos',
     [ChainId.TELOS_MAINNET]: 'telos',
     [ChainId.BOBA_MAINNET]: 'boba',
-    [ChainId.BOBA_BNB]: 'boba',
     [ChainId.KAVA_MAINNET]: 'kava',
     [ChainId.ZKSYNC_MAINNET]: 'zksync',
     [ChainId.ARBITRUM_MAINNET]: 'arbitrum-one',
@@ -47,6 +46,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.SONEIUM_MAINNET]: 'soneium',
     [ChainId.OPBNB_MAINNET]: 'opbnb',
     [ChainId.HYPERLIQUID_MAINNET]: 'hyperevm',
+    [ChainId.KATANA_MAINNET]: 'katana',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -57,7 +57,6 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.MATIC_MAINNET]: 'matic-network',
     [ChainId.TELOS_MAINNET]: 'telos',
     [ChainId.BOBA_MAINNET]: 'ethereum',
-    [ChainId.BOBA_BNB]: 'boba-network',
     [ChainId.KAVA_MAINNET]: 'kava',
     [ChainId.ZKSYNC_MAINNET]: 'ethereum',
     [ChainId.ARBITRUM_MAINNET]: 'ethereum',
@@ -97,4 +96,5 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.SONEIUM_MAINNET]: 'ethereum',
     [ChainId.OPBNB_MAINNET]: 'binancecoin',
     [ChainId.HYPERLIQUID_MAINNET]: 'hyperliquid',
+    [ChainId.KATANA_MAINNET]: 'ethereum',
 }

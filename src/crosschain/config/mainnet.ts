@@ -9,95 +9,100 @@ export const config: Config = {
     limits: [],
     omniPools: [
         {
-            // usd
-            chainId: ChainId.BOBA_BNB,
-            address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
-            oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
+            // USD
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xC3255E317481B95A3e61844c274dE8BAF8eDF397',
+            oracle: '0xbBFb7cb70f84fb6fE1Cb13e42A0B71EFDe769428',
             generalPurpose: true,
+            coinGeckoId: 'usd-coin',
         },
         {
-            // eth
-            chainId: ChainId.BOBA_BNB,
-            address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
-            oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
+            // ETH
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x2d877Fe148dBCB056Bf71ED5232E8d580195c0f1',
+            oracle: '0x61ab82B6Cfe17E8b242E024DE7Fc936c10e35327',
             generalPurpose: true,
+            coinGeckoId: 'weth',
         },
         {
-            // btc
-            chainId: ChainId.BOBA_BNB,
-            address: '0xA267C428b16728831Be52b144F78b8F054411f55',
-            oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
+            // BTC
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xBf084Ee3E5C73129167167Bd5DB9FE8513d8F7e0',
+            oracle: '0x597282d7F75Cf34450395D92a087C71F597024f5',
             generalPurpose: false,
+            coinGeckoId: 'wrapped-bitcoin',
         },
         {
-            // ladys
-            chainId: ChainId.BOBA_BNB,
-            address: '0x7b905059Bdd00844280EBf54E00A087006B2D242',
-            oracle: '0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5',
+            // LADYS
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xAF8Ba1498e1EddD602Aab9cDe4BC6A3a83400165',
+            oracle: '0x422A0A054Eb5a7424d9E3042862546a3F04e3596',
             generalPurpose: false,
+            coinGeckoId: 'milady-meme-coin',
         },
-        // {
-        //     // puf
-        //     chainId: ChainId.BOBA_BNB,
-        //     address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
-        //     oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
-        //     generalPurpose: false,
-        // },
         {
-            // frax
-            chainId: ChainId.BOBA_BNB,
-            address: '0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E',
-            oracle: '0x4CD678FF53538E6b084464da0020422738B46038',
+            // FRAX
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x92114294E42A96C9eF3163DA18Ee7eFdbA6cc661',
+            oracle: '0xd29bfF100F5599522D94E7aEDf2d6B65357c7516',
             generalPurpose: false,
+            coinGeckoId: 'frax',
         },
         {
             // G
-            chainId: ChainId.BOBA_BNB,
-            address: '0x8D2209E88f68324c6241bCAA7d24538ebe94e2Ee',
-            oracle: '0xA7614e3427f52b04EeD23c7371a382640bD6C463',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x20C54Cc697329333fe00DeD49C7dCA8c83dcE65b',
+            oracle: '0xDC636B062AB02C51b79cFaA6C5De7B7fFeAc2717',
             generalPurpose: false,
+            coinGeckoId: 'g-token',
         },
         {
             // WTON
-            chainId: ChainId.BOBA_BNB,
-            address: '0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23',
-            oracle: '0xe717C95007cA64334c9facFFC1975310C3B98EE8',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x7E60A78518E7c9267ae0795E9914F19Cd7CdA168',
+            oracle: '0xAa444c22297b0dBd97bBf316dC0b7C64b33aa64C',
             generalPurpose: false,
+            coinGeckoId: 'wrapped-ton',
         },
         {
             // CATI
-            chainId: ChainId.BOBA_BNB,
-            address: '0x8A71e95adFB7355d060D70b59954B065e3BD35EE',
-            oracle: '0x6B8521C0F46B76A55af7333Bc025e7B9480087C8',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x53a9dbeA6013B22A8AF3Ae8AAac8Fd31759aD287',
+            oracle: '0x9C15664C49065b8E20EcE570f0818a68b71A00DA',
             generalPurpose: false,
+            coinGeckoId: 'catizen',
         },
         {
             // UXLINK
-            chainId: ChainId.BOBA_BNB,
-            address: '0x539E9071D542d6Ec7415Cb9DAa4aD20be1307CcB',
-            oracle: '0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xcd5a0263DD8e29D9727865dcaD0f9D56C6e1Db93',
+            oracle: '0x8d448bDb0c7a5fFf6A4ddf4b815bD517727E0aE5',
             generalPurpose: false,
+            coinGeckoId: 'uxlink',
         },
         {
             // PINEYE
-            chainId: ChainId.BOBA_BNB,
-            address: '0xD122cD767d076B77a873Ca1CDEeE74f2552B367A',
-            oracle: '0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xb2EF74C1120C662984f907ea08096eDAAD94D54E',
+            oracle: '0x4E73aF5663c997A796FF2cc1AD8C5d406541b4F2',
             generalPurpose: false,
+            coinGeckoId: 'pineye',
         },
         {
             // WBNB
-            chainId: ChainId.BOBA_BNB,
-            address: '0x4A277A204f0537153C2022a60D5EbA4C5c0f59BA',
-            oracle: '0x8C4C570fb2DAa7Ce5eB73d0eee132bD90012B307',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x095B362957B3E3638AE1eb7A957f392cD3Dc3c7C',
+            oracle: '0xCCc50a096E3078508FCb14Ac0B4DF3330C32BD96',
             generalPurpose: false,
+            coinGeckoId: 'binancecoin',
         },
         {
-            // sis
+            // SIS
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778',
             oracle: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
             generalPurpose: false,
+            coinGeckoId: 'symbiosis-finance',
         },
     ],
     revertableAddress: {
@@ -229,7 +234,7 @@ export const config: Config = {
                     },
                 },
                 {
-                    deprecated: true,
+                    deprecated: false,
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -627,39 +632,23 @@ export const config: Config = {
             multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3',
         },
         {
-            id: ChainId.BOBA_BNB,
-            rpc: 'https://boba-bnb.gateway.tenderly.co',
-            spareRpcs: ['https://replica.bnb.boba.network'],
-            filterBlockOffset: 3000,
-            stables: [
-                {
-                    name: 'USD Coin',
-                    address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
-                    symbol: 'USDC',
-                    decimals: 18,
-                    chainId: ChainId.BOBA_BNB,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    },
-                },
-            ],
-            router: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-            dexFee: 30,
-            metaRouter: '0x2cBABD7329b84e2c0A317702410E7c73D0e0246d',
-            metaRouterGateway: '0xd666ab407c8E77DB239F473a49E309514aa55e0C',
-            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
-            synthesis: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            portal: '0x0000000000000000000000000000000000000000',
-            fabric: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
-            multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
-        },
-        {
             id: ChainId.SYMBIOSIS_MAINNET,
             rpc: 'https://symbiosis.calderachain.xyz/http',
             spareRpcs: [],
             filterBlockOffset: 1000,
-            stables: [],
+            stables: [
+                {
+                    chainId: ChainId.SYMBIOSIS_MAINNET,
+                    address: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+                    decimals: 18,
+                    symbol: 'WSIS',
+                    name: 'Wrapped SIS',
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                    },
+                },
+            ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
@@ -1617,8 +1606,8 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
+                    name: 'USD Coin via Noble',
+                    symbol: 'USDC.n',
                     address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',
                     chainId: ChainId.SEI_EVM_MAINNET,
                     decimals: 6,
@@ -2233,6 +2222,34 @@ export const config: Config = {
             ],
             router: '0xb4a9C4e6Ea8E2191d2FA5B380452a634Fb21240A',
             dexFee: 30,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.KATANA_MAINNET,
+            rpc: 'https://rpc.katana.network',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Wrapped ETH',
+                    symbol: 'WETH',
+                    address: '0x4200000000000000000000000000000000000006',
+                    chainId: ChainId.KATANA_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',

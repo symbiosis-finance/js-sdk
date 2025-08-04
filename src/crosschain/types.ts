@@ -28,6 +28,7 @@ export type BridgeDirection = 'burn' | 'mint' | 'v2'
 export type ChainConfig = {
     id: ChainId
     rpc: string
+    headers?: Record<string, string>
     spareRpcs?: string[]
     dexFee: number
     filterBlockOffset: number
@@ -53,6 +54,7 @@ export type OmniPoolConfig = {
     address: string
     oracle: string
     generalPurpose: boolean
+    coinGeckoId: string
 }
 
 export type SwapLimit = {
@@ -84,6 +86,7 @@ export type Config = {
 export type OverrideChainConfig = {
     id: ChainId
     rpc: string
+    headers?: Record<string, string>
 }
 export type FeeConfig = {
     token: Token
@@ -227,4 +230,11 @@ export type MultiCallItem = {
     priceImpact: Percent
     fees: FeeItem[]
     routes: RouteItem[]
+}
+
+export type MetricParams = {
+    operation: string
+    kind: string
+    tokenIn?: Token
+    tokenOut?: Token
 }

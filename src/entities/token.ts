@@ -333,18 +333,6 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
-    [ChainId.BOBA_BNB]: new Token({
-        chainId: ChainId.BOBA_BNB,
-        address: '0xC58aaD327D6D58D979882601ba8DDa0685B505eA',
-        decimals: 18,
-        symbol: 'WBOBA',
-        isNative: false,
-        name: 'Wrapped BOBA',
-        icons: {
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-        },
-    }),
     [ChainId.SYMBIOSIS_TESTNET]: new Token({
         chainId: ChainId.SYMBIOSIS_TESTNET,
         address: '0x0000000000000000000000000000000000000000',
@@ -992,6 +980,18 @@ export const WETH = {
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35881.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35881.png',
+        },
+    }),
+    [ChainId.KATANA_MAINNET]: new Token({
+        chainId: ChainId.KATANA_MAINNET,
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
 }

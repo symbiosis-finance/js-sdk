@@ -5,6 +5,7 @@
             "address": "0x2826c540065C8eD792d7100ca89628E986f2F42E",
             "oracle": "0xaF123f922b9cAe0F525c2E5A95314D7E8E229413",
             "generalPurpose": true,
+            "coinGeckoId": "wrapped-ton",
             "id": 0,
             "tokens": [
                 { "index": 0, "tokenId": 5 },
