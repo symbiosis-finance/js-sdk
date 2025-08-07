@@ -280,6 +280,9 @@ export class Symbiosis {
             return i.eligibleChains.filter((j) => involvedChainIds.includes(j)).length > 0
         })
         if (chainEligibleFeeCollector) {
+            if (chainEligibleFeeCollector.feeRate === '0') {
+                return
+            }
             return chainEligibleFeeCollector
         }
         // get default volume fee collector
