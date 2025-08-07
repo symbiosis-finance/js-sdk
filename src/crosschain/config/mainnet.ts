@@ -1562,7 +1562,7 @@ export const config: Config = {
         },
         {
             id: ChainId.TAIKO_MAINNET,
-            rpc: 'https://rpc.mainnet.taiko.xyz',
+            rpc: 'https://taiko-rpc.publicnode.com', // https://rpc.mainnet.taiko.xyz',
             spareRpcs: ['https://taiko-rpc.publicnode.com', 'https://rpc.ankr.com/taiko'],
             filterBlockOffset: 1000,
             stables: [
@@ -2245,6 +2245,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x203A662b0BD271A6ed5a60EdFbd04bFce608FD36',
+                    chainId: ChainId.KATANA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
                     },
                 },
             ],
