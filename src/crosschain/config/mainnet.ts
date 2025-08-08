@@ -1315,6 +1315,18 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'Tether USD',
+                    symbol: 'USDT',
+                    address: '0xdef886c55a79830c47108eeb9c37e78a49684e41',
+                    chainId: ChainId.BAHAMUT_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+                {
+                    deprecated: true,
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x4237e0A5b55233D5B6D6d1D9BF421723954130D8',
