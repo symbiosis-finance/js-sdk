@@ -25,7 +25,14 @@ export async function raydiumSwap({
         slippage,
     })
 
-    await trade.init()
+    await trade.init().catch((e) => {
+        symbiosis.trackError({
+            provider: 'raydium',
+            reason: e.message,
+            chain_id: String(tokenOut.chain?.id),
+        })
+        throw e
+    })
 
     const { instructions, fee } = await addSolanaFee(from, trade.instructions)
 

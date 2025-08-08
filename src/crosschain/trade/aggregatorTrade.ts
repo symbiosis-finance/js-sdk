@@ -68,7 +68,17 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            oneInchTrade.init().then(successTrade).catch(failTrade)
+            oneInchTrade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackError({
+                        provider: '1inch',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade()
+                })
         }
 
         if (!isOneInchClient && OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
@@ -81,7 +91,17 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            openOceanTrade.init().then(successTrade).catch(failTrade)
+            openOceanTrade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackError({
+                        provider: 'OpenOcean',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade()
+                })
         }
 
         if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
@@ -94,7 +114,17 @@ export class AggregatorTrade extends SymbiosisTrade {
                 to,
             })
             tradesCount += 1
-            izumiTrade.init().then(successTrade).catch(failTrade)
+            izumiTrade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackError({
+                        provider: 'IzumiTrade',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade()
+                })
         }
 
         if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
@@ -107,7 +137,17 @@ export class AggregatorTrade extends SymbiosisTrade {
                 to,
             })
             tradesCount += 1
-            uniV3Trade.init().then(successTrade).catch(failTrade)
+            uniV3Trade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackError({
+                        provider: 'UniV3',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade()
+                })
         }
 
         if (isOtherClient && UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
@@ -121,7 +161,17 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            uniV2Trade.init().then(successTrade).catch(failTrade)
+            uniV2Trade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackError({
+                        provider: 'UniV2',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade()
+                })
         }
 
         this.trade = await new Promise((resolve, reject) => {

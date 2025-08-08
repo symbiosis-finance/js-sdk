@@ -9,13 +9,20 @@ export function isDedustSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut } = params
+    const { tokenAmountIn, tokenOut, symbiosis } = params
     const trade = new DedustTrade({
         ...params,
         tokenAmountInMin: tokenAmountIn,
     })
 
-    await trade.init()
+    await trade.init().catch((e) => {
+        symbiosis.trackError({
+            provider: 'dedust',
+            reason: e.message,
+            chain_id: String(tokenOut.chain?.id),
+        })
+        throw e
+    })
 
     return {
         kind: 'onchain-swap',

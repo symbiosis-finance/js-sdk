@@ -238,3 +238,9 @@ export type MetricParams = {
     tokenIn?: Token
     tokenOut?: Token
 }
+
+export type CounterParams = {
+    provider: string
+    reason: string
+    chain_id: string
+}

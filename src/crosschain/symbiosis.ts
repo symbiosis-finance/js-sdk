@@ -3,7 +3,7 @@ import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
-import type { Histogram } from 'prom-client'
+import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
@@ -26,13 +26,14 @@ import {
     TonBridge,
     TonBridge__factory,
 } from './contracts'
-import { Error, ErrorCode } from './error'
+import { aggregatorErrorToText, Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
     BtcConfig,
     ChainConfig,
     Config,
+    CounterParams,
     FeeConfig,
     MetricParams,
     OmniPoolConfig,
@@ -99,6 +100,7 @@ export class Symbiosis {
 
     private signature: string | undefined
     public metrics?: Histogram<string>
+    public counter?: Counter<string>
 
     public feesConfig?: FeeConfig[]
 
@@ -110,6 +112,10 @@ export class Symbiosis {
 
     public setMetrics(metrics: Histogram<string>) {
         this.metrics = metrics
+    }
+
+    public setErrorCounter(counter: Counter<string>) {
+        this.counter = counter
     }
 
     public setSignature(signature: string | undefined) {
@@ -269,6 +275,18 @@ export class Symbiosis {
                 rpc_from: tokenIn ? this.getProvider(tokenIn?.chainId).connection.url : '',
                 rpc_to: tokenOut ? this.getProvider(tokenOut?.chainId).connection.url : '',
             })
+    }
+
+    public trackError({ provider, reason, chain_id }: CounterParams) {
+        if (!this.counter) {
+            console.log("Prometheus error counter doesn't initialized")
+            return
+        }
+
+        console.log(`[DEBUG]: Provider: ${provider}. Aggregator error reason: ${reason}. Chain id: ${chain_id}`)
+
+        const cleanReason = aggregatorErrorToText(reason)
+        this.counter.inc({ provider, reason: cleanReason, chain_id })
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {

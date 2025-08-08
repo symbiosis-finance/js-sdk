@@ -27,7 +27,14 @@ export async function stonfiSwap({
         deadline,
     })
 
-    await trade.init()
+    await trade.init().catch((e) => {
+        symbiosis.trackError({
+            provider: 'stonfi',
+            reason: e.message,
+            chain_id: String(tokenOut.chain?.id),
+        })
+        throw e
+    })
 
     return {
         kind: 'onchain-swap',
