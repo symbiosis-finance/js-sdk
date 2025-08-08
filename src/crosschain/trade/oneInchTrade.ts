@@ -4,7 +4,6 @@ import { OneInchOracle__factory } from '../contracts'
 import { Symbiosis } from '../symbiosis'
 import { getMinAmount } from '../chainUtils'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { Error } from '../error'
 import { getMulticall } from '../multicall'
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
@@ -23,6 +22,14 @@ interface Protocol {
     title: string
     img: string
     img_color: string
+}
+
+interface OneInchError {
+    error: string
+    description: string
+    statusCode: 400 | 500
+    requestId: string
+    meta: { type: string; value: string }[]
 }
 
 interface OneInchTradeParams extends SymbiosisTradeParams {
@@ -111,9 +118,18 @@ export class OneInchTrade extends SymbiosisTrade {
         try {
             json = await OneInchTrade.request(this.symbiosis, `${this.tokenAmountIn.token.chainId}/swap`, searchParams)
         } catch (error) {
-            const message = error instanceof Error ? error.message : 'Unknown error'
+            let errorText = 'Unknown error'
 
-            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${message}`)
+            if (error instanceof Error) {
+                try {
+                    const parsed = JSON.parse(error.message ?? '') as OneInchError
+                    errorText = `Message: ${parsed.description}`
+                } catch {
+                    errorText = error?.message ?? 'Unknown error'
+                }
+            }
+
+            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${errorText}`)
         }
 
         const tx: {

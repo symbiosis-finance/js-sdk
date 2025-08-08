@@ -24,6 +24,12 @@ interface OpenOceanChain {
     nativeTokenAddress: string
 }
 
+interface OpenOceanError {
+    code: number
+    errorMsg: string
+    error?: string
+}
+
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     // ---  1inch supported chains
     [ChainId.ETH_MAINNET]: {
@@ -197,14 +203,25 @@ export class OpenOceanTrade extends SymbiosisTrade {
         })
 
         if (!response.ok) {
-            const text = await response.text()
-            throw new Error(`Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: ${text}`)
+            let errorText = 'Unknown error'
+            try {
+                const jsonError = JSON.parse(await response.text())
+                errorText = jsonError?.message ?? 'Unknown error'
+            } catch (e) {
+                errorText = await response.text()
+            }
+            throw new Error(
+                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: Message: ${errorText}`
+            )
         }
         const json = await response.json()
 
         if (json.code !== 200) {
+            const errorJson = json as OpenOceanError
             throw new Error(
-                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: ${JSON.stringify(json)}}`
+                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}. Message: ${
+                    errorJson?.error ?? errorJson.errorMsg
+                }`
             )
         }
 

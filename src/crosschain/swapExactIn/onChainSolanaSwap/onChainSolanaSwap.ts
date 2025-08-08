@@ -36,7 +36,14 @@ export function onChainSolanaSwap({
     const tradeInstances = [raydiumTradeInstance, jupiterTradeInstance]
 
     return tradeInstances.map(async (instance) => {
-        const trade = await instance.init()
+        const trade = await instance.init().catch((e) => {
+            symbiosis.trackError({
+                provider: instance.tradeType,
+                reason: e.message,
+                chain_id: String(tokenOut.chain?.id),
+            })
+            throw e
+        })
 
         const { instructions, fee } = await addSolanaFee(from, trade.instructions)
 
