@@ -41,7 +41,7 @@ const aggregatorCategoryPatterns: Record<SwapAggregatorErrorCategory, (string | 
         'No avail liquidity',
         'liquidity',
     ],
-    [SwapAggregatorErrorCategory.BigIntError]: ['converted to BigInt'],
+    [SwapAggregatorErrorCategory.BigIntError]: ['converted to bigint', 'to a bigint'],
     [SwapAggregatorErrorCategory.TokenError]: ['not valid token'],
     [SwapAggregatorErrorCategory.Unknown]: ['unknown'],
 }
