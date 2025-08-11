@@ -269,11 +269,8 @@ export class Symbiosis {
             endTimer({
                 operation,
                 kind,
-                client_id: this.clientId,
                 chain_id_from: tokenIn?.chainId ?? '',
                 chain_id_to: tokenOut?.chainId ?? '',
-                rpc_from: tokenIn ? this.getProvider(tokenIn?.chainId).connection.url : '',
-                rpc_to: tokenOut ? this.getProvider(tokenOut?.chainId).connection.url : '',
             })
     }
 
