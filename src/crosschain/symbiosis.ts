@@ -525,11 +525,6 @@ export class Symbiosis {
             return token.chainId === chainId && !token.deprecated && !token.isSynthetic
         })
 
-        // if token is from manager chain (token's chainIs equals to pool chainId)
-        if (chainId === pool.chainId) {
-            return tokens
-        }
-
         return tokens.filter((token) => {
             const tokenPool = this.getOmniPoolByToken(token)
             return pool.id === tokenPool?.id
