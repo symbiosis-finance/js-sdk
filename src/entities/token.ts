@@ -984,7 +984,7 @@ export const WETH = {
     }),
     [ChainId.KATANA_MAINNET]: new Token({
         chainId: ChainId.KATANA_MAINNET,
-        address: '0x4200000000000000000000000000000000000006',
+        address: '0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62',
         decimals: 18,
         symbol: 'WETH',
         isNative: false,

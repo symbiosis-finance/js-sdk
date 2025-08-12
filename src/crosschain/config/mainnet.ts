@@ -464,7 +464,7 @@ export const config: Config = {
                     address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
                     symbol: 'USDC',
                     decimals: 6,
-                    chainId: 43114,
+                    chainId: ChainId.AVAX_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -476,7 +476,7 @@ export const config: Config = {
                     address: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
                     symbol: 'USDC.e',
                     decimals: 6,
-                    chainId: 43114,
+                    chainId: ChainId.AVAX_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -554,7 +554,7 @@ export const config: Config = {
                     address: '0xe6E5f3d264117E030C21920356641DbD5B3d660c',
                     symbol: 'USDC',
                     decimals: 6,
-                    chainId: 40,
+                    chainId: ChainId.TELOS_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -585,7 +585,7 @@ export const config: Config = {
                     name: 'Tether USDt',
                     symbol: 'USDt',
                     address: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
-                    chainId: 2222,
+                    chainId: ChainId.KAVA_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
@@ -850,7 +850,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC.e',
                     address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
-                    chainId: 10,
+                    chainId: ChainId.OPTIMISM_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -861,7 +861,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
-                    chainId: 10,
+                    chainId: ChainId.OPTIMISM_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -893,7 +893,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
-                    chainId: 42170,
+                    chainId: ChainId.ARBITRUM_NOVA,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -904,7 +904,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
-                    chainId: 42170,
+                    chainId: ChainId.ARBITRUM_NOVA,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -936,7 +936,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035',
-                    chainId: 1101,
+                    chainId: ChainId.POLYGON_ZK,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -948,7 +948,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC.e',
                     address: '0x37eAA0eF3549a5Bb7D431be78a3D99BD360d19e5',
-                    chainId: 1101,
+                    chainId: ChainId.POLYGON_ZK,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -959,7 +959,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
-                    chainId: 1101,
+                    chainId: ChainId.POLYGON_ZK,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1098,7 +1098,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
-                    chainId: 8453,
+                    chainId: ChainId.BASE_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1109,7 +1109,7 @@ export const config: Config = {
                     name: 'USD Base Coin',
                     symbol: 'USDbC',
                     address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
-                    chainId: 8453,
+                    chainId: ChainId.BASE_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -2249,6 +2249,7 @@ export const config: Config = {
             filterBlockOffset: 500,
             stables: [
                 {
+                    deprecated: true,
                     name: 'Wrapped ETH',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',

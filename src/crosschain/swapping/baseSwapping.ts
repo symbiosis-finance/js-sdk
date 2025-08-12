@@ -200,7 +200,7 @@ export abstract class BaseSwapping {
             tokenIn: this.transitTokenIn,
             tokenOut: this.transitTokenOut,
         })
-        this.profiler.tick(this.tradeC ? 'TRANSIT + C' : 'TRANSIT')
+        this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
         this.transit = transit as Transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()

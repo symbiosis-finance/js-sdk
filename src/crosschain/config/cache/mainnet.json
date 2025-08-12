@@ -1794,7 +1794,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "deprecated": false,
+            "deprecated": true,
             "address": "0x4200000000000000000000000000000000000006",
             "id": 111
         },
@@ -3579,7 +3579,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 747474,
-            "deprecated": false,
+            "deprecated": true,
             "address": "0x590500bc694654FeF4Ba396f998e48AD4A131171",
             "id": 223,
             "originalId": 111
