@@ -291,13 +291,22 @@ export class Symbiosis {
         if (feeCollectors.length === 0) {
             return
         }
-        const chainEligibleFeeCollector = feeCollectors.find((i) => {
-            return i.eligibleChains.filter((j) => involvedChainIds.includes(j)).length > 0
-        })
+
+        const zeroFeeCollector = feeCollectors
+            .filter((i) => i.feeRate === '0')
+            .find((i) => {
+                return involvedChainIds.every((j) => i.eligibleChains.includes(j))
+            })
+        if (zeroFeeCollector) {
+            return zeroFeeCollector
+        }
+
+        const chainEligibleFeeCollector = feeCollectors
+            .filter((i) => i.feeRate !== '0')
+            .find((i) => {
+                return i.eligibleChains.filter((j) => involvedChainIds.includes(j)).length > 0
+            })
         if (chainEligibleFeeCollector) {
-            if (chainEligibleFeeCollector.feeRate === '0') {
-                return
-            }
             return chainEligibleFeeCollector
         }
         // get default volume fee collector
