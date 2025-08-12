@@ -1574,7 +1574,7 @@ export const config: Config = {
         },
         {
             id: ChainId.TAIKO_MAINNET,
-            rpc: 'https://taiko-rpc.publicnode.com', // https://rpc.mainnet.taiko.xyz',
+            rpc: 'https://rpc.mainnet.taiko.xyz',
             spareRpcs: ['https://taiko-rpc.publicnode.com', 'https://rpc.ankr.com/taiko'],
             filterBlockOffset: 1000,
             stables: [
@@ -2252,6 +2252,17 @@ export const config: Config = {
                     name: 'Wrapped ETH',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
+                    chainId: ChainId.KATANA_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Wrapped ETH',
+                    symbol: 'WETH',
+                    address: '0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62',
                     chainId: ChainId.KATANA_MAINNET,
                     decimals: 18,
                     icons: {
