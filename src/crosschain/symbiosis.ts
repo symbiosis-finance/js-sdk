@@ -298,7 +298,7 @@ export class Symbiosis {
                 return involvedChainIds.every((j) => i.eligibleChains.includes(j))
             })
         if (zeroFeeCollector) {
-            return zeroFeeCollector
+            return
         }
 
         const chainEligibleFeeCollector = feeCollectors
