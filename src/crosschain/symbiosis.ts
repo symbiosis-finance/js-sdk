@@ -656,6 +656,9 @@ export class Symbiosis {
 
         const eventId = utils.id('TransitTokenSent(address,uint256,address)')
         const log = receipt.logs.find((log: Log) => {
+            if (log.topics.length === 0) {
+                return false
+            }
             return log.topics[0] === eventId
         })
 

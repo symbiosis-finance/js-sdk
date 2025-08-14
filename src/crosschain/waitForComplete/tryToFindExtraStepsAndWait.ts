@@ -85,6 +85,9 @@ export async function tryToFindExtraStepsAndWait(
 export async function findChainFlipSwap(receipt: TransactionReceipt) {
     const swapTokenTopic0 = '0x834b524d9f8ccbd31b00b671c896697b96eb4398c0f56e9386a21f5df61e3ce3'
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === swapTokenTopic0
     })
 
@@ -120,6 +123,9 @@ export async function waitForChainFlipSwap(txHash: string): Promise<string> {
 export async function findThorChainDeposit(receipt: TransactionReceipt) {
     const thorChainDepositTopic0 = '0xef519b7eb82aaf6ac376a6df2d793843ebfd593de5f1a0601d3cc6ab49ebb395'
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === thorChainDepositTopic0
     })
 
@@ -160,6 +166,9 @@ async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
     const synthesisInterface = Synthesis__factory.createInterface()
     const topic0 = synthesisInterface.getEventTopic('BurnRequestBTC')
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === topic0
     })
     if (!log) {
@@ -182,6 +191,9 @@ async function findBurnRequestTON(receipt: TransactionReceipt): Promise<
     const synthesisInterface = Synthesis__factory.createInterface()
     const burnRequestTonTopic = synthesisInterface.getEventTopic('BurnRequestTON')
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === burnRequestTonTopic
     })
 

@@ -59,8 +59,11 @@ export const findSourceChainData = async (
     const synthesis = symbiosis.synthesis(omniPoolConfig.chainId)
     const filter = synthesis.filters.SynthesizeCompleted()
     const tx = await synthesis.provider.getTransactionReceipt(txHash)
-    const foundSynthesizeCompleted = tx.logs.find((i) => {
-        return i.topics[0] === filter.topics?.[0]
+    const foundSynthesizeCompleted = tx.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
+        return log.topics[0] === filter.topics?.[0]
     })
     if (!foundSynthesizeCompleted) return undefined
     const externalId = foundSynthesizeCompleted.topics?.[1]
@@ -292,10 +295,15 @@ export class RevertRequest {
         const event = contract.events['SynthesizeRequest(bytes32,address,uint256,address,address,uint256,address)']
 
         const log = receipt.logs.find((log) => {
+            if (log.topics.length === 0) {
+                return false
+            }
             const topic = contract.getEventTopic(event)
             return log.topics[0].toLowerCase() === topic.toLowerCase()
         })
-        if (!log) return null
+        if (!log) {
+            return null
+        }
 
         return contract.parseLog(log)
     }
@@ -303,8 +311,11 @@ export class RevertRequest {
     private findBurnRequest(receipt: TransactionReceipt): LogDescription | null {
         const contract = Synthesis__factory.createInterface()
         const burnRequest = contract.events['BurnRequest(bytes32,address,uint256,address,address,uint256,address)']
+        const topic = contract.getEventTopic(burnRequest)
         const log = receipt.logs.find((log) => {
-            const topic = contract.getEventTopic(burnRequest)
+            if (log.topics.length === 0) {
+                return false
+            }
             return log.topics[0].toLowerCase() === topic.toLowerCase()
         })
 
