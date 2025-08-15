@@ -6,6 +6,7 @@ import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import retry from 'fetch-retry'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -195,7 +196,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         url.searchParams.set('disableRfq', 'true')
         const apiKeys = this.symbiosis.openOceanConfig.apiKeys
         const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
-        const response = await this.symbiosis.fetch(url.toString(), {
+        const response = await retry(this.symbiosis.fetch, { retryOn: [429] })(url.toString(), {
             headers: {
                 apikey: apiKey,
                 'Content-Type': 'application/json',
