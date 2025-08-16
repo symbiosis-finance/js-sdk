@@ -163,6 +163,7 @@ export class OneInchTrade extends SymbiosisTrade {
             callDataOffset: amountOffset,
             minReceivedOffset,
             priceImpact,
+            gasUnits: +tx.gas,
         }
         return this
     }

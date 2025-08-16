@@ -344,3 +344,22 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
         C: hasTradeC ? totalSlippage : 0,
     }
 }
+
+export function calldataGasUnits(hex: string | number): number {
+    const calldata = String(hex).startsWith('0x') ? String(hex).slice(2) : String(hex)
+
+    let nonZeroBytes = 0
+    let zeroBytes = 0
+
+    // get 2 symbols byte
+    for (let i = 0; i < calldata.length; i += 2) {
+        const byte = calldata.slice(i, i + 2)
+        if (byte === '00') {
+            zeroBytes++
+        } else {
+            nonZeroBytes++
+        }
+    }
+
+    return nonZeroBytes * 16 + zeroBytes * 4
+}
