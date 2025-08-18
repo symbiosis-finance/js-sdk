@@ -28,6 +28,7 @@ enum SwapAggregatorErrorCategory {
     LiquidityError = 'liquidity_error',
     TokenError = 'token_error',
     BigIntError = 'bigint_error',
+    ExceedPlan = 'exceed_plan',
     Unknown = 'unknown',
 }
 
@@ -39,6 +40,7 @@ const aggregatorCategoryPatterns: Record<SwapAggregatorErrorCategory, (string | 
         'no path found', // izumi
         'route not found', // uni v3
     ],
+    [SwapAggregatorErrorCategory.ExceedPlan]: ['plan has been exceeded'],
     [SwapAggregatorErrorCategory.LiquidityError]: ['insufficient liquidity', 'No avail liquidity'],
     [SwapAggregatorErrorCategory.BigIntError]: ['converted to bigint', 'to a bigint'],
     [SwapAggregatorErrorCategory.TokenError]: ['not valid token'],
