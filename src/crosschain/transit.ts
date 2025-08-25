@@ -39,7 +39,6 @@ export class Transit {
     public feeToken1: Token
     public feeToken2: Token | undefined
 
-    protected volumeFeeCollector?: VolumeFeeCollector
     protected out?: TransitOutResult
 
     public constructor(
@@ -245,7 +244,7 @@ export class Transit {
             involvedChainIds.push(tradeAmountOut.token.chainFromId)
         }
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(tradeAmountIn.token.chainId, involvedChainIds)
-        if (volumeFeeCollector) {
+        if (volumeFeeCollector && this.omniPoolConfig.coinGeckoId !== 'usd-coin') {
             postCall = Transit.buildFeeCall(tradeAmountOut, volumeFeeCollector)
             tradeAmountOutNew = Transit.applyVolumeFee(tradeAmountOut, volumeFeeCollector)
             tradeAmountOutMinNew = Transit.applyVolumeFee(tradeAmountOutMin, volumeFeeCollector)
