@@ -9,6 +9,7 @@ import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { BytesLike } from 'ethers'
+import { ConfigCacheData } from './config/cache/builder'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -24,6 +25,14 @@ export interface VolumeFeeCollector {
 }
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
+
+export type DepositoryConfig = {
+    depository: string
+    swapUnlocker: string
+    withdrawUnlocker: string
+    branchedUnlocker: string
+    btcRefundUnlocker?: string
+}
 
 export type ChainConfig = {
     id: ChainId
@@ -43,6 +52,7 @@ export type ChainConfig = {
     fabric: string
     tonPortal?: string
     partnerFeeCollector?: string
+    depository?: DepositoryConfig
 }
 
 export type AdvisorConfig = {
@@ -105,6 +115,8 @@ export type OpenOceanConfig = {
     apiKeys: string[]
 }
 
+export type * from './config/cache/builder'
+
 export type OverrideConfig = {
     btcConfigs?: BtcConfig[]
     chains?: OverrideChainConfig[]
@@ -114,6 +126,8 @@ export type OverrideConfig = {
     oneInchConfig?: OneInchConfig
     openOceanConfig?: OpenOceanConfig
     volumeFeeCollectors?: VolumeFeeCollector[]
+    config?: Config
+    configCache?: ConfigCacheData
 }
 
 export interface MiddlewareCall {

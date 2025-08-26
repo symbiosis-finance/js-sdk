@@ -16,6 +16,7 @@
     },
     "module": "dist/index.esm.js",
     "scripts": {
+        "prepare": "npm run build",
         "build": "tsup",
         "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
@@ -46,15 +47,14 @@
         "bitcoin-address-validation": "^2.2.3",
         "bitcoinjs-lib": "^6.1.5",
         "decimal.js-light": "^2.5.0",
+        "fetch-retry": "^6.0.0",
         "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
         "toformat": "^2.0.0",
-        "tronweb": "^5.3.0"
-    },
-    "peerDependencies": {
+        "tronweb": "^5.3.0",
         "ethers": "^5.2.0"
     },
     "devDependencies": {
