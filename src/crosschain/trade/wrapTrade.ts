@@ -44,6 +44,9 @@ interface WrapTradeParams {
     to: string
 }
 
+const DEPOSIT_GAS_UNITS = 21000
+const UNWRAP_GAS_UNITS = 15000
+
 export class WrapTrade extends SymbiosisTrade {
     public static isSupported(tokenAmountIn: TokenAmount, tokenOut: Token): boolean {
         const wrappedInToken = wrappedToken(tokenAmountIn.token)
@@ -116,6 +119,7 @@ export class WrapTrade extends SymbiosisTrade {
             callDataOffset: 4 + 32,
             minReceivedOffset: 0,
             priceImpact,
+            gasUnits: this.tokenAmountIn.token.isNative ? DEPOSIT_GAS_UNITS : UNWRAP_GAS_UNITS,
         }
         return this
     }

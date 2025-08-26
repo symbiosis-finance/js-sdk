@@ -39,7 +39,6 @@ export class AggregatorTrade extends SymbiosisTrade {
 
     public async init() {
         const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
-
         const trades: (Trade | undefined)[] = []
 
         function successTrade(trade: Trade) {
@@ -204,6 +203,11 @@ export class AggregatorTrade extends SymbiosisTrade {
         })
 
         return this
+    }
+
+    get gasUnits(): number {
+        this.assertTradeInitialized('gasUnits')
+        return this.trade?.gasUnits || 0
     }
 
     private selectTheBestTrade(trades: Trade[]) {
