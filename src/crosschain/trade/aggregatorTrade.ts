@@ -72,7 +72,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 .init()
                 .then(successTrade)
                 .catch((e: Error) => {
-                    symbiosis.trackError({
+                    symbiosis.trackAggregatorError({
                         provider: '1inch',
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
@@ -95,7 +95,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 .init()
                 .then(successTrade)
                 .catch((e: Error) => {
-                    symbiosis.trackError({
+                    symbiosis.trackAggregatorError({
                         provider: 'OpenOcean',
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
@@ -118,7 +118,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 .init()
                 .then(successTrade)
                 .catch((e: Error) => {
-                    symbiosis.trackError({
+                    symbiosis.trackAggregatorError({
                         provider: 'IzumiTrade',
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
@@ -141,7 +141,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 .init()
                 .then(successTrade)
                 .catch((e: Error) => {
-                    symbiosis.trackError({
+                    symbiosis.trackAggregatorError({
                         provider: 'UniV3',
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
@@ -165,7 +165,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 .init()
                 .then(successTrade)
                 .catch((e: Error) => {
-                    symbiosis.trackError({
+                    symbiosis.trackAggregatorError({
                         provider: 'UniV2',
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
