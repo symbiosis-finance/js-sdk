@@ -274,16 +274,20 @@ export class Symbiosis {
             })
     }
 
-    public trackError({ provider, reason, chain_id }: CounterParams) {
+    public trackAggregatorError({ provider, reason, chain_id }: CounterParams) {
         if (!this.counter) {
             console.log("Prometheus error counter doesn't initialized")
             return
         }
 
-        console.log(`[DEBUG]: Provider: ${provider}. Aggregator error reason: ${reason}. Chain id: ${chain_id}`)
+        const partner_id = utils.parseBytes32String(this.clientId)
+
+        console.log(
+            `[DEBUG]: Provider: ${provider}. Partner: ${partner_id} Aggregator error reason: ${reason}. Chain id: ${chain_id}`
+        )
 
         const cleanReason = aggregatorErrorToText(reason)
-        this.counter.inc({ provider, reason: cleanReason, chain_id })
+        this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {

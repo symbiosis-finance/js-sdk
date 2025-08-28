@@ -26,7 +26,7 @@ export async function raydiumSwap({
     })
 
     await trade.init().catch((e) => {
-        symbiosis.trackError({
+        symbiosis.trackAggregatorError({
             provider: 'raydium',
             reason: e.message,
             chain_id: String(tokenOut.chain?.id),

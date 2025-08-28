@@ -243,4 +243,5 @@ export type CounterParams = {
     provider: string
     reason: string
     chain_id: string
+    partner_id: string
 }
