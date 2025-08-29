@@ -96,11 +96,13 @@ export class DedustTrade extends SymbiosisTrade {
         const amountOut = new TokenAmount(this.tokenOut, expectedAmountOut)
         const amountOutMin = new TokenAmount(this.tokenOut, minAmountOut)
 
+        const priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
+
         this.out = {
             amountOut,
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
-            priceImpact: await this.getPriceImpact(this.tokenAmountIn, amountOut),
+            priceImpact,
             routerAddress: to.toString() ?? '',
             callData: body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,

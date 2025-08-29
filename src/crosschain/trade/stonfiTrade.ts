@@ -57,11 +57,13 @@ export class StonfiTrade extends SymbiosisTrade {
         const amountOut = new TokenAmount(this.tokenOut, quote.askUnits)
         const amountOutMin = new TokenAmount(this.tokenOut, quote.minAskUnits)
 
+        const priceImpact = new Percent(BigInt(Math.ceil(-quote.priceImpact * 10000)), '10000')
+
         this.out = {
             amountOut,
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
-            priceImpact: new Percent(BigInt(Math.ceil(-quote.priceImpact * 10000)), '10000'),
+            priceImpact,
             routerAddress: txParams.to.toString(),
             callData: txParams.body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
