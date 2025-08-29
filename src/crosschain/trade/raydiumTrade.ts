@@ -91,12 +91,13 @@ export class RaydiumTrade extends SymbiosisTrade {
 
             const amountOut = new TokenAmount(this.tokenOut, quoteResponse.data.outputAmount)
             const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.data.otherAmountThreshold)
+            const priceImpact = new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000))
 
             this.out = {
                 amountOut,
                 amountOutMin,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact: new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000)),
+                priceImpact,
                 routerAddress: '',
                 callData: '',
                 callDataOffset: 0,

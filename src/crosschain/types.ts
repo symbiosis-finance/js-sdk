@@ -244,3 +244,10 @@ export type CounterParams = {
     reason: string
     chain_id: string
 }
+
+export type PriceImpactMetricParams = {
+    name_from: string
+    name_to: string
+    token_amount: number
+    price_impact: number
+}
