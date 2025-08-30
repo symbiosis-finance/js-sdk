@@ -5,6 +5,7 @@ import { Symbiosis } from '../symbiosis'
 import { OmniPoolConfig } from '../types'
 import { BigNumber } from 'ethers'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { GAS_UNITS_OPERATIONS, SwapOperation } from '../constants'
 
 interface OctoPoolTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -81,6 +82,10 @@ export class OctoPoolTrade extends SymbiosisTrade {
         }
 
         return this
+    }
+
+    public get gasUnits(): number {
+        return GAS_UNITS_OPERATIONS[SwapOperation.OCTO_POOL_SWAP]
     }
 
     public async quote(indexIn: number, indexOut: number, amountIn: BigNumber): Promise<BigNumber> {

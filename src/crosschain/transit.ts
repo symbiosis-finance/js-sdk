@@ -6,12 +6,14 @@ import { BridgeDirection, OmniPoolConfig, VolumeFeeCollector } from './types'
 import { OctoPoolTrade } from './trade'
 import { OctoPoolFeeCollector__factory } from './contracts'
 import { BigNumber } from 'ethers'
+import { GAS_UNITS_OPERATIONS, SwapOperation } from './constants'
 
 interface VolumeFeeCall {
     calldata: string
     receiveSide: string
     path: string
     offset: number
+    gasUnits: number
 }
 
 interface CreateOctoPoolTradeParams {
@@ -121,7 +123,6 @@ export class Transit {
         const paths = []
         const offsets = []
 
-        // octopool swap
         calldatas.push(this.trade.callData)
         receiveSides.push(this.trade.routerAddress)
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
@@ -140,6 +141,10 @@ export class Transit {
             paths,
             offsets,
         }
+    }
+
+    public gasUnits(): number {
+        return this.trade.gasUnits + (this.postCall?.gasUnits ?? 0) // octolopool swap + fee collect
     }
 
     public getBridgeAmountIn(): TokenAmount {
@@ -346,6 +351,7 @@ export class Transit {
             receiveSide: volumeFeeCollector.address,
             path: tokenAmount.token.address,
             offset: 36,
+            gasUnits: GAS_UNITS_OPERATIONS[SwapOperation.COLLECT_FEE],
         }
     }
 
