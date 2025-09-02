@@ -350,7 +350,7 @@ async function buildCrossChainSwap(
         btcConfig,
         tx.relayRecipient,
         tx.otherSideCalldata,
-        100n // metaSynthesize struct
+        100n // metaSynthesize struct size
     )
     call.fees = swapExactInResult.fees || []
     call.priceImpact = swapExactInResult.priceImpact
@@ -419,7 +419,7 @@ async function buildDepositCall(
     return {
         to: dep.depository.address,
         data: lockTx.data!,
-        offset: 4 + 20 + 32, // amount field in DepositoryTypes.Deposit
+        offset: 4 + 32 + 32, // Offset to `amount` field in DepositoryTypes.Deposit
         routes: [
             {
                 provider: 'depository',
@@ -428,8 +428,8 @@ async function buildDepositCall(
         ],
         value: '0',
         amountIn: syBtcAmount,
-        amountOut: new TokenAmount(syBtcAmount.token, 0n),
-        amountOutMin: new TokenAmount(syBtcAmount.token, 0n),
+        amountOut: tokenAmountOutMin,
+        amountOutMin: tokenAmountOutMin,
         fees: [],
         priceImpact: new Fraction(0n),
     }
@@ -451,7 +451,7 @@ type EstimateWrapParams = {
     refundAddress?: string
     clientId?: string
 }
-type EstimateWrapBodyParams = {
+export type EstimateWrapBodyParams = {
     amount: number
     info: {
         portalFee: number
@@ -516,7 +516,7 @@ async function estimateWrap({
 type WrapParams = EstimateWrapParams & {
     feeLimit: string
 }
-type WrapBodyParams = EstimateWrapBodyParams & {
+export type WrapBodyParams = EstimateWrapBodyParams & {
     feeLimit: number
 }
 

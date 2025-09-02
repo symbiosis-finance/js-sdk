@@ -1,4 +1,4 @@
-import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Log, StaticJsonRpcProvider, Provider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
@@ -110,7 +110,7 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
 ]
 
 export class Symbiosis {
-    public providers: Map<ChainId, StaticJsonRpcProvider>
+    public providers: Map<ChainId, Provider>
 
     public readonly cache: Cache
     public readonly config: Config
@@ -220,7 +220,7 @@ export class Symbiosis {
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         this.configName = configName
         if (overrideConfig?.config) {
-            this.config = structuredClone(overrideConfig.config)
+            this.config = overrideConfig.config
         } else {
             if (configName === 'mainnet') {
                 this.config = structuredClone(mainnet)
@@ -431,7 +431,7 @@ export class Symbiosis {
         return new Zapping(this, omniPoolConfig)
     }
 
-    public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
+    public getProvider(chainId: ChainId, rpc?: string): Provider {
         if (rpc) {
             const url = isTronChainId(chainId) ? `${rpc}/jsonrpc` : rpc
 
@@ -595,7 +595,9 @@ export class Symbiosis {
         const config = this.config.chains.find((item) => {
             return item.id === chainId
         })
-        if (!config) throw new Error(`Could not config by given chainId: ${chainId}`)
+        if (!config) {
+            throw new Error(`Could not config by given chainId: ${chainId}`)
+        }
         return config
     }
 
@@ -618,7 +620,7 @@ export class Symbiosis {
     public transitTokens(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token[] {
         const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new Error(`Cannot find omniPool ${pool}`)
+            throw new Error(`Cannot find omniPool for chainId ${omniPoolConfig.chainId}`)
         }
 
         const tokens = this.configCache.tokens().filter((token) => {
