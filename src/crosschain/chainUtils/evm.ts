@@ -256,10 +256,7 @@ export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token,
     const chainId = tokenIn.chainId
 
     // Base tokens for building intermediary trading routes
-    const bases = BASES_TO_CHECK_TRADES_AGAINST[chainId]
-    if (!bases) {
-        throw new Error('Bases not found')
-    }
+    const bases = BASES_TO_CHECK_TRADES_AGAINST[chainId] || []
 
     // All pairs from base tokens
     const basePairs: [Token, Token][] = flatMap(bases, (base: Token): [Token, Token][] =>
