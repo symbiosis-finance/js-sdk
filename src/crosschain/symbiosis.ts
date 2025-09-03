@@ -493,10 +493,11 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts {
+    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts | null {
         const config = this.chainConfig(chainId)
         const signerOrProvider = signer || this.getProvider(chainId)
-        const depository = config.depository!
+        if (!config.depository) return null
+        const depository = config.depository
 
         return {
             depository: Depository__factory.connect(depository.depository, signerOrProvider),
