@@ -165,13 +165,10 @@ export class RevertRequest {
 
     async init({ validateState = false, synthesizeRequestFinder }: InitProps): Promise<PendingRequest | null> {
         const provider = this.symbiosis.getProvider(this.chainId)
-        await provider.ready
 
         const receipt = await provider.getTransactionReceipt(this.transactionHash)
         if (!receipt) {
-            throw new Error(
-                `Tx ${this.transactionHash} does not exist on chain ${this.chainId}. Provider ${provider.connection.url}`
-            )
+            throw new Error(`Tx ${this.transactionHash} does not exist on chain ${this.chainId}`)
         }
 
         let type: PendingRequestType = 'synthesize'

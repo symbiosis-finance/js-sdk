@@ -1,4 +1,4 @@
-import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Log, StaticJsonRpcProvider, Provider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
@@ -7,8 +7,14 @@ import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
+    BranchedUnlocker,
+    BranchedUnlocker__factory,
     Bridge,
     Bridge__factory,
+    BtcRefundUnlocker,
+    BtcRefundUnlocker__factory,
+    Depository,
+    Depository__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -21,10 +27,14 @@ import {
     OmniPoolOracle__factory,
     Portal,
     Portal__factory,
+    SwapUnlocker,
+    SwapUnlocker__factory,
     Synthesis,
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
+    WithdrawUnlocker,
+    WithdrawUnlocker__factory,
 } from './contracts'
 import { aggregatorErrorToText, Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
@@ -76,6 +86,14 @@ export type DiscountTier = {
     discount: number
 }
 
+export type DepositoryContracts = {
+    depository: Depository
+    branchedUnlocker: BranchedUnlocker
+    swapUnlocker: SwapUnlocker
+    withdrawUnlocker: WithdrawUnlocker
+    btcRefundUnlocker?: BtcRefundUnlocker
+}
+
 const defaultFetch: typeof fetch = (url, init) => {
     return isomorphicFetch(url as string, init)
 }
@@ -91,7 +109,7 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
 ]
 
 export class Symbiosis {
-    public providers: Map<ChainId, StaticJsonRpcProvider>
+    public providers: Map<ChainId, Provider>
 
     public readonly cache: Cache
     public readonly config: Config
@@ -195,36 +213,39 @@ export class Symbiosis {
 
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         this.configName = configName
-        if (configName === 'mainnet') {
-            this.config = structuredClone(mainnet)
-        } else if (configName === 'testnet') {
-            this.config = structuredClone(testnet)
-        } else if (configName === 'dev') {
-            this.config = structuredClone(dev)
+        if (overrideConfig?.config) {
+            this.config = overrideConfig.config
         } else {
-            throw new Error('Unknown config name')
-        }
-        this.cache = new Cache()
+            if (configName === 'mainnet') {
+                this.config = structuredClone(mainnet)
+            } else if (configName === 'testnet') {
+                this.config = structuredClone(testnet)
+            } else if (configName === 'dev') {
+                this.config = structuredClone(dev)
+            } else {
+                throw new Error('Unknown config name')
+            }
 
-        if (overrideConfig?.chains) {
-            const { chains } = overrideConfig
-            this.config.chains = this.config.chains.map((chainConfig) => {
-                const found = chains.find((i) => i.id === chainConfig.id)
-                if (found) {
-                    chainConfig.rpc = found.rpc
-                    chainConfig.headers = found.headers
-                }
-                return chainConfig
-            })
-        }
-        if (overrideConfig?.limits) {
-            this.config.limits = overrideConfig.limits
-        }
-        if (overrideConfig?.advisor) {
-            this.config.advisor = overrideConfig.advisor
-        }
-        if (overrideConfig?.btcConfigs) {
-            this.config.btcConfigs = overrideConfig.btcConfigs
+            if (overrideConfig?.chains) {
+                const { chains } = overrideConfig
+                this.config.chains = this.config.chains.map((chainConfig) => {
+                    const found = chains.find((i) => i.id === chainConfig.id)
+                    if (found) {
+                        chainConfig.rpc = found.rpc
+                        chainConfig.headers = found.headers
+                    }
+                    return chainConfig
+                })
+            }
+            if (overrideConfig?.limits) {
+                this.config.limits = overrideConfig.limits
+            }
+            if (overrideConfig?.advisor) {
+                this.config.advisor = overrideConfig.advisor
+            }
+            if (overrideConfig?.btcConfigs) {
+                this.config.btcConfigs = overrideConfig.btcConfigs
+            }
         }
         this.oneInchConfig = {
             apiUrl: 'https://api.1inch.dev/swap/v5.2/',
@@ -248,8 +269,8 @@ export class Symbiosis {
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
-        this.configCache = new ConfigCache(configName)
-
+        this.cache = new Cache()
+        this.configCache = new ConfigCache(overrideConfig?.configCache || configName)
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
@@ -406,7 +427,7 @@ export class Symbiosis {
         return new Zapping(this, omniPoolConfig)
     }
 
-    public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
+    public getProvider(chainId: ChainId, rpc?: string): Provider {
         if (rpc) {
             const url = isTronChainId(chainId) ? `${rpc}/jsonrpc` : rpc
 
@@ -466,6 +487,23 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return MetaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts | null {
+        const config = this.chainConfig(chainId)
+        const signerOrProvider = signer || this.getProvider(chainId)
+        if (!config.depository) return null
+        const depository = config.depository
+
+        return {
+            depository: Depository__factory.connect(depository.depository, signerOrProvider),
+            swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
+            withdrawUnlocker: WithdrawUnlocker__factory.connect(depository.withdrawUnlocker, signerOrProvider),
+            btcRefundUnlocker: depository.btcRefundUnlocker
+                ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
+                : undefined,
+            branchedUnlocker: BranchedUnlocker__factory.connect(depository.branchedUnlocker, signerOrProvider),
+        }
     }
 
     public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
@@ -554,7 +592,9 @@ export class Symbiosis {
         const config = this.config.chains.find((item) => {
             return item.id === chainId
         })
-        if (!config) throw new Error(`Could not config by given chainId: ${chainId}`)
+        if (!config) {
+            throw new Error(`Could not config by given chainId: ${chainId}`)
+        }
         return config
     }
 
@@ -577,7 +617,7 @@ export class Symbiosis {
     public transitTokens(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token[] {
         const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new Error(`Cannot find omniPool ${pool}`)
+            throw new Error(`Cannot find omniPool for chainId ${omniPoolConfig.chainId}`)
         }
 
         const tokens = this.configCache.tokens().filter((token) => {

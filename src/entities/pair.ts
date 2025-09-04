@@ -22,7 +22,7 @@ import { InsufficientInputAmountError, InsufficientReservesError } from '../erro
 import { Token } from './token'
 import { BytesLike } from '@ethersproject/bytes'
 
-let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
+export let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
 
 // TODO replace with onchain call to Factory.getPair method
 export function getZkCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
