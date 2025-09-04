@@ -55,8 +55,21 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOpenOceanClient = clientId === 'openocean'
         const isOtherClient = !isOneInchClient && !isOpenOceanClient
         // split the probability of using oneInch and openOcean
-        const isOneInchUsage = Math.random() < 0.5
-        const isOpenOceanUsage = !isOneInchUsage
+        let isOneInchUsage = Math.random() <= 0.5
+        let isOpenOceanUsage = !isOneInchUsage
+
+        if (tokenAmountIn.token.symbol?.includes('USD')) {
+            if (parseFloat(tokenAmountIn.toSignificant()) >= 10000) {
+                isOneInchUsage = true
+                isOpenOceanUsage = true
+            }
+        }
+        if (tokenAmountIn.token.symbol?.includes('ETH')) {
+            if (parseFloat(tokenAmountIn.toSignificant()) >= 2.5) {
+                isOneInchUsage = true
+                isOpenOceanUsage = true
+            }
+        }
 
         let tradesCount = 0
         if (isOneInchUsage && !isOpenOceanClient && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
