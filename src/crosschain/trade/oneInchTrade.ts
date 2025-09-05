@@ -322,7 +322,7 @@ export class OneInchTrade extends SymbiosisTrade {
         const tokens = [wrappedToken(tokenAmountIn.token), wrappedToken(tokenAmountOut.token)]
 
         const aggregated = await this.symbiosis.cache.get(
-            ['getOneInchRateToEth', ...tokens.map((i) => i.address)],
+            ['getOneInchRateToEth', chainId.toString(), ...tokens.map((i) => i.address)],
             async () => {
                 const calls = tokens.map((token) => ({
                     target: oracleAddress,
@@ -333,7 +333,7 @@ export class OneInchTrade extends SymbiosisTrade {
                 }))
 
                 const multicall = await getMulticall(provider)
-                return multicall.callStatic.tryAggregate(false, calls)
+                return multicall.callStatic.tryAggregate(true, calls)
             },
             10 * 60 // 10 minutes
         )
@@ -341,7 +341,9 @@ export class OneInchTrade extends SymbiosisTrade {
         const denominator = BigNumber.from(10).pow(18) // eth decimals
 
         const data = aggregated.map(([success, returnData], i): BigNumber | undefined => {
-            if (!success || returnData === '0x') return
+            if (!success || returnData === '0x') {
+                return
+            }
             const result = oracleInterface.decodeFunctionResult('getRateToEth', returnData)
 
             const numerator = BigNumber.from(10).pow(tokens[i].decimals)

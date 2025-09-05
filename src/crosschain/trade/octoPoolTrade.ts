@@ -63,8 +63,10 @@ export class OctoPoolTrade extends SymbiosisTrade {
         const priceImpact = calculatePriceImpact(this.tokenAmountIn, amountOut)
 
         this.symbiosis.trackPriceImpactSwap({
-            name_from: this.tokenAmountIn.token.name || '',
-            name_to: this.tokenOut.name || '',
+            name_from: `${this.tokenAmountIn.token.symbol}(${
+                (this.tokenAmountIn.token.chainFrom || this.tokenAmountIn.token.chain)?.name
+            })`,
+            name_to: `${this.tokenOut.symbol}(${(this.tokenOut.chainFrom || this.tokenOut.chain)?.name})`,
             token_amount: Number(this.tokenAmountIn.toSignificant(4)),
             price_impact: Math.abs(+priceImpact.toSignificant(2)),
         })
