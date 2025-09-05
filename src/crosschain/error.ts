@@ -29,6 +29,7 @@ enum SwapAggregatorErrorCategory {
     TokenError = 'token_error',
     BigIntError = 'bigint_error',
     ExceedPlan = 'exceed_plan',
+    OracleError = 'oracle_error',
     Unknown = 'unknown',
 }
 
@@ -40,6 +41,7 @@ const aggregatorCategoryPatterns: Record<SwapAggregatorErrorCategory, (string | 
         'no path found', // izumi
         'route not found', // uni v3
     ],
+    [SwapAggregatorErrorCategory.OracleError]: ['oneinch oracle'],
     [SwapAggregatorErrorCategory.ExceedPlan]: ['plan has been exceeded'],
     [SwapAggregatorErrorCategory.LiquidityError]: ['insufficient liquidity', 'No avail liquidity'],
     [SwapAggregatorErrorCategory.BigIntError]: ['converted to bigint', 'to a bigint'],
