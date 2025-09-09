@@ -8,6 +8,7 @@ import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { utils } from 'ethers'
 import { FeeItem } from '../types'
+import { ChainId } from '../../constants'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -58,16 +59,32 @@ export class AggregatorTrade extends SymbiosisTrade {
         let isOneInchUsage = Math.random() <= 0.5
         let isOpenOceanUsage = !isOneInchUsage
 
-        if (tokenAmountIn.token.symbol?.includes('USD')) {
-            if (parseFloat(tokenAmountIn.toSignificant()) >= 10000) {
-                isOneInchUsage = true
-                isOpenOceanUsage = true
+        const chainsForOneInchUsageOnly = [
+            ChainId.TRON_MAINNET,
+            ChainId.BASE_MAINNET,
+            ChainId.ARBITRUM_MAINNET,
+            ChainId.ETH_MAINNET,
+            ChainId.BSC_MAINNET,
+        ]
+
+        const chains = [tokenAmountIn.token.chainId, tokenOut.chainId]
+        const isOneInchPair = chains.every((i) => chainsForOneInchUsageOnly.includes(i))
+
+        if (isOneInchPair) {
+            isOneInchUsage = true
+            isOpenOceanUsage = false
+        } else {
+            if (tokenAmountIn.token.symbol?.includes('USD')) {
+                if (parseFloat(tokenAmountIn.toSignificant()) >= 10000) {
+                    isOneInchUsage = true
+                    isOpenOceanUsage = true
+                }
             }
-        }
-        if (tokenAmountIn.token.symbol?.includes('ETH')) {
-            if (parseFloat(tokenAmountIn.toSignificant()) >= 2.5) {
-                isOneInchUsage = true
-                isOpenOceanUsage = true
+            if (tokenAmountIn.token.symbol?.includes('ETH')) {
+                if (parseFloat(tokenAmountIn.toSignificant()) >= 2.5) {
+                    isOneInchUsage = true
+                    isOpenOceanUsage = true
+                }
             }
         }
 
