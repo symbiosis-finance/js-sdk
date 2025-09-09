@@ -8,7 +8,6 @@ import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { utils } from 'ethers'
 import { FeeItem } from '../types'
-import { ChainId } from '../../constants'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -17,6 +16,7 @@ interface AggregatorTradeParams extends SymbiosisTradeParams {
     from: string
     clientId: string
     deadline: number
+    useOneInchOnly?: boolean
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -28,9 +28,11 @@ class TradeNotInitializedError extends Error {
 
 export class AggregatorTrade extends SymbiosisTrade {
     protected trade: Trade | undefined
+    protected useOneInchOnly: boolean
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
+        this.useOneInchOnly = params.useOneInchOnly || false
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -59,18 +61,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         let isOneInchUsage = Math.random() <= 0.5
         let isOpenOceanUsage = !isOneInchUsage
 
-        const chainsForOneInchUsageOnly = [
-            ChainId.TRON_MAINNET,
-            ChainId.BASE_MAINNET,
-            ChainId.ARBITRUM_MAINNET,
-            ChainId.ETH_MAINNET,
-            ChainId.BSC_MAINNET,
-        ]
-
-        const chains = [tokenAmountIn.token.chainId, tokenOut.chainId]
-        const isOneInchPair = chains.every((i) => chainsForOneInchUsageOnly.includes(i))
-
-        if (isOneInchPair) {
+        if (this.useOneInchOnly) {
             isOneInchUsage = true
             isOpenOceanUsage = false
         } else {

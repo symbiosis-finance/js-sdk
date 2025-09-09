@@ -9,6 +9,8 @@ import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { BytesLike } from 'ethers'
+import { Cache } from './cache'
+import { Logger } from 'pino'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -114,6 +116,7 @@ export type OverrideConfig = {
     oneInchConfig?: OneInchConfig
     openOceanConfig?: OpenOceanConfig
     volumeFeeCollectors?: VolumeFeeCollector[]
+    cache?: Cache
 }
 
 export interface MiddlewareCall {
@@ -250,4 +253,8 @@ export type PriceImpactMetricParams = {
     name_to: string
     token_amount: number
     price_impact: number
+}
+
+export type Context = {
+    logger: Logger
 }

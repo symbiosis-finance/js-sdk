@@ -31,7 +31,7 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
                 return result
             }
         } catch (e) {
-            console.error('Optimal route has not been built', e)
+            symbiosis.context?.logger.error('Optimal route has not been built', e)
         }
     }
 

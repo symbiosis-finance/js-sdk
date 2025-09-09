@@ -33,6 +33,7 @@ import {
     BtcConfig,
     ChainConfig,
     Config,
+    Context,
     CounterParams,
     FeeConfig,
     MetricParams,
@@ -103,6 +104,7 @@ export class Symbiosis {
     public sdkDurationMetric?: Histogram<string>
     public priceImpactSwapMetric?: Histogram<string>
     public counter?: Counter<string>
+    public context?: Context
 
     public feesConfig?: FeeConfig[]
 
@@ -111,6 +113,10 @@ export class Symbiosis {
     public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
+
+    public setContext(context: Context) {
+        this.context = context
+    }
 
     public setMetrics({
         symbiosisSdkDuration,
@@ -204,7 +210,8 @@ export class Symbiosis {
         } else {
             throw new Error('Unknown config name')
         }
-        this.cache = new Cache()
+
+        this.cache = overrideConfig?.cache || new Cache()
 
         if (overrideConfig?.chains) {
             const { chains } = overrideConfig
@@ -268,7 +275,7 @@ export class Symbiosis {
 
     public createMetricTimer() {
         if (!this.sdkDurationMetric) {
-            console.log('Prometheus metrics are not initialized')
+            this.context?.logger.error('Prometheus metrics are not initialized')
             return
         }
 
@@ -285,15 +292,13 @@ export class Symbiosis {
 
     public trackAggregatorError({ provider, reason, chain_id }: CounterParams) {
         if (!this.counter) {
-            console.log("Prometheus error counter doesn't initialized")
+            this.context?.logger.error("Prometheus error counter doesn't initialized")
             return
         }
 
         const partner_id = utils.parseBytes32String(this.clientId)
 
-        console.log(
-            `[DEBUG]: Provider: ${provider}. Partner: ${partner_id} Aggregator error reason: ${reason}. Chain id: ${chain_id}`
-        )
+        this.context?.logger.error(`Provider: ${provider}, ChainId: ${chain_id}, Aggregator error reason: ${reason}.`)
 
         const cleanReason = aggregatorErrorToText(reason)
         this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
@@ -301,7 +306,7 @@ export class Symbiosis {
 
     public trackPriceImpactSwap({ name_from, name_to, token_amount, price_impact }: PriceImpactMetricParams) {
         if (!this.priceImpactSwapMetric) {
-            console.log("Prometheus price impact swap metric doesn't initialized")
+            this.context?.logger.error("Prometheus price impact swap metric doesn't initialized")
             return
         }
         const amountBucket = [

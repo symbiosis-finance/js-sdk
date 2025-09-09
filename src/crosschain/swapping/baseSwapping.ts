@@ -38,6 +38,7 @@ import {
 import { Profiler } from '../../entities/profiler'
 import { createFakeAmount } from '../../utils'
 import { ChainId } from '../../constants'
+import { isUseOneInchOnly } from '../utils'
 
 type MetaRouteParams = {
     amount: string
@@ -500,6 +501,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
+            useOneInchOnly: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
         })
     }
 
@@ -540,6 +542,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
+            useOneInchOnly: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
         })
     }
 

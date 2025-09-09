@@ -20,6 +20,7 @@ import { BIPS_BASE } from '../constants'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { validate } from 'bitcoin-address-validation'
+import { isUseOneInchOnly } from '../utils'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -150,7 +151,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         value: new TokenAmount(btc, btcForwarderFeeMax.raw),
     })
 
-    console.log('Should be minted not less than', `${syBtcAmount.toSignificant()} syBTC`)
+    symbiosis.context?.logger.info('Should be minted not less than', `${syBtcAmount.toSignificant()} syBTC`)
 
     // >> TODO patch amounts instead calling quote again
     const {
@@ -284,7 +285,7 @@ async function buildTail(
 }
 
 async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAmount): Promise<MultiCallItem[]> {
-    const { to, tokenOut, symbiosis } = context
+    const { to, tokenAmountIn, tokenOut, symbiosis } = context
 
     if (syBtcAmount.token.equals(tokenOut)) {
         return []
@@ -294,6 +295,7 @@ async function buildOnChainSwap(context: SwapExactInParams, syBtcAmount: TokenAm
         tokenAmountIn: syBtcAmount,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
+        useOneInchOnly: isUseOneInchOnly(tokenAmountIn.token, tokenOut),
     })
     await aggregatorTrade.init()
 

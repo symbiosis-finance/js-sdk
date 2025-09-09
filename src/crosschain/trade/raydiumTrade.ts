@@ -107,7 +107,7 @@ export class RaydiumTrade extends SymbiosisTrade {
 
             return this
         } catch (err) {
-            console.log('Failed to swap via Raydium', err)
+            this.symbiosis.context?.logger.error('Failed to swap via Raydium', err)
             throw err
         }
     }
@@ -126,7 +126,7 @@ export class RaydiumTrade extends SymbiosisTrade {
         const outputTokenAcc = tokenAccountsFrom.find((a) => a.mint.toBase58() === outputMint)?.publicKey
 
         if (!inputTokenAcc && !isInputSol) {
-            console.error(
+            this.symbiosis.context?.logger.error(
                 `Raydium swap. Do not have input token account for ${this.tokenAmountIn.token.symbol} ${inputMint}`
             )
             return []

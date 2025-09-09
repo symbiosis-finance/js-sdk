@@ -52,7 +52,9 @@
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
         "toformat": "^2.0.0",
-        "tronweb": "^5.3.0"
+        "tronweb": "^5.3.0",
+        "pino": "^8.0.0",
+        "pino-pretty": "^8.0.0"
     },
     "peerDependencies": {
         "ethers": "^5.2.0"

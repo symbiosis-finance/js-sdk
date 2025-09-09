@@ -218,7 +218,9 @@ export class UniV3Trade extends SymbiosisTrade {
         let bestAmountOut: JSBI | undefined = undefined
         for (const result of quotaResults) {
             if (result.status === 'rejected') {
-                console.error(`UniV3Trade rejected: ${JSON.stringify(result.reason?.toString())}`)
+                this.symbiosis.context?.logger.error(
+                    `UniV3Trade rejected: ${JSON.stringify(result.reason?.toString())}`
+                )
                 continue
             }
 

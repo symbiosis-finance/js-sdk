@@ -119,7 +119,7 @@ export class JupiterTrade extends SymbiosisTrade {
 
             return this
         } catch (err) {
-            console.log('Failed to swap via Jupiter', err)
+            this.symbiosis.context?.logger.error('Failed to swap via Jupiter', err)
             throw err
         }
     }
