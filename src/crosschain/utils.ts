@@ -1,5 +1,5 @@
 import { ChainId } from '../constants'
-import { Token } from 'symbiosis-js-sdk'
+import { Token } from '../entities'
 
 export function isUseOneInchOnly(tokenIn: Token, tokenOut: Token): boolean {
     const chainsForOneInchUsageOnly = [
