@@ -307,22 +307,22 @@ async function buildOnChainSwap(
     })
     await aggregatorTrade.init()
 
-    const dep = context.symbiosis.depository(syBtcAmount.token.chainId!)
+    const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
         const transferCall = ERC20__factory.createInterface().encodeFunctionData('transfer', [
             to,
             aggregatorTrade.amountOutMin.toBigInt(),
         ])
-        const call = await buildDepositCall(
+        const call = await buildDepositCall({
             context,
             dep,
             syBtcAmount,
-            aggregatorTrade.amountOutMin,
+            tokenAmountOutMin: aggregatorTrade.amountOutMin,
             btcConfig,
-            aggregatorTrade.amountOutMin.token.address,
-            transferCall,
-            68n // FIXME: could be wrong
-        )
+            target: aggregatorTrade.amountOutMin.token.address,
+            targetCalldata: transferCall,
+            targetOffset: 68n,
+        })
         call.fees = aggregatorTrade.fees || []
         call.priceImpact = aggregatorTrade.priceImpact
 
@@ -369,16 +369,16 @@ async function buildCrossChainSwap(
 
     const dep = context.symbiosis.depository(syBtcAmount.token.chainId!)
     if (dep) {
-        const call = await buildDepositCall(
+        const call = await buildDepositCall({
             context,
             dep,
             syBtcAmount,
-            swapExactInResult.tokenAmountOutMin,
+            tokenAmountOutMin: swapExactInResult.tokenAmountOutMin,
             btcConfig,
-            tx.relayRecipient,
-            tx.otherSideCalldata,
-            100n // metaSynthesize struct size
-        )
+            target: tx.relayRecipient,
+            targetCalldata: tx.otherSideCalldata,
+            targetOffset: 100n, // metaSynthesize struct size
+        })
         call.fees = swapExactInResult.fees || []
         call.priceImpact = swapExactInResult.priceImpact
         return [call]
@@ -417,16 +417,27 @@ async function buildCrossChainSwap(
     }
 }
 
-async function buildDepositCall(
-    context: SwapExactInParams,
-    dep: DepositoryContracts,
-    syBtcAmount: TokenAmount,
-    tokenAmountOutMin: TokenAmount,
-    btcConfig: BtcConfig,
-    target: string,
-    targetCalldata: BytesLike,
+type BuildDepositCallParameters = {
+    context: SwapExactInParams
+    dep: DepositoryContracts
+    syBtcAmount: TokenAmount
+    tokenAmountOutMin: TokenAmount
+    btcConfig: BtcConfig
+    target: string
+    targetCalldata: BytesLike
     targetOffset: BigNumberish
-): Promise<MultiCallItem> {
+}
+
+async function buildDepositCall({
+    context,
+    dep,
+    syBtcAmount,
+    tokenAmountOutMin,
+    btcConfig,
+    target,
+    targetCalldata,
+    targetOffset,
+}: BuildDepositCallParameters): Promise<MultiCallItem> {
     const { to, refundAddress } = context
     const fromToken = syBtcAmount.token
     const toToken = tokenAmountOutMin.token
@@ -434,9 +445,9 @@ async function buildDepositCall(
     const swapCondition = await dep.swapUnlocker.encodeCondition({
         outToken: toToken.address, // destination token
         outMinAmount: tokenAmountOutMin.toBigInt(),
-        target: target, // target to send destination token after validation
-        targetCalldata: targetCalldata, // calldata to call on target. If it's empty then tokens are simply transferred
-        targetOffset: targetOffset, // offset to patch-in amountTo in targetCalldata
+        target, // target to send destination token after validation
+        targetCalldata, // calldata to call on target. If it's empty then tokens are simply transferred
+        targetOffset, // offset to patch-in amountTo in targetCalldata
     })
     const withdrawCondition = await dep.withdrawUnlocker.encodeCondition({
         recipient: to, // owner can withdraw fromToken directly

@@ -16,7 +16,6 @@
     },
     "module": "dist/index.esm.js",
     "scripts": {
-        "prepare": "npm run build",
         "build": "tsup",
         "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
@@ -48,7 +47,6 @@
         "bitcoinjs-lib": "^6.1.5",
         "decimal.js-light": "^2.5.0",
         "ethers": "^5.2.0",
-        "fetch-retry": "^6.0.0",
         "isomorphic-unfetch": "^3.1.0",
         "jsbi": "^3.1.1",
         "lodash.flatmap": "^4.5.0",
