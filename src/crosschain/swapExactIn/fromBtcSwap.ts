@@ -256,13 +256,15 @@ async function buildTail(
     const swapCalls = await buildSwapFunc(context, syBtcAmount)
     let amountOut = syBtcAmount
     let amountOutMin = syBtcAmount
-    const priceImpact = new Percent('0', BIPS_BASE)
+    let priceImpact = new Percent('0', BIPS_BASE)
+
     if (swapCalls.length > 0) {
         calls.push(...swapCalls)
         fees.push(...swapCalls.map((i) => i.fees).flat())
         routes.push(...swapCalls.map((i) => i.routes).flat())
         amountOut = swapCalls[swapCalls.length - 1].amountOut
         amountOutMin = swapCalls[swapCalls.length - 1].amountOutMin
+        priceImpact = swapCalls[swapCalls.length - 1].priceImpact
     }
 
     const multicallRouter = symbiosis.multicallRouter(chainId)
