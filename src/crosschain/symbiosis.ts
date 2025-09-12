@@ -298,8 +298,6 @@ export class Symbiosis {
 
         const partner_id = utils.parseBytes32String(this.clientId)
 
-        this.context?.logger.error(`Provider: ${provider}, ChainId: ${chain_id}, Aggregator error reason: ${reason}.`)
-
         const cleanReason = aggregatorErrorToText(reason)
         this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
     }

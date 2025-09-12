@@ -44,13 +44,16 @@ export class AggregatorTrade extends SymbiosisTrade {
         const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
 
         const trades: (Trade | undefined)[] = []
+        const errors: Error[] = []
 
         function successTrade(trade: Trade) {
             trades.push(trade)
         }
 
-        function failTrade() {
+        function failTrade(e: Error) {
             trades.push(undefined)
+            errors.push(e)
+            symbiosis.context?.logger.error(e)
         }
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)
@@ -101,7 +104,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
                     })
-                    failTrade()
+                    failTrade(e)
                 })
         }
 
@@ -124,7 +127,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                         reason: e.message,
                         chain_id: String(tokenOut.chain?.id),
                     })
-                    failTrade()
+                    failTrade(e)
                 })
         }
 
@@ -181,7 +184,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                     if (theBestTrade) {
                         resolve(theBestTrade)
                     } else {
-                        reject(new Error('Aggregator trade failed'))
+                        reject(new AggregateError(errors, 'Aggregator trade failed'))
                     }
                     clearInterval(intervalId)
                     return
