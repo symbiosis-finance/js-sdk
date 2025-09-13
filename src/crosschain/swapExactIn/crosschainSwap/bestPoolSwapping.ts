@@ -1,11 +1,10 @@
 import { Percent, Token, wrappedToken } from '../../../entities'
 import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
-import { bestTokenSwapping } from './bestTokenSwapping'
 import { Symbiosis } from '../../symbiosis'
 import { theBest } from '../utils'
 
-interface OptimalRoute {
-    pool: OmniPoolConfig
+interface Route {
+    poolConfig: OmniPoolConfig
     transitTokenIn: Token
     transitTokenOut: Token
 }
@@ -13,50 +12,78 @@ interface OptimalRoute {
 // Swapping wrapper what select the best pool for swapping
 export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, selectMode } = params
+
     const optimalRoute = getOptimalRoute(symbiosis, tokenAmountIn.token, tokenOut)
-
-    const promises: Promise<SwapExactInResult>[] = []
     if (optimalRoute) {
-        try {
-            const optimalPromise = symbiosis.newSwapping(optimalRoute.pool).exactIn({
-                ...params,
-                transitTokenIn: optimalRoute.transitTokenIn,
-                transitTokenOut: optimalRoute.transitTokenOut,
-            })
-            promises.push(optimalPromise)
-            const result = await optimalPromise
-
-            const threshold = new Percent('-1', '100') // -1%
-            if (result.priceImpact.greaterThan(threshold)) {
-                return result
-            }
-        } catch (e) {
-            symbiosis.context?.logger.error('Optimal route has not been built', e)
+        const result = await tryRoute(symbiosis, optimalRoute, params)
+        const threshold = new Percent('-1', '100') // -1%
+        if (result.priceImpact.greaterThan(threshold)) {
+            return result
+        } else {
+            symbiosis.context?.logger.error(`Optimal route price impact is too high ${result.priceImpact.toFixed()}`)
         }
     }
 
-    const { omniPools } = symbiosis.config
+    const routes = getRoutes(symbiosis, tokenAmountIn.token, tokenOut)
+    if (optimalRoute) {
+        const exist = routes.find((route) => areRoutesEqual(route, optimalRoute))
+        if (!exist) {
+            routes.push(optimalRoute)
+        } else {
+            symbiosis.context?.logger.error('Optimal route is already in general routes')
+        }
+    }
 
-    promises.push(
-        ...omniPools
-            .filter((poolConfig) => poolConfig.generalPurpose)
-            .map((poolConfig) => bestTokenSwapping(params, poolConfig))
-    )
+    const promises = routes.map((route) => tryRoute(symbiosis, route, params))
 
     return theBest(promises, selectMode)
 }
 
-function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token): OptimalRoute | undefined {
+function tryRoute(symbiosis: Symbiosis, route: Route, params: SwapExactInParams): Promise<SwapExactInResult> {
+    const { transitTokenIn, transitTokenOut, poolConfig } = route
+    return symbiosis.newSwapping(poolConfig).exactIn({
+        ...params,
+        transitTokenIn,
+        transitTokenOut,
+    })
+}
+
+function areRoutesEqual(routeA: Route, routeB: Route): boolean {
+    return (
+        routeA.poolConfig.chainId === routeB.poolConfig.chainId &&
+        routeA.poolConfig.address.toLowerCase() === routeB.poolConfig.address.toLowerCase() &&
+        routeA.transitTokenIn.equals(routeB.transitTokenIn) &&
+        routeA.transitTokenOut.equals(routeB.transitTokenOut)
+    )
+}
+
+function getRoutes(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token): Route[] {
+    const routes: Route[] = []
+    const generalPurposePools = symbiosis.config.omniPools.filter((poolConfig) => poolConfig.generalPurpose)
+    for (const poolConfig of generalPurposePools) {
+        const transitCombinations = symbiosis.getTransitCombinations(tokenIn.chainId, tokenOut.chainId, poolConfig)
+        for (const { transitTokenIn, transitTokenOut } of transitCombinations) {
+            routes.push({
+                transitTokenIn,
+                transitTokenOut,
+                poolConfig,
+            })
+        }
+    }
+    return routes
+}
+
+function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token): Route | undefined {
     const { omniPools } = symbiosis.config
 
-    let optimal: OptimalRoute | undefined
+    let optimal: Route | undefined
 
-    // no routing on both chains
-    for (const pool of omniPools) {
-        const transitTokenIn = symbiosis.transitTokens(tokenIn.chainId, pool).find((transitToken) => {
+    // direct route
+    for (const poolConfig of omniPools) {
+        const transitTokenIn = symbiosis.transitTokens(tokenIn.chainId, poolConfig).find((transitToken) => {
             return transitToken.equals(wrappedToken(tokenIn))
         })
-        const transitTokenOut = symbiosis.transitTokens(tokenOut.chainId, pool).find((transitToken) => {
+        const transitTokenOut = symbiosis.transitTokens(tokenOut.chainId, poolConfig).find((transitToken) => {
             return transitToken.equals(wrappedToken(tokenOut))
         })
 
@@ -64,7 +91,7 @@ function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token):
             optimal = {
                 transitTokenIn,
                 transitTokenOut,
-                pool,
+                poolConfig,
             }
             break
         }
@@ -75,10 +102,10 @@ function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token):
     }
 
     // with routing on a source chain
-    for (const pool of omniPools) {
+    for (const poolConfig of omniPools) {
         try {
-            const transitTokenIn = symbiosis.transitToken(tokenIn.chainId, pool)
-            const transitTokenOut = symbiosis.transitTokens(tokenOut.chainId, pool).find((transitToken) => {
+            const transitTokenIn = symbiosis.transitToken(tokenIn.chainId, poolConfig)
+            const transitTokenOut = symbiosis.transitTokens(tokenOut.chainId, poolConfig).find((transitToken) => {
                 return transitToken.equals(wrappedToken(tokenOut))
             })
 
@@ -86,7 +113,7 @@ function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token):
                 optimal = {
                     transitTokenIn,
                     transitTokenOut,
-                    pool,
+                    poolConfig,
                 }
                 break
             }
@@ -100,17 +127,17 @@ function getOptimalRoute(symbiosis: Symbiosis, tokenIn: Token, tokenOut: Token):
     }
 
     // select a route from the list if there is only one
-    const possibleRoutes: OptimalRoute[] = []
-    for (const pool of omniPools) {
+    const possibleRoutes: Route[] = []
+    for (const poolConfig of omniPools) {
         try {
-            const transitTokenIn = symbiosis.transitToken(tokenIn.chainId, pool)
-            const transitTokenOut = symbiosis.transitToken(tokenOut.chainId, pool)
+            const transitTokenIn = symbiosis.transitToken(tokenIn.chainId, poolConfig)
+            const transitTokenOut = symbiosis.transitToken(tokenOut.chainId, poolConfig)
 
             if (transitTokenIn && transitTokenOut) {
                 possibleRoutes.push({
                     transitTokenIn,
                     transitTokenOut,
-                    pool,
+                    poolConfig,
                 })
             }
         } catch {
