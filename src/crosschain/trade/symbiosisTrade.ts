@@ -18,6 +18,7 @@ export type SymbiosisTradeType =
     | 'stonfi'
     | 'dedust'
     | 'jupiter'
+    | 'depository'
 
 export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
 
