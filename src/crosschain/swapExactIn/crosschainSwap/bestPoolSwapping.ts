@@ -13,9 +13,17 @@ interface Route {
 export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, selectMode } = params
 
+    const routes = getRoutes(symbiosis, tokenAmountIn.token, tokenOut)
     const optimalRoute = getOptimalRoute(symbiosis, tokenAmountIn.token, tokenOut)
     if (optimalRoute) {
         const result = await tryRoute(symbiosis, optimalRoute, params)
+
+        // remove the optimal route from the list of routes
+        const otherRoutes = routes.filter((route) => !areRoutesEqual(route, optimalRoute))
+        // there are no alternatives, return the optimal route result
+        if (otherRoutes.length === 0) {
+            return result
+        }
         const threshold = new Percent('-1', '100') // -1%
         if (result.priceImpact.greaterThan(threshold)) {
             return result
@@ -23,14 +31,11 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
             symbiosis.context?.logger.error(
                 `Price impact of the optimal route is too high ${result.priceImpact.toFixed()}%`
             )
-        }
-    }
 
-    const routes = getRoutes(symbiosis, tokenAmountIn.token, tokenOut)
-    if (optimalRoute) {
-        const exist = routes.find((route) => areRoutesEqual(route, optimalRoute))
-        if (!exist) {
-            routes.push(optimalRoute)
+            const exist = routes.find((route) => areRoutesEqual(route, optimalRoute))
+            if (!exist) {
+                routes.push(optimalRoute)
+            }
         }
     }
 
