@@ -20,7 +20,9 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
         if (result.priceImpact.greaterThan(threshold)) {
             return result
         } else {
-            symbiosis.context?.logger.error(`Optimal route price impact is too high ${result.priceImpact.toFixed()}`)
+            symbiosis.context?.logger.error(
+                `Price impact of the optimal route is too high ${result.priceImpact.toFixed()}%`
+            )
         }
     }
 
@@ -29,8 +31,6 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
         const exist = routes.find((route) => areRoutesEqual(route, optimalRoute))
         if (!exist) {
             routes.push(optimalRoute)
-        } else {
-            symbiosis.context?.logger.error('Optimal route is already in general routes')
         }
     }
 
