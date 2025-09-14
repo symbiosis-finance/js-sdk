@@ -51,4 +51,8 @@ export class TokenAmount extends Fraction {
     public toExact(decimalPlaces: number = this.token.decimals, format: object = { groupSeparator: '' }): string {
         return super.toExact(decimalPlaces, format)
     }
+
+    public toBigInt(): bigint {
+        return BigInt(this.raw.toString())
+    }
 }

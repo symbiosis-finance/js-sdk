@@ -45,7 +45,7 @@ export const getToBtcFee = async (syBtcAmount: TokenAmount, synthesis: Synthesis
 
 export function isBtcChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
-    return [ChainId.BTC_MAINNET, ChainId.BTC_MUTINY, ChainId.BTC_TESTNET4].includes(chainId)
+    return chainId in BTC_NETWORKS
 }
 
 export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
@@ -54,8 +54,16 @@ export const BTC_NETWORKS: Partial<Record<ChainId, Network>> = {
     [ChainId.BTC_TESTNET4]: networks.testnet,
 }
 
-export function getPkScript(addr: string, btcChain: Network): Buffer {
+export function getPkScriptForChain(addr: string, btcChain: Network): Buffer {
     return address.toOutputScript(addr, btcChain)
+}
+
+export function getPkScript(addr: string, btcChainId: ChainId): Buffer {
+    const network = BTC_NETWORKS[btcChainId]
+    if (!network) {
+        throw new Error(`Unknown BTC network ${btcChainId}`)
+    }
+    return getPkScriptForChain(addr, network)
 }
 
 export function getAddress(pkScript: string, btcChain: Network): string {
