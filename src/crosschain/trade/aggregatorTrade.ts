@@ -16,7 +16,7 @@ interface AggregatorTradeParams extends SymbiosisTradeParams {
     from: string
     clientId: string
     deadline: number
-    useOneInchOnly?: boolean
+    preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -28,11 +28,11 @@ class TradeNotInitializedError extends Error {
 
 export class AggregatorTrade extends SymbiosisTrade {
     protected trade: Trade | undefined
-    protected useOneInchOnly: boolean
+    protected preferOneInchUsage: boolean
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
-        this.useOneInchOnly = params.useOneInchOnly || false
+        this.preferOneInchUsage = params.preferOneInchUsage || false
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -60,30 +60,36 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOneInchClient = clientId === '1inch'
         const isOpenOceanClient = clientId === 'openocean'
         const isOtherClient = !isOneInchClient && !isOpenOceanClient
-        // split the probability of using oneInch and openOcean
-        let isOneInchUsage = Math.random() <= 0.5
-        let isOpenOceanUsage = !isOneInchUsage
 
-        if (this.useOneInchOnly) {
-            isOneInchUsage = true
+        const isOneInchAvailable = OneInchTrade.isAvailable(tokenAmountIn.token.chainId) && !isOpenOceanClient
+        const isOpenOceanAvailable = OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) && !isOneInchClient
+
+        let isOneInchUsage = isOneInchAvailable
+        let isOpenOceanUsage = isOpenOceanAvailable
+
+        const isSignificantAmount =
+            (tokenAmountIn.token.symbol?.includes('USD') && parseFloat(tokenAmountIn.toSignificant()) >= 10000) ||
+            (tokenAmountIn.token.symbol?.includes('ETH') && parseFloat(tokenAmountIn.toSignificant()) >= 2.5)
+
+        if (this.preferOneInchUsage && isOneInchAvailable) {
             isOpenOceanUsage = false
-        } else {
-            if (tokenAmountIn.token.symbol?.includes('USD')) {
-                if (parseFloat(tokenAmountIn.toSignificant()) >= 10000) {
-                    isOneInchUsage = true
-                    isOpenOceanUsage = true
-                }
+        } else if (!isSignificantAmount) {
+            // select one of them randomly
+            const aggregators: SymbiosisTradeType[] = []
+            if (isOneInchAvailable) {
+                aggregators.push('1inch')
             }
-            if (tokenAmountIn.token.symbol?.includes('ETH')) {
-                if (parseFloat(tokenAmountIn.toSignificant()) >= 2.5) {
-                    isOneInchUsage = true
-                    isOpenOceanUsage = true
-                }
+            if (isOpenOceanAvailable) {
+                aggregators.push('open-ocean')
             }
+            const i = Math.floor(Math.random() * aggregators.length)
+
+            isOneInchUsage = aggregators[i] === '1inch'
+            isOpenOceanUsage = aggregators[i] === 'open-ocean'
         }
 
         let tradesCount = 0
-        if (isOneInchUsage && !isOpenOceanClient && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (isOneInchUsage) {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -108,7 +114,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 })
         }
 
-        if (isOpenOceanUsage && !isOneInchClient && OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (isOpenOceanUsage) {
             const openOceanTrade = new OpenOceanTrade({
                 symbiosis,
                 to,

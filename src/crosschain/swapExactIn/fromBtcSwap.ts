@@ -303,7 +303,7 @@ async function buildOnChainSwap(
         tokenAmountIn: syBtcAmount,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
-        useOneInchOnly: isUseOneInchOnly(tokenAmountIn.token, tokenOut),
+        preferOneInchUsage: isUseOneInchOnly(tokenAmountIn.token, tokenOut),
     })
     await aggregatorTrade.init()
 
@@ -367,7 +367,7 @@ async function buildCrossChainSwap(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const dep = context.symbiosis.depository(syBtcAmount.token.chainId!)
+    const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
         const call = await buildDepositCall({
             context,

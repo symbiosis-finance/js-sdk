@@ -501,7 +501,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            useOneInchOnly: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
+            preferOneInchUsage: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
         })
     }
 
@@ -542,7 +542,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            useOneInchOnly: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
+            preferOneInchUsage: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
         })
     }
 

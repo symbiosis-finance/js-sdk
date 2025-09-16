@@ -141,6 +141,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'opbnb',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
+    [ChainId.APECHAIN_MAINNET]: {
+        slug: 'ape',
+        nativeTokenAddress: AddressZero,
+    },
     // [ChainId.HYPERLIQUID_MAINNET]: {
     //     slug: 'hyper',
     //     nativeTokenAddress: AddressZero,
@@ -207,7 +211,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         })
 
         if (!response.ok) {
-            let errorText = 'Unknown error'
+            let errorText
             try {
                 const jsonError = JSON.parse(await response.text())
                 errorText = jsonError?.message ?? 'Unknown error'
@@ -313,6 +317,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 const response = await fetch(`${this.endpoint}/gasPrice`, {
                     headers: {
                         apiKey,
+                        'Content-Type': 'application/json',
                     },
                 })
                 if (!response.ok) {

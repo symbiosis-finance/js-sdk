@@ -492,10 +492,11 @@ export class Symbiosis {
     }
 
     public depository(chainId: ChainId, signer?: Signer): DepositoryContracts | null {
-        const config = this.chainConfig(chainId)
+        const depository = this.chainConfig(chainId).depository
+        if (!depository) {
+            return null
+        }
         const signerOrProvider = signer || this.getProvider(chainId)
-        if (!config.depository) return null
-        const depository = config.depository
 
         return {
             depository: Depository__factory.connect(depository.depository, signerOrProvider),

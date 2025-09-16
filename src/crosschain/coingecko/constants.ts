@@ -47,6 +47,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.OPBNB_MAINNET]: 'opbnb',
     [ChainId.HYPERLIQUID_MAINNET]: 'hyperevm',
     [ChainId.KATANA_MAINNET]: 'katana',
+    [ChainId.APECHAIN_MAINNET]: 'apechain',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -97,4 +98,5 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.OPBNB_MAINNET]: 'binancecoin',
     [ChainId.HYPERLIQUID_MAINNET]: 'hyperliquid',
     [ChainId.KATANA_MAINNET]: 'ethereum',
+    [ChainId.APECHAIN_MAINNET]: 'apecoin',
 }

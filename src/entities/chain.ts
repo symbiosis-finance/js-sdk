@@ -798,6 +798,16 @@ export const chains: Chain[] = [
             large: 'https://katana.network/meta/favicon.ico',
         },
     }),
+    new Chain({
+        id: ChainId.APECHAIN_MAINNET,
+        name: 'ApeChain',
+        disabled: false,
+        explorer: 'https://apescan.io',
+        icons: {
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/22184/small/apechain.jpg?1729564324',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/22184/small/apechain.jpg?1729564324',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

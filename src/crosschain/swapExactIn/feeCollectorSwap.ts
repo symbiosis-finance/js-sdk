@@ -60,6 +60,7 @@ export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
     [ChainId.OPBNB_MAINNET]: '0x1cEaeda3D17936916D0F3E866Aa5Ef861F544840',
     [ChainId.HYPERLIQUID_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
     [ChainId.KATANA_MAINNET]: '0xf1C374D065719Ce1Fdc63E2c5C13146813c0A83b',
+    [ChainId.APECHAIN_MAINNET]: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
 }
 
 export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {

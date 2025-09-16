@@ -994,4 +994,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
         },
     }),
+    [ChainId.APECHAIN_MAINNET]: new Token({
+        chainId: ChainId.APECHAIN_MAINNET,
+        address: '0x48b62137edfa95a428d35c09e44256a739f6b557',
+        decimals: 18,
+        symbol: 'WAPE',
+        isNative: false,
+        name: 'Wrapped APE',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+        },
+    }),
 }

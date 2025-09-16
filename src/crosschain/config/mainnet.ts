@@ -104,6 +104,14 @@ export const config: Config = {
             generalPurpose: false,
             coinGeckoId: 'symbiosis-finance',
         },
+        {
+            // APE
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x0b01139C59D6bc2C8323FDbb4824e4aa5Ff4DE7C',
+            oracle: '0x258EF63a81bade0c31c7C4ae75d2CD5332034bEE',
+            generalPurpose: false,
+            coinGeckoId: 'apecoin',
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -301,6 +309,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                     },
                 },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0x4d224452801ACEd8B2F0aebE155379bb5D594381',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                    },
+                },
             ],
             router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
             dexFee: 30,
@@ -445,20 +464,21 @@ export const config: Config = {
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
             dexFee: 25,
-            metaRouter: '0x5aaaAc8dB525277A821Bf0cE3eD8A7E4b22Bd9e7',
+            metaRouter: '0x44487a445a7595446309464A82244B4bD4e325D5',
+            // metaRouter: '0x5aaaAc8dB525277A821Bf0cE3eD8A7E4b22Bd9e7',
             metaRouterGateway: '0x5c97D726bf5130AE15408cE32bc764e458320D2f',
             bridge: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             synthesis: '0x6B1bbd301782FF636601fC594Cd7Bfe74871bfaA',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0xc17d768Bf4FdC6f20a4A0d8Be8767840D106D077',
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
-            depository: {
-                depository: '0x056E5FaBCD478995d6aA7958006cDA042C551656',
-                withdrawUnlocker: '0x89d5140C4E0B3a0B42Bb532CFBF9Da378ee7C11C',
-                swapUnlocker: '0x37f5ba9F15A2547473F7172e45907F898D72eCCF',
-                btcRefundUnlocker: '0xbC405EAf2Ee0420ab5D72774b66330D4712dE4A2',
-                branchedUnlocker: '0x3bA0365C6Bd3D106570e192E29BAAc4b70690249',
-            },
+            // depository: {
+            //     depository: '0x056E5FaBCD478995d6aA7958006cDA042C551656',
+            //     withdrawUnlocker: '0x89d5140C4E0B3a0B42Bb532CFBF9Da378ee7C11C',
+            //     swapUnlocker: '0x37f5ba9F15A2547473F7172e45907F898D72eCCF',
+            //     btcRefundUnlocker: '0xbC405EAf2Ee0420ab5D72774b66330D4712dE4A2',
+            //     branchedUnlocker: '0x3bA0365C6Bd3D106570e192E29BAAc4b70690249',
+            // },
         },
         {
             id: ChainId.AVAX_MAINNET,
@@ -580,10 +600,10 @@ export const config: Config = {
         },
         {
             id: ChainId.KAVA_MAINNET,
-            rpc: 'https://evm.kava.io',
+            rpc: 'https://rpc.ankr.com/kava_evm',
             spareRpcs: [
                 'https://kava-evm-rpc.publicnode.com',
-                'https://rpc.ankr.com/kava_evm',
+                'https://evm.kava.io',
                 'https://evm.kava-rpc.com',
             ],
             filterBlockOffset: 1000,
@@ -834,6 +854,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
+                    },
+                },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0x7f9FBf9bDd3F4105C478b996B648FE6e828a1e98',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
                     },
                 },
             ],
@@ -1097,8 +1128,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BASE_MAINNET,
-            rpc: 'https://base-rpc.publicnode.com',
-            spareRpcs: ['https://mainnet.base.org', 'https://rpc.ankr.com/base'],
+            rpc: 'https://mainnet.base.org',
+            spareRpcs: ['https://base-rpc.publicnode.com', 'https://rpc.ankr.com/base'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -2288,6 +2319,34 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.APECHAIN_MAINNET,
+            rpc: 'https://rpc.apechain.com',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Wrapped APE',
+                    symbol: 'WAPE',
+                    address: '0x48b62137edfa95a428d35c09e44256a739f6b557',
+                    chainId: ChainId.APECHAIN_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
                     },
                 },
             ],
