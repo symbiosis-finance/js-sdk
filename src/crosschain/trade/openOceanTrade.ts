@@ -184,17 +184,21 @@ export class OpenOceanTrade extends SymbiosisTrade {
             toTokenAddress = this.chain.nativeTokenAddress
         }
 
+        const apiKeys = this.symbiosis.openOceanConfig.apiKeys
+        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
+
+        const gasPrice = await this.getGasPrice(apiKey)
+
         const url = new URL(`${this.endpoint}/swap`)
         url.searchParams.set('inTokenAddress', fromTokenAddress)
         url.searchParams.set('outTokenAddress', toTokenAddress)
-        url.searchParams.set('amount', this.tokenAmountIn.toFixed())
-        url.searchParams.set('gasPrice', '5')
+        url.searchParams.set('amountDecimals', this.tokenAmountIn.raw.toString())
+        url.searchParams.set('gasPriceDecimals', gasPrice.toString())
         url.searchParams.set('slippage', (this.slippage / 100).toString())
         url.searchParams.set('account', this.to)
         url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
         url.searchParams.set('disableRfq', 'true')
-        const apiKeys = this.symbiosis.openOceanConfig.apiKeys
-        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
+
         const response = await this.symbiosis.fetch(url.toString(), {
             headers: {
                 apikey: apiKey,
@@ -298,5 +302,31 @@ export class OpenOceanTrade extends SymbiosisTrade {
         }
 
         return new Percent(number.multipliedBy(100).integerValue().toString(), BIPS_BASE)
+    }
+
+    private async getGasPrice(apiKey: string) {
+        const isMainnet = this.tokenAmountIn.token.chainId === ChainId.ETH_MAINNET
+
+        return this.symbiosis.cache.get(
+            ['openOceanGasPrice', this.endpoint],
+            async () => {
+                const response = await fetch(`${this.endpoint}/gasPrice`, {
+                    headers: {
+                        apiKey,
+                    },
+                })
+                if (!response.ok) {
+                    throw new Error('Failed to get gas price')
+                }
+                const json = await response.json()
+
+                if (isMainnet) {
+                    return json.data.standard.legacyGasPrice
+                }
+
+                return json.data.standard
+            },
+            600 // 10 minutes
+        )
     }
 }
