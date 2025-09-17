@@ -369,23 +369,43 @@ async function buildCrossChainSwap(
 
     const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
-        const call = await buildDepositCall({
-            context,
-            dep,
-            syBtcAmount,
-            tokenAmountOutMin: swapExactInResult.tokenAmountOutMin,
-            btcConfig,
-            target: tx.relayRecipient,
-            targetCalldata: tx.otherSideCalldata,
-            targetOffset: 100n, // metaSynthesize struct size
-        })
-        call.fees = swapExactInResult.fees || []
-        call.priceImpact = swapExactInResult.priceImpact
-        return [call]
+        if (swapExactInResult.tradeA) {
+            // There is DEX-swap on BSC, lock to Depository instead.
+            const call = await buildDepositCall({
+                context,
+                dep,
+                syBtcAmount,
+                tokenAmountOutMin: swapExactInResult.tradeA.amountOutMin,
+                btcConfig,
+                target: tx.relayRecipient,
+                targetCalldata: tx.otherSideCalldata,
+                targetOffset: 100n, // metaSynthesize struct size
+            })
+            call.fees = swapExactInResult.fees || []
+            call.priceImpact = swapExactInResult.priceImpact
+            return [call]
+        } else {
+            // There is no on-chain swap, Depository is not needed.
+            return [
+                {
+                    to: tx.relayRecipient,
+                    data: tx.otherSideCalldata,
+                    offset: 100, // metaSynthesize struct
+                    fees: swapExactInResult.fees,
+                    routes: swapExactInResult.routes,
+                    value: '0',
+                    amountIn: syBtcAmount,
+                    amountOut: swapExactInResult.tokenAmountOut,
+                    amountOutMin: swapExactInResult.tokenAmountOutMin,
+                    priceImpact: swapExactInResult.priceImpact,
+                },
+            ]
+        }
     } else {
         const calls: MultiCallItem[] = []
         let amountIn = syBtcAmount
         if (swapExactInResult.tradeA) {
+            // There is DEX-swap on BSC
             calls.push({
                 to: tx.firstDexRouter,
                 data: tx.firstSwapCalldata,
