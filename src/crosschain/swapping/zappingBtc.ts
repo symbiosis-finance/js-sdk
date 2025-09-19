@@ -5,7 +5,7 @@ import { OneInchProtocols } from '../trade/oneInchTrade'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
-import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
+import { Address, FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
@@ -18,14 +18,14 @@ initEccLib(ecc)
 interface ZappingBtcExactInParams {
     tokenAmountIn: TokenAmount
     syBtc: Token
-    from: string
-    to: string
+    from: Address
+    to: Address
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
     transitTokenIn: Token
     transitTokenOut: Token
-    partnerAddress?: string
+    partnerAddress?: Address
 }
 
 export class ZappingBtc extends BaseSwapping {
@@ -36,9 +36,9 @@ export class ZappingBtc extends BaseSwapping {
     protected minBtcFee!: TokenAmount
     protected threshold!: TokenAmount
     protected synthesis!: Synthesis
-    protected evmTo!: string
+    protected evmTo!: Address
     protected partnerFeeCall?: MultiCallItem
-    protected partnerAddress?: string
+    protected partnerAddress?: Address
     protected volumeFeeCall?: MultiCallItem
 
     protected async doPostTransitAction(): Promise<void> {
@@ -184,12 +184,12 @@ export class ZappingBtc extends BaseSwapping {
         }
     }
 
-    protected tradeCTo(): string {
-        return this.multicallRouter.address
+    protected tradeCTo(): Address {
+        return this.multicallRouter.address as Address
     }
 
-    protected finalReceiveSide(): string {
-        return this.multicallRouter.address
+    protected finalReceiveSide(): Address {
+        return this.multicallRouter.address as Address
     }
 
     protected finalCalldata(): string | [] {

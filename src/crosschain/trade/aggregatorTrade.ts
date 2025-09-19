@@ -7,7 +7,7 @@ import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { utils } from 'ethers'
-import { FeeItem } from '../types'
+import { Address, FeeItem } from '../types'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -234,7 +234,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this.trade.amountOutMin
     }
 
-    get routerAddress(): string {
+    get routerAddress(): Address {
         this.assertTradeInitialized('routerAddress')
         return this.trade.routerAddress
     }

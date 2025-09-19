@@ -18,9 +18,16 @@ export enum Field {
     OUTPUT = 'OUTPUT',
 }
 
+export type EvmAddress = `0x${string}`
+export type TronAddress = `T${string}`
+export type BtcAddress = `bc1${string}` | `1${string}` | `3${string}`
+export type EmptyAddress = ""
+export type NonEmptyAddress = EvmAddress | TronAddress
+export type Address = NonEmptyAddress | EmptyAddress
+
 export interface VolumeFeeCollector {
     chainId: ChainId
-    address: string
+    address: Address
     feeRate: string
     eligibleChains: ChainId[]
     default?: boolean
@@ -28,12 +35,14 @@ export interface VolumeFeeCollector {
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
+// Addresses of Depository contracts
 export type DepositoryConfig = {
     depository: string
     swapUnlocker: string
     withdrawUnlocker: string
     branchedUnlocker: string
     btcRefundUnlocker?: string
+    weth9: string
 }
 
 export type ChainConfig = {
@@ -44,14 +53,14 @@ export type ChainConfig = {
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]
-    metaRouter: string
-    metaRouterGateway: string
-    multicallRouter: string
-    router: string
-    bridge: string
-    synthesis: string
-    portal: string
-    fabric: string
+    metaRouter: Address
+    metaRouterGateway: Address
+    multicallRouter: Address
+    router: Address
+    bridge: Address
+    synthesis: Address
+    portal: Address
+    fabric: Address
     tonPortal?: string
     partnerFeeCollector?: string
     depository?: DepositoryConfig
@@ -63,7 +72,7 @@ export type AdvisorConfig = {
 
 export type OmniPoolConfig = {
     chainId: ChainId
-    address: string
+    address: Address
     oracle: string
     generalPurpose: boolean
     coinGeckoId: string
@@ -91,7 +100,7 @@ export type Config = {
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    refundAddress: string
+    refundAddress: Address
     btcConfigs: BtcConfig[]
 }
 
@@ -134,7 +143,7 @@ export type OverrideConfig = {
 }
 
 export interface MiddlewareCall {
-    address: string
+    address: Address
     data: string
     offset: number
 }
@@ -150,8 +159,8 @@ export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
     tokenOut: Token
-    from: string
-    to: string
+    from: Address
+    to: Address
     slippage: number
     deadline: number
     transitTokenIn?: Token

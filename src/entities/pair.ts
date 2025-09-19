@@ -21,12 +21,14 @@ import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/t
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 import { BytesLike } from '@ethersproject/bytes'
+import { Address, EvmAddress, NonEmptyAddress } from '..'
 
-export let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
+export let PAIR_ADDRESS_CACHE: { [token0Address: NonEmptyAddress]: { [token1Address: NonEmptyAddress]: EvmAddress } } =
+    {}
 
 // TODO replace with onchain call to Factory.getPair method
-export function getZkCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
-    const MAP: Record<string, Record<string, string>> = {
+export function getZkCreate2Address(from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike): Address {
+    const MAP: Record<EvmAddress, Record<string, EvmAddress>> = {
         '0x50704Ac00064be03CEEd817f41E0Aa61F52ef4DC': {
             '0x10dac1b69a0ef99baf5786f77bf0aab84749fd564007f4fad53a9395afa06d6a':
                 '0x20eDB5049461c9a6F490671742824c9F9aD05eD8', // H2 (USDC,wzkCRO)
@@ -48,7 +50,7 @@ export class Pair {
     public readonly liquidityToken: Token
     private readonly tokenAmounts: [TokenAmount, TokenAmount]
 
-    public static getAddress(tokenA: Token, tokenB: Token): string {
+    public static getAddress(tokenA: Token, tokenB: Token): Address {
         const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
         const chainId = tokens[0].chainId
@@ -62,7 +64,8 @@ export class Pair {
         }
 
         if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-            let getCreate2Address = getEvmCreate2Address
+            let getCreate2Address: (from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike) => string =
+                getEvmCreate2Address
 
             if (isTronChainId(chainId)) {
                 getCreate2Address = getTronCreate2Address

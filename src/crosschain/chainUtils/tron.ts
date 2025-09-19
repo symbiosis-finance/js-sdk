@@ -7,6 +7,7 @@ import { utils } from 'ethers'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../../constants'
 import { Chain, Token } from '../../entities'
+import { EvmAddress } from '..'
 
 export interface TronTransactionData {
     chain_id: number
@@ -77,11 +78,11 @@ export function prepareTronTransaction({
 
 const ADDRESS_PREFIX_REGEX = /^(41)/
 
-export function tronAddressToEvm(address: string): string {
+export function tronAddressToEvm(address: string): EvmAddress {
     try {
-        return TronWeb.address.toHex(address).replace(ADDRESS_PREFIX_REGEX, '0x')
+        return TronWeb.address.toHex(address).replace(ADDRESS_PREFIX_REGEX, '0x') as EvmAddress
     } catch (e) {
-        return address
+        return address as EvmAddress
     }
 }
 

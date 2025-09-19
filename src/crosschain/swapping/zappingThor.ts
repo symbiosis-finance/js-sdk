@@ -8,13 +8,13 @@ import { Error, ErrorCode } from '../error'
 import { BigNumber } from 'ethers'
 import { getMinAmount, isEvmChainId } from '../chainUtils'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
-import { SwapExactInResult } from '../types'
+import { Address, SwapExactInResult } from '../types'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
     thorTokenIn: Token
-    from: string
-    to: string
+    from: Address
+    to: Address
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
@@ -24,7 +24,7 @@ type ThorQuote = {
     memo: string
     amountOut: TokenAmount
     amountOutMin: TokenAmount
-    router: string
+    router: Address
     expiry: string
     fees: {
         asset: string
@@ -91,7 +91,7 @@ export class ZappingThor extends BaseSwapping {
     protected thorTokenOut = 'BTC.BTC'
     protected thorVault!: string
     protected thorQuote!: ThorQuote
-    protected evmTo!: string
+    protected evmTo!: Address
 
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
@@ -258,12 +258,12 @@ export class ZappingThor extends BaseSwapping {
         }
     }
 
-    protected tradeCTo(): string {
-        return this.multicallRouter.address
+    protected tradeCTo(): Address {
+        return this.multicallRouter.address as Address
     }
 
-    protected finalReceiveSide(): string {
-        return this.multicallRouter.address
+    protected finalReceiveSide(): Address {
+        return this.multicallRouter.address as Address
     }
 
     protected finalCalldata(): string | [] {

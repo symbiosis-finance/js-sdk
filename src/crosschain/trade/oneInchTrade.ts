@@ -9,6 +9,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
+import { Address } from '..'
 
 export type OneInchProtocols = string[]
 
@@ -133,8 +134,8 @@ export class OneInchTrade extends SymbiosisTrade {
         }
 
         const tx: {
-            from: string
-            to: string
+            from: Address
+            to: Address
             data: string
             value: string
             gas: string

@@ -6,13 +6,14 @@ import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { Address, NonEmptyAddress } from '..'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
 }
 
 interface OpenOceanQuote {
-    to: string
+    to: Address
     inAmount: string
     outAmount: string
     data: string
@@ -21,7 +22,7 @@ interface OpenOceanQuote {
 
 interface OpenOceanChain {
     slug: string
-    nativeTokenAddress: string
+    nativeTokenAddress: NonEmptyAddress
 }
 
 interface OpenOceanError {
