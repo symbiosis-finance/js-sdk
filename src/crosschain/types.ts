@@ -98,7 +98,7 @@ export type Config = {
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    refundAddress: Address | BtcAddress
+    refundAddress: BtcAddress
     btcConfigs: BtcConfig[]
 }
 
@@ -169,7 +169,7 @@ export interface SwapExactInParams {
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
     partnerAddress?: string
-    refundAddress?: string
+    refundAddress?: BtcAddress | ''
     generateBtcDepositAddress?: boolean
 }
 

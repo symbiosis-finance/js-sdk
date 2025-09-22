@@ -331,7 +331,7 @@ async function buildOnChainSwap(
     if (dep && context.tokenOut.isNative) {
         isOutputNative = true
         // Replace destination token with Wrapped
-        context = { ...context, tokenOut: WETH[context.tokenOut.chainId] }
+        context = { ...context, tokenOut: wrappedToken(context.tokenOut) }
     }
     // TODO: replace costly AggregatorTrade with price estimation
     const aggregatorTrade = new AggregatorTrade({
