@@ -27,7 +27,7 @@ export let PAIR_ADDRESS_CACHE: { [token0Address: NonEmptyAddress]: { [token1Addr
     {}
 
 // TODO replace with onchain call to Factory.getPair method
-export function getZkCreate2Address(from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike): Address {
+export function getZkCreate2Address(from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike): EvmAddress {
     const MAP: Record<EvmAddress, Record<string, EvmAddress>> = {
         '0x50704Ac00064be03CEEd817f41E0Aa61F52ef4DC': {
             '0x10dac1b69a0ef99baf5786f77bf0aab84749fd564007f4fad53a9395afa06d6a':

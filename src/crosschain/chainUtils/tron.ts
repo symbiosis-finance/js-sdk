@@ -109,6 +109,8 @@ export async function getTransactionInfoById(tronWeb: TronWeb, txId: string): Pr
 }
 
 // Tron uses 0x41 as the prefix for contract addresses created by CREATE2, unlike EVM 0xff.
-export function getTronCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
-    return getAddress(hexDataSlice(kekKeccak256(concat(['0x41', getAddress(from), salt, initCodeHash])), 12))
+export function getTronCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): EvmAddress {
+    return getAddress(
+        hexDataSlice(kekKeccak256(concat(['0x41', getAddress(from), salt, initCodeHash])), 12)
+    ) as EvmAddress
 }
