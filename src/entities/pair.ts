@@ -21,7 +21,7 @@ import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/t
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 import { BytesLike } from '@ethersproject/bytes'
-import { Address, EvmAddress, NonEmptyAddress } from '..'
+import { EvmAddress, NonEmptyAddress } from '..'
 
 export let PAIR_ADDRESS_CACHE: { [token0Address: NonEmptyAddress]: { [token1Address: NonEmptyAddress]: EvmAddress } } =
     {}
@@ -50,7 +50,7 @@ export class Pair {
     public readonly liquidityToken: Token
     private readonly tokenAmounts: [TokenAmount, TokenAmount]
 
-    public static getAddress(tokenA: Token, tokenB: Token): Address {
+    public static getAddress(tokenA: Token, tokenB: Token): EvmAddress {
         const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
         const chainId = tokens[0].chainId
