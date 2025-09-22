@@ -103,7 +103,7 @@ export class DedustTrade extends SymbiosisTrade {
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
-            routerAddress: (to.toString() ?? '') as TonAddress, // TODO: is .toString() really needed and why?
+            routerAddress: (to.toString() as TonAddress) ?? '',
             callData: body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,
