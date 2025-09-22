@@ -21,7 +21,7 @@ export enum Field {
 export type EvmAddress = `0x${string}`
 export type TronAddress = `T${string}`
 export type BtcAddress = `bc1${string}` | `1${string}` | `3${string}`
-export type EmptyAddress = ""
+export type EmptyAddress = ''
 export type NonEmptyAddress = EvmAddress | TronAddress
 export type Address = NonEmptyAddress | EmptyAddress
 
@@ -39,10 +39,8 @@ export type BridgeDirection = 'burn' | 'mint' | 'v2'
 export type DepositoryConfig = {
     depository: string
     swapUnlocker: string
-    withdrawUnlocker: string
     branchedUnlocker: string
     btcRefundUnlocker?: string
-    weth9: string
 }
 
 export type ChainConfig = {
@@ -100,7 +98,7 @@ export type Config = {
     revertableAddress: Partial<Record<ChainId, string>> & { default: string }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    refundAddress: Address
+    refundAddress: Address | BtcAddress
     btcConfigs: BtcConfig[]
 }
 

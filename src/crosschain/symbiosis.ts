@@ -13,8 +13,8 @@ import {
     Bridge__factory,
     BtcRefundUnlocker,
     BtcRefundUnlocker__factory,
-    Depository,
-    Depository__factory,
+    IDepository,
+    IDepository__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -33,8 +33,6 @@ import {
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
-    WithdrawUnlocker,
-    WithdrawUnlocker__factory,
 } from './contracts'
 import { aggregatorErrorToText, Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
@@ -88,10 +86,9 @@ export type DiscountTier = {
 }
 
 export type DepositoryContracts = {
-    depository: Depository
+    depository: IDepository
     branchedUnlocker: BranchedUnlocker
     swapUnlocker: SwapUnlocker
-    withdrawUnlocker: WithdrawUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
 }
 
@@ -499,9 +496,8 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return {
-            depository: Depository__factory.connect(depository.depository, signerOrProvider),
+            depository: IDepository__factory.connect(depository.depository, signerOrProvider),
             swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
-            withdrawUnlocker: WithdrawUnlocker__factory.connect(depository.withdrawUnlocker, signerOrProvider),
             btcRefundUnlocker: depository.btcRefundUnlocker
                 ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
                 : undefined,

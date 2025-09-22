@@ -1,0 +1,166 @@
+{
+    "_format": "hh3-artifact-1",
+    "contractName": "IDepository",
+    "sourceName": "contracts/interfaces/IDepository.sol",
+    "abi": [
+        {
+            "inputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "contract IERC20",
+                            "name": "token",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "amount",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "nonce",
+                            "type": "uint256"
+                        }
+                    ],
+                    "internalType": "struct DepositoryTypes.Deposit",
+                    "name": "d",
+                    "type": "tuple"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "contract IDepositUnlocker",
+                            "name": "unlocker",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "bytes",
+                            "name": "condition",
+                            "type": "bytes"
+                        }
+                    ],
+                    "internalType": "struct DepositoryTypes.Unlocker",
+                    "name": "u",
+                    "type": "tuple"
+                }
+            ],
+            "name": "depositID",
+            "outputs": [
+                {
+                    "internalType": "DepositID",
+                    "name": "",
+                    "type": "bytes32"
+                }
+            ],
+            "stateMutability": "pure",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "contract IERC20",
+                            "name": "token",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "amount",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "nonce",
+                            "type": "uint256"
+                        }
+                    ],
+                    "internalType": "struct DepositoryTypes.Deposit",
+                    "name": "deposit",
+                    "type": "tuple"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "contract IDepositUnlocker",
+                            "name": "unlocker",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "bytes",
+                            "name": "condition",
+                            "type": "bytes"
+                        }
+                    ],
+                    "internalType": "struct DepositoryTypes.Unlocker",
+                    "name": "unlocker",
+                    "type": "tuple"
+                }
+            ],
+            "name": "lock",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "contract IERC20",
+                            "name": "token",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "amount",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "nonce",
+                            "type": "uint256"
+                        }
+                    ],
+                    "internalType": "struct DepositoryTypes.Deposit",
+                    "name": "deposit",
+                    "type": "tuple"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "contract IDepositUnlocker",
+                            "name": "unlocker",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "bytes",
+                            "name": "condition",
+                            "type": "bytes"
+                        }
+                    ],
+                    "internalType": "struct DepositoryTypes.Unlocker",
+                    "name": "unlocker",
+                    "type": "tuple"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "solution",
+                    "type": "bytes"
+                }
+            ],
+            "name": "unlock",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ],
+    "bytecode": "0x",
+    "deployedBytecode": "0x",
+    "linkReferences": {},
+    "deployedLinkReferences": {},
+    "immutableReferences": {},
+    "inputSourceName": "project/contracts/interfaces/IDepository.sol",
+    "buildInfoId": "solc-0_8_28-20506510e8aff0207eb0e822b2f57a9c59559fe6"
+}

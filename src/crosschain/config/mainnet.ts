@@ -601,11 +601,7 @@ export const config: Config = {
         {
             id: ChainId.KAVA_MAINNET,
             rpc: 'https://rpc.ankr.com/kava_evm',
-            spareRpcs: [
-                'https://kava-evm-rpc.publicnode.com',
-                'https://evm.kava.io',
-                'https://evm.kava-rpc.com',
-            ],
+            spareRpcs: ['https://kava-evm-rpc.publicnode.com', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
