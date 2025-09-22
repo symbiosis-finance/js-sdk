@@ -1,4 +1,4 @@
-import { Log, StaticJsonRpcProvider, Provider } from '@ethersproject/providers'
+import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
@@ -13,10 +13,10 @@ import {
     Bridge__factory,
     BtcRefundUnlocker,
     BtcRefundUnlocker__factory,
-    IDepository,
-    IDepository__factory,
     Fabric,
     Fabric__factory,
+    IDepository,
+    IDepository__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -43,6 +43,7 @@ import {
     Config,
     Context,
     CounterParams,
+    EvmAddress,
     FeeConfig,
     MetricParams,
     OmniPoolConfig,
@@ -794,7 +795,7 @@ export class Symbiosis {
         return info
     }
 
-    getRevertableAddress(chainId: ChainId): string {
+    getRevertableAddress(chainId: ChainId): EvmAddress {
         const address = this.config.revertableAddress[chainId]
 
         if (address) {

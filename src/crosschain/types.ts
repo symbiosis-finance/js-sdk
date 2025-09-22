@@ -98,10 +98,10 @@ export type BtcConfig = {
 export type Config = {
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
-    revertableAddress: Partial<Record<ChainId, string>> & { default: string }
+    revertableAddress: Partial<Record<ChainId, EvmAddress>> & { default: EvmAddress }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    refundAddress: BtcAddress
+    refundAddress: EvmAddress
     btcConfigs: BtcConfig[]
 }
 
@@ -171,8 +171,8 @@ export interface SwapExactInParams {
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
-    partnerAddress?: string
-    refundAddress?: BtcAddress | ''
+    partnerAddress?: EvmAddress
+    refundAddress?: BtcAddress | EmptyAddress
     generateBtcDepositAddress?: boolean
 }
 

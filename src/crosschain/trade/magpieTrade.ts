@@ -6,6 +6,7 @@ import type { Symbiosis } from '../symbiosis'
 import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
+import { EvmAddress } from '../types'
 
 interface MagpieQuoteRequest {
     fromTokenAddress: string
@@ -25,8 +26,8 @@ interface MagpieQuoteResponse {
 }
 
 interface MagpieTransactionResponse {
-    from: string
-    to: string
+    from: EvmAddress
+    to: EvmAddress
     data: string
     chainId: number
     type: number
