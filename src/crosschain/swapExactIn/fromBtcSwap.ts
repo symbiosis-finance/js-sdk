@@ -2,8 +2,20 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { BigNumber, BigNumberish } from 'ethers'
 import { BytesLike, isAddress } from 'ethers/lib/utils'
+import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
+import { randomBytes } from 'crypto'
 
-import { Address, BtcConfig, FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
+import {
+    Address,
+    BtcAddress,
+    BtcConfig,
+    EvmAddress,
+    FeeItem,
+    MultiCallItem,
+    RouteItem,
+    SwapExactInParams,
+    SwapExactInResult,
+} from '../types'
 import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
@@ -13,15 +25,13 @@ import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
+import { isUseOneInchOnly } from '../utils'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
-import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { BIPS_BASE } from '../constants'
+import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
-import { validate } from 'bitcoin-address-validation'
-import { isUseOneInchOnly } from '../utils'
-import { randomBytes } from 'crypto'
 import { DepositoryContracts } from '../symbiosis'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -79,7 +89,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         throw new Error(`Incorrect destination address was provided`)
     }
 
-    if (refundAddress && !validate(refundAddress)) {
+    if (refundAddress && !validateBitcoinAddress(refundAddress)) {
         throw new Error(`Incorrect refund address was provided`)
     }
 
@@ -131,9 +141,9 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         portalFee: btcPortalFeeRaw,
         stableBridgingFee: mintFeeRaw,
         tail: initialTail,
-        to,
+        to: to as EvmAddress,
         amount: btcAmountRaw,
-        refundAddress,
+        refundAddress: refundAddress as BtcAddress,
         clientId: symbiosis.clientId,
     })
     const btcForwarderFeeMax = new TokenAmount(
@@ -175,10 +185,10 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
             portalFee: btcPortalFeeRaw,
             stableBridgingFee: mintFeeRaw,
             tail,
-            to,
+            to: to as EvmAddress,
             feeLimit: btcForwarderFeeMax.raw.toString(),
             amount: btcAmountRaw,
-            refundAddress,
+            refundAddress: refundAddress as BtcAddress,
             clientId: symbiosis.clientId,
         })
         validUntil = wrapResponse.validUntil
@@ -573,9 +583,9 @@ type EstimateWrapParams = {
     portalFee: string
     stableBridgingFee: string
     tail: string
-    to: string
+    to: EvmAddress
     amount: string
-    refundAddress?: string
+    refundAddress?: BtcAddress
     clientId?: string
 }
 export type EstimateWrapBodyParams = {
@@ -585,9 +595,9 @@ export type EstimateWrapBodyParams = {
         op: number
         stableBridgingFee: number
         tail: string
-        to: string
+        to: EvmAddress
     }
-    refundAddress?: string
+    refundAddress?: BtcAddress
     clientId?: string
 }
 

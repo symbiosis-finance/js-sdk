@@ -15,7 +15,7 @@ interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
     clientId: string
-    deadline: number
+    deadline: number // epoch
     preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
 }
