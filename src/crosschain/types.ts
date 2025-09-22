@@ -20,9 +20,12 @@ export enum Field {
 
 export type EvmAddress = `0x${string}`
 export type TronAddress = `T${string}`
+export type TonBounceableAddress = `E${string}`
+export type TonNonbounceableAddress = `U${string}`
+export type TonAddress = TonBounceableAddress | TonNonbounceableAddress
 export type BtcAddress = `bc1${string}` | `1${string}` | `3${string}`
 export type EmptyAddress = ''
-export type NonEmptyAddress = EvmAddress | TronAddress
+export type NonEmptyAddress = EvmAddress | TronAddress | TonAddress
 export type Address = NonEmptyAddress | EmptyAddress
 
 export interface VolumeFeeCollector {

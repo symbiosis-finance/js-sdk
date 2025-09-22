@@ -4,7 +4,7 @@ import { BigNumber, BigNumberish } from 'ethers'
 import { BytesLike, isAddress } from 'ethers/lib/utils'
 
 import { Address, BtcConfig, FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
-import { Fraction, Percent, TokenAmount, WETH } from '../../entities'
+import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
 import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'

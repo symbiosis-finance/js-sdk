@@ -13,11 +13,11 @@ export class ConfigCache {
 
     public constructor(configName: ConfigName | ConfigCacheData) {
         if (configName === 'mainnet') {
-            this.data = mainnet
+            this.data = mainnet as ConfigCacheData
         } else if (configName === 'testnet') {
-            this.data = testnet
+            this.data = testnet as ConfigCacheData
         } else if (configName === 'dev') {
-            this.data = dev
+            this.data = dev as ConfigCacheData
         } else if (Object.prototype.hasOwnProperty.call(configName, 'tokens')) {
             this.data = configName
         } else {
