@@ -361,6 +361,7 @@ async function buildOnChainSwap(
             context,
             dep,
             syBtcAmount,
+            tokenAmountOut: aggregatorTrade.amountOut,
             tokenAmountOutMin: aggregatorTrade.amountOutMin,
             btcConfig,
             ...targetCall,
@@ -417,6 +418,7 @@ async function buildCrossChainSwap(
                 context,
                 dep,
                 syBtcAmount,
+                tokenAmountOut: swapExactInResult.tradeA.amountOut,
                 tokenAmountOutMin: swapExactInResult.tradeA.amountOutMin,
                 btcConfig,
                 target: tx.relayRecipient,
@@ -483,6 +485,7 @@ type BuildDepositCallParameters = {
     context: SwapExactInParams
     dep: DepositoryContracts
     syBtcAmount: TokenAmount
+    tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
     btcConfig: BtcConfig
     target: string
@@ -494,6 +497,7 @@ async function buildDepositCall({
     context,
     dep,
     syBtcAmount,
+    tokenAmountOut,
     tokenAmountOutMin,
     btcConfig,
     target,
@@ -565,7 +569,7 @@ async function buildDepositCall({
         ],
         value: '0',
         amountIn: syBtcAmount,
-        amountOut: tokenAmountOutMin,
+        amountOut: tokenAmountOut,
         amountOutMin: tokenAmountOutMin,
         fees: [],
         priceImpact: new Fraction(0n),
