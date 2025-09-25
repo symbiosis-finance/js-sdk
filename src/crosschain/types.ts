@@ -101,7 +101,7 @@ export type Config = {
     revertableAddress: Partial<Record<ChainId, EvmAddress>> & { default: EvmAddress }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    refundAddress: EvmAddress
+    fallbackReceiver: EvmAddress
     btcConfigs: BtcConfig[]
 }
 

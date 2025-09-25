@@ -33,7 +33,7 @@ export const config: Config = {
         [ChainId.TRON_TESTNET]: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
-    refundAddress: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
+    fallbackReceiver: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     btcConfigs: [
         {
             btc: new Token({

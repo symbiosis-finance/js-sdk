@@ -125,7 +125,7 @@ export class ZappingThor extends BaseSwapping {
 
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.refundAddress as Address
+            this.evmTo = this.symbiosis.config.fallbackReceiver
         }
 
         // check if there is "Available" ThorChain pool at the moment
