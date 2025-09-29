@@ -476,7 +476,7 @@ export const config: Config = {
             depository: {
                 depository: '0x99eaB017010e35b42cfeBD4CFEC9b3E1D4Db1Ff2',
                 swapUnlocker: '0xEDc23959D44d9e4CF8cc93CCa36AA0FC316163Eb',
-                btcRefundUnlocker: '0x77370142178c8886EaDf2820331Ef9f050094cB9',
+                btcRefundUnlocker: '0xA0CAf87F2d662b4aecF7366aBf0235d3099fa43B',
                 branchedUnlocker: '0xcD2677d83080B1C931ae7f986021bA413E2b5356',
             },
         },
