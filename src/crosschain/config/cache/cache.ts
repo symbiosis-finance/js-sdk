@@ -2,6 +2,7 @@ import type { ConfigName } from '../../symbiosis'
 import mainnet from './mainnet.json'
 import testnet from './testnet.json'
 import dev from './dev.json'
+import beta from './beta.json'
 import { Error, ErrorCode } from '../../error'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
@@ -18,6 +19,8 @@ export class ConfigCache {
             this.data = testnet as ConfigCacheData
         } else if (configName === 'dev') {
             this.data = dev as ConfigCacheData
+        } else if (configName === 'beta') {
+            this.data = beta as ConfigCacheData
         } else if (Object.prototype.hasOwnProperty.call(configName, 'tokens')) {
             this.data = configName
         } else {

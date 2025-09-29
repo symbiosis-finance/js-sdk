@@ -59,6 +59,7 @@ import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
+import { config as beta } from './config/beta'
 import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
@@ -79,7 +80,7 @@ import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { isTonChainId } from './chainUtils'
 
-export type ConfigName = 'dev' | 'testnet' | 'mainnet'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
 export type DiscountTier = {
     amount: string
@@ -226,6 +227,8 @@ export class Symbiosis {
                 this.config = structuredClone(testnet)
             } else if (configName === 'dev') {
                 this.config = structuredClone(dev)
+            } else if (configName === 'beta') {
+                this.config = structuredClone(beta)
             } else {
                 throw new Error('Unknown config name')
             }
