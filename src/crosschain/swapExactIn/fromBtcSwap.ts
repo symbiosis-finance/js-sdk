@@ -33,6 +33,7 @@ import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { DepositoryContracts } from '../symbiosis'
+import { Token } from 'symbiosis-js-sdk'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -313,13 +314,12 @@ function erc20TransferCall(to: Address, tokenOut: Address): CallData {
     }
 }
 
-function nativeUnwrapCall(context: SwapExactInParams, to: Address): CallData {
+function nativeUnwrapCall(dep: DepositoryContracts, tokenOut: Token, to: Address): CallData {
     // Calls Router.transferNative(to)
-    const dep = context.symbiosis.depository(context.tokenOut.chainId)
     return {
-        target: dep?.router.address as Address,
+        target: dep.router.address as Address,
         targetCalldata: IRouter__factory.createInterface().encodeFunctionData('transferNative', [
-            context.tokenOut.address,
+            tokenOut.address,
             to,
             0n, // will be patched
         ]),
@@ -356,7 +356,7 @@ async function buildOnChainSwap(
 
     if (dep) {
         const targetCall = isOutputNative
-            ? nativeUnwrapCall(context, to)
+            ? nativeUnwrapCall(dep, context.tokenOut, to)
             : erc20TransferCall(to, aggregatorTrade.amountOutMin.token.address)
         const call = await buildDepositCall({
             context,
