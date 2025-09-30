@@ -20,7 +20,7 @@ import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
 import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { ERC20__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
+import { ERC20__factory, MetaRouter__factory, SymBtc__factory, IRouter__factory } from '../contracts'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
@@ -314,10 +314,11 @@ function erc20TransferCall(to: Address, tokenOut: Address): CallData {
 }
 
 function nativeUnwrapCall(context: SwapExactInParams, to: Address): CallData {
-    // Calls MetaRouter.transferNative(to)
+    // Calls Router.transferNative(to)
+    const dep = context.symbiosis.depository(context.tokenOut.chainId)
     return {
-        target: context.symbiosis.metaRouter(context.tokenOut.chainId).address as Address,
-        targetCalldata: MetaRouter__factory.createInterface().encodeFunctionData('transferNative', [
+        target: dep?.router.address as Address,
+        targetCalldata: IRouter__factory.createInterface().encodeFunctionData('transferNative', [
             context.tokenOut.address,
             to,
             0n, // will be patched

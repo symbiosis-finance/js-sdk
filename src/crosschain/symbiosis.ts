@@ -17,6 +17,8 @@ import {
     Fabric__factory,
     IDepository,
     IDepository__factory,
+    IRouter,
+    IRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -89,6 +91,7 @@ export type DiscountTier = {
 
 export type DepositoryContracts = {
     depository: IDepository
+    router: IRouter
     branchedUnlocker: BranchedUnlocker
     swapUnlocker: SwapUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
@@ -501,6 +504,7 @@ export class Symbiosis {
 
         return {
             depository: IDepository__factory.connect(depository.depository, signerOrProvider),
+            router: IRouter__factory.connect(depository.router, signerOrProvider),
             swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
             btcRefundUnlocker: depository.btcRefundUnlocker
                 ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
