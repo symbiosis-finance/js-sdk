@@ -107,7 +107,10 @@ export interface MetaRouterInterface extends utils.Interface {
         'metaMintSwap((uint256,uint256,bytes32,bytes32,address,uint256,address,address[],address,bytes,address,bytes,uint256))': FunctionFragment
         'metaRoute((bytes,bytes,address[],address,address,uint256,bool,address,bytes))': FunctionFragment
         'metaRouterGateway()': FunctionFragment
+        'rawExternalCall(address,uint256,address,bytes,uint256)': FunctionFragment
         'returnSwap(address,uint256,address,bytes,address,address,bytes)': FunctionFragment
+        'sendTransitToken(address,address,uint256)': FunctionFragment
+        'transferNative(address,address,uint256)': FunctionFragment
     }
 
     encodeFunctionData(
@@ -118,15 +121,24 @@ export interface MetaRouterInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'metaRoute', values: [MetaRouteStructs.MetaRouteTransactionStruct]): string
     encodeFunctionData(functionFragment: 'metaRouterGateway', values?: undefined): string
     encodeFunctionData(
+        functionFragment: 'rawExternalCall',
+        values: [string, BigNumberish, string, BytesLike, BigNumberish]
+    ): string
+    encodeFunctionData(
         functionFragment: 'returnSwap',
         values: [string, BigNumberish, string, BytesLike, string, string, BytesLike]
     ): string
+    encodeFunctionData(functionFragment: 'sendTransitToken', values: [string, string, BigNumberish]): string
+    encodeFunctionData(functionFragment: 'transferNative', values: [string, string, BigNumberish]): string
 
     decodeFunctionResult(functionFragment: 'externalCall', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaMintSwap', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaRoute', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'metaRouterGateway', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'rawExternalCall', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'returnSwap', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'sendTransitToken', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'transferNative', data: BytesLike): Result
 
     events: {
         'TransitTokenSent(address,uint256,address)': EventFragment
@@ -188,6 +200,15 @@ export interface MetaRouter extends BaseContract {
 
         metaRouterGateway(overrides?: CallOverrides): Promise<[string]>
 
+        rawExternalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
         returnSwap(
             _token: string,
             _amount: BigNumberish,
@@ -196,6 +217,20 @@ export interface MetaRouter extends BaseContract {
             _burnToken: string,
             _synthesis: string,
             _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        sendTransitToken(
+            _token: string,
+            _to: string,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        transferNative(
+            _token: string,
+            _to: string,
+            _amount: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
     }
@@ -222,6 +257,15 @@ export interface MetaRouter extends BaseContract {
 
     metaRouterGateway(overrides?: CallOverrides): Promise<string>
 
+    rawExternalCall(
+        _token: string,
+        _amount: BigNumberish,
+        _receiveSide: string,
+        _calldata: BytesLike,
+        _offset: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     returnSwap(
         _token: string,
         _amount: BigNumberish,
@@ -230,6 +274,20 @@ export interface MetaRouter extends BaseContract {
         _burnToken: string,
         _synthesis: string,
         _burnCalldata: BytesLike,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    sendTransitToken(
+        _token: string,
+        _to: string,
+        _amount: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    transferNative(
+        _token: string,
+        _to: string,
+        _amount: BigNumberish,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -256,6 +314,15 @@ export interface MetaRouter extends BaseContract {
 
         metaRouterGateway(overrides?: CallOverrides): Promise<string>
 
+        rawExternalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
+
         returnSwap(
             _token: string,
             _amount: BigNumberish,
@@ -266,6 +333,10 @@ export interface MetaRouter extends BaseContract {
             _burnCalldata: BytesLike,
             overrides?: CallOverrides
         ): Promise<void>
+
+        sendTransitToken(_token: string, _to: string, _amount: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        transferNative(_token: string, _to: string, _amount: BigNumberish, overrides?: CallOverrides): Promise<void>
     }
 
     filters: {
@@ -296,6 +367,15 @@ export interface MetaRouter extends BaseContract {
 
         metaRouterGateway(overrides?: CallOverrides): Promise<BigNumber>
 
+        rawExternalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
         returnSwap(
             _token: string,
             _amount: BigNumberish,
@@ -304,6 +384,20 @@ export interface MetaRouter extends BaseContract {
             _burnToken: string,
             _synthesis: string,
             _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        sendTransitToken(
+            _token: string,
+            _to: string,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        transferNative(
+            _token: string,
+            _to: string,
+            _amount: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
     }
@@ -331,6 +425,15 @@ export interface MetaRouter extends BaseContract {
 
         metaRouterGateway(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
+        rawExternalCall(
+            _token: string,
+            _amount: BigNumberish,
+            _receiveSide: string,
+            _calldata: BytesLike,
+            _offset: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
         returnSwap(
             _token: string,
             _amount: BigNumberish,
@@ -339,6 +442,20 @@ export interface MetaRouter extends BaseContract {
             _burnToken: string,
             _synthesis: string,
             _burnCalldata: BytesLike,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        sendTransitToken(
+            _token: string,
+            _to: string,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        transferNative(
+            _token: string,
+            _to: string,
+            _amount: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
     }

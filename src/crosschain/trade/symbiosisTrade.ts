@@ -1,6 +1,6 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 import { BigNumber } from 'ethers'
-import { FeeItem } from '../types'
+import { Address, FeeItem } from '../types'
 
 export type SymbiosisTradeType =
     | 'uni-v2'
@@ -32,7 +32,7 @@ export interface SymbiosisTradeParams {
 export interface SymbiosisTradeOutResult {
     amountOut: TokenAmount
     amountOutMin: TokenAmount
-    routerAddress: string
+    routerAddress: Address
     route: Token[]
     priceImpact: Percent
     callData: string
@@ -84,7 +84,7 @@ export abstract class SymbiosisTrade {
         return this.out.amountOutMin
     }
 
-    get routerAddress(): string {
+    get routerAddress(): Address {
         this.assertOutInitialized('routerAddress')
         return this.out.routerAddress
     }

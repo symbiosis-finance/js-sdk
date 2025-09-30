@@ -2,26 +2,36 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { BigNumber, BigNumberish } from 'ethers'
 import { BytesLike, isAddress } from 'ethers/lib/utils'
+import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
+import { randomBytes } from 'crypto'
 
-import { BtcConfig, FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../types'
-import { Fraction, Percent, TokenAmount } from '../../entities'
+import {
+    Address,
+    BtcAddress,
+    BtcConfig,
+    EvmAddress,
+    FeeItem,
+    MultiCallItem,
+    RouteItem,
+    SwapExactInParams,
+    SwapExactInResult,
+} from '../types'
+import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
 import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { ERC20__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
+import { ERC20__factory, MetaRouter__factory, SymBtc__factory, IRouter__factory } from '../contracts'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
+import { isUseOneInchOnly } from '../utils'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
-import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { BIPS_BASE } from '../constants'
+import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
-import { validate } from 'bitcoin-address-validation'
-import { isUseOneInchOnly } from '../utils'
-import { randomBytes } from 'crypto'
 import { DepositoryContracts } from '../symbiosis'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -79,7 +89,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         throw new Error(`Incorrect destination address was provided`)
     }
 
-    if (refundAddress && !validate(refundAddress)) {
+    if (refundAddress && !validateBitcoinAddress(refundAddress)) {
         throw new Error(`Incorrect refund address was provided`)
     }
 
@@ -131,9 +141,9 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         portalFee: btcPortalFeeRaw,
         stableBridgingFee: mintFeeRaw,
         tail: initialTail,
-        to,
+        to: to as EvmAddress,
         amount: btcAmountRaw,
-        refundAddress,
+        refundAddress: refundAddress as BtcAddress,
         clientId: symbiosis.clientId,
     })
     const btcForwarderFeeMax = new TokenAmount(
@@ -175,10 +185,10 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
             portalFee: btcPortalFeeRaw,
             stableBridgingFee: mintFeeRaw,
             tail,
-            to,
+            to: to as EvmAddress,
             feeLimit: btcForwarderFeeMax.raw.toString(),
             amount: btcAmountRaw,
-            refundAddress,
+            refundAddress: refundAddress as BtcAddress,
             clientId: symbiosis.clientId,
         })
         validUntil = wrapResponse.validUntil
@@ -288,6 +298,35 @@ async function buildTail(
     return { tail, fees, routes, priceImpact, amountOut, amountOutMin }
 }
 
+type CallData = {
+    target: Address
+    targetCalldata: BytesLike
+    targetOffset: bigint
+}
+
+function erc20TransferCall(to: Address, tokenOut: Address): CallData {
+    // Calls ERC20.transfer(to)
+    return {
+        target: tokenOut,
+        targetCalldata: ERC20__factory.createInterface().encodeFunctionData('transfer', [to, 0n]),
+        targetOffset: 68n, // 4 (selector) + 32 (to) + 32 (amount)
+    }
+}
+
+function nativeUnwrapCall(context: SwapExactInParams, to: Address): CallData {
+    // Calls Router.transferNative(to)
+    const dep = context.symbiosis.depository(context.tokenOut.chainId)
+    return {
+        target: dep?.router.address as Address,
+        targetCalldata: IRouter__factory.createInterface().encodeFunctionData('transferNative', [
+            context.tokenOut.address,
+            to,
+            0n, // will be patched
+        ]),
+        targetOffset: 100n, // 4 (selector) + 32 (token) + 32 (to) + 32 (amount)
+    }
+}
+
 async function buildOnChainSwap(
     context: SwapExactInParams,
     syBtcAmount: TokenAmount,
@@ -298,6 +337,14 @@ async function buildOnChainSwap(
     if (syBtcAmount.token.equals(tokenOut)) {
         return []
     }
+    const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
+    let isOutputNative = false
+    if (dep && context.tokenOut.isNative) {
+        isOutputNative = true
+        // Replace destination token with Wrapped
+        context = { ...context, tokenOut: wrappedToken(context.tokenOut) }
+    }
+    // TODO: replace costly AggregatorTrade with price estimation
     const aggregatorTrade = new AggregatorTrade({
         ...context,
         tokenAmountIn: syBtcAmount,
@@ -307,21 +354,18 @@ async function buildOnChainSwap(
     })
     await aggregatorTrade.init()
 
-    const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
-        const transferCall = ERC20__factory.createInterface().encodeFunctionData('transfer', [
-            to,
-            aggregatorTrade.amountOutMin.toBigInt(),
-        ])
+        const targetCall = isOutputNative
+            ? nativeUnwrapCall(context, to)
+            : erc20TransferCall(to, aggregatorTrade.amountOutMin.token.address)
         const call = await buildDepositCall({
             context,
             dep,
             syBtcAmount,
+            tokenAmountOut: aggregatorTrade.amountOut,
             tokenAmountOutMin: aggregatorTrade.amountOutMin,
             btcConfig,
-            target: aggregatorTrade.amountOutMin.token.address,
-            targetCalldata: transferCall,
-            targetOffset: 68n,
+            ...targetCall,
         })
         call.fees = aggregatorTrade.fees || []
         call.priceImpact = aggregatorTrade.priceImpact
@@ -375,6 +419,7 @@ async function buildCrossChainSwap(
                 context,
                 dep,
                 syBtcAmount,
+                tokenAmountOut: swapExactInResult.tradeA.amountOut,
                 tokenAmountOutMin: swapExactInResult.tradeA.amountOutMin,
                 btcConfig,
                 target: tx.relayRecipient,
@@ -441,6 +486,7 @@ type BuildDepositCallParameters = {
     context: SwapExactInParams
     dep: DepositoryContracts
     syBtcAmount: TokenAmount
+    tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
     btcConfig: BtcConfig
     target: string
@@ -452,6 +498,7 @@ async function buildDepositCall({
     context,
     dep,
     syBtcAmount,
+    tokenAmountOut,
     tokenAmountOutMin,
     btcConfig,
     target,
@@ -462,15 +509,19 @@ async function buildDepositCall({
     const fromToken = syBtcAmount.token
     const toToken = tokenAmountOutMin.token
 
-    const swapCondition = await dep.swapUnlocker.encodeCondition({
+    const condData = {
         outToken: toToken.address, // destination token
         outMinAmount: tokenAmountOutMin.toBigInt(),
-        target, // target to send destination token after validation
-        targetCalldata, // calldata to call on target. If it's empty then tokens are simply transferred
+        target, // target to call after validation
+        targetCalldata, // calldata to call on target.
         targetOffset, // offset to patch-in amountTo in targetCalldata
-    })
-    const withdrawCondition = await dep.withdrawUnlocker.encodeCondition({
-        recipient: to, // owner can withdraw fromToken directly
+    }
+    const swapCondition = await dep.swapUnlocker.encodeCondition(condData)
+    const withdrawCall = erc20TransferCall(to, syBtcAmount.token.address)
+    const withdrawCondition = await dep.swapUnlocker.encodeCondition({
+        outToken: fromToken.address, // destination token
+        outMinAmount: syBtcAmount.toBigInt(),
+        ...withdrawCall,
     })
     const unlockers = [
         {
@@ -478,7 +529,7 @@ async function buildDepositCall({
             condition: swapCondition,
         },
         {
-            unlocker: dep.withdrawUnlocker.address,
+            unlocker: dep.swapUnlocker.address,
             condition: withdrawCondition,
         },
     ]
@@ -519,7 +570,7 @@ async function buildDepositCall({
         ],
         value: '0',
         amountIn: syBtcAmount,
-        amountOut: tokenAmountOutMin,
+        amountOut: tokenAmountOut,
         amountOutMin: tokenAmountOutMin,
         fees: [],
         priceImpact: new Fraction(0n),
@@ -537,9 +588,9 @@ type EstimateWrapParams = {
     portalFee: string
     stableBridgingFee: string
     tail: string
-    to: string
+    to: EvmAddress
     amount: string
-    refundAddress?: string
+    refundAddress?: BtcAddress
     clientId?: string
 }
 export type EstimateWrapBodyParams = {
@@ -549,9 +600,9 @@ export type EstimateWrapBodyParams = {
         op: number
         stableBridgingFee: number
         tail: string
-        to: string
+        to: EvmAddress
     }
-    refundAddress?: string
+    refundAddress?: BtcAddress
     clientId?: string
 }
 

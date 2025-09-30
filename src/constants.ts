@@ -1,4 +1,5 @@
 import JSBI from 'jsbi'
+import { Address, EvmAddress } from '.'
 
 // exports for external consumption
 export type BigintIsh = JSBI | bigint | string
@@ -11,7 +12,7 @@ export type Icons = {
 export type TokenConstructor = {
     name?: string
     symbol?: string
-    address: string
+    address: Address
     decimals: number
     chainId: ChainId
     isNative?: boolean
@@ -126,7 +127,7 @@ export enum Rounding {
     ROUND_HALF_UP,
     ROUND_UP,
 }
-export const FACTORY_ADDRESS = {
+export const FACTORY_ADDRESS: Record<ChainId, EvmAddress> = {
     [ChainId.ETH_MAINNET]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
     [ChainId.ETH_RINKEBY]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
     [ChainId.ETH_KOVAN]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',

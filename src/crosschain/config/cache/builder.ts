@@ -22,6 +22,7 @@ import { Token } from '../../../entities'
 import { config as mainnet } from '../mainnet'
 import { config as testnet } from '../testnet'
 import { config as dev } from '../dev'
+import { config as beta } from '../beta'
 import type { ConfigName } from '../../symbiosis'
 import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
@@ -61,6 +62,8 @@ export class Builder {
             this.config = testnet
         } else if (configName === 'dev') {
             this.config = dev
+        } else if (configName === 'beta') {
+            this.config = beta
         } else {
             throw new Error('Unknown config name')
         }

@@ -1,9 +1,9 @@
 import { BaseSwapping } from './baseSwapping'
 import { Swapping } from './swapping'
-import { SwapExactInParams, SwapExactInResult } from '../types'
+import { Address, SwapExactInParams, SwapExactInResult } from '../types'
 
 export class SwappingMiddleware extends BaseSwapping {
-    protected middlewareAddress!: string
+    protected middlewareAddress!: Address
     protected middlewareData!: string
     protected middlewareOffset!: number
 
@@ -24,7 +24,7 @@ export class SwappingMiddleware extends BaseSwapping {
         return this.doExactIn(params)
     }
 
-    protected finalReceiveSide(): string {
+    protected finalReceiveSide(): Address {
         return this.middlewareAddress
     }
 

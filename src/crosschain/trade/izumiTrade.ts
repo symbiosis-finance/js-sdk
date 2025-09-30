@@ -10,11 +10,12 @@ import { Symbiosis } from '../symbiosis'
 import { getMinAmount } from '../chainUtils'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { Multicall2 } from '../contracts/Multicall'
+import { Address } from '..'
 
 interface IzumiAddresses {
-    factory: string
-    quoter: string
-    swap: string
+    factory: Address
+    quoter: Address
+    swap: Address
     baseTokens: Token[]
 }
 
@@ -508,7 +509,7 @@ function fee2Hex(fee: number): string {
 }
 
 export const getTokenChainPath = (tokenChain: Token[], feeChain: number[]): string => {
-    let hexString = wrappedToken(tokenChain[0]).address
+    let hexString: string = wrappedToken(tokenChain[0]).address
     for (let i = 0; i < feeChain.length; i++) {
         hexString = appendHex(hexString, fee2Hex(feeChain[i]))
         hexString = appendHex(hexString, wrappedToken(tokenChain[i + 1]).address)

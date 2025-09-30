@@ -1,4 +1,4 @@
-import { Log, StaticJsonRpcProvider, Provider } from '@ethersproject/providers'
+import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
@@ -13,10 +13,12 @@ import {
     Bridge__factory,
     BtcRefundUnlocker,
     BtcRefundUnlocker__factory,
-    Depository,
-    Depository__factory,
     Fabric,
     Fabric__factory,
+    IDepository,
+    IDepository__factory,
+    IRouter,
+    IRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -33,8 +35,6 @@ import {
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
-    WithdrawUnlocker,
-    WithdrawUnlocker__factory,
 } from './contracts'
 import { aggregatorErrorToText, Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
@@ -45,6 +45,7 @@ import {
     Config,
     Context,
     CounterParams,
+    EvmAddress,
     FeeConfig,
     MetricParams,
     OmniPoolConfig,
@@ -60,6 +61,7 @@ import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
+import { config as beta } from './config/beta'
 import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
@@ -80,7 +82,7 @@ import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { isTonChainId } from './chainUtils'
 
-export type ConfigName = 'dev' | 'testnet' | 'mainnet'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
 export type DiscountTier = {
     amount: string
@@ -88,10 +90,10 @@ export type DiscountTier = {
 }
 
 export type DepositoryContracts = {
-    depository: Depository
+    depository: IDepository
+    router: IRouter
     branchedUnlocker: BranchedUnlocker
     swapUnlocker: SwapUnlocker
-    withdrawUnlocker: WithdrawUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
 }
 
@@ -228,6 +230,8 @@ export class Symbiosis {
                 this.config = structuredClone(testnet)
             } else if (configName === 'dev') {
                 this.config = structuredClone(dev)
+            } else if (configName === 'beta') {
+                this.config = structuredClone(beta)
             } else {
                 throw new Error('Unknown config name')
             }
@@ -499,9 +503,9 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return {
-            depository: Depository__factory.connect(depository.depository, signerOrProvider),
+            depository: IDepository__factory.connect(depository.depository, signerOrProvider),
+            router: IRouter__factory.connect(depository.router, signerOrProvider),
             swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
-            withdrawUnlocker: WithdrawUnlocker__factory.connect(depository.withdrawUnlocker, signerOrProvider),
             btcRefundUnlocker: depository.btcRefundUnlocker
                 ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
                 : undefined,
@@ -798,7 +802,7 @@ export class Symbiosis {
         return info
     }
 
-    getRevertableAddress(chainId: ChainId): string {
+    getRevertableAddress(chainId: ChainId): EvmAddress {
         const address = this.config.revertableAddress[chainId]
 
         if (address) {

@@ -4,6 +4,7 @@ import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
 import { isTronChainId, tronAddressToEvm } from '../crosschain/chainUtils/tron'
 import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
 import { Chain, getChainById } from './chain'
+import { NonEmptyAddress } from '..'
 
 /**
  * A token is any fungible financial instrument on Ethereum.
@@ -14,7 +15,7 @@ export class Token {
     public readonly symbol?: string
     public readonly name?: string
     public readonly chainId: ChainId
-    public readonly address: string
+    public readonly address: NonEmptyAddress
     public readonly icons?: Icons
     public readonly chainFromId?: ChainId
     public readonly isNative: boolean
@@ -48,7 +49,7 @@ export class Token {
             return
         }
 
-        this.address = validateAndParseAddress(params.address)
+        this.address = validateAndParseAddress(params.address) as NonEmptyAddress
     }
 
     /**

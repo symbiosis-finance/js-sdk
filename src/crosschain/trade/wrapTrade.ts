@@ -4,8 +4,9 @@ import { getFunctionSelector } from '../chainUtils/tron'
 import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { BIPS_BASE } from '../constants'
+import { EvmAddress } from '..'
 
-const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
+const UNWRAP_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
     [ChainId.MANTA_MAINNET]: '0xf39D9A9ABb98593ceaC395D7A37c572Da48fCfD5',
     [ChainId.LINEA_MAINNET]: '0xF5b0861e787706195c98E2F0d2D6EFBDAC1D1e08',

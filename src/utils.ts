@@ -4,6 +4,7 @@ import { getAddress } from '@ethersproject/address'
 
 import { BigintIsh, ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from './constants'
 import { Token, TokenAmount } from './entities'
+import { Address, EvmAddress } from '.'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
     invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
@@ -11,13 +12,13 @@ export function validateSolidityTypeInstance(value: JSBI, solidityType: Solidity
 }
 
 // warns if addresses are not checksummed
-export function validateAndParseAddress(address: string): string {
+export function validateAndParseAddress(address: string): Address {
     if (address === '') {
         return address
     }
 
     try {
-        return getAddress(address)
+        return getAddress(address) as EvmAddress
     } catch (error) {
         invariant(false, `${address} is not a valid address.`)
     }

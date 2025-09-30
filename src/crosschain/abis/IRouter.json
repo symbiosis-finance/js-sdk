@@ -1,0 +1,81 @@
+{
+    "_format": "hh3-artifact-1",
+    "contractName": "IRouter",
+    "sourceName": "contracts/interfaces/IRouter.sol",
+    "abi": [
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "target",
+                    "type": "address"
+                }
+            ],
+            "name": "CallToNonContract",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "_token",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_receiveSide",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "_calldata",
+                    "type": "bytes"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_offset",
+                    "type": "uint256"
+                }
+            ],
+            "name": "externalCall",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "contract IWETH",
+                    "name": "token",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transferNative",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ],
+    "bytecode": "0x",
+    "deployedBytecode": "0x",
+    "linkReferences": {},
+    "deployedLinkReferences": {},
+    "immutableReferences": {},
+    "inputSourceName": "project/contracts/interfaces/IRouter.sol",
+    "buildInfoId": "solc-0_8_28-bec985a03876ab15ebd8b1ba4d2fbf940659ba17"
+}

@@ -20,7 +20,7 @@ import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
 import { ChainId } from '../../constants'
-import { FeeItem } from '../types'
+import { TonAddress, FeeItem } from '../types'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -103,7 +103,7 @@ export class DedustTrade extends SymbiosisTrade {
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
-            routerAddress: to.toString() ?? '',
+            routerAddress: (to.toString() as TonAddress) ?? '',
             callData: body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,
