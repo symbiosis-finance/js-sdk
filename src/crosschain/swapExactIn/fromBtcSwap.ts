@@ -16,7 +16,7 @@ import {
     SwapExactInParams,
     SwapExactInResult,
 } from '../types'
-import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
+import { Fraction, Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
 import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
@@ -33,7 +33,6 @@ import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { DepositoryContracts } from '../symbiosis'
-import { Token } from 'symbiosis-js-sdk'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
