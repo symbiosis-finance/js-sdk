@@ -2266,6 +2266,28 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xb88339CB7199b77E23DB6E890353E22632Ba630f',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0xab11329560fa9c9c860bb21a9342215a1265bbb0',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
+                    },
+                },
             ],
             router: '0xb4a9C4e6Ea8E2191d2FA5B380452a634Fb21240A',
             dexFee: 30,
