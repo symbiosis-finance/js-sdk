@@ -472,11 +472,10 @@ export const config: Config = {
             fabric: '0xc17d768Bf4FdC6f20a4A0d8Be8767840D106D077',
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
             depository: {
-                depository: '0x99eaB017010e35b42cfeBD4CFEC9b3E1D4Db1Ff2',
-                swapUnlocker: '0xEDc23959D44d9e4CF8cc93CCa36AA0FC316163Eb',
-                btcRefundUnlocker: '0xA0CAf87F2d662b4aecF7366aBf0235d3099fa43B',
-                branchedUnlocker: '0xcD2677d83080B1C931ae7f986021bA413E2b5356',
-                router: '0x157063211009261fb2ba9C2292a7Fe38411d73C6',
+                depository: '0xE813Cec05DA3db6d026193695bB23cEeF8c41531',
+                swapUnlocker: '0xd551d981AC20F04A2574C91611A07c41a574C8d9',
+                btcRefundUnlocker: '0x1E758EC4FFda58Ae5b9d7d1724bE1D3a6E1b5F2B',
+                branchedUnlocker: '0x247871cD6692491F8b9cE380b3c2DEe205f21A31',
             },
         },
         {
