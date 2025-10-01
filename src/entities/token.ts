@@ -1006,4 +1006,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
         },
     }),
+    [ChainId.PLASMA_MAINNET]: new Token({
+        chainId: ChainId.PLASMA_MAINNET,
+        address: '0x6100E367285b01F48D07953803A2d8dCA5D19873',
+        decimals: 18,
+        symbol: 'WXPL',
+        isNative: false,
+        name: 'Wrapped XPL',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
+        },
+    }),
 }

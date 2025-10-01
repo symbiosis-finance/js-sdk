@@ -808,6 +808,16 @@ export const chains: Chain[] = [
             large: 'https://coin-images.coingecko.com/asset_platforms/images/22184/small/apechain.jpg?1729564324',
         },
     }),
+    new Chain({
+        id: ChainId.PLASMA_MAINNET,
+        name: 'Plasma',
+        disabled: false,
+        explorer: 'https://plasmascan.to',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

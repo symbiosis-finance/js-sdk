@@ -601,11 +601,7 @@ export const config: Config = {
         {
             id: ChainId.KAVA_MAINNET,
             rpc: 'https://rpc.ankr.com/kava_evm',
-            spareRpcs: [
-                'https://kava-evm-rpc.publicnode.com',
-                'https://evm.kava.io',
-                'https://evm.kava-rpc.com',
-            ],
+            spareRpcs: ['https://kava-evm-rpc.publicnode.com', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -2347,6 +2343,34 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.PLASMA_MAINNET,
+            rpc: 'https://rpc.plasma.to',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Tether USD',
+                    symbol: 'USDT0',
+                    address: '0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb',
+                    chainId: ChainId.PLASMA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                     },
                 },
             ],
