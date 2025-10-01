@@ -20,7 +20,7 @@ import { Fraction, Percent, Token, TokenAmount, wrappedToken } from '../../entit
 
 import { Error, ErrorCode } from '../error'
 import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { ERC20__factory, MetaRouter__factory, SymBtc__factory, IRouter__factory } from '../contracts'
+import { ERC20__factory, IRouter__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
 import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
@@ -542,7 +542,7 @@ async function buildDepositCall({
             condition: btcRefundCondition,
         })
     }
-    const condition = await dep.branchedUnlocker.encodeCondition({branches})
+    const condition = await dep.branchedUnlocker.encodeCondition({ branches })
     const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
     const deposit = {
         token: fromToken.address, // source token
