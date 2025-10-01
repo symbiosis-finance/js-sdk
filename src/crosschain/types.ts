@@ -135,8 +135,8 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     fetch?: typeof fetch
     advisor?: AdvisorConfig
-    oneInchConfig?: OneInchConfig
-    openOceanConfig?: OpenOceanConfig
+    oneInchConfig?: Partial<OneInchConfig>
+    openOceanConfig?: Partial<OpenOceanConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
     config?: Config

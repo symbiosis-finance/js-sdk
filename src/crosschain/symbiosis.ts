@@ -262,14 +262,14 @@ export class Symbiosis {
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.oneInchConfig) {
-            this.oneInchConfig = overrideConfig.oneInchConfig
+            this.oneInchConfig = { ...this.oneInchConfig, ...overrideConfig.oneInchConfig }
         }
         this.openOceanConfig = {
             apiUrl: 'https://open-api.openocean.finance/v4',
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.openOceanConfig) {
-            this.openOceanConfig = overrideConfig.openOceanConfig
+            this.openOceanConfig = { ...this.openOceanConfig, ...overrideConfig.openOceanConfig }
         }
 
         this.volumeFeeCollectors = VOLUME_FEE_COLLECTORS
