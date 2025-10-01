@@ -336,7 +336,7 @@ async function buildOnChainSwap(
     if (syBtcAmount.token.equals(tokenOut)) {
         return []
     }
-    const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
+    const dep = await context.symbiosis.depository(syBtcAmount.token.chainId)
     let isOutputNative = false
     if (dep && context.tokenOut.isNative) {
         isOutputNative = true
@@ -410,7 +410,7 @@ async function buildCrossChainSwap(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const dep = context.symbiosis.depository(syBtcAmount.token.chainId)
+    const dep = await context.symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
         if (swapExactInResult.tradeA) {
             // There is DEX-swap on BSC, lock to Depository instead.
@@ -522,7 +522,7 @@ async function buildDepositCall({
         outMinAmount: syBtcAmount.toBigInt(),
         ...withdrawCall,
     })
-    const unlockers = [
+    const branches = [
         {
             unlocker: dep.swapUnlocker.address,
             condition: swapCondition,
@@ -537,14 +537,12 @@ async function buildDepositCall({
         const btcRefundCondition = await dep.btcRefundUnlocker.encodeCondition({
             refundAddress: refundScript,
         })
-        unlockers.push({
+        branches.push({
             unlocker: dep.btcRefundUnlocker.address,
             condition: btcRefundCondition,
         })
     }
-    const condition = await dep.branchedUnlocker.encodeCondition({
-        unlockers: unlockers,
-    })
+    const condition = await dep.branchedUnlocker.encodeCondition({branches})
     const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
     const deposit = {
         token: fromToken.address, // source token

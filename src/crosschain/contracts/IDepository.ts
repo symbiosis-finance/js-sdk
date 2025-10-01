@@ -13,7 +13,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -30,9 +30,12 @@ export declare namespace DepositoryTypes {
         nonce: BigNumber
     }
 
-    export type UnlockerStruct = { unlocker: string; condition: BytesLike }
+    export type UnlockConditionStruct = {
+        unlocker: string
+        condition: BytesLike
+    }
 
-    export type UnlockerStructOutput = [string, string] & {
+    export type UnlockConditionStructOutput = [string, string] & {
         unlocker: string
         condition: string
     }
@@ -42,29 +45,62 @@ export interface IDepositoryInterface extends utils.Interface {
     contractName: 'IDepository'
     functions: {
         'depositID((address,uint256,uint256),(address,bytes))': FunctionFragment
+        'depositStatus(bytes32)': FunctionFragment
         'lock((address,uint256,uint256),(address,bytes))': FunctionFragment
+        'router()': FunctionFragment
         'unlock((address,uint256,uint256),(address,bytes),bytes)': FunctionFragment
     }
 
     encodeFunctionData(
         functionFragment: 'depositID',
-        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockerStruct]
+        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockConditionStruct]
     ): string
+    encodeFunctionData(functionFragment: 'depositStatus', values: [BytesLike]): string
     encodeFunctionData(
         functionFragment: 'lock',
-        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockerStruct]
+        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockConditionStruct]
     ): string
+    encodeFunctionData(functionFragment: 'router', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'unlock',
-        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockerStruct, BytesLike]
+        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockConditionStruct, BytesLike]
     ): string
 
     decodeFunctionResult(functionFragment: 'depositID', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'depositStatus', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'lock', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'router', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'DepositLocked(bytes32,tuple,tuple)': EventFragment
+        'DepositUnlocked(bytes32)': EventFragment
+        'SetRouter(address,address)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'DepositLocked'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'DepositUnlocked'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'SetRouter'): EventFragment
 }
+
+export type DepositLockedEvent = TypedEvent<
+    [string, DepositoryTypes.DepositStructOutput, DepositoryTypes.UnlockConditionStructOutput],
+    {
+        depositID: string
+        deposit: DepositoryTypes.DepositStructOutput
+        unlocker: DepositoryTypes.UnlockConditionStructOutput
+    }
+>
+
+export type DepositLockedEventFilter = TypedEventFilter<DepositLockedEvent>
+
+export type DepositUnlockedEvent = TypedEvent<[string], { depositID: string }>
+
+export type DepositUnlockedEventFilter = TypedEventFilter<DepositUnlockedEvent>
+
+export type SetRouterEvent = TypedEvent<[string, string], { oldRouter: string; newRouter: string }>
+
+export type SetRouterEventFilter = TypedEventFilter<SetRouterEvent>
 
 export interface IDepository extends BaseContract {
     contractName: 'IDepository'
@@ -91,83 +127,112 @@ export interface IDepository extends BaseContract {
 
     functions: {
         depositID(
-            d: DepositoryTypes.DepositStruct,
-            u: DepositoryTypes.UnlockerStruct,
+            depository: DepositoryTypes.DepositStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: CallOverrides
         ): Promise<[string]>
 
+        depositStatus(depositID: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
+
         lock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
+        router(overrides?: CallOverrides): Promise<[string]>
+
         unlock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
     }
 
     depositID(
-        d: DepositoryTypes.DepositStruct,
-        u: DepositoryTypes.UnlockerStruct,
+        depository: DepositoryTypes.DepositStruct,
+        condition: DepositoryTypes.UnlockConditionStruct,
         overrides?: CallOverrides
     ): Promise<string>
 
+    depositStatus(depositID: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
     lock(
         deposit: DepositoryTypes.DepositStruct,
-        unlocker: DepositoryTypes.UnlockerStruct,
+        condition: DepositoryTypes.UnlockConditionStruct,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
+    router(overrides?: CallOverrides): Promise<string>
+
     unlock(
         deposit: DepositoryTypes.DepositStruct,
-        unlocker: DepositoryTypes.UnlockerStruct,
+        condition: DepositoryTypes.UnlockConditionStruct,
         solution: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
     callStatic: {
         depositID(
-            d: DepositoryTypes.DepositStruct,
-            u: DepositoryTypes.UnlockerStruct,
+            depository: DepositoryTypes.DepositStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: CallOverrides
         ): Promise<string>
 
+        depositStatus(depositID: BytesLike, overrides?: CallOverrides): Promise<boolean>
+
         lock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: CallOverrides
         ): Promise<void>
 
+        router(overrides?: CallOverrides): Promise<string>
+
         unlock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             solution: BytesLike,
             overrides?: CallOverrides
         ): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'DepositLocked(bytes32,tuple,tuple)'(
+            depositID?: BytesLike | null,
+            deposit?: null,
+            unlocker?: null
+        ): DepositLockedEventFilter
+        DepositLocked(depositID?: BytesLike | null, deposit?: null, unlocker?: null): DepositLockedEventFilter
+
+        'DepositUnlocked(bytes32)'(depositID?: BytesLike | null): DepositUnlockedEventFilter
+        DepositUnlocked(depositID?: BytesLike | null): DepositUnlockedEventFilter
+
+        'SetRouter(address,address)'(oldRouter?: string | null, newRouter?: string | null): SetRouterEventFilter
+        SetRouter(oldRouter?: string | null, newRouter?: string | null): SetRouterEventFilter
+    }
 
     estimateGas: {
         depositID(
-            d: DepositoryTypes.DepositStruct,
-            u: DepositoryTypes.UnlockerStruct,
+            depository: DepositoryTypes.DepositStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
+        depositStatus(depositID: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+
         lock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
+        router(overrides?: CallOverrides): Promise<BigNumber>
+
         unlock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
@@ -175,20 +240,24 @@ export interface IDepository extends BaseContract {
 
     populateTransaction: {
         depositID(
-            d: DepositoryTypes.DepositStruct,
-            u: DepositoryTypes.UnlockerStruct,
+            depository: DepositoryTypes.DepositStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
+        depositStatus(depositID: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
         lock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
+        router(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
         unlock(
             deposit: DepositoryTypes.DepositStruct,
-            unlocker: DepositoryTypes.UnlockerStruct,
+            condition: DepositoryTypes.UnlockConditionStruct,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>

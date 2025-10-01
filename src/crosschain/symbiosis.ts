@@ -495,22 +495,26 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts | null {
-        const depository = this.chainConfig(chainId).depository
-        if (!depository) {
-            return null
-        }
-        const signerOrProvider = signer || this.getProvider(chainId)
+    public async depository(chainId: ChainId): Promise<DepositoryContracts | null> {
+        return this.cache.get(["depository", `${chainId}`], async () => {
+            const depositoryCfg = this.chainConfig(chainId).depository
+            if (!depositoryCfg) {
+                return null
+            }
+            const signerOrProvider = this.getProvider(chainId)
+            const depository = IDepository__factory.connect(depositoryCfg.depository, signerOrProvider)
+            const routerAddress = await depository.router()
 
-        return {
-            depository: IDepository__factory.connect(depository.depository, signerOrProvider),
-            router: IRouter__factory.connect(depository.router, signerOrProvider),
-            swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
-            btcRefundUnlocker: depository.btcRefundUnlocker
-                ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
-                : undefined,
-            branchedUnlocker: BranchedUnlocker__factory.connect(depository.branchedUnlocker, signerOrProvider),
-        }
+            return {
+                depository,
+                router: IRouter__factory.connect(routerAddress, signerOrProvider),
+                swapUnlocker: SwapUnlocker__factory.connect(depositoryCfg.swapUnlocker, signerOrProvider),
+                btcRefundUnlocker: depositoryCfg.btcRefundUnlocker
+                    ? BtcRefundUnlocker__factory.connect(depositoryCfg.btcRefundUnlocker, signerOrProvider)
+                    : undefined,
+                branchedUnlocker: BranchedUnlocker__factory.connect(depositoryCfg.branchedUnlocker, signerOrProvider),
+            }
+        })
     }
 
     public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
@@ -825,8 +829,7 @@ export class Symbiosis {
             const maxLimitTokenAmount = new TokenAmount(token, maxAmountRaw)
             if (amount.greaterThan(maxLimitTokenAmount)) {
                 throw new Error(
-                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${
-                        maxLimitTokenAmount.token.symbol
+                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${maxLimitTokenAmount.token.symbol
                     }`,
                     ErrorCode.AMOUNT_TOO_HIGH
                 )
@@ -837,8 +840,7 @@ export class Symbiosis {
             const minLimitTokenAmount = new TokenAmount(token, minAmountRaw)
             if (amount.lessThan(minLimitTokenAmount)) {
                 throw new Error(
-                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${
-                        minLimitTokenAmount.token.symbol
+                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${minLimitTokenAmount.token.symbol
                     }`,
                     ErrorCode.AMOUNT_TOO_LOW
                 )

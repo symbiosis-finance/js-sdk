@@ -112,7 +112,7 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<[string]>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
@@ -127,7 +127,7 @@ export interface SwapUnlocker extends BaseContract {
     encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
 
     unlock(
-        metarouter: string,
+        router: string,
         deposit: DepositoryTypes.DepositStruct,
         condition: BytesLike,
         solution: BytesLike,
@@ -142,7 +142,7 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
@@ -160,7 +160,7 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<BigNumber>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
@@ -176,7 +176,7 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,

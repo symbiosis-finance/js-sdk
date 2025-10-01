@@ -41,7 +41,6 @@ export type BridgeDirection = 'burn' | 'mint' | 'v2'
 // Addresses of Depository contracts
 export type DepositoryConfig = {
     depository: EvmAddress
-    router: EvmAddress
     swapUnlocker: EvmAddress
     branchedUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress

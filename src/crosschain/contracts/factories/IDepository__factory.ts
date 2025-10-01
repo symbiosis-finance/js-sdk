@@ -10,6 +10,114 @@ const _abi = [
     {
         inputs: [
             {
+                internalType: 'DepositID',
+                name: 'id',
+                type: 'bytes32',
+            },
+        ],
+        name: 'DepositExists',
+        type: 'error',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'DepositID',
+                name: 'id',
+                type: 'bytes32',
+            },
+        ],
+        name: 'DepositUnavailable',
+        type: 'error',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: 'DepositID',
+                name: 'depositID',
+                type: 'bytes32',
+            },
+            {
+                components: [
+                    {
+                        internalType: 'contract IERC20',
+                        name: 'token',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'amount',
+                        type: 'uint256',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'nonce',
+                        type: 'uint256',
+                    },
+                ],
+                indexed: false,
+                internalType: 'struct DepositoryTypes.Deposit',
+                name: 'deposit',
+                type: 'tuple',
+            },
+            {
+                components: [
+                    {
+                        internalType: 'contract IDepositUnlocker',
+                        name: 'unlocker',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'bytes',
+                        name: 'condition',
+                        type: 'bytes',
+                    },
+                ],
+                indexed: false,
+                internalType: 'struct DepositoryTypes.UnlockCondition',
+                name: 'unlocker',
+                type: 'tuple',
+            },
+        ],
+        name: 'DepositLocked',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: 'DepositID',
+                name: 'depositID',
+                type: 'bytes32',
+            },
+        ],
+        name: 'DepositUnlocked',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: 'contract IRouter',
+                name: 'oldRouter',
+                type: 'address',
+            },
+            {
+                indexed: true,
+                internalType: 'contract IRouter',
+                name: 'newRouter',
+                type: 'address',
+            },
+        ],
+        name: 'SetRouter',
+        type: 'event',
+    },
+    {
+        inputs: [
+            {
                 components: [
                     {
                         internalType: 'contract IERC20',
@@ -28,7 +136,7 @@ const _abi = [
                     },
                 ],
                 internalType: 'struct DepositoryTypes.Deposit',
-                name: 'd',
+                name: 'depository',
                 type: 'tuple',
             },
             {
@@ -44,8 +152,8 @@ const _abi = [
                         type: 'bytes',
                     },
                 ],
-                internalType: 'struct DepositoryTypes.Unlocker',
-                name: 'u',
+                internalType: 'struct DepositoryTypes.UnlockCondition',
+                name: 'condition',
                 type: 'tuple',
             },
         ],
@@ -63,48 +171,20 @@ const _abi = [
     {
         inputs: [
             {
-                components: [
-                    {
-                        internalType: 'contract IERC20',
-                        name: 'token',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'uint256',
-                        name: 'amount',
-                        type: 'uint256',
-                    },
-                    {
-                        internalType: 'uint256',
-                        name: 'nonce',
-                        type: 'uint256',
-                    },
-                ],
-                internalType: 'struct DepositoryTypes.Deposit',
-                name: 'deposit',
-                type: 'tuple',
-            },
-            {
-                components: [
-                    {
-                        internalType: 'contract IDepositUnlocker',
-                        name: 'unlocker',
-                        type: 'address',
-                    },
-                    {
-                        internalType: 'bytes',
-                        name: 'condition',
-                        type: 'bytes',
-                    },
-                ],
-                internalType: 'struct DepositoryTypes.Unlocker',
-                name: 'unlocker',
-                type: 'tuple',
+                internalType: 'DepositID',
+                name: 'depositID',
+                type: 'bytes32',
             },
         ],
-        name: 'lock',
-        outputs: [],
-        stateMutability: 'nonpayable',
+        name: 'depositStatus',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
+        ],
+        stateMutability: 'view',
         type: 'function',
     },
     {
@@ -144,8 +224,68 @@ const _abi = [
                         type: 'bytes',
                     },
                 ],
-                internalType: 'struct DepositoryTypes.Unlocker',
-                name: 'unlocker',
+                internalType: 'struct DepositoryTypes.UnlockCondition',
+                name: 'condition',
+                type: 'tuple',
+            },
+        ],
+        name: 'lock',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'router',
+        outputs: [
+            {
+                internalType: 'contract IRouter',
+                name: '',
+                type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                components: [
+                    {
+                        internalType: 'contract IERC20',
+                        name: 'token',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'amount',
+                        type: 'uint256',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'nonce',
+                        type: 'uint256',
+                    },
+                ],
+                internalType: 'struct DepositoryTypes.Deposit',
+                name: 'deposit',
+                type: 'tuple',
+            },
+            {
+                components: [
+                    {
+                        internalType: 'contract IDepositUnlocker',
+                        name: 'unlocker',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'bytes',
+                        name: 'condition',
+                        type: 'bytes',
+                    },
+                ],
+                internalType: 'struct DepositoryTypes.UnlockCondition',
+                name: 'condition',
                 type: 'tuple',
             },
             {

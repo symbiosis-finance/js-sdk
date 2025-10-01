@@ -22,15 +22,9 @@ export declare namespace BtcRefundUnlocker {
 
     export type ConditionStructOutput = [string] & { refundAddress: string }
 
-    export type SolutionStruct = {
-        stableBridgingFee: BigNumberish
-        clientID: BytesLike
-    }
+    export type SolutionStruct = { clientID: BytesLike }
 
-    export type SolutionStructOutput = [BigNumber, string] & {
-        stableBridgingFee: BigNumber
-        clientID: string
-    }
+    export type SolutionStructOutput = [string] & { clientID: string }
 }
 
 export declare namespace DepositoryTypes {
@@ -52,7 +46,7 @@ export interface BtcRefundUnlockerInterface extends utils.Interface {
     functions: {
         'decodeCondition(bytes)': FunctionFragment
         'encodeCondition((bytes))': FunctionFragment
-        'encodeSolution((uint256,bytes32))': FunctionFragment
+        'encodeSolution((bytes32))': FunctionFragment
         'synthesis()': FunctionFragment
         'unlock(address,(address,uint256,uint256),bytes,bytes)': FunctionFragment
     }
@@ -111,7 +105,7 @@ export interface BtcRefundUnlocker extends BaseContract {
         synthesis(overrides?: CallOverrides): Promise<[string]>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
@@ -128,7 +122,7 @@ export interface BtcRefundUnlocker extends BaseContract {
     synthesis(overrides?: CallOverrides): Promise<string>
 
     unlock(
-        metarouter: string,
+        router: string,
         deposit: DepositoryTypes.DepositStruct,
         condition: BytesLike,
         solution: BytesLike,
@@ -148,7 +142,7 @@ export interface BtcRefundUnlocker extends BaseContract {
         synthesis(overrides?: CallOverrides): Promise<string>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
@@ -168,7 +162,7 @@ export interface BtcRefundUnlocker extends BaseContract {
         synthesis(overrides?: CallOverrides): Promise<BigNumber>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
@@ -186,7 +180,7 @@ export interface BtcRefundUnlocker extends BaseContract {
         synthesis(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
             condition: BytesLike,
             solution: BytesLike,
