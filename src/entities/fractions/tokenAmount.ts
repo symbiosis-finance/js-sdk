@@ -5,6 +5,7 @@ import { BigintIsh, Rounding, SolidityType, TEN } from '../../constants'
 import { parseBigintIsh, validateSolidityTypeInstance } from '../../utils'
 import { Token } from '../../entities'
 import { Fraction } from './fraction'
+import Decimal from 'decimal.js-light'
 
 export class TokenAmount extends Fraction {
     public readonly token: Token
@@ -54,5 +55,11 @@ export class TokenAmount extends Fraction {
 
     public toBigInt(): bigint {
         return BigInt(this.raw.toString())
+    }
+
+    public convertTo(other: Token, price: number): TokenAmount {
+        const dec = new Decimal(10).pow(other.decimals)
+        const thisD = this.toDecimal()
+        return new TokenAmount(other, BigInt(thisD.mul(price).mul(dec).toString()))
     }
 }

@@ -38,12 +38,18 @@ export interface VolumeFeeCollector {
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
+export type PriceEstimationConfig = {
+    enabled: boolean
+    slippage: number
+}
+
 // Addresses of Depository contracts
 export type DepositoryConfig = {
     depository: EvmAddress
     swapUnlocker: EvmAddress
     branchedUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress
+    priceEstimation: PriceEstimationConfig
 }
 
 export type ChainConfig = {

@@ -45,6 +45,7 @@ import {
     Config,
     Context,
     CounterParams,
+    DepositoryConfig,
     EvmAddress,
     FeeConfig,
     MetricParams,
@@ -91,6 +92,7 @@ export type DiscountTier = {
 }
 
 export type DepositoryContracts = {
+    cfg: DepositoryConfig
     depository: IDepository
     router: IRouter
     branchedUnlocker: BranchedUnlocker
@@ -499,23 +501,24 @@ export class Symbiosis {
     }
 
     public async depository(chainId: ChainId): Promise<DepositoryContracts | null> {
-        return this.cache.get(["depository", `${chainId}`], async () => {
-            const depositoryCfg = this.chainConfig(chainId).depository
-            if (!depositoryCfg) {
+        return this.cache.get(['depository', `${chainId}`], async () => {
+            const cfg = this.chainConfig(chainId).depository
+            if (!cfg) {
                 return null
             }
             const signerOrProvider = this.getProvider(chainId)
-            const depository = IDepository__factory.connect(depositoryCfg.depository, signerOrProvider)
+            const depository = IDepository__factory.connect(cfg.depository, signerOrProvider)
             const routerAddress = await depository.router()
 
             return {
+                cfg,
                 depository,
                 router: IRouter__factory.connect(routerAddress, signerOrProvider),
-                swapUnlocker: SwapUnlocker__factory.connect(depositoryCfg.swapUnlocker, signerOrProvider),
-                btcRefundUnlocker: depositoryCfg.btcRefundUnlocker
-                    ? BtcRefundUnlocker__factory.connect(depositoryCfg.btcRefundUnlocker, signerOrProvider)
+                swapUnlocker: SwapUnlocker__factory.connect(cfg.swapUnlocker, signerOrProvider),
+                btcRefundUnlocker: cfg.btcRefundUnlocker
+                    ? BtcRefundUnlocker__factory.connect(cfg.btcRefundUnlocker, signerOrProvider)
                     : undefined,
-                branchedUnlocker: BranchedUnlocker__factory.connect(depositoryCfg.branchedUnlocker, signerOrProvider),
+                branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
             }
         })
     }
