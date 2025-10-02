@@ -1,34 +1,42 @@
+type CacheItem = {
+    result?: unknown
+    exception?: unknown
+    expiresAt: number
+}
+
+type NotVoid<T> = void extends T ? never : T
+
 export class Cache {
-    private data = new Map<string, any>()
+    private data = new Map<string, CacheItem>()
 
-    async get<T>(key: string[], func: () => Promise<T>, ttl?: number): Promise<T> {
-        return this.fromCache(
-            key,
-            () => {
-                return func()
-            },
-            ttl
-        )
-    }
-
-    private async fromCache<T>(key: (number | string)[], func: () => Promise<T>, ttl?: number): Promise<T> {
+    async get<T>(
+        key: string[],
+        func: () => Promise<NotVoid<T>>,
+        ttl: number = Number.MAX_SAFE_INTEGER,
+        cacheExceptions: boolean = false
+    ): Promise<T> {
         const stringKey = key.join('-')
         const now = Math.floor(Date.now() / 1000)
         const cached = this.data.get(stringKey)
-        if (cached) {
-            const { value, expiresAt } = cached
-            if (expiresAt === null || now < expiresAt) {
-                return value
-            }
+        if (cached && now < cached.expiresAt) {
+            if (cached.exception) throw cached.exception
+            else return cached.result as T
+        }
+        const set = (result?: T, exception?: unknown) => {
+            this.data.set(stringKey, {
+                result: result,
+                exception: exception,
+                expiresAt: now + ttl,
+            })
         }
 
-        const newValue = await func()
-
-        this.data.set(stringKey, {
-            value: newValue,
-            expiresAt: ttl ? now + ttl : null,
-        })
-
-        return newValue
+        try {
+            const result = await func()
+            set(result)
+            return result
+        } catch (exc) {
+            if (cacheExceptions) set(undefined, exc)
+            throw exc
+        }
     }
 }

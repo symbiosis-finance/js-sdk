@@ -327,10 +327,10 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 const json = await response.json()
 
                 if (isMainnet) {
-                    return json.data.standard.legacyGasPrice
+                    return json.data.standard.legacyGasPrice as number
                 }
 
-                return json.data.standard
+                return json.data.standard as number
             },
             600 // 10 minutes
         )

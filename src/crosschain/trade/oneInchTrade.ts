@@ -115,9 +115,23 @@ export class OneInchTrade extends SymbiosisTrade {
         searchParams.set('usePatching', 'true')
         searchParams.set('protocols', protocols.join(','))
 
-        let json: any
+        let json: {
+            tx: {
+                from: Address
+                to: Address
+                data: string
+                value: string
+                gas: string
+                gasPrice: string
+            }
+            toAmount: string
+        }
         try {
-            json = await OneInchTrade.request(this.symbiosis, `${this.tokenAmountIn.token.chainId}/swap`, searchParams)
+            json = (await OneInchTrade.request(
+                this.symbiosis,
+                `${this.tokenAmountIn.token.chainId}/swap`,
+                searchParams
+            )) as typeof json
         } catch (error) {
             let errorText = 'Unknown error'
 
@@ -133,14 +147,7 @@ export class OneInchTrade extends SymbiosisTrade {
             throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${errorText}`)
         }
 
-        const tx: {
-            from: Address
-            to: Address
-            data: string
-            value: string
-            gas: string
-            gasPrice: string
-        } = json['tx']
+        const tx = json['tx']
         const callData = tx.data
         const { amountOffset, minReceivedOffset } = this.getOffsets(callData)
 
@@ -187,18 +194,18 @@ export class OneInchTrade extends SymbiosisTrade {
             throw new Error(text)
         }
 
-        return response.json()
+        return (await response.json()) as { [key: string]: unknown }
     }
 
     static async getProtocols(symbiosis: Symbiosis, chainId: ChainId): Promise<OneInchProtocols> {
         try {
-            const json = await symbiosis.cache.get(
+            const json = (await symbiosis.cache.get(
                 ['oneInchGetProtocols', chainId.toString()],
                 async () => {
                     return OneInchTrade.request(symbiosis, `${chainId}/liquidity-sources`)
                 },
                 4 * 60 * 60 // 4h
-            )
+            )) as { protocols: Protocol[] }
 
             return json['protocols'].reduce((acc: OneInchProtocols, protocol: Protocol) => {
                 if (protocol.id.includes('ONE_INCH_LIMIT_ORDER')) {

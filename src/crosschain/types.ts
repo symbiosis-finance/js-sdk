@@ -95,8 +95,13 @@ export type BtcConfig = {
     forwarderUrl: string
 }
 
+export type CoinGeckoConfig = {
+    url: string
+}
+
 export type Config = {
     advisor: AdvisorConfig
+    coinGecko?: CoinGeckoConfig
     omniPools: OmniPoolConfig[]
     revertableAddress: Partial<Record<ChainId, EvmAddress>> & { default: EvmAddress }
     limits: SwapLimit[]

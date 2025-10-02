@@ -1,9 +1,9 @@
 import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
+import { Percent, TokenAmount } from '../../entities'
 import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade'
 import { getMinAmount } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
-import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
+import { CoinGecko } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
 import { EvmAddress } from '../types'
@@ -192,24 +192,15 @@ export class MagpieTrade extends SymbiosisTrade {
         return response.json()
     }
 
-    private async getTokenPrice(token: Token) {
-        return this.symbiosis.cache.get(
-            ['getTokenPriceUsd', token.chainId.toString(), token.address],
-            () => {
-                return getTokenPriceUsd(token)
-            },
-            600 // 10 minutes
-        )
-    }
-
     private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
         try {
+            const coinGecko = this.symbiosis.coinGecko
             const [tokenInPrice, tokenOutPrice] = await Promise.all([
-                this.getTokenPrice(tokenAmountIn.token),
-                this.getTokenPrice(tokenAmountOut.token),
+                coinGecko.getTokenPriceCached(tokenAmountIn.token),
+                coinGecko.getTokenPriceCached(tokenAmountOut.token),
             ])
-            const tokenAmountInUsd = getTokenAmountUsd(tokenAmountIn, tokenInPrice)
-            const tokenAmountOutUsd = getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
+            const tokenAmountInUsd = CoinGecko.getTokenAmountUsd(tokenAmountIn, tokenInPrice)
+            const tokenAmountOutUsd = CoinGecko.getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
 
             const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
 

@@ -81,6 +81,7 @@ import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { isTonChainId } from './chainUtils'
+import { CoinGecko } from './coingecko'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
@@ -133,6 +134,7 @@ export class Symbiosis {
     public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
+    public readonly coinGecko: CoinGecko
 
     public setContext(context: Context) {
         this.context = context
@@ -295,6 +297,7 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(connection, chain.id)]
             })
         )
+        this.coinGecko = new CoinGecko(this.config.coinGecko?.url, this.config.advisor.url, this.cache)
     }
 
     public createMetricTimer() {
@@ -829,7 +832,8 @@ export class Symbiosis {
             const maxLimitTokenAmount = new TokenAmount(token, maxAmountRaw)
             if (amount.greaterThan(maxLimitTokenAmount)) {
                 throw new Error(
-                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${maxLimitTokenAmount.token.symbol
+                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${
+                        maxLimitTokenAmount.token.symbol
                     }`,
                     ErrorCode.AMOUNT_TOO_HIGH
                 )
@@ -840,7 +844,8 @@ export class Symbiosis {
             const minLimitTokenAmount = new TokenAmount(token, minAmountRaw)
             if (amount.lessThan(minLimitTokenAmount)) {
                 throw new Error(
-                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${minLimitTokenAmount.token.symbol
+                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${
+                        minLimitTokenAmount.token.symbol
                     }`,
                     ErrorCode.AMOUNT_TOO_LOW
                 )

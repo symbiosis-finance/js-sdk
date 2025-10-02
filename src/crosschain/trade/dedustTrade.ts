@@ -16,11 +16,11 @@ import { GAS_TOKEN, Percent, Token, TokenAmount } from '../../entities'
 import { TON_REFERRAL_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getTokenAmountUsd, getTokenPriceUsd } from '../coingecko'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
 import { ChainId } from '../../constants'
 import { TonAddress, FeeItem } from '../types'
+import { CoinGecko } from '../coingecko'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -114,24 +114,15 @@ export class DedustTrade extends SymbiosisTrade {
         return this
     }
 
-    private async getTokenPrice(token: Token) {
-        return this.symbiosis.cache.get(
-            ['getTokenPriceUsd', token.chainId.toString(), token.address],
-            () => {
-                return getTokenPriceUsd(token)
-            },
-            600 // 10 minutes
-        )
-    }
-
     private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
+        const coinGecko = this.symbiosis.coinGecko
         try {
             const [tokenInPrice, tokenOutPrice] = await Promise.all([
-                this.getTokenPrice(tokenAmountIn.token),
-                this.getTokenPrice(tokenAmountOut.token),
+                coinGecko.getTokenPriceCached(tokenAmountIn.token),
+                coinGecko.getTokenPriceCached(tokenAmountOut.token),
             ])
-            const tokenAmountInUsd = getTokenAmountUsd(tokenAmountIn, tokenInPrice)
-            const tokenAmountOutUsd = getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
+            const tokenAmountInUsd = CoinGecko.getTokenAmountUsd(tokenAmountIn, tokenInPrice)
+            const tokenAmountOutUsd = CoinGecko.getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
 
             const impactNumber = -(1 - tokenAmountOutUsd / tokenAmountInUsd)
 
