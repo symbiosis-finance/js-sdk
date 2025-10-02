@@ -112,6 +112,14 @@ export const config: Config = {
             generalPurpose: false,
             coinGeckoId: 'apecoin',
         },
+        {
+            // EVAA
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xd40750043100501ea75cAc2386f23Bcf7554cB9A',
+            oracle: '0x3930C108ae8e85aAdc0d833D2096b8778eaf4432',
+            generalPurpose: false,
+            coinGeckoId: 'evaa-protocol',
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -459,6 +467,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                    },
+                },
+                {
+                    name: 'EVAA',
+                    symbol: 'EVAA',
+                    address: '0xaa036928c9c0Df07d525B55ea8EE690Bb5a628C1',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
                     },
                 },
             ],
@@ -1917,6 +1936,20 @@ export const config: Config = {
                     },
                     attributes: {
                         ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU',
+                    },
+                },
+                {
+                    name: 'EVAA',
+                    symbol: 'EVAA',
+                    address: '0xB1c95672B453fBFCA2A7cc6BFA274D6419cEf681',
+                    chainId: ChainId.TON_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                    },
+                    attributes: {
+                        ton: 'EQBKMfjX_a_dsOLm-juxyVZytFP7_KKnzGv6J01kGc72gVBp',
                     },
                 },
             ],
