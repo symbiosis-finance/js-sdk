@@ -112,6 +112,14 @@ export const config: Config = {
             generalPurpose: false,
             coinGeckoId: 'apecoin',
         },
+        {
+            // EVAA
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xd40750043100501ea75cAc2386f23Bcf7554cB9A',
+            oracle: '0x3930C108ae8e85aAdc0d833D2096b8778eaf4432',
+            generalPurpose: false,
+            coinGeckoId: 'evaa-protocol',
+        },
     ],
     revertableAddress: {
         [ChainId.TRON_MAINNET]: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
@@ -459,6 +467,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                    },
+                },
+                {
+                    name: 'EVAA',
+                    symbol: 'EVAA',
+                    address: '0xaa036928c9c0Df07d525B55ea8EE690Bb5a628C1',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
                     },
                 },
             ],
@@ -1911,6 +1930,20 @@ export const config: Config = {
                         ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU',
                     },
                 },
+                {
+                    name: 'EVAA',
+                    symbol: 'EVAA',
+                    address: '0xB1c95672B453fBFCA2A7cc6BFA274D6419cEf681',
+                    chainId: ChainId.TON_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                    },
+                    attributes: {
+                        ton: 'EQBKMfjX_a_dsOLm-juxyVZytFP7_KKnzGv6J01kGc72gVBp',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
@@ -2258,6 +2291,28 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xb88339CB7199b77E23DB6E890353E22632Ba630f',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0xab11329560fa9c9c860bb21a9342215a1265bbb0',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
+                    },
+                },
             ],
             router: '0xb4a9C4e6Ea8E2191d2FA5B380452a634Fb21240A',
             dexFee: 30,
@@ -2335,6 +2390,34 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.PLASMA_MAINNET,
+            rpc: 'https://rpc.plasma.to',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Tether USD',
+                    symbol: 'USDT0',
+                    address: '0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb',
+                    chainId: ChainId.PLASMA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                     },
                 },
             ],

@@ -85,6 +85,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.HYPERLIQUID_MAINNET]: [WETH[ChainId.HYPERLIQUID_MAINNET]],
     [ChainId.KATANA_MAINNET]: [WETH[ChainId.KATANA_MAINNET]],
     [ChainId.APECHAIN_MAINNET]: [WETH[ChainId.APECHAIN_MAINNET]],
+    [ChainId.PLASMA_MAINNET]: [WETH[ChainId.PLASMA_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -469,6 +470,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.HYPERLIQUID_MAINNET]: [],
     [ChainId.KATANA_MAINNET]: [],
     [ChainId.APECHAIN_MAINNET]: [],
+    [ChainId.PLASMA_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -612,6 +614,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.APECHAIN_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.APECHAIN_MAINNET],
     ],
+    [ChainId.PLASMA_MAINNET]: [
+        WETH[ChainId.PLASMA_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.PLASMA_MAINNET],
+    ],
 }
 
 /**
@@ -703,6 +709,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: EvmAddress } = {
     [ChainId.HYPERLIQUID_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.KATANA_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
     [ChainId.APECHAIN_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.PLASMA_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, EvmAddress>> = {

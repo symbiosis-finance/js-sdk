@@ -404,6 +404,9 @@ export function tonAdvisorMock(feeToken: Token) {
     if (feeToken.symbol?.toLowerCase().includes('pineye')) {
         feeRaw = '1000'
     }
+    if (feeToken.symbol?.toLowerCase().includes('evaa')) {
+        feeRaw = '1'
+    }
     return {
         fee: new TokenAmount(feeToken, parseUnits(feeRaw, feeToken.decimals).toString()),
         save: new TokenAmount(feeToken, '0'),

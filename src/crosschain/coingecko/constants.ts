@@ -48,6 +48,7 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.HYPERLIQUID_MAINNET]: 'hyperevm',
     [ChainId.KATANA_MAINNET]: 'katana',
     [ChainId.APECHAIN_MAINNET]: 'apechain',
+    [ChainId.PLASMA_MAINNET]: 'plasma',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -99,4 +100,5 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.HYPERLIQUID_MAINNET]: 'hyperliquid',
     [ChainId.KATANA_MAINNET]: 'ethereum',
     [ChainId.APECHAIN_MAINNET]: 'apecoin',
+    [ChainId.PLASMA_MAINNET]: 'plasma',
 }

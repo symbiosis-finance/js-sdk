@@ -146,10 +146,14 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'ape',
         nativeTokenAddress: AddressZero,
     },
-    // [ChainId.HYPERLIQUID_MAINNET]: {
-    //     slug: 'hyper',
-    //     nativeTokenAddress: AddressZero,
-    // },
+    [ChainId.PLASMA_MAINNET]: {
+        slug: 'plasma',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.HYPERLIQUID_MAINNET]: {
+        slug: 'hyperevm',
+        nativeTokenAddress: AddressZero,
+    },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {
