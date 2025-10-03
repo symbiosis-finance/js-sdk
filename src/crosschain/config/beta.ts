@@ -472,6 +472,10 @@ export const config: Config = {
             fabric: '0xc17d768Bf4FdC6f20a4A0d8Be8767840D106D077',
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
             depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippage: 0.02,
+                },
                 depository: '0xE813Cec05DA3db6d026193695bB23cEeF8c41531',
                 swapUnlocker: '0xd551d981AC20F04A2574C91611A07c41a574C8d9',
                 btcRefundUnlocker: '0x1E758EC4FFda58Ae5b9d7d1724bE1D3a6E1b5F2B',
