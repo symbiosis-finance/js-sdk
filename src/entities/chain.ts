@@ -758,16 +758,6 @@ export const chains: Chain[] = [
             large: 'https://coin-images.coingecko.com/asset_platforms/images/22200/thumb/soneium-removebg-preview.png?1737099934',
         },
     }),
-    new Chain({
-        id: ChainId.MONAD_TESTNET,
-        name: 'Monad',
-        disabled: false,
-        explorer: 'https://testnet.monadexplorer.com/',
-        icons: {
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
-        },
-    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

@@ -79,7 +79,6 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.BERACHAIN_MAINNET]: [WETH[ChainId.BERACHAIN_MAINNET]],
     [ChainId.UNICHAIN_MAINNET]: [WETH[ChainId.UNICHAIN_MAINNET]],
     [ChainId.SONEIUM_MAINNET]: [WETH[ChainId.SONEIUM_MAINNET]],
-    [ChainId.MONAD_TESTNET]: [WETH[ChainId.MONAD_TESTNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -459,7 +458,6 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.BERACHAIN_MAINNET]: [],
     [ChainId.UNICHAIN_MAINNET]: [],
     [ChainId.SONEIUM_MAINNET]: [],
-    [ChainId.MONAD_TESTNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -580,10 +578,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.SONEIUM_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.SONEIUM_MAINNET],
     ],
-    [ChainId.MONAD_TESTNET]: [
-        WETH[ChainId.MONAD_TESTNET],
-        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MONAD_TESTNET],
-    ],
 }
 
 /**
@@ -670,7 +664,6 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.BERACHAIN_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.UNICHAIN_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.SONEIUM_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
-    [ChainId.MONAD_TESTNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {
