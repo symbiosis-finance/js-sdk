@@ -17,7 +17,7 @@ import { theBest } from './utils'
 import { ChainId } from '../../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
 import { BIPS_BASE } from '../constants'
-import { getPartnerFeeCall, getPartnerFeeCallParams } from '../feeCall/getPartnerFeeCall'
+import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { validate } from 'bitcoin-address-validation'
 import { isUseOneInchOnly } from '../utils'
@@ -230,21 +230,15 @@ async function buildTail(
     const fees: FeeItem[] = []
     const routes: RouteItem[] = []
 
-    if (partnerAddress) {
-        const partnerFeeCallParams = await getPartnerFeeCallParams({
-            symbiosis,
-            partnerAddress,
-            token: syBtcAmount.token,
-        })
-        if (partnerFeeCallParams) {
-            const partnerFeeCall = getPartnerFeeCall({
-                partnerFeeCallParams,
-                amountIn: syBtcAmount,
-            })
-            syBtcAmount = partnerFeeCall.amountOut // override
-            calls.push(partnerFeeCall)
-            fees.push(...partnerFeeCall.fees)
-        }
+    const partnerFeeCall = await getPartnerFeeCall({
+        symbiosis,
+        partnerAddress,
+        amountIn: syBtcAmount,
+    })
+    if (partnerFeeCall) {
+        syBtcAmount = partnerFeeCall.amountOut // override
+        calls.push(partnerFeeCall)
+        fees.push(...partnerFeeCall.fees)
     }
 
     const feeCollector = symbiosis.getVolumeFeeCollector(syBtcAmount.token.chainId, [ChainId.BTC_MAINNET])

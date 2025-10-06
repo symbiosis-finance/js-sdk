@@ -2,9 +2,9 @@ import { Symbiosis } from './symbiosis'
 import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { BridgeDirection, MultiCallItem, OmniPoolConfig, PartnerFeeCallParams } from './types'
+import { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
-import { getPartnerFeeCall, getPartnerFeeCallParams } from './feeCall/getPartnerFeeCall'
+import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from './feeCall/getVolumeFeeCall'
 
 interface CreateOctoPoolTradeParams {
@@ -56,7 +56,6 @@ export class Transit {
     public feeToken1: Token
     public feeToken2: Token | undefined
 
-    protected partnerFeeCallParams?: PartnerFeeCallParams
     protected out?: TransitOutResult
 
     public constructor({
@@ -132,15 +131,7 @@ export class Transit {
             to,
         })
 
-        if (this.partnerAddress) {
-            this.partnerFeeCallParams = await getPartnerFeeCallParams({
-                symbiosis: this.symbiosis,
-                partnerAddress: this.partnerAddress,
-                token: trade.amountOut.token,
-            })
-        }
-
-        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = this.getAmountsOut(trade)
+        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(trade)
 
         this.out = {
             amountOut,
@@ -202,7 +193,7 @@ export class Transit {
         return this.amountIn
     }
 
-    public applyFees(fee1: TokenAmount, fee2?: TokenAmount) {
+    public async applyFees(fee1: TokenAmount, fee2?: TokenAmount) {
         this.assertOutInitialized('applyFees')
 
         if (!fee1.token.equals(this.feeToken1)) {
@@ -226,7 +217,7 @@ export class Transit {
         const { tradeAmountIn: newAmountIn } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         this.trade.applyAmountIn(newAmountIn)
 
-        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = this.getAmountsOut(this.trade)
+        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(this.trade)
 
         this.out = {
             trade: this.trade,
@@ -277,12 +268,12 @@ export class Transit {
         return this.tokenOut
     }
 
-    private getAmountsOut(trade: OctoPoolTrade): {
+    private async getAmountsOut(trade: OctoPoolTrade): Promise<{
         amountOut: TokenAmount
         amountOutMin: TokenAmount
         volumeFeeCall: MultiCallItem | undefined
         partnerFeeCall: MultiCallItem | undefined
-    } {
+    }> {
         const { tokenAmountIn: tradeAmountIn, amountOut: tradeAmountOut, amountOutMin: tradeAmountOutMin } = trade
         let volumeFeeCall: MultiCallItem | undefined = undefined
 
@@ -307,13 +298,13 @@ export class Transit {
             amountOutMin = volumeFeeCall.amountOutMin
         }
 
-        let partnerFeeCall: MultiCallItem | undefined = undefined
-        if (this.partnerFeeCallParams) {
-            partnerFeeCall = getPartnerFeeCall({
-                partnerFeeCallParams: this.partnerFeeCallParams,
-                amountIn: amountOut,
-                amountInMin: amountOutMin,
-            })
+        const partnerFeeCall = await getPartnerFeeCall({
+            symbiosis: this.symbiosis,
+            amountIn: amountOut,
+            amountInMin: amountOutMin,
+            partnerAddress: this.partnerAddress,
+        })
+        if (partnerFeeCall) {
             amountOut = partnerFeeCall.amountOut
             amountOutMin = partnerFeeCall.amountOutMin
         }

@@ -7,7 +7,7 @@ import ecc from '@bitcoinerlab/secp256k1'
 import { getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
 import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
-import { getPartnerFeeCall, getPartnerFeeCallParams } from '../feeCall/getPartnerFeeCall'
+import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { ChainId } from '../../constants'
@@ -51,20 +51,13 @@ export class ZappingBtc extends BaseSwapping {
         this.minBtcFee = minBtcFee
         this.threshold = threshold
 
-        if (this.partnerAddress) {
-            const partnerFeeCallParams = await getPartnerFeeCallParams({
-                symbiosis: this.symbiosis,
-                partnerAddress: this.partnerAddress,
-                token: amount.token,
-            })
-            if (partnerFeeCallParams) {
-                this.partnerFeeCall = getPartnerFeeCall({
-                    partnerFeeCallParams,
-                    amountIn: amount,
-                    amountInMin: amountMin,
-                })
-            }
-        }
+        this.partnerFeeCall = await getPartnerFeeCall({
+            symbiosis: this.symbiosis,
+            amountIn: amount,
+            amountInMin: amountMin,
+            partnerAddress: this.partnerAddress,
+        })
+
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(amount.token.chainId, [ChainId.BTC_MAINNET])
         if (volumeFeeCollector) {
             this.volumeFeeCall = getVolumeFeeCall({

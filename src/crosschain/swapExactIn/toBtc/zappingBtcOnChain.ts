@@ -10,7 +10,7 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contrac
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { Symbiosis } from '../../symbiosis'
 import { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
-import { getPartnerFeeCall, getPartnerFeeCallParams } from '../../feeCall/getPartnerFeeCall'
+import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 import { ChainId } from '../../../constants'
 
@@ -81,22 +81,16 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         }
     }
 
-    if (partnerAddress) {
-        const partnerFeeCallParams = await getPartnerFeeCallParams({
-            symbiosis,
-            partnerAddress,
-            token: amountIn.token,
-        })
-        if (partnerFeeCallParams) {
-            const partnerFeeCall = getPartnerFeeCall({
-                partnerFeeCallParams,
-                amountIn,
-                amountInMin,
-            })
-            calls.push(partnerFeeCall)
-            amountIn = partnerFeeCall.amountOut
-            amountInMin = partnerFeeCall.amountOutMin
-        }
+    const partnerFeeCall = await getPartnerFeeCall({
+        symbiosis,
+        amountIn,
+        amountInMin,
+        partnerAddress,
+    })
+    if (partnerFeeCall) {
+        calls.push(partnerFeeCall)
+        amountIn = partnerFeeCall.amountOut
+        amountInMin = partnerFeeCall.amountOutMin
     }
     const volumeFeeCollector = symbiosis.getVolumeFeeCollector(amountIn.token.chainId, [ChainId.BTC_MAINNET])
     if (volumeFeeCollector) {

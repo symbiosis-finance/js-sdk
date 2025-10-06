@@ -32,7 +32,7 @@ describe('Transit#ExtraFee', async () => {
         decimals: 6,
         symbol: 'sUSDT',
         name: 'Synthetic USDT From Tron',
-        chainId: 56288,
+        chainId: ChainId.SYMBIOSIS_MAINNET,
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
@@ -45,13 +45,13 @@ describe('Transit#ExtraFee', async () => {
         decimals: 6,
         symbol: 'sUSDC',
         name: 'Synthetic USDС From Sei',
-        chainId: 56288,
+        chainId: ChainId.SYMBIOSIS_MAINNET,
         isNative: false,
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
             small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
         },
-        chainFromId: 1329,
+        chainFromId: ChainId.SEI_EVM_MAINNET,
         address: '0xFfECd35dd178D0c55c6E2227516e59314d347921',
     })
 
@@ -59,12 +59,12 @@ describe('Transit#ExtraFee', async () => {
         decimals: 6,
         symbol: 'sUSDT',
         name: 'Synthetic USDT From Tron',
-        chainId: 56288,
+        chainId: ChainId.SYMBIOSIS_MAINNET,
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
         },
-        chainFromId: 728126428,
+        chainFromId: ChainId.TRON_MAINNET,
         address: '0x2dF311E049a839E1011507ccE20Afb6f871a81a1',
     })
     const feeToken2 = new Token({

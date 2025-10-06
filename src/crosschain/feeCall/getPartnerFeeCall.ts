@@ -5,7 +5,7 @@ import { PartnerFeeCollector__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { BIPS_BASE } from '../constants'
 
-export async function getPartnerFeeCallParams({
+async function getPartnerFeeCallParams({
     symbiosis,
     partnerAddress,
     token,
@@ -45,7 +45,7 @@ export async function getPartnerFeeCallParams({
     }
 }
 
-export function getPartnerFeeCall({
+function getPartnerFeeCallItem({
     partnerFeeCallParams,
     amountIn,
     amountInMin,
@@ -97,4 +97,35 @@ export function getPartnerFeeCall({
         ],
         routes: [],
     }
+}
+
+export async function getPartnerFeeCall({
+    symbiosis,
+    amountIn,
+    amountInMin,
+    partnerAddress,
+}: {
+    symbiosis: Symbiosis
+    amountIn: TokenAmount
+    amountInMin?: TokenAmount
+    partnerAddress?: string
+}): Promise<MultiCallItem | undefined> {
+    if (!partnerAddress) {
+        return
+    }
+    const { token } = amountIn
+    const partnerFeeCallParams = await getPartnerFeeCallParams({
+        symbiosis,
+        partnerAddress,
+        token,
+    })
+    if (!partnerFeeCallParams) {
+        return
+    }
+
+    return getPartnerFeeCallItem({
+        partnerFeeCallParams,
+        amountIn,
+        amountInMin,
+    })
 }
