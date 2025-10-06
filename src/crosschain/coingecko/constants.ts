@@ -8,7 +8,6 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.MATIC_MAINNET]: 'polygon-pos',
     [ChainId.TELOS_MAINNET]: 'telos',
     [ChainId.BOBA_MAINNET]: 'boba',
-    [ChainId.BOBA_BNB]: 'boba',
     [ChainId.KAVA_MAINNET]: 'kava',
     [ChainId.ZKSYNC_MAINNET]: 'zksync',
     [ChainId.ARBITRUM_MAINNET]: 'arbitrum-one',
@@ -45,6 +44,11 @@ export const COINGECKO_PLATFORMS: { [chainId in ChainId]?: string } = {
     [ChainId.BERACHAIN_MAINNET]: 'berachain',
     [ChainId.UNICHAIN_MAINNET]: 'unichain',
     [ChainId.SONEIUM_MAINNET]: 'soneium',
+    [ChainId.OPBNB_MAINNET]: 'opbnb',
+    [ChainId.HYPERLIQUID_MAINNET]: 'hyperevm',
+    [ChainId.KATANA_MAINNET]: 'katana',
+    [ChainId.APECHAIN_MAINNET]: 'apechain',
+    [ChainId.PLASMA_MAINNET]: 'plasma',
 }
 
 export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
@@ -55,7 +59,6 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.MATIC_MAINNET]: 'matic-network',
     [ChainId.TELOS_MAINNET]: 'telos',
     [ChainId.BOBA_MAINNET]: 'ethereum',
-    [ChainId.BOBA_BNB]: 'boba-network',
     [ChainId.KAVA_MAINNET]: 'kava',
     [ChainId.ZKSYNC_MAINNET]: 'ethereum',
     [ChainId.ARBITRUM_MAINNET]: 'ethereum',
@@ -79,7 +82,7 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.SEI_EVM_MAINNET]: 'sei-network',
     [ChainId.ZETACHAIN_MAINNET]: 'zetachain',
     [ChainId.CRONOS_MAINNET]: 'crypto-com-chain',
-    [ChainId.FRAXTAL_MAINNET]: 'frax-ether',
+    [ChainId.FRAXTAL_MAINNET]: 'frax-share',
     [ChainId.GRAVITY_MAINNET]: 'g-token',
     [ChainId.BSQUARED_MAINNET]: 'bitcoin',
     [ChainId.CRONOS_ZK_MAINNET]: 'cronos-zkevm-cro',
@@ -93,4 +96,9 @@ export const COINGECKO_GAS_TOKEN_IDS: { [chainId in ChainId]?: string } = {
     [ChainId.BERACHAIN_MAINNET]: 'berachain-bera',
     [ChainId.UNICHAIN_MAINNET]: 'ethereum',
     [ChainId.SONEIUM_MAINNET]: 'ethereum',
+    [ChainId.OPBNB_MAINNET]: 'binancecoin',
+    [ChainId.HYPERLIQUID_MAINNET]: 'hyperliquid',
+    [ChainId.KATANA_MAINNET]: 'ethereum',
+    [ChainId.APECHAIN_MAINNET]: 'apecoin',
+    [ChainId.PLASMA_MAINNET]: 'plasma',
 }

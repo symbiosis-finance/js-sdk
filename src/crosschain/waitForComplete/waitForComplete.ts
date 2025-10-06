@@ -7,7 +7,7 @@ import { tronAddressToEvm } from '../chainUtils/tron'
 import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
 import { isTonChainId } from '../chainUtils'
 
-import { BridgeTxInfo, BridgeRequestType } from './types'
+import { BridgeRequestType, BridgeTxInfo } from './types'
 import { getTxTonBridgeInfo } from './getTxTonBridgeInfo'
 import { Transaction } from '@ton/core'
 
@@ -44,13 +44,9 @@ export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitF
         return outHash
     }
 
-    console.log('aBridgeInfo', aBridgeInfo)
-
     const bTxId = await waitOtherSideTx(symbiosis, aBridgeInfo)
-    console.log('bTxId', bTxId)
 
     const bBridgeInfo = await getTxBridgeInfo(symbiosis, aBridgeInfo.externalChainId, bTxId)
-    console.log('bBridgeInfo', bBridgeInfo)
 
     // if b-chain is final destination
     if (!bBridgeInfo) {
@@ -59,7 +55,6 @@ export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitF
     }
 
     const cTxId = await waitOtherSideTx(symbiosis, bBridgeInfo)
-    console.log('cTxId', cTxId)
 
     const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
     return outHash

@@ -11,6 +11,8 @@ import {
     AvaxRouter__factory,
     DragonswapRouter,
     DragonswapRouter__factory,
+    HyperSwapRouter,
+    HyperSwapRouter__factory,
     KavaRouter,
     KavaRouter__factory,
     KimRouter,
@@ -31,7 +33,7 @@ interface UniV2TradeParams extends SymbiosisTradeParams {
     deadline: number
 }
 
-type UniV2Router = UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter
+type UniV2Router = UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRouter | DragonswapRouter | HyperSwapRouter
 
 export class UniV2Trade extends SymbiosisTrade {
     private router!: UniV2Router
@@ -70,6 +72,9 @@ export class UniV2Trade extends SymbiosisTrade {
         }
         if ([ChainId.MODE_MAINNET].includes(chainId)) {
             router = this.kimRouter(chainId)
+        }
+        if ([ChainId.HYPERLIQUID_MAINNET].includes(chainId)) {
+            router = this.hyperSwapRouter(chainId)
         }
         if ([ChainId.SEI_EVM_MAINNET].includes(chainId)) {
             router = this.dragonSwapRouter(chainId)
@@ -134,7 +139,9 @@ export class UniV2Trade extends SymbiosisTrade {
             allowedSlippage: new Percent(JSBI.BigInt(Math.floor(this.slippage)), BIPS_BASE),
             recipient: this.to,
             ttl: this.deadline,
-            feeOnTransfer: trade.inputAmount.token.chainId === ChainId.MODE_MAINNET, // kim.exchange has extra param `referrer`
+            feeOnTransfer: [ChainId.MODE_MAINNET, ChainId.HYPERLIQUID_MAINNET].includes(
+                trade.inputAmount.token.chainId
+            ),
         })
 
         let method = methodName
@@ -236,6 +243,11 @@ export class UniV2Trade extends SymbiosisTrade {
     private kimRouter(chainId: ChainId): KimRouter {
         const { address, provider } = this.getRouterConfig(chainId)
         return KimRouter__factory.connect(address, provider)
+    }
+
+    private hyperSwapRouter(chainId: ChainId): HyperSwapRouter {
+        const { address, provider } = this.getRouterConfig(chainId)
+        return HyperSwapRouter__factory.connect(address, provider)
     }
 
     private dragonSwapRouter(chainId: ChainId): DragonswapRouter {

@@ -12,72 +12,7 @@ export const TON_TOKEN_DECIMALS = 9
 
 export const TON_REFERRAL_ADDRESS = Address.parse('UQD35aoXN2UbZ1ZrjjjKsLNH-ISdp5Lj42d_0Q_pllYmRth0')
 
-export const TON_EVM_ADDRESS = '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C'
-
-const TON_ADDRESSES_MAP = [
-    {
-        evm: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
-        ton: 'EQD8AErK5HbmnftlHQuk8bXC_JuX1COLPeNIfMriw23gfO3I', // TON
-        stonFi: 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c', // stonfi TON
-    },
-    {
-        evm: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe',
-        ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs', // USDT
-    },
-    {
-        evm: '0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293',
-        ton: 'EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5', // UXLINK
-    },
-    {
-        evm: '0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400',
-        ton: 'EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7', // CATI
-    },
-    {
-        evm: '0x7eA393298D1077e19ec59F8e3FE8fe642738c08C', // TON testnet
-        ton: 'EQCgXxcoCXhsAiLyeG5-o5MpjRB34Z7Fn44_6P5kJzjAjKH4',
-    },
-    {
-        evm: '0x46deec715e419a1f0f5959b5c8450894959d2dbf',
-        ton: 'EQD73uqQJHKAg140YSlG3uxxXkGaHw9ZWbXIRQiUlZ0tv79a', // USDT testnet
-    },
-    {
-        evm: '0x32cc2d7bc18283f40d20bb03e432cd603ac33ffc',
-        ton: 'EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT', //NOT
-    },
-    {
-        evm: '0xde78fc6b46c51048513f8e9a6d44060199c1bf0c',
-        ton: 'EQCvxJy4eG8hyHBFsZ7eePxrRsUQSFE_jpptRAYBmcG_DOGS', // DOGS
-    },
-    {
-        evm: '0xdf48a1e91b6410970fa3d5ffed3eed49e3cf08ff',
-        ton: 'EQB420yQsZobGcy0VYDfSKHpG2QQlw-j1f_tPu1J488I__PX', // PX
-    },
-    {
-        evm: '0x744a45f2b710aa4234b89adb630e99d79b01bd4f',
-        ton: 'EQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO', // Ston.fi
-    },
-    {
-        evm: '0x0d2d353642cFFC051A2694C51B6C00e787EB4590',
-        ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU', // PINEYE
-    },
-]
-
-export function getTonTokenAddress(address: string, isStonFi: boolean = false): string {
-    const found = TON_ADDRESSES_MAP.find((item) => {
-        return item.evm.toLowerCase() === address.toLowerCase()
-    })
-
-    if (!found) {
-        throw new Error(`TON address was not found by evm address ${address}`)
-    }
-
-    // TON doesn't has contract address in TON, Stonfi use their own proxy contract
-    if (found.evm === TON_EVM_ADDRESS && isStonFi && found.stonFi) {
-        return found.stonFi
-    }
-
-    return found.ton
-}
+export const TON_STONFI_PROXY_ADDRESS = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c'
 
 export function isTonChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
@@ -306,7 +241,7 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
         throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
-    const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
+    const tonTokenAddress = amountIn.token.tonAddress
 
     const metaSynthesizeBody = Bridge.metaSynthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
@@ -339,7 +274,8 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
             ],
         }
     } else {
-        const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
+        const tonTokenAddress = amountIn.token.tonAddress
+
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
         const tonClient = await symbiosis.getTonClient()
@@ -393,7 +329,7 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
         throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
-    const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
+    const tonTokenAddress = amountIn.token.tonAddress
 
     const synthesizeMessage = Bridge.synthesizeMessage({
         stableBridgingFee: BigInt(fee.raw.toString()),
@@ -420,7 +356,8 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
             ],
         }
     } else {
-        const tonTokenAddress = getTonTokenAddress(amountIn.token.address)
+        const tonTokenAddress = amountIn.token.tonAddress
+
         const jettonMaster = JettonMaster.create(Address.parse(tonTokenAddress))
 
         const tonClient = await symbiosis.getTonClient()
@@ -466,6 +403,9 @@ export function tonAdvisorMock(feeToken: Token) {
     }
     if (feeToken.symbol?.toLowerCase().includes('pineye')) {
         feeRaw = '1000'
+    }
+    if (feeToken.symbol?.toLowerCase().includes('evaa')) {
+        feeRaw = '1'
     }
     return {
         fee: new TokenAmount(feeToken, parseUnits(feeRaw, feeToken.decimals).toString()),

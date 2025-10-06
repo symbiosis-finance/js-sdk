@@ -1,9 +1,11 @@
-import { DEX, pTON } from '@ston-fi/sdk'
-import { StonApiClient } from '@ston-fi/api'
-import { SenderArguments } from '@ton/core'
+import { dexFactory } from '@ston-fi/sdk'
+import { RouterInfo, StonApiClient } from '@ston-fi/api'
+import { OpenedContract, SenderArguments } from '@ton/core'
+import { TonClient4 } from '@ton/ton'
+import { BaseRouterV2_1 } from '@ston-fi/sdk/dist/contracts/dex/v2_1/router/BaseRouterV2_1'
 
 import { Percent, Token, TokenAmount } from '../../entities'
-import { getTonTokenAddress, TON_EVM_ADDRESS, TON_REFERRAL_ADDRESS } from '../chainUtils'
+import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
@@ -12,22 +14,22 @@ interface StonfiTradeParams extends SymbiosisTradeParams {
     deadline: number
     from: string
 }
-
 export class StonfiTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
     public readonly deadline: number
     public readonly from: string
+
     private readonly stonClient: StonApiClient
+    private tonClient: TonClient4 | null = null
+    private routerMetadata: RouterInfo | null = null
+    private dexContracts: ReturnType<typeof dexFactory> | null = null
+    private router: OpenedContract<BaseRouterV2_1> | null = null
 
     public constructor(params: StonfiTradeParams) {
         super(params)
-
-        const { symbiosis, deadline, from } = params
-
-        this.symbiosis = symbiosis
-        this.deadline = deadline
-        this.from = from
-
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
+        this.from = params.from
         this.stonClient = new StonApiClient()
     }
 
@@ -36,29 +38,34 @@ export class StonfiTrade extends SymbiosisTrade {
     }
 
     public async init() {
+        this.tonClient = await this.symbiosis.getTonClient()
         const quote = await this.stonClient.simulateSwap({
-            offerAddress: getTonTokenAddress(this.tokenAmountIn.token.address, true),
+            offerAddress: this.tokenAmountIn.token.isNative
+                ? TON_STONFI_PROXY_ADDRESS
+                : this.tokenAmountIn.token.tonAddress,
             offerUnits: this.tokenAmountIn.raw.toString(),
-            askAddress: getTonTokenAddress(this.tokenOut.address, true),
+            askAddress: this.tokenOut.isNative ? TON_STONFI_PROXY_ADDRESS : this.tokenOut.tonAddress,
             slippageTolerance: (this.slippage / 10000).toString(), // 0.01 is 1%
         })
-
+        await this.initRouterAndContracts(quote.routerAddress)
         const txParams = await this.buildCalldata(this.tokenAmountIn, this.tokenOut, quote.minAskUnits)
-
-        const amountOut = new TokenAmount(this.tokenOut, quote.askUnits)
-        const amountOutMin = new TokenAmount(this.tokenOut, quote.minAskUnits)
 
         if (!txParams) {
             throw new Error('Failed to build TON swap via Stonfi DEX')
         }
 
+        const amountOut = new TokenAmount(this.tokenOut, quote.askUnits)
+        const amountOutMin = new TokenAmount(this.tokenOut, quote.minAskUnits)
+
+        const priceImpact = new Percent(BigInt(Math.ceil(-quote.priceImpact * 10000)), '10000')
+
         this.out = {
             amountOut,
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
-            priceImpact: new Percent(BigInt(Math.ceil(-quote.priceImpact * 10000)), '10000'),
-            routerAddress: txParams?.to.toString() ?? '',
-            callData: txParams?.body?.toBoc().toString('base64') ?? '',
+            priceImpact,
+            routerAddress: txParams.to.toString(),
+            callData: txParams.body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,
             value: txParams.value,
@@ -74,54 +81,64 @@ export class StonfiTrade extends SymbiosisTrade {
         return this
     }
 
+    private async initRouterAndContracts(routerAddress: string) {
+        const metadata = await this.stonClient.getRouter(routerAddress)
+        this.routerMetadata = metadata
+        this.dexContracts = dexFactory(metadata)
+
+        if (!this.dexContracts) {
+            throw new Error('Failed to get dex contracts')
+        }
+        const routerContract = this.dexContracts.Router.create(metadata.address)
+        this.router = this.tonClient!.open(routerContract) as OpenedContract<BaseRouterV2_1>
+    }
+
     public async buildCalldata(
         tokenAmountIn: TokenAmount,
         tokenOut: Token,
         minAskUnits: string
     ): Promise<SenderArguments | null> {
-        const client = await this.symbiosis.getTonClient()
-        const router = client.open(new DEX.v1.Router())
+        if (!this.router || !this.dexContracts || !this.routerMetadata) {
+            throw new Error('Stonfi trade not initialized')
+        }
+
         const queryId = Math.floor(Math.random() * 100_000)
+        const referralParams = {
+            referralAddress: TON_REFERRAL_ADDRESS,
+            referralValue: 25, // 0.25%
+            queryId,
+        }
 
-        const proxyTon = new pTON.v1()
-
-        let txParams: SenderArguments | null = null
-
-        // TON -> jetton
-        if (tokenAmountIn.token.address === TON_EVM_ADDRESS) {
-            txParams = await router.getSwapTonToJettonTxParams({
+        if (tokenAmountIn.token.isNative) {
+            // TON -> jetton
+            return this.router.getSwapTonToJettonTxParams({
                 userWalletAddress: this.from,
-                proxyTon: proxyTon,
+                proxyTon: this.dexContracts.pTON.create(this.routerMetadata.ptonMasterAddress),
                 offerAmount: tokenAmountIn.raw.toString(),
-                askJettonAddress: getTonTokenAddress(tokenOut.address),
+                askJettonAddress: tokenOut.tonAddress,
                 minAskAmount: minAskUnits,
-                referralAddress: TON_REFERRAL_ADDRESS,
-                queryId,
+                ...referralParams,
             })
-        } else if (tokenOut.address === TON_EVM_ADDRESS) {
+        } else if (tokenOut.isNative) {
             // jetton -> TON
-            txParams = await router.getSwapJettonToTonTxParams({
+            return this.router.getSwapJettonToTonTxParams({
                 userWalletAddress: this.from,
-                offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
+                offerJettonAddress: tokenAmountIn.token.tonAddress,
                 offerAmount: tokenAmountIn.raw.toString(),
                 minAskAmount: minAskUnits,
-                referralAddress: TON_REFERRAL_ADDRESS,
-                proxyTon,
-                queryId,
+                proxyTon: this.dexContracts.pTON.create(this.routerMetadata.ptonMasterAddress),
+                ...referralParams,
             })
         } else {
             // jetton -> jetton
-            txParams = await router.getSwapJettonToJettonTxParams({
+            return this.router.getSwapJettonToJettonTxParams({
                 userWalletAddress: this.from,
-                offerJettonAddress: getTonTokenAddress(tokenAmountIn.token.address),
+                offerJettonAddress: tokenAmountIn.token.tonAddress,
                 offerAmount: tokenAmountIn.raw.toString(),
-                askJettonAddress: getTonTokenAddress(tokenOut.address),
+                askJettonAddress: tokenOut.tonAddress,
                 minAskAmount: minAskUnits,
-                referralAddress: TON_REFERRAL_ADDRESS,
-                queryId,
+                ...referralParams,
             })
         }
-
-        return txParams
     }
 }

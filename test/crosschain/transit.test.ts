@@ -3,16 +3,16 @@ import { ChainId, chains } from '../../src'
 import { Transit } from '../../src/crosschain/transit'
 
 describe('Transit#getDirection', async () => {
-    const hostChainId = ChainId.BOBA_BNB
+    const hostChainId = ChainId.SYMBIOSIS_MAINNET
     const otherChains = chains.filter((chain) => chain.id !== hostChainId)
     test('mint', () => {
         otherChains.forEach((chain) => {
-            expect(Transit['getDirection'](chain.id, ChainId.BOBA_BNB, hostChainId)).toEqual('mint')
+            expect(Transit['getDirection'](chain.id, ChainId.SYMBIOSIS_MAINNET, hostChainId)).toEqual('mint')
         })
     })
     test('burn', () => {
         otherChains.forEach((chain) => {
-            expect(Transit['getDirection'](ChainId.BOBA_BNB, chain.id, hostChainId)).toEqual('burn')
+            expect(Transit['getDirection'](ChainId.SYMBIOSIS_MAINNET, chain.id, hostChainId)).toEqual('burn')
         })
     })
     test('v2', () => {

@@ -4,13 +4,14 @@ import { MulticallRouter, Synthesis } from '../contracts'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
-import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../chainUtils/btc'
+import { getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
 import { FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
 import { getPartnerFeeCall, getPartnerFeeCallParams } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { ChainId } from '../../constants'
+import { Error, ErrorCode } from '../error'
 
 initEccLib(ecc)
 
@@ -33,6 +34,7 @@ export class ZappingBtc extends BaseSwapping {
 
     protected syBtc!: Token
     protected minBtcFee!: TokenAmount
+    protected threshold!: TokenAmount
     protected synthesis!: Synthesis
     protected evmTo!: string
     protected partnerFeeCall?: MultiCallItem
@@ -41,7 +43,13 @@ export class ZappingBtc extends BaseSwapping {
     protected async doPostTransitAction(): Promise<void> {
         const amount = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const amountMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
-        this.minBtcFee = await getToBtcFee(amount, this.synthesis, this.symbiosis.cache)
+
+        const [minBtcFee, threshold] = await Promise.all([
+            getToBtcFee(amount, this.synthesis, this.symbiosis.cache),
+            getThreshold(amount, this.synthesis, this.symbiosis.cache),
+        ])
+        this.minBtcFee = minBtcFee
+        this.threshold = threshold
 
         if (this.partnerAddress) {
             const partnerFeeCallParams = await getPartnerFeeCallParams({
@@ -81,13 +89,9 @@ export class ZappingBtc extends BaseSwapping {
         if (!syBtc.chainFromId) {
             throw new Error('syBtc is not synthetic')
         }
-        const network = BTC_NETWORKS[syBtc.chainFromId]
-        if (!network) {
-            throw new Error('Unknown BTC network')
-        }
         const btc = GAS_TOKEN[syBtc.chainFromId]
 
-        this.bitcoinAddress = getPkScript(to, network)
+        this.bitcoinAddress = getPkScript(to, syBtc.chainFromId)
         this.syBtc = syBtc
 
         const chainId = syBtc.chainId
@@ -130,6 +134,19 @@ export class ZappingBtc extends BaseSwapping {
             if (this.volumeFeeCall.fees.length > 0) {
                 volumeFee = this.volumeFeeCall.fees[0].value
             }
+        }
+
+        if (amountOut.lessThan(this.minBtcFee) || amountOutMin.lessThan(this.minBtcFee)) {
+            throw new Error(
+                `Amount less than fee. Min amount: ${this.minBtcFee.toSignificant()} ${this.minBtcFee.token.symbol}`,
+                ErrorCode.AMOUNT_LESS_THAN_FEE
+            )
+        }
+        if (amountOut.lessThan(this.threshold) || amountOutMin.lessThan(this.threshold)) {
+            throw new Error(
+                `Amount is too low. Min amount: ${this.threshold.toSignificant()} ${this.threshold.token.symbol}`,
+                ErrorCode.AMOUNT_TOO_LOW
+            )
         }
 
         const tokenAmountOut = new TokenAmount(btc, amountOut.subtract(this.minBtcFee).raw)

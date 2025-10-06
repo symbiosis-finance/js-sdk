@@ -24,6 +24,12 @@ interface OpenOceanChain {
     nativeTokenAddress: string
 }
 
+interface OpenOceanError {
+    code: number
+    errorMsg: string
+    error?: string
+}
+
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     // ---  1inch supported chains
     [ChainId.ETH_MAINNET]: {
@@ -128,8 +134,24 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         nativeTokenAddress: AddressZero,
     },
     [ChainId.UNICHAIN_MAINNET]: {
-        slug: 'unichain',
+        slug: 'uni',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.OPBNB_MAINNET]: {
+        slug: 'opbnb',
+        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    },
+    [ChainId.APECHAIN_MAINNET]: {
+        slug: 'ape',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.PLASMA_MAINNET]: {
+        slug: 'plasma',
+        nativeTokenAddress: AddressZero,
+    },
+    [ChainId.HYPERLIQUID_MAINNET]: {
+        slug: 'hyperevm',
+        nativeTokenAddress: AddressZero,
     },
 }
 
@@ -145,13 +167,14 @@ export class OpenOceanTrade extends SymbiosisTrade {
     public constructor(params: OpenOceanTradeParams) {
         super(params)
 
-        const chain = OPEN_OCEAN_NETWORKS[this.tokenAmountIn.token.chainId]
+        const chainId = this.tokenAmountIn.token.chainId
+        const chain = OPEN_OCEAN_NETWORKS[chainId]
         if (!chain) {
             throw new Error('Unsupported chain')
         }
         this.chain = chain
         this.symbiosis = params.symbiosis
-        this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${this.chain.slug}`
+        this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${chainId}`
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -169,17 +192,21 @@ export class OpenOceanTrade extends SymbiosisTrade {
             toTokenAddress = this.chain.nativeTokenAddress
         }
 
+        const apiKeys = this.symbiosis.openOceanConfig.apiKeys
+        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
+
+        const gasPrice = await this.getGasPrice(apiKey)
+
         const url = new URL(`${this.endpoint}/swap`)
         url.searchParams.set('inTokenAddress', fromTokenAddress)
         url.searchParams.set('outTokenAddress', toTokenAddress)
-        url.searchParams.set('amount', this.tokenAmountIn.toFixed())
-        url.searchParams.set('gasPrice', '5')
+        url.searchParams.set('amountDecimals', this.tokenAmountIn.raw.toString())
+        url.searchParams.set('gasPriceDecimals', gasPrice.toString())
         url.searchParams.set('slippage', (this.slippage / 100).toString())
         url.searchParams.set('account', this.to)
         url.searchParams.set('referrer', '0x3254aE00947e44B7fD03F50b93B9acFEd59F9620')
+        url.searchParams.set('disableRfq', 'true')
 
-        const apiKeys = this.symbiosis.openOceanConfig.apiKeys
-        const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
         const response = await this.symbiosis.fetch(url.toString(), {
             headers: {
                 apikey: apiKey,
@@ -188,14 +215,25 @@ export class OpenOceanTrade extends SymbiosisTrade {
         })
 
         if (!response.ok) {
-            const text = await response.text()
-            throw new Error(`Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: ${text}`)
+            let errorText
+            try {
+                const jsonError = JSON.parse(await response.text())
+                errorText = jsonError?.message ?? 'Unknown error'
+            } catch (e) {
+                errorText = await response.text()
+            }
+            throw new Error(
+                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: Message: ${errorText}`
+            )
         }
         const json = await response.json()
 
         if (json.code !== 200) {
+            const errorJson = json as OpenOceanError
             throw new Error(
-                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: ${JSON.stringify(json)}}`
+                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}. Message: ${
+                    errorJson?.error ?? errorJson.errorMsg
+                }`
             )
         }
 
@@ -272,5 +310,32 @@ export class OpenOceanTrade extends SymbiosisTrade {
         }
 
         return new Percent(number.multipliedBy(100).integerValue().toString(), BIPS_BASE)
+    }
+
+    private async getGasPrice(apiKey: string) {
+        const isMainnet = this.tokenAmountIn.token.chainId === ChainId.ETH_MAINNET
+
+        return this.symbiosis.cache.get(
+            ['openOceanGasPrice', this.endpoint],
+            async () => {
+                const response = await fetch(`${this.endpoint}/gasPrice`, {
+                    headers: {
+                        apiKey,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                if (!response.ok) {
+                    throw new Error('Failed to get gas price')
+                }
+                const json = await response.json()
+
+                if (isMainnet) {
+                    return json.data.standard.legacyGasPrice
+                }
+
+                return json.data.standard
+            },
+            600 // 10 minutes
+        )
     }
 }

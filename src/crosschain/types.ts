@@ -10,6 +10,9 @@ import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { BigNumber, BytesLike } from 'ethers'
 import { PartnerFeeCollector } from './contracts'
+import { Cache } from './cache'
+import { Logger } from 'pino'
+import { ConfigCacheData } from './config/cache/builder'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -26,9 +29,18 @@ export interface VolumeFeeCollector {
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
+export type DepositoryConfig = {
+    depository: string
+    swapUnlocker: string
+    withdrawUnlocker: string
+    branchedUnlocker: string
+    btcRefundUnlocker?: string
+}
+
 export type ChainConfig = {
     id: ChainId
     rpc: string
+    headers?: Record<string, string>
     spareRpcs?: string[]
     dexFee: number
     filterBlockOffset: number
@@ -43,6 +55,7 @@ export type ChainConfig = {
     fabric: string
     tonPortal?: string
     partnerFeeCollector?: string
+    depository?: DepositoryConfig
 }
 
 export type AdvisorConfig = {
@@ -54,6 +67,7 @@ export type OmniPoolConfig = {
     address: string
     oracle: string
     generalPurpose: boolean
+    coinGeckoId: string
 }
 
 export type SwapLimit = {
@@ -63,6 +77,15 @@ export type SwapLimit = {
     max: string
 }
 
+export type BtcConfig = {
+    btc: Token
+    symBtc: {
+        address: string
+        chainId: ChainId
+    }
+    forwarderUrl: string
+}
+
 export type Config = {
     advisor: AdvisorConfig
     omniPools: OmniPoolConfig[]
@@ -70,11 +93,13 @@ export type Config = {
     limits: SwapLimit[]
     chains: ChainConfig[]
     refundAddress: string
+    btcConfigs: BtcConfig[]
 }
 
 export type OverrideChainConfig = {
     id: ChainId
     rpc: string
+    headers?: Record<string, string>
 }
 export type FeeConfig = {
     token: Token
@@ -93,7 +118,10 @@ export type OpenOceanConfig = {
     apiKeys: string[]
 }
 
+export type * from './config/cache/builder'
+
 export type OverrideConfig = {
+    btcConfigs?: BtcConfig[]
     chains?: OverrideChainConfig[]
     limits?: SwapLimit[]
     fetch?: typeof fetch
@@ -101,6 +129,9 @@ export type OverrideConfig = {
     oneInchConfig?: OneInchConfig
     openOceanConfig?: OpenOceanConfig
     volumeFeeCollectors?: VolumeFeeCollector[]
+    cache?: Cache
+    config?: Config
+    configCache?: ConfigCacheData
 }
 
 export interface MiddlewareCall {
@@ -133,6 +164,7 @@ export interface SwapExactInParams {
     tradeAContext?: TradeAContext
     partnerAddress?: string
     refundAddress?: string
+    generateBtcDepositAddress?: boolean
 }
 
 export type BtcTransactionData = {
@@ -223,4 +255,28 @@ export type PartnerFeeCallParams = {
     partnerFeeCollector: PartnerFeeCollector
     feeRate: BigNumber
     fixedFee: BigNumber
+}
+
+export type MetricParams = {
+    operation: string
+    kind: string
+    tokenIn?: Token
+    tokenOut?: Token
+}
+
+export type CounterParams = {
+    provider: string
+    reason: string
+    chain_id: string
+}
+
+export type PriceImpactMetricParams = {
+    name_from: string
+    name_to: string
+    token_amount: number
+    price_impact: number
+}
+
+export type Context = {
+    logger: Logger
 }

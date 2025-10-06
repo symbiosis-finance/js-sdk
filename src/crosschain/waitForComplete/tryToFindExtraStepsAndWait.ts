@@ -7,8 +7,8 @@ import { Synthesis__factory } from '../contracts'
 import { BigNumber } from 'ethers'
 import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
-import { SwapSDK, SwapStatusResponse } from '@chainflip/sdk/swap'
-import { BtcConfig, getBtcConfig } from '../chainUtils/btc'
+import { SwapSDK, SwapStatusResponseV2 } from '@chainflip/sdk/swap'
+import { BtcConfig } from '../types'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -49,7 +49,7 @@ export async function tryToFindExtraStepsAndWait(
         if (!btc) {
             throw new Error('BTC token not found')
         }
-        const btcConfig = getBtcConfig(btc)
+        const btcConfig = symbiosis.getBtcConfig(btc)
         const outHash = await waitUnwrapBtcTxComplete(btcConfig, burnSerial)
 
         return {
@@ -85,6 +85,9 @@ export async function tryToFindExtraStepsAndWait(
 export async function findChainFlipSwap(receipt: TransactionReceipt) {
     const swapTokenTopic0 = '0x834b524d9f8ccbd31b00b671c896697b96eb4398c0f56e9386a21f5df61e3ce3'
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === swapTokenTopic0
     })
 
@@ -96,27 +99,33 @@ export async function waitForChainFlipSwap(txHash: string): Promise<string> {
         network: 'mainnet',
     })
     const response = await longPolling({
-        pollingFunction: async (): Promise<SwapStatusResponse> => {
-            return chainFlipSdk.getStatus({ id: txHash })
+        pollingFunction: async (): Promise<SwapStatusResponseV2> => {
+            return chainFlipSdk.getStatusV2({ id: txHash })
         },
         successCondition: (response) => {
-            return response.state === 'COMPLETE' || response.state === 'BROADCASTED'
+            return response.state === 'COMPLETED' || response.state === 'SENT'
         },
         error: new TxNotFound(txHash),
         exceedDelay: 3_600_000, // 1 hour
         pollingInterval: 10 * 1000, // 10 seconds
     })
 
-    if (response.state !== 'COMPLETE' && response.state !== 'BROADCASTED') {
+    if (response.state !== 'COMPLETED' && response.state !== 'SENT') {
+        throw new TxNotFound(txHash)
+    }
+    if (!response.swapEgress?.txRef) {
         throw new TxNotFound(txHash)
     }
 
-    return response.broadcastTransactionRef
+    return response.swapEgress.txRef
 }
 
 export async function findThorChainDeposit(receipt: TransactionReceipt) {
     const thorChainDepositTopic0 = '0xef519b7eb82aaf6ac376a6df2d793843ebfd593de5f1a0601d3cc6ab49ebb395'
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === thorChainDepositTopic0
     })
 
@@ -157,6 +166,9 @@ async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
     const synthesisInterface = Synthesis__factory.createInterface()
     const topic0 = synthesisInterface.getEventTopic('BurnRequestBTC')
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === topic0
     })
     if (!log) {
@@ -179,6 +191,9 @@ async function findBurnRequestTON(receipt: TransactionReceipt): Promise<
     const synthesisInterface = Synthesis__factory.createInterface()
     const burnRequestTonTopic = synthesisInterface.getEventTopic('BurnRequestTON')
     const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
         return log.topics[0] === burnRequestTonTopic
     })
 

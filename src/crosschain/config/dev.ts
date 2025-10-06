@@ -12,6 +12,7 @@ export const config: Config = {
             address: '0x789001A80a8EdBBEE07876b0dF58c3eAdEE89877',
             oracle: '0x2cD94CB0F4cBC4a51c3e9c4b88d03B982bE24608',
             generalPurpose: true,
+            coinGeckoId: 'usd-coin',
         },
     ],
     revertableAddress: {
@@ -19,10 +20,11 @@ export const config: Config = {
         default: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
     },
     refundAddress: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
+    btcConfigs: [],
     chains: [
         {
             id: 97,
-            rpc: 'https://rpc.ankr.com/bsc_testnet_chapel',
+            rpc: 'https://bsc-testnet-rpc.publicnode.com',
             filterBlockOffset: 2000,
             stables: [],
             router: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',

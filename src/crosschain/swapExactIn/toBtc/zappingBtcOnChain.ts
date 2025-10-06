@@ -4,7 +4,7 @@ import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../../swapExactIn'
 import { Percent, Token, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { tronAddressToEvm } from '../../chainUtils'
-import { BTC_NETWORKS, getPkScript, getToBtcFee } from '../../chainUtils/btc'
+import { getPkScript, getThreshold, getToBtcFee } from '../../chainUtils/btc'
 import { Error, ErrorCode } from '../../error'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
@@ -17,11 +17,7 @@ import { ChainId } from '../../../constants'
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
 
-    const network = BTC_NETWORKS[tokenOut.chainId]
-    if (!network) {
-        throw new Error(`Unknown BTC network ${tokenOut.chainId}`)
-    }
-    const bitcoinAddress = getPkScript(to, network)
+    const bitcoinAddress = getPkScript(to, tokenOut.chainId)
 
     const chainId = tokenAmountIn.token.chainId
 
@@ -209,7 +205,22 @@ async function getBurnCall({
     bitcoinAddress: Buffer
 }): Promise<MultiCallItem> {
     const synthesis = symbiosis.synthesis(amountIn.token.chainId)
-    const fee = await getToBtcFee(amountIn, synthesis, symbiosis.cache)
+    const [fee, threshold] = await Promise.all([
+        getToBtcFee(amountIn, synthesis, symbiosis.cache),
+        getThreshold(amountIn, synthesis, symbiosis.cache),
+    ])
+    if (amountIn.lessThan(fee)) {
+        throw new Error(
+            `Amount less than fee. Min amount: ${fee.toSignificant()} ${fee.token.symbol}`,
+            ErrorCode.AMOUNT_LESS_THAN_FEE
+        )
+    }
+    if (amountIn.lessThan(threshold)) {
+        throw new Error(
+            `Amount is too low. Min amount: ${threshold.toSignificant()} ${threshold.token.symbol}`,
+            ErrorCode.AMOUNT_TOO_LOW
+        )
+    }
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
         fee.raw.toString(), // _stableBridgingFee must be >= minBtcFee
         '0', // _amount will be patched

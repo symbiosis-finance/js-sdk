@@ -20,6 +20,10 @@ export class Token {
     public readonly isNative: boolean
     public readonly userToken?: boolean
     public readonly deprecated: boolean
+    public readonly attributes?: {
+        solana?: string
+        ton?: string
+    }
 
     /**
      * Constructs an instance of the base class `Token`.
@@ -37,6 +41,7 @@ export class Token {
         this.chainFromId = params.chainFromId
         this.userToken = params.userToken
         this.deprecated = !!params.deprecated
+        this.attributes = params.attributes
 
         if (isTronChainId(params.chainId)) {
             this.address = tronAddressToEvm(params.address)
@@ -79,6 +84,20 @@ export class Token {
 
     get chainFrom(): Chain | undefined {
         return getChainById(this.chainFromId)
+    }
+
+    get tonAddress(): string {
+        if (!this.attributes?.ton) {
+            throw new Error(`${this.name} has no ton address`)
+        }
+        return this.attributes.ton
+    }
+
+    get solAddress(): string {
+        if (!this.attributes?.solana) {
+            throw new Error(`${this.name} has no solana address`)
+        }
+        return this.attributes.solana
     }
 }
 /**
@@ -177,8 +196,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped BNB',
         icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
         },
     }),
     [ChainId.BSC_TESTNET]: new Token({
@@ -189,8 +208,8 @@ export const WETH = {
         isNative: false,
         name: 'Wrapped BNB',
         icons: {
-            large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
-            small: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
         },
     }),
     [ChainId.MATIC_MAINNET]: new Token({
@@ -314,16 +333,28 @@ export const WETH = {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
         },
     }),
-    [ChainId.BOBA_BNB]: new Token({
-        chainId: ChainId.BOBA_BNB,
-        address: '0xC58aaD327D6D58D979882601ba8DDa0685B505eA',
+    [ChainId.SYMBIOSIS_TESTNET]: new Token({
+        chainId: ChainId.SYMBIOSIS_TESTNET,
+        address: '0x0000000000000000000000000000000000000000',
         decimals: 18,
-        symbol: 'WBOBA',
+        symbol: 'WTVT',
         isNative: false,
-        name: 'Wrapped BOBA',
+        name: 'Wrapped TVT',
         icons: {
-            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
-            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+        },
+    }),
+    [ChainId.SYMBIOSIS_MAINNET]: new Token({
+        chainId: ChainId.SYMBIOSIS_MAINNET,
+        address: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+        decimals: 18,
+        symbol: 'WSIS',
+        isNative: false,
+        name: 'Wrapped SIS',
+        icons: {
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
         },
     }),
     [ChainId.BOBA_RINKEBY]: new Token({
@@ -785,14 +816,14 @@ export const WETH = {
     }),
     [ChainId.FRAXTAL_MAINNET]: new Token({
         chainId: ChainId.FRAXTAL_MAINNET,
-        address: '0xfc00000000000000000000000000000000000006',
+        address: '0xFc00000000000000000000000000000000000002',
         decimals: 18,
-        symbol: 'wfrxETH',
+        symbol: 'WFRAX',
         isNative: false,
-        name: 'Wrapped frxETH',
+        name: 'Wrapped FRAX',
         icons: {
-            small: 'https://fraxscan.com/token/images/wfrxeth_32.png',
-            large: 'https://fraxscan.com/token/images/wfrxeth_32.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
         },
     }),
     [ChainId.GRAVITY_MAINNET]: new Token({
@@ -925,6 +956,66 @@ export const WETH = {
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.OPBNB_MAINNET]: new Token({
+        chainId: ChainId.OPBNB_MAINNET,
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'WBNB',
+        isNative: false,
+        name: 'Wrapped BNB',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+        },
+    }),
+    [ChainId.HYPERLIQUID_MAINNET]: new Token({
+        chainId: ChainId.HYPERLIQUID_MAINNET,
+        address: '0x5555555555555555555555555555555555555555',
+        decimals: 18,
+        symbol: 'WHYPE',
+        isNative: false,
+        name: 'Wrapped HYPE',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35881.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35881.png',
+        },
+    }),
+    [ChainId.KATANA_MAINNET]: new Token({
+        chainId: ChainId.KATANA_MAINNET,
+        address: '0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62',
+        decimals: 18,
+        symbol: 'WETH',
+        isNative: false,
+        name: 'Wrapped ETH',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+        },
+    }),
+    [ChainId.APECHAIN_MAINNET]: new Token({
+        chainId: ChainId.APECHAIN_MAINNET,
+        address: '0x48b62137edfa95a428d35c09e44256a739f6b557',
+        decimals: 18,
+        symbol: 'WAPE',
+        isNative: false,
+        name: 'Wrapped APE',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+        },
+    }),
+    [ChainId.PLASMA_MAINNET]: new Token({
+        chainId: ChainId.PLASMA_MAINNET,
+        address: '0x6100E367285b01F48D07953803A2d8dCA5D19873',
+        decimals: 18,
+        symbol: 'WXPL',
+        isNative: false,
+        name: 'Wrapped XPL',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
         },
     }),
 }

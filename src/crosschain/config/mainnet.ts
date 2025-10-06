@@ -1,5 +1,6 @@
 import { ChainId } from '../../constants'
 import { Config } from '../types'
+import { Token } from '../../entities'
 
 export const config: Config = {
     advisor: {
@@ -8,88 +9,116 @@ export const config: Config = {
     limits: [],
     omniPools: [
         {
-            // usd
-            chainId: ChainId.BOBA_BNB,
-            address: '0x6148FD6C649866596C3d8a971fC313E5eCE84882',
-            oracle: '0x7775b274f0C3fA919B756b22A4d9674e55927ab8',
+            // USD
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xC3255E317481B95A3e61844c274dE8BAF8eDF397',
+            oracle: '0xbBFb7cb70f84fb6fE1Cb13e42A0B71EFDe769428',
             generalPurpose: true,
+            coinGeckoId: 'usd-coin',
         },
         {
-            // eth
-            chainId: ChainId.BOBA_BNB,
-            address: '0xBcc2637DFa64999F75abB53a7265b5B4932e40eB',
-            oracle: '0x628613064b1902a1A422825cf11B687C6f17961E',
+            // ETH
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x2d877Fe148dBCB056Bf71ED5232E8d580195c0f1',
+            oracle: '0x61ab82B6Cfe17E8b242E024DE7Fc936c10e35327',
             generalPurpose: true,
+            coinGeckoId: 'weth',
         },
         {
-            // btc
-            chainId: ChainId.BOBA_BNB,
-            address: '0xA267C428b16728831Be52b144F78b8F054411f55',
-            oracle: '0xECBe427C8F8ea1Ee5258cAf5aB0A9d26b4D91769',
+            // BTC
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xBf084Ee3E5C73129167167Bd5DB9FE8513d8F7e0',
+            oracle: '0x597282d7F75Cf34450395D92a087C71F597024f5',
             generalPurpose: false,
+            coinGeckoId: 'wrapped-bitcoin',
         },
         {
-            // ladys
-            chainId: ChainId.BOBA_BNB,
-            address: '0x7b905059Bdd00844280EBf54E00A087006B2D242',
-            oracle: '0x82E7034ED28674c185E0d03dF5eBd8cAa5f37Bb5',
+            // LADYS
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xAF8Ba1498e1EddD602Aab9cDe4BC6A3a83400165',
+            oracle: '0x422A0A054Eb5a7424d9E3042862546a3F04e3596',
             generalPurpose: false,
+            coinGeckoId: 'milady-meme-coin',
         },
         {
-            // sis
-            chainId: ChainId.BOBA_BNB,
-            address: '0xB5D99bE6089720d1aD3DB2a5a16D5765605704df',
-            oracle: '0xcd3DCFabA22CE28fA8b8D9e8bf545D642F4f458E',
+            // FRAX
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x92114294E42A96C9eF3163DA18Ee7eFdbA6cc661',
+            oracle: '0xd29bfF100F5599522D94E7aEDf2d6B65357c7516',
             generalPurpose: false,
-        },
-        // {
-        //     // puf
-        //     chainId: ChainId.BOBA_BNB,
-        //     address: '0x50DF155DAab4548F4512F6568deD8d42dbf3EE96',
-        //     oracle: '0xBc70e59BFF8abcC0f18a40D2c6fF6A4AE42586F9',
-        //     generalPurpose: false,
-        // },
-        {
-            // frax
-            chainId: ChainId.BOBA_BNB,
-            address: '0xdc25D04cb14E114426bFc43877e1Fd32C336eA4E',
-            oracle: '0x4CD678FF53538E6b084464da0020422738B46038',
-            generalPurpose: false,
+            coinGeckoId: 'frax',
         },
         {
             // G
-            chainId: ChainId.BOBA_BNB,
-            address: '0x8D2209E88f68324c6241bCAA7d24538ebe94e2Ee',
-            oracle: '0xA7614e3427f52b04EeD23c7371a382640bD6C463',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x20C54Cc697329333fe00DeD49C7dCA8c83dcE65b',
+            oracle: '0xDC636B062AB02C51b79cFaA6C5De7B7fFeAc2717',
             generalPurpose: false,
+            coinGeckoId: 'g-token',
         },
         {
             // WTON
-            chainId: ChainId.BOBA_BNB,
-            address: '0xDFCaCf059062C5c495436cE534AEeDcD2265Cc23',
-            oracle: '0xe717C95007cA64334c9facFFC1975310C3B98EE8',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x7E60A78518E7c9267ae0795E9914F19Cd7CdA168',
+            oracle: '0xAa444c22297b0dBd97bBf316dC0b7C64b33aa64C',
             generalPurpose: false,
+            coinGeckoId: 'wrapped-ton',
         },
         {
             // CATI
-            chainId: ChainId.BOBA_BNB,
-            address: '0x8A71e95adFB7355d060D70b59954B065e3BD35EE',
-            oracle: '0x6B8521C0F46B76A55af7333Bc025e7B9480087C8',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x53a9dbeA6013B22A8AF3Ae8AAac8Fd31759aD287',
+            oracle: '0x9C15664C49065b8E20EcE570f0818a68b71A00DA',
             generalPurpose: false,
+            coinGeckoId: 'catizen',
         },
         {
             // UXLINK
-            chainId: ChainId.BOBA_BNB,
-            address: '0x539E9071D542d6Ec7415Cb9DAa4aD20be1307CcB',
-            oracle: '0xAf0183a29201DcDAf5Bd1511518ac9264Fc83514',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xcd5a0263DD8e29D9727865dcaD0f9D56C6e1Db93',
+            oracle: '0x8d448bDb0c7a5fFf6A4ddf4b815bD517727E0aE5',
             generalPurpose: false,
+            coinGeckoId: 'uxlink',
         },
         {
             // PINEYE
-            chainId: ChainId.BOBA_BNB,
-            address: '0xD122cD767d076B77a873Ca1CDEeE74f2552B367A',
-            oracle: '0xDdf91d7A1049f84255BA2593EFFEE8575a327f4D',
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xb2EF74C1120C662984f907ea08096eDAAD94D54E',
+            oracle: '0x4E73aF5663c997A796FF2cc1AD8C5d406541b4F2',
             generalPurpose: false,
+            coinGeckoId: 'pineye',
+        },
+        {
+            // WBNB
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x095B362957B3E3638AE1eb7A957f392cD3Dc3c7C',
+            oracle: '0xCCc50a096E3078508FCb14Ac0B4DF3330C32BD96',
+            generalPurpose: false,
+            coinGeckoId: 'binancecoin',
+        },
+        {
+            // SIS
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x3E6A3EbbC9D88ACC192221797ad90BF72d391778',
+            oracle: '0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C',
+            generalPurpose: false,
+            coinGeckoId: 'symbiosis-finance',
+        },
+        {
+            // APE
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0x0b01139C59D6bc2C8323FDbb4824e4aa5Ff4DE7C',
+            oracle: '0x258EF63a81bade0c31c7C4ae75d2CD5332034bEE',
+            generalPurpose: false,
+            coinGeckoId: 'apecoin',
+        },
+        {
+            // EVAA
+            chainId: ChainId.SYMBIOSIS_MAINNET,
+            address: '0xd40750043100501ea75cAc2386f23Bcf7554cB9A',
+            oracle: '0x3930C108ae8e85aAdc0d833D2096b8778eaf4432',
+            generalPurpose: false,
+            coinGeckoId: 'evaa-protocol',
         },
     ],
     revertableAddress: {
@@ -97,6 +126,63 @@ export const config: Config = {
         default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     },
     refundAddress: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+    btcConfigs: [
+        {
+            btc: new Token({
+                deprecated: true,
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
+                chainId: ChainId.ZKSYNC_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
+        },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x1dfc1e32d75b3f4cb2f2b1bcecad984e99eeba05',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0xa1262496e84a9663b7AB64ed96C152A23d0B7214',
+                chainId: ChainId.BSC_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
+        },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
+                chainId: ChainId.RSK_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
+        },
+    ],
     chains: [
         {
             id: ChainId.BTC_MAINNET,
@@ -164,7 +250,7 @@ export const config: Config = {
                     },
                 },
                 {
-                    deprecated: true,
+                    deprecated: false,
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -229,6 +315,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+                    },
+                },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0x4d224452801ACEd8B2F0aebE155379bb5D594381',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
                     },
                 },
             ],
@@ -361,21 +458,51 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
                     },
                 },
+                {
+                    name: 'Wrapped BNB',
+                    symbol: 'WBNB',
+                    address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                    },
+                },
+                {
+                    name: 'EVAA',
+                    symbol: 'EVAA',
+                    address: '0xaa036928c9c0Df07d525B55ea8EE690Bb5a628C1',
+                    chainId: ChainId.BSC_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                    },
+                },
             ],
             router: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
             dexFee: 25,
             metaRouter: '0x44487a445a7595446309464A82244B4bD4e325D5',
+            // metaRouter: '0x5aaaAc8dB525277A821Bf0cE3eD8A7E4b22Bd9e7',
             metaRouterGateway: '0x5c97D726bf5130AE15408cE32bc764e458320D2f',
             bridge: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             synthesis: '0x6B1bbd301782FF636601fC594Cd7Bfe74871bfaA',
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0xc17d768Bf4FdC6f20a4A0d8Be8767840D106D077',
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
+            // depository: {
+            //     depository: '0x056E5FaBCD478995d6aA7958006cDA042C551656',
+            //     withdrawUnlocker: '0x89d5140C4E0B3a0B42Bb532CFBF9Da378ee7C11C',
+            //     swapUnlocker: '0x37f5ba9F15A2547473F7172e45907F898D72eCCF',
+            //     btcRefundUnlocker: '0xbC405EAf2Ee0420ab5D72774b66330D4712dE4A2',
+            //     branchedUnlocker: '0x3bA0365C6Bd3D106570e192E29BAAc4b70690249',
+            // },
         },
         {
             id: ChainId.AVAX_MAINNET,
             rpc: 'https://avalanche-c-chain-rpc.publicnode.com',
-            spareRpcs: ['https://rpc.ankr.com/avalanche', 'https://avalanche.drpc.org', 'https://avax.meowrpc.com'],
+            spareRpcs: ['https://rpc.ankr.com/avalanche', 'https://api.avax.network/ext/bc/C/rpc'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -383,7 +510,7 @@ export const config: Config = {
                     address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
                     symbol: 'USDC',
                     decimals: 6,
-                    chainId: 43114,
+                    chainId: ChainId.AVAX_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -395,7 +522,7 @@ export const config: Config = {
                     address: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
                     symbol: 'USDC.e',
                     decimals: 6,
-                    chainId: 43114,
+                    chainId: ChainId.AVAX_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -473,7 +600,7 @@ export const config: Config = {
                     address: '0xe6E5f3d264117E030C21920356641DbD5B3d660c',
                     symbol: 'USDC',
                     decimals: 6,
-                    chainId: 40,
+                    chainId: ChainId.TELOS_MAINNET,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -492,19 +619,15 @@ export const config: Config = {
         },
         {
             id: ChainId.KAVA_MAINNET,
-            rpc: 'https://evm.kava.io',
-            spareRpcs: [
-                'https://kava-evm-rpc.publicnode.com',
-                'https://rpc.ankr.com/kava_evm',
-                'https://evm.kava-rpc.com',
-            ],
+            rpc: 'https://rpc.ankr.com/kava_evm',
+            spareRpcs: ['https://kava-evm-rpc.publicnode.com', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Tether USDt',
                     symbol: 'USDt',
                     address: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
-                    chainId: 2222,
+                    chainId: ChainId.KAVA_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
@@ -551,33 +674,33 @@ export const config: Config = {
             multicallRouter: '0x506803495B1876FE1fA6Cd9dC65fB060057A4Cc3',
         },
         {
-            id: ChainId.BOBA_BNB,
-            rpc: 'https://boba-bnb.gateway.tenderly.co',
-            spareRpcs: ['https://replica.bnb.boba.network'],
-            filterBlockOffset: 3000,
+            id: ChainId.SYMBIOSIS_MAINNET,
+            rpc: 'https://symbiosis.calderachain.xyz/http',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
             partnerFeeCollector: '0x68B4fE890A2cFF636A42Ff2b3D86D6F5A168C8f6',
             stables: [
                 {
-                    name: 'USD Coin',
-                    address: '0x9F98f9F312D23d078061962837042b8918e6aff2',
-                    symbol: 'USDC',
+                    chainId: ChainId.SYMBIOSIS_MAINNET,
+                    address: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
                     decimals: 18,
-                    chainId: ChainId.BOBA_BNB,
+                    symbol: 'WSIS',
+                    name: 'Wrapped SIS',
                     icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
                     },
                 },
             ],
-            router: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-            dexFee: 30,
-            metaRouter: '0x2cBABD7329b84e2c0A317702410E7c73D0e0246d',
-            metaRouterGateway: '0xd666ab407c8E77DB239F473a49E309514aa55e0C',
-            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
-            synthesis: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
+            metaRouterGateway: '0x13F2C77D83258C3038cF59FD024bD94A95B2A0D8',
+            bridge: '0x1a039cE63AE35a67Bf0E9F6DbFaE969639D59eC8',
+            synthesis: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
             portal: '0x0000000000000000000000000000000000000000',
-            fabric: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
-            multicallRouter: '0xcB28fbE3E9C0FEA62E0E63ff3f232CECfE555aD4',
+            fabric: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
+            multicallRouter: '0xBbAD2fe9558e55EbfA04b3B5Bff0b6c4E2ffDD2C',
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
@@ -749,6 +872,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
                     },
                 },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0x7f9FBf9bDd3F4105C478b996B648FE6e828a1e98',
+                    chainId: ChainId.ARBITRUM_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                    },
+                },
             ],
             router: '0xD01319f4b65b79124549dE409D36F25e04B3e551',
             dexFee: 30,
@@ -762,15 +896,15 @@ export const config: Config = {
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
-            rpc: 'https://mainnet.optimism.io',
-            spareRpcs: ['https://optimism-rpc.publicnode.com', 'https://rpc.ankr.com/optimism'],
+            rpc: 'https://optimism-rpc.publicnode.com',
+            spareRpcs: ['https://mainnet.optimism.io', 'https://rpc.ankr.com/optimism'],
             filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'USD Coin',
                     symbol: 'USDC.e',
                     address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
-                    chainId: 10,
+                    chainId: ChainId.OPTIMISM_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -781,7 +915,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
-                    chainId: 10,
+                    chainId: ChainId.OPTIMISM_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -813,7 +947,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
-                    chainId: 42170,
+                    chainId: ChainId.ARBITRUM_NOVA,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -824,7 +958,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
-                    chainId: 42170,
+                    chainId: ChainId.ARBITRUM_NOVA,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -856,7 +990,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035',
-                    chainId: 1101,
+                    chainId: ChainId.POLYGON_ZK,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -868,7 +1002,7 @@ export const config: Config = {
                     name: 'USD Coin',
                     symbol: 'USDC.e',
                     address: '0x37eAA0eF3549a5Bb7D431be78a3D99BD360d19e5',
-                    chainId: 1101,
+                    chainId: ChainId.POLYGON_ZK,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -879,7 +1013,7 @@ export const config: Config = {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
-                    chainId: 1101,
+                    chainId: ChainId.POLYGON_ZK,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -949,12 +1083,8 @@ export const config: Config = {
         },
         {
             id: ChainId.MANTLE_MAINNET,
-            rpc: 'https://rpc.mantle.xyz',
-            spareRpcs: [
-                'https://mantle-rpc.publicnode.com',
-                'https://mantle-mainnet.public.blastapi.io',
-                'https://rpc.ankr.com/mantle',
-            ],
+            rpc: 'https://mantle-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.mantle.xyz', 'https://rpc.ankr.com/mantle'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1014,15 +1144,15 @@ export const config: Config = {
         },
         {
             id: ChainId.BASE_MAINNET,
-            rpc: 'https://base-rpc.publicnode.com',
-            spareRpcs: ['https://mainnet.base.org', 'https://base.llamarpc.com', 'https://rpc.ankr.com/base'],
+            rpc: 'https://mainnet.base.org',
+            spareRpcs: ['https://base-rpc.publicnode.com', 'https://rpc.ankr.com/base'],
             filterBlockOffset: 1000,
             stables: [
                 {
                     name: 'Wrapped Ether',
                     symbol: 'WETH',
                     address: '0x4200000000000000000000000000000000000006',
-                    chainId: 8453,
+                    chainId: ChainId.BASE_MAINNET,
                     decimals: 18,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1033,7 +1163,7 @@ export const config: Config = {
                     name: 'USD Base Coin',
                     symbol: 'USDbC',
                     address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
-                    chainId: 8453,
+                    chainId: ChainId.BASE_MAINNET,
                     decimals: 6,
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -1092,11 +1222,7 @@ export const config: Config = {
         {
             id: ChainId.SCROLL_MAINNET,
             rpc: 'https://rpc.scroll.io',
-            spareRpcs: [
-                'https://rpc.ankr.com/scroll',
-                'https://scroll.blockpi.network/v1/rpc/public',
-                'https://scroll-mainnet.public.blastapi.io',
-            ],
+            spareRpcs: ['https://scroll-rpc.publicnode.com', 'https://rpc.ankr.com/scroll'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1157,7 +1283,7 @@ export const config: Config = {
         {
             id: ChainId.MANTA_MAINNET,
             rpc: 'https://pacific-rpc.manta.network/http',
-            spareRpcs: ['https://1rpc.io/manta', 'https://manta-pacific.drpc.org'],
+            spareRpcs: ['https://manta-atlantic-rpc.publicnode.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1239,10 +1365,22 @@ export const config: Config = {
         {
             id: ChainId.BAHAMUT_MAINNET,
             rpc: 'https://bahamut-eu-1.nodes.guru',
-            spareRpcs: ['https://rpc.ankr.com/bahamut'],
+            spareRpcs: ['https://bahamut-rpc.publicnode.com', 'https://rpc.ankr.com/bahamut'],
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'Tether USD',
+                    symbol: 'USDT',
+                    address: '0xdef886c55a79830c47108eeb9c37e78a49684e41',
+                    chainId: ChainId.BAHAMUT_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+                {
+                    deprecated: true,
                     name: 'USD Coin',
                     symbol: 'USDC',
                     address: '0x4237e0A5b55233D5B6D6d1D9BF421723954130D8',
@@ -1299,6 +1437,18 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'USD₮0',
+                    symbol: 'USD₮0',
+                    address: '0x779ded0c9e1022225f8e0630b35a9b54be713736',
+                    chainId: ChainId.RSK_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
+                    },
+                },
+                {
+                    deprecated: true,
                     name: 'Tether USD',
                     symbol: 'rUSDT',
                     address: '0xef213441a85df4d7acbdae0cf78004e1e486bb96',
@@ -1310,6 +1460,7 @@ export const config: Config = {
                     },
                 },
                 {
+                    deprecated: true,
                     name: 'Bridged USDC (Stargate)',
                     symbol: 'USDC.e',
                     address: '0x74c9f2b00581f1b11aa7ff05aa9f608b7389de67',
@@ -1331,25 +1482,32 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32702.png',
                     },
                 },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba',
+                    chainId: ChainId.RSK_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
             metaRouter: '0x7057ab3fb2bee9c18e0cde4240de4ff7f159e365',
             metaRouterGateway: '0xfffdb2a69abcbbf55ecb2f6b348e0bd3d0f9f2e1',
             bridge: '0xda8057acb94905eb6025120cb2c38415fd81bfeb',
-            synthesis: '0x0000000000000000000000000000000000000000',
+            synthesis: '0xf8504d2ca2f0bbad9d36927e3d32e278abadada0',
             portal: '0x5aa5f7f84ed0e5db0a4a85c3947ea16b53352fd4',
-            fabric: '0x0000000000000000000000000000000000000000',
+            fabric: '0x7775b274f0c3fa919b756b22a4d9674e55927ab8',
             multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9',
         },
         {
             id: ChainId.BLAST_MAINNET,
             rpc: 'https://blast-rpc.publicnode.com',
-            spareRpcs: [
-                'https://rpc.blast.io',
-                'https://rpc.ankr.com/blast',
-                'https://blastl2-mainnet.public.blastapi.io',
-            ],
+            spareRpcs: ['https://rpc.blast.io', 'https://rpc.ankr.com/blast'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1471,7 +1629,7 @@ export const config: Config = {
         {
             id: ChainId.TAIKO_MAINNET,
             rpc: 'https://rpc.mainnet.taiko.xyz',
-            spareRpcs: ['https://rpc.ankr.com/taiko', 'https://taiko.blockpi.network/v1/rpc/public'],
+            spareRpcs: ['https://taiko-rpc.publicnode.com', 'https://rpc.ankr.com/taiko'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1503,6 +1661,18 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'USD Coin via Noble',
+                    symbol: 'USDC.n',
+                    address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',
+                    chainId: ChainId.SEI_EVM_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    deprecated: true,
                     name: 'USDT',
                     symbol: 'USDT',
                     address: '0xB75D0B03c06A926e488e2659DF1A861F860bD3d1',
@@ -1511,17 +1681,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
-                    },
-                },
-                {
-                    name: 'USD Coin',
-                    symbol: 'USDC',
-                    address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',
-                    chainId: ChainId.SEI_EVM_MAINNET,
-                    decimals: 6,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
                     },
                 },
                 {
@@ -1631,18 +1790,18 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Frax',
-                    symbol: 'FRAX',
+                    name: 'Frax USD',
+                    symbol: 'frxUSD',
                     address: '0xfc00000000000000000000000000000000000001',
                     chainId: ChainId.FRAXTAL_MAINNET,
                     decimals: 18,
                     icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36039.png',
                     },
                 },
             ],
-            router: '0x39cd4db6460d8B5961F73E997E86DdbB7Ca4D5F6',
+            router: '0x000000008096D9dED037d4dB3fe57764B996BC86',
             dexFee: 30,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
@@ -1725,18 +1884,6 @@ export const config: Config = {
             filterBlockOffset: 0,
             stables: [
                 {
-                    deprecated: true,
-                    name: 'TON Coin',
-                    symbol: 'TON',
-                    address: '0xA4f1b5C2fC9b97d4238B3dE3487ccaE2c36dE07C',
-                    chainId: ChainId.TON_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                    },
-                },
-                {
                     name: 'USDt',
                     symbol: 'USDT',
                     address: '0x9328Eb759596C38a25f59028B146Fecdc3621Dfe',
@@ -1745,6 +1892,9 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                    attributes: {
+                        ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
                     },
                 },
                 {
@@ -1757,6 +1907,9 @@ export const config: Config = {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
                     },
+                    attributes: {
+                        ton: 'EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5',
+                    },
                 },
                 {
                     name: 'Catizen',
@@ -1767,6 +1920,9 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
+                    },
+                    attributes: {
+                        ton: 'EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7',
                     },
                 },
                 {
@@ -1779,6 +1935,23 @@ export const config: Config = {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
                     },
+                    attributes: {
+                        ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU',
+                    },
+                },
+                {
+                    name: 'EVAA',
+                    symbol: 'EVAA',
+                    address: '0xB1c95672B453fBFCA2A7cc6BFA274D6419cEf681',
+                    chainId: ChainId.TON_MAINNET,
+                    decimals: 9,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/38376.png',
+                    },
+                    attributes: {
+                        ton: 'EQBKMfjX_a_dsOLm-juxyVZytFP7_KKnzGv6J01kGc72gVBp',
+                    },
                 },
             ],
             router: '0x0000000000000000000000000000000000000000',
@@ -1790,7 +1963,7 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
-            tonPortal: 'EQDpUHhVl5lJ6Y47DCd0TWdXB_kd-U-N6KyAELePNjfj15HT',
+            tonPortal: 'EQBZh9CpLZyNlwI7am0PHpVy8T8zdJxAhlG3m3xMi0BoVaUh',
         },
         {
             id: ChainId.CRONOS_ZK_MAINNET,
@@ -2063,6 +2236,202 @@ export const config: Config = {
             ],
             router: '0x3c56C7C1Bfd9dbC14Ab04935f409d49D3b7A802E',
             dexFee: 30,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.OPBNB_MAINNET,
+            rpc: 'https://opbnb-rpc.publicnode.com/',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'Wrapped ETH',
+                    symbol: 'WETH',
+                    address: '0xE7798f023fC62146e8Aa1b36Da45fb70855a77Ea',
+                    chainId: ChainId.OPBNB_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Wrapped BNB',
+                    symbol: 'WBNB',
+                    address: '0x4200000000000000000000000000000000000006',
+                    chainId: ChainId.OPBNB_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.HYPERLIQUID_MAINNET,
+            rpc: 'https://rpc.hyperliquid.xyz/evm',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Unit ETH',
+                    symbol: 'UETH',
+                    address: '0xbe6727b535545c67d5caa73dea54865b92cf7907',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xb88339CB7199b77E23DB6E890353E22632Ba630f',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    name: 'ApeCoin',
+                    symbol: 'APE',
+                    address: '0xab11329560fa9c9c860bb21a9342215a1265bbb0',
+                    chainId: ChainId.HYPERLIQUID_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
+                    },
+                },
+            ],
+            router: '0xb4a9C4e6Ea8E2191d2FA5B380452a634Fb21240A',
+            dexFee: 30,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.KATANA_MAINNET,
+            rpc: 'https://rpc.katana.network',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    deprecated: true,
+                    name: 'Wrapped ETH',
+                    symbol: 'WETH',
+                    address: '0x4200000000000000000000000000000000000006',
+                    chainId: ChainId.KATANA_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'Wrapped ETH',
+                    symbol: 'WETH',
+                    address: '0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62',
+                    chainId: ChainId.KATANA_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
+                    },
+                },
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x203A662b0BD271A6ed5a60EdFbd04bFce608FD36',
+                    chainId: ChainId.KATANA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.APECHAIN_MAINNET,
+            rpc: 'https://rpc.apechain.com',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Wrapped APE',
+                    symbol: 'WAPE',
+                    address: '0x48b62137edfa95a428d35c09e44256a739f6b557',
+                    chainId: ChainId.APECHAIN_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/18876.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.PLASMA_MAINNET,
+            rpc: 'https://rpc.plasma.to',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Tether USD',
+                    symbol: 'USDT0',
+                    address: '0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb',
+                    chainId: ChainId.PLASMA_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
             metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
             metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',

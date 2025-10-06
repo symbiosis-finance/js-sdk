@@ -4,7 +4,6 @@ import { OneInchOracle__factory } from '../contracts'
 import { Symbiosis } from '../symbiosis'
 import { getMinAmount } from '../chainUtils'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { Error } from '../error'
 import { getMulticall } from '../multicall'
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
@@ -23,6 +22,14 @@ interface Protocol {
     title: string
     img: string
     img_color: string
+}
+
+interface OneInchError {
+    error: string
+    description: string
+    statusCode: 400 | 500
+    requestId: string
+    meta: { type: string; value: string }[]
 }
 
 interface OneInchTradeParams extends SymbiosisTradeParams {
@@ -111,9 +118,18 @@ export class OneInchTrade extends SymbiosisTrade {
         try {
             json = await OneInchTrade.request(this.symbiosis, `${this.tokenAmountIn.token.chainId}/swap`, searchParams)
         } catch (error) {
-            const message = error instanceof Error ? error.message : 'Unknown error'
+            let errorText = 'Unknown error'
 
-            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${message}`)
+            if (error instanceof Error) {
+                try {
+                    const parsed = JSON.parse(error.message ?? '') as OneInchError
+                    errorText = `Message: ${parsed.description}`
+                } catch {
+                    errorText = error?.message ?? 'Unknown error'
+                }
+            }
+
+            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${errorText}`)
         }
 
         const tx: {
@@ -306,7 +322,7 @@ export class OneInchTrade extends SymbiosisTrade {
         const tokens = [wrappedToken(tokenAmountIn.token), wrappedToken(tokenAmountOut.token)]
 
         const aggregated = await this.symbiosis.cache.get(
-            ['getOneInchRateToEth', ...tokens.map((i) => i.address)],
+            ['getOneInchRateToEth', chainId.toString(), ...tokens.map((i) => i.address)],
             async () => {
                 const calls = tokens.map((token) => ({
                     target: oracleAddress,
@@ -317,7 +333,7 @@ export class OneInchTrade extends SymbiosisTrade {
                 }))
 
                 const multicall = await getMulticall(provider)
-                return multicall.callStatic.tryAggregate(false, calls)
+                return multicall.callStatic.tryAggregate(true, calls)
             },
             10 * 60 // 10 minutes
         )
@@ -325,7 +341,9 @@ export class OneInchTrade extends SymbiosisTrade {
         const denominator = BigNumber.from(10).pow(18) // eth decimals
 
         const data = aggregated.map(([success, returnData], i): BigNumber | undefined => {
-            if (!success || returnData === '0x') return
+            if (!success || returnData === '0x') {
+                return
+            }
             const result = oracleInterface.decodeFunctionResult('getRateToEth', returnData)
 
             const numerator = BigNumber.from(10).pow(tokens[i].decimals)

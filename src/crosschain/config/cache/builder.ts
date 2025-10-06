@@ -27,7 +27,6 @@ import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import fs from 'fs'
-import { BTC_CONFIGS } from '../../chainUtils/btc'
 
 export type Id = number
 
@@ -142,6 +141,10 @@ export class Builder {
 
                     // syBTC on BNB chain
                     if (token.address === '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7') {
+                        continue
+                    }
+                    // syBTC on RSK chain
+                    if (token.address === '0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba') {
                         continue
                     }
 
@@ -298,7 +301,7 @@ export class Builder {
             realTokensWithId.push({ ...stables[idCounter], id: idCounter })
         }
 
-        BTC_CONFIGS.forEach((btcConfig) => {
+        this.config.btcConfigs.forEach((btcConfig) => {
             realTokensWithId.push({ ...btcConfig.btc, id: idCounter++ })
         })
 
@@ -344,6 +347,7 @@ export class Builder {
 
                 const token: TokenInfo = {
                     ...realTokensWithId[j],
+                    isNative: false,
                     id: idCounter++,
                     symbol: await erc20.symbol(),
                     name: await erc20.name(),

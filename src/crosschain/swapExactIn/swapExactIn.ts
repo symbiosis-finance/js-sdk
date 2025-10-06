@@ -11,6 +11,8 @@ import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 import { isToSolanaSwapSupported, toSolanaSwap } from './toSolanaSwap'
 
+export * from './fromBtcSwap'
+
 // Universal stateless function that allows swap tokens on same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut } = params

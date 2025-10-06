@@ -11,13 +11,15 @@ import { OmniPoolConfig } from '../../types'
 export class ConfigCache {
     private readonly data: ConfigCacheData
 
-    public constructor(configName: ConfigName) {
+    public constructor(configName: ConfigName | ConfigCacheData) {
         if (configName === 'mainnet') {
             this.data = mainnet
         } else if (configName === 'testnet') {
             this.data = testnet
         } else if (configName === 'dev') {
             this.data = dev
+        } else if (Object.prototype.hasOwnProperty.call(configName, 'tokens')) {
+            this.data = configName
         } else {
             throw new Error('Unknown config name')
         }
@@ -61,6 +63,9 @@ export class ConfigCache {
             synths = [token]
         } else {
             synths = this.getSynthTokens(token)
+        }
+        if (synths.length === 0) {
+            synths = [token]
         }
 
         const ids = synths.map((i) => {

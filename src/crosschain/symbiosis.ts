@@ -1,13 +1,20 @@
-import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Log, StaticJsonRpcProvider, Provider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
+import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount } from '../entities'
 import {
+    BranchedUnlocker,
+    BranchedUnlocker__factory,
     Bridge,
     Bridge__factory,
+    BtcRefundUnlocker,
+    BtcRefundUnlocker__factory,
+    Depository,
+    Depository__factory,
     Fabric,
     Fabric__factory,
     MetaRouter,
@@ -20,22 +27,31 @@ import {
     OmniPoolOracle__factory,
     Portal,
     Portal__factory,
+    SwapUnlocker,
+    SwapUnlocker__factory,
     Synthesis,
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
+    WithdrawUnlocker,
+    WithdrawUnlocker__factory,
 } from './contracts'
-import { Error, ErrorCode } from './error'
+import { aggregatorErrorToText, Error, ErrorCode } from './error'
 import { RevertPending } from './revert'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
+    BtcConfig,
     ChainConfig,
     Config,
+    Context,
+    CounterParams,
     FeeConfig,
+    MetricParams,
     OmniPoolConfig,
     OneInchConfig,
     OpenOceanConfig,
     OverrideConfig,
+    PriceImpactMetricParams,
     SwapExactInParams,
     SwapExactInResult,
     VolumeFeeCollector,
@@ -61,7 +77,6 @@ import { parseUnits } from '@ethersproject/units'
 import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
-import { BTC_CONFIGS, BtcConfig } from './chainUtils/btc'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { isTonChainId } from './chainUtils'
 
@@ -70,6 +85,14 @@ export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 export type DiscountTier = {
     amount: string
     discount: number
+}
+
+export type DepositoryContracts = {
+    depository: Depository
+    branchedUnlocker: BranchedUnlocker
+    swapUnlocker: SwapUnlocker
+    withdrawUnlocker: WithdrawUnlocker
+    btcRefundUnlocker?: BtcRefundUnlocker
 }
 
 const defaultFetch: typeof fetch = (url, init) => {
@@ -84,54 +107,10 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
         feeRate: '2000000000000000', // 0.2%
         eligibleChains: [ChainId.BTC_MAINNET],
     },
-    // BOBA BNB
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0xe8035f3e32E1728A0558B67C6F410607d7Da2B6b',
-        feeRate: '6000000000000000', // 0.6%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0xe63a8E9fD72e70121f99974A4E288Fb9e8668BBe',
-        feeRate: '5000000000000000', // 0.5%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x5f5829F7CDca871b16ed76E498EeE35D4250738A',
-        feeRate: '4000000000000000', // 0.4%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x0E8c084c7Edcf863eDdf0579A013b5c9f85462a2',
-        feeRate: '3000000000000000', // 0.3%
-        eligibleChains: [],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x56aE0251a9059fb35C21BffBe127d8E769A34D0D',
-        feeRate: '2000000000000000', // 0.2%
-        eligibleChains: [ChainId.TRON_MAINNET],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x602Bf79772763fEe47701FA2772F5aA9d505Fbf4',
-        feeRate: '1000000000000000', // 0.1%
-        eligibleChains: [ChainId.SEI_EVM_MAINNET, ChainId.MANTLE_MAINNET],
-    },
-    {
-        chainId: ChainId.BOBA_BNB,
-        address: '0x0f68eE6BD92dE3eD499142812C89F825e65d7241',
-        feeRate: '500000000000000', // 0.05%
-        eligibleChains: [],
-        default: true,
-    },
 ]
 
 export class Symbiosis {
-    public providers: Map<ChainId, StaticJsonRpcProvider>
+    public providers: Map<ChainId, Provider>
 
     public readonly cache: Cache
     public readonly config: Config
@@ -140,6 +119,10 @@ export class Symbiosis {
     public clientId: string
 
     private signature: string | undefined
+    public sdkDurationMetric?: Histogram<string>
+    public priceImpactSwapMetric?: Histogram<string>
+    public counter?: Counter<string>
+    public context?: Context
 
     public feesConfig?: FeeConfig[]
 
@@ -148,6 +131,25 @@ export class Symbiosis {
     public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
+
+    public setContext(context: Context) {
+        this.context = context
+    }
+
+    public setMetrics({
+        symbiosisSdkDuration,
+        priceImpactSwap,
+    }: {
+        symbiosisSdkDuration: Histogram<string>
+        priceImpactSwap: Histogram<string>
+    }) {
+        this.sdkDurationMetric = symbiosisSdkDuration
+        this.priceImpactSwapMetric = priceImpactSwap
+    }
+
+    public setErrorCounter(counter: Counter<string>) {
+        this.counter = counter
+    }
 
     public setSignature(signature: string | undefined) {
         this.signature = signature
@@ -159,6 +161,14 @@ export class Symbiosis {
 
     public setClientId(clientId: string) {
         this.clientId = utils.formatBytes32String(clientId)
+    }
+
+    public getBtcConfig(btc: Token): BtcConfig {
+        const config = this.config.btcConfigs.find((i) => i.btc.equals(btc))
+        if (!config) {
+            throw new Error('BTC config not found')
+        }
+        return config
     }
 
     public async getDiscountTiers(): Promise<DiscountTier[]> {
@@ -209,32 +219,39 @@ export class Symbiosis {
 
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
         this.configName = configName
-        if (configName === 'mainnet') {
-            this.config = mainnet
-        } else if (configName === 'testnet') {
-            this.config = testnet
-        } else if (configName === 'dev') {
-            this.config = dev
+        if (overrideConfig?.config) {
+            this.config = overrideConfig.config
         } else {
-            throw new Error('Unknown config name')
-        }
-        this.cache = new Cache()
+            if (configName === 'mainnet') {
+                this.config = structuredClone(mainnet)
+            } else if (configName === 'testnet') {
+                this.config = structuredClone(testnet)
+            } else if (configName === 'dev') {
+                this.config = structuredClone(dev)
+            } else {
+                throw new Error('Unknown config name')
+            }
 
-        if (overrideConfig?.chains) {
-            const { chains } = overrideConfig
-            this.config.chains = this.config.chains.map((chainConfig) => {
-                const found = chains.find((i) => i.id === chainConfig.id)
-                if (found) {
-                    chainConfig.rpc = found.rpc
-                }
-                return chainConfig
-            })
-        }
-        if (overrideConfig?.limits) {
-            this.config.limits = overrideConfig.limits
-        }
-        if (overrideConfig?.advisor) {
-            this.config.advisor = overrideConfig.advisor
+            if (overrideConfig?.chains) {
+                const { chains } = overrideConfig
+                this.config.chains = this.config.chains.map((chainConfig) => {
+                    const found = chains.find((i) => i.id === chainConfig.id)
+                    if (found) {
+                        chainConfig.rpc = found.rpc
+                        chainConfig.headers = found.headers
+                    }
+                    return chainConfig
+                })
+            }
+            if (overrideConfig?.limits) {
+                this.config.limits = overrideConfig.limits
+            }
+            if (overrideConfig?.advisor) {
+                this.config.advisor = overrideConfig.advisor
+            }
+            if (overrideConfig?.btcConfigs) {
+                this.config.btcConfigs = overrideConfig.btcConfigs
+            }
         }
         this.oneInchConfig = {
             apiUrl: 'https://api.1inch.dev/swap/v5.2/',
@@ -258,17 +275,91 @@ export class Symbiosis {
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
 
-        this.configCache = new ConfigCache(configName)
-
+        this.cache = overrideConfig?.cache || new Cache()
+        this.configCache = new ConfigCache(overrideConfig?.configCache || configName)
         this.clientId = utils.formatBytes32String(clientId)
 
         this.providers = new Map(
             this.config.chains.map((chain) => {
                 const rpc = isTronChainId(chain.id) ? `${chain.rpc}/jsonrpc` : chain.rpc
+                const connection: utils.ConnectionInfo = { url: rpc }
 
-                return [chain.id, new StaticJsonRpcProvider(rpc, chain.id)]
+                if (chain?.headers) {
+                    connection.headers = chain.headers
+                }
+
+                return [chain.id, new StaticJsonRpcProvider(connection, chain.id)]
             })
         )
+    }
+
+    public createMetricTimer() {
+        if (!this.sdkDurationMetric) {
+            this.context?.logger.error('Prometheus metrics are not initialized')
+            return
+        }
+
+        const endTimer = this.sdkDurationMetric.startTimer()
+
+        return ({ tokenIn, tokenOut, operation, kind }: MetricParams) =>
+            endTimer({
+                operation,
+                kind,
+                chain_id_from: tokenIn?.chainId ?? '',
+                chain_id_to: tokenOut?.chainId ?? '',
+            })
+    }
+
+    public trackAggregatorError({ provider, reason, chain_id }: CounterParams) {
+        if (!this.counter) {
+            this.context?.logger.error("Prometheus error counter doesn't initialized")
+            return
+        }
+
+        const partner_id = utils.parseBytes32String(this.clientId)
+
+        const cleanReason = aggregatorErrorToText(reason)
+        this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
+    }
+
+    public trackPriceImpactSwap({ name_from, name_to, token_amount, price_impact }: PriceImpactMetricParams) {
+        if (!this.priceImpactSwapMetric) {
+            this.context?.logger.error("Prometheus price impact swap metric doesn't initialized")
+            return
+        }
+        const amountBucket = [
+            0.001, 0.01, 0.1, 0.5, 1, 5, 10, 50, 100, 1000, 3000, 5000, 10_000, 20_000, 50_000, 100_000, 200_000,
+            500_000, 1_000_000,
+        ]
+
+        const findNearestAmountIndex = (amount: number): number => {
+            if (amount <= amountBucket[0]) {
+                return 0
+            }
+            if (amount >= amountBucket[amountBucket.length - 1]) {
+                return amountBucket.length - 1
+            }
+
+            let nearestIndex = 0
+            let minDifference = Math.abs(amount - amountBucket[0])
+
+            for (let i = 1; i < amountBucket.length; i++) {
+                const difference = Math.abs(amount - amountBucket[i])
+                if (difference < minDifference) {
+                    minDifference = difference
+                    nearestIndex = i
+                }
+            }
+
+            return nearestIndex
+        }
+
+        if (price_impact >= 0.5) {
+            const amountIndex = findNearestAmountIndex(token_amount)
+            const amount_usd_bucket = amountBucket[amountIndex]
+
+            this.priceImpactSwapMetric.observe({ name_from, name_to, amount_usd: amount_usd_bucket }, price_impact)
+        }
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {
@@ -276,9 +367,21 @@ export class Symbiosis {
         if (feeCollectors.length === 0) {
             return
         }
-        const chainEligibleFeeCollector = feeCollectors.find((i) => {
-            return i.eligibleChains.filter((j) => involvedChainIds.includes(j)).length > 0
-        })
+
+        const zeroFeeCollector = feeCollectors
+            .filter((i) => i.feeRate === '0')
+            .find((i) => {
+                return involvedChainIds.every((j) => i.eligibleChains.includes(j))
+            })
+        if (zeroFeeCollector) {
+            return
+        }
+
+        const chainEligibleFeeCollector = feeCollectors
+            .filter((i) => i.feeRate !== '0')
+            .find((i) => {
+                return i.eligibleChains.filter((j) => involvedChainIds.includes(j)).length > 0
+            })
         if (chainEligibleFeeCollector) {
             return chainEligibleFeeCollector
         }
@@ -326,7 +429,7 @@ export class Symbiosis {
         return new Zapping(this, omniPoolConfig)
     }
 
-    public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
+    public getProvider(chainId: ChainId, rpc?: string): Provider {
         if (rpc) {
             const url = isTronChainId(chainId) ? `${rpc}/jsonrpc` : rpc
 
@@ -386,6 +489,24 @@ export class Symbiosis {
         const signerOrProvider = signer || this.getProvider(chainId)
 
         return MetaRouter__factory.connect(address, signerOrProvider)
+    }
+
+    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts | null {
+        const depository = this.chainConfig(chainId).depository
+        if (!depository) {
+            return null
+        }
+        const signerOrProvider = signer || this.getProvider(chainId)
+
+        return {
+            depository: Depository__factory.connect(depository.depository, signerOrProvider),
+            swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
+            withdrawUnlocker: WithdrawUnlocker__factory.connect(depository.withdrawUnlocker, signerOrProvider),
+            btcRefundUnlocker: depository.btcRefundUnlocker
+                ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
+                : undefined,
+            branchedUnlocker: BranchedUnlocker__factory.connect(depository.branchedUnlocker, signerOrProvider),
+        }
     }
 
     public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
@@ -474,7 +595,9 @@ export class Symbiosis {
         const config = this.config.chains.find((item) => {
             return item.id === chainId
         })
-        if (!config) throw new Error(`Could not config by given chainId: ${chainId}`)
+        if (!config) {
+            throw new Error(`Could not config by given chainId: ${chainId}`)
+        }
         return config
     }
 
@@ -497,17 +620,12 @@ export class Symbiosis {
     public transitTokens(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token[] {
         const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new Error(`Cannot find omniPool ${pool}`)
+            throw new Error(`Cannot find omniPool for chainId ${omniPoolConfig.chainId}`)
         }
 
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId && !token.deprecated && !token.isSynthetic
         })
-
-        // if token is from manager chain (token's chainIs equals to pool chainId)
-        if (chainId === pool.chainId) {
-            return tokens
-        }
 
         return tokens.filter((token) => {
             const tokenPool = this.getOmniPoolByToken(token)
@@ -604,7 +722,7 @@ export class Symbiosis {
 
     public async waitForBtcDepositAccepted(depositAddress: string) {
         return Promise.any(
-            BTC_CONFIGS.map((btcConfig) => {
+            this.config.btcConfigs.map((btcConfig) => {
                 return waitForBtcDepositAccepted(btcConfig, depositAddress)
             })
         )
@@ -634,6 +752,9 @@ export class Symbiosis {
 
         const eventId = utils.id('TransitTokenSent(address,uint256,address)')
         const log = receipt.logs.find((log: Log) => {
+            if (log.topics.length === 0) {
+                return false
+            }
             return log.topics[0] === eventId
         })
 

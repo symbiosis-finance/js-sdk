@@ -6,7 +6,7 @@ import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/sp
 import { Percent, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getSolanaConnection, getSolanaTokenAddress } from '../chainUtils'
+import { getSolanaConnection } from '../chainUtils'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -62,10 +62,12 @@ export class RaydiumTrade extends SymbiosisTrade {
         try {
             const inputMint = this.tokenAmountIn.token.isNative
                 ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenAmountIn.token.address)
-            const outputMint = this.tokenOut.isNative
-                ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenOut.address)
+                : this.tokenAmountIn.token.solAddress
+            const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
+
+            if (!inputMint || !outputMint) {
+                throw new Error('Solana address not found')
+            }
 
             // get quote
             const quoteResponse = (await fetch(
@@ -89,12 +91,13 @@ export class RaydiumTrade extends SymbiosisTrade {
 
             const amountOut = new TokenAmount(this.tokenOut, quoteResponse.data.outputAmount)
             const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.data.otherAmountThreshold)
+            const priceImpact = new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000))
 
             this.out = {
                 amountOut,
                 amountOutMin,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact: new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000)),
+                priceImpact,
                 routerAddress: '',
                 callData: '',
                 callDataOffset: 0,
@@ -104,7 +107,7 @@ export class RaydiumTrade extends SymbiosisTrade {
 
             return this
         } catch (err) {
-            console.log('Failed to swap via Raydium', err)
+            this.symbiosis.context?.logger.error('Failed to swap via Raydium', err)
             throw err
         }
     }
@@ -123,7 +126,7 @@ export class RaydiumTrade extends SymbiosisTrade {
         const outputTokenAcc = tokenAccountsFrom.find((a) => a.mint.toBase58() === outputMint)?.publicKey
 
         if (!inputTokenAcc && !isInputSol) {
-            console.error(
+            this.symbiosis.context?.logger.error(
                 `Raydium swap. Do not have input token account for ${this.tokenAmountIn.token.symbol} ${inputMint}`
             )
             return []

@@ -237,13 +237,23 @@ export const chains: Chain[] = [
         },
     }),
     new Chain({
-        id: ChainId.BOBA_BNB,
-        name: 'Boba BNB',
+        id: ChainId.SYMBIOSIS_TESTNET,
+        name: 'Symbiosis Testnet',
         disabled: false,
-        explorer: 'https://bnb.bobascan.com',
+        explorer: 'https://symbiosis-nitro-testnet.explorer.caldera.xyz',
         icons: {
-            small: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
-            large: 'https://raw.githubusercontent.com/allush/assets/main/images/blockchains/boba-bnb/logo.png',
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.SYMBIOSIS_MAINNET,
+        name: 'Symbiosis',
+        disabled: false,
+        explorer: 'https://symbiosis.calderaexplorer.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
         },
     }),
     new Chain({
@@ -756,6 +766,56 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://coin-images.coingecko.com/asset_platforms/images/22200/thumb/soneium-removebg-preview.png?1737099934',
             large: 'https://coin-images.coingecko.com/asset_platforms/images/22200/thumb/soneium-removebg-preview.png?1737099934',
+        },
+    }),
+    new Chain({
+        id: ChainId.OPBNB_MAINNET,
+        name: 'opBNB',
+        disabled: false,
+        explorer: 'https://opbnb.bscscan.com',
+        icons: {
+            small: 'https://icons.llamao.fi/icons/chains/rsz_opbnb?w=48&h=48',
+            large: 'https://icons.llamao.fi/icons/chains/rsz_opbnb?w=48&h=48',
+        },
+    }),
+    new Chain({
+        id: ChainId.HYPERLIQUID_MAINNET,
+        name: 'HyperEVM',
+        disabled: false,
+        explorer: 'https://www.hyperscan.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png',
+        },
+    }),
+    new Chain({
+        id: ChainId.KATANA_MAINNET,
+        name: 'Katana',
+        disabled: false,
+        explorer: 'https://explorer.katanarpc.com',
+        icons: {
+            small: 'https://katana.network/meta/favicon.ico',
+            large: 'https://katana.network/meta/favicon.ico',
+        },
+    }),
+    new Chain({
+        id: ChainId.APECHAIN_MAINNET,
+        name: 'ApeChain',
+        disabled: false,
+        explorer: 'https://apescan.io',
+        icons: {
+            small: 'https://coin-images.coingecko.com/asset_platforms/images/22184/small/apechain.jpg?1729564324',
+            large: 'https://coin-images.coingecko.com/asset_platforms/images/22184/small/apechain.jpg?1729564324',
+        },
+    }),
+    new Chain({
+        id: ChainId.PLASMA_MAINNET,
+        name: 'Plasma',
+        disabled: false,
+        explorer: 'https://plasmascan.to',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
         },
     }),
 ]

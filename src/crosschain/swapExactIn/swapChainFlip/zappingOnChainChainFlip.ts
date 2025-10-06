@@ -11,7 +11,7 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contrac
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 
-import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, getChainFlipFee } from './utils'
+import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
 
 type MulticallItem = {
@@ -227,6 +227,8 @@ async function getDepositCall({
         enabledFeatures: { dca: true },
     })
 
+    checkMinAmount(amountIn)
+
     let quote
     try {
         const { quotes } = await chainFlipSdk.getQuoteV2({
@@ -241,11 +243,7 @@ async function getDepositCall({
         quote = quotes.find((quote) => quote.type === 'REGULAR')
     } catch (e) {
         console.error(e)
-        if ((e as unknown as { status: number }).status === 400) {
-            throw new Error('The min swap amount is $10', ErrorCode.MIN_CHAINFLIP_AMOUNT_IN)
-        } else {
-            throw new Error('Chainflip error')
-        }
+        throw new Error('Chainflip error')
     }
     if (!quote) {
         throw new Error('There is no REGULAR quote found')
@@ -268,9 +266,9 @@ async function getDepositCall({
     }
     const { calldata, to } = vaultSwapData
 
-    const { includedFees, egressAmount } = quote
+    const { egressAmount } = quote
 
-    const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(includedFees)
+    const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(quote)
 
     return {
         amountIn,

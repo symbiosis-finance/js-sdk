@@ -4,7 +4,6 @@ import { NATIVE_MINT } from '@solana/spl-token'
 import { Percent, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getSolanaTokenAddress } from '../chainUtils'
 
 interface JupiterTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -59,7 +58,7 @@ interface JupiterSwapResponse {
     simulationError: null | string
 }
 
-const JUPITER_API_URL = 'https://api.jup.ag/swap/v1'
+const JUPITER_API_URL = 'https://lite-api.jup.ag/swap/v1'
 
 export class JupiterTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
@@ -82,10 +81,8 @@ export class JupiterTrade extends SymbiosisTrade {
         try {
             const inputMint = this.tokenAmountIn.token.isNative
                 ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenAmountIn.token.address)
-            const outputMint = this.tokenOut.isNative
-                ? NATIVE_MINT.toBase58()
-                : getSolanaTokenAddress(this.tokenOut.address)
+                : this.tokenAmountIn.token.solAddress
+            const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
 
             // get quote
             const quoteResponse = (await fetch(
@@ -103,14 +100,16 @@ export class JupiterTrade extends SymbiosisTrade {
             const amountOut = new TokenAmount(this.tokenOut, quoteResponse.outAmount)
             const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.otherAmountThreshold)
 
+            const priceImpact = new Percent(
+                BigInt(+Number(quoteResponse.priceImpactPct).toFixed(4) * -10000),
+                BigInt(10000)
+            )
+
             this.out = {
                 amountOut,
                 amountOutMin,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact: new Percent(
-                    BigInt(+Number(quoteResponse.priceImpactPct).toFixed(4) * -10000),
-                    BigInt(10000)
-                ),
+                priceImpact,
                 routerAddress: '',
                 callData: '',
                 callDataOffset: 0,
@@ -120,7 +119,7 @@ export class JupiterTrade extends SymbiosisTrade {
 
             return this
         } catch (err) {
-            console.log('Failed to swap via Jupiter', err)
+            this.symbiosis.context?.logger.error('Failed to swap via Jupiter', err)
             throw err
         }
     }

@@ -16,6 +16,7 @@ interface AggregatorTradeParams extends SymbiosisTradeParams {
     from: string
     clientId: string
     deadline: number
+    preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -27,9 +28,11 @@ class TradeNotInitializedError extends Error {
 
 export class AggregatorTrade extends SymbiosisTrade {
     protected trade: Trade | undefined
+    protected preferOneInchUsage: boolean
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
+        this.preferOneInchUsage = params.preferOneInchUsage || false
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -41,13 +44,16 @@ export class AggregatorTrade extends SymbiosisTrade {
         const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
 
         const trades: (Trade | undefined)[] = []
+        const errors: Error[] = []
 
         function successTrade(trade: Trade) {
             trades.push(trade)
         }
 
-        function failTrade() {
+        function failTrade(e: Error) {
             trades.push(undefined)
+            errors.push(e)
+            symbiosis.context?.logger.error(e)
         }
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)
@@ -55,8 +61,35 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOpenOceanClient = clientId === 'openocean'
         const isOtherClient = !isOneInchClient && !isOpenOceanClient
 
+        const isOneInchAvailable = OneInchTrade.isAvailable(tokenAmountIn.token.chainId) && !isOpenOceanClient
+        const isOpenOceanAvailable = OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) && !isOneInchClient
+
+        let isOneInchUsage = isOneInchAvailable
+        let isOpenOceanUsage = isOpenOceanAvailable
+
+        const isSignificantAmount =
+            (tokenAmountIn.token.symbol?.includes('USD') && parseFloat(tokenAmountIn.toSignificant()) >= 10000) ||
+            (tokenAmountIn.token.symbol?.includes('ETH') && parseFloat(tokenAmountIn.toSignificant()) >= 2.5)
+
+        if (this.preferOneInchUsage && isOneInchAvailable) {
+            isOpenOceanUsage = false
+        } else if (!isSignificantAmount) {
+            // select one of them randomly
+            const aggregators: SymbiosisTradeType[] = []
+            if (isOneInchAvailable) {
+                aggregators.push('1inch')
+            }
+            if (isOpenOceanAvailable) {
+                aggregators.push('open-ocean')
+            }
+            const i = Math.floor(Math.random() * aggregators.length)
+
+            isOneInchUsage = aggregators[i] === '1inch'
+            isOpenOceanUsage = aggregators[i] === 'open-ocean'
+        }
+
         let tradesCount = 0
-        if (!isOpenOceanClient && OneInchTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (isOneInchUsage) {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -68,10 +101,20 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            oneInchTrade.init().then(successTrade).catch(failTrade)
+            oneInchTrade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackAggregatorError({
+                        provider: '1inch',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade(e)
+                })
         }
 
-        if (!isOneInchClient && OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId)) {
+        if (isOpenOceanUsage) {
             const openOceanTrade = new OpenOceanTrade({
                 symbiosis,
                 to,
@@ -81,7 +124,17 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            openOceanTrade.init().then(successTrade).catch(failTrade)
+            openOceanTrade
+                .init()
+                .then(successTrade)
+                .catch((e: Error) => {
+                    symbiosis.trackAggregatorError({
+                        provider: 'OpenOcean',
+                        reason: e.message,
+                        chain_id: String(tokenOut.chain?.id),
+                    })
+                    failTrade(e)
+                })
         }
 
         if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
@@ -137,7 +190,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                     if (theBestTrade) {
                         resolve(theBestTrade)
                     } else {
-                        reject(new Error('Aggregator trade failed'))
+                        reject(new AggregateError(errors, 'Aggregator trade failed'))
                     }
                     clearInterval(intervalId)
                     return
