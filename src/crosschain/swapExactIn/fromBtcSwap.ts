@@ -232,8 +232,8 @@ async function buildTail(
 
     const partnerFeeCall = await getPartnerFeeCall({
         symbiosis,
-        partnerAddress,
         amountIn: syBtcAmount,
+        partnerAddress,
     })
     if (partnerFeeCall) {
         syBtcAmount = partnerFeeCall.amountOut // override
