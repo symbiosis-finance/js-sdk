@@ -16,7 +16,7 @@ import {
     SwapExactInParams,
     SwapExactInResult,
 } from '../types'
-import { Fraction, Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 
 import { Error, ErrorCode } from '../error'
 import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
@@ -386,7 +386,7 @@ async function buildOnChainSwap(
                 ...call,
                 amountOutMin: tokenAmountOut,
                 fees: [], // TODO: calculate fees (how?)
-                priceImpact: new Fraction(0n), // TODO: calculate priceImpact (how?)
+                priceImpact: new Percent('0', BIPS_BASE), // TODO: calculate priceImpact (how?)
             },
         ]
     } else {
@@ -593,7 +593,7 @@ async function buildDepositCall({
         amountIn: syBtcAmount,
         amountOut: tokenAmountOut,
         fees: [],
-        priceImpact: new Fraction(0n),
+        priceImpact: new Percent('0', BIPS_BASE),
     }
 }
 
