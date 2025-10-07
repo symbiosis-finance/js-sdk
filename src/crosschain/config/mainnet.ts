@@ -678,6 +678,7 @@ export const config: Config = {
             rpc: 'https://symbiosis.calderachain.xyz/http',
             spareRpcs: [],
             filterBlockOffset: 1000,
+            partnerFeeCollector: '0x783EE304C54d4658f59EAefb73b32D37ee466e23',
             stables: [
                 {
                     chainId: ChainId.SYMBIOSIS_MAINNET,

@@ -94,7 +94,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     }
     const volumeFeeCollector = symbiosis.getVolumeFeeCollector(amountIn.token.chainId, [ChainId.BTC_MAINNET])
     if (volumeFeeCollector) {
-        const volumeFeeCall = await getVolumeFeeCall({
+        const volumeFeeCall = getVolumeFeeCall({
             feeCollector: volumeFeeCollector,
             amountIn,
             amountInMin,

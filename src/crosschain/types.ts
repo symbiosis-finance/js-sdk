@@ -8,7 +8,8 @@ import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
-import { BytesLike } from 'ethers'
+import { BigNumber, BytesLike } from 'ethers'
+import { PartnerFeeCollector } from './contracts'
 import { Cache } from './cache'
 import { Logger } from 'pino'
 import { ConfigCacheData } from './config/cache/builder'
@@ -247,6 +248,13 @@ export type MultiCallItem = {
     priceImpact: Percent
     fees: FeeItem[]
     routes: RouteItem[]
+}
+
+export type PartnerFeeCallParams = {
+    partnerAddress: string
+    partnerFeeCollector: PartnerFeeCollector
+    feeRate: BigNumber
+    fixedFee: BigNumber
 }
 
 export type MetricParams = {

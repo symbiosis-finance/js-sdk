@@ -17,6 +17,7 @@ export interface ZappingThorExactInParams {
     to: string
     slippage: number
     deadline: number
+    partnerAddress?: string
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -111,6 +112,7 @@ export class ZappingThor extends BaseSwapping {
         to,
         slippage,
         deadline,
+        partnerAddress,
     }: ZappingThorExactInParams): Promise<SwapExactInResult> {
         const isAddressValid = validate(to)
         if (!isAddressValid) {
@@ -149,6 +151,7 @@ export class ZappingThor extends BaseSwapping {
             deadline,
             transitTokenIn,
             transitTokenOut,
+            partnerAddress,
         })
 
         return {

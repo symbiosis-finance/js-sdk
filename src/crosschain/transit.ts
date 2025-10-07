@@ -2,17 +2,10 @@ import { Symbiosis } from './symbiosis'
 import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
 import { Error, ErrorCode } from './error'
-import { BridgeDirection, OmniPoolConfig, VolumeFeeCollector } from './types'
+import { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
-import { OctoPoolFeeCollector__factory } from './contracts'
-import { BigNumber } from 'ethers'
-
-interface VolumeFeeCall {
-    calldata: string
-    receiveSide: string
-    path: string
-    offset: number
-}
+import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
+import { getVolumeFeeCall } from './feeCall/getVolumeFeeCall'
 
 interface CreateOctoPoolTradeParams {
     tokenAmountIn: TokenAmount
@@ -23,9 +16,10 @@ interface CreateOctoPoolTradeParams {
 
 export interface TransitOutResult {
     trade: OctoPoolTrade
-    postCall?: VolumeFeeCall
     amountOut: TokenAmount
     amountOutMin: TokenAmount
+    volumeFeeCall?: MultiCallItem
+    partnerFeeCall?: MultiCallItem
 }
 
 class OutNotInitializedError extends Error {
@@ -34,24 +28,58 @@ class OutNotInitializedError extends Error {
     }
 }
 
+type TransitParams = {
+    symbiosis: Symbiosis
+    amountIn: TokenAmount
+    amountInMin: TokenAmount
+    tokenOut: Token
+    slippage: number
+    deadline: number
+    omniPoolConfig: OmniPoolConfig
+    fee1?: TokenAmount
+    fee2?: TokenAmount
+    partnerAddress?: string
+}
+
 export class Transit {
+    public symbiosis: Symbiosis
+    public amountIn: TokenAmount
+    public amountInMin: TokenAmount
+    public tokenOut: Token
+    public slippage: number
+    public deadline: number
+    public omniPoolConfig: OmniPoolConfig
+    public fee1?: TokenAmount
+    public fee2?: TokenAmount
+    public partnerAddress?: string
     public direction: BridgeDirection
     public feeToken1: Token
     public feeToken2: Token | undefined
 
     protected out?: TransitOutResult
 
-    public constructor(
-        protected symbiosis: Symbiosis,
-        public amountIn: TokenAmount,
-        public amountInMin: TokenAmount,
-        public tokenOut: Token,
-        protected slippage: number,
-        protected deadline: number,
-        protected omniPoolConfig: OmniPoolConfig,
-        public fee1?: TokenAmount,
-        public fee2?: TokenAmount
-    ) {
+    public constructor({
+        symbiosis,
+        amountIn,
+        amountInMin,
+        tokenOut,
+        slippage,
+        deadline,
+        omniPoolConfig,
+        fee1,
+        fee2,
+        partnerAddress,
+    }: TransitParams) {
+        this.symbiosis = symbiosis
+        this.amountIn = amountIn
+        this.amountInMin = amountInMin
+        this.tokenOut = tokenOut
+        this.slippage = slippage
+        this.deadline = deadline
+        this.omniPoolConfig = omniPoolConfig
+        this.fee1 = fee1
+        this.fee2 = fee2
+        this.partnerAddress = partnerAddress
         this.direction = Transit.getDirection(amountIn.token.chainId, tokenOut.chainId, omniPoolConfig.chainId)
 
         this.feeToken1 = this.getFeeToken1()
@@ -80,9 +108,14 @@ export class Transit {
         return this.out.trade
     }
 
-    get postCall(): VolumeFeeCall | undefined {
-        this.assertOutInitialized('postCall')
-        return this.out.postCall
+    get volumeFeeCall(): MultiCallItem | undefined {
+        this.assertOutInitialized('volumeFeeCall')
+        return this.out.volumeFeeCall
+    }
+
+    get partnerFeeCall(): MultiCallItem | undefined {
+        this.assertOutInitialized('partnerFeeCall')
+        return this.out.partnerFeeCall
     }
 
     public async init(): Promise<Transit> {
@@ -98,13 +131,14 @@ export class Transit {
             to,
         })
 
-        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(trade)
+        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(trade)
 
         this.out = {
             amountOut,
             amountOutMin,
             trade,
-            postCall,
+            volumeFeeCall,
+            partnerFeeCall,
         }
         return this
     }
@@ -127,11 +161,18 @@ export class Transit {
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
         offsets.push(this.trade.callDataOffset)
 
-        if (this.postCall) {
-            calldatas.push(this.postCall.calldata)
-            receiveSides.push(this.postCall.receiveSide)
-            paths.push(this.postCall.path)
-            offsets.push(this.postCall.offset)
+        if (this.volumeFeeCall) {
+            calldatas.push(this.volumeFeeCall.data)
+            receiveSides.push(this.volumeFeeCall.to)
+            paths.push(this.volumeFeeCall.amountIn.token.address)
+            offsets.push(this.volumeFeeCall.offset)
+        }
+
+        if (this.partnerFeeCall) {
+            calldatas.push(this.partnerFeeCall.data)
+            receiveSides.push(this.partnerFeeCall.to)
+            paths.push(this.partnerFeeCall.amountIn.token.address)
+            offsets.push(this.partnerFeeCall.offset)
         }
 
         return {
@@ -152,7 +193,7 @@ export class Transit {
         return this.amountIn
     }
 
-    public applyFees(fee1: TokenAmount, fee2?: TokenAmount) {
+    public async applyFees(fee1: TokenAmount, fee2?: TokenAmount) {
         this.assertOutInitialized('applyFees')
 
         if (!fee1.token.equals(this.feeToken1)) {
@@ -176,11 +217,12 @@ export class Transit {
         const { tradeAmountIn: newAmountIn } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         this.trade.applyAmountIn(newAmountIn)
 
-        const { amountOut, amountOutMin, postCall } = this.getAmountsOut(this.trade)
+        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(this.trade)
 
         this.out = {
             trade: this.trade,
-            postCall,
+            volumeFeeCall,
+            partnerFeeCall,
             amountOut,
             amountOutMin,
         }
@@ -226,15 +268,17 @@ export class Transit {
         return this.tokenOut
     }
 
-    private getAmountsOut(trade: OctoPoolTrade): {
+    private async getAmountsOut(trade: OctoPoolTrade): Promise<{
         amountOut: TokenAmount
         amountOutMin: TokenAmount
-        postCall: VolumeFeeCall | undefined
-    } {
+        volumeFeeCall: MultiCallItem | undefined
+        partnerFeeCall: MultiCallItem | undefined
+    }> {
         const { tokenAmountIn: tradeAmountIn, amountOut: tradeAmountOut, amountOutMin: tradeAmountOutMin } = trade
-        let tradeAmountOutNew = tradeAmountOut
-        let tradeAmountOutMinNew = tradeAmountOutMin
-        let postCall: VolumeFeeCall | undefined = undefined
+        let volumeFeeCall: MultiCallItem | undefined = undefined
+
+        let amountOut = tradeAmountOut
+        let amountOutMin = tradeAmountOutMin
 
         const involvedChainIds = [tradeAmountIn.token.chainId, tradeAmountOut.token.chainId]
         if (tradeAmountIn.token.chainFromId) {
@@ -245,21 +289,38 @@ export class Transit {
         }
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(tradeAmountIn.token.chainId, involvedChainIds)
         if (volumeFeeCollector && this.omniPoolConfig.coinGeckoId !== 'usd-coin') {
-            postCall = Transit.buildFeeCall(tradeAmountOut, volumeFeeCollector)
-            tradeAmountOutNew = Transit.applyVolumeFee(tradeAmountOut, volumeFeeCollector)
-            tradeAmountOutMinNew = Transit.applyVolumeFee(tradeAmountOutMin, volumeFeeCollector)
+            volumeFeeCall = getVolumeFeeCall({
+                feeCollector: volumeFeeCollector,
+                amountIn: amountOut,
+                amountInMin: amountOutMin,
+            })
+            amountOut = volumeFeeCall.amountOut
+            amountOutMin = volumeFeeCall.amountOutMin
+        }
+
+        const partnerFeeCall = await getPartnerFeeCall({
+            symbiosis: this.symbiosis,
+            amountIn: amountOut,
+            amountInMin: amountOutMin,
+            partnerAddress: this.partnerAddress,
+        })
+        if (partnerFeeCall) {
+            amountOut = partnerFeeCall.amountOut
+            amountOutMin = partnerFeeCall.amountOutMin
         }
 
         if (this.direction === 'mint') {
             return {
-                postCall,
-                amountOut: tradeAmountOutNew,
-                amountOutMin: tradeAmountOutMinNew,
+                volumeFeeCall,
+                partnerFeeCall,
+                amountOut,
+                amountOutMin,
             }
         }
 
-        let amountOut = new TokenAmount(this.tokenOut, tradeAmountOutNew.raw)
-        let amountOutMin = new TokenAmount(this.tokenOut, tradeAmountOutMinNew.raw)
+        // replace synthetic token by real token
+        amountOut = new TokenAmount(this.tokenOut, amountOut.raw)
+        amountOutMin = new TokenAmount(this.tokenOut, amountOutMin.raw)
 
         let fee = this.fee1
         if (this.isV2()) {
@@ -279,7 +340,8 @@ export class Transit {
         }
 
         return {
-            postCall,
+            volumeFeeCall,
+            partnerFeeCall,
             amountOut,
             amountOutMin,
         }
@@ -334,28 +396,6 @@ export class Transit {
             )
         }
         return sToken
-    }
-
-    private static buildFeeCall(tokenAmount: TokenAmount, volumeFeeCollector: VolumeFeeCollector): VolumeFeeCall {
-        const calldata = OctoPoolFeeCollector__factory.createInterface().encodeFunctionData('collectFee', [
-            tokenAmount.raw.toString(),
-            tokenAmount.token.address,
-        ])
-        return {
-            calldata,
-            receiveSide: volumeFeeCollector.address,
-            path: tokenAmount.token.address,
-            offset: 36,
-        }
-    }
-
-    private static applyVolumeFee(amount: TokenAmount, volumeFeeCollector: VolumeFeeCollector): TokenAmount {
-        const feeRateBase = BigNumber.from(10).pow(18)
-        const feeRate = BigNumber.from(volumeFeeCollector.feeRate)
-
-        const amountBn = BigNumber.from(amount.raw.toString())
-        const raw = amountBn.sub(amountBn.mul(feeRate).div(feeRateBase))
-        return new TokenAmount(amount.token, raw.toString())
     }
 
     private static getDirection(chainIdIn: ChainId, chainIdOut: ChainId, hostChainId: ChainId): BridgeDirection {

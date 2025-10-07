@@ -243,7 +243,7 @@ async function buildTail(
 
     const feeCollector = symbiosis.getVolumeFeeCollector(syBtcAmount.token.chainId, [ChainId.BTC_MAINNET])
     if (feeCollector) {
-        const volumeFeeCall = await getVolumeFeeCall({
+        const volumeFeeCall = getVolumeFeeCall({
             feeCollector,
             amountIn: syBtcAmount,
         })
@@ -362,6 +362,7 @@ async function buildCrossChainSwap(
         tokenAmountIn: syBtcAmount,
         from: to, // to be able to revert a tx
         tradeAContext: 'multicallRouter',
+        partnerAddress: undefined, // don't need to call partner fee twice
     })
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
