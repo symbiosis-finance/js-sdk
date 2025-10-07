@@ -55,7 +55,7 @@ export class ZappingBtc extends BaseSwapping {
             symbiosis: this.symbiosis,
             amountIn: amount,
             amountInMin: amountMin,
-            partnerAddress: this.partnerAddress,
+            partnerAddress: undefined, // do not charge partnerFee twice
         })
 
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(amount.token.chainId, [ChainId.BTC_MAINNET])
@@ -89,8 +89,6 @@ export class ZappingBtc extends BaseSwapping {
 
         const chainId = syBtc.chainId
 
-        this.partnerAddress = partnerAddress
-
         this.multicallRouter = this.symbiosis.multicallRouter(chainId)
         this.synthesis = this.symbiosis.synthesis(chainId)
 
@@ -107,7 +105,7 @@ export class ZappingBtc extends BaseSwapping {
             deadline,
             transitTokenIn,
             transitTokenOut,
-            partnerAddress: undefined, // do not charge partnerFee twice
+            partnerAddress,
         })
 
         let amountOut = result.tokenAmountOut
