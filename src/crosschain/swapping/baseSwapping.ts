@@ -234,7 +234,7 @@ export abstract class BaseSwapping {
         const fee2 = fee2Raw?.fee
         const save2 = fee2Raw?.save
 
-        this.transit.applyFees(fee1, fee2)
+        await this.transit.applyFees(fee1, fee2)
         if (this.tradeC) {
             this.tradeC.applyAmountIn(this.transit.amountOut)
         }
