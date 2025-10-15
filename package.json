@@ -63,7 +63,7 @@
         "bitcoinjs-lib": "^6.1.5",
         "decimal.js-light": "github:arjunyel/decimal.js-light#fix-types-2",
         "ethers": "^5.8.0",
-        "jsbi": "github:symbiosis-finance/jsbi#v3.2.5+symbiosis5",
+        "jsbi": "github:symbiosis-finance/jsbi#v3.2.5+symbiosis6",
         "lodash.flatmap": "^4.5.0",
         "tiny-invariant": "^1.1.0",
         "tiny-warning": "^1.0.3",
