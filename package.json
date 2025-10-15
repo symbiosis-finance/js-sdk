@@ -4,21 +4,11 @@
     "type": "module",
     "exports": {
         "types": {
-            "import": {
-                ".": "./dist/index.d.ts"
-            },
-            "require": {
-                ".": "./dist/index.d.cts"
-            }
+            "import": "./dist/index.d.ts",
+            "require": "./dist/index.d.cts"
         },
-        "default": {
-            "import": {
-                ".": "./dist/index.esm.js"
-            },
-            "require": {
-                ".": "./dist/index.cjs.js"
-            }
-        }
+        "import": "./dist/index.esm.js",
+        "require": "./dist/index.cjs.js"
     },
     "files": [
         "dist/*"
