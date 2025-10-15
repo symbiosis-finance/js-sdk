@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { Multicall, MulticallInterface } from '../Multicall'
+import type { Provider } from '@ethersproject/providers'
+import type { Multicall, MulticallInterface } from '../Multicall.js'
 
 const _abi = [
     {
@@ -318,7 +318,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class Multicall__factory {
     static readonly abi = _abi

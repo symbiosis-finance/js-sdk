@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { IDepository, IDepositoryInterface } from '../IDepository'
+import type { Provider } from '@ethersproject/providers'
+import type { IDepository, IDepositoryInterface } from '../IDepository.js'
 
 const _abi = [
     {
@@ -299,7 +299,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class IDepository__factory {
     static readonly abi = _abi

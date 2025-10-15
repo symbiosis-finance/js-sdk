@@ -1,12 +1,12 @@
-import { ChainId } from '../../constants'
-import { Percent, TokenAmount } from '../../entities'
-import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade'
-import { getMinAmount } from '../chainUtils'
-import type { Symbiosis } from '../symbiosis'
-import { CoinGecko } from '../coingecko'
+import { ChainId } from '../../constants.ts'
+import { Percent, TokenAmount } from '../../entities/index.ts'
+import { SymbiosisTrade, SymbiosisTradeParams } from './symbiosisTrade.ts'
+import { getMinAmount } from '../chainUtils/index.ts'
+import type { Symbiosis } from '../symbiosis.ts'
+import { CoinGecko } from '../coingecko/index.ts'
 import JSBI from 'jsbi'
-import { BIPS_BASE } from '../constants'
-import { EvmAddress } from '../types'
+import { BIPS_BASE } from '../constants.ts'
+import { EvmAddress } from '../types.ts'
 
 interface MagpieQuoteRequest {
     fromTokenAddress: string

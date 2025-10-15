@@ -1,8 +1,8 @@
 import { Currency, Ether, Token, NativeCurrency } from '@uniswap/sdk-core'
-import { ChainId } from '../../../constants'
-import { WETH } from '../../../entities'
+import { ChainId } from '../../../constants.ts'
+import { WETH } from '../../../entities/index.ts'
 import invariant from 'tiny-invariant'
-import { toUniToken } from './toUniTypes'
+import { toUniToken } from './toUniTypes.ts'
 
 export class GasToken extends NativeCurrency {
     protected constructor(chainId: number) {

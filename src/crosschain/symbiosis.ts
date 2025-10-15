@@ -1,11 +1,10 @@
 import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
-import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import type { Counter, Histogram } from 'prom-client'
-import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { ChainId } from '../constants.ts'
+import { Chain, chains, Token, TokenAmount } from '../entities/index.ts'
 import {
     BranchedUnlocker,
     BranchedUnlocker__factory,
@@ -35,10 +34,10 @@ import {
     Synthesis__factory,
     TonBridge,
     TonBridge__factory,
-} from './contracts'
-import { aggregatorErrorToText, Error, ErrorCode } from './error'
-import { RevertPending } from './revert'
-import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
+} from './contracts/index.ts'
+import { aggregatorErrorToText, Error, ErrorCode } from './error.ts'
+import { RevertPending } from './revert.ts'
+import { getTransactionInfoById, isTronChainId } from './chainUtils/tron.ts'
 import {
     BtcConfig,
     ChainConfig,
@@ -57,32 +56,32 @@ import {
     SwapExactInParams,
     SwapExactInResult,
     VolumeFeeCollector,
-} from './types'
-import { Zapping } from './zapping'
-import { config as mainnet } from './config/mainnet'
-import { config as testnet } from './config/testnet'
-import { config as dev } from './config/dev'
-import { config as beta } from './config/beta'
-import { ConfigCache } from './config/cache/cache'
-import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
-import { PendingRequest } from './revertRequest'
-import { delay } from '../utils'
+} from './types.ts'
+import { Zapping } from './zapping.ts'
+import { config as mainnet } from './config/mainnet.ts'
+import { config as testnet } from './config/testnet.ts'
+import { config as dev } from './config/dev.ts'
+import { config as beta } from './config/beta.ts'
+import { ConfigCache } from './config/cache/cache.ts'
+import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder.ts'
+import { PendingRequest } from './revertRequest.ts'
+import { delay } from '../utils.ts'
 import {
     waitForBtcCommitTxMined,
     waitForBtcDepositAccepted,
     waitForBtcEvmTxIssued,
     waitForComplete,
     waitFromTonTxMined,
-} from './waitForComplete'
-import { Cache } from './cache'
-import { SwappingMiddleware } from './swapping'
+} from './waitForComplete/index.ts'
+import { Cache } from './cache.ts'
+import { SwappingMiddleware } from './swapping/index.ts'
 import { parseUnits } from '@ethersproject/units'
-import { swapExactIn } from './swapExactIn'
-import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
+import { swapExactIn } from './swapExactIn/index.ts'
+import type { WaitForCompleteParams } from './waitForComplete/waitForComplete.ts'
 import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
-import { isTonChainId } from './chainUtils'
-import { CoinGecko } from './coingecko'
+import { isTonChainId } from './chainUtils/index.ts'
+import { CoinGecko } from './coingecko/index.ts'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
@@ -98,10 +97,6 @@ export type DepositoryContracts = {
     branchedUnlocker: BranchedUnlocker
     swapUnlocker: SwapUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
-}
-
-const defaultFetch: typeof fetch = (url, init) => {
-    return isomorphicFetch(url as string, init)
 }
 
 const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
@@ -281,7 +276,7 @@ export class Symbiosis {
             this.volumeFeeCollectors = overrideConfig.volumeFeeCollectors
         }
 
-        this.fetch = overrideConfig?.fetch ?? defaultFetch
+        this.fetch = overrideConfig?.fetch ?? fetch
 
         this.cache = overrideConfig?.cache || new Cache()
         this.configCache = new ConfigCache(overrideConfig?.configCache || configName)

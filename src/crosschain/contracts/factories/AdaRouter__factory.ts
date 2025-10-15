@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { AdaRouter, AdaRouterInterface } from '../AdaRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { AdaRouter, AdaRouterInterface } from '../AdaRouter.js'
 
 const _abi = [
     {
@@ -978,7 +978,7 @@ const _abi = [
         type: 'receive',
         stateMutability: 'payable',
     },
-]
+] as const
 
 export class AdaRouter__factory {
     static readonly abi = _abi

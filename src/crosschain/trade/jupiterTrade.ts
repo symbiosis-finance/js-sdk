@@ -1,9 +1,9 @@
 import { PublicKey } from '@solana/web3.js'
 import { NATIVE_MINT } from '@solana/spl-token'
 
-import { Percent, TokenAmount } from '../../entities'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { Percent, TokenAmount } from '../../entities/index.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
 
 interface JupiterTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis

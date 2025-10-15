@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { ThorRouter, ThorRouterInterface } from '../ThorRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { ThorRouter, ThorRouterInterface } from '../ThorRouter.js'
 
 const _abi = [
     {
@@ -447,7 +447,7 @@ const _abi = [
         stateMutability: 'view',
         type: 'function',
     },
-]
+] as const
 
 export class ThorRouter__factory {
     static readonly abi = _abi

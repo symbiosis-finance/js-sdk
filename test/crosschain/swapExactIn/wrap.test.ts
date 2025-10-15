@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { isWrapSupported, wrap } from '../../../src/crosschain/swapExactIn/wrap'
+import { isWrapSupported, wrap } from '../../../src/crosschain/swapExactIn/wrap.ts'
 import {
     ChainId,
     GAS_TOKEN,
@@ -9,7 +9,7 @@ import {
     Symbiosis,
     TokenAmount,
     WETH,
-} from '../../../src'
+} from '../../../src/index.ts'
 import TronWeb from 'tronweb'
 
 const symbiosis = new Symbiosis('mainnet', 'test')

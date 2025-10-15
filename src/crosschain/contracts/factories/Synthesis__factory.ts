@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { Synthesis, SynthesisInterface } from '../Synthesis'
+import type { Provider } from '@ethersproject/providers'
+import type { Synthesis, SynthesisInterface } from '../Synthesis.js'
 
 const _abi = [
     {
@@ -1449,7 +1449,7 @@ const _abi = [
         stateMutability: 'pure',
         type: 'function',
     },
-]
+] as const
 
 export class Synthesis__factory {
     static readonly abi = _abi

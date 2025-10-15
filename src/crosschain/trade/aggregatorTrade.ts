@@ -1,13 +1,13 @@
-import { Symbiosis } from '../symbiosis'
-import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
-import { OpenOceanTrade } from './openOceanTrade'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { IzumiTrade } from './izumiTrade'
-import { UniV2Trade } from './uniV2Trade'
-import { UniV3Trade } from './uniV3Trade'
-import { Percent, Token, TokenAmount } from '../../entities'
+import { Symbiosis } from '../symbiosis.ts'
+import { OneInchProtocols, OneInchTrade } from './oneInchTrade.ts'
+import { OpenOceanTrade } from './openOceanTrade.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { IzumiTrade } from './izumiTrade.ts'
+import { UniV2Trade } from './uniV2Trade.ts'
+import { UniV3Trade } from './uniV3Trade.ts'
+import { Percent, Token, TokenAmount } from '../../entities/index.ts'
 import { utils } from 'ethers'
-import { Address, FeeItem } from '../types'
+import { Address, FeeItem } from '../types.ts'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 

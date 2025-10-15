@@ -1,6 +1,6 @@
 import { Token as TokenUni, CurrencyAmount, Currency } from '@uniswap/sdk-core'
-import { Token, TokenAmount } from '../../../entities'
-import { GasToken } from './gasToken'
+import { Token, TokenAmount } from '../../../entities/index.ts'
+import { GasToken } from './gasToken.ts'
 
 export function toUniToken(token: Token): TokenUni {
     return new TokenUni(token.chainId, token.address, token.decimals)

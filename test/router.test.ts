@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant'
-import { ChainId, Pair, Percent, Route, Router, Token, TokenAmount, Trade } from '../src'
+import { ChainId, Pair, Percent, Route, Router, Token, TokenAmount, Trade } from '../src/index.ts'
 import JSBI from 'jsbi'
 import { describe, expect, test } from 'vitest'
 

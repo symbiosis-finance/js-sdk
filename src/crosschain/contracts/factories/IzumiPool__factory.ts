@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { IzumiPool, IzumiPoolInterface } from '../IzumiPool'
+import type { Provider } from '@ethersproject/providers'
+import type { IzumiPool, IzumiPoolInterface } from '../IzumiPool.js'
 
 const _abi = [
     {
@@ -1411,7 +1411,7 @@ const _abi = [
         stateMutability: 'view',
         type: 'function',
     },
-]
+] as const
 
 export class IzumiPool__factory {
     static readonly abi = _abi

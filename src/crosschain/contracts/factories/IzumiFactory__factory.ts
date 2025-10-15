@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { IzumiFactory, IzumiFactoryInterface } from '../IzumiFactory'
+import type { Provider } from '@ethersproject/providers'
+import type { IzumiFactory, IzumiFactoryInterface } from '../IzumiFactory.js'
 
 const _abi = [
     {
@@ -336,7 +336,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class IzumiFactory__factory {
     static readonly abi = _abi

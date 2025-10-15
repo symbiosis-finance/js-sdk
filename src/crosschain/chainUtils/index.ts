@@ -1,5 +1,5 @@
-export { isBtcChainId, getPkScript, getAddress, BTC_NETWORKS } from './btc'
-export * from './ton'
+export { isBtcChainId, getPkScript, getAddress, BTC_NETWORKS } from './btc.ts'
+export * from './ton.ts'
 export {
     prepareTronTransaction,
     isTronToken,
@@ -7,6 +7,6 @@ export {
     isTronChain,
     tronAddressToEvm,
     type TronTransactionData,
-} from './tron'
-export * from './evm'
-export * from './solana'
+} from './tron.ts'
+export * from './evm.ts'
+export * from './solana.ts'

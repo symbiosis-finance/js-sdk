@@ -1,15 +1,15 @@
 import { parseUnits } from '@ethersproject/units'
-import type { Symbiosis } from './symbiosis'
-import { ChainId } from '../constants'
-import { Portal__factory, Synthesis__factory } from './contracts'
+import type { Symbiosis } from './symbiosis.ts'
+import { ChainId } from '../constants.ts'
+import { Portal__factory, Synthesis__factory } from './contracts/index.ts'
 import { TransactionReceipt } from '@ethersproject/providers'
 import { LogDescription } from '@ethersproject/abi'
-import { TokenAmount } from '../entities'
-import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils'
-import { SynthesizeRequestEvent } from './contracts/Portal'
+import { TokenAmount } from '../entities/index.ts'
+import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils/index.ts'
+import { SynthesizeRequestEvent } from './contracts/Portal.ts'
 import { utils } from 'ethers'
-import { OmniPoolConfig } from './types'
-import { Error } from './error'
+import { OmniPoolConfig } from './types.ts'
+import { Error } from './error.ts'
 
 type InitProps = {
     validateState: boolean

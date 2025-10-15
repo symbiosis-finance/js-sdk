@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
-import { OctoPoolTrade } from '../../../src/crosschain/trade'
-import { Symbiosis, TokenAmount } from '../../../src'
+import { OctoPoolTrade } from '../../../src/crosschain/trade/index.ts'
+import { Symbiosis, TokenAmount } from '../../../src/index.ts'
 import { BigNumber } from 'ethers'
 
 const DECIMALS = BigNumber.from(10).pow(18)

@@ -1,11 +1,11 @@
 import { address, Network, networks } from 'bitcoinjs-lib'
 import { BigNumber } from 'ethers'
 
-import { TokenAmount } from '../../entities'
-import { Cache } from '../cache'
-import { getFastestFee } from '../mempool'
-import { Synthesis } from '../contracts'
-import { ChainId } from '../../constants'
+import { TokenAmount } from '../../entities/index.ts'
+import { Cache } from '../cache.ts'
+import { getFastestFee } from '../mempool.ts'
+import { Synthesis } from '../contracts/index.ts'
+import { ChainId } from '../../constants.ts'
 
 export const getThreshold = async (syBtcAmount: TokenAmount, synthesis: Synthesis, cache: Cache) => {
     const syBtc = syBtcAmount.token

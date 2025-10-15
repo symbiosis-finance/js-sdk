@@ -1,7 +1,7 @@
 import { Provider } from '@ethersproject/providers'
-import { ChainId } from '../constants'
-import { MULTICALL_ADDRESSES } from './constants'
-import { Multicall, Multicall__factory } from './contracts'
+import { ChainId } from '../constants.ts'
+import { MULTICALL_ADDRESSES } from './constants.ts'
+import { Multicall, Multicall__factory } from './contracts/index.ts'
 
 export class NoMulticallAddressError extends Error {
     public constructor(chainId: ChainId) {

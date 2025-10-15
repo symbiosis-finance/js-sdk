@@ -1,5 +1,5 @@
-import { ChainId, Token, TokenAmount, Pair, InsufficientInputAmountError } from '../src'
-import { sortedInsert } from '../src/utils'
+import { ChainId, Token, TokenAmount, Pair, InsufficientInputAmountError } from '../src/index.ts'
+import { sortedInsert } from '../src/utils.ts'
 import { describe, expect, test } from 'vitest'
 
 describe('miscellaneous', () => {

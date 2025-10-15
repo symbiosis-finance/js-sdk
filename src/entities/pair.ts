@@ -1,4 +1,4 @@
-import { Price, TokenAmount } from './fractions'
+import { Price, TokenAmount } from './fractions/index.ts'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import { keccak256, pack } from '@ethersproject/solidity'
@@ -15,16 +15,30 @@ import {
     MINIMUM_LIQUIDITY,
     ONE,
     ZERO,
-} from '../constants'
-import { parseBigintIsh, sqrt } from '../utils'
-import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/tron'
-import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
-import { Token } from './token'
+} from '../constants.ts'
+import { parseBigintIsh, sqrt } from '../utils.ts'
+import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/tron.ts'
+import { InsufficientInputAmountError, InsufficientReservesError } from '../errors.ts'
+import { Token } from './token.ts'
 import { BytesLike } from '@ethersproject/bytes'
-import { EvmAddress, NonEmptyAddress } from '..'
+import { EvmAddress, NonEmptyAddress } from '../index.ts'
 
-export let PAIR_ADDRESS_CACHE: { [token0Address: NonEmptyAddress]: { [token1Address: NonEmptyAddress]: EvmAddress } } =
-    {}
+export class MapWithDefault<K, V> extends Map<K, V> {
+    #default: () => V
+    get(key: K): V {
+        if (!this.has(key)) {
+            this.set(key, this.#default())
+        }
+        return super.get(key) as V
+    }
+
+    constructor(defaultFunction: () => V, entries?: readonly (readonly [K, V])[] | null) {
+        super(entries)
+        this.#default = defaultFunction
+    }
+}
+
+export const PAIR_ADDRESS_CACHE = new MapWithDefault<NonEmptyAddress, Map<NonEmptyAddress, EvmAddress>>(() => new Map())
 
 // TODO replace with onchain call to Factory.getPair method
 export function getZkCreate2Address(from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike): EvmAddress {
@@ -63,9 +77,12 @@ export class Pair {
             params = [...params, false]
         }
 
-        if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-            let getCreate2Address: (from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike) => string =
-                getEvmCreate2Address
+        if (PAIR_ADDRESS_CACHE.get(tokens[0].address).get(tokens[1].address) === undefined) {
+            let getCreate2Address = getEvmCreate2Address as (
+                from: EvmAddress,
+                salt: BytesLike,
+                initCodeHash: BytesLike
+            ) => EvmAddress
 
             if (isTronChainId(chainId)) {
                 getCreate2Address = getTronCreate2Address
@@ -73,20 +90,17 @@ export class Pair {
                 getCreate2Address = getZkCreate2Address
             }
 
-            PAIR_ADDRESS_CACHE = {
-                ...PAIR_ADDRESS_CACHE,
-                [tokens[0].address]: {
-                    ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
-                    [tokens[1].address]: getCreate2Address(
-                        FACTORY_ADDRESS[chainId],
-                        keccak256(['bytes'], [pack(types, params)]),
-                        INIT_CODE_HASH[chainId]
-                    ),
-                },
-            }
+            PAIR_ADDRESS_CACHE.get(tokens[0].address).set(
+                tokens[1].address,
+                getCreate2Address(
+                    FACTORY_ADDRESS[chainId],
+                    keccak256(['bytes'], [pack(types, params)]),
+                    INIT_CODE_HASH[chainId]
+                )
+            )
         }
 
-        return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
+        return PAIR_ADDRESS_CACHE.get(tokens[0].address).get(tokens[1].address) as EvmAddress
     }
 
     public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount) {

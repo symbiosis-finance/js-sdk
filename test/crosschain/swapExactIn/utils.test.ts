@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { theBest } from '../../../src/crosschain/swapExactIn/utils'
+import { theBest } from '../../../src/crosschain/swapExactIn/utils.ts'
 
 describe('#theBest', () => {
     describe('fastest', () => {

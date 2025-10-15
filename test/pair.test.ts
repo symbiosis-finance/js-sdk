@@ -1,4 +1,4 @@
-import { ChainId, Token, Pair, TokenAmount, WETH, Price } from '../src'
+import { ChainId, Token, Pair, TokenAmount, WETH, Price } from '../src/index.ts'
 import { describe, expect, test } from 'vitest'
 
 describe('Pair', () => {

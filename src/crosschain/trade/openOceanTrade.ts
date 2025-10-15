@@ -1,12 +1,12 @@
-import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
-import { Percent, TokenAmount } from '../../entities'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getMinAmount } from '../chainUtils'
-import type { Symbiosis } from '../symbiosis'
-import { BIPS_BASE } from '../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants.ts'
+import { Percent, TokenAmount } from '../../entities/index.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { getMinAmount } from '../chainUtils/index.ts'
+import type { Symbiosis } from '../symbiosis.ts'
+import { BIPS_BASE } from '../constants.ts'
 import BigNumber from 'bignumber.js'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { Address, NonEmptyAddress } from '..'
+import { AddressZero } from '@ethersproject/constants'
+import { Address, NonEmptyAddress } from '../index.ts'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis

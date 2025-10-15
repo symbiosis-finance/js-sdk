@@ -12,15 +12,15 @@ import {
     Pool,
 } from '@dedust/sdk'
 
-import { GAS_TOKEN, Percent, Token, TokenAmount } from '../../entities'
-import { TON_REFERRAL_ADDRESS } from '../chainUtils'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { GAS_TOKEN, Percent, Token, TokenAmount } from '../../entities/index.ts'
+import { TON_REFERRAL_ADDRESS } from '../chainUtils/index.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
 import JSBI from 'jsbi'
-import { BIPS_BASE } from '../constants'
-import { ChainId } from '../../constants'
-import { TonAddress, FeeItem } from '../types'
-import { CoinGecko } from '../coingecko'
+import { BIPS_BASE } from '../constants.ts'
+import { ChainId } from '../../constants.ts'
+import { TonAddress, FeeItem } from '../types.ts'
+import { CoinGecko } from '../coingecko/index.ts'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis

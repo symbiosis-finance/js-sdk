@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { UniV3Router, UniV3RouterInterface } from '../UniV3Router'
+import type { Provider } from '@ethersproject/providers'
+import type { UniV3Router, UniV3RouterInterface } from '../UniV3Router.js'
 
 const _abi = [
     {
@@ -570,7 +570,7 @@ const _abi = [
         stateMutability: 'payable',
         type: 'receive',
     },
-]
+] as const
 
 export class UniV3Router__factory {
     static readonly abi = _abi

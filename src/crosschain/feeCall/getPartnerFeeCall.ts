@@ -1,9 +1,9 @@
-import { Symbiosis } from '../symbiosis'
-import { Percent, TokenAmount } from '../../entities'
-import { MultiCallItem } from '../types'
-import { PartnerFeeCollector__factory } from '../contracts'
+import { Symbiosis } from '../symbiosis.ts'
+import { Percent, TokenAmount } from '../../entities/index.ts'
+import { MultiCallItem } from '../types.ts'
+import { PartnerFeeCollector__factory } from '../contracts/index.ts'
 import { BigNumber } from 'ethers'
-import { BIPS_BASE } from '../constants'
+import { BIPS_BASE } from '../constants.ts'
 
 export async function getPartnerFeeCall({
     symbiosis,

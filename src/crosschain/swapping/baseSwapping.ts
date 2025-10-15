@@ -1,15 +1,15 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
-import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
-import type { Symbiosis } from '../symbiosis'
-import { AggregatorTrade, WrapTrade } from '../trade'
-import { Transit } from '../transit'
-import { Error } from '../error'
-import { SymbiosisTrade } from '../trade/symbiosisTrade'
-import { OneInchProtocols } from '../trade/oneInchTrade'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities/index.ts'
+import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants.ts'
+import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts/index.ts'
+import type { Symbiosis } from '../symbiosis.ts'
+import { AggregatorTrade, WrapTrade } from '../trade/index.ts'
+import { Transit } from '../transit.ts'
+import { Error } from '../error.ts'
+import { SymbiosisTrade } from '../trade/symbiosisTrade.ts'
+import { OneInchProtocols } from '../trade/oneInchTrade.ts'
 import {
     buildMetaSynthesize,
     DetailedSlippage,
@@ -23,8 +23,8 @@ import {
     splitSlippage,
     tronAddressToEvm,
     TronTransactionData,
-} from '../chainUtils'
-import { TRON_METAROUTER_ABI } from '../tronAbis'
+} from '../chainUtils/index.ts'
+import { TRON_METAROUTER_ABI } from '../tronAbis/index.ts'
 import {
     Address,
     FeeItem,
@@ -35,11 +35,11 @@ import {
     SwapExactInTransactionPayload,
     TonTransactionData,
     TradeAContext,
-} from '../types'
-import { Profiler } from '../../entities/profiler'
-import { createFakeAmount } from '../../utils'
-import { ChainId } from '../../constants'
-import { isUseOneInchOnly } from '../utils'
+} from '../types.ts'
+import { Profiler } from '../../entities/profiler.ts'
+import { createFakeAmount } from '../../utils.ts'
+import { ChainId } from '../../constants.ts'
+import { isUseOneInchOnly } from '../utils.ts'
 
 type MetaRouteParams = {
     amount: string

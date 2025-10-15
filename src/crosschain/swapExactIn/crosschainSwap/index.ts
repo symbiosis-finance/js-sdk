@@ -1,1 +1,1 @@
-export { crosschainSwap } from './crosschainSwap'
+export { crosschainSwap } from './crosschainSwap.ts'

@@ -1,6 +1,6 @@
-import { Percent, Token, TokenAmount } from '../../entities'
+import { Percent, Token, TokenAmount } from '../../entities/index.ts'
 import { BigNumber } from 'ethers'
-import { Address, FeeItem } from '../types'
+import { Address, FeeItem } from '../types.ts'
 
 export type SymbiosisTradeType =
     | 'uni-v2'

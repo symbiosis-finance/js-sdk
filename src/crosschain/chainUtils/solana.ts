@@ -6,8 +6,8 @@ import {
     TransactionMessage,
     VersionedTransaction,
 } from '@solana/web3.js'
-import { ChainId } from '../../constants'
-import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
+import { ChainId } from '../../constants.ts'
+import { GAS_TOKEN, Token, TokenAmount } from '../../entities/index.ts'
 
 export function isSolanaChainId(chainId: ChainId | undefined) {
     if (!chainId) return false

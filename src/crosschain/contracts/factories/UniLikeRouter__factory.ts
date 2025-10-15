@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { UniLikeRouter, UniLikeRouterInterface } from '../UniLikeRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { UniLikeRouter, UniLikeRouterInterface } from '../UniLikeRouter.js'
 
 const _abi = [
     {
@@ -958,7 +958,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class UniLikeRouter__factory {
     static readonly abi = _abi

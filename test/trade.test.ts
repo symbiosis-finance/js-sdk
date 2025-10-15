@@ -1,5 +1,5 @@
 import JSBI from 'jsbi'
-import { ChainId, Pair, Percent, Route, Token, TokenAmount, Trade, TradeType } from '../src'
+import { ChainId, Pair, Percent, Route, Token, TokenAmount, Trade, TradeType } from '../src/index.ts'
 import { describe, expect, test } from 'vitest'
 
 describe('Trade', () => {

@@ -1,5 +1,16 @@
 import invariant from 'tiny-invariant'
-import { ChainId, WETH as _WETH, TradeType, Rounding, Token, TokenAmount, Pair, Route, Trade, EvmAddress } from '../src'
+import {
+    ChainId,
+    WETH as _WETH,
+    TradeType,
+    Rounding,
+    Token,
+    TokenAmount,
+    Pair,
+    Route,
+    Trade,
+    EvmAddress,
+} from '../src/index.ts'
 import { describe, expect, test } from 'vitest'
 
 const ADDRESSES: EvmAddress[] = [

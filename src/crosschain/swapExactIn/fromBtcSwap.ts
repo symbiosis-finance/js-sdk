@@ -1,7 +1,6 @@
 import { TransactionRequest } from '@ethersproject/providers'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { BigNumber, BigNumberish } from 'ethers'
-import { BytesLike, isAddress } from 'ethers/lib/utils'
+import { AddressZero } from '@ethersproject/constants'
+import { BigNumber, BigNumberish, BytesLike, utils } from 'ethers'
 import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
 import { randomBytes } from 'crypto'
 
@@ -15,24 +14,24 @@ import {
     RouteItem,
     SwapExactInParams,
     SwapExactInResult,
-} from '../types'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+} from '../types.ts'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities/index.ts'
 
-import { Error, ErrorCode } from '../error'
-import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { ERC20__factory, IRouter__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
-import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { Cache } from '../cache'
-import { getFastestFee } from '../mempool'
-import { AggregatorTrade } from '../trade'
-import { isUseOneInchOnly } from '../utils'
-import { theBest } from './utils'
-import { ChainId } from '../../constants'
-import { BIPS_BASE } from '../constants'
-import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
-import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
-import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
-import { DepositoryContracts } from '../symbiosis'
+import { Error, ErrorCode } from '../error.ts'
+import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils/index.ts'
+import { ERC20__factory, IRouter__factory, MetaRouter__factory, SymBtc__factory } from '../contracts/index.ts'
+import { MetaRouteStructs } from '../contracts/MetaRouter.ts'
+import { Cache } from '../cache.ts'
+import { getFastestFee } from '../mempool.ts'
+import { AggregatorTrade } from '../trade/index.ts'
+import { isUseOneInchOnly } from '../utils.ts'
+import { theBest } from './utils.ts'
+import { ChainId } from '../../constants.ts'
+import { BIPS_BASE } from '../constants.ts'
+import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping.ts'
+import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall.ts'
+import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall.ts'
+import { DepositoryContracts } from '../symbiosis.ts'
 import assert from 'assert'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -86,7 +85,7 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         throw new Error(`Only EVM chains are allowed to swap from BTC`)
     }
 
-    if (!isAddress(to)) {
+    if (!utils.isAddress(to)) {
         throw new Error(`Incorrect destination address was provided`)
     }
 

@@ -1,8 +1,8 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { ChainId, TokenConstructor } from '../../../constants'
-import { getMulticall } from '../../multicall'
+import { AddressZero } from '@ethersproject/constants'
+import { ChainId, TokenConstructor } from '../../../constants.ts'
+import { getMulticall } from '../../multicall.ts'
 
-import { ChainConfig, Config, OmniPoolConfig } from '../../types'
+import { ChainConfig, Config, OmniPoolConfig } from '../../types.ts'
 import {
     Bridge,
     Bridge__factory,
@@ -16,17 +16,17 @@ import {
     Portal__factory,
     Synthesis,
     Synthesis__factory,
-} from '../../contracts'
+} from '../../contracts/index.ts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Token } from '../../../entities'
-import { config as mainnet } from '../mainnet'
-import { config as testnet } from '../testnet'
-import { config as dev } from '../dev'
-import { config as beta } from '../beta'
-import type { ConfigName } from '../../symbiosis'
+import { Token } from '../../../entities/index.ts'
+import { config as mainnet } from '../mainnet.ts'
+import { config as testnet } from '../testnet.ts'
+import { config as dev } from '../dev.ts'
+import { config as beta } from '../beta.ts'
+import type { ConfigName } from '../../symbiosis.ts'
 import { Contract } from '@ethersproject/contracts'
-import ERC20 from '../../abis/ERC20.json'
-import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
+import ERC20 from '../../abis/ERC20.json' with { type: 'json' }
+import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils/index.ts'
 import fs from 'fs'
 
 export type Id = number

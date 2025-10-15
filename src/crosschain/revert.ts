@@ -1,19 +1,24 @@
 import { TransactionRequest } from '@ethersproject/providers'
-import { MaxUint256 } from '@ethersproject/constants'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { MaxUint256, AddressZero } from '@ethersproject/constants'
 import { BigNumberish, BytesLike } from 'ethers'
 import JSBI from 'jsbi'
-import { Token, TokenAmount } from '../entities'
-import { Error, ErrorCode } from './error'
-import type { Symbiosis } from './symbiosis'
-import { getExternalId, getInternalId, isTronChainId, prepareTronTransaction, TronTransactionData } from './chainUtils'
-import { MulticallRouter } from './contracts'
-import { ChainId } from '../constants'
-import { OctoPoolTrade } from './trade'
-import { OmniPoolConfig } from './types'
-import { PendingRequest } from './revertRequest'
-import { TRON_PORTAL_ABI } from './tronAbis'
-import { CROSS_CHAIN_ID } from './constants'
+import { Token, TokenAmount } from '../entities/index.ts'
+import { Error, ErrorCode } from './error.ts'
+import type { Symbiosis } from './symbiosis.ts'
+import {
+    getExternalId,
+    getInternalId,
+    isTronChainId,
+    prepareTronTransaction,
+    TronTransactionData,
+} from './chainUtils/index.ts'
+import { MulticallRouter } from './contracts/index.ts'
+import { ChainId } from '../constants.ts'
+import { OctoPoolTrade } from './trade/index.ts'
+import { OmniPoolConfig } from './types.ts'
+import { PendingRequest } from './revertRequest.ts'
+import { TRON_PORTAL_ABI } from './tronAbis/index.ts'
+import { CROSS_CHAIN_ID } from './constants.ts'
 
 type RevertBase = {
     type: 'tron' | 'evm'

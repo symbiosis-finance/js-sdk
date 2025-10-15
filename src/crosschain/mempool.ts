@@ -1,4 +1,4 @@
-import { Error } from './error'
+import { Error } from './error.ts'
 
 export async function getFastestFee(): Promise<number> {
     const response = await fetch('https://mempool.space/api/v1/fees/recommended')

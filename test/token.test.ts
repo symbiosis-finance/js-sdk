@@ -1,4 +1,4 @@
-import { ChainId, Token } from '../src'
+import { ChainId, Token } from '../src/index.ts'
 import { describe, expect, test } from 'vitest'
 
 describe('Token', () => {

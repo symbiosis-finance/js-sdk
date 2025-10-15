@@ -1,12 +1,12 @@
-import { SwapExactInParams, SwapExactInResult } from '../../types'
-import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types'
-import { GAS_TOKEN } from '../../../entities'
-import { ChainId } from '../../../constants'
-import { theBest } from '../utils'
-import { SOL_USDC } from '../../chainUtils'
-import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
-import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
-import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
+import { SwapExactInParams, SwapExactInResult } from '../../types.ts'
+import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types.ts'
+import { GAS_TOKEN } from '../../../entities/index.ts'
+import { ChainId } from '../../../constants.ts'
+import { theBest } from '../utils.ts'
+import { SOL_USDC } from '../../chainUtils/index.ts'
+import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip.ts'
+import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip.ts'
+import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils.ts'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,

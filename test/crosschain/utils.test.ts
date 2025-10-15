@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { calculateGasMargin, getMinAmount, splitSlippage } from '../../src'
+import { calculateGasMargin, getMinAmount, splitSlippage } from '../../src/index.ts'
 import { BigNumber } from 'ethers'
 
 describe('#getMinAmount', () => {

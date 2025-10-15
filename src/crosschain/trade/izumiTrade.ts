@@ -1,16 +1,21 @@
 import BNJS from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { AbiCoder } from 'ethers/lib/utils'
-import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-import { BIPS_BASE } from '../constants'
-import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
-import { getMulticall } from '../multicall'
-import { Symbiosis } from '../symbiosis'
-import { getMinAmount } from '../chainUtils'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { Multicall2 } from '../contracts/Multicall'
-import { Address } from '..'
+import { AbiCoder } from '@ethersproject/abi'
+import { ChainId } from '../../constants.ts'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities/index.ts'
+import { BIPS_BASE } from '../constants.ts'
+import {
+    IzumiFactory__factory,
+    IzumiPool__factory,
+    IzumiQuoter__factory,
+    IzumiSwap__factory,
+} from '../contracts/index.ts'
+import { getMulticall } from '../multicall.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { getMinAmount } from '../chainUtils/index.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { Multicall2 } from '../contracts/Multicall.ts'
+import { Address } from '../index.ts'
 
 interface IzumiAddresses {
     factory: Address

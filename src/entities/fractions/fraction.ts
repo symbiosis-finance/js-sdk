@@ -4,9 +4,9 @@ import _Decimal from 'decimal.js-light'
 import _Big from 'big.js'
 import toFormat from 'toformat'
 
-import { BigintIsh, Rounding } from '../../constants'
-import { ONE } from '../../constants'
-import { parseBigintIsh } from '../../utils'
+import { BigintIsh, Rounding } from '../../constants.ts'
+import { ONE } from '../../constants.ts'
+import { parseBigintIsh } from '../../utils.ts'
 
 // Reexport from 'big.js'
 const enum RoundingMode {

@@ -3,10 +3,10 @@ import { ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
 import { API_URLS } from '@raydium-io/raydium-sdk-v2'
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
-import { Percent, TokenAmount } from '../../entities'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getSolanaConnection } from '../chainUtils'
+import { Percent, TokenAmount } from '../../entities/index.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { getSolanaConnection } from '../chainUtils/index.ts'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string

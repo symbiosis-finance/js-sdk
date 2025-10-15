@@ -2,19 +2,21 @@ import { dexFactory } from '@ston-fi/sdk'
 import { RouterInfo, StonApiClient } from '@ston-fi/api'
 import { OpenedContract, SenderArguments } from '@ton/core'
 import { TonClient4 } from '@ton/ton'
-import { BaseRouterV2_1 } from '@ston-fi/sdk/dist/contracts/dex/v2_1/router/BaseRouterV2_1'
 
-import { Percent, Token, TokenAmount } from '../../entities'
-import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { TonAddress } from '..'
+import { Percent, Token, TokenAmount } from '../../entities/index.ts'
+import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils/index.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { TonAddress } from '../index.ts'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     deadline: number
     from: string
 }
+
+type BaseRouterV2_1 = InstanceType<ReturnType<typeof dexFactory>['Router']>
+
 export class StonfiTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
     public readonly deadline: number

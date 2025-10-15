@@ -1,7 +1,7 @@
-import { Percent, Token, wrappedToken } from '../../../entities'
-import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
-import { Symbiosis } from '../../symbiosis'
-import { theBest } from '../utils'
+import { Percent, Token, wrappedToken } from '../../../entities/index.ts'
+import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types.ts'
+import { Symbiosis } from '../../symbiosis.ts'
+import { theBest } from '../utils.ts'
 
 interface Route {
     poolConfig: OmniPoolConfig

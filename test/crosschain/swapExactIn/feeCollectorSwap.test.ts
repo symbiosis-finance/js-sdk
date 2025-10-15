@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { ChainId, GAS_TOKEN, SwapExactInParams, Symbiosis, TokenAmount, WETH } from '../../../src'
-import { isFeeCollectorSwapSupported } from '../../../src/crosschain/swapExactIn/feeCollectorSwap'
+import { ChainId, GAS_TOKEN, SwapExactInParams, Symbiosis, TokenAmount, WETH } from '../../../src/index.ts'
+import { isFeeCollectorSwapSupported } from '../../../src/crosschain/swapExactIn/feeCollectorSwap.ts'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 

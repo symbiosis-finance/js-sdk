@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
-import { WrapTrade } from '../../../src/crosschain/trade'
-import { Token, TokenAmount, wrappedToken } from '../../../src'
+import { WrapTrade } from '../../../src/crosschain/trade/index.ts'
+import { Token, TokenAmount, wrappedToken } from '../../../src/index.ts'
 
 describe('WrapTrade', () => {
     describe('WRAP', () => {

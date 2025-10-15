@@ -1,11 +1,11 @@
 import { Address, beginCell, Cell, Contract, toNano } from '@ton/core'
 import { JettonMaster } from '@ton/ton'
 
-import { ChainId } from '../../constants'
-import { Symbiosis } from '../symbiosis'
-import { Token, TokenAmount } from '../../entities'
-import { TonTransactionData } from '../types'
-import { Error } from '../error'
+import { ChainId } from '../../constants.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { Token, TokenAmount } from '../../entities/index.ts'
+import { TonTransactionData } from '../types.ts'
+import { Error } from '../error.ts'
 import { parseUnits } from '@ethersproject/units'
 
 export const TON_TOKEN_DECIMALS = 9

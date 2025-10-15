@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { Unwrapper, UnwrapperInterface } from '../Unwrapper'
+import type { Provider } from '@ethersproject/providers'
+import type { Unwrapper, UnwrapperInterface } from '../Unwrapper.js'
 
 const _abi = [
     {
@@ -114,7 +114,7 @@ const _abi = [
         stateMutability: 'view',
         type: 'function',
     },
-]
+] as const
 
 export class Unwrapper__factory {
     static readonly abi = _abi

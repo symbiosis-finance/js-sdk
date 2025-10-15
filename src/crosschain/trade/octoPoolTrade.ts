@@ -1,10 +1,10 @@
-import { TokenAmount } from '../../entities'
-import { OmniPool__factory } from '../contracts'
-import { calculatePriceImpact, getMinAmount } from '../chainUtils'
-import { Symbiosis } from '../symbiosis'
-import { OmniPoolConfig } from '../types'
+import { TokenAmount } from '../../entities/index.ts'
+import { OmniPool__factory } from '../contracts/index.ts'
+import { calculatePriceImpact, getMinAmount } from '../chainUtils/index.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { OmniPoolConfig } from '../types.ts'
 import { BigNumber } from 'ethers'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
 
 interface OctoPoolTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis

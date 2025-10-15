@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { UniV3Factory, UniV3FactoryInterface } from '../UniV3Factory'
+import type { Provider } from '@ethersproject/providers'
+import type { UniV3Factory, UniV3FactoryInterface } from '../UniV3Factory.js'
 
 const _abi = [
     {
@@ -241,7 +241,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class UniV3Factory__factory {
     static readonly abi = _abi

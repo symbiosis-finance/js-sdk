@@ -1,1 +1,1 @@
-export * from './onChainSolanaSwap'
+export * from './onChainSolanaSwap.ts'

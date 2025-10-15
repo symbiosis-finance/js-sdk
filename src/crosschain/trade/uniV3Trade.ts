@@ -1,8 +1,8 @@
-import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
-import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { ChainId } from '../../constants.ts'
+import { Percent, Token, TokenAmount } from '../../entities/index.ts'
+import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts/index.ts'
+import { Symbiosis } from '../symbiosis.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
 import {
     encodeRouteToPath,
     FeeAmount,
@@ -16,17 +16,17 @@ import {
     toHex,
     Trade,
 } from '@uniswap/v3-sdk'
-import { getPool } from './uniV3Trade/pool'
+import { getPool } from './uniV3Trade/pool.ts'
 import { Currency, CurrencyAmount, Percent as PercentUni, TradeType, validateAndParseAddress } from '@uniswap/sdk-core'
-import { getOutputQuote } from './uniV3Trade/getOutputQuote'
+import { getOutputQuote } from './uniV3Trade/getOutputQuote.ts'
 import JSBI from 'jsbi'
-import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
+import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes.ts'
 import invariant from 'tiny-invariant'
-import { Error } from '../error'
-import { BIPS_BASE } from '../constants'
-import { getMinAmount } from '../chainUtils'
-import { IV3SwapRouter } from '../contracts/UniV3Router02'
-import { Address } from '..'
+import { Error } from '../error.ts'
+import { BIPS_BASE } from '../constants.ts'
+import { getMinAmount } from '../chainUtils/index.ts'
+import { IV3SwapRouter } from '../contracts/UniV3Router02.ts'
+import { Address } from '../index.ts'
 
 interface Deployment {
     factory: Address

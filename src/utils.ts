@@ -2,13 +2,13 @@ import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import { getAddress } from '@ethersproject/address'
 
-import { BigintIsh, ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from './constants'
-import { Token, TokenAmount } from './entities'
-import { Address, EvmAddress } from '.'
+import { BigintIsh, ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from './constants.ts'
+import { Token, TokenAmount } from './entities/index.ts'
+import { Address, EvmAddress } from './crosschain/types.ts'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
     invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
-    invariant(JSBI.lessThanOrEqual(value, SOLIDITY_TYPE_MAXIMA[solidityType]), `${value} is not a ${solidityType}.`)
+    invariant(JSBI.lessThanOrEqual(value, SOLIDITY_TYPE_MAXIMA[solidityType]), `${value} should be <= ${SOLIDITY_TYPE_MAXIMA[solidityType]}.`)
 }
 
 // warns if addresses are not checksummed

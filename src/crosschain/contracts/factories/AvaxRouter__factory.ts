@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { AvaxRouter, AvaxRouterInterface } from '../AvaxRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { AvaxRouter, AvaxRouterInterface } from '../AvaxRouter.js'
 
 const _abi = [
     {
@@ -978,7 +978,7 @@ const _abi = [
         stateMutability: 'payable',
         type: 'receive',
     },
-]
+] as const
 
 export class AvaxRouter__factory {
     static readonly abi = _abi

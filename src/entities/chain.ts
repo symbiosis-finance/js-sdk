@@ -1,4 +1,4 @@
-import { ChainConstructor, ChainId, Icons } from '../constants'
+import { ChainConstructor, ChainId, Icons } from '../constants.ts'
 
 export class Chain {
     public readonly id: ChainId

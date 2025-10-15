@@ -1,6 +1,6 @@
-import { Address } from '..'
-import { ChainId } from '../constants'
-import { Token } from './token'
+import { Address } from '../index.ts'
+import { ChainId } from '../constants.ts'
+import { Token } from './token.ts'
 
 const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
     new Token({

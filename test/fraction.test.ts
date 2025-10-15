@@ -1,4 +1,4 @@
-import { Fraction } from '../src'
+import { Fraction } from '../src/index.ts'
 import JSBI from 'jsbi'
 import { describe, expect, test } from 'vitest'
 

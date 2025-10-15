@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { SymBtc, SymBtcInterface } from '../SymBtc'
+import type { Provider } from '@ethersproject/providers'
+import type { SymBtc, SymBtcInterface } from '../SymBtc.js'
 
 const _abi = [
     {
@@ -464,7 +464,7 @@ const _abi = [
         stateMutability: 'pure',
         type: 'function',
     },
-]
+] as const
 
 export class SymBtc__factory {
     static readonly abi = _abi

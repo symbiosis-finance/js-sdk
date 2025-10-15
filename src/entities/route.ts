@@ -1,10 +1,10 @@
 import invariant from 'tiny-invariant'
 
-import { ChainId } from '../constants'
+import { ChainId } from '../constants.ts'
 
-import { WETH, Token } from './token'
-import { Pair } from './pair'
-import { Price } from './fractions'
+import { WETH, Token } from './token.ts'
+import { Pair } from './pair.ts'
+import { Price } from './fractions/index.ts'
 
 export class Route {
     public readonly pairs: Pair[]

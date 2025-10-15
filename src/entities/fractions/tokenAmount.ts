@@ -1,10 +1,10 @@
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 
-import { BigintIsh, Rounding, SolidityType, TEN } from '../../constants'
-import { parseBigintIsh, validateSolidityTypeInstance } from '../../utils'
-import { Token } from '../../entities'
-import { Fraction } from './fraction'
+import { BigintIsh, Rounding, SolidityType, TEN } from '../../constants.ts'
+import { parseBigintIsh, validateSolidityTypeInstance } from '../../utils.ts'
+import { Token } from '../../entities/index.ts'
+import { Fraction } from './fraction.ts'
 import Decimal from 'decimal.js-light'
 
 export class TokenAmount extends Fraction {

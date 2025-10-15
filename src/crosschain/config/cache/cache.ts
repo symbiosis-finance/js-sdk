@@ -1,13 +1,13 @@
-import type { ConfigName } from '../../symbiosis'
-import mainnet from './mainnet.json'
-import testnet from './testnet.json'
-import dev from './dev.json'
-import beta from './beta.json'
-import { Error, ErrorCode } from '../../error'
-import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
-import { ChainId } from '../../../constants'
-import { Token, wrappedToken } from '../../../entities'
-import { OmniPoolConfig } from '../../types'
+import type { ConfigName } from '../../symbiosis.ts'
+import mainnet from './mainnet.json' with { type: 'json' }
+import testnet from './testnet.json' with { type: 'json' }
+import dev from './dev.json' with { type: 'json' }
+import beta from './beta.json' with { type: 'json' }
+import { Error, ErrorCode } from '../../error.ts'
+import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder.ts'
+import { ChainId } from '../../../constants.ts'
+import { Token, wrappedToken } from '../../../entities/index.ts'
+import { OmniPoolConfig } from '../../types.ts'
 
 export class ConfigCache {
     private readonly data: ConfigCacheData

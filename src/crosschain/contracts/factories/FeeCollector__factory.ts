@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { FeeCollector, FeeCollectorInterface } from '../FeeCollector'
+import type { Provider } from '@ethersproject/providers'
+import type { FeeCollector, FeeCollectorInterface } from '../FeeCollector.js'
 
 const _abi = [
     {
@@ -199,7 +199,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class FeeCollector__factory {
     static readonly abi = _abi

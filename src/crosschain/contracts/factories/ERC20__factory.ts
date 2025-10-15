@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { ERC20, ERC20Interface } from '../ERC20'
+import type { Provider } from '@ethersproject/providers'
+import type { ERC20, ERC20Interface } from '../ERC20.js'
 
 const _abi = [
     {
@@ -227,7 +227,7 @@ const _abi = [
         name: 'Transfer',
         type: 'event',
     },
-]
+] as const
 
 export class ERC20__factory {
     static readonly abi = _abi

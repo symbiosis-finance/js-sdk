@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { IRouter, IRouterInterface } from '../IRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { IRouter, IRouterInterface } from '../IRouter.js'
 
 const _abi = [
     {
@@ -74,7 +74,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class IRouter__factory {
     static readonly abi = _abi

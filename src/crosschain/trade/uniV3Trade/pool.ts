@@ -1,9 +1,9 @@
-import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
+import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json' with {type: 'json'}
 import { computePoolAddress, Pool } from '@uniswap/v3-sdk'
 import { ethers } from 'ethers'
-import { FeeAmount } from '@uniswap/v3-sdk/dist/constants'
+import { FeeAmount } from '@uniswap/v3-sdk'
 import { Token } from '@uniswap/sdk-core'
-import { UniV3Factory } from '../../contracts'
+import { UniV3Factory } from '../../contracts/index.ts'
 
 export async function getPool(
     factory: UniV3Factory,

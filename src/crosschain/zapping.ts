@@ -1,13 +1,13 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
-import { Error, ErrorCode } from './error'
-import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, WrapTrade } from './trade'
+import { Percent, Token, TokenAmount, wrappedToken } from '../entities/index.ts'
+import { BIPS_BASE, CROSS_CHAIN_ID } from './constants.ts'
+import { Error, ErrorCode } from './error.ts'
+import type { Symbiosis } from './symbiosis.ts'
+import { AggregatorTrade, WrapTrade } from './trade/index.ts'
 import {
     buildMetaSynthesize,
     getExternalId,
@@ -18,17 +18,17 @@ import {
     prepareTronTransaction,
     tronAddressToEvm,
     TronTransactionData,
-} from './chainUtils'
-import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
-import { OmniLiquidity } from './omniLiquidity'
-import { TRON_METAROUTER_ABI } from './tronAbis'
+} from './chainUtils/index.ts'
+import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts/index.ts'
+import { OmniLiquidity } from './omniLiquidity.ts'
+import { TRON_METAROUTER_ABI } from './tronAbis/index.ts'
 import {
     OmniPoolConfig,
     RouteItem,
     SwapExactInResult,
     SwapExactInTransactionPayload,
     TonTransactionData,
-} from './types'
+} from './types.ts'
 
 type ZappingExactInParams = {
     tokenAmountIn: TokenAmount

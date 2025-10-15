@@ -1,6 +1,6 @@
-import { BaseSwapping } from './baseSwapping'
-import { Swapping } from './swapping'
-import { Address, SwapExactInParams, SwapExactInResult } from '../types'
+import { BaseSwapping } from './baseSwapping.ts'
+import { Swapping } from './swapping.ts'
+import { Address, SwapExactInParams, SwapExactInResult } from '../types.ts'
 
 export class SwappingMiddleware extends BaseSwapping {
     protected middlewareAddress!: Address

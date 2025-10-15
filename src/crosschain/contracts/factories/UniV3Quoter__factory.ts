@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { UniV3Quoter, UniV3QuoterInterface } from '../UniV3Quoter'
+import type { Provider } from '@ethersproject/providers'
+import type { UniV3Quoter, UniV3QuoterInterface } from '../UniV3Quoter.js'
 
 const _abi = [
     {
@@ -272,7 +272,7 @@ const _abi = [
         stateMutability: 'view',
         type: 'function',
     },
-]
+] as const
 
 export class UniV3Quoter__factory {
     static readonly abi = _abi

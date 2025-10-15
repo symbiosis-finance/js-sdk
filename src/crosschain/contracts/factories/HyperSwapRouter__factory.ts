@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { HyperSwapRouter, HyperSwapRouterInterface } from '../HyperSwapRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { HyperSwapRouter, HyperSwapRouterInterface } from '../HyperSwapRouter.js'
 
 const _abi = [
     {
@@ -711,7 +711,7 @@ const _abi = [
         stateMutability: 'payable',
         type: 'receive',
     },
-]
+] as const
 
 export class HyperSwapRouter__factory {
     static readonly abi = _abi

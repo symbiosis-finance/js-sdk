@@ -1,10 +1,10 @@
-import { ChainId } from '../../constants'
-import { Unwrapper__factory, Weth__factory } from '../contracts'
-import { getFunctionSelector } from '../chainUtils/tron'
-import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-import { BIPS_BASE } from '../constants'
-import { EvmAddress } from '..'
+import { ChainId } from '../../constants.ts'
+import { Unwrapper__factory, Weth__factory } from '../contracts/index.ts'
+import { getFunctionSelector } from '../chainUtils/tron.ts'
+import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { Percent, Token, TokenAmount, wrappedToken } from '../../entities/index.ts'
+import { BIPS_BASE } from '../constants.ts'
+import { EvmAddress } from '../index.ts'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',

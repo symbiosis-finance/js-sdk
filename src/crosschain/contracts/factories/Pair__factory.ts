@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { Pair, PairInterface } from '../Pair'
+import type { Provider } from '@ethersproject/providers'
+import type { Pair, PairInterface } from '../Pair.js'
 
 const _abi = [
     {
@@ -712,7 +712,7 @@ const _abi = [
         stateMutability: 'nonpayable',
         type: 'function',
     },
-]
+] as const
 
 export class Pair__factory {
     static readonly abi = _abi

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { BigNumber } from 'ethers'
-import { SymbiosisTrade } from '../../../src/crosschain/trade/symbiosisTrade'
+import { SymbiosisTrade } from '../../../src/crosschain/trade/symbiosisTrade.ts'
 
 describe('SymbiosisTrade#patchCalldata', () => {
     const data =

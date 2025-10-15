@@ -1,6 +1,6 @@
 import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
 import { Route, SwapQuoter } from '@uniswap/v3-sdk'
-import { UniV3Quoter } from '../../contracts'
+import { UniV3Quoter } from '../../contracts/index.ts'
 import { ethers } from 'ethers'
 
 export async function getOutputQuote(

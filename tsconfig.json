@@ -3,7 +3,7 @@
     "exclude": ["node_modules", "dist"],
     "compilerOptions": {
         "target": "es2021",
-        "module": "esnext",
+        "module": "nodenext",
         "importHelpers": false,
         "skipLibCheck": true,
         "declaration": true,
@@ -19,9 +19,11 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "node",
+        "moduleResolution": "nodenext",
         "esModuleInterop": true,
         "resolveJsonModule": true,
-        "allowJs": true
+        "allowJs": true,
+        "allowImportingTsExtensions": true,
+        "noEmit": true
     }
 }

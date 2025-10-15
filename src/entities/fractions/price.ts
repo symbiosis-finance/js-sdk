@@ -1,12 +1,12 @@
-import { Token } from '../token'
-import { TokenAmount } from './tokenAmount'
-import { tokenEquals } from '../token'
+import { Token } from '../token.ts'
+import { TokenAmount } from './tokenAmount.ts'
+import { tokenEquals } from '../token.ts'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 
-import { BigintIsh, Rounding, TEN } from '../../constants'
-import { Route } from '../route'
-import { Fraction } from './fraction'
+import { BigintIsh, Rounding, TEN } from '../../constants.ts'
+import { Route } from '../route.ts'
+import { Fraction } from './fraction.ts'
 
 export class Price extends Fraction {
     public readonly baseToken: Token // input i.e. denominator

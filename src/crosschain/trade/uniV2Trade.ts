@@ -1,9 +1,9 @@
 import { Provider } from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import { ChainId } from '../../constants'
-import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
-import { Router } from '../../router'
-import { BIPS_BASE } from '../constants'
+import { ChainId } from '../../constants.ts'
+import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities/index.ts'
+import { Router } from '../../router.ts'
+import { BIPS_BASE } from '../constants.ts'
 import {
     AdaRouter,
     AdaRouter__factory,
@@ -20,14 +20,18 @@ import {
     Pair__factory,
     UniLikeRouter,
     UniLikeRouter__factory,
-} from '../contracts'
-import { getMulticall } from '../multicall'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getFunctionSelector } from '../chainUtils/tron'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { Symbiosis } from '../symbiosis'
-import { Address } from '..'
+} from '../contracts/index.ts'
+import { getMulticall } from '../multicall.ts'
+import {
+    computeSlippageAdjustedAmounts,
+    computeTradePriceBreakdown,
+    getAllPairCombinations,
+} from '../chainUtils/index.ts'
+import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
+import { getFunctionSelector } from '../chainUtils/tron.ts'
+import { AddressZero } from '@ethersproject/constants'
+import { Symbiosis } from '../symbiosis.ts'
+import { Address } from '../index.ts'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -155,7 +159,7 @@ export class UniV2Trade extends SymbiosisTrade {
             method = methodName.replace('ETH', 'SEI')
         }
 
-        const functionAbi = this.router.interface.getFunction(method)
+        const functionAbi = this.router.interface.getFunction(method as keyof UniV2Router['functions'])
 
         return {
             functionSelector: getFunctionSelector(functionAbi),

@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from 'ethers'
-import { Provider } from '@ethersproject/providers'
-import type { KavaRouter, KavaRouterInterface } from '../KavaRouter'
+import type { Provider } from '@ethersproject/providers'
+import type { KavaRouter, KavaRouterInterface } from '../KavaRouter.js'
 
 const _abi = [
     {
@@ -1257,7 +1257,7 @@ const _abi = [
         type: 'receive',
         stateMutability: 'payable',
     },
-]
+] as const
 
 export class KavaRouter__factory {
     static readonly abi = _abi

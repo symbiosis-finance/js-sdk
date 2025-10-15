@@ -1,5 +1,5 @@
 import JSBI from 'jsbi'
-import { Address, EvmAddress } from '.'
+import { Address, EvmAddress } from './index.ts'
 
 // exports for external consumption
 export type BigintIsh = JSBI | bigint | string

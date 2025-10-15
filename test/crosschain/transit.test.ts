@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { ChainId, chains } from '../../src'
-import { Transit } from '../../src/crosschain/transit'
+import { ChainId, chains } from '../../src/index.ts'
+import { Transit } from '../../src/crosschain/transit.ts'
 
 describe('Transit#getDirection', async () => {
     const hostChainId = ChainId.SYMBIOSIS_MAINNET

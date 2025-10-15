@@ -1,8 +1,8 @@
 import { AddressZero } from '@ethersproject/constants'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants'
-import { Percent, Token, WETH } from '../entities'
-import { EvmAddress } from './types'
+import { ChainId } from '../constants.ts'
+import { Percent, Token, WETH } from '../entities/index.ts'
+import { EvmAddress } from './types.ts'
 
 export const CROSS_CHAIN_ID = '0x0000000000000000000000000000000000000000000000000000000000000000'
 

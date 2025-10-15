@@ -1,10 +1,10 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
-import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants'
-import { isTronChainId, tronAddressToEvm } from '../crosschain/chainUtils/tron'
-import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils'
-import { Chain, getChainById } from './chain'
-import { NonEmptyAddress } from '..'
+import { ChainId, Icons, SolidityType, TokenConstructor } from '../constants.ts'
+import { isTronChainId, tronAddressToEvm } from '../crosschain/chainUtils/tron.ts'
+import { validateAndParseAddress, validateSolidityTypeInstance } from '../utils.ts'
+import { Chain, getChainById } from './chain.ts'
+import { NonEmptyAddress } from '../index.ts'
 
 /**
  * A token is any fungible financial instrument on Ethereum.

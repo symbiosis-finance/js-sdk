@@ -1,14 +1,13 @@
-import { ChainId } from '../../constants'
-import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
-import { BaseSwapping } from './baseSwapping'
-import { MulticallRouter, ThorRouter__factory } from '../contracts'
-import fetch from 'isomorphic-unfetch'
-import { OneInchProtocols } from '../trade/oneInchTrade'
-import { Error, ErrorCode } from '../error'
+import { ChainId } from '../../constants.ts'
+import { GAS_TOKEN, Token, TokenAmount } from '../../entities/index.ts'
+import { BaseSwapping } from './baseSwapping.ts'
+import { MulticallRouter, ThorRouter__factory } from '../contracts/index.ts'
+import { OneInchProtocols } from '../trade/oneInchTrade.ts'
+import { Error, ErrorCode } from '../error.ts'
 import { BigNumber } from 'ethers'
-import { getMinAmount, isEvmChainId } from '../chainUtils'
+import { getMinAmount, isEvmChainId } from '../chainUtils/index.ts'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
-import { Address, SwapExactInResult } from '../types'
+import { Address, SwapExactInResult } from '../types.ts'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount

@@ -1,10 +1,10 @@
-import { Symbiosis } from './symbiosis'
-import { chains, Token, TokenAmount } from '../entities'
-import { ChainId } from '../constants'
-import { Error, ErrorCode } from './error'
-import { BridgeDirection, OmniPoolConfig, VolumeFeeCollector } from './types'
-import { OctoPoolTrade } from './trade'
-import { OctoPoolFeeCollector__factory } from './contracts'
+import { Symbiosis } from './symbiosis.ts'
+import { chains, Token, TokenAmount } from '../entities/index.ts'
+import { ChainId } from '../constants.ts'
+import { Error, ErrorCode } from './error.ts'
+import { BridgeDirection, OmniPoolConfig, VolumeFeeCollector } from './types.ts'
+import { OctoPoolTrade } from './trade/index.ts'
+import { OctoPoolFeeCollector__factory } from './contracts/index.ts'
 import { BigNumber } from 'ethers'
 
 interface VolumeFeeCall {

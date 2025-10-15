@@ -1,17 +1,17 @@
 import { TransactionRequest } from '@ethersproject/providers'
 
-import { ChainId, TokenConstructor } from '../constants'
-import { Percent, Token, TokenAmount } from '../entities'
-import { OneInchProtocols } from './trade/oneInchTrade'
-import { SymbiosisKind, SymbiosisTradeType } from './trade'
-import { TronTransactionData } from './chainUtils'
-import { Symbiosis } from './symbiosis'
-import { ProfilerItem } from '../entities/profiler'
-import { SymbiosisTrade } from './trade/symbiosisTrade'
+import { ChainId, TokenConstructor } from '../constants.ts'
+import { Percent, Token, TokenAmount } from '../entities/index.ts'
+import { OneInchProtocols } from './trade/oneInchTrade.ts'
+import { SymbiosisKind, SymbiosisTradeType } from './trade/index.ts'
+import { TronTransactionData } from './chainUtils/index.ts'
+import { Symbiosis } from './symbiosis.ts'
+import { ProfilerItem } from '../entities/profiler.ts'
+import { SymbiosisTrade } from './trade/symbiosisTrade.ts'
 import { BytesLike } from 'ethers'
-import { Cache } from './cache'
+import { Cache } from './cache.ts'
 import { Logger } from 'pino'
-import { ConfigCacheData } from './config/cache/builder'
+import { ConfigCacheData } from './config/cache/builder.ts'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -138,7 +138,7 @@ export type OpenOceanConfig = {
     apiKeys: string[]
 }
 
-export type * from './config/cache/builder'
+export type * from './config/cache/builder.ts'
 
 export type OverrideConfig = {
     btcConfigs?: BtcConfig[]
