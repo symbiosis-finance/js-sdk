@@ -41,7 +41,8 @@ export class AggregatorTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
+        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenAmountInMin, tokenOut, oneInchProtocols } =
+            this.params
 
         const trades: (Trade | undefined)[] = []
         const errors: Error[] = []
@@ -93,6 +94,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 from,
                 to,
@@ -119,6 +121,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 symbiosis,
                 to,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 slippage,
             })
@@ -141,6 +144,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             const izumiTrade = new IzumiTrade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 slippage,
                 deadline,
@@ -154,6 +158,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             const uniV3Trade = new UniV3Trade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 slippage,
                 deadline,
@@ -167,6 +172,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             const uniV2Trade = new UniV2Trade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
                 slippage,

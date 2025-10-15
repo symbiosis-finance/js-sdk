@@ -24,6 +24,7 @@ export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwra
 
 export interface SymbiosisTradeParams {
     tokenAmountIn: TokenAmount
+    tokenAmountInMin: TokenAmount
     tokenOut: Token
     to: string
     slippage: number
@@ -53,14 +54,16 @@ class OutNotInitializedError extends Error {
 
 export abstract class SymbiosisTrade {
     public tokenAmountIn: TokenAmount
+    public tokenAmountInMin: TokenAmount
     public tokenOut: Token
     public to: string
     public slippage: number
 
     protected out?: SymbiosisTradeOutResult
 
-    protected constructor({ tokenAmountIn, tokenOut, to, slippage }: SymbiosisTradeParams) {
+    protected constructor({ tokenAmountIn, tokenAmountInMin, tokenOut, to, slippage }: SymbiosisTradeParams) {
         this.tokenAmountIn = tokenAmountIn
+        this.tokenAmountInMin = tokenAmountInMin
         this.tokenOut = tokenOut
         this.to = to
         this.slippage = slippage

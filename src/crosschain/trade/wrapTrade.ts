@@ -41,23 +41,24 @@ const UNWRAP_ADDRESSES: Partial<Record<ChainId, string>> = {
 
 interface WrapTradeParams {
     tokenAmountIn: TokenAmount
+    tokenAmountInMin: TokenAmount
     tokenOut: Token
     to: string
 }
 
 export class WrapTrade extends SymbiosisTrade {
-    public static isSupported(tokenAmountIn: TokenAmount, tokenOut: Token): boolean {
-        const wrappedInToken = wrappedToken(tokenAmountIn.token)
-        if (tokenAmountIn.token.isNative && wrappedInToken.equals(tokenOut)) {
+    public static isSupported(tokenIn: Token, tokenOut: Token): boolean {
+        const wrappedInToken = wrappedToken(tokenIn)
+        if (tokenIn.isNative && wrappedInToken.equals(tokenOut)) {
             // wrap
             return true
         }
 
-        const unwrapAddress = UNWRAP_ADDRESSES[tokenAmountIn.token.chainId]
+        const unwrapAddress = UNWRAP_ADDRESSES[tokenIn.chainId]
         const wrappedOutToken = wrappedToken(tokenOut)
 
         // unwrap
-        return !!unwrapAddress && tokenOut.isNative && wrappedOutToken.equals(tokenAmountIn.token)
+        return !!unwrapAddress && tokenOut.isNative && wrappedOutToken.equals(tokenIn)
     }
 
     public constructor(params: WrapTradeParams) {
@@ -76,7 +77,7 @@ export class WrapTrade extends SymbiosisTrade {
             const wethToken = wrappedToken(this.tokenAmountIn.token)
 
             const amountOut = new TokenAmount(wethToken, this.tokenAmountIn.raw)
-            const amountOutMin = amountOut
+            const amountOutMin = new TokenAmount(wethToken, this.tokenAmountInMin.raw)
 
             const wethInterface = Weth__factory.createInterface()
             const callData = wethInterface.encodeFunctionData('deposit')
@@ -101,7 +102,7 @@ export class WrapTrade extends SymbiosisTrade {
         }
 
         const amountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
-        const amountOutMin = amountOut
+        const amountOutMin = new TokenAmount(this.tokenOut, this.tokenAmountInMin.raw)
 
         const unwrapperInterface = Unwrapper__factory.createInterface()
         const callData = unwrapperInterface.encodeFunctionData('unwrap', [this.tokenAmountIn.raw.toString(), this.to])

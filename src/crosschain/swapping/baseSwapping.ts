@@ -191,8 +191,9 @@ export abstract class BaseSwapping {
                     return
                 }
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
+                const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
 
-                return this.buildTradeC(fakeTradeCAmountIn).init()
+                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin).init()
             })()
         )
 
@@ -489,8 +490,13 @@ export abstract class BaseSwapping {
     protected buildTradeA(tradeAContext?: TradeAContext): SymbiosisTrade {
         const tokenOut = this.transitTokenIn
 
-        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
-            return new WrapTrade({ tokenAmountIn: this.tokenAmountIn, tokenOut, to: this.to })
+        if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
+            return new WrapTrade({
+                tokenAmountIn: this.tokenAmountIn,
+                tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
+                tokenOut,
+                to: this.to,
+            })
         }
 
         const chainId = this.tokenAmountIn.token.chainId
@@ -503,6 +509,7 @@ export abstract class BaseSwapping {
 
         return new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
+            tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
             tokenOut,
             from,
             to,
@@ -534,10 +541,11 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected buildTradeC(amountIn: TokenAmount) {
-        if (WrapTrade.isSupported(amountIn, this.tokenOut)) {
+    protected buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount) {
+        if (WrapTrade.isSupported(amountIn.token, this.tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: amountIn,
+                tokenAmountInMin: amountInMin,
                 tokenOut: this.tokenOut,
                 to: this.to,
             })
@@ -545,6 +553,7 @@ export abstract class BaseSwapping {
 
         return new AggregatorTrade({
             tokenAmountIn: amountIn,
+            tokenAmountInMin: amountInMin,
             tokenOut: this.tokenOut,
             from: this.symbiosis.chainConfig(this.tokenOut.chainId).metaRouter,
             to: this.tradeCTo(),

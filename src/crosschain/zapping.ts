@@ -300,9 +300,10 @@ export class Zapping {
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
+        if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: this.tokenAmountIn,
+                tokenAmountInMin: this.tokenAmountIn, // correct as it is tradeA
                 tokenOut,
                 to: this.to,
             })
@@ -310,6 +311,7 @@ export class Zapping {
 
         return new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
+            tokenAmountInMin: this.tokenAmountIn,
             tokenOut,
             from,
             to,

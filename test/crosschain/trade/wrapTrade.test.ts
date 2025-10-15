@@ -6,12 +6,14 @@ describe('WrapTrade', () => {
     describe('WRAP', () => {
         const eth = new Token({ chainId: 1, address: '', decimals: 18, isNative: true })
         const tokenAmountIn = new TokenAmount(eth, '100')
+        const tokenAmountInMin = new TokenAmount(eth, '90')
         const tokenOut = wrappedToken(eth)
         const to = '0x1111111111111111111111111111111111111111'
 
         describe('Not initialized trade', () => {
             const trade = new WrapTrade({
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
             })
@@ -26,6 +28,7 @@ describe('WrapTrade', () => {
         describe('Initialized', async () => {
             const trade = new WrapTrade({
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
             })
@@ -37,6 +40,14 @@ describe('WrapTrade', () => {
                 const expectedAmountOut = new TokenAmount(tokenOut, '100')
                 expect(amountOut.equalTo(expectedAmountOut)).toBeTruthy()
                 expect(getAmountOut).toHaveReturned()
+            })
+
+            test('amountOutMin', () => {
+                const getAmountOutMin = vi.fn(() => trade.amountOutMin)
+                const amountOutMin = getAmountOutMin()
+                const expectedAmountOutMin = new TokenAmount(tokenOut, '90')
+                expect(amountOutMin.equalTo(expectedAmountOutMin)).toBeTruthy()
+                expect(getAmountOutMin).toHaveReturned()
             })
 
             test('calldata', () => {
@@ -53,6 +64,7 @@ describe('WrapTrade', () => {
         describe('Patched', async () => {
             const trade = new WrapTrade({
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
             })
@@ -73,6 +85,14 @@ describe('WrapTrade', () => {
                 expect(getAmountOut).toHaveReturned()
             })
 
+            test('amountOutMin', () => {
+                const getAmountOutMin = vi.fn(() => trade.amountOutMin)
+                const amountOutMin = getAmountOutMin()
+                const expectedAmountOutMin = new TokenAmount(tokenOut, '81')
+                expect(amountOutMin.equalTo(expectedAmountOutMin)).toBeTruthy()
+                expect(getAmountOutMin).toHaveReturned()
+            })
+
             test('calldata', () => {
                 expect(trade.callData).toEqual('0xd0e30db0')
             })
@@ -83,11 +103,13 @@ describe('WrapTrade', () => {
         const tokenOut = new Token({ chainId: 1, address: '', decimals: 18, isNative: true })
         const weth = wrappedToken(tokenOut)
         const tokenAmountIn = new TokenAmount(weth, '100')
+        const tokenAmountInMin = new TokenAmount(weth, '90')
         const to = '0x1111111111111111111111111111111111111111'
 
         describe('Not initialized trade', () => {
             const trade = new WrapTrade({
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
             })
@@ -102,6 +124,7 @@ describe('WrapTrade', () => {
         describe('Initialized', async () => {
             const trade = new WrapTrade({
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
             })
@@ -113,6 +136,14 @@ describe('WrapTrade', () => {
                 const expectedAmountOut = new TokenAmount(tokenOut, '100')
                 expect(amountOut.equalTo(expectedAmountOut)).toBeTruthy()
                 expect(getAmountOut).toHaveReturned()
+            })
+
+            test('amountOutMin', () => {
+                const getAmountOutMin = vi.fn(() => trade.amountOutMin)
+                const amountOutMin = getAmountOutMin()
+                const expectedAmountOutMin = new TokenAmount(tokenOut, '90')
+                expect(amountOutMin.equalTo(expectedAmountOutMin)).toBeTruthy()
+                expect(getAmountOutMin).toHaveReturned()
             })
 
             test('calldata', () => {
@@ -131,6 +162,7 @@ describe('WrapTrade', () => {
         describe('Patched', async () => {
             const trade = new WrapTrade({
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
             })
@@ -149,6 +181,14 @@ describe('WrapTrade', () => {
                 const expectedAmountOut = new TokenAmount(tokenOut, '90')
                 expect(amountOut.equalTo(expectedAmountOut)).toBeTruthy()
                 expect(getAmountOut).toHaveReturned()
+            })
+
+            test('amountOutMin', () => {
+                const getAmountOutMin = vi.fn(() => trade.amountOutMin)
+                const amountOutMin = getAmountOutMin()
+                const expectedAmountOutMin = new TokenAmount(tokenOut, '81')
+                expect(amountOutMin.equalTo(expectedAmountOutMin)).toBeTruthy()
+                expect(getAmountOutMin).toHaveReturned()
             })
 
             test('calldata', () => {

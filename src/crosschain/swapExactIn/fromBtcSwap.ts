@@ -301,6 +301,7 @@ async function buildOnChainSwap(
     const aggregatorTrade = new AggregatorTrade({
         ...context,
         tokenAmountIn: syBtcAmount,
+        tokenAmountInMin: syBtcAmount,
         from: to, // there is not from address, set user's address
         clientId: symbiosis.clientId,
         preferOneInchUsage: isUseOneInchOnly(tokenAmountIn.token, tokenOut),
