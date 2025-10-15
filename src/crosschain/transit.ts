@@ -214,8 +214,11 @@ export class Transit {
             this.fee2 = fee2
         }
 
-        const { tradeAmountIn: newAmountIn } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
-        this.trade.applyAmountIn(newAmountIn)
+        const { tradeAmountIn: newAmountIn, tradeAmountInMin: newAmountInMin } = this.getTradeAmountsIn(
+            this.amountIn,
+            this.amountInMin
+        )
+        this.trade.applyAmountIn(newAmountIn, newAmountInMin)
 
         const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(this.trade)
 

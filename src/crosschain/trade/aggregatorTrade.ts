@@ -275,9 +275,9 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this.trade.functionSelector
     }
 
-    public applyAmountIn(newAmount: TokenAmount) {
+    public applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
         this.assertTradeInitialized('applyAmountIn')
-        this.trade.applyAmountIn(newAmount)
+        this.trade.applyAmountIn(newAmountIn, newAmountInMin)
     }
 
     get fees(): FeeItem[] | undefined {

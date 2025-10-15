@@ -175,7 +175,7 @@ export abstract class BaseSwapping {
         }
 
         const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : transitAmountIn
+        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountIn
 
         const promises = []
         promises.push(this.buildTransit(transitAmountIn, transitAmountInMin).init())
@@ -190,6 +190,7 @@ export abstract class BaseSwapping {
                 if (this.transitTokenOut.equals(tokenOut)) {
                     return
                 }
+                // NOTE actually amountInMin == amountIn, because we don't know the correct amounts
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
                 const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
 
@@ -237,7 +238,7 @@ export abstract class BaseSwapping {
 
         await this.transit.applyFees(fee1, fee2)
         if (this.tradeC) {
-            this.tradeC.applyAmountIn(this.transit.amountOut)
+            this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
         }
         this.profiler.tick('PATCHING')
 

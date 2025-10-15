@@ -71,10 +71,15 @@ describe('WrapTrade', () => {
             await trade.init()
 
             const newAmountIn = new TokenAmount(tokenAmountIn.token, '90')
-            trade.applyAmountIn(newAmountIn)
+            const newAmountInMin = new TokenAmount(tokenAmountIn.token, '80')
+            trade.applyAmountIn(newAmountIn, newAmountInMin)
 
             test('amountIn', () => {
                 expect(trade.tokenAmountIn.equalTo(newAmountIn)).toBeTruthy()
+            })
+
+            test('amountInMin', () => {
+                expect(trade.tokenAmountInMin.equalTo(newAmountInMin)).toBeTruthy()
             })
 
             test('amountOut', () => {
@@ -88,7 +93,7 @@ describe('WrapTrade', () => {
             test('amountOutMin', () => {
                 const getAmountOutMin = vi.fn(() => trade.amountOutMin)
                 const amountOutMin = getAmountOutMin()
-                const expectedAmountOutMin = new TokenAmount(tokenOut, '81')
+                const expectedAmountOutMin = new TokenAmount(tokenOut, '80')
                 expect(amountOutMin.equalTo(expectedAmountOutMin)).toBeTruthy()
                 expect(getAmountOutMin).toHaveReturned()
             })
@@ -169,10 +174,15 @@ describe('WrapTrade', () => {
             await trade.init()
 
             const newAmountIn = new TokenAmount(tokenAmountIn.token, '90')
-            trade.applyAmountIn(newAmountIn)
+            const newAmountInMin = new TokenAmount(tokenAmountIn.token, '80')
+            trade.applyAmountIn(newAmountIn, newAmountInMin)
 
             test('amountIn', () => {
                 expect(trade.tokenAmountIn.equalTo(newAmountIn)).toBeTruthy()
+            })
+
+            test('amountInMin', () => {
+                expect(trade.tokenAmountInMin.equalTo(newAmountInMin)).toBeTruthy()
             })
 
             test('amountOut', () => {
@@ -186,7 +196,7 @@ describe('WrapTrade', () => {
             test('amountOutMin', () => {
                 const getAmountOutMin = vi.fn(() => trade.amountOutMin)
                 const amountOutMin = getAmountOutMin()
-                const expectedAmountOutMin = new TokenAmount(tokenOut, '81')
+                const expectedAmountOutMin = new TokenAmount(tokenOut, '80')
                 expect(amountOutMin.equalTo(expectedAmountOutMin)).toBeTruthy()
                 expect(getAmountOutMin).toHaveReturned()
             })
