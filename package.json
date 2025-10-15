@@ -15,7 +15,7 @@
         }
     },
     "files": [
-        "dist"
+        "dist/*"
     ],
     "license": "MIT",
     "repository": {
