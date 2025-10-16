@@ -61,7 +61,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         BigNumber,
-        string
+        string,
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -108,7 +108,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
-        BigNumber
+        BigNumber,
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -150,7 +150,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
-        BigNumber
+        BigNumber,
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -265,7 +265,7 @@ export interface SynthesisInterface extends utils.Interface {
             string,
             string,
             BigNumberish,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(functionFragment: 'fabric', values?: undefined): string

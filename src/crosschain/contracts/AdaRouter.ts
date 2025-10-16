@@ -113,7 +113,7 @@ export interface AdaRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(
@@ -128,7 +128,7 @@ export interface AdaRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(
@@ -144,7 +144,7 @@ export interface AdaRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(

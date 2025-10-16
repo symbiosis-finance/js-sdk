@@ -88,7 +88,7 @@ export interface SymBtcInterface extends utils.Interface {
             BigNumberish,
             BigNumberish,
             string,
-            SymBtc.FromBTCTransactionTailStruct
+            SymBtc.FromBTCTransactionTailStruct,
         ]
     ): string
     encodeFunctionData(functionFragment: 'getBTCExternalID', values: [BytesLike, BigNumberish, string]): string
@@ -104,7 +104,7 @@ export interface SymBtcInterface extends utils.Interface {
             BigNumberish,
             BigNumberish,
             string,
-            SymBtc.FromBTCTransactionTailStruct
+            SymBtc.FromBTCTransactionTailStruct,
         ]
     ): string
     encodeFunctionData(functionFragment: 'getMpcHash', values: [string]): string

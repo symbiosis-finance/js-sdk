@@ -95,7 +95,7 @@ export interface HyperSwapRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(
@@ -110,7 +110,7 @@ export interface HyperSwapRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(
@@ -126,7 +126,7 @@ export interface HyperSwapRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(

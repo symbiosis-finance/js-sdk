@@ -54,7 +54,7 @@ export declare namespace ISwapRouter {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
     ] & {
         tokenIn: string
         tokenOut: string
@@ -101,7 +101,7 @@ export declare namespace ISwapRouter {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
     ] & {
         tokenIn: string
         tokenOut: string

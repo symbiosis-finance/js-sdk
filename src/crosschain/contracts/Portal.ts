@@ -48,7 +48,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
-        string
+        string,
     ] & {
         stableBridgingFee: BigNumber
         internalID: string
@@ -100,7 +100,7 @@ export declare namespace MetaRouteStructs {
         string,
         BigNumber,
         string,
-        string
+        string,
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -145,7 +145,7 @@ export declare namespace Portal {
         string,
         string,
         BigNumber,
-        string
+        string,
     ] & {
         stableBridgingFee: BigNumber
         approvalData: string

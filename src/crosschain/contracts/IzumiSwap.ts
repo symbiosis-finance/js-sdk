@@ -72,7 +72,7 @@ export declare namespace Swap {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
     ] & {
         tokenX: string
         tokenY: string

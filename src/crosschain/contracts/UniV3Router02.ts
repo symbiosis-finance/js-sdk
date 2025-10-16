@@ -50,7 +50,7 @@ export declare namespace IV3SwapRouter {
         string,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
     ] & {
         tokenIn: string
         tokenOut: string
@@ -92,7 +92,7 @@ export declare namespace IV3SwapRouter {
         string,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
     ] & {
         tokenIn: string
         tokenOut: string

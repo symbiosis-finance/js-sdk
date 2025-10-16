@@ -48,7 +48,7 @@ export declare namespace MetaRouteStructs {
         string,
         string,
         string,
-        BigNumber
+        BigNumber,
     ] & {
         stableBridgingFee: BigNumber
         amount: BigNumber
@@ -86,7 +86,7 @@ export declare namespace MetaRouteStructs {
         BigNumber,
         boolean,
         string,
-        string
+        string,
     ] & {
         firstSwapCalldata: string
         secondSwapCalldata: string

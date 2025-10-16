@@ -108,7 +108,7 @@ export interface KimRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(
@@ -123,7 +123,7 @@ export interface KimRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(
@@ -139,7 +139,7 @@ export interface KimRouterInterface extends utils.Interface {
             boolean,
             BigNumberish,
             BytesLike,
-            BytesLike
+            BytesLike,
         ]
     ): string
     encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
