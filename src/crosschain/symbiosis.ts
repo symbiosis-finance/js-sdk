@@ -32,6 +32,8 @@ import {
     SwapUnlocker__factory,
     Synthesis,
     Synthesis__factory,
+    TimedUnlocker,
+    TimedUnlocker__factory,
     TonBridge,
     TonBridge__factory,
 } from './contracts/index.ts'
@@ -90,12 +92,13 @@ export type DiscountTier = {
     discount: number
 }
 
-export type DepositoryContracts = {
+export type DepositoryContext = {
     cfg: DepositoryConfig
     depository: IDepository
     router: IRouter
     branchedUnlocker: BranchedUnlocker
     swapUnlocker: SwapUnlocker
+    timedUnlocker: TimedUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
 }
 
@@ -495,7 +498,7 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public async depository(chainId: ChainId): Promise<DepositoryContracts | null> {
+    public async depository(chainId: ChainId): Promise<DepositoryContext | null> {
         return this.cache.get(['depository', `${chainId}`], async () => {
             const cfg = this.chainConfig(chainId).depository
             if (!cfg) {
@@ -513,6 +516,7 @@ export class Symbiosis {
                 btcRefundUnlocker: cfg.btcRefundUnlocker
                     ? BtcRefundUnlocker__factory.connect(cfg.btcRefundUnlocker, signerOrProvider)
                     : undefined,
+                timedUnlocker: TimedUnlocker__factory.connect(cfg.timedUnlocker, signerOrProvider),
                 branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
             }
         })

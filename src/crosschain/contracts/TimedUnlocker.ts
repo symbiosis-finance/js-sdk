@@ -17,32 +17,17 @@ import type { FunctionFragment, Result } from '@ethersproject/abi'
 import type { Listener, Provider } from '@ethersproject/providers'
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common.js'
 
-export declare namespace SwapUnlocker {
-    export type ConditionStruct = {
-        outToken: string
-        outMinAmount: BigNumberish
-        target: string
-        targetCalldata: BytesLike
-        targetOffset: BigNumberish
-    }
-
-    export type ConditionStructOutput = [string, BigNumber, string, string, BigNumber] & {
-        outToken: string
-        outMinAmount: BigNumber
-        target: string
-        targetCalldata: string
-        targetOffset: BigNumber
-    }
-
-    export type SolutionStruct = { swapper: string; swapCalldata: BytesLike }
-
-    export type SolutionStructOutput = [string, string] & {
-        swapper: string
-        swapCalldata: string
-    }
-}
-
 export declare namespace DepositoryTypes {
+    export type UnlockConditionStruct = {
+        unlocker: string
+        condition: BytesLike
+    }
+
+    export type UnlockConditionStructOutput = [string, string] & {
+        unlocker: string
+        condition: string
+    }
+
     export type DepositStruct = {
         token: string
         amount: BigNumberish
@@ -66,21 +51,29 @@ export declare namespace DepositoryTypes {
     }
 }
 
-export interface SwapUnlockerInterface extends utils.Interface {
+export declare namespace TimedUnlocker {
+    export type ConditionStruct = {
+        delay: BigNumberish
+        next: DepositoryTypes.UnlockConditionStruct
+    }
+
+    export type ConditionStructOutput = [BigNumber, DepositoryTypes.UnlockConditionStructOutput] & {
+        delay: BigNumber
+        next: DepositoryTypes.UnlockConditionStructOutput
+    }
+}
+
+export interface TimedUnlockerInterface extends utils.Interface {
     functions: {
         'decodeCondition(bytes)': FunctionFragment
-        'encodeCondition((address,uint256,address,bytes,uint256))': FunctionFragment
-        'encodeSolution((address,bytes))': FunctionFragment
+        'encodeCondition((uint256,(address,bytes)))': FunctionFragment
         'unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)': FunctionFragment
     }
 
-    getFunction(
-        nameOrSignatureOrTopic: 'decodeCondition' | 'encodeCondition' | 'encodeSolution' | 'unlock'
-    ): FunctionFragment
+    getFunction(nameOrSignatureOrTopic: 'decodeCondition' | 'encodeCondition' | 'unlock'): FunctionFragment
 
     encodeFunctionData(functionFragment: 'decodeCondition', values: [BytesLike]): string
-    encodeFunctionData(functionFragment: 'encodeCondition', values: [SwapUnlocker.ConditionStruct]): string
-    encodeFunctionData(functionFragment: 'encodeSolution', values: [SwapUnlocker.SolutionStruct]): string
+    encodeFunctionData(functionFragment: 'encodeCondition', values: [TimedUnlocker.ConditionStruct]): string
     encodeFunctionData(
         functionFragment: 'unlock',
         values: [string, DepositoryTypes.DepositStruct, DepositoryTypes.BlockchainStateStruct, BytesLike, BytesLike]
@@ -88,18 +81,17 @@ export interface SwapUnlockerInterface extends utils.Interface {
 
     decodeFunctionResult(functionFragment: 'decodeCondition', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'encodeCondition', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'encodeSolution', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
     events: {}
 }
 
-export interface SwapUnlocker extends BaseContract {
+export interface TimedUnlocker extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this
     attach(addressOrName: string): this
     deployed(): Promise<this>
 
-    interface: SwapUnlockerInterface
+    interface: TimedUnlockerInterface
 
     queryFilter<TEvent extends TypedEvent>(
         event: TypedEventFilter<TEvent>,
@@ -117,11 +109,9 @@ export interface SwapUnlocker extends BaseContract {
     removeListener: OnEvent<this>
 
     functions: {
-        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<[SwapUnlocker.ConditionStructOutput]>
+        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<[TimedUnlocker.ConditionStructOutput]>
 
-        encodeCondition(c: SwapUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<[string]>
-
-        encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<[string]>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<[string]>
 
         unlock(
             router: string,
@@ -133,11 +123,9 @@ export interface SwapUnlocker extends BaseContract {
         ): Promise<ContractTransaction>
     }
 
-    decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<SwapUnlocker.ConditionStructOutput>
+    decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<TimedUnlocker.ConditionStructOutput>
 
-    encodeCondition(c: SwapUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
-
-    encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
+    encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
 
     unlock(
         router: string,
@@ -149,11 +137,9 @@ export interface SwapUnlocker extends BaseContract {
     ): Promise<ContractTransaction>
 
     callStatic: {
-        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<SwapUnlocker.ConditionStructOutput>
+        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<TimedUnlocker.ConditionStructOutput>
 
-        encodeCondition(c: SwapUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
-
-        encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
 
         unlock(
             router: string,
@@ -170,9 +156,7 @@ export interface SwapUnlocker extends BaseContract {
     estimateGas: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
-        encodeCondition(c: SwapUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<BigNumber>
-
-        encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<BigNumber>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<BigNumber>
 
         unlock(
             router: string,
@@ -187,9 +171,7 @@ export interface SwapUnlocker extends BaseContract {
     populateTransaction: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-        encodeCondition(c: SwapUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         unlock(
             router: string,

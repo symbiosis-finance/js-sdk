@@ -40,7 +40,8 @@ export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
 export type PriceEstimationConfig = {
     enabled: boolean
-    slippage: number
+    slippageMax: number // Maximum slippage - used for tokenAmountOutMin calculation and delayed solving.
+    slippageNorm: number // Normal slippage - used for tokenAmountOut calculation and immetiate solving.
 }
 
 // Addresses of Depository contracts
@@ -48,8 +49,12 @@ export type DepositoryConfig = {
     depository: EvmAddress
     swapUnlocker: EvmAddress
     branchedUnlocker: EvmAddress
+    timedUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress
     priceEstimation: PriceEstimationConfig
+    refundDelay: number // Minimal delay before refund
+    withdrawDelay: number // Minimal delay before withdraw
+    minAmountDelay: number // Minimal delay before swap with minimal amount
 }
 
 export type ChainConfig = {

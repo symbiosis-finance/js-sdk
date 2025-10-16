@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { BigNumber, BigNumberish, BytesLike, utils } from 'ethers'
 import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
 import { randomBytes } from 'crypto'
+import assert from 'assert'
 
 import {
     Address,
@@ -31,8 +32,8 @@ import { BIPS_BASE } from '../constants.ts'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping.ts'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall.ts'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall.ts'
-import { DepositoryContracts } from '../symbiosis.ts'
-import assert from 'assert'
+import { DepositoryContext } from '../symbiosis.ts'
+import { DepositoryTypes } from '../contracts/IDepository.ts'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -313,7 +314,7 @@ function erc20TransferCall(to: Address, tokenOut: Address): CallData {
     }
 }
 
-function nativeUnwrapCall(dep: DepositoryContracts, tokenOut: Token, to: Address): CallData {
+function nativeUnwrapCall(dep: DepositoryContext, tokenOut: Token, to: Address): CallData {
     // Calls Router.transferNative(to)
     return {
         target: dep.router.address as Address,
@@ -345,6 +346,7 @@ async function buildOnChainSwap(
     }
     let aggregatorTrade: AggregatorTrade | null = null
     let tokenAmountOut: TokenAmount
+    let tokenAmountOutMin: TokenAmount
     if (dep && dep.cfg.priceEstimation.enabled) {
         const coinGecko = context.symbiosis.coinGecko
         const [syBtcPrice, tokenOutPrice] = await Promise.all([
@@ -353,7 +355,11 @@ async function buildOnChainSwap(
         ])
         tokenAmountOut = syBtcAmount.convertTo(
             context.tokenOut,
-            (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippage)
+            (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageNorm)
+        )
+        tokenAmountOutMin = syBtcAmount.convertTo(
+            context.tokenOut,
+            (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageMax)
         )
     } else {
         aggregatorTrade = new AggregatorTrade({
@@ -364,7 +370,8 @@ async function buildOnChainSwap(
             preferOneInchUsage: isUseOneInchOnly(tokenAmountIn.token, context.tokenOut),
         })
         await aggregatorTrade.init()
-        tokenAmountOut = aggregatorTrade.amountOutMin
+        tokenAmountOut = aggregatorTrade.amountOut
+        tokenAmountOutMin = aggregatorTrade.amountOutMin
     }
 
     if (dep) {
@@ -376,6 +383,7 @@ async function buildOnChainSwap(
             dep,
             syBtcAmount,
             tokenAmountOut,
+            tokenAmountOutMin,
             btcConfig,
             ...targetCall,
         })
@@ -437,7 +445,8 @@ async function buildCrossChainSwap(
                 context,
                 dep,
                 syBtcAmount,
-                tokenAmountOut: swapExactInResult.tradeA.amountOutMin,
+                tokenAmountOut: swapExactInResult.tradeA.amountOut,
+                tokenAmountOutMin: swapExactInResult.tradeA.amountOutMin,
                 btcConfig,
                 target: tx.relayRecipient,
                 targetCalldata: tx.otherSideCalldata,
@@ -506,9 +515,10 @@ async function buildCrossChainSwap(
 
 type BuildDepositCallParameters = {
     context: SwapExactInParams
-    dep: DepositoryContracts
+    dep: DepositoryContext
     syBtcAmount: TokenAmount
     tokenAmountOut: TokenAmount
+    tokenAmountOutMin: TokenAmount
     btcConfig: BtcConfig
     target: string
     targetCalldata: BytesLike
@@ -520,6 +530,7 @@ async function buildDepositCall({
     dep,
     syBtcAmount,
     tokenAmountOut,
+    tokenAmountOutMin,
     btcConfig,
     target,
     targetCalldata,
@@ -529,42 +540,87 @@ async function buildDepositCall({
     const fromToken = syBtcAmount.token
     const toToken = tokenAmountOut.token
 
-    const condData = {
-        outToken: toToken.address, // destination token
-        outMinAmount: tokenAmountOut.toBigInt(),
-        target, // target to call after validation
-        targetCalldata, // calldata to call on target.
-        targetOffset, // offset to patch-in amountTo in targetCalldata
+    async function makeTimed(
+        delay: number,
+        next: DepositoryTypes.UnlockConditionStruct
+    ): Promise<DepositoryTypes.UnlockConditionStruct> {
+        if (dep.cfg.withdrawDelay === 0) return next
+        const timedWithdrawCondition = await dep.timedUnlocker.encodeCondition({
+            next,
+            delay,
+        })
+        return {
+            unlocker: dep.timedUnlocker.address,
+            condition: timedWithdrawCondition,
+        }
     }
-    const swapCondition = await dep.swapUnlocker.encodeCondition(condData)
-    const withdrawCall = erc20TransferCall(to, syBtcAmount.token.address)
-    const withdrawCondition = await dep.swapUnlocker.encodeCondition({
-        outToken: fromToken.address, // destination token
-        outMinAmount: syBtcAmount.toBigInt(),
-        ...withdrawCall,
-    })
-    const branches = [
-        {
+    const branches: DepositoryTypes.UnlockConditionStruct[] = []
+
+    // Normal swap.
+    {
+        const condData = {
+            outToken: toToken.address, // destination token
+            outMinAmount: tokenAmountOut.toBigInt(),
+            target, // target to call after validation
+            targetCalldata, // calldata to call on target.
+            targetOffset, // offset to patch-in amountTo in targetCalldata
+        }
+        const swapCondition = await dep.swapUnlocker.encodeCondition(condData)
+        branches.push({
             unlocker: dep.swapUnlocker.address,
             condition: swapCondition,
-        },
-        {
+        })
+    }
+
+    // Minimal swap - with maximal slippage.
+    {
+        const condData = {
+            outToken: toToken.address, // destination token
+            outMinAmount: tokenAmountOutMin.toBigInt(),
+            target, // target to call after validation
+            targetCalldata, // calldata to call on target.
+            targetOffset, // offset to patch-in amountTo in targetCalldata
+        }
+        const swapCondition = await dep.swapUnlocker.encodeCondition(condData)
+        branches.push({
             unlocker: dep.swapUnlocker.address,
-            condition: withdrawCondition,
-        },
-    ]
+            condition: swapCondition,
+        })
+    }
+
+    // Transit token withdraw (i.e. syBTC)
+    {
+        const withdrawCall = erc20TransferCall(to, syBtcAmount.token.address)
+        const withdrawCondition = await dep.swapUnlocker.encodeCondition({
+            outToken: fromToken.address, // destination token
+            outMinAmount: syBtcAmount.toBigInt(),
+            ...withdrawCall,
+        })
+        branches.push(
+            await makeTimed(dep.cfg.withdrawDelay, {
+                unlocker: dep.swapUnlocker.address,
+                condition: withdrawCondition,
+            })
+        )
+    }
+
+    // Optional BTC refund.
     if (refundAddress !== undefined && refundAddress !== '' && dep.btcRefundUnlocker !== undefined) {
         const refundScript = getPkScript(refundAddress, btcConfig.btc.chainId)
         const btcRefundCondition = await dep.btcRefundUnlocker.encodeCondition({
             refundAddress: refundScript,
         })
-        branches.push({
-            unlocker: dep.btcRefundUnlocker.address,
-            condition: btcRefundCondition,
-        })
+        branches.push(
+            await makeTimed(dep.cfg.refundDelay, {
+                unlocker: dep.btcRefundUnlocker.address,
+                condition: btcRefundCondition,
+            })
+        )
     } else {
         console.warn('locking btc without refund unlocker')
     }
+
+    // Compose all branches.
     const condition = await dep.branchedUnlocker.encodeCondition({ branches })
     const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
     const deposit = {
