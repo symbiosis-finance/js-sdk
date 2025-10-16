@@ -35,7 +35,7 @@ import {
     TonTransactionData,
     TradeAContext,
 } from '../types'
-import { Profiler } from '../../entities/profiler'
+import { Profiler } from '../../entities'
 import { createFakeAmount } from '../../utils'
 import { ChainId } from '../../constants'
 import { isUseOneInchOnly } from '../utils'
@@ -210,6 +210,7 @@ export abstract class BaseSwapping {
         this.transit = transit as Transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()
+        this.profiler.tick('POST_TRANSIT_1')
         this.tradeC = tradeC as SymbiosisTrade | undefined
 
         if (this.tradeC) {
@@ -243,6 +244,7 @@ export abstract class BaseSwapping {
         this.profiler.tick('PATCHING')
 
         await this.doPostTransitAction()
+        this.profiler.tick('POST_TRANSIT_2')
 
         const tokenAmountOut = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const tokenAmountOutMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
