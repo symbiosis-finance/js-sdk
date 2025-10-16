@@ -161,7 +161,11 @@ export const isSynthesizeV2 = async (symbiosis: Symbiosis, chainId: ChainId, txH
 }
 
 export class RevertRequest {
-    constructor(private symbiosis: Symbiosis, private chainId: ChainId, private transactionHash: string) {}
+    constructor(
+        private symbiosis: Symbiosis,
+        private chainId: ChainId,
+        private transactionHash: string
+    ) {}
 
     async init({ validateState = false, synthesizeRequestFinder }: InitProps): Promise<PendingRequest | null> {
         const provider = this.symbiosis.getProvider(this.chainId)

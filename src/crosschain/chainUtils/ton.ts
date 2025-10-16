@@ -74,7 +74,10 @@ export const EventIds = {
 }
 
 export class Bridge implements Contract {
-    constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
+    constructor(
+        readonly address: Address,
+        readonly init?: { code: Cell; data: Cell }
+    ) {}
 
     // Creates forward payload for 'synthesize' endpoint
     static synthesizeMessage({

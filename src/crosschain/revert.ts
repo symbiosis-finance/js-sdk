@@ -43,7 +43,10 @@ export class RevertPending {
     private transitTokenTo!: Token
     private omniPoolConfig: OmniPoolConfig
 
-    constructor(private symbiosis: Symbiosis, private request: PendingRequest) {
+    constructor(
+        private symbiosis: Symbiosis,
+        private request: PendingRequest
+    ) {
         const token = this.request.fromTokenAmount.token
         const omniPoolConfig = symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {

@@ -21,7 +21,7 @@ interface MagpieQuoteResponse {
         {
             type: string
             value: string
-        }
+        },
     ]
 }
 

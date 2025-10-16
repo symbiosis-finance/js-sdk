@@ -54,7 +54,7 @@ export function aggregatorErrorToText(reason: string) {
 
     for (const [category, patterns] of Object.entries(aggregatorCategoryPatterns) as [
         SwapAggregatorErrorCategory,
-        (string | RegExp)[]
+        (string | RegExp)[],
     ][]) {
         for (const pattern of patterns) {
             if (typeof pattern === 'string') {

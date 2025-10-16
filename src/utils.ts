@@ -8,7 +8,10 @@ import { Address, EvmAddress } from './crosschain/types.ts'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
     invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
-    invariant(JSBI.lessThanOrEqual(value, SOLIDITY_TYPE_MAXIMA[solidityType]), `${value} should be <= ${SOLIDITY_TYPE_MAXIMA[solidityType]}.`)
+    invariant(
+        JSBI.lessThanOrEqual(value, SOLIDITY_TYPE_MAXIMA[solidityType]),
+        `${value} should be <= ${SOLIDITY_TYPE_MAXIMA[solidityType]}.`
+    )
 }
 
 // warns if addresses are not checksummed
@@ -28,8 +31,8 @@ export function parseBigintIsh(bigintIsh: BigintIsh): JSBI {
     return bigintIsh instanceof JSBI
         ? bigintIsh
         : typeof bigintIsh === 'bigint'
-        ? JSBI.BigInt(bigintIsh.toString())
-        : JSBI.BigInt(bigintIsh)
+          ? JSBI.BigInt(bigintIsh.toString())
+          : JSBI.BigInt(bigintIsh)
 }
 
 // mock the on-chain sqrt function

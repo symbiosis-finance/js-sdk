@@ -1,4 +1,4 @@
-import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json' with {type: 'json'}
+import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json' with { type: 'json' }
 import { computePoolAddress, Pool } from '@uniswap/v3-sdk'
 import { ethers } from 'ethers'
 import { FeeAmount } from '@uniswap/v3-sdk'
