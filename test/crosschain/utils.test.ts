@@ -110,6 +110,16 @@ describe('#splitSlippage', () => {
         })
     })
 
+    // 1%
+    test('1% true true', () => {
+        const detailedSlippage = splitSlippage(100, true, true)
+        expect(detailedSlippage).toStrictEqual({
+            A: 48,
+            B: 20,
+            C: 52,
+        })
+    })
+
     // 0.5%
     test('0.5% true false', () => {
         const detailedSlippage = splitSlippage(50, true, false)
