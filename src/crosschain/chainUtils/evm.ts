@@ -306,38 +306,36 @@ export interface DetailedSlippage {
     C: number
 }
 
-export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
-    const MINIMUM_SLIPPAGE = 20 // 0.2%
-    if (totalSlippage < MINIMUM_SLIPPAGE) {
-        throw new Error('Slippage cannot be less than 0.2%')
-    }
+export function getMinSlippageAllowed(hasTradeA: boolean, hasTradeC: boolean) {
     let swapsCount = 1
-    let extraSwapsCount = 0
     if (hasTradeA) {
-        extraSwapsCount += 1
+        swapsCount += 1
     }
-
     if (hasTradeC) {
-        extraSwapsCount += 1
+        swapsCount += 1
     }
-    swapsCount += extraSwapsCount
 
-    const slippage = Math.floor((totalSlippage * 10) / swapsCount) / 10
-    const MAX_STABLE_SLIPPAGE = 50 // 0.5%
-    if (slippage > MAX_STABLE_SLIPPAGE) {
-        const diff = slippage - MAX_STABLE_SLIPPAGE
-        const addition = extraSwapsCount > 0 ? Math.floor((diff * 10) / extraSwapsCount) / 10 : 0
+    const MINIMUM_SWAP_SLIPPAGE = 20 // 0.2%
 
-        return {
-            A: hasTradeA ? slippage + addition : 0,
-            B: MAX_STABLE_SLIPPAGE,
-            C: hasTradeC ? totalSlippage : 0,
-        }
+    return MINIMUM_SWAP_SLIPPAGE * swapsCount
+}
+
+export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
+    const minAllowedSlippage = getMinSlippageAllowed(hasTradeA, hasTradeC)
+    if (totalSlippage < minAllowedSlippage) {
+        throw new Error(`Slippage cannot be less than ${(minAllowedSlippage / 100).toString()}% for such swap`)
     }
+
+    const SYMBIOSIS_POOL_SLIPPAGE = 20 // 0.2%
+    const rest = totalSlippage - SYMBIOSIS_POOL_SLIPPAGE
+
+    // 60% of the rest of the slippage goes to A, 40% to C
+    const a = hasTradeA ? rest * (hasTradeC ? 0.6 : 1) : 0
+    const c = hasTradeC ? rest * (hasTradeA ? 0.4 : 1) + SYMBIOSIS_POOL_SLIPPAGE : 0 // add slippage B because C depends on B
 
     return {
-        A: hasTradeA ? slippage : 0,
-        B: slippage,
-        C: hasTradeC ? totalSlippage : 0,
+        A: a,
+        B: SYMBIOSIS_POOL_SLIPPAGE,
+        C: c,
     }
 }
