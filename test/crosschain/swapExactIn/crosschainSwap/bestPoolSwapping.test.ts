@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { ChainId, GAS_TOKEN, Symbiosis, WETH } from '../../../../src'
+import { ChainId, GAS_TOKEN, Symbiosis, WETH, Token } from '../../../../src'
 import { getRoutes, Route } from '../../../../src/crosschain/swapExactIn/crosschainSwap/bestPoolSwapping'
-import { Token } from 'symbiosis-js-sdk'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 
