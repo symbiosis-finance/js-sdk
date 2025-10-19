@@ -306,38 +306,40 @@ export interface DetailedSlippage {
     C: number
 }
 
-export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
-    const MINIMUM_SLIPPAGE = 20 // 0.2%
-    if (totalSlippage < MINIMUM_SLIPPAGE) {
-        throw new Error('Slippage cannot be less than 0.2%')
-    }
-    let swapsCount = 1
-    let extraSwapsCount = 0
+export function getMinRequiredSlippage(hasTradeA: boolean, hasTradeC: boolean) {
+    const symbiosisPoolSlippage = 20 // 0.2%
+    const tradeAMinSlippage = 20
+    const tradeCMinSlippage = 20
+
+    let minRequiredSlippage = symbiosisPoolSlippage
     if (hasTradeA) {
-        extraSwapsCount += 1
+        minRequiredSlippage += tradeAMinSlippage
     }
-
     if (hasTradeC) {
-        extraSwapsCount += 1
-    }
-    swapsCount += extraSwapsCount
-
-    const slippage = Math.floor((totalSlippage * 10) / swapsCount) / 10
-    const MAX_STABLE_SLIPPAGE = 50 // 0.5%
-    if (slippage > MAX_STABLE_SLIPPAGE) {
-        const diff = slippage - MAX_STABLE_SLIPPAGE
-        const addition = extraSwapsCount > 0 ? Math.floor((diff * 10) / extraSwapsCount) / 10 : 0
-
-        return {
-            A: hasTradeA ? slippage + addition : 0,
-            B: MAX_STABLE_SLIPPAGE,
-            C: hasTradeC ? totalSlippage : 0,
-        }
+        minRequiredSlippage += tradeCMinSlippage
     }
 
     return {
-        A: hasTradeA ? slippage : 0,
-        B: slippage,
-        C: hasTradeC ? totalSlippage : 0,
+        symbiosisPoolSlippage,
+        minRequiredSlippage,
+    }
+}
+
+export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
+    const { minRequiredSlippage, symbiosisPoolSlippage } = getMinRequiredSlippage(hasTradeA, hasTradeC)
+    if (totalSlippage < minRequiredSlippage) {
+        throw new Error(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
+    }
+
+    const rest = totalSlippage - symbiosisPoolSlippage
+
+    // 50% of the rest of the slippage goes to A, 50% to C
+    const a = hasTradeA ? rest * (hasTradeC ? 0.5 : 1) : 0
+    const c = hasTradeC ? rest * (hasTradeA ? 0.5 : 1) + symbiosisPoolSlippage : 0 // add slippage B because C depends on B
+
+    return {
+        A: a,
+        B: symbiosisPoolSlippage,
+        C: c,
     }
 }

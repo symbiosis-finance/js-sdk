@@ -376,8 +376,8 @@ export abstract class BaseSwapping {
     protected async doPostTransitAction() {}
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
-        const hasTradeA = !this.transitTokenIn.equals(this.tokenAmountIn.token)
-        const hasTradeC = !this.transitTokenOut.equals(this.tokenOut)
+        const hasTradeA = !this.transitTokenIn.equals(wrappedToken(this.tokenAmountIn.token))
+        const hasTradeC = !this.transitTokenOut.equals(wrappedToken(this.tokenOut))
 
         return splitSlippage(totalSlippage, hasTradeA, hasTradeC)
     }
