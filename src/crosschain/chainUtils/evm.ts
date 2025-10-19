@@ -306,36 +306,40 @@ export interface DetailedSlippage {
     C: number
 }
 
-export function getMinSlippageAllowed(hasTradeA: boolean, hasTradeC: boolean) {
-    let swapsCount = 1
+export function getMinRequiredSlippage(hasTradeA: boolean, hasTradeC: boolean) {
+    const symbiosisPoolSlippage = 20 // 0.2%
+    const tradeAMinSlippage = 20
+    const tradeCMinSlippage = 20
+
+    let minRequiredSlippage = symbiosisPoolSlippage
     if (hasTradeA) {
-        swapsCount += 1
+        minRequiredSlippage += tradeAMinSlippage
     }
     if (hasTradeC) {
-        swapsCount += 1
+        minRequiredSlippage += tradeCMinSlippage
     }
 
-    const MINIMUM_SWAP_SLIPPAGE = 20 // 0.2%
-
-    return MINIMUM_SWAP_SLIPPAGE * swapsCount
+    return {
+        symbiosisPoolSlippage,
+        minRequiredSlippage,
+    }
 }
 
 export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
-    const minAllowedSlippage = getMinSlippageAllowed(hasTradeA, hasTradeC)
-    if (totalSlippage < minAllowedSlippage) {
-        throw new Error(`Slippage cannot be less than ${(minAllowedSlippage / 100).toString()}% for such swap`)
+    const { minRequiredSlippage, symbiosisPoolSlippage } = getMinRequiredSlippage(hasTradeA, hasTradeC)
+    if (totalSlippage < minRequiredSlippage) {
+        throw new Error(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
     }
 
-    const SYMBIOSIS_POOL_SLIPPAGE = 20 // 0.2%
-    const rest = totalSlippage - SYMBIOSIS_POOL_SLIPPAGE
+    const rest = totalSlippage - symbiosisPoolSlippage
 
     // 50% of the rest of the slippage goes to A, 50% to C
     const a = hasTradeA ? rest * (hasTradeC ? 0.5 : 1) : 0
-    const c = hasTradeC ? rest * (hasTradeA ? 0.5 : 1) + SYMBIOSIS_POOL_SLIPPAGE : 0 // add slippage B because C depends on B
+    const c = hasTradeC ? rest * (hasTradeA ? 0.5 : 1) + symbiosisPoolSlippage : 0 // add slippage B because C depends on B
 
     return {
         A: a,
-        B: SYMBIOSIS_POOL_SLIPPAGE,
+        B: symbiosisPoolSlippage,
         C: c,
     }
 }
