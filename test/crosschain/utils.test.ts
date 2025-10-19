@@ -78,9 +78,9 @@ describe('#splitSlippage', () => {
     test('3% true true', () => {
         const detailedSlippage = splitSlippage(300, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 168,
+            A: 140,
             B: 20,
-            C: 132,
+            C: 160,
         })
     })
 
@@ -104,9 +104,9 @@ describe('#splitSlippage', () => {
     test('1.5% true true', () => {
         const detailedSlippage = splitSlippage(150, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 78,
+            A: 65,
             B: 20,
-            C: 72,
+            C: 85,
         })
     })
 
@@ -114,9 +114,9 @@ describe('#splitSlippage', () => {
     test('1% true true', () => {
         const detailedSlippage = splitSlippage(100, true, true)
         expect(detailedSlippage).toStrictEqual({
-            A: 48,
+            A: 40,
             B: 20,
-            C: 52,
+            C: 60,
         })
     })
 

@@ -329,9 +329,9 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
     const SYMBIOSIS_POOL_SLIPPAGE = 20 // 0.2%
     const rest = totalSlippage - SYMBIOSIS_POOL_SLIPPAGE
 
-    // 60% of the rest of the slippage goes to A, 40% to C
-    const a = hasTradeA ? rest * (hasTradeC ? 0.6 : 1) : 0
-    const c = hasTradeC ? rest * (hasTradeA ? 0.4 : 1) + SYMBIOSIS_POOL_SLIPPAGE : 0 // add slippage B because C depends on B
+    // 50% of the rest of the slippage goes to A, 50% to C
+    const a = hasTradeA ? rest * (hasTradeC ? 0.5 : 1) : 0
+    const c = hasTradeC ? rest * (hasTradeA ? 0.5 : 1) + SYMBIOSIS_POOL_SLIPPAGE : 0 // add slippage B because C depends on B
 
     return {
         A: a,

@@ -165,6 +165,8 @@ export interface SwapExactInParams {
     partnerAddress?: string
     refundAddress?: string
     generateBtcDepositAddress?: boolean
+    disableSrcChainRouting?: boolean
+    disableDstChainRouting?: boolean
 }
 
 export type BtcTransactionData = {
