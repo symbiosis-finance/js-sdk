@@ -308,6 +308,9 @@ export class OpenOceanTrade extends SymbiosisTrade {
         if (number.isNaN()) {
             return zeroPercent
         }
+        if (!number.isFinite()) {
+            return zeroPercent
+        }
 
         return new Percent(number.multipliedBy(100).integerValue().toString(), BIPS_BASE)
     }
