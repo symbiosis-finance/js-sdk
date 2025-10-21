@@ -4,7 +4,7 @@ import { ZappingBtc } from '../../swapping'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, symbiosis, to, selectMode } = context
+    const { tokenAmountIn, symbiosis, to, selectMode, disableSrcChainRouting, disableDstChainRouting } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
@@ -29,11 +29,13 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             symbiosis.config.omniPools[2], // BTC pool
         ]
         pools.forEach((poolConfig) => {
-            const combinations = symbiosis.getTransitCombinations(
-                tokenAmountIn.token.chainId,
-                syBtc.chainId,
-                poolConfig
-            )
+            const combinations = symbiosis.getTransitCombinations({
+                poolConfig,
+                tokenIn: tokenAmountIn.token,
+                tokenOut: syBtc,
+                disableSrcChainRouting,
+                disableDstChainRouting,
+            })
             combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
                 const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
                 const { from, slippage, deadline, partnerAddress } = context

@@ -1,11 +1,11 @@
-import { Log, StaticJsonRpcProvider, Provider } from '@ethersproject/providers'
+import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import {
     BranchedUnlocker,
     BranchedUnlocker__factory,
@@ -665,9 +665,21 @@ export class Symbiosis {
         return transitToken
     }
 
-    public getTransitCombinations(chainIdIn: ChainId, chainIdOut: ChainId, poolConfig: OmniPoolConfig) {
-        const transitTokensIn = this.transitTokens(chainIdIn, poolConfig)
-        const transitTokensOut = this.transitTokens(chainIdOut, poolConfig)
+    public getTransitCombinations({
+        poolConfig,
+        tokenIn,
+        tokenOut,
+        disableSrcChainRouting,
+        disableDstChainRouting,
+    }: {
+        poolConfig: OmniPoolConfig
+        tokenIn: Token
+        tokenOut: Token
+        disableSrcChainRouting?: boolean
+        disableDstChainRouting?: boolean
+    }) {
+        const transitTokensIn = this.transitTokens(tokenIn.chainId, poolConfig)
+        const transitTokensOut = this.transitTokens(tokenOut.chainId, poolConfig)
 
         const combinations: { transitTokenIn: Token; transitTokenOut: Token }[] = []
 
@@ -675,6 +687,16 @@ export class Symbiosis {
             transitTokensOut.forEach((transitTokenOut) => {
                 if (transitTokenIn.equals(transitTokenOut)) {
                     return
+                }
+                if (disableSrcChainRouting) {
+                    if (!transitTokenIn.equals(wrappedToken(tokenIn))) {
+                        return
+                    }
+                }
+                if (disableDstChainRouting) {
+                    if (!transitTokenOut.equals(wrappedToken(tokenOut))) {
+                        return
+                    }
                 }
                 combinations.push({ transitTokenIn, transitTokenOut })
             })

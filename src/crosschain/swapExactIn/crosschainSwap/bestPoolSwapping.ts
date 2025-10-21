@@ -63,19 +63,14 @@ export function getRoutes({
     const routes: Route[] = []
     const generalPurposePools = symbiosis.config.omniPools.filter((poolConfig) => poolConfig.generalPurpose)
     for (const poolConfig of generalPurposePools) {
-        const transitCombinations = symbiosis.getTransitCombinations(tokenIn.chainId, tokenOut.chainId, poolConfig)
+        const transitCombinations = symbiosis.getTransitCombinations({
+            poolConfig,
+            tokenIn,
+            tokenOut,
+            disableSrcChainRouting,
+            disableDstChainRouting,
+        })
         for (const { transitTokenIn, transitTokenOut } of transitCombinations) {
-            if (disableSrcChainRouting) {
-                if (!transitTokenIn.equals(wrappedToken(tokenIn))) {
-                    continue
-                }
-            }
-            if (disableDstChainRouting) {
-                if (!transitTokenOut.equals(wrappedToken(tokenOut))) {
-                    continue
-                }
-            }
-
             routes.push({
                 transitTokenIn,
                 transitTokenOut,
