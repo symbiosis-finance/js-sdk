@@ -9,8 +9,7 @@ import { Percent } from './fractions/percent'
 import { Price } from './fractions/price'
 import { Pair } from './pair'
 import { Route } from './route'
-import { Token, tokenEquals } from './token'
-import { WETH } from './WETH'
+import { tokenEquals, Token, WETH } from './token'
 
 /**
  * Returns the percent difference between the mid price and the execution price, i.e. price impact.
