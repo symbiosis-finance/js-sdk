@@ -8,12 +8,14 @@ import { Percent, Token, TokenAmount } from '../../entities'
 import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { StonFiTradeError } from '../sdkError'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     deadline: number
     from: string
 }
+
 export class StonfiTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
     public readonly deadline: number
@@ -51,7 +53,7 @@ export class StonfiTrade extends SymbiosisTrade {
         const txParams = await this.buildCalldata(this.tokenAmountIn, this.tokenOut, quote.minAskUnits)
 
         if (!txParams) {
-            throw new Error('Failed to build TON swap via Stonfi DEX')
+            throw new StonFiTradeError('Failed to build TON swap')
         }
 
         const amountOut = new TokenAmount(this.tokenOut, quote.askUnits)
@@ -87,7 +89,7 @@ export class StonfiTrade extends SymbiosisTrade {
         this.dexContracts = dexFactory(metadata)
 
         if (!this.dexContracts) {
-            throw new Error('Failed to get dex contracts')
+            throw new StonFiTradeError('Failed to get dex contracts')
         }
         const routerContract = this.dexContracts.Router.create(metadata.address)
         this.router = this.tonClient!.open(routerContract) as OpenedContract<BaseRouterV2_1>
@@ -99,7 +101,7 @@ export class StonfiTrade extends SymbiosisTrade {
         minAskUnits: string
     ): Promise<SenderArguments | null> {
         if (!this.router || !this.dexContracts || !this.routerMetadata) {
-            throw new Error('Stonfi trade not initialized')
+            throw new StonFiTradeError('Trade is not initialized')
         }
 
         const queryId = Math.floor(Math.random() * 100_000)

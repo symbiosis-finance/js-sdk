@@ -1,6 +1,7 @@
 import { Percent, Token, TokenAmount } from '../../entities'
 import { BigNumber } from 'ethers'
 import { FeeItem } from '../types'
+import { TradeError } from '../sdkError'
 
 export type SymbiosisTradeType =
     | 'uni-v2'
@@ -9,7 +10,6 @@ export type SymbiosisTradeType =
     | 'open-ocean'
     | 'wrap'
     | 'izumi'
-    | 'magpie'
     | 'octopool'
     | 'symbiosis'
     | 'thorchain-bridge'
@@ -70,11 +70,11 @@ export abstract class SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        throw new Error('Implement me')
+        throw new TradeError('Implement me')
     }
 
     public async init(): Promise<this> {
-        throw new Error('Implement me')
+        throw new TradeError('Implement me')
     }
 
     get amountOut(): TokenAmount {
@@ -231,12 +231,12 @@ export abstract class SymbiosisTrade {
         }
         const stringOffset = bytesOffset * 2 + hexPrefix
         if (data.length < stringOffset) {
-            throw new Error('offset is to big')
+            throw new TradeError('offset is to big')
         }
         const amountWidth = 64
         const stringAmount = amount.toHexString().substring(2).padStart(amountWidth, '0').toLowerCase()
         if (stringAmount.length !== amountWidth) {
-            throw new Error('amount is to wide')
+            throw new TradeError('amount is to wide')
         }
 
         return data.substring(0, stringOffset - amountWidth) + stringAmount + data.substring(stringOffset)

@@ -6,7 +6,7 @@ import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { Percent, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { isEvmChainId, tronAddressToEvm } from '../../chainUtils'
-import { Error, ErrorCode } from '../../error'
+import { AmountLessThanFeeError, SdkError } from '../../sdkError'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
@@ -37,11 +37,11 @@ export async function ZappingOnChainChainFlip(
 
     const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
     if (!feeCollectorAddress) {
-        throw new Error(`Fee collector not found for chain ${chainId}`)
+        throw new SdkError(`Fee collector not found for chain ${chainId}`)
     }
     const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
     if (!multicallRouterAddress) {
-        throw new Error(`MulticallRouterV2 not found for chain ${chainId}`)
+        throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
     }
 
     const provider = symbiosis.getProvider(chainId)
@@ -60,10 +60,7 @@ export async function ZappingOnChainChainFlip(
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
-            throw new Error(
-                `Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
+            throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
         }
 
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
@@ -243,10 +240,10 @@ async function getDepositCall({
         quote = quotes.find((quote) => quote.type === 'REGULAR')
     } catch (e) {
         console.error(e)
-        throw new Error('Chainflip error')
+        throw new SdkError('Chainflip error')
     }
     if (!quote) {
-        throw new Error('There is no REGULAR quote found')
+        throw new SdkError('There is no REGULAR quote found')
     }
 
     const vaultSwapData = await chainFlipSdk.encodeVaultSwapData({
@@ -262,7 +259,7 @@ async function getDepositCall({
     })
     const { chain } = vaultSwapData
     if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
-        throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
+        throw new SdkError(`Incorrect ChainFlip source chain: ${chain}`)
     }
     const { calldata, to } = vaultSwapData
 

@@ -9,7 +9,7 @@ import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils'
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
-import { Error } from './error'
+import { SdkError } from './sdkError'
 
 type InitProps = {
     validateState: boolean
@@ -98,7 +98,7 @@ export const findSourceChainData = async (
         }
     }
     if (error && !synthesizeRequestFinder) {
-        throw new Error(error)
+        throw new SdkError(error)
     }
 
     if (!fromAddress && synthesizeRequestFinder) {
@@ -168,7 +168,7 @@ export class RevertRequest {
 
         const receipt = await provider.getTransactionReceipt(this.transactionHash)
         if (!receipt) {
-            throw new Error(`Tx ${this.transactionHash} does not exist on chain ${this.chainId}`)
+            throw new SdkError(`Tx ${this.transactionHash} does not exist on chain ${this.chainId}`)
         }
 
         let type: PendingRequestType = 'synthesize'
@@ -179,7 +179,7 @@ export class RevertRequest {
         }
 
         if (!log) {
-            throw new Error('Tx does not contain mint/burn event and cannot be reverted')
+            throw new SdkError('Tx does not contain mint/burn event and cannot be reverted')
         }
 
         const { id, amount, token: tokenAddress, from: fromOrigin, to, chainID, revertableAddress } = log.args
@@ -189,11 +189,11 @@ export class RevertRequest {
 
         const token = this.symbiosis.findToken(tokenAddress, this.chainId)
         if (!token) {
-            throw new Error(`Cannot find token ${tokenAddress} at chain ${this.chainId}`)
+            throw new SdkError(`Cannot find token ${tokenAddress} at chain ${this.chainId}`)
         }
         const omniPoolConfig = this.symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {
-            throw new Error(`Cannot find omni pool config by token ${tokenAddress}`)
+            throw new SdkError(`Cannot find omni pool config by token ${tokenAddress}`)
         }
 
         let fromTokenAmount = new TokenAmount(token, amount)
@@ -261,7 +261,7 @@ export class RevertRequest {
                 state = await this.symbiosis.portal(chainIdTo).unsynthesizeStates(externalId)
             }
             if (state === 1) {
-                throw new Error(`Tx is success and cannot be reverted.`)
+                throw new SdkError(`Tx is success and cannot be reverted.`)
             }
         }
 

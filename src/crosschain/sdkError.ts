@@ -1,26 +1,59 @@
-export enum ErrorCode {
-    'DEFAULT',
-    'NO_REPRESENTATION_FOUND',
-    'AMOUNT_LESS_THAN_FEE',
-    'NO_TRANSIT_TOKEN',
-    'MIN_THORCHAIN_AMOUNT_IN',
-    'ADVISOR_ERROR',
-    'AMOUNT_TOO_HIGH',
-    'AMOUNT_TOO_LOW',
-    'MIN_TON_AMOUNT_IN',
-    'THORCHAIN_NOT_SUPPORTED_ADDRESS',
-    'MIN_CHAINFLIP_AMOUNT_IN',
-}
+export class SdkError extends Error {
+    constructor(message: string, error?: unknown) {
+        super(message)
 
-export class Error {
-    public code: ErrorCode
-    public message?: string
+        this.message = `${this.constructor.name}. ${message}`
+        this.name = this.constructor.name
 
-    public constructor(message?: string, code?: ErrorCode) {
-        this.code = code || ErrorCode.DEFAULT
-        this.message = message
+        if (error instanceof Error) {
+            this.message = `${this.message}: ${error.message}`
+        } else {
+            // TODO process unknown errors
+        }
     }
 }
+
+// routing
+export class RoutingError extends SdkError {}
+
+export class NoTransitTokenError extends RoutingError {}
+
+export class NoRepresentationFoundError extends RoutingError {}
+
+// limits
+export class LimitError extends SdkError {}
+
+export class AmountTooLowError extends LimitError {}
+
+export class AmountTooHighError extends LimitError {}
+
+export class AmountLessThanFeeError extends LimitError {}
+
+// advisor
+export class AdvisorError extends SdkError {}
+
+// trade
+export class TradeError extends SdkError {}
+
+export class WrapTradeError extends TradeError {}
+
+export class UniV2TradeError extends TradeError {}
+
+export class UniV3TradeError extends TradeError {}
+
+export class IzumiTradeError extends TradeError {}
+
+export class OpenOceanTradeError extends TradeError {}
+
+export class OneInchTradeError extends TradeError {}
+
+export class DedustTradeError extends TradeError {}
+
+export class StonFiTradeError extends TradeError {}
+
+export class RaydiumTradeError extends TradeError {}
+
+export class JupiterTradeError extends TradeError {}
 
 enum SwapAggregatorErrorCategory {
     RateLimit = 'rate_limit',

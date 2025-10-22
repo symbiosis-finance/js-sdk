@@ -5,7 +5,7 @@ import { Percent, Token, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { tronAddressToEvm } from '../../chainUtils'
 import { getPkScript, getThreshold, getToBtcFee } from '../../chainUtils/btc'
-import { Error, ErrorCode } from '../../error'
+import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../../sdkError'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { Symbiosis } from '../../symbiosis'
@@ -23,11 +23,11 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
 
     const feeCollectorAddress = ZERO_FEE_COLLECTOR_ADDRESSES[chainId]
     if (!feeCollectorAddress) {
-        throw new Error(`Fee collector not found for chain ${chainId}`)
+        throw new SdkError(`Fee collector not found for chain ${chainId}`)
     }
     const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
     if (!multicallRouterAddress) {
-        throw new Error(`MulticallRouterV2 not found for chain ${chainId}`)
+        throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
     }
 
     const provider = symbiosis.getProvider(chainId)
@@ -46,10 +46,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
-            throw new Error(
-                `Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
+            throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
         }
 
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
@@ -166,7 +163,7 @@ async function getSwapCall(params: SwapExactInParams): Promise<MultiCallItem> {
         data = result.transactionRequest.data as BytesLike
         routerAddress = result.transactionRequest.to as string
     } else {
-        throw new Error('Swap call is possible on EVM or Tron chains')
+        throw new SdkError('Swap call is possible on EVM or Tron chains')
     }
 
     const { routes, fees, tokenAmountOut: amountOut, tokenAmountOutMin: amountOutMin, priceImpact } = result
@@ -204,16 +201,10 @@ async function getBurnCall({
         getThreshold(amountIn, synthesis, symbiosis.cache),
     ])
     if (amountIn.lessThan(fee)) {
-        throw new Error(
-            `Amount less than fee. Min amount: ${fee.toSignificant()} ${fee.token.symbol}`,
-            ErrorCode.AMOUNT_LESS_THAN_FEE
-        )
+        throw new AmountLessThanFeeError(`Min amount: ${fee.toSignificant()} ${fee.token.symbol}`)
     }
     if (amountIn.lessThan(threshold)) {
-        throw new Error(
-            `Amount is too low. Min amount: ${threshold.toSignificant()} ${threshold.token.symbol}`,
-            ErrorCode.AMOUNT_TOO_LOW
-        )
+        throw new AmountTooLowError(`Min amount: ${threshold.toSignificant()} ${threshold.token.symbol}`)
     }
     const data = synthesis.interface.encodeFunctionData('burnSyntheticTokenBTC', [
         fee.raw.toString(), // _stableBridgingFee must be >= minBtcFee

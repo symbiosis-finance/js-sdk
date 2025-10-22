@@ -8,6 +8,7 @@ import {
 } from '@solana/web3.js'
 import { ChainId } from '../../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
+import { SdkError } from '../sdkError'
 
 export function isSolanaChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
@@ -38,7 +39,7 @@ const SOL_FEE_AMOUNT = 2000000 // 0.002 SOL (9 decimals)
 
 export async function addSolanaFee(from: string, instructions?: string) {
     if (!instructions) {
-        throw new Error('Theres is no instructions in solana trade')
+        throw new SdkError('Theres is no instructions in solana trade')
     }
     const connection = getSolanaConnection()
     const transferSolInstruction = SystemProgram.transfer({

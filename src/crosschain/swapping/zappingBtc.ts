@@ -11,7 +11,7 @@ import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { ChainId } from '../../constants'
-import { Error, ErrorCode } from '../error'
+import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../sdkError'
 
 initEccLib(ecc)
 
@@ -80,7 +80,7 @@ export class ZappingBtc extends BaseSwapping {
         partnerAddress,
     }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
         if (!syBtc.chainFromId) {
-            throw new Error('syBtc is not synthetic')
+            throw new SdkError('syBtc is not synthetic')
         }
         const btc = GAS_TOKEN[syBtc.chainFromId]
 
@@ -128,15 +128,13 @@ export class ZappingBtc extends BaseSwapping {
         }
 
         if (amountOut.lessThan(this.minBtcFee) || amountOutMin.lessThan(this.minBtcFee)) {
-            throw new Error(
-                `Amount less than fee. Min amount: ${this.minBtcFee.toSignificant()} ${this.minBtcFee.token.symbol}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
+            throw new AmountLessThanFeeError(
+                `Min amount: ${this.minBtcFee.toSignificant()} ${this.minBtcFee.token.symbol}`
             )
         }
         if (amountOut.lessThan(this.threshold) || amountOutMin.lessThan(this.threshold)) {
-            throw new Error(
-                `Amount is too low. Min amount: ${this.threshold.toSignificant()} ${this.threshold.token.symbol}`,
-                ErrorCode.AMOUNT_TOO_LOW
+            throw new AmountTooLowError(
+                `Amount is too low. Min amount: ${this.threshold.toSignificant()} ${this.threshold.token.symbol}`
             )
         }
 

@@ -27,6 +27,7 @@ import { Contract } from '@ethersproject/contracts'
 import ERC20 from '../../abis/ERC20.json'
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import fs from 'fs'
+import { SdkError } from '../../sdkError'
 
 export type Id = number
 
@@ -62,7 +63,7 @@ export class Builder {
         } else if (configName === 'dev') {
             this.config = dev
         } else {
-            throw new Error('Unknown config name')
+            throw new SdkError('Unknown config name')
         }
 
         this.providers = new Map(
@@ -112,13 +113,13 @@ export class Builder {
             if (chain.portal !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.portal)
                 if (!ok) {
-                    throw new Error(`${chain.id} Portal is not transmitter`)
+                    throw new SdkError(`${chain.id} Portal is not transmitter`)
                 }
             }
             if (chain.synthesis !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.synthesis)
                 if (!ok) {
-                    throw new Error(`${chain.id} Synthesis is not transmitter`)
+                    throw new SdkError(`${chain.id} Synthesis is not transmitter`)
                 }
             }
         }
@@ -172,7 +173,7 @@ export class Builder {
             if (!result.ok) {
                 const errorMessage = `${result.chainId} Token ${result.token} is not whitelisted on portal`
                 // console.error(errorMessage)
-                throw new Error(errorMessage)
+                throw new SdkError(errorMessage)
             }
         })
     }

@@ -6,6 +6,7 @@ import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { OpenOceanTradeError } from '../sdkError'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -170,7 +171,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const chain = OPEN_OCEAN_NETWORKS[chainId]
         if (!chain) {
-            throw new Error('Unsupported chain')
+            throw new OpenOceanTradeError('Unsupported chain')
         }
         this.chain = chain
         this.symbiosis = params.symbiosis
@@ -222,16 +223,16 @@ export class OpenOceanTrade extends SymbiosisTrade {
             } catch (e) {
                 errorText = await response.text()
             }
-            throw new Error(
-                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: Message: ${errorText}`
+            throw new OpenOceanTradeError(
+                `Cannot build trade for chain ${this.tokenAmountIn.token.chainId}: Message: ${errorText}`
             )
         }
         const json = await response.json()
 
         if (json.code !== 200) {
             const errorJson = json as OpenOceanError
-            throw new Error(
-                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}. Message: ${
+            throw new OpenOceanTradeError(
+                `Cannot build trade for chain ${this.tokenAmountIn.token.chainId}. Message: ${
                     errorJson?.error ?? errorJson.errorMsg
                 }`
             )
@@ -289,7 +290,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         })
 
         if (method === undefined) {
-            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+            throw new OpenOceanTradeError('Unknown swap method encoded to calldata')
         }
 
         return {
@@ -328,7 +329,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                     },
                 })
                 if (!response.ok) {
-                    throw new Error('Failed to get gas price')
+                    throw new OpenOceanTradeError('Failed to get gas price')
                 }
                 const json = await response.json()
 

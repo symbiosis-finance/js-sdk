@@ -22,7 +22,7 @@ import { getOutputQuote } from './uniV3Trade/getOutputQuote'
 import JSBI from 'jsbi'
 import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
 import invariant from 'tiny-invariant'
-import { Error } from '../error'
+import { UniV3TradeError } from '../sdkError'
 import { BIPS_BASE } from '../constants'
 import { getMinAmount } from '../chainUtils'
 import { IV3SwapRouter } from '../contracts/UniV3Router02'
@@ -149,7 +149,7 @@ export class UniV3Trade extends SymbiosisTrade {
 
         const addresses = DEPLOYMENT_ADDRESSES[chainId]
         if (!addresses) {
-            throw new Error('Unsupported chain')
+            throw new UniV3TradeError('Unsupported chain')
         }
         const provider = this.symbiosis.getProvider(chainId)
 
@@ -216,11 +216,10 @@ export class UniV3Trade extends SymbiosisTrade {
 
         let bestRoute: Route<Currency, Currency> | undefined = undefined
         let bestAmountOut: JSBI | undefined = undefined
+        const errors: UniV3TradeError[] = []
         for (const result of quotaResults) {
             if (result.status === 'rejected') {
-                this.symbiosis.context?.logger.error(
-                    `UniV3Trade rejected: ${JSON.stringify(result.reason?.toString())}`
-                )
+                errors.push(new UniV3TradeError(JSON.stringify(result.reason?.toString())))
                 continue
             }
 
@@ -235,7 +234,7 @@ export class UniV3Trade extends SymbiosisTrade {
             }
         }
         if (!bestAmountOut || !bestRoute) {
-            throw new Error('Route not found')
+            throw new AggregateError(errors, 'UniV3Route not found')
         }
 
         const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
@@ -312,7 +311,7 @@ export class UniV3Trade extends SymbiosisTrade {
         })
 
         if (method === undefined) {
-            throw new Error('Unknown uniV3Trade swap method encoded to calldata')
+            throw new UniV3TradeError('Unknown swap method encoded to calldata')
         }
 
         return {

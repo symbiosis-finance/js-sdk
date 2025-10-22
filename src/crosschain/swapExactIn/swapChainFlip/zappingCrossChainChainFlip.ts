@@ -4,7 +4,7 @@ import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping'
 import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
-import { Error } from '../../error'
+import { SdkError } from '../../sdkError'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
@@ -59,7 +59,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             })
             const quote = quotes.find((quote) => quote.type === 'REGULAR')
             if (!quote) {
-                throw new Error('There is no REGULAR quote found')
+                throw new SdkError('There is no REGULAR quote found')
             }
 
             this.chainFlipQuote = quote
@@ -78,7 +78,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             })
         } catch (e) {
             console.error(e)
-            throw new Error('Chainflip error')
+            throw new SdkError('Chainflip error')
         }
     }
 
@@ -96,7 +96,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(chainFlipTokenIn.chainId, this.omniPoolConfig)
         if (transitTokenIn.equals(transitTokenOut)) {
-            throw new Error('Same transit token')
+            throw new SdkError('Same transit token')
         }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
@@ -182,7 +182,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
         const { chain } = this.chainFlipVaultSwapResponse
         if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
-            throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
+            throw new SdkError(`Incorrect ChainFlip source chain: ${chain}`)
         }
         const { tokenIn } = this.config
         const { calldata, to } = this.chainFlipVaultSwapResponse

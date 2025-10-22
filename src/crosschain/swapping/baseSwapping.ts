@@ -7,7 +7,7 @@ import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { Transit } from '../transit'
-import { Error } from '../error'
+import { SdkError } from '../sdkError'
 import { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import {
@@ -140,11 +140,11 @@ export abstract class BaseSwapping {
         } else if (revertableAddresses) {
             const AB = revertableAddresses.find((ra) => ra.chainId === this.tokenAmountIn.token.chainId)
             if (!AB) {
-                throw new Error(`Revertable address for chain ${this.tokenAmountIn.token.chainId} was not specified`)
+                throw new SdkError(`Revertable address for chain ${this.tokenAmountIn.token.chainId} was not specified`)
             }
             const BC = revertableAddresses.find((ra) => ra.chainId === this.tokenOut.chainId)
             if (!BC) {
-                throw new Error(`Revertable address for chain ${this.tokenOut.chainId} was not specified`)
+                throw new SdkError(`Revertable address for chain ${this.tokenOut.chainId} was not specified`)
             }
             this.revertableAddresses = { AB: AB.address, BC: BC.address }
         } else {
@@ -272,7 +272,7 @@ export abstract class BaseSwapping {
                 transactionRequest,
             }
         } else {
-            throw new Error(`Unsupported chain type: ${this.tokenAmountIn.token.chainId}`)
+            throw new SdkError(`Unsupported chain type: ${this.tokenAmountIn.token.chainId}`)
         }
 
         this.profiler.tick('TRANSACTION_REQUEST')

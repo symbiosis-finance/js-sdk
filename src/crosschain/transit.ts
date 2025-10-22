@@ -1,7 +1,7 @@
 import { Symbiosis } from './symbiosis'
 import { chains, Token, TokenAmount } from '../entities'
 import { ChainId } from '../constants'
-import { Error, ErrorCode } from './error'
+import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
 import { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
 import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
@@ -22,7 +22,7 @@ export interface TransitOutResult {
     partnerFeeCall?: MultiCallItem
 }
 
-class OutNotInitializedError extends Error {
+class OutNotInitializedError extends SdkError {
     constructor(msg?: string) {
         super(`Out is not initialized: ${msg}`)
     }
@@ -86,10 +86,10 @@ export class Transit {
         this.feeToken2 = this.getFeeToken2()
 
         if (fee1 && !this.feeToken1.equals(fee1.token)) {
-            throw new Error('Incorrect fee1 token set')
+            throw new SdkError('Incorrect fee1 token set')
         }
         if (fee2 && this.feeToken2 && !this.feeToken2.equals(fee2.token)) {
-            throw new Error('Incorrect fee2 token set')
+            throw new SdkError('Incorrect fee2 token set')
         }
     }
 
@@ -197,19 +197,19 @@ export class Transit {
         this.assertOutInitialized('applyFees')
 
         if (!fee1.token.equals(this.feeToken1)) {
-            throw new Error('Incorrect fee1 token')
+            throw new SdkError('Incorrect fee1 token')
         }
         this.fee1 = fee1
 
         if (this.isV2()) {
             if (!fee2) {
-                throw new Error('fee2 should be passed')
+                throw new SdkError('fee2 should be passed')
             }
             if (!this.feeToken2) {
-                throw new Error('feeToken2 should have been initialized')
+                throw new SdkError('feeToken2 should have been initialized')
             }
             if (!fee2.token.equals(this.feeToken2)) {
-                throw new Error('Incorrect fee2 token')
+                throw new SdkError('Incorrect fee2 token')
             }
             this.fee2 = fee2
         }
@@ -255,9 +255,8 @@ export class Transit {
         const sTokenChainId = this.isV2() ? this.omniPoolConfig.chainId : this.tokenOut.chainId
         const sToken = this.symbiosis.getRepresentation(tokenIn, sTokenChainId)
         if (!sToken) {
-            throw new Error(
-                `Representation of ${tokenIn.chainId}:${tokenIn.symbol} in chain ${sTokenChainId} not found`,
-                ErrorCode.NO_REPRESENTATION_FOUND
+            throw new NoRepresentationFoundError(
+                `Representation of ${tokenIn.chainId}:${tokenIn.symbol} in chain ${sTokenChainId} not found`
             )
         }
         return sToken
@@ -331,11 +330,10 @@ export class Transit {
         }
         if (fee) {
             if (amountOutMin.lessThan(fee) || amountOutMin.equalTo(fee)) {
-                throw new Error(
+                throw new AmountLessThanFeeError(
                     `Amount ${amountOutMin.toSignificant()} ${
                         amountOutMin.token.symbol
-                    } less than fee ${fee.toSignificant()} ${fee.token.symbol}`,
-                    ErrorCode.AMOUNT_LESS_THAN_FEE
+                    } less than fee ${fee.toSignificant()} ${fee.token.symbol}`
                 )
             }
             amountOut = amountOut.subtract(fee)
@@ -368,11 +366,10 @@ export class Transit {
         let tradeAmountInMin = new TokenAmount(this.feeToken1, amountInMin.raw)
         if (this.fee1) {
             if (tradeAmountInMin.lessThan(this.fee1) || tradeAmountInMin.equalTo(this.fee1)) {
-                throw new Error(
+                throw new AmountLessThanFeeError(
                     `Amount ${tradeAmountInMin.toSignificant()} ${
                         tradeAmountInMin.token.symbol
-                    } less than fee ${this.fee1.toSignificant()} ${this.fee1.token.symbol}`,
-                    ErrorCode.AMOUNT_LESS_THAN_FEE
+                    } less than fee ${this.fee1.toSignificant()} ${this.fee1.token.symbol}`
                 )
             }
             tradeAmountIn = tradeAmountIn.subtract(this.fee1)
@@ -393,9 +390,8 @@ export class Transit {
         const sTokenChainId = this.isV2() ? this.omniPoolConfig.chainId : this.amountIn.token.chainId
         const sToken = this.symbiosis.getRepresentation(this.tokenOut, sTokenChainId)
         if (!sToken) {
-            throw new Error(
-                `Representation of ${this.tokenOut.symbol} in chain ${sTokenChainId} not found`,
-                ErrorCode.NO_REPRESENTATION_FOUND
+            throw new NoRepresentationFoundError(
+                `Representation of ${this.tokenOut.symbol} in chain ${sTokenChainId} not found`
             )
         }
         return sToken
@@ -412,11 +408,11 @@ export class Transit {
 
         const indexIn = chainsWithHostChain.indexOf(chainIdIn)
         if (indexIn === -1) {
-            throw new Error(`Chain ${chainIdIn} not found in chains priority`)
+            throw new SdkError(`Chain ${chainIdIn} not found in chains priority`)
         }
         const indexOut = chainsWithHostChain.indexOf(chainIdOut)
         if (indexOut === -1) {
-            throw new Error(`Chain ${chainIdOut} not found in chains priority`)
+            throw new SdkError(`Chain ${chainIdOut} not found in chains priority`)
         }
 
         return indexIn > indexOut ? 'burn' : 'mint'

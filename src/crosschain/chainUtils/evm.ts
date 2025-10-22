@@ -8,7 +8,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../const
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
 import flatMap from 'lodash.flatmap'
-import { Error } from '../error'
+import { SdkError } from '../sdkError'
 import { isBtcChainId } from './btc'
 import { isTronChainId } from './tron'
 import { isTonChainId } from './ton'
@@ -125,7 +125,7 @@ export function calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut:
         tokenAmountIn.token.decimals
     ).toString()
     if (typedValueParsed === '0') {
-        throw new Error('Cannot parse amountOut with decimals')
+        throw new SdkError('Cannot parse amountOut with decimals')
     }
     const amountIn = tokenAmountIn.raw
     const amountOut = JSBI.BigInt(typedValueParsed)
@@ -135,7 +135,7 @@ export function calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut:
     return new Percent(value, BIPS_BASE)
 }
 
-export class GetLogTimeoutExceededError extends Error {
+export class GetLogTimeoutExceededError extends SdkError {
     constructor(public readonly filter: Filter) {
         super(`Timed out waiting for logs matching filter: ${JSON.stringify(filter)}`)
     }
@@ -158,7 +158,7 @@ function _promiseRaceResolved<T>(promises: Promise<T>[]): Promise<T> {
         const onReject = () => {
             rejectCounter++
             if (rejectCounter === totalPromises) {
-                reject(new Error('All promises were rejected.'))
+                reject(new SdkError('All promises were rejected.'))
             }
         }
 
@@ -227,7 +227,7 @@ export async function prepareTransactionRequest(
 ): Promise<TransactionRequest> {
     const { provider } = signer
     if (!provider) {
-        throw new Error('Signer has no provider')
+        throw new SdkError('Signer has no provider')
     }
 
     const preparedTransactionRequest = { ...transactionRequest }
@@ -328,7 +328,7 @@ export function getMinRequiredSlippage(hasTradeA: boolean, hasTradeC: boolean) {
 export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
     const { minRequiredSlippage, symbiosisPoolSlippage } = getMinRequiredSlippage(hasTradeA, hasTradeC)
     if (totalSlippage < minRequiredSlippage) {
-        throw new Error(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
+        throw new SdkError(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
     }
 
     const rest = totalSlippage - symbiosisPoolSlippage

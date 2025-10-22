@@ -7,6 +7,7 @@ import { utils } from 'ethers'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../../constants'
 import { Chain, Token } from '../../entities'
+import { SdkError } from '../sdkError'
 
 export interface TronTransactionData {
     chain_id: number
@@ -58,7 +59,7 @@ export function prepareTronTransaction({
     const functionFragment = abi.find((item) => item.type === 'function' && item.name === functionName)
 
     if (!functionFragment) {
-        throw new Error('Method not found in ABI')
+        throw new SdkError('Method not found in ABI')
     }
 
     const functionSelector = getFunctionSelector(functionFragment)
