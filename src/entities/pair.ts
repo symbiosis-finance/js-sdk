@@ -21,7 +21,6 @@ import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/t
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 import { BytesLike } from '@ethersproject/bytes'
-import { SdkError } from '../crosschain'
 
 export let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
 
@@ -41,7 +40,7 @@ export function getZkCreate2Address(from: string, salt: BytesLike, initCodeHash:
         return MAP[from][salt as string]
     } catch {
         console.error({ initCodeHash })
-        throw new SdkError('Unknown zk pair')
+        throw new Error('Unknown zk pair')
     }
 }
 

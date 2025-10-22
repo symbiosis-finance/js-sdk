@@ -6,7 +6,6 @@ import { Cache } from '../cache'
 import { getFastestFee } from '../mempool'
 import { Synthesis } from '../contracts'
 import { ChainId } from '../../constants'
-import { SdkError } from '../sdkError'
 
 export const getThreshold = async (syBtcAmount: TokenAmount, synthesis: Synthesis, cache: Cache) => {
     const syBtc = syBtcAmount.token
@@ -62,7 +61,7 @@ export function getPkScriptForChain(addr: string, btcChain: Network): Buffer {
 export function getPkScript(addr: string, btcChainId: ChainId): Buffer {
     const network = BTC_NETWORKS[btcChainId]
     if (!network) {
-        throw new SdkError(`Unknown BTC network ${btcChainId}`)
+        throw new Error(`Unknown BTC network ${btcChainId}`)
     }
     return getPkScriptForChain(addr, network)
 }
