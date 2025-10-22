@@ -1,6 +1,6 @@
-import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
+import { Filter, Log } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { BigintIsh, ChainId, ONE } from '../../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
@@ -135,7 +135,7 @@ export function calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut:
     return new Percent(value, BIPS_BASE)
 }
 
-export class GetLogTimeoutExceededError extends SdkError {
+export class GetLogTimeoutExceededError extends Error {
     constructor(public readonly filter: Filter) {
         super(`Timed out waiting for logs matching filter: ${JSON.stringify(filter)}`)
     }
@@ -216,40 +216,6 @@ export async function getLogWithTimeout({
 
         const interval = setInterval(getLogs, period)
     })
-}
-
-const TELOS_MPC_ADDRESS = '0xDcB7d65b15436CE9B608864ACcff75871C6556FC'
-
-// Sets the necessary parameters for send transaction
-export async function prepareTransactionRequest(
-    transactionRequest: TransactionRequest,
-    signer: Signer
-): Promise<TransactionRequest> {
-    const { provider } = signer
-    if (!provider) {
-        throw new SdkError('Signer has no provider')
-    }
-
-    const preparedTransactionRequest = { ...transactionRequest }
-
-    let { from } = transactionRequest
-    if (transactionRequest.chainId === ChainId.TELOS_MAINNET) {
-        // Set address with balance (symbiosis mpc) for TELOS to avoid "insufficient funds for gas" error
-        from = TELOS_MPC_ADDRESS
-    }
-
-    const gasLimit = await provider.estimateGas({ ...transactionRequest, from })
-
-    preparedTransactionRequest.gasLimit = calculateGasMargin(gasLimit)
-
-    const { chainId: requestChainId } = preparedTransactionRequest
-    if (requestChainId === ChainId.MATIC_MAINNET || requestChainId === ChainId.MATIC_MUMBAI) {
-        // Double gas price for MATIC
-        const gasPrice = await signer.getGasPrice()
-        preparedTransactionRequest.gasPrice = gasPrice.mul(2)
-    }
-
-    return preparedTransactionRequest
 }
 
 export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token, Token][] {
