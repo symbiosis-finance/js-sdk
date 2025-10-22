@@ -22,7 +22,7 @@ export interface TransitOutResult {
     partnerFeeCall?: MultiCallItem
 }
 
-class OutNotInitializedError extends SdkError {
+class OutNotInitializedError extends Error {
     constructor(msg?: string) {
         super(`Out is not initialized: ${msg}`)
     }
