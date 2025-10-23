@@ -82,13 +82,12 @@ export const findSourceChainData = async (
 
     let sourceChainId = undefined
     let fromAddress = undefined
-    let error = undefined
+    const errors: SdkError[] = []
     for (let i = 0; i < results.length; i++) {
         const item = results[i]
         const chainId = chains[i].id
         if (item.status !== 'fulfilled') {
-            error = `Error occurred on chain ${chainId} while loading findSynthesizeRequestOnChain`
-            console.error(error, item)
+            errors.push(new SdkError(`Error occurred on chain ${chainId} while loading findSynthesizeRequestOnChain`))
             continue
         }
         if (item.value) {
@@ -97,8 +96,8 @@ export const findSourceChainData = async (
             break
         }
     }
-    if (error && !synthesizeRequestFinder) {
-        throw new SdkError(error)
+    if (errors.length > 0 && !synthesizeRequestFinder) {
+        throw new AggregateError(errors, 'findSourceChainData error')
     }
 
     if (!fromAddress && synthesizeRequestFinder) {

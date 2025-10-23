@@ -1,4 +1,4 @@
-import { SwapSDK } from '@chainflip/sdk/swap'
+import { SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { BigNumber, BytesLike, utils } from 'ethers'
 
@@ -6,7 +6,7 @@ import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { Percent, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
 import { isEvmChainId, tronAddressToEvm } from '../../chainUtils'
-import { AmountLessThanFeeError, SdkError } from '../../sdkError'
+import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
@@ -239,27 +239,33 @@ async function getDepositCall({
         })
         quote = quotes.find((quote) => quote.type === 'REGULAR')
     } catch (e) {
-        console.error(e)
-        throw new SdkError('Chainflip error')
-    }
-    if (!quote) {
-        throw new SdkError('There is no REGULAR quote found')
+        throw new ChainFlipError('getQuoteV2 error', e)
     }
 
-    const vaultSwapData = await chainFlipSdk.encodeVaultSwapData({
-        quote,
-        destAddress: receiverAddress,
-        fillOrKillParams: {
-            slippageTolerancePercent: quote.recommendedSlippageTolerancePercent,
-            refundAddress,
-            retryDurationBlocks: 100,
-        },
-        brokerAccount: ChainFlipBrokerAccount,
-        brokerCommissionBps: ChainFlipBrokerFeeBps,
-    })
+    if (!quote) {
+        throw new ChainFlipError('There is no REGULAR quote found')
+    }
+
+    let vaultSwapData: VaultSwapResponse
+    try {
+        vaultSwapData = await chainFlipSdk.encodeVaultSwapData({
+            quote,
+            destAddress: receiverAddress,
+            fillOrKillParams: {
+                slippageTolerancePercent: quote.recommendedSlippageTolerancePercent,
+                refundAddress,
+                retryDurationBlocks: 100,
+            },
+            brokerAccount: ChainFlipBrokerAccount,
+            brokerCommissionBps: ChainFlipBrokerFeeBps,
+        })
+    } catch (e) {
+        throw new ChainFlipError('encodeVaultSwapData error', e)
+    }
+
     const { chain } = vaultSwapData
     if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
-        throw new SdkError(`Incorrect ChainFlip source chain: ${chain}`)
+        throw new ChainFlipError(`Incorrect source chain: ${chain}`)
     }
     const { calldata, to } = vaultSwapData
 

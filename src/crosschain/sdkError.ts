@@ -1,14 +1,16 @@
 export class SdkError extends Error {
-    constructor(message: string, error?: unknown) {
+    constructor(message: string, cause?: unknown) {
         super(message)
 
-        this.message = `${this.constructor.name}. ${message}`
+        this.message = `[${this.constructor.name}] ${message}`
         this.name = this.constructor.name
 
-        if (error instanceof Error) {
-            this.message = `${this.message}: ${error.message}`
+        if (cause instanceof Error) {
+            this.message = `${this.message}: ${cause.message}`
+        } else if (typeof cause === 'string' && cause.length > 0) {
+            this.message = `${this.message}: ${cause}`
         } else {
-            // TODO process unknown errors
+            this.message = `${this.message}: Unknown error.`
         }
     }
 }
@@ -31,6 +33,9 @@ export class AmountLessThanFeeError extends LimitError {}
 
 // advisor
 export class AdvisorError extends SdkError {}
+
+// ChainFlip
+export class ChainFlipError extends SdkError {}
 
 // trade
 export class TradeError extends SdkError {}

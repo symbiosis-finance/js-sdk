@@ -39,8 +39,7 @@ export function getZkCreate2Address(from: string, salt: BytesLike, initCodeHash:
     try {
         return MAP[from][salt as string]
     } catch {
-        console.error({ initCodeHash })
-        throw new Error('Unknown zk pair')
+        throw new Error(`Unknown zk pair with initCodeHash: ${initCodeHash}`)
     }
 }
 
