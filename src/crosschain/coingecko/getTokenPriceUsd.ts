@@ -2,6 +2,7 @@ import TronWeb from 'tronweb'
 import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 import { GAS_TOKEN, Token, TokenAmount, WETH } from '../../entities'
 import { isSolanaChainId, isTonChainId, isTronToken } from '../chainUtils'
+import { AdvisorError } from '../sdkError'
 
 const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
     const isWrappedToken = WETH[token.chainId].equals(token)
@@ -25,14 +26,14 @@ const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
     if (!response.ok) {
         const text = await response.text()
         const json = JSON.parse(text)
-        throw new Error(`Advisor: failed to get token price: ${json.message ?? text}`)
+        throw new AdvisorError(`Failed to get token price: ${json.message ?? text}`)
     }
 
     const json = await response.json()
 
     const price = json[0]['price']
     if (!price) {
-        throw new Error(`Advisor: unknown price for token ${token.chainId}.${token.address}`)
+        throw new AdvisorError(`Unknown price for token ${token.chainId}.${token.address}`)
     }
     return price
 }

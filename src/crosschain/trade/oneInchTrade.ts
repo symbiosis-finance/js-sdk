@@ -9,6 +9,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
+import { OneInchTradeError } from '../sdkError'
 
 export type OneInchProtocols = string[]
 
@@ -129,7 +130,7 @@ export class OneInchTrade extends SymbiosisTrade {
                 }
             }
 
-            throw new Error(`Cannot get 1inch swap on chain ${this.tokenAmountIn.token.chainId}: ${errorText}`)
+            throw new OneInchTradeError(`Cannot get swap on chain ${this.tokenAmountIn.token.chainId}: ${errorText}`)
         }
 
         const tx: {
@@ -183,7 +184,7 @@ export class OneInchTrade extends SymbiosisTrade {
         if (!response.ok) {
             const text = await response.text()
 
-            throw new Error(text)
+            throw new OneInchTradeError(text)
         }
 
         return response.json()
@@ -210,9 +211,7 @@ export class OneInchTrade extends SymbiosisTrade {
                 return acc
             }, [])
         } catch (error) {
-            const message = error instanceof Error ? error.message : 'Unknown error'
-
-            throw new Error(`Cannot get 1inch swap on chain ${chainId}: ${message}`)
+            throw new OneInchTradeError(`Cannot get swap on chain ${chainId}`, error)
         }
     }
 
@@ -302,7 +301,7 @@ export class OneInchTrade extends SymbiosisTrade {
         })
 
         if (method === undefined) {
-            throw new Error('Unknown OneInchTrade swap method encoded to calldata')
+            throw new OneInchTradeError('Unknown swap method encoded to calldata')
         }
         return {
             amountOffset: method.offset,
@@ -315,7 +314,7 @@ export class OneInchTrade extends SymbiosisTrade {
         const provider = this.symbiosis.getProvider(chainId)
         const oracleAddress = ONE_INCH_ORACLE_MAP[chainId]
         if (!oracleAddress) {
-            throw new Error(`Could not find oneInch off-chain oracle on chain ${chainId}`)
+            throw new OneInchTradeError(`Could not find off-chain oracle on chain ${chainId}`)
         }
         const oracleInterface = OneInchOracle__factory.createInterface()
 
@@ -352,7 +351,7 @@ export class OneInchTrade extends SymbiosisTrade {
         })
 
         if (!data[0] || !data[1]) {
-            throw new Error('OneInch oracle: cannot to receive rate to ETH')
+            throw new OneInchTradeError('Cannot get rate to ETH from price oracle')
         }
         if (data[0].isZero() || data[1]?.isZero()) {
             return new Percent('0', BIPS_BASE)

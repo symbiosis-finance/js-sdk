@@ -1,10 +1,10 @@
-import { Quote, SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
+import { Quote, RegularQuote, SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
 
 import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping'
 import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
-import { Error } from '../../error'
+import { ChainFlipError } from '../../sdkError'
 import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
@@ -47,6 +47,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         checkMinAmount(this.transit.amountOut)
 
         const { src, dest } = this.config
+        let quote: RegularQuote | undefined
         try {
             const { quotes } = await this.chainFlipSdk.getQuoteV2({
                 amount: this.transit.amountOut.raw.toString(),
@@ -57,13 +58,18 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                 isVaultSwap: true,
                 brokerCommissionBps: ChainFlipBrokerFeeBps,
             })
-            const quote = quotes.find((quote) => quote.type === 'REGULAR')
-            if (!quote) {
-                throw new Error('There is no REGULAR quote found')
-            }
+            quote = quotes.find((quote) => quote.type === 'REGULAR')
+        } catch (e) {
+            throw new ChainFlipError('getQuoteV2', e)
+        }
 
-            this.chainFlipQuote = quote
+        if (!quote) {
+            throw new ChainFlipError('There is no REGULAR quote found')
+        }
 
+        this.chainFlipQuote = quote
+
+        try {
             // Encode vault swap transaction data
             this.chainFlipVaultSwapResponse = await this.chainFlipSdk.encodeVaultSwapData({
                 quote,
@@ -77,8 +83,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                 brokerCommissionBps: ChainFlipBrokerFeeBps,
             })
         } catch (e) {
-            console.error(e)
-            throw new Error('Chainflip error')
+            throw new ChainFlipError('encodeVaultSwapData', e)
         }
     }
 
@@ -96,7 +101,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(chainFlipTokenIn.chainId, this.omniPoolConfig)
         if (transitTokenIn.equals(transitTokenOut)) {
-            throw new Error('Same transit token')
+            throw new ChainFlipError('Same transit token')
         }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
@@ -182,7 +187,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
         const { chain } = this.chainFlipVaultSwapResponse
         if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
-            throw new Error(`Incorrect ChainFlip source chain: ${chain}`)
+            throw new ChainFlipError(`Incorrect source chain: ${chain}`)
         }
         const { tokenIn } = this.config
         const { calldata, to } = this.chainFlipVaultSwapResponse

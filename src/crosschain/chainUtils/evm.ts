@@ -1,6 +1,6 @@
-import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
+import { Filter, Log } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { BigintIsh, ChainId, ONE } from '../../constants'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
@@ -8,7 +8,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../const
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
 import flatMap from 'lodash.flatmap'
-import { Error } from '../error'
+import { SdkError } from '../sdkError'
 import { isBtcChainId } from './btc'
 import { isTronChainId } from './tron'
 import { isTonChainId } from './ton'
@@ -125,7 +125,7 @@ export function calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut:
         tokenAmountIn.token.decimals
     ).toString()
     if (typedValueParsed === '0') {
-        throw new Error('Cannot parse amountOut with decimals')
+        throw new SdkError('Cannot parse amountOut with decimals')
     }
     const amountIn = tokenAmountIn.raw
     const amountOut = JSBI.BigInt(typedValueParsed)
@@ -158,7 +158,7 @@ function _promiseRaceResolved<T>(promises: Promise<T>[]): Promise<T> {
         const onReject = () => {
             rejectCounter++
             if (rejectCounter === totalPromises) {
-                reject(new Error('All promises were rejected.'))
+                reject(new SdkError('All promises were rejected.'))
             }
         }
 
@@ -216,40 +216,6 @@ export async function getLogWithTimeout({
 
         const interval = setInterval(getLogs, period)
     })
-}
-
-const TELOS_MPC_ADDRESS = '0xDcB7d65b15436CE9B608864ACcff75871C6556FC'
-
-// Sets the necessary parameters for send transaction
-export async function prepareTransactionRequest(
-    transactionRequest: TransactionRequest,
-    signer: Signer
-): Promise<TransactionRequest> {
-    const { provider } = signer
-    if (!provider) {
-        throw new Error('Signer has no provider')
-    }
-
-    const preparedTransactionRequest = { ...transactionRequest }
-
-    let { from } = transactionRequest
-    if (transactionRequest.chainId === ChainId.TELOS_MAINNET) {
-        // Set address with balance (symbiosis mpc) for TELOS to avoid "insufficient funds for gas" error
-        from = TELOS_MPC_ADDRESS
-    }
-
-    const gasLimit = await provider.estimateGas({ ...transactionRequest, from })
-
-    preparedTransactionRequest.gasLimit = calculateGasMargin(gasLimit)
-
-    const { chainId: requestChainId } = preparedTransactionRequest
-    if (requestChainId === ChainId.MATIC_MAINNET || requestChainId === ChainId.MATIC_MUMBAI) {
-        // Double gas price for MATIC
-        const gasPrice = await signer.getGasPrice()
-        preparedTransactionRequest.gasPrice = gasPrice.mul(2)
-    }
-
-    return preparedTransactionRequest
 }
 
 export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token, Token][] {
@@ -328,7 +294,7 @@ export function getMinRequiredSlippage(hasTradeA: boolean, hasTradeC: boolean) {
 export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
     const { minRequiredSlippage, symbiosisPoolSlippage } = getMinRequiredSlippage(hasTradeA, hasTradeC)
     if (totalSlippage < minRequiredSlippage) {
-        throw new Error(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
+        throw new SdkError(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
     }
 
     const rest = totalSlippage - symbiosisPoolSlippage

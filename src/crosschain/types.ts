@@ -11,7 +11,6 @@ import { SymbiosisTrade } from './trade/symbiosisTrade'
 import { BigNumber, BytesLike } from 'ethers'
 import { PartnerFeeCollector } from './contracts'
 import { Cache } from './cache'
-import { Logger } from 'pino'
 import { ConfigCacheData } from './config/cache/builder'
 
 export enum Field {
@@ -277,8 +276,4 @@ export type PriceImpactMetricParams = {
     name_to: string
     token_amount: number
     price_impact: number
-}
-
-export type Context = {
-    logger: Logger
 }

@@ -54,7 +54,6 @@ export class AggregatorTrade extends SymbiosisTrade {
         function failTrade(e: Error) {
             trades.push(undefined)
             errors.push(e)
-            symbiosis.context?.logger.error(e)
         }
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)

@@ -1,6 +1,6 @@
 export * from './symbiosis'
 export * from './types'
-export * from './error'
+export * from './sdkError'
 export * from './chainUtils'
 export * from './constants'
 export * from './multicall'

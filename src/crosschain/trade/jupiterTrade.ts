@@ -4,6 +4,7 @@ import { NATIVE_MINT } from '@solana/spl-token'
 import { Percent, TokenAmount } from '../../entities'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { JupiterTradeError } from '../sdkError'
 
 interface JupiterTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -78,50 +79,45 @@ export class JupiterTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        try {
-            const inputMint = this.tokenAmountIn.token.isNative
-                ? NATIVE_MINT.toBase58()
-                : this.tokenAmountIn.token.solAddress
-            const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
+        const inputMint = this.tokenAmountIn.token.isNative
+            ? NATIVE_MINT.toBase58()
+            : this.tokenAmountIn.token.solAddress
+        const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
 
-            // get quote
-            const quoteResponse = (await fetch(
-                `${JUPITER_API_URL}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${this.tokenAmountIn.raw.toString()}&slippageBps=${
-                    this.slippage
-                }&restrictIntermediateTokens=true`
-            ).then((res) => res.json())) as JupiterQuoteResponse
+        // get quote
+        const quoteResponse = (await fetch(
+            `${JUPITER_API_URL}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${this.tokenAmountIn.raw.toString()}&slippageBps=${
+                this.slippage
+            }&restrictIntermediateTokens=true`
+        ).then((res) => res.json())) as JupiterQuoteResponse
 
-            if (!quoteResponse?.outAmount) {
-                throw new Error('Failed to get quote via jupiter dex')
-            }
-
-            const instructionsResponse = await this.buildInstructions(quoteResponse)
-
-            const amountOut = new TokenAmount(this.tokenOut, quoteResponse.outAmount)
-            const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.otherAmountThreshold)
-
-            const priceImpact = new Percent(
-                BigInt(+Number(quoteResponse.priceImpactPct).toFixed(4) * -10000),
-                BigInt(10000)
-            )
-
-            this.out = {
-                amountOut,
-                amountOutMin,
-                route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact,
-                routerAddress: '',
-                callData: '',
-                callDataOffset: 0,
-                minReceivedOffset: 0,
-                instructions: instructionsResponse.swapTransaction,
-            }
-
-            return this
-        } catch (err) {
-            this.symbiosis.context?.logger.error('Failed to swap via Jupiter', err)
-            throw err
+        if (!quoteResponse?.outAmount) {
+            throw new JupiterTradeError('Failed to get quote')
         }
+
+        const instructionsResponse = await this.buildInstructions(quoteResponse)
+
+        const amountOut = new TokenAmount(this.tokenOut, quoteResponse.outAmount)
+        const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.otherAmountThreshold)
+
+        const priceImpact = new Percent(
+            BigInt(+Number(quoteResponse.priceImpactPct).toFixed(4) * -10000),
+            BigInt(10000)
+        )
+
+        this.out = {
+            amountOut,
+            amountOutMin,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            priceImpact,
+            routerAddress: '',
+            callData: '',
+            callDataOffset: 0,
+            minReceivedOffset: 0,
+            instructions: instructionsResponse.swapTransaction,
+        }
+
+        return this
     }
 
     async buildInstructions(quoteResponse: JupiterQuoteResponse) {
