@@ -6,17 +6,28 @@ export class SdkError extends Error {
         this.name = this.constructor.name
 
         if (cause) {
-            if (cause instanceof AggregateError) {
-                this.message = `${this.message}. AggregateError Cause: ${cause.message} [${cause.errors
-                    .map((e) => e.message)
-                    .join(', ')}]`
-            } else if (cause instanceof Error) {
-                this.message = `${this.message}. Error Cause: ${cause.message}`
-            } else if (typeof cause === 'string' && cause.length > 0) {
-                this.message = `${this.message}. String Cause: ${cause}`
-            } else {
-                this.message = `${this.message}. Unknown Cause`
-            }
+            this.message = `${this.message}. Cause: ${this.unwrapCause(cause)}`
+        }
+    }
+
+    private unwrapCause(cause: unknown): string {
+        if (cause instanceof AggregateError) {
+            const errors = cause.errors
+                .map((e: unknown) => {
+                    return this.unwrapCause(e)
+                })
+                .join(', ')
+            return `${cause.message} [${errors}]`
+        } else if (cause instanceof Error) {
+            return cause.message
+        } else if (typeof cause === 'string' && cause.length > 0) {
+            return cause
+        } else if (typeof cause === 'number') {
+            return `${cause}`
+        } else if (typeof cause === 'object') {
+            return JSON.stringify(cause)
+        } else {
+            return 'Unknown'
         }
     }
 }
