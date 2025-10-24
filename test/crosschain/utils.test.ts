@@ -138,14 +138,29 @@ describe('#splitSlippage', () => {
         })
     })
     test('0.5% true true', () => {
-        expect(() => splitSlippage(50, true, true)).toThrowError('Slippage cannot be less than 0.6% for such swap')
+        const detailedSlippage = splitSlippage(50, true, true)
+        expect(detailedSlippage).toStrictEqual({
+            A: 16.66,
+            B: 16.66,
+            C: 33.33,
+        })
     })
 
     test('0.2% true false', () => {
-        expect(() => splitSlippage(20, true, false)).toThrowError('Slippage cannot be less than 0.4% for such swap')
+        const detailedSlippage = splitSlippage(20, true, false)
+        expect(detailedSlippage).toStrictEqual({
+            A: 10,
+            B: 10,
+            C: 0,
+        })
     })
     test('0.2% false true', () => {
-        expect(() => splitSlippage(20, false, true)).toThrowError('Slippage cannot be less than 0.4% for such swap')
+        const detailedSlippage = splitSlippage(20, false, true)
+        expect(detailedSlippage).toStrictEqual({
+            A: 0,
+            B: 10,
+            C: 20,
+        })
     })
     test('0.2% false false', () => {
         expect(splitSlippage(20, false, false)).toStrictEqual({
@@ -155,6 +170,6 @@ describe('#splitSlippage', () => {
         })
     })
     test('0.1% false false', () => {
-        expect(() => splitSlippage(10, false, false)).toThrowError('Slippage cannot be less than 0.2% for such swap')
+        expect(() => splitSlippage(10, false, false)).toThrowError('Slippage cannot be less than 0.2%')
     })
 })

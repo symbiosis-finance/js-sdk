@@ -272,40 +272,35 @@ export interface DetailedSlippage {
     C: number
 }
 
-export function getMinRequiredSlippage(hasTradeA: boolean, hasTradeC: boolean) {
-    const symbiosisPoolSlippage = 20 // 0.2%
-    const tradeAMinSlippage = 20
-    const tradeCMinSlippage = 20
+export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
+    const minSlippage = 20 // 0.2%
+    if (totalSlippage < minSlippage) {
+        throw new SdkError(`Slippage cannot be less than ${(minSlippage / 100).toString()}%`)
+    }
 
-    let minRequiredSlippage = symbiosisPoolSlippage
+    let extraSwapsCount = 0
     if (hasTradeA) {
-        minRequiredSlippage += tradeAMinSlippage
+        extraSwapsCount += 1
     }
     if (hasTradeC) {
-        minRequiredSlippage += tradeCMinSlippage
+        extraSwapsCount += 1
+    }
+    const swapsCount = extraSwapsCount + 1
+
+    const avg = totalSlippage / swapsCount
+
+    let addition = 0
+    let symbiosisPoolSlippage = avg
+    const symbiosisPoolMaxSlippage = 20 // 0.2%
+    if (avg > symbiosisPoolMaxSlippage) {
+        const rest = avg - symbiosisPoolMaxSlippage
+        symbiosisPoolSlippage = symbiosisPoolMaxSlippage
+        addition = extraSwapsCount > 0 ? rest / extraSwapsCount : 0
     }
 
     return {
-        symbiosisPoolSlippage,
-        minRequiredSlippage,
-    }
-}
-
-export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
-    const { minRequiredSlippage, symbiosisPoolSlippage } = getMinRequiredSlippage(hasTradeA, hasTradeC)
-    if (totalSlippage < minRequiredSlippage) {
-        throw new SdkError(`Slippage cannot be less than ${(minRequiredSlippage / 100).toString()}% for such swap`)
-    }
-
-    const rest = totalSlippage - symbiosisPoolSlippage
-
-    // 50% of the rest of the slippage goes to A, 50% to C
-    const a = hasTradeA ? rest * (hasTradeC ? 0.5 : 1) : 0
-    const c = hasTradeC ? rest * (hasTradeA ? 0.5 : 1) + symbiosisPoolSlippage : 0 // add slippage B because C depends on B
-
-    return {
-        A: a,
-        B: symbiosisPoolSlippage,
-        C: c,
+        A: hasTradeA ? Math.floor((avg + addition) * 100) / 100 : 0,
+        B: Math.floor(symbiosisPoolSlippage * 100) / 100,
+        C: hasTradeC ? Math.floor((avg + addition + symbiosisPoolSlippage) * 100) / 100 : 0,
     }
 }

@@ -1,7 +1,7 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { Percent, Profiler, Token, TokenAmount, wrappedToken } from '../../entities'
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
@@ -35,7 +35,6 @@ import {
     TonTransactionData,
     TradeAContext,
 } from '../types'
-import { Profiler } from '../../entities'
 import { createFakeAmount } from '../../utils'
 import { ChainId } from '../../constants'
 import { isUseOneInchOnly } from '../utils'
