@@ -69,3 +69,61 @@ export function getPkScript(addr: string, btcChainId: ChainId): Buffer {
 export function getAddress(pkScript: string, btcChain: Network): string {
     return address.fromOutputScript(Buffer.from(pkScript.substring(2), 'hex'), btcChain)
 }
+
+async function getPortalSettings(forwarderUrl: string) {
+    // kind of the state: 0=finalized 1=pending 2=best
+    const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=2`)
+
+    const response = await fetch(portalApiUrl)
+    if (!response.ok) {
+        const text = await response.text()
+        const json = JSON.parse(text)
+        throw new Error(json.message ?? text)
+    }
+
+    return response.json()
+}
+
+export async function getBtcPortalFee(forwarderUrl: string, cache: Cache): Promise<string> {
+    let fee = await cache.get(
+        ['getMinBtcFee', forwarderUrl],
+        async () => {
+            const response = await getPortalSettings(forwarderUrl)
+            const {
+                state: { minBtcFee },
+            } = await response.json()
+
+            return Number(minBtcFee)
+        },
+        600 // 10 minutes
+    )
+
+    try {
+        const fastestFee = await cache.get(['getFastestFee'], getFastestFee, 60) // 1 minute
+        const recommendedFee = fastestFee * 200 // 200 vByte
+        if (recommendedFee > fee) {
+            fee = recommendedFee
+        }
+    } catch {
+        /* nothing */
+    }
+    return fee.toString()
+}
+
+export async function getUnwrapDustLimit(forwarderUrl: string, cache: Cache): Promise<string> {
+    const unwrapDustLimit = await cache.get(
+        ['getUnwrapDustLimit', forwarderUrl],
+        async () => {
+            const response = await getPortalSettings(forwarderUrl)
+
+            const {
+                state: { unwrapDustLimit },
+            } = await response.json()
+
+            return Number(unwrapDustLimit)
+        },
+        60 * 60 // 1 hour
+    )
+
+    return unwrapDustLimit.toString()
+}

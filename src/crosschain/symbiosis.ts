@@ -39,6 +39,7 @@ import {
 import {
     AdvisorError,
     aggregatorErrorToText,
+    AmountLessThanFeeError,
     AmountTooHighError,
     AmountTooLowError,
     NoTransitTokenError,
@@ -84,7 +85,7 @@ import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
-import { isTonChainId } from './chainUtils'
+import { isTonChainId, getUnwrapDustLimit } from './chainUtils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet'
 
@@ -216,6 +217,17 @@ export class Symbiosis {
         const json = await response.json()
 
         return json['percent'] as number
+    }
+
+    public async checkDustLimit(amount: TokenAmount) {
+        const btcConfig = this.config.btcConfigs.filter((i) => i.symBtc.chainId !== amount.token.chainId)[0]
+        if (!btcConfig) {
+            throw new SdkError(`BTC config for chain ${amount.token.chainId} not found`)
+        }
+        const dustLimit = await getUnwrapDustLimit(btcConfig.forwarderUrl, this.cache)
+        if (amount.lessThan(dustLimit)) {
+            throw new AmountLessThanFeeError('amountOut must be greater than dust limit')
+        }
     }
 
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {

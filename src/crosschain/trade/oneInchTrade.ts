@@ -49,6 +49,9 @@ const ONE_INCH_CHAINS: ChainId[] = [
     ChainId.ZKSYNC_MAINNET,
     ChainId.BASE_MAINNET,
     ChainId.GNOSIS_MAINNET,
+    // ChainId.UNICHAIN_MAINNET, // TODO
+    // ChainId.LINEA_MAINNET, // TODO
+    // ChainId.SONIC_MAINNET, // TODO
 ]
 
 const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
@@ -61,6 +64,9 @@ const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
     [ChainId.ZKSYNC_MAINNET]: '0x739B4e7a3ad8210B6315F75b24cfe0D3226f6945',
     [ChainId.BASE_MAINNET]: '0x00000000000D6FFc74A8feb35aF5827bf57f6786',
     [ChainId.GNOSIS_MAINNET]: '0x00000000000D6FFc74A8feb35aF5827bf57f6786',
+    // [ChainId.UNICHAIN_MAINNET]: '', // TODO
+    // [ChainId.LINEA_MAINNET]: '', // TODO
+    // [ChainId.SONIC_MAINNET]: '', // TODO
 }
 
 export class OneInchTrade extends SymbiosisTrade {

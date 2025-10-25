@@ -24,36 +24,34 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
             return
         }
 
-        const pools = [
-            ...symbiosis.config.omniPools.filter((i) => i.generalPurpose),
-            symbiosis.config.omniPools[2], // BTC pool
-        ]
-        pools.forEach((poolConfig) => {
-            const combinations = symbiosis.getTransitCombinations({
-                poolConfig,
-                tokenIn: tokenAmountIn.token,
-                tokenOut: syBtc,
-                disableSrcChainRouting,
-                disableDstChainRouting,
-            })
-            combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
-                const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
-                const { from, slippage, deadline, partnerAddress } = context
-
-                const promise = zappingBtc.exactIn({
-                    tokenAmountIn,
-                    syBtc,
-                    from,
-                    to,
-                    slippage,
-                    deadline,
-                    transitTokenIn,
-                    transitTokenOut,
-                    partnerAddress,
+        symbiosis.config.omniPools
+            .filter((i) => i.generalPurpose || i.coinGeckoId === 'bitcoin')
+            .forEach((poolConfig) => {
+                const combinations = symbiosis.getTransitCombinations({
+                    poolConfig,
+                    tokenIn: tokenAmountIn.token,
+                    tokenOut: syBtc,
+                    disableSrcChainRouting,
+                    disableDstChainRouting,
                 })
-                promises.push(promise)
+                combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
+                    const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
+                    const { from, slippage, deadline, partnerAddress } = context
+
+                    const promise = zappingBtc.exactIn({
+                        tokenAmountIn,
+                        syBtc,
+                        from,
+                        to,
+                        slippage,
+                        deadline,
+                        transitTokenIn,
+                        transitTokenOut,
+                        partnerAddress,
+                    })
+                    promises.push(promise)
+                })
             })
-        })
     })
 
     return theBest(promises, selectMode)
