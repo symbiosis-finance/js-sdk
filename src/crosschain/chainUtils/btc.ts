@@ -91,7 +91,7 @@ export async function getBtcPortalFee(forwarderUrl: string, cache: Cache): Promi
             const response = await getPortalSettings(forwarderUrl)
             const {
                 state: { minBtcFee },
-            } = await response.json()
+            } = response
 
             return Number(minBtcFee)
         },
@@ -118,7 +118,7 @@ export async function getUnwrapDustLimit(forwarderUrl: string, cache: Cache): Pr
 
             const {
                 state: { unwrapDustLimit },
-            } = await response.json()
+            } = response
 
             return Number(unwrapDustLimit)
         },

@@ -54,6 +54,9 @@ export class AdvisorError extends SdkError {}
 // ChainFlip
 export class ChainFlipError extends SdkError {}
 
+// ThorChain
+export class ThorChainError extends SdkError {}
+
 // trade
 export class TradeError extends SdkError {}
 

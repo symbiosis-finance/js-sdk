@@ -1,5 +1,5 @@
 import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer, utils } from 'ethers'
+import { Signer, utils, BigNumber } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
@@ -225,8 +225,8 @@ export class Symbiosis {
             throw new SdkError(`BTC config for chain ${amount.token.chainId} not found`)
         }
         const dustLimit = await getUnwrapDustLimit(btcConfig.forwarderUrl, this.cache)
-        if (amount.lessThan(dustLimit)) {
-            throw new AmountLessThanFeeError('amountOut must be greater than dust limit')
+        if (BigNumber.from(amount.raw.toString()).lt(dustLimit)) {
+            throw new AmountLessThanFeeError(`amountOut must be greater than dust limit: ${dustLimit} satoshi`)
         }
     }
 
