@@ -110,6 +110,8 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     })
     calls.push(burnCall)
 
+    await symbiosis.checkDustLimit(burnCall.amountOutMin)
+
     const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
         inTokenAmount.raw.toString(),
         [...calls.map((i) => i.data)],

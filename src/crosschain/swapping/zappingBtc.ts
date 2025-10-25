@@ -141,6 +141,8 @@ export class ZappingBtc extends BaseSwapping {
         const tokenAmountOut = new TokenAmount(btc, amountOut.subtract(this.minBtcFee).raw)
         const tokenAmountOutMin = new TokenAmount(btc, amountOutMin.subtract(this.minBtcFee).raw)
 
+        await this.symbiosis.checkDustLimit(tokenAmountOutMin)
+
         const fees = [
             ...result.fees,
             {

@@ -30,7 +30,7 @@ export const config: Config = {
             address: '0xBf084Ee3E5C73129167167Bd5DB9FE8513d8F7e0',
             oracle: '0x597282d7F75Cf34450395D92a087C71F597024f5',
             generalPurpose: false,
-            coinGeckoId: 'wrapped-bitcoin',
+            coinGeckoId: 'bitcoin',
         },
         {
             // LADYS

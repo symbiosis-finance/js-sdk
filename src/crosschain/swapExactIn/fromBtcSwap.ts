@@ -7,11 +7,9 @@ import { BtcConfig, FeeItem, MultiCallItem, RouteItem, SwapExactInParams, SwapEx
 import { Fraction, Percent, TokenAmount } from '../../entities'
 
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
-import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
+import { getBtcPortalFee, getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
 import { ERC20__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { Cache } from '../cache'
-import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
 import { theBest } from './utils'
 import { ChainId } from '../../constants'
@@ -666,39 +664,4 @@ async function wrap({
 
 function encodeTail(tail: string): string {
     return Buffer.from(tail.slice(2), 'hex').toString('base64')
-}
-
-async function getBtcPortalFee(forwarderUrl: string, cache: Cache): Promise<string> {
-    let fee = await cache.get(
-        ['getMinBtcFee'],
-        async () => {
-            // kind of the state: 0=finalized 1=pending 2=best
-            const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=2`)
-
-            const response = await fetch(portalApiUrl)
-            if (!response.ok) {
-                const text = await response.text()
-                const json = JSON.parse(text)
-                throw new SdkError(json.message ?? text)
-            }
-
-            const {
-                state: { minBtcFee },
-            } = await response.json()
-
-            return Number(minBtcFee)
-        },
-        600 // 10 minutes
-    )
-
-    try {
-        const fastestFee = await cache.get(['getFastestFee'], getFastestFee, 60) // 1 minute
-        const recommendedFee = fastestFee * 200 // 200 vByte
-        if (recommendedFee > fee) {
-            fee = recommendedFee
-        }
-    } catch {
-        /* nothing */
-    }
-    return fee.toString()
 }

@@ -7,6 +7,7 @@ import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
 import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types'
 import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
+import { ChainFlipError } from '../../sdkError'
 
 const CF_BTC_BTC: ChainFlipToken = {
     chainId: ChainFlipChainId.Bitcoin,
@@ -41,7 +42,7 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
     const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
 
     if (!CF_CONFIGS.length) {
-        throw new Error('ChainFlipSwap: No config found for tokenOut')
+        throw new ChainFlipError('No config found for tokenOut')
     }
 
     const promises: Promise<SwapExactInResult>[] = []
