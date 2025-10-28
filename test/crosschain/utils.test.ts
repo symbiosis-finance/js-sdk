@@ -146,6 +146,14 @@ describe('#splitSlippage', () => {
         })
     })
 
+    test('0.2% true true', () => {
+        const detailedSlippage = splitSlippage(20, true, true)
+        expect(detailedSlippage).toStrictEqual({
+            A: 6.66,
+            B: 6.66,
+            C: 13.33,
+        })
+    })
     test('0.2% true false', () => {
         const detailedSlippage = splitSlippage(20, true, false)
         expect(detailedSlippage).toStrictEqual({
