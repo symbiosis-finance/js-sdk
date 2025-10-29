@@ -88,7 +88,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             isOpenOceanUsage = aggregators[i] === 'open-ocean'
         }
 
-        const timeout = 2000 // 2s
+        const timeout = 3000 // 3s
         const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
             return new Promise<T>((resolve, reject) => {
                 const timer = setTimeout(() => {
