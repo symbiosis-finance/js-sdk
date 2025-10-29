@@ -582,10 +582,12 @@ async function buildDepositCall({
             targetOffset, // offset to patch-in amountTo in targetCalldata
         }
         const swapCondition = await dep.swapUnlocker.encodeCondition(condData)
-        branches.push({
-            unlocker: dep.swapUnlocker.address,
-            condition: swapCondition,
-        })
+        branches.push(
+            await makeTimed(dep.cfg.minAmountDelay, {
+                unlocker: dep.swapUnlocker.address,
+                condition: swapCondition,
+            })
+        )
     }
 
     // Transit token withdraw (i.e. syBTC)
