@@ -195,7 +195,12 @@ export class AggregatorTrade extends SymbiosisTrade {
                     if (theBestTrade) {
                         resolve(theBestTrade)
                     } else {
-                        reject(new AggregateError(errors, 'Aggregator trade failed'))
+                        reject(
+                            new AggregateError(
+                                errors,
+                                `Aggregator trade failed: ${timeout ? 'timeout' : 'all trades failed'}`
+                            )
+                        )
                     }
                     clearInterval(intervalId)
                     return
