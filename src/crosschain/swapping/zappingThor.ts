@@ -3,11 +3,11 @@ import { GAS_TOKEN, Token, TokenAmount } from '../../entities/index.ts'
 import { BaseSwapping } from './baseSwapping.ts'
 import { MulticallRouter, ThorRouter__factory } from '../contracts/index.ts'
 import { OneInchProtocols } from '../trade/oneInchTrade.ts'
-import { Error, ErrorCode } from '../error.ts'
+import { ThorChainError } from '../sdkError.ts'
 import { BigNumber } from 'ethers'
 import { getMinAmount, isEvmChainId } from '../chainUtils/index.ts'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
-import { Address, SwapExactInResult } from '../types.ts'
+import { Address, EvmAddress, SwapExactInResult } from '../types.ts'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
@@ -16,6 +16,7 @@ export interface ZappingThorExactInParams {
     to: Address
     slippage: number
     deadline: number
+    partnerAddress?: EvmAddress
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -69,7 +70,7 @@ function toThorChain(chainId: ChainId): string {
     } else if (chainId === ChainId.BSC_MAINNET) {
         chain = 'BSC'
     } else {
-        throw new Error('toThorChain: unknown chain')
+        throw new ThorChainError(`Unknown chain: ${chainId}`)
     }
     return chain
 }
@@ -95,10 +96,7 @@ export class ZappingThor extends BaseSwapping {
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
         if (amountIn < MIN_AMOUNT_IN) {
-            throw new Error(
-                `The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`,
-                ErrorCode.MIN_THORCHAIN_AMOUNT_IN
-            )
+            throw new ThorChainError(`The min swap amount towards Bitcoin is $${MIN_AMOUNT_IN}`)
         }
         this.thorQuote = await this.getThorQuote(this.transit.amountOut)
     }
@@ -110,14 +108,15 @@ export class ZappingThor extends BaseSwapping {
         to,
         slippage,
         deadline,
+        partnerAddress,
     }: ZappingThorExactInParams): Promise<SwapExactInResult> {
         const isAddressValid = validate(to)
         if (!isAddressValid) {
-            throw new Error('Bitcoin address is not valid')
+            throw new ThorChainError('Bitcoin address is not valid')
         }
         const addressInfo = getAddressInfo(to)
         if (addressInfo.type === AddressType.p2tr) {
-            throw new Error(`ThorChain doesn't support taproot addresses`, ErrorCode.THORCHAIN_NOT_SUPPORTED_ADDRESS)
+            throw new ThorChainError(`ThorChain doesn't support taproot addresses`)
         }
         this.bitcoinAddress = to
         this.thorTokenIn = thorTokenIn
@@ -136,7 +135,7 @@ export class ZappingThor extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(thorTokenIn.chainId, this.omniPoolConfig)
         if (transitTokenIn.equals(transitTokenOut)) {
-            throw new Error('Same transit token')
+            throw new ThorChainError('Same transit token')
         }
 
         const result = await this.doExactIn({
@@ -148,6 +147,7 @@ export class ZappingThor extends BaseSwapping {
             deadline,
             transitTokenIn,
             transitTokenOut,
+            partnerAddress,
         })
 
         return {
@@ -186,10 +186,10 @@ export class ZappingThor extends BaseSwapping {
             return i.asset === toThorToken(token)
         })
         if (!found) {
-            throw new Error('Thor pool not found')
+            throw new ThorChainError('Thor pool not found')
         }
         if (found.status !== 'Available') {
-            throw new Error('Thor pool is not available')
+            throw new ThorChainError('Thor pool is not available')
         }
         return found
     }
@@ -205,14 +205,14 @@ export class ZappingThor extends BaseSwapping {
         const json = await response.json()
 
         if (json.error) {
-            throw new Error(json.error)
+            throw new ThorChainError(json.error)
         }
 
         const found = json.find((i: any) => {
             return i.chain === toThorChain(token.chainId)
         })
         if (!found) {
-            throw new Error('Thor vault not found')
+            throw new ThorChainError('Thor vault not found')
         }
         return found.address
     }
@@ -239,7 +239,7 @@ export class ZappingThor extends BaseSwapping {
         const json = await response.json()
 
         if (json.error) {
-            throw new Error(json.error)
+            throw new ThorChainError(json.error)
         }
         const { memo, expected_amount_out: expectedAmountOut, router, expiry, fees } = json
 

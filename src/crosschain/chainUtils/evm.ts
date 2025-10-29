@@ -1,6 +1,6 @@
-import { Filter, Log, TransactionRequest } from '@ethersproject/providers'
+import { Filter, Log } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import { BigNumber, Signer, utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
 import { BigintIsh, ChainId, ONE } from '../../constants.ts'
 import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities/index.ts'
@@ -8,11 +8,11 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../const
 import type { Symbiosis } from '../symbiosis.ts'
 import { Field } from '../types.ts'
 import flatMap from 'lodash.flatmap'
-import { Error } from '../error.ts'
 import { isBtcChainId } from './btc.ts'
 import { isTronChainId } from './tron.ts'
 import { isTonChainId } from './ton.ts'
 import { isSolanaChainId } from './solana.ts'
+import { SdkError } from '../sdkError.ts'
 
 interface GetInternalIdParams {
     contractAddress: string
@@ -125,7 +125,7 @@ export function calculatePriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut:
         tokenAmountIn.token.decimals
     ).toString()
     if (typedValueParsed === '0') {
-        throw new Error('Cannot parse amountOut with decimals')
+        throw new SdkError('Cannot parse amountOut with decimals')
     }
     const amountIn = tokenAmountIn.raw
     const amountOut = JSBI.BigInt(typedValueParsed)
@@ -158,7 +158,7 @@ function _promiseRaceResolved<T>(promises: Promise<T>[]): Promise<T> {
         const onReject = () => {
             rejectCounter++
             if (rejectCounter === totalPromises) {
-                reject(new Error('All promises were rejected.'))
+                reject(new SdkError('All promises were rejected.'))
             }
         }
 
@@ -218,40 +218,6 @@ export async function getLogWithTimeout({
     })
 }
 
-const TELOS_MPC_ADDRESS = '0xDcB7d65b15436CE9B608864ACcff75871C6556FC'
-
-// Sets the necessary parameters for send transaction
-export async function prepareTransactionRequest(
-    transactionRequest: TransactionRequest,
-    signer: Signer
-): Promise<TransactionRequest> {
-    const { provider } = signer
-    if (!provider) {
-        throw new Error('Signer has no provider')
-    }
-
-    const preparedTransactionRequest = { ...transactionRequest }
-
-    let { from } = transactionRequest
-    if (transactionRequest.chainId === ChainId.TELOS_MAINNET) {
-        // Set address with balance (symbiosis mpc) for TELOS to avoid "insufficient funds for gas" error
-        from = TELOS_MPC_ADDRESS
-    }
-
-    const gasLimit = await provider.estimateGas({ ...transactionRequest, from })
-
-    preparedTransactionRequest.gasLimit = calculateGasMargin(gasLimit)
-
-    const { chainId: requestChainId } = preparedTransactionRequest
-    if (requestChainId === ChainId.MATIC_MAINNET || requestChainId === ChainId.MATIC_MUMBAI) {
-        // Double gas price for MATIC
-        const gasPrice = await signer.getGasPrice()
-        preparedTransactionRequest.gasPrice = gasPrice.mul(2)
-    }
-
-    return preparedTransactionRequest
-}
-
 export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token, Token][] {
     const chainId = tokenIn.chainId
 
@@ -261,7 +227,7 @@ export function getAllPairCombinations(tokenIn: Token, tokenOut: Token): [Token,
     // All pairs from base tokens
     const basePairs: [Token, Token][] = flatMap(bases, (base: Token): [Token, Token][] =>
         bases.map((otherBase) => [base, otherBase])
-    ).filter(([t0, t1]) => t0.address !== t1.address)
+    ).filter(([t0, t1]: [Token, Token]) => t0.address !== t1.address)
 
     const [tokenA, tokenB] = [wrappedToken(tokenIn), wrappedToken(tokenOut)]
     if (!tokenA || !tokenB) {
@@ -307,37 +273,34 @@ export interface DetailedSlippage {
 }
 
 export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
-    const MINIMUM_SLIPPAGE = 20 // 0.2%
-    if (totalSlippage < MINIMUM_SLIPPAGE) {
-        throw new Error('Slippage cannot be less than 0.2%')
+    const minSlippage = 20 // 0.2%
+    if (totalSlippage < minSlippage) {
+        throw new SdkError(`Slippage cannot be less than ${(minSlippage / 100).toString()}%`)
     }
-    let swapsCount = 1
+
     let extraSwapsCount = 0
     if (hasTradeA) {
         extraSwapsCount += 1
     }
-
     if (hasTradeC) {
         extraSwapsCount += 1
     }
-    swapsCount += extraSwapsCount
+    const swapsCount = extraSwapsCount + 1
 
-    const slippage = Math.floor((totalSlippage * 10) / swapsCount) / 10
-    const MAX_STABLE_SLIPPAGE = 50 // 0.5%
-    if (slippage > MAX_STABLE_SLIPPAGE) {
-        const diff = slippage - MAX_STABLE_SLIPPAGE
-        const addition = extraSwapsCount > 0 ? Math.floor((diff * 10) / extraSwapsCount) / 10 : 0
+    const avg = totalSlippage / swapsCount
 
-        return {
-            A: hasTradeA ? slippage + addition : 0,
-            B: MAX_STABLE_SLIPPAGE,
-            C: hasTradeC ? totalSlippage : 0,
-        }
+    let addition = 0
+    let symbiosisPoolSlippage = avg
+    const symbiosisPoolMaxSlippage = 20 // 0.2%
+    if (avg > symbiosisPoolMaxSlippage) {
+        const rest = avg - symbiosisPoolMaxSlippage
+        symbiosisPoolSlippage = symbiosisPoolMaxSlippage
+        addition = extraSwapsCount > 0 ? rest / extraSwapsCount : 0
     }
 
     return {
-        A: hasTradeA ? slippage : 0,
-        B: slippage,
-        C: hasTradeC ? totalSlippage : 0,
+        A: hasTradeA ? Math.floor((avg + addition) * 100) / 100 : 0,
+        B: Math.floor(symbiosisPoolSlippage * 100) / 100,
+        C: hasTradeC ? Math.floor((avg + addition + symbiosisPoolSlippage) * 100) / 100 : 0,
     }
 }

@@ -7,6 +7,7 @@ import { SOL_USDC } from '../../chainUtils/index.ts'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip.ts'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip.ts'
 import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils.ts'
+import { ChainFlipError } from '../../sdkError.ts'
 
 const CF_SOL_SOL: ChainFlipToken = {
     chainId: ChainFlipChainId.Solana,
@@ -60,7 +61,7 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
     const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
 
     if (!CF_CONFIGS.length) {
-        throw new Error('ChainFlipSwap: No config found for tokenOut')
+        throw new ChainFlipError('No config found for tokenOut')
     }
 
     const promises: Promise<SwapExactInResult>[] = []

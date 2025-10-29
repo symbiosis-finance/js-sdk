@@ -1,4 +1,5 @@
-export { isBtcChainId, getPkScript, getAddress, BTC_NETWORKS } from './btc.ts'
+export * from './ton.ts'
+export * from './btc.ts'
 export * from './ton.ts'
 export {
     prepareTronTransaction,

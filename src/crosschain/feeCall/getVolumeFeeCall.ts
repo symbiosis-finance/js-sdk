@@ -4,7 +4,7 @@ import { OctoPoolFeeCollector__factory } from '../contracts/index.ts'
 import { BIPS_BASE } from '../constants.ts'
 import { BigNumber } from 'ethers'
 
-export async function getVolumeFeeCall({
+export function getVolumeFeeCall({
     feeCollector,
     amountIn,
     amountInMin,
@@ -12,7 +12,7 @@ export async function getVolumeFeeCall({
     feeCollector: VolumeFeeCollector
     amountIn: TokenAmount
     amountInMin?: TokenAmount
-}): Promise<MultiCallItem> {
+}): MultiCallItem {
     const WAD = BigNumber.from(10).pow(18)
     // amountOut
     const amountInBn = BigNumber.from(amountIn.raw.toString())

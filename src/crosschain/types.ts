@@ -1,4 +1,5 @@
 import { TransactionRequest } from '@ethersproject/providers'
+import { BigNumber } from 'ethers'
 
 import { ChainId, TokenConstructor } from '../constants.ts'
 import { Percent, Token, TokenAmount } from '../entities/index.ts'
@@ -9,8 +10,8 @@ import { Symbiosis } from './symbiosis.ts'
 import { ProfilerItem } from '../entities/profiler.ts'
 import { SymbiosisTrade } from './trade/symbiosisTrade.ts'
 import { BytesLike } from 'ethers'
+import { PartnerFeeCollector } from './contracts'
 import { Cache } from './cache.ts'
-import { Logger } from 'pino'
 import { ConfigCacheData } from './config/cache/builder.ts'
 
 export enum Field {
@@ -190,6 +191,8 @@ export interface SwapExactInParams {
     partnerAddress?: EvmAddress
     refundAddress?: BtcAddress | EmptyAddress
     generateBtcDepositAddress?: boolean
+    disableSrcChainRouting?: boolean
+    disableDstChainRouting?: boolean
 }
 
 export type BtcTransactionData = {
@@ -275,6 +278,13 @@ export type MultiCallItem = {
     routes: RouteItem[]
 }
 
+export type PartnerFeeCallParams = {
+    partnerAddress: string
+    partnerFeeCollector: PartnerFeeCollector
+    feeRate: BigNumber
+    fixedFee: BigNumber
+}
+
 export type MetricParams = {
     operation: string
     kind: string
@@ -293,8 +303,4 @@ export type PriceImpactMetricParams = {
     name_to: string
     token_amount: number
     price_impact: number
-}
-
-export type Context = {
-    logger: Logger
 }

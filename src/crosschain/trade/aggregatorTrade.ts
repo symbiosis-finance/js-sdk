@@ -41,7 +41,8 @@ export class AggregatorTrade extends SymbiosisTrade {
     }
 
     public async init() {
-        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenOut, oneInchProtocols } = this.params
+        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenAmountInMin, tokenOut, oneInchProtocols } =
+            this.params
 
         const trades: (Trade | undefined)[] = []
         const errors: Error[] = []
@@ -53,7 +54,6 @@ export class AggregatorTrade extends SymbiosisTrade {
         function failTrade(e: Error) {
             trades.push(undefined)
             errors.push(e)
-            symbiosis.context?.logger.error(e)
         }
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)
@@ -88,11 +88,30 @@ export class AggregatorTrade extends SymbiosisTrade {
             isOpenOceanUsage = aggregators[i] === 'open-ocean'
         }
 
+        const timeout = 30000 // 30s
+        const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
+            return new Promise<T>((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    reject(new Error(`Timeout: ${name}`))
+                }, timeout)
+                promise
+                    .then((res) => {
+                        clearTimeout(timer)
+                        resolve(res)
+                    })
+                    .catch((err) => {
+                        clearTimeout(timer)
+                        reject(err)
+                    })
+            })
+        }
+
         let tradesCount = 0
         if (isOneInchUsage) {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 from,
                 to,
@@ -101,8 +120,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            oneInchTrade
-                .init()
+            withTimeout(oneInchTrade.init(), '1inch')
                 .then(successTrade)
                 .catch((e: Error) => {
                     symbiosis.trackAggregatorError({
@@ -119,13 +137,13 @@ export class AggregatorTrade extends SymbiosisTrade {
                 symbiosis,
                 to,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 slippage,
             })
 
             tradesCount += 1
-            openOceanTrade
-                .init()
+            withTimeout(openOceanTrade.init(), 'OpenOcean')
                 .then(successTrade)
                 .catch((e: Error) => {
                     symbiosis.trackAggregatorError({
@@ -141,32 +159,35 @@ export class AggregatorTrade extends SymbiosisTrade {
             const izumiTrade = new IzumiTrade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 slippage,
                 deadline,
                 to,
             })
             tradesCount += 1
-            izumiTrade.init().then(successTrade).catch(failTrade)
+            withTimeout(izumiTrade.init(), 'Izumi').then(successTrade).catch(failTrade)
         }
 
         if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
             const uniV3Trade = new UniV3Trade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 slippage,
                 deadline,
                 to,
             })
             tradesCount += 1
-            uniV3Trade.init().then(successTrade).catch(failTrade)
+            withTimeout(uniV3Trade.init(), 'UniV3').then(successTrade).catch(failTrade)
         }
 
         if (isOtherClient && UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
             const uniV2Trade = new UniV2Trade({
                 symbiosis,
                 tokenAmountIn,
+                tokenAmountInMin,
                 tokenOut,
                 to,
                 slippage,
@@ -174,27 +195,26 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             tradesCount += 1
-            uniV2Trade.init().then(successTrade).catch(failTrade)
+            withTimeout(uniV2Trade.init(), 'UniV2').then(successTrade).catch(failTrade)
         }
 
         this.trade = await new Promise((resolve, reject) => {
             const startTime = Date.now()
             const intervalId = setInterval(() => {
                 const diff = Date.now() - startTime
-                const timeout = diff >= 2000
                 const allTradesFinished = trades.length === tradesCount
                 const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
 
-                if (allTradesFinished || timeout) {
+                if (allTradesFinished) {
                     const theBestTrade = this.selectTheBestTrade(successTrades)
                     if (theBestTrade) {
                         resolve(theBestTrade)
                     } else {
-                        reject(new AggregateError(errors, 'Aggregator trade failed'))
+                        reject(new AggregateError(errors, `AggregatorTrade: all trades failed`))
                     }
                     clearInterval(intervalId)
                     return
-                } else if (diff >= 500) {
+                } else if (diff >= 200) {
                     const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
                     const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
 
@@ -269,9 +289,9 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this.trade.functionSelector
     }
 
-    public applyAmountIn(newAmount: TokenAmount) {
+    public applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
         this.assertTradeInitialized('applyAmountIn')
-        this.trade.applyAmountIn(newAmount)
+        this.trade.applyAmountIn(newAmountIn, newAmountInMin)
     }
 
     get fees(): FeeItem[] | undefined {

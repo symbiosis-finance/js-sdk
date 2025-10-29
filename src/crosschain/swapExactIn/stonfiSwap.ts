@@ -20,6 +20,7 @@ export async function stonfiSwap({
     const trade = new StonfiTrade({
         symbiosis,
         tokenAmountIn,
+        tokenAmountInMin: tokenAmountIn,
         tokenOut,
         from,
         to,

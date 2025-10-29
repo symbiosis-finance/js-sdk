@@ -5,7 +5,7 @@ import { ChainId } from '../../constants.ts'
 import { Symbiosis } from '../symbiosis.ts'
 import { Token, TokenAmount } from '../../entities/index.ts'
 import { TonTransactionData } from '../types.ts'
-import { Error } from '../error.ts'
+import { SdkError } from '../sdkError.ts'
 import { parseUnits } from '@ethersproject/units'
 
 export const TON_TOKEN_DECIMALS = 9
@@ -237,11 +237,11 @@ export async function buildMetaSynthesize(params: MetaSynthesizeParams): Promise
     } = params
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)
     if (!tonChainConfig) {
-        throw new Error(`No TON chain config for chain ${amountIn.token.chainId}`)
+        throw new SdkError(`No TON chain config for chain ${amountIn.token.chainId}`)
     }
     const tonPortal = tonChainConfig.tonPortal
     if (!tonPortal) {
-        throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
+        throw new SdkError(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
     const tonTokenAddress = amountIn.token.tonAddress
@@ -325,11 +325,11 @@ export async function buildSynthesize(params: SynthesizeParams): Promise<TonTran
     const { symbiosis, fee, from, amountIn, to, chainIdOut, validUntil, revertableAddress } = params
     const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === amountIn.token.chainId)
     if (!tonChainConfig) {
-        throw new Error(`No TON chain config for chain ${amountIn.token.chainId}`)
+        throw new SdkError(`No TON chain config for chain ${amountIn.token.chainId}`)
     }
     const tonPortal = tonChainConfig.tonPortal
     if (!tonPortal) {
-        throw new Error(`No TON portal for chain ${amountIn.token.chainId}`)
+        throw new SdkError(`No TON portal for chain ${amountIn.token.chainId}`)
     }
 
     const tonTokenAddress = amountIn.token.tonAddress

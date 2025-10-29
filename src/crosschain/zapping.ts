@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
 import { Percent, Token, TokenAmount, wrappedToken } from '../entities/index.ts'
 import { BIPS_BASE, CROSS_CHAIN_ID } from './constants.ts'
-import { Error, ErrorCode } from './error.ts'
+import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError.ts'
 import type { Symbiosis } from './symbiosis.ts'
 import { AggregatorTrade, WrapTrade } from './trade/index.ts'
 import {
@@ -91,7 +91,7 @@ export class Zapping {
 
         const targetPool = this.symbiosis.getOmniPoolByConfig(this.omniPoolConfig)
         if (!targetPool) {
-            throw new Error(`Unknown pool ${this.omniPoolConfig.address}`)
+            throw new SdkError(`Unknown pool ${this.omniPoolConfig.address}`)
         }
         const wrapped = wrappedToken(tokenAmountIn.token)
         const tokenPool = this.symbiosis.getOmniPoolByToken(wrapped)
@@ -283,11 +283,10 @@ export class Zapping {
 
         if (fee) {
             if (synthAmount.lessThan(fee) || synthAmount.equalTo(fee)) {
-                throw new Error(
+                throw new AmountLessThanFeeError(
                     `Amount ${synthAmount.toSignificant()} ${
                         synthAmount.token.symbol
-                    } less than fee ${fee.toSignificant()} ${fee.token.symbol}`,
-                    ErrorCode.AMOUNT_LESS_THAN_FEE
+                    } less than fee ${fee.toSignificant()} ${fee.token.symbol}`
                 )
             }
 
@@ -303,9 +302,10 @@ export class Zapping {
         const from = this.symbiosis.metaRouter(chainId).address
         const to = from
 
-        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
+        if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: this.tokenAmountIn,
+                tokenAmountInMin: this.tokenAmountIn, // correct as it is tradeA
                 tokenOut,
                 to: this.to,
             })
@@ -313,6 +313,7 @@ export class Zapping {
 
         return new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
+            tokenAmountInMin: this.tokenAmountIn,
             tokenOut,
             from,
             to,
@@ -342,7 +343,7 @@ export class Zapping {
 
     private otherSideSynthCallData(fee: TokenAmount): [string, string] {
         if (!this.tokenAmountIn) {
-            throw new Error('Token is not set')
+            throw new SdkError('Token is not set')
         }
 
         const chainIdIn = this.tokenAmountIn.token.chainId
@@ -381,9 +382,8 @@ export class Zapping {
         const rep = this.symbiosis.getRepresentation(this.transitTokenIn, chainIdOut)
 
         if (!rep) {
-            throw new Error(
-                `Representation of ${this.transitTokenIn.symbol} in chain ${chainIdOut} not found`,
-                ErrorCode.NO_REPRESENTATION_FOUND
+            throw new NoRepresentationFoundError(
+                `Representation of ${this.transitTokenIn.symbol} in chain ${chainIdOut} not found`
             )
         }
 

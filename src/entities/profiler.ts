@@ -38,6 +38,6 @@ export class Profiler {
             stop: this.stop,
             duration: this.stop - this.start,
         })
-        return list.filter((i) => i.duration > 10)
+        return list.filter((i) => i.duration > 1)
     }
 }

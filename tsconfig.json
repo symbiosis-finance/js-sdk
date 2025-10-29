@@ -3,7 +3,7 @@
     "exclude": ["node_modules", "dist"],
     "compilerOptions": {
         "target": "es2021",
-        "module": "nodenext",
+        "module": "preserve",
         "importHelpers": false,
         "skipLibCheck": true,
         "declaration": true,
@@ -19,7 +19,7 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "nodenext",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "allowJs": true,

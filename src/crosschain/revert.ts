@@ -3,7 +3,7 @@ import { MaxUint256, AddressZero } from '@ethersproject/constants'
 import { BigNumberish, BytesLike } from 'ethers'
 import JSBI from 'jsbi'
 import { Token, TokenAmount } from '../entities/index.ts'
-import { Error, ErrorCode } from './error.ts'
+import { AmountLessThanFeeError, SdkError } from './sdkError.ts'
 import type { Symbiosis } from './symbiosis.ts'
 import {
     getExternalId,
@@ -50,7 +50,7 @@ export class RevertPending {
         const token = this.request.fromTokenAmount.token
         const omniPoolConfig = symbiosis.getOmniPoolByToken(token)
         if (!omniPoolConfig) {
-            throw new Error(`Cannot find omni pool config by token ${token.address}`)
+            throw new SdkError(`Cannot find omni pool config by token ${token.address}`)
         }
 
         this.omniPoolConfig = omniPoolConfig
@@ -141,7 +141,7 @@ export class RevertPending {
         const synthesis = this.symbiosis.synthesis(this.omniPoolConfig.chainId)
         const synth = this.getSyntheticToken(this.transitTokenFrom)
         if (!synth) {
-            throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
+            throw new SdkError(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
         const metarouter = this.symbiosis.metaRouter(this.omniPoolConfig.chainId)
@@ -250,11 +250,10 @@ export class RevertPending {
             this.request.originalFromTokenAmount.lessThan(feeTokenAmount) ||
             this.request.originalFromTokenAmount.equalTo(feeTokenAmount)
         ) {
-            throw new Error(
+            throw new AmountLessThanFeeError(
                 `Amount ${this.request.fromTokenAmount.toSignificant()} ${
                     this.request.fromTokenAmount.token.symbol
-                } less than fee ${feeTokenAmount.toSignificant()} ${feeTokenAmount.token.symbol}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
+                } less than fee ${feeTokenAmount.toSignificant()} ${feeTokenAmount.token.symbol}`
             )
         }
 
@@ -406,14 +405,14 @@ export class RevertPending {
 
         const tokenIn = this.getSyntheticToken(this.transitTokenTo)
         if (!tokenIn) {
-            throw new Error(`Cannot find synthetic token between mChain and ${chainIdTo}`)
+            throw new SdkError(`Cannot find synthetic token between mChain and ${chainIdTo}`)
         }
         const tokenAmountIn = new TokenAmount(tokenIn, originalFromTokenAmount.raw) // sStable -> Stable
         const amount = fee ? new TokenAmount(tokenIn, JSBI.subtract(tokenAmountIn.raw, fee.raw)) : tokenAmountIn
 
         const tokenOut = this.getSyntheticToken(this.transitTokenFrom)
         if (!tokenOut) {
-            throw new Error(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
+            throw new SdkError(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
         const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address

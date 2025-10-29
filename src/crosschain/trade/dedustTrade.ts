@@ -5,11 +5,11 @@ import {
     JettonRoot,
     JettonWallet,
     MAINNET_FACTORY_ADDR,
+    Pool,
     PoolType,
     ReadinessStatus,
     VaultJetton,
     VaultNative,
-    Pool,
 } from '@dedust/sdk'
 
 import { GAS_TOKEN, Percent, Token, TokenAmount } from '../../entities/index.ts'
@@ -21,6 +21,7 @@ import { BIPS_BASE } from '../constants.ts'
 import { ChainId } from '../../constants.ts'
 import { TonAddress, FeeItem } from '../types.ts'
 import { CoinGecko } from '../coingecko/index.ts'
+import { DedustTradeError } from '../sdkError.ts'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -147,7 +148,7 @@ export class DedustTrade extends SymbiosisTrade {
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [Asset.native(), tokenB]))
 
             if ((await tonVault.getReadinessStatus()) !== ReadinessStatus.READY) {
-                throw new Error('Vault (TON) Dedust does not exist.')
+                throw new DedustTradeError('Vault (TON) Dedust does not exist.')
             }
         } else if (tokenOut.isNative) {
             const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
@@ -185,7 +186,7 @@ export class DedustTrade extends SymbiosisTrade {
                     pool = poolTonOut
                     secondPool = poolTonIn
                 } else {
-                    throw new Error('Dedust can not find pool for this trade')
+                    throw new DedustTradeError('Cannot find pool for this trade')
                 }
             }
         }
@@ -262,7 +263,7 @@ export class DedustTrade extends SymbiosisTrade {
         if (isTonIn) {
             // Check if vault exits:
             if ((await tonVault.getReadinessStatus()) !== ReadinessStatus.READY) {
-                throw new Error('Vault (TON) does not exist.')
+                throw new DedustTradeError('Vault (TON) does not exist.')
             }
 
             txParams = this.buildTonSwapCalldata({
@@ -313,11 +314,11 @@ export class DedustTrade extends SymbiosisTrade {
                 })
             }
         } else {
-            throw new Error('Failed to build calldata for dedust trade')
+            throw new DedustTradeError('Failed to build calldata')
         }
 
         if (!txParams) {
-            throw new Error("Dedust doesn't support this trade")
+            throw new DedustTradeError("Doesn't support this trade")
         }
 
         return {

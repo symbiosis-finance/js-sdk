@@ -1,6 +1,6 @@
 export * from './symbiosis.ts'
 export * from './types.ts'
-export * from './error.ts'
+export * from './sdkError.ts'
 export * from './chainUtils/index.ts'
 export * from './constants.ts'
 export * from './multicall.ts'

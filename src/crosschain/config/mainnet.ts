@@ -30,7 +30,7 @@ export const config: Config = {
             address: '0xBf084Ee3E5C73129167167Bd5DB9FE8513d8F7e0',
             oracle: '0x597282d7F75Cf34450395D92a087C71F597024f5',
             generalPurpose: false,
-            coinGeckoId: 'wrapped-bitcoin',
+            coinGeckoId: 'bitcoin',
         },
         {
             // LADYS
@@ -329,8 +329,8 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-            dexFee: 30,
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
             metaRouter: '0xf621Fb08BBE51aF70e7E0F4EA63496894166Ff7F',
             metaRouterGateway: '0xfCEF2Fe72413b65d3F393d278A714caD87512bcd',
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
@@ -670,6 +670,7 @@ export const config: Config = {
             rpc: 'https://symbiosis.calderachain.xyz/http',
             spareRpcs: [],
             filterBlockOffset: 1000,
+            partnerFeeCollector: '0x783EE304C54d4658f59EAefb73b32D37ee466e23',
             stables: [
                 {
                     chainId: ChainId.SYMBIOSIS_MAINNET,

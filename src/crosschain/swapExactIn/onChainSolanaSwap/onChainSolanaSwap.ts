@@ -19,6 +19,7 @@ export function onChainSolanaSwap({
     const raydiumTradeInstance = new RaydiumTrade({
         symbiosis,
         tokenAmountIn,
+        tokenAmountInMin: tokenAmountIn,
         tokenOut,
         from,
         to,
@@ -28,6 +29,7 @@ export function onChainSolanaSwap({
     const jupiterTradeInstance = new JupiterTrade({
         symbiosis,
         tokenAmountIn,
+        tokenAmountInMin: tokenAmountIn,
         tokenOut,
         to,
         slippage,

@@ -1,12 +1,12 @@
 import { PublicKey } from '@solana/web3.js'
-import { ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
-import { API_URLS } from '@raydium-io/raydium-sdk-v2'
+import { API_URLS, ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 import { Percent, TokenAmount } from '../../entities/index.ts'
 import { Symbiosis } from '../symbiosis.ts'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade.ts'
 import { getSolanaConnection } from '../chainUtils/index.ts'
+import { RaydiumTradeError } from '../sdkError.ts'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -59,57 +59,52 @@ export class RaydiumTrade extends SymbiosisTrade {
     public async init() {
         const txVersion = 'V0' // could be 'LEGACY' or 'V0'
 
-        try {
-            const inputMint = this.tokenAmountIn.token.isNative
-                ? NATIVE_MINT.toBase58()
-                : this.tokenAmountIn.token.solAddress
-            const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
+        const inputMint = this.tokenAmountIn.token.isNative
+            ? NATIVE_MINT.toBase58()
+            : this.tokenAmountIn.token.solAddress
+        const outputMint = this.tokenOut.isNative ? NATIVE_MINT.toBase58() : this.tokenOut.solAddress
 
-            if (!inputMint || !outputMint) {
-                throw new Error('Solana address not found')
-            }
-
-            // get quote
-            const quoteResponse = (await fetch(
-                `${
-                    API_URLS.SWAP_HOST
-                }/compute/swap-base-in?inputMint=${inputMint}&outputMint=${outputMint}&amount=${this.tokenAmountIn.raw.toString()}&slippageBps=${
-                    this.slippage
-                }&txVersion=${txVersion}`
-            ).then((res) => res.json())) as ApiSwapV1Out
-
-            if (!quoteResponse.success) {
-                throw new Error('Failed to get quote via raydium dex')
-            }
-
-            const instructionsResponse = await this.buildInstructions({
-                inputMint,
-                outputMint,
-                txVersion,
-                quoteResponse,
-            })
-
-            const amountOut = new TokenAmount(this.tokenOut, quoteResponse.data.outputAmount)
-            const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.data.otherAmountThreshold)
-            const priceImpact = new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000))
-
-            this.out = {
-                amountOut,
-                amountOutMin,
-                route: [this.tokenAmountIn.token, this.tokenOut],
-                priceImpact,
-                routerAddress: '',
-                callData: '',
-                callDataOffset: 0,
-                minReceivedOffset: 0,
-                instructions: instructionsResponse[0], // all instructions will be in the first array element
-            }
-
-            return this
-        } catch (err) {
-            this.symbiosis.context?.logger.error('Failed to swap via Raydium', err)
-            throw err
+        if (!inputMint || !outputMint) {
+            throw new RaydiumTradeError('Solana address not found')
         }
+
+        // get quote
+        const quoteResponse = (await fetch(
+            `${
+                API_URLS.SWAP_HOST
+            }/compute/swap-base-in?inputMint=${inputMint}&outputMint=${outputMint}&amount=${this.tokenAmountIn.raw.toString()}&slippageBps=${
+                this.slippage
+            }&txVersion=${txVersion}`
+        ).then((res) => res.json())) as ApiSwapV1Out
+
+        if (!quoteResponse.success) {
+            throw new RaydiumTradeError('Failed to get quote')
+        }
+
+        const instructionsResponse = await this.buildInstructions({
+            inputMint,
+            outputMint,
+            txVersion,
+            quoteResponse,
+        })
+
+        const amountOut = new TokenAmount(this.tokenOut, quoteResponse.data.outputAmount)
+        const amountOutMin = new TokenAmount(this.tokenOut, quoteResponse.data.otherAmountThreshold)
+        const priceImpact = new Percent(BigInt(quoteResponse.data.priceImpactPct * -100), BigInt(10000))
+
+        this.out = {
+            amountOut,
+            amountOutMin,
+            route: [this.tokenAmountIn.token, this.tokenOut],
+            priceImpact,
+            routerAddress: '',
+            callData: '',
+            callDataOffset: 0,
+            minReceivedOffset: 0,
+            instructions: instructionsResponse[0], // all instructions will be in the first array element
+        }
+
+        return this
     }
 
     async buildInstructions({ inputMint, outputMint, txVersion, quoteResponse }: BuildSwapInstructionsParams) {
@@ -126,30 +121,33 @@ export class RaydiumTrade extends SymbiosisTrade {
         const outputTokenAcc = tokenAccountsFrom.find((a) => a.mint.toBase58() === outputMint)?.publicKey
 
         if (!inputTokenAcc && !isInputSol) {
-            this.symbiosis.context?.logger.error(
-                `Raydium swap. Do not have input token account for ${this.tokenAmountIn.token.symbol} ${inputMint}`
+            throw new RaydiumTradeError(
+                `Do not have input token account for ${this.tokenAmountIn.token.symbol} ${inputMint}`
             )
-            return []
         }
 
-        const swapTransactions = (await fetch(`${API_URLS.SWAP_HOST}/transaction/swap-base-in`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                computeUnitPriceMicroLamports: String(priorityFee.data.default.h),
-                swapResponse: quoteResponse,
-                txVersion,
-                wallet: this.solanaToPubkey,
-                wrapSol: isInputSol,
-                unwrapSol: isOutputSol,
-                inputAccount: isInputSol ? undefined : inputTokenAcc,
-                outputAccount: isOutputSol ? undefined : outputTokenAcc,
-            }),
-        }).then((res) => res.json())) as SwapTransactionsResponse
+        try {
+            const swapTransactions = (await fetch(`${API_URLS.SWAP_HOST}/transaction/swap-base-in`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    computeUnitPriceMicroLamports: String(priorityFee.data.default.h),
+                    swapResponse: quoteResponse,
+                    txVersion,
+                    wallet: this.solanaToPubkey,
+                    wrapSol: isInputSol,
+                    unwrapSol: isOutputSol,
+                    inputAccount: isInputSol ? undefined : inputTokenAcc,
+                    outputAccount: isOutputSol ? undefined : outputTokenAcc,
+                }),
+            }).then((res) => res.json())) as SwapTransactionsResponse
 
-        return swapTransactions.data.map((tx) => tx.transaction)
+            return swapTransactions.data.map((tx) => tx.transaction)
+        } catch (e) {
+            throw new RaydiumTradeError(`Failed to fetch swap transactions`, e)
+        }
     }
 
     async fetchTokenAccountData(publicKey: PublicKey) {

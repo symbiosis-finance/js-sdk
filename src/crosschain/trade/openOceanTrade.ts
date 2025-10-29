@@ -7,6 +7,7 @@ import { BIPS_BASE } from '../constants.ts'
 import BigNumber from 'bignumber.js'
 import { AddressZero } from '@ethersproject/constants'
 import { Address, NonEmptyAddress } from '../index.ts'
+import { OpenOceanTradeError } from '../sdkError.ts'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -33,40 +34,52 @@ interface OpenOceanError {
 
 const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     // ---  1inch supported chains
-    [ChainId.ETH_MAINNET]: {
-        slug: 'eth',
+    // [ChainId.ETH_MAINNET]: {
+    //     slug: 'eth',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.BSC_MAINNET]: {
+    //     slug: 'bsc',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.MATIC_MAINNET]: {
+    //     slug: 'polygon',
+    //     nativeTokenAddress: '0x0000000000000000000000000000000000001010',
+    // },
+    // [ChainId.OPTIMISM_MAINNET]: {
+    //     slug: 'optimism',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.ARBITRUM_MAINNET]: {
+    //     slug: 'arbitrum',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.AVAX_MAINNET]: {
+    //     slug: 'avax',
+    //     nativeTokenAddress: AddressZero,
+    // },
+    // [ChainId.ZKSYNC_MAINNET]: {
+    //     slug: 'zksync',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.BASE_MAINNET]: {
+    //     slug: 'base',
+    //     nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
+    // },
+    // [ChainId.GNOSIS_MAINNET]: {
+    //     slug: 'xdai',
+    //     nativeTokenAddress: AddressZero,
+    // },
+    [ChainId.UNICHAIN_MAINNET]: {
+        slug: 'uni',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
-    [ChainId.BSC_MAINNET]: {
-        slug: 'bsc',
+    [ChainId.LINEA_MAINNET]: {
+        slug: 'linea',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
-    [ChainId.ZKSYNC_MAINNET]: {
-        slug: 'zksync',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.MATIC_MAINNET]: {
-        slug: 'polygon',
-        nativeTokenAddress: '0x0000000000000000000000000000000000001010',
-    },
-    [ChainId.BASE_MAINNET]: {
-        slug: 'base',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.AVAX_MAINNET]: {
-        slug: 'avax',
-        nativeTokenAddress: AddressZero,
-    },
-    [ChainId.ARBITRUM_MAINNET]: {
-        slug: 'arbitrum',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.OPTIMISM_MAINNET]: {
-        slug: 'optimism',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.GNOSIS_MAINNET]: {
-        slug: 'xdai',
+    [ChainId.SONIC_MAINNET]: {
+        slug: 'sonic',
         nativeTokenAddress: AddressZero,
     },
     // --- OpenOcean supported only chains
@@ -76,10 +89,6 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
     },
     [ChainId.POLYGON_ZK]: {
         slug: 'polygon_zkevm',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
-    },
-    [ChainId.LINEA_MAINNET]: {
-        slug: 'linea',
         nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
     [ChainId.SCROLL_MAINNET]: {
@@ -126,17 +135,9 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'gravity',
         nativeTokenAddress: AddressZero,
     },
-    [ChainId.SONIC_MAINNET]: {
-        slug: 'sonic',
-        nativeTokenAddress: AddressZero,
-    },
     [ChainId.BERACHAIN_MAINNET]: {
         slug: 'bera',
         nativeTokenAddress: AddressZero,
-    },
-    [ChainId.UNICHAIN_MAINNET]: {
-        slug: 'uni',
-        nativeTokenAddress: NATIVE_TOKEN_ADDRESS,
     },
     [ChainId.OPBNB_MAINNET]: {
         slug: 'opbnb',
@@ -171,7 +172,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const chain = OPEN_OCEAN_NETWORKS[chainId]
         if (!chain) {
-            throw new Error('Unsupported chain')
+            throw new OpenOceanTradeError('Unsupported chain')
         }
         this.chain = chain
         this.symbiosis = params.symbiosis
@@ -223,16 +224,16 @@ export class OpenOceanTrade extends SymbiosisTrade {
             } catch (e) {
                 errorText = await response.text()
             }
-            throw new Error(
-                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}: Message: ${errorText}`
+            throw new OpenOceanTradeError(
+                `Cannot build trade for chain ${this.tokenAmountIn.token.chainId}: Message: ${errorText}`
             )
         }
         const json = await response.json()
 
         if (json.code !== 200) {
             const errorJson = json as OpenOceanError
-            throw new Error(
-                `Cannot build OpenOcean trade for chain ${this.tokenAmountIn.token.chainId}. Message: ${
+            throw new OpenOceanTradeError(
+                `Cannot build trade for chain ${this.tokenAmountIn.token.chainId}. Message: ${
                     errorJson?.error ?? errorJson.errorMsg
                 }`
             )
@@ -290,7 +291,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         })
 
         if (method === undefined) {
-            throw new Error('Unknown OpenOcean swap method encoded to calldata')
+            throw new OpenOceanTradeError('Unknown swap method encoded to calldata')
         }
 
         return {
@@ -307,6 +308,9 @@ export class OpenOceanTrade extends SymbiosisTrade {
 
         const number = new BigNumber(value.split('%')[0])
         if (number.isNaN()) {
+            return zeroPercent
+        }
+        if (!number.isFinite()) {
             return zeroPercent
         }
 
@@ -326,7 +330,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                     },
                 })
                 if (!response.ok) {
-                    throw new Error('Failed to get gas price')
+                    throw new OpenOceanTradeError('Failed to get gas price')
                 }
                 const json = await response.json()
 

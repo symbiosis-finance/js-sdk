@@ -5,6 +5,7 @@ import { SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade.ts'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities/index.ts'
 import { BIPS_BASE } from '../constants.ts'
 import { EvmAddress } from '../index.ts'
+import { WrapTradeError } from '../sdkError.ts'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
@@ -42,23 +43,24 @@ const UNWRAP_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
 
 interface WrapTradeParams {
     tokenAmountIn: TokenAmount
+    tokenAmountInMin: TokenAmount
     tokenOut: Token
     to: string
 }
 
 export class WrapTrade extends SymbiosisTrade {
-    public static isSupported(tokenAmountIn: TokenAmount, tokenOut: Token): boolean {
-        const wrappedInToken = wrappedToken(tokenAmountIn.token)
-        if (tokenAmountIn.token.isNative && wrappedInToken.equals(tokenOut)) {
+    public static isSupported(tokenIn: Token, tokenOut: Token): boolean {
+        const wrappedInToken = wrappedToken(tokenIn)
+        if (tokenIn.isNative && wrappedInToken.equals(tokenOut)) {
             // wrap
             return true
         }
 
-        const unwrapAddress = UNWRAP_ADDRESSES[tokenAmountIn.token.chainId]
+        const unwrapAddress = UNWRAP_ADDRESSES[tokenIn.chainId]
         const wrappedOutToken = wrappedToken(tokenOut)
 
         // unwrap
-        return !!unwrapAddress && tokenOut.isNative && wrappedOutToken.equals(tokenAmountIn.token)
+        return !!unwrapAddress && tokenOut.isNative && wrappedOutToken.equals(tokenIn)
     }
 
     public constructor(params: WrapTradeParams) {
@@ -77,7 +79,7 @@ export class WrapTrade extends SymbiosisTrade {
             const wethToken = wrappedToken(this.tokenAmountIn.token)
 
             const amountOut = new TokenAmount(wethToken, this.tokenAmountIn.raw)
-            const amountOutMin = amountOut
+            const amountOutMin = new TokenAmount(wethToken, this.tokenAmountInMin.raw)
 
             const wethInterface = Weth__factory.createInterface()
             const callData = wethInterface.encodeFunctionData('deposit')
@@ -98,11 +100,11 @@ export class WrapTrade extends SymbiosisTrade {
 
         const unwrapperAddress = UNWRAP_ADDRESSES[this.tokenAmountIn.token.chainId]
         if (!unwrapperAddress) {
-            throw new Error('Cannot unwrap on this network')
+            throw new WrapTradeError('Cannot unwrap on this network')
         }
 
         const amountOut = new TokenAmount(this.tokenOut, this.tokenAmountIn.raw)
-        const amountOutMin = amountOut
+        const amountOutMin = new TokenAmount(this.tokenOut, this.tokenAmountInMin.raw)
 
         const unwrapperInterface = Unwrapper__factory.createInterface()
         const callData = unwrapperInterface.encodeFunctionData('unwrap', [this.tokenAmountIn.raw.toString(), this.to])
