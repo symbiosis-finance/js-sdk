@@ -8,23 +8,20 @@ import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symb
 
 interface OctoPoolTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
-    tokenAmountInMin: TokenAmount
     deadline: number
     omniPoolConfig: OmniPoolConfig
 }
 
 export class OctoPoolTrade extends SymbiosisTrade {
     public readonly symbiosis: Symbiosis
-    public readonly tokenAmountInMin: TokenAmount
     public readonly deadline: number
     public readonly poolConfig: OmniPoolConfig
 
     public constructor(params: OctoPoolTradeParams) {
         super(params)
 
-        const { symbiosis, omniPoolConfig, tokenAmountInMin, deadline } = params
+        const { symbiosis, omniPoolConfig, deadline } = params
         this.symbiosis = symbiosis
-        this.tokenAmountInMin = tokenAmountInMin
         this.deadline = deadline
         this.poolConfig = omniPoolConfig
     }

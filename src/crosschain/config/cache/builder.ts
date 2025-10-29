@@ -173,9 +173,7 @@ export class Builder {
         const results = (await Promise.all(promises)) as { chainId: ChainId; token: string; ok: boolean }[]
         results.forEach((result) => {
             if (!result.ok) {
-                const errorMessage = `${result.chainId} Token ${result.token} is not whitelisted on portal`
-                // console.error(errorMessage)
-                throw new Error(errorMessage)
+                throw new Error(`${result.chainId} Token ${result.token} is not whitelisted on portal`)
             }
         })
     }

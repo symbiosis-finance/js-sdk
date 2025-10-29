@@ -5,13 +5,13 @@ import { OneInchProtocols } from '../trade/oneInchTrade'
 import { initEccLib } from 'bitcoinjs-lib'
 import ecc from '@bitcoinerlab/secp256k1'
 import { getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
-import { Address, FeeItem, MultiCallItem, SwapExactInResult } from '../types'
+import { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { isEvmChainId } from '../chainUtils'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { BytesLike } from 'ethers'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { ChainId } from '../../constants'
-import { Error, ErrorCode } from '../error'
+import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../sdkError'
 
 initEccLib(ecc)
 
@@ -25,7 +25,7 @@ interface ZappingBtcExactInParams {
     oneInchProtocols?: OneInchProtocols
     transitTokenIn: Token
     transitTokenOut: Token
-    partnerAddress?: Address
+    partnerAddress?: EvmAddress
 }
 
 export class ZappingBtc extends BaseSwapping {
@@ -38,7 +38,6 @@ export class ZappingBtc extends BaseSwapping {
     protected synthesis!: Synthesis
     protected evmTo!: Address
     protected partnerFeeCall?: MultiCallItem
-    protected partnerAddress?: Address
     protected volumeFeeCall?: MultiCallItem
 
     protected async doPostTransitAction(): Promise<void> {
@@ -56,11 +55,12 @@ export class ZappingBtc extends BaseSwapping {
             symbiosis: this.symbiosis,
             amountIn: amount,
             amountInMin: amountMin,
-            partnerAddress: this.partnerAddress,
+            partnerAddress: undefined, // do not charge partnerFee twice
         })
+
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(amount.token.chainId, [ChainId.BTC_MAINNET])
         if (volumeFeeCollector) {
-            this.volumeFeeCall = await getVolumeFeeCall({
+            this.volumeFeeCall = getVolumeFeeCall({
                 feeCollector: volumeFeeCollector,
                 amountIn: amount,
                 amountInMin: amountMin,
@@ -80,7 +80,7 @@ export class ZappingBtc extends BaseSwapping {
         partnerAddress,
     }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
         if (!syBtc.chainFromId) {
-            throw new Error('syBtc is not synthetic')
+            throw new SdkError('syBtc is not synthetic')
         }
         const btc = GAS_TOKEN[syBtc.chainFromId]
 
@@ -88,8 +88,6 @@ export class ZappingBtc extends BaseSwapping {
         this.syBtc = syBtc
 
         const chainId = syBtc.chainId
-
-        this.partnerAddress = partnerAddress
 
         this.multicallRouter = this.symbiosis.multicallRouter(chainId)
         this.synthesis = this.symbiosis.synthesis(chainId)
@@ -107,6 +105,7 @@ export class ZappingBtc extends BaseSwapping {
             deadline,
             transitTokenIn,
             transitTokenOut,
+            partnerAddress,
         })
 
         let amountOut = result.tokenAmountOut
@@ -129,20 +128,20 @@ export class ZappingBtc extends BaseSwapping {
         }
 
         if (amountOut.lessThan(this.minBtcFee) || amountOutMin.lessThan(this.minBtcFee)) {
-            throw new Error(
-                `Amount less than fee. Min amount: ${this.minBtcFee.toSignificant()} ${this.minBtcFee.token.symbol}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
+            throw new AmountLessThanFeeError(
+                `Min amount: ${this.minBtcFee.toSignificant()} ${this.minBtcFee.token.symbol}`
             )
         }
         if (amountOut.lessThan(this.threshold) || amountOutMin.lessThan(this.threshold)) {
-            throw new Error(
-                `Amount is too low. Min amount: ${this.threshold.toSignificant()} ${this.threshold.token.symbol}`,
-                ErrorCode.AMOUNT_TOO_LOW
+            throw new AmountTooLowError(
+                `Amount is too low. Min amount: ${this.threshold.toSignificant()} ${this.threshold.token.symbol}`
             )
         }
 
         const tokenAmountOut = new TokenAmount(btc, amountOut.subtract(this.minBtcFee).raw)
         const tokenAmountOutMin = new TokenAmount(btc, amountOutMin.subtract(this.minBtcFee).raw)
+
+        await this.symbiosis.checkDustLimit(tokenAmountOutMin)
 
         const fees = [
             ...result.fees,

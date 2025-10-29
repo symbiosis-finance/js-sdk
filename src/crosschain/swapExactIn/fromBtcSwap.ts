@@ -18,12 +18,10 @@ import {
 } from '../types'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 
-import { Error, ErrorCode } from '../error'
-import { getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
 import { ERC20__factory, IRouter__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
+import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import { getBtcPortalFee, getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
 import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { Cache } from '../cache'
-import { getFastestFee } from '../mempool'
 import { AggregatorTrade } from '../trade'
 import { isUseOneInchOnly } from '../utils'
 import { theBest } from './utils'
@@ -51,7 +49,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
     const { tokenAmountIn, tokenOut, selectMode, symbiosis } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
-        throw new Error(`tokenAmountIn is not BTC token`)
+        throw new SdkError(`tokenAmountIn is not BTC token`)
     }
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -75,23 +73,23 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
 
     const syBtcSynth = symbiosis.getRepresentation(btc, symBtc.chainId)
     if (!syBtcSynth) {
-        throw new Error(`syBTC as synth wasn't found`)
+        throw new SdkError(`syBTC as synth wasn't found`)
     }
     const syBtc = symbiosis.tokens().find((token) => token.equals(syBtcSynth) && !token.isSynthetic)
     if (!syBtc) {
-        throw new Error(`syBTC as original wasn't found`)
+        throw new SdkError(`syBTC as original wasn't found`)
     }
 
     if (!isEvmChainId(tokenOut.chainId) && !isTronChainId(tokenOut.chainId)) {
-        throw new Error(`Only EVM chains are allowed to swap from BTC`)
+        throw new SdkError(`Only EVM chains are allowed to swap from BTC`)
     }
 
     if (!isAddress(to)) {
-        throw new Error(`Incorrect destination address was provided`)
+        throw new SdkError(`Incorrect destination address was provided`)
     }
 
     if (refundAddress && !validateBitcoinAddress(refundAddress)) {
-        throw new Error(`Incorrect refund address was provided`)
+        throw new SdkError(`Incorrect refund address was provided`)
     }
 
     const btcAmountRaw = tokenAmountIn.raw.toString()
@@ -103,11 +101,10 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
     const btcPortalFeeRaw = await getBtcPortalFee(forwarderUrl, symbiosis.cache)
     const btcPortalFee = new TokenAmount(syBtc, btcPortalFeeRaw)
     if (syBtcAmount.lessThan(btcPortalFee)) {
-        throw new Error(
+        throw new AmountLessThanFeeError(
             `Amount ${syBtcAmount.toSignificant()} ${
                 syBtcAmount.token.symbol
-            } less than btcPortalFee ${btcPortalFee.toSignificant()} ${btcPortalFee.token.symbol}`,
-            ErrorCode.AMOUNT_LESS_THAN_FEE
+            } less than btcPortalFee ${btcPortalFee.toSignificant()} ${btcPortalFee.token.symbol}`
         )
     }
     syBtcAmount = syBtcAmount.subtract(btcPortalFee)
@@ -121,11 +118,10 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
     const mintFeeRaw = '1000' // satoshi
     const mintFee = new TokenAmount(syBtc, mintFeeRaw.toString())
     if (syBtcAmount.lessThan(mintFee)) {
-        throw new Error(
+        throw new AmountLessThanFeeError(
             `Amount ${syBtcAmount.toSignificant()} ${
                 syBtcAmount.token.symbol
-            } less than mintFee ${mintFee.toSignificant()} ${mintFee.token.symbol}`,
-            ErrorCode.AMOUNT_LESS_THAN_FEE
+            } less than mintFee ${mintFee.toSignificant()} ${mintFee.token.symbol}`
         )
     }
     syBtcAmount = syBtcAmount.subtract(mintFee)
@@ -152,9 +148,8 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         btcForwarderFeeRaw.mul(200).div(100).toString() // +100% of fee
     )
     if (syBtcAmount.lessThan(btcForwarderFeeMax)) {
-        throw new Error(
-            `Amount ${syBtcAmount.toSignificant()} less than btcForwarderFeeMax ${btcForwarderFeeMax.toSignificant()}`,
-            ErrorCode.AMOUNT_LESS_THAN_FEE
+        throw new AmountLessThanFeeError(
+            `Amount ${syBtcAmount.toSignificant()} less than btcForwarderFeeMax ${btcForwarderFeeMax.toSignificant()}`
         )
     }
     syBtcAmount = syBtcAmount.subtract(btcForwarderFeeMax)
@@ -163,8 +158,6 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         description: 'BTC Forwarder fee',
         value: new TokenAmount(btc, btcForwarderFeeMax.raw),
     })
-
-    symbiosis.context?.logger.info('Should be minted not less than', `${syBtcAmount.toSignificant()} syBTC`)
 
     // >> TODO patch amounts instead calling quote again
     const {
@@ -254,7 +247,7 @@ async function buildTail(
 
     const feeCollector = symbiosis.getVolumeFeeCollector(syBtcAmount.token.chainId, [ChainId.BTC_MAINNET])
     if (feeCollector) {
-        const volumeFeeCall = await getVolumeFeeCall({
+        const volumeFeeCall = getVolumeFeeCall({
             feeCollector,
             amountIn: syBtcAmount,
         })
@@ -360,6 +353,7 @@ async function buildOnChainSwap(
         aggregatorTrade = new AggregatorTrade({
             ...context,
             tokenAmountIn: syBtcAmount,
+            tokenAmountInMin: syBtcAmount,
             from: to, // there is not from address, set user's address
             clientId: symbiosis.clientId,
             preferOneInchUsage: isUseOneInchOnly(tokenAmountIn.token, context.tokenOut),
@@ -425,6 +419,7 @@ async function buildCrossChainSwap(
         tokenAmountIn: syBtcAmount,
         from: to, // to be able to revert a tx
         tradeAContext: 'multicallRouter',
+        partnerAddress: undefined, // don't need to call partner fee twice
     })
     const data = (swapExactInResult.transactionRequest as TransactionRequest).data!
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
@@ -667,7 +662,7 @@ async function estimateWrap({
     if (!response.ok) {
         const text = await response.text()
         const json = JSON.parse(text)
-        throw new Error(json.message ?? text)
+        throw new SdkError(json.message ?? text)
     }
 
     const { revealTxFee } = await response.json()
@@ -724,7 +719,7 @@ async function wrap({
     if (!response.ok) {
         const text = await response.text()
         const json = JSON.parse(text)
-        throw new Error(json.message ?? text)
+        throw new SdkError(json.message ?? text)
     }
 
     const data = await response.json()
@@ -740,39 +735,4 @@ async function wrap({
 
 function encodeTail(tail: string): string {
     return Buffer.from(tail.slice(2), 'hex').toString('base64')
-}
-
-async function getBtcPortalFee(forwarderUrl: string, cache: Cache): Promise<string> {
-    let fee = await cache.get(
-        ['getMinBtcFee'],
-        async () => {
-            // kind of the state: 0=finalized 1=pending 2=best
-            const portalApiUrl = new URL(`${forwarderUrl}/portal?kind=2`)
-
-            const response = await fetch(portalApiUrl)
-            if (!response.ok) {
-                const text = await response.text()
-                const json = JSON.parse(text)
-                throw new Error(json.message ?? text)
-            }
-
-            const {
-                state: { minBtcFee },
-            } = await response.json()
-
-            return Number(minBtcFee)
-        },
-        600 // 10 minutes
-    )
-
-    try {
-        const fastestFee = await cache.get(['getFastestFee'], getFastestFee, 60) // 1 minute
-        const recommendedFee = fastestFee * 200 // 200 vByte
-        if (recommendedFee > fee) {
-            fee = recommendedFee
-        }
-    } catch {
-        /* nothing */
-    }
-    return fee.toString()
 }

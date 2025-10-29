@@ -1,13 +1,13 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { Percent, Profiler, Token, TokenAmount, wrappedToken } from '../../entities'
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { Transit } from '../transit'
-import { Error } from '../error'
+import { SdkError } from '../sdkError'
 import { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { OneInchProtocols } from '../trade/oneInchTrade'
 import {
@@ -27,6 +27,7 @@ import {
 import { TRON_METAROUTER_ABI } from '../tronAbis'
 import {
     Address,
+    EvmAddress,
     FeeItem,
     OmniPoolConfig,
     RouteItem,
@@ -36,7 +37,6 @@ import {
     TonTransactionData,
     TradeAContext,
 } from '../types'
-import { Profiler } from '../../entities/profiler'
 import { createFakeAmount } from '../../utils'
 import { ChainId } from '../../constants'
 import { isUseOneInchOnly } from '../utils'
@@ -77,6 +77,7 @@ export abstract class BaseSwapping {
 
     protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
+    protected partnerAddress?: EvmAddress
 
     private profiler: Profiler
 
@@ -98,10 +99,12 @@ export abstract class BaseSwapping {
         transitTokenOut,
         revertableAddresses,
         tradeAContext,
+        partnerAddress,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
+        this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
         this.tokenOut = tokenOut
@@ -138,11 +141,11 @@ export abstract class BaseSwapping {
         } else if (revertableAddresses) {
             const AB = revertableAddresses.find((ra) => ra.chainId === this.tokenAmountIn.token.chainId)
             if (!AB) {
-                throw new Error(`Revertable address for chain ${this.tokenAmountIn.token.chainId} was not specified`)
+                throw new SdkError(`Revertable address for chain ${this.tokenAmountIn.token.chainId} was not specified`)
             }
             const BC = revertableAddresses.find((ra) => ra.chainId === this.tokenOut.chainId)
             if (!BC) {
-                throw new Error(`Revertable address for chain ${this.tokenOut.chainId} was not specified`)
+                throw new SdkError(`Revertable address for chain ${this.tokenOut.chainId} was not specified`)
             }
             this.revertableAddresses = { AB: AB.address, BC: BC.address }
         } else {
@@ -173,7 +176,7 @@ export abstract class BaseSwapping {
         }
 
         const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : transitAmountIn
+        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountIn
 
         const promises = []
         promises.push(this.buildTransit(transitAmountIn, transitAmountInMin).init())
@@ -188,9 +191,11 @@ export abstract class BaseSwapping {
                 if (this.transitTokenOut.equals(tokenOut)) {
                     return
                 }
+                // NOTE actually amountInMin == amountIn, because we don't know the correct amounts
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
+                const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
 
-                return this.buildTradeC(fakeTradeCAmountIn).init()
+                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin).init()
             })()
         )
 
@@ -206,6 +211,7 @@ export abstract class BaseSwapping {
         this.transit = transit as Transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()
+        this.profiler.tick('POST_TRANSIT_1')
         this.tradeC = tradeC as SymbiosisTrade | undefined
 
         if (this.tradeC) {
@@ -232,13 +238,14 @@ export abstract class BaseSwapping {
         const fee2 = fee2Raw?.fee
         const save2 = fee2Raw?.save
 
-        this.transit.applyFees(fee1, fee2)
+        await this.transit.applyFees(fee1, fee2)
         if (this.tradeC) {
-            this.tradeC.applyAmountIn(this.transit.amountOut)
+            this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
         }
         this.profiler.tick('PATCHING')
 
         await this.doPostTransitAction()
+        this.profiler.tick('POST_TRANSIT_2')
 
         const tokenAmountOut = this.tradeC ? this.tradeC.amountOut : this.transit.amountOut
         const tokenAmountOutMin = this.tradeC ? this.tradeC.amountOutMin : this.transit.amountOutMin
@@ -266,7 +273,7 @@ export abstract class BaseSwapping {
                 transactionRequest,
             }
         } else {
-            throw new Error(`Unsupported chain type: ${this.tokenAmountIn.token.chainId}`)
+            throw new SdkError(`Unsupported chain type: ${this.tokenAmountIn.token.chainId}`)
         }
 
         this.profiler.tick('TRANSACTION_REQUEST')
@@ -286,6 +293,13 @@ export abstract class BaseSwapping {
                 description: 'Cross-chain fee',
                 save: save2,
             })
+        }
+
+        if (this.transit.partnerFeeCall) {
+            fees.push(...this.transit.partnerFeeCall.fees)
+        }
+        if (this.transit.volumeFeeCall) {
+            fees.push(...this.transit.volumeFeeCall.fees)
         }
 
         return {
@@ -363,8 +377,8 @@ export abstract class BaseSwapping {
     protected async doPostTransitAction() {}
 
     protected buildDetailedSlippage(totalSlippage: number): DetailedSlippage {
-        const hasTradeA = !this.transitTokenIn.equals(this.tokenAmountIn.token)
-        const hasTradeC = !this.transitTokenOut.equals(this.tokenOut)
+        const hasTradeA = !this.transitTokenIn.equals(wrappedToken(this.tokenAmountIn.token))
+        const hasTradeC = !this.transitTokenOut.equals(wrappedToken(this.tokenOut))
 
         return splitSlippage(totalSlippage, hasTradeA, hasTradeC)
     }
@@ -480,8 +494,13 @@ export abstract class BaseSwapping {
     protected buildTradeA(tradeAContext?: TradeAContext): SymbiosisTrade {
         const tokenOut = this.transitTokenIn
 
-        if (WrapTrade.isSupported(this.tokenAmountIn, tokenOut)) {
-            return new WrapTrade({ tokenAmountIn: this.tokenAmountIn, tokenOut, to: this.to })
+        if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
+            return new WrapTrade({
+                tokenAmountIn: this.tokenAmountIn,
+                tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
+                tokenOut,
+                to: this.to,
+            })
         }
 
         const chainId = this.tokenAmountIn.token.chainId
@@ -494,6 +513,7 @@ export abstract class BaseSwapping {
 
         return new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
+            tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
             tokenOut,
             from,
             to,
@@ -509,25 +529,27 @@ export abstract class BaseSwapping {
     protected buildTransit(amountIn: TokenAmount, amountInMin: TokenAmount): Transit {
         this.symbiosis.validateLimits(amountIn)
 
-        return new Transit(
-            this.symbiosis,
+        return new Transit({
+            symbiosis: this.symbiosis,
             amountIn,
             amountInMin,
-            this.transitTokenOut,
-            this.slippage['B'],
-            this.deadline,
-            this.omniPoolConfig
-        )
+            tokenOut: this.transitTokenOut,
+            slippage: this.slippage['B'],
+            deadline: this.deadline,
+            omniPoolConfig: this.omniPoolConfig,
+            partnerAddress: this.partnerAddress,
+        })
     }
 
     protected tradeCTo() {
         return this.to
     }
 
-    protected buildTradeC(amountIn: TokenAmount) {
-        if (WrapTrade.isSupported(amountIn, this.tokenOut)) {
+    protected buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount) {
+        if (WrapTrade.isSupported(amountIn.token, this.tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: amountIn,
+                tokenAmountInMin: amountInMin,
                 tokenOut: this.tokenOut,
                 to: this.to,
             })
@@ -535,6 +557,7 @@ export abstract class BaseSwapping {
 
         return new AggregatorTrade({
             tokenAmountIn: amountIn,
+            tokenAmountInMin: amountInMin,
             tokenOut: this.tokenOut,
             from: this.symbiosis.chainConfig(this.tokenOut.chainId).metaRouter,
             to: this.tradeCTo(),

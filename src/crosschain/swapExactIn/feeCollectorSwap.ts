@@ -7,7 +7,7 @@ import { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../chainUtils/tron'
-import { Error, ErrorCode } from '../error'
+import { AmountLessThanFeeError, SdkError } from '../sdkError'
 
 export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ZKSYNC_MAINNET]: '0x35e3dc1f3383bD348EC651EdD73fE1d7a7dA5AAa',
@@ -78,7 +78,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
 
     const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[inChainId]
     if (!feeCollectorAddress) {
-        throw new Error(`Fee collector not found for chain ${inChainId}`)
+        throw new SdkError(`Fee collector not found for chain ${inChainId}`)
     }
 
     const provider = symbiosis.getProvider(inChainId)
@@ -92,10 +92,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     let inTokenAmount = params.tokenAmountIn
     if (inTokenAmount.token.equals(feeToken)) {
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
-            throw new Error(
-                `Amount is too low. Min amount: ${feeTokenAmount.toSignificant()}`,
-                ErrorCode.AMOUNT_LESS_THAN_FEE
-            )
+            throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
         }
 
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)

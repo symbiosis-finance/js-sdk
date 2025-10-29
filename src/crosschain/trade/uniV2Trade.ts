@@ -28,6 +28,7 @@ import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Symbiosis } from '../symbiosis'
 import { Address } from '..'
+import { UniV2TradeError } from '../sdkError'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -90,30 +91,36 @@ export class UniV2Trade extends SymbiosisTrade {
             60 // 1 minute
         )
 
-        const [trade] = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
-            maxHops: 3,
-            maxNumResults: 1,
-        })
+        let trade
+        try {
+            const [t] = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
+                maxHops: 3,
+                maxNumResults: 1,
+            })
+            trade = t
+        } catch (e: any) {
+            throw new UniV2TradeError(`bestTradeExactIn failed ${e.message}`)
+        }
 
         if (!trade) {
-            throw new Error('Cannot create trade')
+            throw new UniV2TradeError('Cannot create trade')
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
 
         const priceImpact = computeTradePriceBreakdown(trade, dexFee).priceImpactWithoutFee
         if (!priceImpact) {
-            throw new Error('Cannot calculate priceImpact')
+            throw new UniV2TradeError('Cannot calculate priceImpact')
         }
 
         const amountOutMin = computeSlippageAdjustedAmounts(trade, this.slippage).OUTPUT
         if (!amountOutMin) {
-            throw new Error('Cannot compute amountOutMin')
+            throw new UniV2TradeError('Cannot compute amountOutMin')
         }
 
         const { data, offset, minReceivedOffset, functionSelector } = this.buildCallData(trade)
         if (!data) {
-            throw new Error('Cannot build callData')
+            throw new UniV2TradeError('Cannot build callData')
         }
 
         this.out = {
@@ -176,9 +183,15 @@ export class UniV2Trade extends SymbiosisTrade {
         const multicall = await getMulticall(provider)
 
         const pairAddresses = wrappedTokens.map(([tokenA, tokenB]) => {
-            if (!tokenA || !tokenB) throw new Error()
-            if (tokenA.chainId !== tokenB.chainId) throw new Error()
-            if (tokenA.equals(tokenB)) throw new Error()
+            if (!tokenA || !tokenB) {
+                throw new UniV2TradeError('tokenA or tokenB is null')
+            }
+            if (tokenA.chainId !== tokenB.chainId) {
+                throw new UniV2TradeError('tokenA and tokenB are not on the same chain')
+            }
+            if (tokenA.equals(tokenB)) {
+                throw new UniV2TradeError('tokenA and tokenB are the same')
+            }
 
             return Pair.getAddress(tokenA, tokenB)
         })

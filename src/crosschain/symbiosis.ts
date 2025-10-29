@@ -1,11 +1,11 @@
 import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer, utils } from 'ethers'
+import { Signer, utils, BigNumber } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount } from '../entities'
+import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import {
     BranchedUnlocker,
     BranchedUnlocker__factory,
@@ -36,14 +36,21 @@ import {
     TonBridge,
     TonBridge__factory,
 } from './contracts'
-import { aggregatorErrorToText, Error, ErrorCode } from './error'
+import {
+    AdvisorError,
+    aggregatorErrorToText,
+    AmountLessThanFeeError,
+    AmountTooHighError,
+    AmountTooLowError,
+    NoTransitTokenError,
+    SdkError,
+} from './sdkError'
 import { RevertPending } from './revert'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import {
     BtcConfig,
     ChainConfig,
     Config,
-    Context,
     CounterParams,
     DepositoryConfig,
     EvmAddress,
@@ -81,8 +88,8 @@ import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
-import { isTonChainId } from './chainUtils'
 import { CoinGecko } from './coingecko'
+import { isTonChainId, getUnwrapDustLimit } from './chainUtils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
@@ -127,7 +134,6 @@ export class Symbiosis {
     public sdkDurationMetric?: Histogram<string>
     public priceImpactSwapMetric?: Histogram<string>
     public counter?: Counter<string>
-    public context?: Context
 
     public feesConfig?: FeeConfig[]
 
@@ -137,10 +143,6 @@ export class Symbiosis {
 
     public readonly fetch: typeof fetch
     public readonly coinGecko: CoinGecko
-
-    public setContext(context: Context) {
-        this.context = context
-    }
 
     public setMetrics({
         symbiosisSdkDuration,
@@ -172,7 +174,7 @@ export class Symbiosis {
     public getBtcConfig(btc: Token): BtcConfig {
         const config = this.config.btcConfigs.find((i) => i.btc.equals(btc))
         if (!config) {
-            throw new Error('BTC config not found')
+            throw new SdkError('BTC config not found')
         }
         return config
     }
@@ -183,7 +185,7 @@ export class Symbiosis {
         if (!response.ok) {
             const text = await response.text()
             const json = JSON.parse(text)
-            throw new Error(json.message ?? text)
+            throw new SdkError(json.message ?? text)
         }
 
         return await response.json()
@@ -195,7 +197,7 @@ export class Symbiosis {
         if (!response.ok) {
             const text = await response.text()
             const json = JSON.parse(text)
-            throw new Error(json.message ?? text)
+            throw new SdkError(json.message ?? text)
         }
 
         return await response.json()
@@ -215,12 +217,23 @@ export class Symbiosis {
         if (!response.ok) {
             const text = await response.text()
             const json = JSON.parse(text)
-            throw new Error(json.message ?? text)
+            throw new SdkError(json.message ?? text)
         }
 
         const json = await response.json()
 
         return json['percent'] as number
+    }
+
+    public async checkDustLimit(amount: TokenAmount) {
+        const btcConfig = this.config.btcConfigs.filter((i) => i.symBtc.chainId !== amount.token.chainId)[0]
+        if (!btcConfig) {
+            throw new SdkError(`BTC config for chain ${amount.token.chainId} not found`)
+        }
+        const dustLimit = await getUnwrapDustLimit(btcConfig.forwarderUrl, this.cache)
+        if (BigNumber.from(amount.raw.toString()).lt(dustLimit)) {
+            throw new AmountLessThanFeeError(`amountOut must be greater than dust limit: ${dustLimit} satoshi`)
+        }
     }
 
     public constructor(configName: ConfigName, clientId: string, overrideConfig?: OverrideConfig) {
@@ -237,7 +250,7 @@ export class Symbiosis {
             } else if (configName === 'beta') {
                 this.config = structuredClone(beta)
             } else {
-                throw new Error('Unknown config name')
+                throw new SdkError('Unknown config name')
             }
 
             if (overrideConfig?.chains) {
@@ -304,7 +317,6 @@ export class Symbiosis {
 
     public createMetricTimer() {
         if (!this.sdkDurationMetric) {
-            this.context?.logger.error('Prometheus metrics are not initialized')
             return
         }
 
@@ -321,7 +333,6 @@ export class Symbiosis {
 
     public trackAggregatorError({ provider, reason, chain_id }: CounterParams) {
         if (!this.counter) {
-            this.context?.logger.error("Prometheus error counter doesn't initialized")
             return
         }
 
@@ -333,7 +344,6 @@ export class Symbiosis {
 
     public trackPriceImpactSwap({ name_from, name_to, token_amount, price_impact }: PriceImpactMetricParams) {
         if (!this.priceImpactSwapMetric) {
-            this.context?.logger.error("Prometheus price impact swap metric doesn't initialized")
             return
         }
         const amountBucket = [
@@ -447,7 +457,7 @@ export class Symbiosis {
 
         const provider = this.providers.get(chainId)
         if (!provider) {
-            throw new Error(`No provider for given chainId: ${chainId}`)
+            throw new SdkError(`No provider for given chainId: ${chainId}`)
         }
         return provider
     }
@@ -576,7 +586,7 @@ export class Symbiosis {
         if (!response.ok) {
             const text = await response.text()
             const json = JSON.parse(text)
-            throw new Error(json.message ?? text, ErrorCode.ADVISOR_ERROR)
+            throw new AdvisorError(json.message ?? text)
         }
 
         const { price, save } = await response.json()
@@ -610,7 +620,7 @@ export class Symbiosis {
             return item.id === chainId
         })
         if (!config) {
-            throw new Error(`Could not config by given chainId: ${chainId}`)
+            throw new SdkError(`Could not config by given chainId: ${chainId}`)
         }
         return config
     }
@@ -634,7 +644,7 @@ export class Symbiosis {
     public transitTokens(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token[] {
         const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new Error(`Cannot find omniPool for chainId ${omniPoolConfig.chainId}`)
+            throw new SdkError(`Cannot find omniPool for chainId ${omniPoolConfig.chainId}`)
         }
 
         const tokens = this.configCache.tokens().filter((token) => {
@@ -650,13 +660,13 @@ export class Symbiosis {
     public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
         const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new Error(`Cannot find omniPool ${pool}`)
+            throw new SdkError(`Cannot find omniPool ${pool}`)
         }
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId && !token.deprecated && !token.isSynthetic
         })
         if (tokens.length === 0) {
-            throw new Error(`Cannot find token for chain ${chainId}`)
+            throw new SdkError(`Cannot find token for chain ${chainId}`)
         }
 
         // if token is from manager chain (token's chainIs equals to pool chainId)
@@ -671,17 +681,26 @@ export class Symbiosis {
         })
 
         if (!transitToken) {
-            throw new Error(
-                `Cannot find transitToken for chain ${chainId}. Pool: ${pool.id}`,
-                ErrorCode.NO_TRANSIT_TOKEN
-            )
+            throw new NoTransitTokenError(`Cannot find transitToken for chain ${chainId}. Pool: ${pool.id}`)
         }
         return transitToken
     }
 
-    public getTransitCombinations(chainIdIn: ChainId, chainIdOut: ChainId, poolConfig: OmniPoolConfig) {
-        const transitTokensIn = this.transitTokens(chainIdIn, poolConfig)
-        const transitTokensOut = this.transitTokens(chainIdOut, poolConfig)
+    public getTransitCombinations({
+        poolConfig,
+        tokenIn,
+        tokenOut,
+        disableSrcChainRouting,
+        disableDstChainRouting,
+    }: {
+        poolConfig: OmniPoolConfig
+        tokenIn: Token
+        tokenOut: Token
+        disableSrcChainRouting?: boolean
+        disableDstChainRouting?: boolean
+    }) {
+        const transitTokensIn = this.transitTokens(tokenIn.chainId, poolConfig)
+        const transitTokensOut = this.transitTokens(tokenOut.chainId, poolConfig)
 
         const combinations: { transitTokenIn: Token; transitTokenOut: Token }[] = []
 
@@ -689,6 +708,16 @@ export class Symbiosis {
             transitTokensOut.forEach((transitTokenOut) => {
                 if (transitTokenIn.equals(transitTokenOut)) {
                     return
+                }
+                if (disableSrcChainRouting) {
+                    if (!transitTokenIn.equals(wrappedToken(tokenIn))) {
+                        return
+                    }
+                }
+                if (disableDstChainRouting) {
+                    if (!transitTokenOut.equals(wrappedToken(tokenOut))) {
+                        return
+                    }
                 }
                 combinations.push({ transitTokenIn, transitTokenOut })
             })
@@ -715,12 +744,12 @@ export class Symbiosis {
 
     public tronWeb(chainId: ChainId): TronWeb {
         if (!isTronChainId(chainId)) {
-            throw new Error(`Chain ${chainId} is not Tron chain`)
+            throw new SdkError(`Chain ${chainId} is not Tron chain`)
         }
 
         const config = this.chainConfig(chainId)
         if (!config) {
-            throw new Error(`Could not find Tron config for chain ${chainId}`)
+            throw new SdkError(`Could not find Tron config for chain ${chainId}`)
         }
 
         return new TronWeb({ fullHost: config.rpc, eventNode: config.rpc, solidityNode: config.rpc })
@@ -806,7 +835,7 @@ export class Symbiosis {
         }
 
         if (!info) {
-            throw new Error('Transaction not found')
+            throw new SdkError('Transaction not found')
         }
 
         return info
@@ -834,11 +863,8 @@ export class Symbiosis {
         if (maxAmountRaw !== '0') {
             const maxLimitTokenAmount = new TokenAmount(token, maxAmountRaw)
             if (amount.greaterThan(maxLimitTokenAmount)) {
-                throw new Error(
-                    `Swap amount is too high. Max: ${maxLimitTokenAmount.toSignificant()} ${
-                        maxLimitTokenAmount.token.symbol
-                    }`,
-                    ErrorCode.AMOUNT_TOO_HIGH
+                throw new AmountTooHighError(
+                    `Max: ${maxLimitTokenAmount.toSignificant()} ${maxLimitTokenAmount.token.symbol}`
                 )
             }
         }
@@ -846,11 +872,8 @@ export class Symbiosis {
         if (minAmountRaw !== '0') {
             const minLimitTokenAmount = new TokenAmount(token, minAmountRaw)
             if (amount.lessThan(minLimitTokenAmount)) {
-                throw new Error(
-                    `Swap amount is too low. Min: ${minLimitTokenAmount.toSignificant()} ${
-                        minLimitTokenAmount.token.symbol
-                    }`,
-                    ErrorCode.AMOUNT_TOO_LOW
+                throw new AmountTooLowError(
+                    `Min: ${minLimitTokenAmount.toSignificant()} ${minLimitTokenAmount.token.symbol}`
                 )
             }
         }

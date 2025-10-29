@@ -19,6 +19,7 @@ export async function raydiumSwap({
     const trade = new RaydiumTrade({
         symbiosis,
         tokenAmountIn,
+        tokenAmountInMin: tokenAmountIn,
         tokenOut,
         from,
         to,

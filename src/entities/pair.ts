@@ -41,8 +41,7 @@ export function getZkCreate2Address(from: EvmAddress, salt: BytesLike, initCodeH
     try {
         return MAP[from][salt as string]
     } catch {
-        console.error({ initCodeHash })
-        throw new Error('Unknown zk pair')
+        throw new Error(`Unknown zk pair with initCodeHash: ${initCodeHash}`)
     }
 }
 

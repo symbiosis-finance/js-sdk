@@ -1,7 +1,7 @@
 import { Percent, TokenAmount, wrappedToken } from '../../entities'
 import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData } from '../types'
-import { AddressZero } from '@ethersproject/constants'
-import { Error, ErrorCode } from '../error'
+import { AddressZero, MaxUint256 } from '@ethersproject/constants'
+import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import {
     buildSynthesize,
     getExternalId,
@@ -16,7 +16,6 @@ import {
 import { TRON_PORTAL_ABI } from '../tronAbis'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Portal__factory, Synthesis__factory } from '../contracts'
-import { MaxUint256 } from '@ethersproject/constants'
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Address } from '@ton/core'
 
@@ -207,11 +206,10 @@ function getAmountOut(context: SwapExactInParams, fee: TokenAmount) {
     const { tokenAmountIn, tokenOut } = context
     const amountOut = new TokenAmount(tokenOut, tokenAmountIn.raw)
     if (amountOut.lessThan(fee)) {
-        throw new Error(
+        throw new AmountLessThanFeeError(
             `Amount ${amountOut.toSignificant()} ${amountOut.token.symbol} less than fee ${fee.toSignificant()} ${
                 fee.token.symbol
-            }`,
-            ErrorCode.AMOUNT_LESS_THAN_FEE
+            }`
         )
     }
     return amountOut.subtract(fee)
@@ -252,7 +250,7 @@ async function getTransactionPayload(
         }
     }
 
-    throw new Error(`Transaction payload can't be built. Unknown chainId type`)
+    throw new SdkError(`Transaction payload can't be built. Unknown chainId type`)
 }
 
 function getTronTransactionRequest(
@@ -267,7 +265,7 @@ function getTronTransactionRequest(
     const chainIdOut = tokenOut.chainId
 
     if (direction === 'burn') {
-        throw new Error('Burn is not supported on Tron')
+        throw new SdkError('Burn is not supported on Tron')
     }
 
     return prepareTronTransaction({
@@ -298,7 +296,7 @@ async function getTonTransactionRequest(
     direction: Direction
 ): Promise<TonTransactionData> {
     if (direction === 'burn') {
-        throw new Error('Burn is not supported on Tron')
+        throw new SdkError('Burn is not supported on Tron')
     }
 
     const { symbiosis, tokenAmountIn, tokenOut, to, from, deadline } = context

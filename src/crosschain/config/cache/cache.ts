@@ -3,7 +3,7 @@ import mainnet from './mainnet.json'
 import testnet from './testnet.json'
 import dev from './dev.json'
 import beta from './beta.json'
-import { Error, ErrorCode } from '../../error'
+import { NoTransitTokenError, SdkError } from '../../sdkError'
 import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
 import { ChainId } from '../../../constants'
 import { Token, wrappedToken } from '../../../entities'
@@ -24,7 +24,7 @@ export class ConfigCache {
         } else if (Object.prototype.hasOwnProperty.call(configName, 'tokens')) {
             this.data = configName
         } else {
-            throw new Error('Unknown config name')
+            throw new SdkError('Unknown config name')
         }
     }
 
@@ -85,7 +85,7 @@ export class ConfigCache {
     public getOmniPoolTokenIndex(omniPoolConfig: OmniPoolConfig, token: Token): number {
         const omniPool = this.getOmniPoolByConfig(omniPoolConfig)
         if (!omniPool) {
-            throw new Error(`getOmniPoolIndex: cannot find omniPoolByConfig ${omniPoolConfig}`)
+            throw new SdkError(`getOmniPoolIndex: cannot find omniPoolByConfig ${omniPoolConfig}`)
         }
 
         const tokenInfo = this.getTokenInfoByToken(token)
@@ -95,10 +95,7 @@ export class ConfigCache {
         })
 
         if (found === undefined) {
-            throw new Error(
-                `getOmniPoolTokenIndex: There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`,
-                ErrorCode.NO_TRANSIT_TOKEN
-            )
+            throw new NoTransitTokenError(`There is no token ${tokenInfo.address} in omniPool ${omniPool.address}`)
         }
 
         return found.index
@@ -107,7 +104,7 @@ export class ConfigCache {
     public getOmniPoolTokens(omniPoolConfig: OmniPoolConfig): Token[] {
         const pool = this.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new Error('Cannot find omniPool')
+            throw new SdkError('Cannot find omniPool')
         }
         return pool.tokens.map((i) => {
             const tokenInfo = this.getTokenInfoById(i.tokenId)
@@ -119,7 +116,7 @@ export class ConfigCache {
         const tokenInfo = this.data.tokens.find((i) => i.id === id)
 
         if (!tokenInfo) {
-            throw new Error(`Can't get tokenInfo for id ${id}`)
+            throw new SdkError(`Can't get tokenInfo for id ${id}`)
         }
 
         return tokenInfo
@@ -137,7 +134,7 @@ export class ConfigCache {
         })
 
         if (!found) {
-            throw new Error(`Can't get tokenInfo by token ${token.address} ${token.chainId}`)
+            throw new SdkError(`Can't get tokenInfo by token ${token.address} ${token.chainId}`)
         }
 
         return found

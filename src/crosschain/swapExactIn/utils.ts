@@ -1,5 +1,5 @@
 import { SelectMode, SwapExactInResult } from '../types'
-import { Error } from '../error'
+import { SdkError } from '../sdkError'
 
 export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
     if (mode === 'fastest') {
@@ -10,7 +10,7 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
     const results = await Promise.allSettled(promises)
 
     let result: SwapExactInResult | undefined
-    const errors: Error[] = []
+    const errors: SdkError[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {
             errors.push(item.reason)

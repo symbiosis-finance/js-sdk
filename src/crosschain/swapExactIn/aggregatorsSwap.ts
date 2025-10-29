@@ -19,6 +19,7 @@ export async function aggregatorsSwap({
         clientId: symbiosis.clientId,
         slippage,
         tokenAmountIn,
+        tokenAmountInMin: tokenAmountIn, // correct as aggregatorsSwap is used for onchain swaps only
         tokenOut,
         deadline,
         oneInchProtocols,

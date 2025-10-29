@@ -8,9 +8,9 @@ import { TronTransactionData } from './chainUtils'
 import { Symbiosis } from './symbiosis'
 import { ProfilerItem } from '../entities/profiler'
 import { SymbiosisTrade } from './trade/symbiosisTrade'
-import { BytesLike } from 'ethers'
+import { BigNumber, BytesLike } from 'ethers'
+import { PartnerFeeCollector } from './contracts'
 import { Cache } from './cache'
-import { Logger } from 'pino'
 import { ConfigCacheData } from './config/cache/builder'
 
 export enum Field {
@@ -185,6 +185,8 @@ export interface SwapExactInParams {
     partnerAddress?: EvmAddress
     refundAddress?: BtcAddress | EmptyAddress
     generateBtcDepositAddress?: boolean
+    disableSrcChainRouting?: boolean
+    disableDstChainRouting?: boolean
 }
 
 export type BtcTransactionData = {
@@ -270,6 +272,13 @@ export type MultiCallItem = {
     routes: RouteItem[]
 }
 
+export type PartnerFeeCallParams = {
+    partnerAddress: string
+    partnerFeeCollector: PartnerFeeCollector
+    feeRate: BigNumber
+    fixedFee: BigNumber
+}
+
 export type MetricParams = {
     operation: string
     kind: string
@@ -288,8 +297,4 @@ export type PriceImpactMetricParams = {
     name_to: string
     token_amount: number
     price_impact: number
-}
-
-export type Context = {
-    logger: Logger
 }

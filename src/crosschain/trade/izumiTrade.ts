@@ -11,6 +11,7 @@ import { getMinAmount } from '../chainUtils'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { Multicall2 } from '../contracts/Multicall'
 import { Address } from '..'
+import { IzumiTradeError } from '../sdkError'
 
 interface IzumiAddresses {
     factory: Address
@@ -275,7 +276,7 @@ export class IzumiTrade extends SymbiosisTrade {
         const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
 
         if (!addresses) {
-            throw new Error('Unsupported chain')
+            throw new IzumiTradeError('Unsupported chain')
         }
 
         const { quoter, swap } = addresses
@@ -350,7 +351,7 @@ export class IzumiTrade extends SymbiosisTrade {
         }
 
         if (!bestRoute || !bestOutput) {
-            throw new Error('No path found')
+            throw new IzumiTradeError('No path found')
         }
 
         const { path, tokens } = bestRoute
@@ -436,7 +437,7 @@ export class IzumiTrade extends SymbiosisTrade {
         const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
 
         if (!addresses) {
-            throw new Error('Unsupported chain')
+            throw new IzumiTradeError('Unsupported chain')
         }
 
         const provider = this.symbiosis.getProvider(this.tokenAmountIn.token.chainId)
