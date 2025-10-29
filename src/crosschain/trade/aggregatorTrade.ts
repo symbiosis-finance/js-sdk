@@ -88,7 +88,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             isOpenOceanUsage = aggregators[i] === 'open-ocean'
         }
 
-        const timeout = 3000 // 3s
+        const timeout = 30000 // 30s
         const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
             return new Promise<T>((resolve, reject) => {
                 const timer = setTimeout(() => {
@@ -214,7 +214,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                     }
                     clearInterval(intervalId)
                     return
-                } else if (diff >= 500) {
+                } else if (diff >= 200) {
                     const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
                     const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
 
