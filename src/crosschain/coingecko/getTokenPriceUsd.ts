@@ -41,7 +41,7 @@ const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
 
 const getGasTokenPrice = async (token: Token): Promise<number> => {
     const { chainId } = token
-    const tokenId = COINGECKO_GAS_TOKEN_IDS[chainId]
+    const tokenId = COINGECKO_GAS_TOKEN_IDS.get(chainId)
     if (!tokenId) {
         console.error('CoinGecko: cannot find tokenId')
         return 0
@@ -78,7 +78,7 @@ const getTokenPrice = async (token: Token, map?: Map<string, Address>): Promise<
             decimals: token.decimals,
         })
     }
-    const platform = COINGECKO_PLATFORMS[token.chainId]
+    const platform = COINGECKO_PLATFORMS.get(token.chainId)
     if (!platform) {
         console.error('CoinGecko: cannot find asset platform')
         return 0

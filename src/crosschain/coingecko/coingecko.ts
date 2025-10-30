@@ -62,7 +62,7 @@ export class CoinGecko {
 
     async getGasTokenPrice(token: Token): Promise<number> {
         const { chainId } = token
-        const tokenId = CoinGecko.GAS_TOKEN_IDS[chainId]
+        const tokenId = CoinGecko.GAS_TOKEN_IDS.get(chainId)
         if (!tokenId) {
             throw Error(`CoinGecko: cannot find gas tokenId for chain ${chainId}`)
         }
@@ -88,7 +88,7 @@ export class CoinGecko {
     }
 
     async getTokenPrice(token: Token): Promise<number> {
-        const platform = CoinGecko.PLATFORMS[token.chainId]
+        const platform = CoinGecko.PLATFORMS.get(token.chainId)
         if (!platform) {
             throw Error(`CoinGecko: cannot find asset platform for chain ${token.chainId}`)
         }
