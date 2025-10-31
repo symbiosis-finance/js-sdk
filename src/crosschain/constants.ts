@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
+import { EvmAddress } from './types'
 
 export const CROSS_CHAIN_ID = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
@@ -634,7 +635,7 @@ export const ONE_BIPS = new Percent(JSBI.BigInt(1), JSBI.BigInt(10000))
 export const BIPS_BASE = JSBI.BigInt(10000)
 
 // Multicall2 addresses (tryAggregate method required)
-export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
+export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: EvmAddress } = {
     [ChainId.ETH_MAINNET]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
     [ChainId.ETH_RINKEBY]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
     [ChainId.ETH_KOVAN]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
@@ -711,7 +712,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: string } = {
     [ChainId.PLASMA_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
 }
 
-export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, string>> = {
+export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ETH_MAINNET]: '0x44487a445a7595446309464A82244B4bD4e325D5',
     [ChainId.ARBITRUM_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
     [ChainId.ZKSYNC_MAINNET]: '0x7D2172C9bf79263FFf6E456c423a5e3E69F9AA4b',

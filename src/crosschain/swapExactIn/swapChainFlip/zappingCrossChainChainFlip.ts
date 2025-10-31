@@ -4,8 +4,8 @@ import { TokenAmount } from '../../../entities'
 import { BaseSwapping } from '../../swapping'
 import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
+import { Address, EvmAddress, OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { ChainFlipError } from '../../sdkError'
-import { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isEvmChainId } from '../../chainUtils'
 
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
@@ -14,8 +14,8 @@ import { ChainFlipConfig } from './types'
 export interface ZappingChainFlipExactInParams {
     tokenAmountIn: TokenAmount
     config: ChainFlipConfig
-    from: string
-    to: string
+    from: Address
+    to: Address
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
@@ -27,7 +27,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected chainFlipQuote!: Quote
     protected chainFlipVaultSwapResponse!: VaultSwapResponse
     protected config!: ChainFlipConfig
-    protected evmTo!: string
+    protected evmTo!: Address // should be EvmAddress actually
     protected dstAddress: string
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
@@ -105,7 +105,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.refundAddress
+            this.evmTo = this.symbiosis.config.fallbackReceiver
         }
         const result = await this.doExactIn({
             tokenAmountIn,
@@ -155,12 +155,12 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         }
     }
 
-    protected tradeCTo(): string {
-        return this.multicallRouter.address
+    protected tradeCTo(): EvmAddress {
+        return this.multicallRouter.address as EvmAddress
     }
 
-    protected finalReceiveSide(): string {
-        return this.multicallRouter.address
+    protected finalReceiveSide(): EvmAddress {
+        return this.multicallRouter.address as EvmAddress
     }
 
     protected finalCalldata(): string | [] {

@@ -18,9 +18,12 @@ import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace DepositoryTypes {
-    export type UnlockerStruct = { unlocker: string; condition: BytesLike }
+    export type UnlockConditionStruct = {
+        unlocker: string
+        condition: BytesLike
+    }
 
-    export type UnlockerStructOutput = [string, string] & {
+    export type UnlockConditionStructOutput = [string, string] & {
         unlocker: string
         condition: string
     }
@@ -36,13 +39,25 @@ export declare namespace DepositoryTypes {
         amount: BigNumber
         nonce: BigNumber
     }
+
+    export type BlockchainStateStruct = {
+        blockNumber: BigNumberish
+        timestamp: BigNumberish
+    }
+
+    export type BlockchainStateStructOutput = [BigNumber, BigNumber] & {
+        blockNumber: BigNumber
+        timestamp: BigNumber
+    }
 }
 
 export declare namespace BranchedUnlocker {
-    export type ConditionStruct = { unlockers: DepositoryTypes.UnlockerStruct[] }
+    export type ConditionStruct = {
+        branches: DepositoryTypes.UnlockConditionStruct[]
+    }
 
-    export type ConditionStructOutput = [DepositoryTypes.UnlockerStructOutput[]] & {
-        unlockers: DepositoryTypes.UnlockerStructOutput[]
+    export type ConditionStructOutput = [DepositoryTypes.UnlockConditionStructOutput[]] & {
+        branches: DepositoryTypes.UnlockConditionStructOutput[]
     }
 
     export type SolutionStruct = { index: BigNumberish; solution: BytesLike }
@@ -59,7 +74,7 @@ export interface BranchedUnlockerInterface extends utils.Interface {
         'decodeCondition(bytes)': FunctionFragment
         'encodeCondition(((address,bytes)[]))': FunctionFragment
         'encodeSolution((uint256,bytes))': FunctionFragment
-        'unlock(address,(address,uint256,uint256),bytes,bytes)': FunctionFragment
+        'unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)': FunctionFragment
     }
 
     encodeFunctionData(functionFragment: 'decodeCondition', values: [BytesLike]): string
@@ -67,7 +82,7 @@ export interface BranchedUnlockerInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'encodeSolution', values: [BranchedUnlocker.SolutionStruct]): string
     encodeFunctionData(
         functionFragment: 'unlock',
-        values: [string, DepositoryTypes.DepositStruct, BytesLike, BytesLike]
+        values: [string, DepositoryTypes.DepositStruct, DepositoryTypes.BlockchainStateStruct, BytesLike, BytesLike]
     ): string
 
     decodeFunctionResult(functionFragment: 'decodeCondition', data: BytesLike): Result
@@ -112,8 +127,9 @@ export interface BranchedUnlocker extends BaseContract {
         encodeSolution(s: BranchedUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<[string]>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
@@ -127,8 +143,9 @@ export interface BranchedUnlocker extends BaseContract {
     encodeSolution(s: BranchedUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
 
     unlock(
-        metarouter: string,
+        router: string,
         deposit: DepositoryTypes.DepositStruct,
+        blockchainState: DepositoryTypes.BlockchainStateStruct,
         condition: BytesLike,
         solution: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
@@ -145,8 +162,9 @@ export interface BranchedUnlocker extends BaseContract {
         encodeSolution(s: BranchedUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: CallOverrides
@@ -163,8 +181,9 @@ export interface BranchedUnlocker extends BaseContract {
         encodeSolution(s: BranchedUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<BigNumber>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
@@ -179,8 +198,9 @@ export interface BranchedUnlocker extends BaseContract {
         encodeSolution(s: BranchedUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }

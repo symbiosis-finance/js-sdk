@@ -54,6 +54,16 @@ export declare namespace DepositoryTypes {
         amount: BigNumber
         nonce: BigNumber
     }
+
+    export type BlockchainStateStruct = {
+        blockNumber: BigNumberish
+        timestamp: BigNumberish
+    }
+
+    export type BlockchainStateStructOutput = [BigNumber, BigNumber] & {
+        blockNumber: BigNumber
+        timestamp: BigNumber
+    }
 }
 
 export interface SwapUnlockerInterface extends utils.Interface {
@@ -62,7 +72,7 @@ export interface SwapUnlockerInterface extends utils.Interface {
         'decodeCondition(bytes)': FunctionFragment
         'encodeCondition((address,uint256,address,bytes,uint256))': FunctionFragment
         'encodeSolution((address,bytes))': FunctionFragment
-        'unlock(address,(address,uint256,uint256),bytes,bytes)': FunctionFragment
+        'unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)': FunctionFragment
     }
 
     encodeFunctionData(functionFragment: 'decodeCondition', values: [BytesLike]): string
@@ -70,7 +80,7 @@ export interface SwapUnlockerInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'encodeSolution', values: [SwapUnlocker.SolutionStruct]): string
     encodeFunctionData(
         functionFragment: 'unlock',
-        values: [string, DepositoryTypes.DepositStruct, BytesLike, BytesLike]
+        values: [string, DepositoryTypes.DepositStruct, DepositoryTypes.BlockchainStateStruct, BytesLike, BytesLike]
     ): string
 
     decodeFunctionResult(functionFragment: 'decodeCondition', data: BytesLike): Result
@@ -112,8 +122,9 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<[string]>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
@@ -127,8 +138,9 @@ export interface SwapUnlocker extends BaseContract {
     encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
 
     unlock(
-        metarouter: string,
+        router: string,
         deposit: DepositoryTypes.DepositStruct,
+        lockState: DepositoryTypes.BlockchainStateStruct,
         condition: BytesLike,
         solution: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
@@ -142,8 +154,9 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: CallOverrides
@@ -160,8 +173,9 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<BigNumber>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
@@ -176,8 +190,9 @@ export interface SwapUnlocker extends BaseContract {
         encodeSolution(s: SwapUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         unlock(
-            metarouter: string,
+            router: string,
             deposit: DepositoryTypes.DepositStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }

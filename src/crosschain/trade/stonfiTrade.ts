@@ -8,6 +8,7 @@ import { Percent, Token, TokenAmount } from '../../entities'
 import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { TonAddress } from '..'
 import { StonFiTradeError } from '../sdkError'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
@@ -66,7 +67,7 @@ export class StonfiTrade extends SymbiosisTrade {
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
-            routerAddress: txParams.to.toString(),
+            routerAddress: txParams.to.toString() as TonAddress,
             callData: txParams.body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,

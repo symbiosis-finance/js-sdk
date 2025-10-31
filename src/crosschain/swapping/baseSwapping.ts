@@ -26,6 +26,8 @@ import {
 } from '../chainUtils'
 import { TRON_METAROUTER_ABI } from '../tronAbis'
 import {
+    Address,
+    EvmAddress,
     FeeItem,
     OmniPoolConfig,
     RouteItem,
@@ -55,8 +57,8 @@ export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
     public amountInUsd: TokenAmount | undefined
 
-    protected from!: string
-    protected to!: string
+    protected from!: Address
+    protected to!: Address
     protected tokenAmountIn!: TokenAmount
     protected tokenOut!: Token
     protected slippage!: DetailedSlippage
@@ -75,7 +77,7 @@ export abstract class BaseSwapping {
 
     protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
-    protected partnerAddress?: string
+    protected partnerAddress?: EvmAddress
 
     private profiler: Profiler
 
@@ -785,13 +787,13 @@ export abstract class BaseSwapping {
         }
     }
 
-    protected approvedTokens(): string[] {
+    protected approvedTokens(): Address[] {
         let firstToken = this.tradeA ? this.tradeA.tokenAmountIn.token.address : this.tokenAmountIn.token.address
         if (!firstToken) {
             firstToken = AddressZero // AddressZero if first token is GasToken
         }
 
-        let tokens: string[]
+        let tokens: Address[]
         if (this.transit.direction === 'burn') {
             tokens = [firstToken, ...this.transit.trade.route.map((i) => i.address)]
         } else {
@@ -800,7 +802,7 @@ export abstract class BaseSwapping {
         return tokens
     }
 
-    protected firstDexRouter(): string {
+    protected firstDexRouter(): Address {
         return this.tradeA?.routerAddress || AddressZero
     }
 
@@ -808,9 +810,9 @@ export abstract class BaseSwapping {
         return this.tradeA?.callData || []
     }
 
-    protected secondDexRouter(): string {
+    protected secondDexRouter(): Address {
         const multicallRouter = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId)
-        return multicallRouter.address
+        return multicallRouter.address as Address
     }
 
     protected secondSwapCalldata(): string | [] {
@@ -840,7 +842,7 @@ export abstract class BaseSwapping {
         ])
     }
 
-    protected finalReceiveSide(): string {
+    protected finalReceiveSide(): Address {
         return this.tradeC?.routerAddress || AddressZero
     }
 
@@ -852,8 +854,8 @@ export abstract class BaseSwapping {
         return this.tradeC?.callDataOffset || 0
     }
 
-    protected finalReceiveSideV2(): string {
-        return this.synthesisV2.address
+    protected finalReceiveSideV2(): Address {
+        return this.synthesisV2.address as Address
     }
 
     protected finalCalldataV2(fee2?: TokenAmount | undefined): string {
@@ -882,12 +884,12 @@ export abstract class BaseSwapping {
         return 100
     }
 
-    protected swapTokens(): string[] {
+    protected swapTokens(): Address[] {
         if (this.transit.trade.route.length === 0) {
             return []
         }
 
-        const tokens = [
+        const tokens: Address[] = [
             this.transit.trade.route[0].address,
             this.transit.trade.route[this.transit.trade.route.length - 1].address,
         ]
@@ -904,7 +906,7 @@ export abstract class BaseSwapping {
         return tokens
     }
 
-    protected extraSwapTokens(): string[] {
+    protected extraSwapTokens(): Address[] {
         return []
     }
 }

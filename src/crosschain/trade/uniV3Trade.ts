@@ -26,11 +26,12 @@ import { UniV3TradeError } from '../sdkError'
 import { BIPS_BASE } from '../constants'
 import { getMinAmount } from '../chainUtils'
 import { IV3SwapRouter } from '../contracts/UniV3Router02'
+import { Address } from '..'
 
 interface Deployment {
-    factory: string
-    quoter: string
-    swap02: string
+    factory: Address
+    quoter: Address
+    swap02: Address
     initCodeHash?: string
     baseTokens: Token[]
 }

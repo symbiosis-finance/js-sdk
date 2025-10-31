@@ -8,16 +8,16 @@ import { ThorChainError } from '../sdkError'
 import { BigNumber } from 'ethers'
 import { getMinAmount, isEvmChainId } from '../chainUtils'
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
-import { SwapExactInResult } from '../types'
+import { Address, EvmAddress, SwapExactInResult } from '../types'
 
 export interface ZappingThorExactInParams {
     tokenAmountIn: TokenAmount
     thorTokenIn: Token
-    from: string
-    to: string
+    from: Address
+    to: Address
     slippage: number
     deadline: number
-    partnerAddress?: string
+    partnerAddress?: EvmAddress
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -25,7 +25,7 @@ type ThorQuote = {
     memo: string
     amountOut: TokenAmount
     amountOutMin: TokenAmount
-    router: string
+    router: Address
     expiry: string
     fees: {
         asset: string
@@ -92,7 +92,7 @@ export class ZappingThor extends BaseSwapping {
     protected thorTokenOut = 'BTC.BTC'
     protected thorVault!: string
     protected thorQuote!: ThorQuote
-    protected evmTo!: string
+    protected evmTo!: Address
 
     protected async doPostTransitAction() {
         const amountIn = parseFloat(this.transit.amountIn.toSignificant())
@@ -124,7 +124,7 @@ export class ZappingThor extends BaseSwapping {
 
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.refundAddress
+            this.evmTo = this.symbiosis.config.fallbackReceiver
         }
 
         // check if there is "Available" ThorChain pool at the moment
@@ -258,12 +258,12 @@ export class ZappingThor extends BaseSwapping {
         }
     }
 
-    protected tradeCTo(): string {
-        return this.multicallRouter.address
+    protected tradeCTo(): Address {
+        return this.multicallRouter.address as Address
     }
 
-    protected finalReceiveSide(): string {
-        return this.multicallRouter.address
+    protected finalReceiveSide(): Address {
+        return this.multicallRouter.address as Address
     }
 
     protected finalCalldata(): string | [] {

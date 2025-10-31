@@ -7,6 +7,7 @@ import { utils } from 'ethers'
 import TronWeb, { TransactionInfo } from 'tronweb'
 import { ChainId } from '../../constants'
 import { Chain, Token } from '../../entities'
+import { EvmAddress } from '..'
 
 export interface TronTransactionData {
     chain_id: number
@@ -77,11 +78,11 @@ export function prepareTronTransaction({
 
 const ADDRESS_PREFIX_REGEX = /^(41)/
 
-export function tronAddressToEvm(address: string): string {
+export function tronAddressToEvm(address: string): EvmAddress {
     try {
-        return TronWeb.address.toHex(address).replace(ADDRESS_PREFIX_REGEX, '0x')
+        return TronWeb.address.toHex(address).replace(ADDRESS_PREFIX_REGEX, '0x') as EvmAddress
     } catch (e) {
-        return address
+        return address as EvmAddress
     }
 }
 
@@ -108,6 +109,8 @@ export async function getTransactionInfoById(tronWeb: TronWeb, txId: string): Pr
 }
 
 // Tron uses 0x41 as the prefix for contract addresses created by CREATE2, unlike EVM 0xff.
-export function getTronCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
-    return getAddress(hexDataSlice(kekKeccak256(concat(['0x41', getAddress(from), salt, initCodeHash])), 12))
+export function getTronCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): EvmAddress {
+    return getAddress(
+        hexDataSlice(kekKeccak256(concat(['0x41', getAddress(from), salt, initCodeHash])), 12)
+    ) as EvmAddress
 }

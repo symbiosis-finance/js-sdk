@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "3.5.62",
+    "version": "3.6.8",
     "main": "dist/index.cjs.js",
     "typings": "dist/index.d.ts",
     "files": [
@@ -20,8 +20,8 @@
         "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
-        "prepublishOnly": "tsc --noEmit && tsup",
-        "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json'",
+        "prepare": "npm run build",
+        "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
         "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
         "test": "vitest test/crosschain"
     },
@@ -58,7 +58,7 @@
         "pino-pretty": "^8.0.0"
     },
     "devDependencies": {
-        "@symbiosis-finance/depository": "github:symbiosis-finance/depository",
+        "@symbiosis-finance/depository": "github:symbiosis-finance/depository#v0.6.4",
         "@typechain/ethers-v5": "^9.0.0",
         "@types/big.js": "^4.0.5",
         "@types/bs58": "^4.0.0",

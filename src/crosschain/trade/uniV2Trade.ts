@@ -27,6 +27,7 @@ import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symb
 import { getFunctionSelector } from '../chainUtils/tron'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { Symbiosis } from '../symbiosis'
+import { Address } from '..'
 import { UniV2TradeError } from '../sdkError'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
@@ -125,7 +126,7 @@ export class UniV2Trade extends SymbiosisTrade {
         this.out = {
             amountOut: trade.outputAmount,
             amountOutMin,
-            routerAddress: this.router.address,
+            routerAddress: this.router.address as Address,
             route: trade.route.path,
             callData: data,
             callDataOffset: offset,

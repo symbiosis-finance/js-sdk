@@ -13,10 +13,12 @@ import {
     Bridge__factory,
     BtcRefundUnlocker,
     BtcRefundUnlocker__factory,
-    Depository,
-    Depository__factory,
     Fabric,
     Fabric__factory,
+    IDepository,
+    IDepository__factory,
+    IRouter,
+    IRouter__factory,
     MetaRouter,
     MetaRouter__factory,
     MulticallRouter,
@@ -31,10 +33,10 @@ import {
     SwapUnlocker__factory,
     Synthesis,
     Synthesis__factory,
+    TimedUnlocker,
+    TimedUnlocker__factory,
     TonBridge,
     TonBridge__factory,
-    WithdrawUnlocker,
-    WithdrawUnlocker__factory,
 } from './contracts'
 import {
     AdvisorError,
@@ -52,6 +54,8 @@ import {
     ChainConfig,
     Config,
     CounterParams,
+    DepositoryConfig,
+    EvmAddress,
     FeeConfig,
     MetricParams,
     OmniPoolConfig,
@@ -67,6 +71,7 @@ import { Zapping } from './zapping'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import { config as dev } from './config/dev'
+import { config as beta } from './config/beta'
 import { ConfigCache } from './config/cache/cache'
 import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
 import { PendingRequest } from './revertRequest'
@@ -85,20 +90,23 @@ import { swapExactIn } from './swapExactIn'
 import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
+import { CoinGecko } from './coingecko'
 import { isTonChainId, getUnwrapDustLimit } from './chainUtils'
 
-export type ConfigName = 'dev' | 'testnet' | 'mainnet'
+export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
 export type DiscountTier = {
     amount: string
     discount: number
 }
 
-export type DepositoryContracts = {
-    depository: Depository
+export type DepositoryContext = {
+    cfg: DepositoryConfig
+    depository: IDepository
+    router: IRouter
     branchedUnlocker: BranchedUnlocker
     swapUnlocker: SwapUnlocker
-    withdrawUnlocker: WithdrawUnlocker
+    timedUnlocker: TimedUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
 }
 
@@ -137,6 +145,7 @@ export class Symbiosis {
     public readonly openOceanConfig: OpenOceanConfig
 
     public readonly fetch: typeof fetch
+    public readonly coinGecko: CoinGecko
 
     public setMetrics({
         symbiosisSdkDuration,
@@ -241,6 +250,8 @@ export class Symbiosis {
                 this.config = structuredClone(testnet)
             } else if (configName === 'dev') {
                 this.config = structuredClone(dev)
+            } else if (configName === 'beta') {
+                this.config = structuredClone(beta)
             } else {
                 throw new SdkError('Unknown config name')
             }
@@ -271,14 +282,14 @@ export class Symbiosis {
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.oneInchConfig) {
-            this.oneInchConfig = overrideConfig.oneInchConfig
+            this.oneInchConfig = { ...this.oneInchConfig, ...overrideConfig.oneInchConfig }
         }
         this.openOceanConfig = {
             apiUrl: 'https://open-api.openocean.finance/v4',
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.openOceanConfig) {
-            this.openOceanConfig = overrideConfig.openOceanConfig
+            this.openOceanConfig = { ...this.openOceanConfig, ...overrideConfig.openOceanConfig }
         }
 
         this.volumeFeeCollectors = VOLUME_FEE_COLLECTORS
@@ -304,6 +315,7 @@ export class Symbiosis {
                 return [chain.id, new StaticJsonRpcProvider(connection, chain.id)]
             })
         )
+        this.coinGecko = new CoinGecko(this.config.coinGecko?.url, this.config.advisor.url, this.cache)
     }
 
     public createMetricTimer() {
@@ -501,22 +513,28 @@ export class Symbiosis {
         return MetaRouter__factory.connect(address, signerOrProvider)
     }
 
-    public depository(chainId: ChainId, signer?: Signer): DepositoryContracts | null {
-        const depository = this.chainConfig(chainId).depository
-        if (!depository) {
-            return null
-        }
-        const signerOrProvider = signer || this.getProvider(chainId)
+    public async depository(chainId: ChainId): Promise<DepositoryContext | null> {
+        return this.cache.get(['depository', `${chainId}`], async () => {
+            const cfg = this.chainConfig(chainId).depository
+            if (!cfg) {
+                return null
+            }
+            const signerOrProvider = this.getProvider(chainId)
+            const depository = IDepository__factory.connect(cfg.depository, signerOrProvider)
+            const routerAddress = await depository.router()
 
-        return {
-            depository: Depository__factory.connect(depository.depository, signerOrProvider),
-            swapUnlocker: SwapUnlocker__factory.connect(depository.swapUnlocker, signerOrProvider),
-            withdrawUnlocker: WithdrawUnlocker__factory.connect(depository.withdrawUnlocker, signerOrProvider),
-            btcRefundUnlocker: depository.btcRefundUnlocker
-                ? BtcRefundUnlocker__factory.connect(depository.btcRefundUnlocker, signerOrProvider)
-                : undefined,
-            branchedUnlocker: BranchedUnlocker__factory.connect(depository.branchedUnlocker, signerOrProvider),
-        }
+            return {
+                cfg,
+                depository,
+                router: IRouter__factory.connect(routerAddress, signerOrProvider),
+                swapUnlocker: SwapUnlocker__factory.connect(cfg.swapUnlocker, signerOrProvider),
+                btcRefundUnlocker: cfg.btcRefundUnlocker
+                    ? BtcRefundUnlocker__factory.connect(cfg.btcRefundUnlocker, signerOrProvider)
+                    : undefined,
+                timedUnlocker: TimedUnlocker__factory.connect(cfg.timedUnlocker, signerOrProvider),
+                branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
+            }
+        })
     }
 
     public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {
@@ -827,7 +845,7 @@ export class Symbiosis {
         return info
     }
 
-    getRevertableAddress(chainId: ChainId): string {
+    getRevertableAddress(chainId: ChainId): EvmAddress {
         const address = this.config.revertableAddress[chainId]
 
         if (address) {

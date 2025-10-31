@@ -17,17 +17,17 @@ import { FunctionFragment, Result } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
-export declare namespace BtcRefundUnlocker {
-    export type ConditionStruct = { refundAddress: BytesLike }
-
-    export type ConditionStructOutput = [string] & { refundAddress: string }
-
-    export type SolutionStruct = { clientID: BytesLike }
-
-    export type SolutionStructOutput = [string] & { clientID: string }
-}
-
 export declare namespace DepositoryTypes {
+    export type UnlockConditionStruct = {
+        unlocker: string
+        condition: BytesLike
+    }
+
+    export type UnlockConditionStructOutput = [string, string] & {
+        unlocker: string
+        condition: string
+    }
+
     export type DepositStruct = {
         token: string
         amount: BigNumberish
@@ -51,20 +51,28 @@ export declare namespace DepositoryTypes {
     }
 }
 
-export interface BtcRefundUnlockerInterface extends utils.Interface {
-    contractName: 'BtcRefundUnlocker'
+export declare namespace TimedUnlocker {
+    export type ConditionStruct = {
+        delay: BigNumberish
+        next: DepositoryTypes.UnlockConditionStruct
+    }
+
+    export type ConditionStructOutput = [BigNumber, DepositoryTypes.UnlockConditionStructOutput] & {
+        delay: BigNumber
+        next: DepositoryTypes.UnlockConditionStructOutput
+    }
+}
+
+export interface TimedUnlockerInterface extends utils.Interface {
+    contractName: 'TimedUnlocker'
     functions: {
         'decodeCondition(bytes)': FunctionFragment
-        'encodeCondition((bytes))': FunctionFragment
-        'encodeSolution((bytes32))': FunctionFragment
-        'synthesis()': FunctionFragment
+        'encodeCondition((uint256,(address,bytes)))': FunctionFragment
         'unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)': FunctionFragment
     }
 
     encodeFunctionData(functionFragment: 'decodeCondition', values: [BytesLike]): string
-    encodeFunctionData(functionFragment: 'encodeCondition', values: [BtcRefundUnlocker.ConditionStruct]): string
-    encodeFunctionData(functionFragment: 'encodeSolution', values: [BtcRefundUnlocker.SolutionStruct]): string
-    encodeFunctionData(functionFragment: 'synthesis', values?: undefined): string
+    encodeFunctionData(functionFragment: 'encodeCondition', values: [TimedUnlocker.ConditionStruct]): string
     encodeFunctionData(
         functionFragment: 'unlock',
         values: [string, DepositoryTypes.DepositStruct, DepositoryTypes.BlockchainStateStruct, BytesLike, BytesLike]
@@ -72,20 +80,18 @@ export interface BtcRefundUnlockerInterface extends utils.Interface {
 
     decodeFunctionResult(functionFragment: 'decodeCondition', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'encodeCondition', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'encodeSolution', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'synthesis', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
     events: {}
 }
 
-export interface BtcRefundUnlocker extends BaseContract {
-    contractName: 'BtcRefundUnlocker'
+export interface TimedUnlocker extends BaseContract {
+    contractName: 'TimedUnlocker'
     connect(signerOrProvider: Signer | Provider | string): this
     attach(addressOrName: string): this
     deployed(): Promise<this>
 
-    interface: BtcRefundUnlockerInterface
+    interface: TimedUnlockerInterface
 
     queryFilter<TEvent extends TypedEvent>(
         event: TypedEventFilter<TEvent>,
@@ -103,60 +109,42 @@ export interface BtcRefundUnlocker extends BaseContract {
     removeListener: OnEvent<this>
 
     functions: {
-        decodeCondition(
-            condition: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<[BtcRefundUnlocker.ConditionStructOutput]>
+        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<[TimedUnlocker.ConditionStructOutput]>
 
-        encodeCondition(c: BtcRefundUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<[string]>
-
-        encodeSolution(s: BtcRefundUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<[string]>
-
-        synthesis(overrides?: CallOverrides): Promise<[string]>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<[string]>
 
         unlock(
             router: string,
             deposit: DepositoryTypes.DepositStruct,
-            arg2: DepositoryTypes.BlockchainStateStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
     }
 
-    decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BtcRefundUnlocker.ConditionStructOutput>
+    decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<TimedUnlocker.ConditionStructOutput>
 
-    encodeCondition(c: BtcRefundUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
-
-    encodeSolution(s: BtcRefundUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
-
-    synthesis(overrides?: CallOverrides): Promise<string>
+    encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
 
     unlock(
         router: string,
         deposit: DepositoryTypes.DepositStruct,
-        arg2: DepositoryTypes.BlockchainStateStruct,
+        lockState: DepositoryTypes.BlockchainStateStruct,
         condition: BytesLike,
         solution: BytesLike,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
     callStatic: {
-        decodeCondition(
-            condition: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<BtcRefundUnlocker.ConditionStructOutput>
+        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<TimedUnlocker.ConditionStructOutput>
 
-        encodeCondition(c: BtcRefundUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
-
-        encodeSolution(s: BtcRefundUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<string>
-
-        synthesis(overrides?: CallOverrides): Promise<string>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
 
         unlock(
             router: string,
             deposit: DepositoryTypes.DepositStruct,
-            arg2: DepositoryTypes.BlockchainStateStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: CallOverrides
@@ -168,16 +156,12 @@ export interface BtcRefundUnlocker extends BaseContract {
     estimateGas: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
-        encodeCondition(c: BtcRefundUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<BigNumber>
-
-        encodeSolution(s: BtcRefundUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<BigNumber>
-
-        synthesis(overrides?: CallOverrides): Promise<BigNumber>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<BigNumber>
 
         unlock(
             router: string,
             deposit: DepositoryTypes.DepositStruct,
-            arg2: DepositoryTypes.BlockchainStateStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }
@@ -187,16 +171,12 @@ export interface BtcRefundUnlocker extends BaseContract {
     populateTransaction: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-        encodeCondition(c: BtcRefundUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        encodeSolution(s: BtcRefundUnlocker.SolutionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-        synthesis(overrides?: CallOverrides): Promise<PopulatedTransaction>
+        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         unlock(
             router: string,
             deposit: DepositoryTypes.DepositStruct,
-            arg2: DepositoryTypes.BlockchainStateStruct,
+            lockState: DepositoryTypes.BlockchainStateStruct,
             condition: BytesLike,
             solution: BytesLike,
             overrides?: Overrides & { from?: string | Promise<string> }

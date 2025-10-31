@@ -3,19 +3,19 @@ import { BigNumber, BytesLike, utils } from 'ethers'
 import { ChainId } from '../../constants'
 import { GAS_TOKEN, TokenAmount } from '../../entities'
 import { onchainSwap } from './onchainSwap'
-import { SwapExactInParams, SwapExactInResult } from '../types'
+import { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
 import { FeeCollector__factory } from '../contracts'
 import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../chainUtils/tron'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 
-export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
+export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ZKSYNC_MAINNET]: '0x35e3dc1f3383bD348EC651EdD73fE1d7a7dA5AAa',
     [ChainId.BSC_MAINNET]: '0x628613064b1902a1A422825cf11B687C6f17961E',
     [ChainId.RSK_MAINNET]: '0xa257f3fe4e4032291516dc355edf90664e9eb932',
 }
 
-export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, string>> = {
+export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ETH_MAINNET]: '0xff9b21c3bfa4bce9b20b55fed56d102ced48b0f6',
     [ChainId.BSC_MAINNET]: '0x0425841529882628880fBD228AC90606e0c2e09A',
     [ChainId.AVAX_MAINNET]: '0xA257F3FE4E4032291516DC355eDF90664e9eB932',

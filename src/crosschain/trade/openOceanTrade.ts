@@ -6,6 +6,7 @@ import type { Symbiosis } from '../symbiosis'
 import { BIPS_BASE } from '../constants'
 import BigNumber from 'bignumber.js'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { Address, NonEmptyAddress } from '..'
 import { OpenOceanTradeError } from '../sdkError'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
@@ -13,7 +14,7 @@ interface OpenOceanTradeParams extends SymbiosisTradeParams {
 }
 
 interface OpenOceanQuote {
-    to: string
+    to: Address
     inAmount: string
     outAmount: string
     data: string
@@ -22,7 +23,7 @@ interface OpenOceanQuote {
 
 interface OpenOceanChain {
     slug: string
-    nativeTokenAddress: string
+    nativeTokenAddress: NonEmptyAddress
 }
 
 interface OpenOceanError {
@@ -334,10 +335,10 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 const json = await response.json()
 
                 if (isMainnet) {
-                    return json.data.standard.legacyGasPrice
+                    return json.data.standard.legacyGasPrice as number
                 }
 
-                return json.data.standard
+                return json.data.standard as number
             },
             600 // 10 minutes
         )

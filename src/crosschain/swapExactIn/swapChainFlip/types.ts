@@ -26,7 +26,7 @@ export enum ChainFlipAssetId {
 export interface ChainFlipToken {
     chainId: ChainFlipChainId
     assetId: ChainFlipAssetId
-    chain: Chain
+    chain: Exclude<Chain, 'Polkadot'>
     asset: Asset
 }
 

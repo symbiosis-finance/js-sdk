@@ -6,7 +6,7 @@ import { getCreate2Address as getEvmCreate2Address } from '@ethersproject/addres
 
 import {
     _1000,
-    _998,
+    _997,
     BigintIsh,
     ChainId,
     FACTORY_ADDRESS,
@@ -21,12 +21,28 @@ import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/t
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { Token } from './token'
 import { BytesLike } from '@ethersproject/bytes'
+import { EvmAddress, NonEmptyAddress } from '..'
 
-export let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
+export class MapWithDefault<K, V> extends Map<K, V> {
+    #default: () => V
+    get(key: K): V {
+        if (!this.has(key)) {
+            this.set(key, this.#default())
+        }
+        return super.get(key) as V
+    }
+
+    constructor(defaultFunction: () => V, entries?: readonly (readonly [K, V])[] | null) {
+        super(entries)
+        this.#default = defaultFunction
+    }
+}
+
+export const PAIR_ADDRESS_CACHE = new MapWithDefault<NonEmptyAddress, Map<NonEmptyAddress, EvmAddress>>(() => new Map())
 
 // TODO replace with onchain call to Factory.getPair method
-export function getZkCreate2Address(from: string, salt: BytesLike, initCodeHash: BytesLike): string {
-    const MAP: Record<string, Record<string, string>> = {
+export function getZkCreate2Address(from: EvmAddress, salt: BytesLike, initCodeHash: BytesLike): EvmAddress {
+    const MAP: Record<EvmAddress, Record<string, EvmAddress>> = {
         '0x50704Ac00064be03CEEd817f41E0Aa61F52ef4DC': {
             '0x10dac1b69a0ef99baf5786f77bf0aab84749fd564007f4fad53a9395afa06d6a':
                 '0x20eDB5049461c9a6F490671742824c9F9aD05eD8', // H2 (USDC,wzkCRO)
@@ -47,7 +63,7 @@ export class Pair {
     public readonly liquidityToken: Token
     private readonly tokenAmounts: [TokenAmount, TokenAmount]
 
-    public static getAddress(tokenA: Token, tokenB: Token): string {
+    public static getAddress(tokenA: Token, tokenB: Token): EvmAddress {
         const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
         const chainId = tokens[0].chainId
@@ -60,8 +76,12 @@ export class Pair {
             params = [...params, false]
         }
 
-        if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-            let getCreate2Address = getEvmCreate2Address
+        if (PAIR_ADDRESS_CACHE.get(tokens[0].address).get(tokens[1].address) === undefined) {
+            let getCreate2Address = getEvmCreate2Address as (
+                from: EvmAddress,
+                salt: BytesLike,
+                initCodeHash: BytesLike
+            ) => EvmAddress
 
             if (isTronChainId(chainId)) {
                 getCreate2Address = getTronCreate2Address
@@ -69,20 +89,17 @@ export class Pair {
                 getCreate2Address = getZkCreate2Address
             }
 
-            PAIR_ADDRESS_CACHE = {
-                ...PAIR_ADDRESS_CACHE,
-                [tokens[0].address]: {
-                    ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
-                    [tokens[1].address]: getCreate2Address(
-                        FACTORY_ADDRESS[chainId],
-                        keccak256(['bytes'], [pack(types, params)]),
-                        INIT_CODE_HASH[chainId]
-                    ),
-                },
-            }
+            PAIR_ADDRESS_CACHE.get(tokens[0].address).set(
+                tokens[1].address,
+                getCreate2Address(
+                    FACTORY_ADDRESS[chainId],
+                    keccak256(['bytes'], [pack(types, params)]),
+                    INIT_CODE_HASH[chainId]
+                )
+            )
         }
 
-        return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
+        return PAIR_ADDRESS_CACHE.get(tokens[0].address).get(tokens[1].address) as EvmAddress
     }
 
     public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount) {
@@ -165,7 +182,7 @@ export class Pair {
         }
         const inputReserve = this.reserveOf(inputAmount.token)
         const outputReserve = this.reserveOf(inputAmount.token.equals(this.token0) ? this.token1 : this.token0)
-        const inputAmountWithFee = JSBI.multiply(inputAmount.raw, _998)
+        const inputAmountWithFee = JSBI.multiply(inputAmount.raw, _997)
         const numerator = JSBI.multiply(inputAmountWithFee, outputReserve.raw)
         const denominator = JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee)
         const outputAmount = new TokenAmount(
@@ -191,7 +208,7 @@ export class Pair {
         const outputReserve = this.reserveOf(outputAmount.token)
         const inputReserve = this.reserveOf(outputAmount.token.equals(this.token0) ? this.token1 : this.token0)
         const numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), _1000)
-        const denominator = JSBI.multiply(JSBI.subtract(outputReserve.raw, outputAmount.raw), _998)
+        const denominator = JSBI.multiply(JSBI.subtract(outputReserve.raw, outputAmount.raw), _997)
         const inputAmount = new TokenAmount(
             outputAmount.token.equals(this.token0) ? this.token1 : this.token0,
             JSBI.add(JSBI.divide(numerator, denominator), ONE)

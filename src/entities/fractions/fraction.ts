@@ -65,6 +65,11 @@ export class Fraction {
         return new Fraction(JSBI.remainder(this.numerator, this.denominator), this.denominator)
     }
 
+    public toDecimal(): _Decimal {
+        const numStr = this.numerator.toString()
+        return new _Decimal(numStr).div(this.denominator.toString())
+    }
+
     public invert(): Fraction {
         return new Fraction(this.denominator, this.numerator)
     }
@@ -142,8 +147,8 @@ export class Fraction {
         format: object = { groupSeparator: '' },
         rounding: Rounding = Rounding.ROUND_HALF_UP
     ): string {
-        invariant(Number.isInteger(significantDigits), `${significantDigits} is not an integer.`)
-        invariant(significantDigits > 0, `${significantDigits} is not positive.`)
+        invariant(Number.isInteger(significantDigits), `toSignificant: ${significantDigits} is not an integer.`)
+        invariant(significantDigits > 0, `toSignificant: ${significantDigits} is not positive.`)
 
         Decimal.set({ precision: significantDigits + 1, rounding: toSignificantRounding[rounding] })
         const quotient = new Decimal(this.numerator.toString())
@@ -157,8 +162,8 @@ export class Fraction {
         format: object = { groupSeparator: '' },
         rounding: Rounding = Rounding.ROUND_HALF_UP
     ): string {
-        invariant(Number.isInteger(decimalPlaces), `${decimalPlaces} is not an integer.`)
-        invariant(decimalPlaces >= 0, `${decimalPlaces} is negative.`)
+        invariant(Number.isInteger(decimalPlaces), `toFixed: ${decimalPlaces} is not an integer.`)
+        invariant(decimalPlaces >= 0, `toFixed: ${decimalPlaces} is negative.`)
 
         Big.DP = decimalPlaces
         Big.RM = toFixedRounding[rounding]

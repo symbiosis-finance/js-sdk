@@ -1,3 +1,4 @@
+import { Address } from '..'
 import { ChainId } from '../constants'
 import { Token } from './token'
 
@@ -15,7 +16,7 @@ const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
         },
     })
 
-const TOKEN_AS_GAS = (chainId: ChainId, address: string, symbol: string, iconId: number, decimals = 18) =>
+const TOKEN_AS_GAS = (chainId: ChainId, address: Address, symbol: string, iconId: number, decimals = 18) =>
     new Token({
         name: symbol,
         symbol,

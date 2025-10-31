@@ -18,9 +18,19 @@ export enum Field {
     OUTPUT = 'OUTPUT',
 }
 
+export type EvmAddress = `0x${string}`
+export type TronAddress = `T${string}`
+export type TonBounceableAddress = `E${string}`
+export type TonNonbounceableAddress = `U${string}`
+export type TonAddress = TonBounceableAddress | TonNonbounceableAddress
+export type BtcAddress = `bc1${string}` | `1${string}` | `3${string}`
+export type EmptyAddress = ''
+export type NonEmptyAddress = EvmAddress | TronAddress | TonAddress | BtcAddress
+export type Address = NonEmptyAddress | EmptyAddress
+
 export interface VolumeFeeCollector {
     chainId: ChainId
-    address: string
+    address: Address
     feeRate: string
     eligibleChains: ChainId[]
     default?: boolean
@@ -28,12 +38,23 @@ export interface VolumeFeeCollector {
 
 export type BridgeDirection = 'burn' | 'mint' | 'v2'
 
+export type PriceEstimationConfig = {
+    enabled: boolean
+    slippageMax: number // Maximum slippage - used for tokenAmountOutMin calculation and delayed solving.
+    slippageNorm: number // Normal slippage - used for tokenAmountOut calculation and immetiate solving.
+}
+
+// Addresses of Depository contracts
 export type DepositoryConfig = {
-    depository: string
-    swapUnlocker: string
-    withdrawUnlocker: string
-    branchedUnlocker: string
-    btcRefundUnlocker?: string
+    depository: EvmAddress
+    swapUnlocker: EvmAddress
+    branchedUnlocker: EvmAddress
+    timedUnlocker: EvmAddress
+    btcRefundUnlocker?: EvmAddress
+    priceEstimation: PriceEstimationConfig
+    refundDelay: number // Minimal delay before refund
+    withdrawDelay: number // Minimal delay before withdraw
+    minAmountDelay: number // Minimal delay before swap with minimal amount
 }
 
 export type ChainConfig = {
@@ -44,14 +65,14 @@ export type ChainConfig = {
     dexFee: number
     filterBlockOffset: number
     stables: TokenConstructor[]
-    metaRouter: string
-    metaRouterGateway: string
-    multicallRouter: string
-    router: string
-    bridge: string
-    synthesis: string
-    portal: string
-    fabric: string
+    metaRouter: Address
+    metaRouterGateway: Address
+    multicallRouter: Address
+    router: Address
+    bridge: Address
+    synthesis: Address
+    portal: Address
+    fabric: Address
     tonPortal?: string
     partnerFeeCollector?: string
     depository?: DepositoryConfig
@@ -63,7 +84,7 @@ export type AdvisorConfig = {
 
 export type OmniPoolConfig = {
     chainId: ChainId
-    address: string
+    address: Address
     oracle: string
     generalPurpose: boolean
     coinGeckoId: string
@@ -85,13 +106,18 @@ export type BtcConfig = {
     forwarderUrl: string
 }
 
+export type CoinGeckoConfig = {
+    url: string
+}
+
 export type Config = {
     advisor: AdvisorConfig
+    coinGecko?: CoinGeckoConfig
     omniPools: OmniPoolConfig[]
-    revertableAddress: Partial<Record<ChainId, string>> & { default: string }
+    revertableAddress: Partial<Record<ChainId, EvmAddress>> & { default: EvmAddress }
     limits: SwapLimit[]
     chains: ChainConfig[]
-    refundAddress: string
+    fallbackReceiver: EvmAddress
     btcConfigs: BtcConfig[]
 }
 
@@ -125,8 +151,8 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     fetch?: typeof fetch
     advisor?: AdvisorConfig
-    oneInchConfig?: OneInchConfig
-    openOceanConfig?: OpenOceanConfig
+    oneInchConfig?: Partial<OneInchConfig>
+    openOceanConfig?: Partial<OpenOceanConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
     config?: Config
@@ -134,7 +160,7 @@ export type OverrideConfig = {
 }
 
 export interface MiddlewareCall {
-    address: string
+    address: Address
     data: string
     offset: number
 }
@@ -150,8 +176,8 @@ export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
     tokenOut: Token
-    from: string
-    to: string
+    from: Address
+    to: Address
     slippage: number
     deadline: number
     transitTokenIn?: Token
@@ -161,8 +187,8 @@ export interface SwapExactInParams {
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
-    partnerAddress?: string
-    refundAddress?: string
+    partnerAddress?: EvmAddress
+    refundAddress?: BtcAddress | EmptyAddress
     generateBtcDepositAddress?: boolean
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean

@@ -1,5 +1,6 @@
+import { Address } from '.'
 import { Percent, Token, TokenAmount } from '../entities'
-import { getMinAmount } from './chainUtils/evm'
+import { getMinAmount } from './chainUtils'
 import { OmniPool, OmniPoolOracle } from './contracts'
 
 export class OmniLiquidity {
@@ -25,7 +26,7 @@ export class OmniLiquidity {
         const depositEstimate = await this.poolOracle.quoteDeposit(index, this.tokenAmountIn.raw.toString())
 
         const lpToken = new Token({
-            address: this.pool.address,
+            address: this.pool.address as Address,
             decimals: 18,
             chainId: network.chainId,
         })
