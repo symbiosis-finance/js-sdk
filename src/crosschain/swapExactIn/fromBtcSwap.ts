@@ -326,33 +326,33 @@ async function buildOnChainSwap(
     syBtcAmount: TokenAmount,
     btcConfig: BtcConfig
 ): Promise<MultiCallItem[]> {
-    const { to, tokenAmountIn, symbiosis, tokenOut } = context
+    const { to, tokenAmountIn, symbiosis } = context
 
-    if (syBtcAmount.token.equals(tokenOut)) {
+    if (syBtcAmount.token.equals(context.tokenOut)) {
         return []
     }
-    const dep = await symbiosis.depository(syBtcAmount.token.chainId)
+    const dep = await context.symbiosis.depository(syBtcAmount.token.chainId)
     let isOutputNative = false
-    if (dep && tokenOut.isNative) {
+    if (dep && context.tokenOut.isNative) {
         isOutputNative = true
         // Replace destination token with Wrapped
-        context = { ...context, tokenOut: wrappedToken(tokenOut) }
+        context = { ...context, tokenOut: wrappedToken(context.tokenOut) }
     }
     let aggregatorTrade: AggregatorTrade | null = null
     let tokenAmountOut: TokenAmount
     let tokenAmountOutMin: TokenAmount
     if (dep && dep.cfg.priceEstimation.enabled) {
-        const coinGecko = symbiosis.coinGecko
+        const coinGecko = context.symbiosis.coinGecko
         const [syBtcPrice, tokenOutPrice] = await Promise.all([
             coinGecko.getTokenPriceCached(syBtcAmount.token),
-            coinGecko.getTokenPriceCached(tokenOut),
+            coinGecko.getTokenPriceCached(context.tokenOut),
         ])
         tokenAmountOut = syBtcAmount.convertTo(
-            tokenOut,
+            context.tokenOut,
             (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageNorm)
         )
         tokenAmountOutMin = syBtcAmount.convertTo(
-            tokenOut,
+            context.tokenOut,
             (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageMax)
         )
     } else {
@@ -362,7 +362,7 @@ async function buildOnChainSwap(
             tokenAmountInMin: syBtcAmount,
             from: to, // there is not from address, set user's address
             clientId: symbiosis.clientId,
-            preferOneInchUsage: isUseOneInchOnly(tokenAmountIn.token, tokenOut),
+            preferOneInchUsage: isUseOneInchOnly(tokenAmountIn.token, context.tokenOut),
         })
         await aggregatorTrade.init()
         tokenAmountOut = aggregatorTrade.amountOut
@@ -371,7 +371,7 @@ async function buildOnChainSwap(
 
     if (dep) {
         const targetCall = isOutputNative
-            ? nativeUnwrapCall(dep, tokenOut, to)
+            ? nativeUnwrapCall(dep, context.tokenOut, to)
             : erc20TransferCall(to, tokenAmountOut.token.address)
         const call = await buildDepositCall({
             context,
@@ -420,7 +420,7 @@ async function buildCrossChainSwap(
     syBtcAmount: TokenAmount,
     btcConfig: BtcConfig
 ): Promise<MultiCallItem[]> {
-    const { to, symbiosis } = context
+    const { to } = context
 
     const swapExactInResult = await bestPoolSwapping({
         ...context,
@@ -433,7 +433,7 @@ async function buildCrossChainSwap(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const dep = await symbiosis.depository(syBtcAmount.token.chainId)
+    const dep = await context.symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
         if (swapExactInResult.tradeA) {
             // There is DEX-swap on BSC, lock to Depository instead.
@@ -550,7 +550,6 @@ async function buildDepositCall({
             condition: timedWithdrawCondition,
         }
     }
-
     const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
     // Normal swap.
