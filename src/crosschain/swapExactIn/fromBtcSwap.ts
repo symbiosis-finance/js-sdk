@@ -386,7 +386,6 @@ async function buildOnChainSwap(
         return [
             {
                 ...call,
-                amountOutMin: tokenAmountOut,
                 fees: [], // TODO: calculate fees (how?)
                 priceImpact: new Percent('0', BIPS_BASE), // TODO: calculate priceImpact (how?)
             },
@@ -451,7 +450,6 @@ async function buildCrossChainSwap(
             return [
                 {
                     ...call,
-                    amountOutMin: swapExactInResult.tradeA.amountOut,
                     fees: swapExactInResult.fees || [],
                     priceImpact: swapExactInResult.priceImpact,
                 },
@@ -531,7 +529,7 @@ async function buildDepositCall({
     target,
     targetCalldata,
     targetOffset,
-}: BuildDepositCallParameters): Promise<Omit<MultiCallItem, 'amountOutMin'>> {
+}: BuildDepositCallParameters): Promise<MultiCallItem> {
     const { to, refundAddress } = context
     const fromToken = syBtcAmount.token
     const toToken = tokenAmountOut.token
@@ -645,6 +643,7 @@ async function buildDepositCall({
         value: '0',
         amountIn: syBtcAmount,
         amountOut: tokenAmountOut,
+        amountOutMin: tokenAmountOutMin,
         fees: [],
         priceImpact: new Percent('0', BIPS_BASE),
     }
