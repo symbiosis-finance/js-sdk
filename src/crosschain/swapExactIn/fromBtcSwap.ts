@@ -331,7 +331,7 @@ async function buildOnChainSwap(
     if (syBtcAmount.token.equals(context.tokenOut)) {
         return []
     }
-    const dep = await context.symbiosis.depository(syBtcAmount.token.chainId)
+    const dep = await symbiosis.depository(syBtcAmount.token.chainId)
     let isOutputNative = false
     if (dep && context.tokenOut.isNative) {
         isOutputNative = true
@@ -342,7 +342,7 @@ async function buildOnChainSwap(
     let tokenAmountOut: TokenAmount
     let tokenAmountOutMin: TokenAmount
     if (dep && dep.cfg.priceEstimation.enabled) {
-        const coinGecko = context.symbiosis.coinGecko
+        const coinGecko = symbiosis.coinGecko
         const [syBtcPrice, tokenOutPrice] = await Promise.all([
             coinGecko.getTokenPriceCached(syBtcAmount.token),
             coinGecko.getTokenPriceCached(context.tokenOut),
@@ -420,7 +420,7 @@ async function buildCrossChainSwap(
     syBtcAmount: TokenAmount,
     btcConfig: BtcConfig
 ): Promise<MultiCallItem[]> {
-    const { to } = context
+    const { to, symbiosis } = context
 
     const swapExactInResult = await bestPoolSwapping({
         ...context,
@@ -433,7 +433,7 @@ async function buildCrossChainSwap(
     const result = MetaRouter__factory.createInterface().decodeFunctionData('metaRoute', data)
     const tx = result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 
-    const dep = await context.symbiosis.depository(syBtcAmount.token.chainId)
+    const dep = await symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
         if (swapExactInResult.tradeA) {
             // There is DEX-swap on BSC, lock to Depository instead.
