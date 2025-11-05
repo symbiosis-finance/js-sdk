@@ -60,6 +60,6 @@ export class TokenAmount extends Fraction {
     public convertTo(other: Token, price: number): TokenAmount {
         const dec = new Decimal(10).pow(other.decimals)
         const thisD = this.toDecimal()
-        return new TokenAmount(other, thisD.mul(price).mul(dec).toInteger().toString())
+        return new TokenAmount(other, thisD.mul(price).mul(dec).toFixed())
     }
 }

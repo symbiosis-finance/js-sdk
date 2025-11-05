@@ -367,6 +367,36 @@ async function buildOnChainSwap(
         await aggregatorTrade.init()
         tokenAmountOut = aggregatorTrade.amountOut
         tokenAmountOutMin = aggregatorTrade.amountOutMin
+
+        // tmp, for logging purposes only
+        try {
+            const coinGecko = symbiosis.coinGecko
+            const [syBtcPrice, tokenOutPrice] = await Promise.all([
+                coinGecko.getTokenPriceCached(syBtcAmount.token),
+                coinGecko.getTokenPriceCached(context.tokenOut),
+            ])
+            const tao = syBtcAmount.convertTo(
+                context.tokenOut,
+                (syBtcPrice / tokenOutPrice) * 0.999 // 0.1%
+            )
+            const taoMin = syBtcAmount.convertTo(
+                context.tokenOut,
+                (syBtcPrice / tokenOutPrice) * 0.98 // 2%
+            )
+            console.log({
+                aggregators: {
+                    base: tokenAmountOut.toSignificant(),
+                    min: tokenAmountOutMin.toSignificant(),
+                },
+                coinGecko: {
+                    base: tao.toSignificant(),
+                    min: taoMin.toSignificant(),
+                },
+                overlaps: taoMin.lessThan(tokenAmountOut),
+            })
+        } catch (e) {
+            console.log('getting coingecko price: ', e)
+        }
     }
 
     if (dep) {
