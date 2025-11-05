@@ -35,6 +35,8 @@ export class SdkError extends Error {
 // routing
 export class RoutingError extends SdkError {}
 
+export class NoRouteError extends SdkError {}
+
 export class NoTransitTokenError extends RoutingError {}
 
 export class NoRepresentationFoundError extends RoutingError {}

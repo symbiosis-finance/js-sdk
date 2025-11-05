@@ -85,7 +85,7 @@ export class ConfigCache {
     public getOmniPoolTokenIndex(omniPoolConfig: OmniPoolConfig, token: Token): number {
         const omniPool = this.getOmniPoolByConfig(omniPoolConfig)
         if (!omniPool) {
-            throw new SdkError(`getOmniPoolIndex: cannot find omniPoolByConfig ${omniPoolConfig}`)
+            throw new SdkError(`getOmniPoolByConfig: cannot find omniPoolByConfig ${omniPoolConfig}`)
         }
 
         const tokenInfo = this.getTokenInfoByToken(token)

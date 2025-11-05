@@ -1,7 +1,11 @@
 import { SelectMode, SwapExactInResult } from '../types'
-import { SdkError } from '../sdkError'
+import { NoRouteError, SdkError } from '../sdkError'
 
 export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
+    if (promises.length === 0) {
+        throw new NoRouteError('No promises provided')
+    }
+
     if (mode === 'fastest') {
         return Promise.any(promises)
     }
