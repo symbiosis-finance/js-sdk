@@ -215,6 +215,7 @@ export async function getLogWithTimeout({
         }
 
         const interval = setInterval(getLogs, period)
+        getLogs()
     })
 }
 
