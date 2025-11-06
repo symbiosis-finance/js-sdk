@@ -1,8 +1,8 @@
 import { Symbiosis } from '../symbiosis'
 import { getLogWithTimeout } from '../chainUtils'
 import { LogDescription } from '@ethersproject/abi'
-import { ChainId } from 'symbiosis-js-sdk'
 import { Log } from '@ethersproject/providers'
+import { ChainId } from '../../constants'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
 
