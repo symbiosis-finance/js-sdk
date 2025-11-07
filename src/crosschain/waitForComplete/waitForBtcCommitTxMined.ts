@@ -1,55 +1,24 @@
 import { fetchData, longPolling } from './utils'
 import { BtcConfig } from '../types'
 
-interface WrapTx {
-    feeLimit: number
-    info: {
-        fee: number
-        op: number
-        sbfee: number
+interface Wrap {
+    commitTx: string
+    wrap: {
+        blockHeight: number
+        btcFee: number
+        offchainHash: string
+        revealInputIdx: number
+        revealTx: string
+        serial: number
+        stableBridgingFee: number
         tail: string
         to: string
+        value: number
     }
 }
 
-interface AddressInfo {
-    legacyAddress: string
-    revealAddress: string
-    validUntil: string
-    wrap: WrapTx
-}
-
-interface TransactionBtcInfo {
-    commitOutputIdx: number
-    commitTx: string
-    incomeOutputIdx: number
-    incomeTx: string
-    revealTx: string
-}
-
-interface Block {
-    blockHash: string
-    blockTime: number
-    blockHeight: number
-    confirmations: number
-}
-
-interface WrapOperation {
-    btcFee: number
-    revealInputIdx: number
-    revealTx: string
-    serial: number
-    stableBridgingFee: number
-    tail: string
-    to: string
-    value: number
-}
-
-interface TxResponse {
-    addressInfo: AddressInfo
-    block: Block
-    txInfo: TransactionBtcInfo
-    wrap: WrapOperation
+interface WrapsResponse {
+    wraps: Wrap[]
 }
 
 class WaitForCommitBtcTxError extends Error {
@@ -64,30 +33,42 @@ interface WaitForBtcCommitTxMinedParams {
     commitTx: string
 }
 
+type Response = {
+    blockHeight: number
+    revealTx: string
+}
+
 export async function waitForBtcCommitTxMined({
     btcConfig,
     commitTx,
-}: WaitForBtcCommitTxMinedParams): Promise<{ blockHeight: number; revealTx: string } | undefined> {
+}: WaitForBtcCommitTxMinedParams): Promise<Response | undefined> {
     const { forwarderUrl } = btcConfig
-    const txInfoUrl = new URL(`${forwarderUrl}/tx`)
-    txInfoUrl.searchParams.append('txid', commitTx)
+    const wrapsUrl = new URL(`${forwarderUrl}/wraps`)
+    wrapsUrl.searchParams.append('limit', '20')
 
-    const txResponse = await longPolling<TxResponse>({
+    return longPolling<Response | undefined>({
         pollingFunction: async () => {
-            return fetchData(txInfoUrl)
+            const response: WrapsResponse = await fetchData(wrapsUrl)
+
+            const found = response.wraps.find((w) => w.commitTx.toLowerCase() === commitTx.toLowerCase())
+            if (!found) {
+                return
+            }
+
+            const { blockHeight, revealTx } = found.wrap
+
+            return {
+                blockHeight,
+                revealTx,
+            }
         },
         successCondition: (response) => {
-            return (response?.block?.confirmations || 0) > 0
+            if (!response) {
+                return false
+            }
+
+            return response.blockHeight > -1
         },
-        error: new WaitForCommitBtcTxError('getting TxResponse timeout exceed'),
+        error: new WaitForCommitBtcTxError('getting /wraps timeout exceed'),
     })
-
-    if (!txResponse || !txResponse.block || !txResponse.txInfo.revealTx) {
-        return
-    }
-
-    return {
-        blockHeight: txResponse.block.blockHeight,
-        revealTx: txResponse.txInfo.revealTx,
-    }
 }
