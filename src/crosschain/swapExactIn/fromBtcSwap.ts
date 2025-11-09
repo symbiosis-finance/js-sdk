@@ -480,9 +480,9 @@ async function buildCrossChainSwap(
             return [
                 {
                     ...call,
-                    fees: [...call.fees, ...swapExactInResult.fees],
-                    routes: [...call.routes, ...swapExactInResult.routes],
+                    routes: swapExactInResult.routes,
                     priceImpact: swapExactInResult.priceImpact,
+                    fees: [...call.fees, ...swapExactInResult.fees],
                 },
             ]
         } else {
