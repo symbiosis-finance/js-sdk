@@ -5,7 +5,7 @@ describe('#theBest', () => {
     describe('fastest', () => {
         const mode = 'fastest'
         test('empty promises', async () => {
-            await expect(theBest([], mode)).rejects.toThrowError('All promises were rejected')
+            await expect(theBest([], mode)).rejects.toThrowError('NoRouteError')
         })
         test('not empty promises', async () => {
             const resolvedPromise = new Promise((resolve) => {
@@ -42,7 +42,7 @@ describe('#theBest', () => {
     describe('best_return', () => {
         const mode = 'best_return'
         test('empty promises', async () => {
-            await expect(theBest([], mode)).rejects.toThrowError('Build route error')
+            await expect(theBest([], mode)).rejects.toThrowError('NoRouteError')
         })
         test('all resolved promises', async () => {
             const rejectedPromise = new Promise((resolve, reject) => {

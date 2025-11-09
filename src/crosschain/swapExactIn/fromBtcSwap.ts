@@ -299,10 +299,10 @@ type CallData = {
     targetOffset: bigint
 }
 
-function erc20TransferCall(to: Address, tokenOut: Address): CallData {
+function erc20TransferCall(tokenOut: Token, to: Address): CallData {
     // Calls ERC20.transfer(to)
     return {
-        target: tokenOut,
+        target: tokenOut.address,
         targetCalldata: ERC20__factory.createInterface().encodeFunctionData('transfer', [to, 0n]),
         targetOffset: 68n, // 4 (selector) + 32 (to) + 32 (amount)
     }
@@ -401,8 +401,8 @@ async function buildOnChainSwap(
 
     if (dep) {
         const targetCall = isOutputNative
-            ? nativeUnwrapCall(dep, context.tokenOut, to)
-            : erc20TransferCall(to, tokenAmountOut.token.address)
+            ? nativeUnwrapCall(dep, tokenAmountOut.token, to)
+            : erc20TransferCall(tokenAmountOut.token, to)
         const call = await buildDepositCall({
             context,
             dep,
@@ -480,7 +480,8 @@ async function buildCrossChainSwap(
             return [
                 {
                     ...call,
-                    fees: swapExactInResult.fees || [],
+                    fees: [...call.fees, ...swapExactInResult.fees],
+                    routes: [...call.routes, ...swapExactInResult.routes],
                     priceImpact: swapExactInResult.priceImpact,
                 },
             ]
@@ -616,7 +617,7 @@ async function buildDepositCall({
 
     // Transit token withdraw (i.e. syBTC)
     {
-        const withdrawCall = erc20TransferCall(to, syBtcAmount.token.address)
+        const withdrawCall = erc20TransferCall(syBtcAmount.token, to)
         const withdrawCondition = await dep.swapUnlocker.encodeCondition({
             outToken: fromToken.address, // destination token
             outMinAmount: syBtcAmount.toBigInt(),
