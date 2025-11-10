@@ -60,7 +60,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             })
             quote = quotes.find((quote) => quote.type === 'REGULAR')
         } catch (e) {
-            throw new ChainFlipError('getQuoteV2', e)
+            throw new ChainFlipError('getQuoteV2', [e])
         }
 
         if (!quote) {
@@ -83,7 +83,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
                 brokerCommissionBps: ChainFlipBrokerFeeBps,
             })
         } catch (e) {
-            throw new ChainFlipError('encodeVaultSwapData', e)
+            throw new ChainFlipError('encodeVaultSwapData', [e])
         }
     }
 

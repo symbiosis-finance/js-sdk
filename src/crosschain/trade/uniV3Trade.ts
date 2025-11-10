@@ -235,7 +235,7 @@ export class UniV3Trade extends SymbiosisTrade {
             }
         }
         if (!bestAmountOut || !bestRoute) {
-            throw new SdkError('UniV3Route not found', new AggregateError(errors))
+            throw new SdkError('UniV3Route not found', errors)
         }
 
         const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())

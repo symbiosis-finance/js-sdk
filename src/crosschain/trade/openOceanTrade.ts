@@ -209,7 +209,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
             return this
         } catch (e: unknown) {
             if (e instanceof Error) {
-                throw new OpenOceanTradeError(e.message, response)
+                throw new OpenOceanTradeError(e.message, [response])
             }
             throw e
         }

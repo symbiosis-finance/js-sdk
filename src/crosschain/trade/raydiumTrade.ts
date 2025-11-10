@@ -146,7 +146,7 @@ export class RaydiumTrade extends SymbiosisTrade {
 
             return swapTransactions.data.map((tx) => tx.transaction)
         } catch (e) {
-            throw new RaydiumTradeError(`Failed to fetch swap transactions`, e)
+            throw new RaydiumTradeError(`Failed to fetch swap transactions`, [e])
         }
     }
 

@@ -225,7 +225,7 @@ export class OneInchTrade extends SymbiosisTrade {
                 return acc
             }, [])
         } catch (error) {
-            throw new OneInchTradeError(`Cannot get swap on chain ${chainId}`, error)
+            throw new OneInchTradeError(`Cannot get swap on chain ${chainId}`, [error])
         }
     }
 

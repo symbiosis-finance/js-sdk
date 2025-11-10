@@ -239,7 +239,7 @@ async function getDepositCall({
         })
         quote = quotes.find((quote) => quote.type === 'REGULAR')
     } catch (e) {
-        throw new ChainFlipError('getQuoteV2 error', e)
+        throw new ChainFlipError('getQuoteV2 error', [e])
     }
 
     if (!quote) {
@@ -260,7 +260,7 @@ async function getDepositCall({
             brokerCommissionBps: ChainFlipBrokerFeeBps,
         })
     } catch (e) {
-        throw new ChainFlipError('encodeVaultSwapData error', e)
+        throw new ChainFlipError('encodeVaultSwapData error', [e])
     }
 
     const { chain } = vaultSwapData

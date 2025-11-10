@@ -31,7 +31,7 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
     }
 
     if (!result) {
-        throw new SdkError('Build route error', new AggregateError(errors))
+        throw new SdkError('Build route error', errors)
     }
 
     return result

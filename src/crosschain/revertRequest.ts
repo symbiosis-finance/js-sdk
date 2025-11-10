@@ -97,7 +97,7 @@ export const findSourceChainData = async (
         }
     }
     if (errors.length > 0 && !synthesizeRequestFinder) {
-        throw new SdkError('findSourceChainData error', new AggregateError(errors))
+        throw new SdkError('findSourceChainData error', errors)
     }
 
     if (!fromAddress && synthesizeRequestFinder) {

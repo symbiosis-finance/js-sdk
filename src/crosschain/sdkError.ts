@@ -1,33 +1,31 @@
-export class SdkError extends Error {
-    constructor(message: string, cause?: unknown) {
-        super(message)
+export class SdkError extends AggregateError {
+    constructor(message: string, errors?: unknown[]) {
+        super(errors || [], message)
 
-        this.message = `[${this.constructor.name}] ${message}`
-        this.name = this.constructor.name
-
-        if (cause) {
-            this.message = `${this.message}. Cause: ${this.unwrapCause(cause)}`
+        this.message = `[${this.constructor.name}] ${this.message}`
+        if (this.errors.length > 0) {
+            this.message = `${this.message}: [${this.errors.map((i) => this.unwrapError(i)).join(', ')}]`
         }
     }
 
-    private unwrapCause(cause: unknown): string {
-        if (cause instanceof AggregateError) {
-            const errors = cause.errors
-                .map((e: unknown) => {
-                    return this.unwrapCause(e)
+    private unwrapError(error: unknown): string {
+        if (error instanceof AggregateError) {
+            const errors = error.errors
+                .map((e: Error) => {
+                    return this.unwrapError(e)
                 })
                 .join(', ')
-            return `${cause.message} [${errors}]`
-        } else if (cause instanceof Error) {
-            return cause.message
-        } else if (typeof cause === 'string' && cause.length > 0) {
-            return cause
-        } else if (typeof cause === 'number') {
-            return `${cause}`
-        } else if (typeof cause === 'object') {
-            return JSON.stringify(cause)
+            return `${error.message} [${errors}]`
+        } else if (error instanceof Error) {
+            return error.message
+        } else if (typeof error === 'string' && error.length > 0) {
+            return error
+        } else if (typeof error === 'number') {
+            return `${error}`
+        } else if (typeof error === 'object') {
+            return JSON.stringify(error)
         } else {
-            return 'Unknown'
+            return `${error}`
         }
     }
 }
