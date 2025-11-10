@@ -8,6 +8,7 @@ import { UniV3Trade } from './uniV3Trade'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { utils } from 'ethers'
 import { Address, FeeItem } from '../types'
+import { SdkError } from '../sdkError'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -210,7 +211,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                     if (theBestTrade) {
                         resolve(theBestTrade)
                     } else {
-                        reject(new AggregateError(errors, `AggregatorTrade: all trades failed`))
+                        reject(new SdkError('AggregatorTrade: all trades failed', new AggregateError(errors)))
                     }
                     clearInterval(intervalId)
                     return

@@ -22,7 +22,7 @@ import { getOutputQuote } from './uniV3Trade/getOutputQuote'
 import JSBI from 'jsbi'
 import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
 import invariant from 'tiny-invariant'
-import { UniV3TradeError } from '../sdkError'
+import { SdkError, UniV3TradeError } from '../sdkError'
 import { BIPS_BASE } from '../constants'
 import { getMinAmount } from '../chainUtils'
 import { IV3SwapRouter } from '../contracts/UniV3Router02'
@@ -235,7 +235,7 @@ export class UniV3Trade extends SymbiosisTrade {
             }
         }
         if (!bestAmountOut || !bestRoute) {
-            throw new AggregateError(errors, 'UniV3Route not found')
+            throw new SdkError('UniV3Route not found', new AggregateError(errors))
         }
 
         const amountOut = new TokenAmount(this.tokenOut, bestAmountOut.toString())
