@@ -13,7 +13,7 @@ interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
 }
 
-interface OpenOceanQuote {
+export interface OpenOceanQuote {
     to: Address
     inAmount: string
     outAmount: string
@@ -184,6 +184,38 @@ export class OpenOceanTrade extends SymbiosisTrade {
     }
 
     public async init() {
+        const response = await this.request()
+
+        try {
+            const { data, outAmount, to, price_impact: priceImpactString } = response
+            const { amountOffset, minReceivedOffset } = this.getOffsets(data)
+
+            const amountOut = new TokenAmount(this.tokenOut, outAmount)
+
+            const amountOutMinRaw = getMinAmount(this.slippage, outAmount)
+            const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+
+            this.out = {
+                amountOut,
+                amountOutMin,
+                routerAddress: to,
+                route: [this.tokenAmountIn.token, this.tokenOut],
+                callData: data,
+                callDataOffset: amountOffset,
+                minReceivedOffset,
+                priceImpact: this.convertPriceImpact(priceImpactString),
+            }
+
+            return this
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                throw new OpenOceanTradeError(e.message, response)
+            }
+            throw e
+        }
+    }
+
+    public async request(): Promise<OpenOceanQuote> {
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
             fromTokenAddress = this.chain.nativeTokenAddress
@@ -239,27 +271,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
             )
         }
 
-        const { data, outAmount, to, price_impact: priceImpactString } = json.data as OpenOceanQuote
-
-        const { amountOffset, minReceivedOffset } = this.getOffsets(data)
-
-        const amountOut = new TokenAmount(this.tokenOut, outAmount)
-
-        const amountOutMinRaw = getMinAmount(this.slippage, outAmount)
-        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
-
-        this.out = {
-            amountOut,
-            amountOutMin,
-            routerAddress: to,
-            route: [this.tokenAmountIn.token, this.tokenOut],
-            callData: data,
-            callDataOffset: amountOffset,
-            minReceivedOffset,
-            priceImpact: this.convertPriceImpact(priceImpactString),
-        }
-
-        return this
+        return json.data as OpenOceanQuote
     }
 
     private getOffsets(callData: string) {
