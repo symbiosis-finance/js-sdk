@@ -9,7 +9,7 @@ import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils'
 import { SynthesizeRequestEvent } from './contracts/Portal'
 import { utils } from 'ethers'
 import { OmniPoolConfig } from './types'
-import { SdkError } from './sdkError'
+import { AggregateSdkError, SdkError } from './sdkError'
 
 type InitProps = {
     validateState: boolean
@@ -97,7 +97,7 @@ export const findSourceChainData = async (
         }
     }
     if (errors.length > 0 && !synthesizeRequestFinder) {
-        throw new AggregateError(errors, 'findSourceChainData error')
+        throw new AggregateSdkError(errors, 'findSourceChainData error')
     }
 
     if (!fromAddress && synthesizeRequestFinder) {

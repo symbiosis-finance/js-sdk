@@ -1,5 +1,5 @@
 import { SelectMode, SwapExactInResult } from '../types'
-import { NoRouteError, SdkError } from '../sdkError'
+import { AggregateSdkError, NoRouteError, SdkError } from '../sdkError'
 
 export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
     if (promises.length === 0) {
@@ -31,7 +31,7 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
     }
 
     if (!result) {
-        throw new AggregateError(errors, 'Build route error')
+        throw new AggregateSdkError(errors, 'Build route error')
     }
 
     return result

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { AdvisorError, ChainFlipError, SdkError } from '../../src'
+import { AdvisorError, AggregateSdkError, ChainFlipError, SdkError } from '../../src'
 
 describe('SdkError', async () => {
     test('SdkError', () => {
@@ -63,8 +63,30 @@ describe('SdkError', async () => {
         const error = new ChainFlipError('ChainFlipError Text', { prop: 'value' })
         expect(error.message).toEqual('[ChainFlipError] ChainFlipError Text. Cause: {"prop":"value"}')
     })
-    test('Unknown (Boolean)', () => {
+    test('Boolean Cause', () => {
         const error = new ChainFlipError('ChainFlipError Text', true)
-        expect(error.message).toEqual('[ChainFlipError] ChainFlipError Text. Cause: Unknown')
+        expect(error.message).toEqual('[ChainFlipError] ChainFlipError Text. Cause: true')
+    })
+})
+
+describe('AggregateSdkError', async () => {
+    test('Errors empty', () => {
+        const error = new AggregateSdkError([], 'Text')
+        expect(error.message).toEqual('Text []')
+    })
+    test('Several Errors', () => {
+        const errors = [new Error('Error 1'), new Error('Error 2')]
+        const error = new AggregateSdkError(errors, 'Text')
+        expect(error.message).toEqual('Text [Error 1, Error 2]')
+    })
+    test('Several SdkErrors', () => {
+        const errors = [new SdkError('Error 1'), new SdkError('Error 2')]
+        const error = new AggregateSdkError(errors, 'Text')
+        expect(error.message).toEqual('Text [[SdkError] Error 1, [SdkError] Error 2]')
+    })
+    test('Several SdkErrors', () => {
+        const errors = [new SdkError('Error 1'), new AggregateSdkError([new SdkError('Internal')], 'Error 2')]
+        const error = new AggregateSdkError(errors, 'Text')
+        expect(error.message).toEqual('Text [[SdkError] Error 1, Error 2 [[SdkError] Internal]]')
     })
 })

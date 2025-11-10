@@ -1,3 +1,38 @@
+function unwrapErrorMessage(error: unknown): string {
+    if (error instanceof AggregateSdkError) {
+        if (error.formatted) {
+            return error.message
+        }
+    }
+    if (error instanceof AggregateError) {
+        const errors = error.errors
+            .map((e: unknown) => {
+                return unwrapErrorMessage(e)
+            })
+            .join(', ')
+        return `${error.message} [${errors}]`
+    } else if (error instanceof Error) {
+        return error.message
+    } else if (typeof error === 'string' && error.length > 0) {
+        return error
+    } else if (typeof error === 'number') {
+        return `${error}`
+    } else if (typeof error === 'object') {
+        return JSON.stringify(error)
+    } else {
+        return `${error}`
+    }
+}
+
+export class AggregateSdkError extends AggregateError {
+    public readonly formatted: boolean = false
+    constructor(errors: unknown[], message?: string) {
+        super(errors, message)
+        this.message = unwrapErrorMessage(this)
+        this.formatted = true
+    }
+}
+
 export class SdkError extends Error {
     constructor(message: string, cause?: unknown) {
         super(message)
@@ -6,28 +41,7 @@ export class SdkError extends Error {
         this.name = this.constructor.name
 
         if (cause) {
-            this.message = `${this.message}. Cause: ${this.unwrapCause(cause)}`
-        }
-    }
-
-    private unwrapCause(cause: unknown): string {
-        if (cause instanceof AggregateError) {
-            const errors = cause.errors
-                .map((e: unknown) => {
-                    return this.unwrapCause(e)
-                })
-                .join(', ')
-            return `${cause.message} [${errors}]`
-        } else if (cause instanceof Error) {
-            return cause.message
-        } else if (typeof cause === 'string' && cause.length > 0) {
-            return cause
-        } else if (typeof cause === 'number') {
-            return `${cause}`
-        } else if (typeof cause === 'object') {
-            return JSON.stringify(cause)
-        } else {
-            return 'Unknown'
+            this.message = `${this.message}. Cause: ${unwrapErrorMessage(cause)}`
         }
     }
 }
