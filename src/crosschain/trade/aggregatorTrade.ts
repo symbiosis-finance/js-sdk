@@ -63,7 +63,11 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOtherClient = !isOneInchClient && !isOpenOceanClient
 
         const isOneInchAvailable = OneInchTrade.isAvailable(tokenAmountIn.token.chainId) && !isOpenOceanClient
-        const isOpenOceanAvailable = OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) && !isOneInchClient
+
+        let isOpenOceanAvailable = OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) && !isOneInchClient
+        if (this.preferOneInchUsage && isOneInchAvailable) {
+            isOpenOceanAvailable = false
+        }
 
         const timeout = 30000 // 30s
         const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
