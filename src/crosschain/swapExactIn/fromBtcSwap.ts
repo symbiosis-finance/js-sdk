@@ -332,6 +332,7 @@ async function buildOnChainSwap(
     }
     const dep = await symbiosis.depository(syBtcAmount.token.chainId)
     let isOutputNative = false
+    const originalTokenOut = context.tokenOut
     if (dep && context.tokenOut.isNative) {
         isOutputNative = true
         // Replace destination token with Wrapped
@@ -391,6 +392,8 @@ async function buildOnChainSwap(
         return [
             {
                 ...call,
+                amountOut: new TokenAmount(originalTokenOut, tokenAmountOut.raw.toString()),
+                amountOutMin: new TokenAmount(originalTokenOut, tokenAmountOutMin.raw.toString()),
                 fees: [], // TODO: calculate fees (how?)
                 priceImpact: new Percent('0', BIPS_BASE), // TODO: calculate priceImpact (how?)
             },
