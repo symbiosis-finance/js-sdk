@@ -65,30 +65,6 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOneInchAvailable = OneInchTrade.isAvailable(tokenAmountIn.token.chainId) && !isOpenOceanClient
         const isOpenOceanAvailable = OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) && !isOneInchClient
 
-        let isOneInchUsage = isOneInchAvailable
-        let isOpenOceanUsage = isOpenOceanAvailable
-
-        const isSignificantAmount =
-            (tokenAmountIn.token.symbol?.includes('USD') && parseFloat(tokenAmountIn.toSignificant()) >= 10000) ||
-            (tokenAmountIn.token.symbol?.includes('ETH') && parseFloat(tokenAmountIn.toSignificant()) >= 2.5)
-
-        if (this.preferOneInchUsage && isOneInchAvailable) {
-            isOpenOceanUsage = false
-        } else if (!isSignificantAmount) {
-            // select one of them randomly
-            const aggregators: SymbiosisTradeType[] = []
-            if (isOneInchAvailable) {
-                aggregators.push('1inch')
-            }
-            if (isOpenOceanAvailable) {
-                aggregators.push('open-ocean')
-            }
-            const i = Math.floor(Math.random() * aggregators.length)
-
-            isOneInchUsage = aggregators[i] === '1inch'
-            isOpenOceanUsage = aggregators[i] === 'open-ocean'
-        }
-
         const timeout = 30000 // 30s
         const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
             return new Promise<T>((resolve, reject) => {
@@ -108,7 +84,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         }
 
         let tradesCount = 0
-        if (isOneInchUsage) {
+        if (isOneInchAvailable) {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -133,7 +109,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 })
         }
 
-        if (isOpenOceanUsage) {
+        if (isOpenOceanAvailable) {
             const openOceanTrade = new OpenOceanTrade({
                 symbiosis,
                 to,
