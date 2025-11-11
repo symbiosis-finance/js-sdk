@@ -4,7 +4,6 @@ import { BigNumber, BigNumberish } from 'ethers'
 import { BytesLike, isAddress } from 'ethers/lib/utils'
 import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
 import { randomBytes } from 'crypto'
-import assert from 'assert'
 
 import {
     Address,
@@ -338,24 +337,30 @@ async function buildOnChainSwap(
         // Replace destination token with Wrapped
         context = { ...context, tokenOut: wrappedToken(context.tokenOut) }
     }
-    let aggregatorTrade: AggregatorTrade | null = null
-    let tokenAmountOut: TokenAmount
-    let tokenAmountOutMin: TokenAmount
+    let tokenAmountOut: TokenAmount | undefined = undefined
+    let tokenAmountOutMin: TokenAmount | undefined = undefined
     if (dep && dep.cfg.priceEstimation.enabled) {
-        const coinGecko = symbiosis.coinGecko
-        const [syBtcPrice, tokenOutPrice] = await Promise.all([
-            coinGecko.getTokenPriceCached(syBtcAmount.token),
-            coinGecko.getTokenPriceCached(context.tokenOut),
-        ])
-        tokenAmountOut = syBtcAmount.convertTo(
-            context.tokenOut,
-            (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageNorm)
-        )
-        tokenAmountOutMin = syBtcAmount.convertTo(
-            context.tokenOut,
-            (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageMax)
-        )
-    } else {
+        try {
+            const coinGecko = symbiosis.coinGecko
+            const [syBtcPrice, tokenOutPrice] = await Promise.all([
+                coinGecko.getTokenPriceCached(syBtcAmount.token),
+                coinGecko.getTokenPriceCached(context.tokenOut),
+            ])
+            tokenAmountOut = syBtcAmount.convertTo(
+                context.tokenOut,
+                (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageNorm)
+            )
+            tokenAmountOutMin = syBtcAmount.convertTo(
+                context.tokenOut,
+                (syBtcPrice / tokenOutPrice) * (1 - dep.cfg.priceEstimation.slippageMax)
+            )
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    let aggregatorTrade: AggregatorTrade | null = null
+    if (!tokenAmountOut || !tokenAmountOutMin) {
         aggregatorTrade = new AggregatorTrade({
             ...context,
             tokenAmountIn: syBtcAmount,
@@ -367,36 +372,6 @@ async function buildOnChainSwap(
         await aggregatorTrade.init()
         tokenAmountOut = aggregatorTrade.amountOut
         tokenAmountOutMin = aggregatorTrade.amountOutMin
-
-        // tmp, for logging purposes only
-        try {
-            const coinGecko = symbiosis.coinGecko
-            const [syBtcPrice, tokenOutPrice] = await Promise.all([
-                coinGecko.getTokenPriceCached(syBtcAmount.token),
-                coinGecko.getTokenPriceCached(context.tokenOut),
-            ])
-            const tao = syBtcAmount.convertTo(
-                context.tokenOut,
-                (syBtcPrice / tokenOutPrice) * 0.999 // 0.1%
-            )
-            const taoMin = syBtcAmount.convertTo(
-                context.tokenOut,
-                (syBtcPrice / tokenOutPrice) * 0.98 // 2%
-            )
-            console.log({
-                aggregators: {
-                    base: tokenAmountOut.toSignificant(),
-                    min: tokenAmountOutMin.toSignificant(),
-                },
-                coinGecko: {
-                    base: tao.toSignificant(),
-                    min: taoMin.toSignificant(),
-                },
-                overlaps: taoMin.lessThan(tokenAmountOut),
-            })
-        } catch (e) {
-            console.log('getting coingecko price: ', e)
-        }
     }
 
     if (dep) {
@@ -420,28 +395,30 @@ async function buildOnChainSwap(
                 priceImpact: new Percent('0', BIPS_BASE), // TODO: calculate priceImpact (how?)
             },
         ]
-    } else {
-        assert(!!aggregatorTrade)
-        return [
-            {
-                to: aggregatorTrade.routerAddress,
-                data: aggregatorTrade.callData,
-                offset: aggregatorTrade.callDataOffset,
-                fees: aggregatorTrade.fees || [],
-                amountOut: aggregatorTrade.amountOut,
-                amountOutMin: aggregatorTrade.amountOutMin,
-                amountIn: syBtcAmount,
-                routes: [
-                    {
-                        provider: aggregatorTrade.tradeType,
-                        tokens: [syBtcAmount.token, aggregatorTrade.tokenOut],
-                    },
-                ],
-                value: '0',
-                priceImpact: aggregatorTrade.priceImpact,
-            },
-        ]
     }
+
+    if (!aggregatorTrade) {
+        throw new SdkError('AggregatorTrade is not initialized')
+    }
+    return [
+        {
+            to: aggregatorTrade.routerAddress,
+            data: aggregatorTrade.callData,
+            offset: aggregatorTrade.callDataOffset,
+            fees: aggregatorTrade.fees || [],
+            amountOut: aggregatorTrade.amountOut,
+            amountOutMin: aggregatorTrade.amountOutMin,
+            amountIn: syBtcAmount,
+            routes: [
+                {
+                    provider: aggregatorTrade.tradeType,
+                    tokens: [syBtcAmount.token, aggregatorTrade.tokenOut],
+                },
+            ],
+            value: '0',
+            priceImpact: aggregatorTrade.priceImpact,
+        },
+    ]
 }
 
 async function buildCrossChainSwap(
@@ -581,6 +558,7 @@ async function buildDepositCall({
             condition: timedWithdrawCondition,
         }
     }
+
     const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
     // Normal swap.
