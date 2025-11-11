@@ -490,6 +490,21 @@ export const config: Config = {
             portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
             fabric: '0xc17d768Bf4FdC6f20a4A0d8Be8767840D106D077',
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0xf4129114Ae290a595A24EA3C5D3DD56a702C98EF',
+                swapUnlocker: '0x7A77bf653D31215e96cfE6b2FC4d1A6631b5e6F2',
+                btcRefundUnlocker: '0x020cb1cA3d555AF714CE0643d8e128441Fe59b9C',
+                branchedUnlocker: '0xc43631b5a5Fb1FA277026c80c75b9834456faD2c',
+                timedUnlocker: '0xF7839D4116F3DD127fDE40fE6478fAA810782676',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.AVAX_MAINNET,
