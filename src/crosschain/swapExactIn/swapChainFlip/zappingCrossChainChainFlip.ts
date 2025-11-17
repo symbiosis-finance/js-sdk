@@ -6,7 +6,7 @@ import { MulticallRouter } from '../../contracts'
 import { OneInchProtocols } from '../../trade/oneInchTrade'
 import { Address, EvmAddress, OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import { ChainFlipError } from '../../sdkError'
-import { isEvmChainId } from '../../chainUtils'
+import { getMinAmount, isEvmChainId } from '../../chainUtils'
 
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
@@ -44,7 +44,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     }
 
     protected async doPostTransitAction() {
-        checkMinAmount(this.transit.amountOut)
+        await checkMinAmount(this.symbiosis.cache, this.chainFlipSdk, this.transit.amountOutMin)
 
         const { src, dest } = this.config
         let quote: RegularQuote | undefined
@@ -101,7 +101,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(chainFlipTokenIn.chainId, this.omniPoolConfig)
         if (transitTokenIn.equals(transitTokenOut)) {
-            throw new ChainFlipError('Same transit token')
+            throw new ChainFlipError('Same transit token. Prefer on-chain swap')
         }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
@@ -119,14 +119,17 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             partnerAddress: this.partnerAddress,
         })
 
-        const { egressAmount } = this.chainFlipQuote
+        const { egressAmount, recommendedSlippageTolerancePercent } = this.chainFlipQuote
+        const egressAmountMin = getMinAmount(recommendedSlippageTolerancePercent * 100, egressAmount)
+
         const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(this.chainFlipQuote)
         const amountOut = new TokenAmount(config.tokenOut, egressAmount)
+        const amountOutMin = new TokenAmount(config.tokenOut, egressAmountMin)
 
         return {
             ...result,
             tokenAmountOut: amountOut,
-            tokenAmountOutMin: amountOut,
+            tokenAmountOutMin: amountOutMin,
             routes: [
                 ...result.routes,
                 {

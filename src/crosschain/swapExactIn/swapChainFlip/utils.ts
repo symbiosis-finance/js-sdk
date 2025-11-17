@@ -1,8 +1,10 @@
-import { Quote } from '@chainflip/sdk/swap'
+import { Quote, SwapSDK } from '@chainflip/sdk/swap'
 
 import { ChainId } from '../../../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import { ChainFlipAssetId, ChainFlipChainId, ChainFlipToken } from './types'
+import { ChainFlipError } from '../../sdkError'
+import { Cache } from '../../cache'
 
 export const ChainFlipBrokerAccount = 'cFJZvt5AiEGwUiFFNxhDuLRcgC1WBR6tE7gaQQfe8dqbzoYkx'
 export const ChainFlipBrokerFeeBps = 20
@@ -45,16 +47,34 @@ export const CF_ETH_USDC: ChainFlipToken = {
     asset: 'USDC',
 }
 
-export function checkMinAmount(amountIn: TokenAmount) {
+export async function checkMinAmount(cache: Cache, chainFlipSdk: SwapSDK, amountIn: TokenAmount) {
+    const swapLimits = await cache.get(['chainFlip', 'getSwapLimits'], () => chainFlipSdk.getSwapLimits(), 24 * 60 * 60) // 24 hours
+
     let minThreshold: TokenAmount | undefined = undefined
+    let maxThreshold: TokenAmount | undefined = undefined
     if (amountIn.token.equals(ARB_USDC)) {
-        minThreshold = new TokenAmount(ARB_USDC, '15000000') //  15 USDC
+        minThreshold = new TokenAmount(ARB_USDC, swapLimits.minimumSwapAmounts.Arbitrum.USDC.toString())
+        const max = swapLimits.maximumSwapAmounts.Arbitrum.USDC
+        if (max) {
+            maxThreshold = new TokenAmount(ARB_USDC, max.toString())
+        }
     } else if (amountIn.token.equals(ETH_USDC)) {
-        minThreshold = new TokenAmount(ARB_USDC, '25000000') //  25 USDC
+        minThreshold = new TokenAmount(ETH_USDC, swapLimits.minimumSwapAmounts.Ethereum.USDC.toString())
+        const max = swapLimits.maximumSwapAmounts.Ethereum.USDC
+        if (max) {
+            maxThreshold = new TokenAmount(ETH_USDC, max.toString())
+        }
     }
 
     if (minThreshold && amountIn.lessThan(minThreshold)) {
-        throw new Error(`Amount should be greater than ${minThreshold.toSignificant()} ${minThreshold.token.symbol}`)
+        throw new ChainFlipError(
+            `Amount should be greater than ${minThreshold.toSignificant()} ${minThreshold.token.symbol}`
+        )
+    }
+    if (maxThreshold && amountIn.greaterThan(maxThreshold)) {
+        throw new ChainFlipError(
+            `Amount should be less than ${maxThreshold.toSignificant()} ${maxThreshold.token.symbol}`
+        )
     }
 }
 

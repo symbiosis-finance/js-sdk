@@ -5,7 +5,7 @@ import { BigNumber, BytesLike, utils } from 'ethers'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { Percent, TokenAmount } from '../../../entities'
 import { onchainSwap } from '../onchainSwap'
-import { isEvmChainId, tronAddressToEvm } from '../../chainUtils'
+import { getMinAmount, isEvmChainId, tronAddressToEvm } from '../../chainUtils'
 import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
@@ -13,6 +13,7 @@ import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../
 
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
 import { ChainFlipConfig } from './types'
+import { Symbiosis } from '../../symbiosis'
 
 type MulticallItem = {
     data: BytesLike
@@ -69,6 +70,7 @@ export async function ZappingOnChainChainFlip(
     const multicallItems: MulticallItem[] = []
     let value = fee.toString()
     let depositAmount = tokenAmountIn
+    let depositAmountMin = tokenAmountIn
     let priceImpact = new Percent('0', BIPS_BASE)
 
     const fees: FeeItem[] = []
@@ -94,6 +96,7 @@ export async function ZappingOnChainChainFlip(
         routes.push(...swapCall.routes)
         priceImpact = swapCall.priceImpact
         depositAmount = swapCall.amountOut
+        depositAmountMin = swapCall.amountOutMin
         multicallItems.push({
             data: swapCall.data,
             to: swapCall.to,
@@ -104,7 +107,9 @@ export async function ZappingOnChainChainFlip(
     }
 
     const depositCall = await getDepositCall({
+        symbiosis,
         amountIn: depositAmount,
+        amountInMin: depositAmountMin,
         config,
         receiverAddress: to,
         refundAddress: evmTo,
@@ -137,10 +142,9 @@ export async function ZappingOnChainChainFlip(
         multicallCalldata,
     ])
 
-    const tokenAmountOut = depositCall.amountOut
     return {
-        tokenAmountOut,
-        tokenAmountOutMin: tokenAmountOut,
+        tokenAmountOut: depositCall.amountOut,
+        tokenAmountOutMin: depositCall.amountOutMin,
         priceImpact: priceImpact,
         amountInUsd: depositAmount,
         approveTo: approveAddress,
@@ -160,6 +164,7 @@ export async function ZappingOnChainChainFlip(
 type Call = {
     amountIn: TokenAmount
     amountOut: TokenAmount
+    amountOutMin: TokenAmount
     to: string
     data: BytesLike
     value: string
@@ -200,6 +205,7 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
         // Call type params
         amountIn: params.tokenAmountIn,
         amountOut: result.tokenAmountOut,
+        amountOutMin: result.tokenAmountOutMin,
         to: routerAddress,
         data,
         value,
@@ -208,12 +214,16 @@ async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
 }
 
 async function getDepositCall({
+    symbiosis,
     amountIn,
+    amountInMin,
     config,
     receiverAddress,
     refundAddress,
 }: {
+    symbiosis: Symbiosis
     amountIn: TokenAmount
+    amountInMin: TokenAmount
     config: ChainFlipConfig
     receiverAddress: string
     refundAddress: string
@@ -224,7 +234,7 @@ async function getDepositCall({
         enabledFeatures: { dca: true },
     })
 
-    checkMinAmount(amountIn)
+    await checkMinAmount(symbiosis.cache, chainFlipSdk, amountInMin)
 
     let quote
     try {
@@ -269,13 +279,15 @@ async function getDepositCall({
     }
     const { calldata, to } = vaultSwapData
 
-    const { egressAmount } = quote
+    const { egressAmount, recommendedSlippageTolerancePercent } = quote
+    const egressAmountMin = getMinAmount(recommendedSlippageTolerancePercent * 100, egressAmount)
 
     const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(quote)
 
     return {
         amountIn,
         amountOut: new TokenAmount(tokenOut, egressAmount),
+        amountOutMin: new TokenAmount(tokenOut, egressAmountMin),
         to,
         data: calldata,
         value: '0',

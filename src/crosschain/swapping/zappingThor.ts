@@ -136,7 +136,7 @@ export class ZappingThor extends BaseSwapping {
         const transitTokenIn = this.symbiosis.transitToken(tokenAmountIn.token.chainId, this.omniPoolConfig)
         const transitTokenOut = this.symbiosis.transitToken(thorTokenIn.chainId, this.omniPoolConfig)
         if (transitTokenIn.equals(transitTokenOut)) {
-            throw new ThorChainError('Same transit token')
+            throw new ThorChainError('Same transit token. Prefer on-chain swap')
         }
 
         const result = await this.doExactIn({
