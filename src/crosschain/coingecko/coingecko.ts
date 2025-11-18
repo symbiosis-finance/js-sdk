@@ -12,7 +12,7 @@ export class CoinGecko {
     static TOKEN_PRICE_PATH = '/api/v3/simple/token_price/'
     static PRICE_PATH = '/api/v3/simple/price/'
     static DEFAULT_COINGECKO_API_URL = 'https://api.coingecko.com'
-    static DEFAULT_ADVISOR_URL = 'https://api.symbiosis.finance/calculations/v1/token/price'
+    static DEFAULT_ADVISOR_URL = 'https://api.symbiosis.finance/calculations'
     static PLATFORMS = COINGECKO_PLATFORMS
     static GAS_TOKEN_IDS = COINGECKO_GAS_TOKEN_IDS
 
@@ -39,7 +39,7 @@ export class CoinGecko {
         ])
         const myHeaders = new Headers()
         myHeaders.append('Content-Type', 'application/json')
-        const response = await fetch(this.#advisorUrl, {
+        const response = await fetch(`${this.#advisorUrl}/v1/token/price`, {
             method: 'POST',
             body: raw,
             headers: myHeaders,
