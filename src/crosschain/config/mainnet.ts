@@ -654,8 +654,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BOBA_MAINNET,
-            rpc: 'https://lightning-replica.boba.network',
-            spareRpcs: ['https://replica.boba.network', 'https://1rpc.io/boba/eth', 'https://mainnet.boba.network'],
+            rpc: 'https://mainnet.boba.network',
+            spareRpcs: ['https://1rpc.io/boba/eth', 'https://boba-ethereum.gateway.tenderly.co'],
             filterBlockOffset: 3000,
             stables: [
                 {
