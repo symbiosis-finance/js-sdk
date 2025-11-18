@@ -496,7 +496,7 @@ export const config: Config = {
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
-                depository: '0xf4129114Ae290a595A24EA3C5D3DD56a702C98EF',
+                depository: '0x84b10469dB07446D5fc7156aeFdd6B7117108A73',
                 swapUnlocker: '0x7A77bf653D31215e96cfE6b2FC4d1A6631b5e6F2',
                 btcRefundUnlocker: '0x020cb1cA3d555AF714CE0643d8e128441Fe59b9C',
                 branchedUnlocker: '0xc43631b5a5Fb1FA277026c80c75b9834456faD2c',
