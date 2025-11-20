@@ -12,13 +12,14 @@ import { AggregateSdkError } from '../sdkError'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
-interface AggregatorTradeParams extends SymbiosisTradeParams {
+export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
     clientId: string
     deadline: number // epoch
     preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
+    firstTimeoutMs?: number // stop waiting for other quotes after this timeout if at least a single quote is available.
 }
 
 class TradeNotInitializedError extends Error {
@@ -27,9 +28,11 @@ class TradeNotInitializedError extends Error {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export interface AggregatorTrade extends AggregatorTradeParams {}
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class AggregatorTrade extends SymbiosisTrade {
     protected trade: Trade | undefined
-    protected preferOneInchUsage: boolean
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
@@ -195,7 +198,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                     }
                     clearInterval(intervalId)
                     return
-                } else if (diff >= 200) {
+                } else if (diff >= (this.firstTimeoutMs || 200)) {
                     const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
                     const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
 
