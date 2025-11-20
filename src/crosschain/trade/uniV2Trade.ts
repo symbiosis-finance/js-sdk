@@ -98,8 +98,8 @@ export class UniV2Trade extends SymbiosisTrade {
                 maxNumResults: 1,
             })
             trade = t
-        } catch (e: any) {
-            throw new UniV2TradeError(`bestTradeExactIn failed ${e.message}`)
+        } catch (e) {
+            throw new UniV2TradeError('bestTradeExactIn failed', e)
         }
 
         if (!trade) {
