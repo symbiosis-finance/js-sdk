@@ -36,9 +36,10 @@ export interface SymbiosisTradeOutResult {
     routerAddress: Address
     route: Token[]
     priceImpact: Percent
-    callData: string
-    callDataOffset: number
-    minReceivedOffset: number
+    // The following fields are set only if `to` address was provided.
+    callData?: string
+    callDataOffset?: number
+    minReceivedOffset?: number
     minReceivedOffset2?: number
     functionSelector?: string
     instructions?: string
@@ -78,17 +79,17 @@ export abstract class SymbiosisTrade {
     }
 
     get amountOut(): TokenAmount {
-        this.assertOutInitialized('amountOut')
+        this.assertOutPropInitialized('amountOut')
         return this.out.amountOut
     }
 
     get amountOutMin(): TokenAmount {
-        this.assertOutInitialized('amountOutMin')
+        this.assertOutPropInitialized('amountOutMin')
         return this.out.amountOutMin
     }
 
     get routerAddress(): Address {
-        this.assertOutInitialized('routerAddress')
+        this.assertOutPropInitialized('routerAddress')
         return this.out.routerAddress
     }
 
@@ -98,23 +99,23 @@ export abstract class SymbiosisTrade {
     }
 
     get route(): Token[] {
-        this.assertOutInitialized('route')
+        this.assertOutPropInitialized('route')
         return this.out.route
     }
 
     get callData(): string {
-        this.assertOutInitialized('callData')
+        this.assertOutPropInitialized('callData')
         return this.out.callData
     }
 
     get callDataOffset(): number {
         this.assertOutInitialized('callDataOffset')
-        return this.out.callDataOffset
+        return this.out.callDataOffset || 0
     }
 
     get minReceivedOffset(): number {
         this.assertOutInitialized('minReceivedOffset')
-        return this.out.minReceivedOffset
+        return this.out.minReceivedOffset || 0
     }
 
     get minReceivedOffset2(): number {
@@ -123,27 +124,28 @@ export abstract class SymbiosisTrade {
     }
 
     get priceImpact(): Percent {
-        this.assertOutInitialized('priceImpact')
+        this.assertOutPropInitialized('priceImpact')
         return this.out.priceImpact
     }
 
     get functionSelector(): string | undefined {
-        this.assertOutInitialized('functionSelector')
+        this.assertOutPropInitialized('functionSelector')
         return this.out.functionSelector
     }
 
     get instructions(): string | undefined {
-        this.assertOutInitialized('instructions')
+        this.assertOutPropInitialized('instructions')
         return this.out.instructions
     }
 
     get fees(): FeeItem[] | undefined {
-        this.assertOutInitialized('fees')
+        this.assertOutPropInitialized('fees')
         return this.out.fees
     }
 
+    // Patch calldata with new input amounts.
     public applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
-        this.assertOutInitialized('applyAmountIn')
+        this.assertOutPropInitialized('callData')
 
         // >>> amountIn
         const amountInBn = BigNumber.from(this.tokenAmountIn.raw.toString())
@@ -207,9 +209,16 @@ export abstract class SymbiosisTrade {
     private assertOutInitialized(msg?: string): asserts this is {
         out: SymbiosisTradeOutResult
     } {
-        if (!this.out) {
-            throw new OutNotInitializedError(msg)
-        }
+        if (!this.out) throw new OutNotInitializedError(msg)
+    }
+
+    private assertOutPropInitialized<PropName extends keyof SymbiosisTradeOutResult>(
+        propName?: PropName
+    ): asserts this is {
+        out: SymbiosisTradeOutResult & Record<PropName, Exclude<SymbiosisTradeOutResult[PropName], undefined>>
+    } {
+        this.assertOutInitialized(propName)
+        if (propName && !this.out[propName]) throw new OutNotInitializedError(propName)
     }
 
     public static getAmountFromCallData(data: string, bytesOffset: number): BigNumber {

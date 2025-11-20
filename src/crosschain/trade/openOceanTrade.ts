@@ -17,7 +17,7 @@ export interface OpenOceanQuote {
     to: Address
     inAmount: string
     outAmount: string
-    data: string
+    data?: string
     price_impact: string
 }
 
@@ -188,7 +188,6 @@ export class OpenOceanTrade extends SymbiosisTrade {
 
         try {
             const { data, outAmount, to, price_impact: priceImpactString } = response
-            const { amountOffset, minReceivedOffset } = this.getOffsets(data)
 
             const amountOut = new TokenAmount(this.tokenOut, outAmount)
 
@@ -200,10 +199,13 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 amountOutMin,
                 routerAddress: to,
                 route: [this.tokenAmountIn.token, this.tokenOut],
-                callData: data,
-                callDataOffset: amountOffset,
-                minReceivedOffset,
                 priceImpact: this.convertPriceImpact(priceImpactString),
+            }
+            if (data) {
+                const { amountOffset, minReceivedOffset } = this.getOffsets(data)
+                this.out.callData = data
+                this.out.callDataOffset = amountOffset
+                this.out.minReceivedOffset = minReceivedOffset
             }
 
             return this
