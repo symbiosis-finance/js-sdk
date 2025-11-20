@@ -52,6 +52,10 @@ export class Token {
         this.address = validateAndParseAddress(params.address) as NonEmptyAddress
     }
 
+    public toString(): string {
+        return this.symbol || this.name || this.address
+    }
+
     /**
      * Returns true if the two tokens are equivalent, i.e. have the same chainId and address.
      * @param other other token to compare

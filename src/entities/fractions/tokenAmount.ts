@@ -18,6 +18,10 @@ export class TokenAmount extends Fraction {
         this.token = token
     }
 
+    public toString(): string {
+        return `${this.toFixed()} ${this.token}`
+    }
+
     public get raw(): JSBI {
         return this.numerator
     }
