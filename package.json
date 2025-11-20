@@ -58,7 +58,7 @@
         "pino-pretty": "^8.0.0"
     },
     "devDependencies": {
-        "@symbiosis-finance/depository": "github:symbiosis-finance/depository#v0.6.4",
+        "@symbiosis-finance/depository": "github:symbiosis-finance/depository#v1.2.0",
         "@typechain/ethers-v5": "^9.0.0",
         "@types/big.js": "^4.0.5",
         "@types/bs58": "^4.0.0",
