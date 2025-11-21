@@ -13,7 +13,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -82,8 +82,19 @@ export interface TimedUnlockerInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'encodeCondition', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'Unlocked(uint256,uint256,uint256)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'Unlocked'): EventFragment
 }
+
+export type UnlockedEvent = TypedEvent<
+    [BigNumber, BigNumber, BigNumber],
+    { currentTimestamp: BigNumber; lockTimestamp: BigNumber; delay: BigNumber }
+>
+
+export type UnlockedEventFilter = TypedEventFilter<UnlockedEvent>
 
 export interface TimedUnlocker extends BaseContract {
     contractName: 'TimedUnlocker'
@@ -151,7 +162,14 @@ export interface TimedUnlocker extends BaseContract {
         ): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'Unlocked(uint256,uint256,uint256)'(
+            currentTimestamp?: null,
+            lockTimestamp?: null,
+            delay?: null
+        ): UnlockedEventFilter
+        Unlocked(currentTimestamp?: null, lockTimestamp?: null, delay?: null): UnlockedEventFilter
+    }
 
     estimateGas: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>

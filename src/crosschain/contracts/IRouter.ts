@@ -13,7 +13,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -33,8 +33,16 @@ export interface IRouterInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'externalCall', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'transferNative', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'TransferNative(address,uint256)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'TransferNative'): EventFragment
 }
+
+export type TransferNativeEvent = TypedEvent<[string, BigNumber], { to: string; amount: BigNumber }>
+
+export type TransferNativeEventFilter = TypedEventFilter<TransferNativeEvent>
 
 export interface IRouter extends BaseContract {
     contractName: 'IRouter'
@@ -61,11 +69,11 @@ export interface IRouter extends BaseContract {
 
     functions: {
         externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
+            token: string,
+            amount: BigNumberish,
+            receiveSide: string,
             _calldata: BytesLike,
-            _offset: BigNumberish,
+            offset: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -78,11 +86,11 @@ export interface IRouter extends BaseContract {
     }
 
     externalCall(
-        _token: string,
-        _amount: BigNumberish,
-        _receiveSide: string,
+        token: string,
+        amount: BigNumberish,
+        receiveSide: string,
         _calldata: BytesLike,
-        _offset: BigNumberish,
+        offset: BigNumberish,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -95,26 +103,29 @@ export interface IRouter extends BaseContract {
 
     callStatic: {
         externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
+            token: string,
+            amount: BigNumberish,
+            receiveSide: string,
             _calldata: BytesLike,
-            _offset: BigNumberish,
+            offset: BigNumberish,
             overrides?: CallOverrides
         ): Promise<void>
 
         transferNative(token: string, to: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'TransferNative(address,uint256)'(to?: null, amount?: null): TransferNativeEventFilter
+        TransferNative(to?: null, amount?: null): TransferNativeEventFilter
+    }
 
     estimateGas: {
         externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
+            token: string,
+            amount: BigNumberish,
+            receiveSide: string,
             _calldata: BytesLike,
-            _offset: BigNumberish,
+            offset: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -128,11 +139,11 @@ export interface IRouter extends BaseContract {
 
     populateTransaction: {
         externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
+            token: string,
+            amount: BigNumberish,
+            receiveSide: string,
             _calldata: BytesLike,
-            _offset: BigNumberish,
+            offset: BigNumberish,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

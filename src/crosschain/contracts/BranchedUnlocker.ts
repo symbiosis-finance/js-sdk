@@ -13,7 +13,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -90,8 +90,16 @@ export interface BranchedUnlockerInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'encodeSolution', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'UnlockBranch(uint256)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'UnlockBranch'): EventFragment
 }
+
+export type UnlockBranchEvent = TypedEvent<[BigNumber], { index: BigNumber }>
+
+export type UnlockBranchEventFilter = TypedEventFilter<UnlockBranchEvent>
 
 export interface BranchedUnlocker extends BaseContract {
     contractName: 'BranchedUnlocker'
@@ -171,7 +179,10 @@ export interface BranchedUnlocker extends BaseContract {
         ): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'UnlockBranch(uint256)'(index?: null): UnlockBranchEventFilter
+        UnlockBranch(index?: null): UnlockBranchEventFilter
+    }
 
     estimateGas: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>

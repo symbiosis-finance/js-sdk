@@ -152,7 +152,7 @@ export type DepositLockedEvent = TypedEvent<
         depositID: string
         deposit: DepositoryTypes.DepositStructOutput
         unlocker: DepositoryTypes.UnlockConditionStructOutput
-        state: DepositoryTypes.BlockchainStateStructOutput
+        blockchainState: DepositoryTypes.BlockchainStateStructOutput
     }
 >
 
@@ -213,7 +213,7 @@ export interface IDepository extends BaseContract {
         depositID(
             deposit: DepositoryTypes.DepositStruct,
             condition: DepositoryTypes.UnlockConditionStruct,
-            state: DepositoryTypes.BlockchainStateStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             overrides?: CallOverrides
         ): Promise<[string]>
 
@@ -269,7 +269,7 @@ export interface IDepository extends BaseContract {
     depositID(
         deposit: DepositoryTypes.DepositStruct,
         condition: DepositoryTypes.UnlockConditionStruct,
-        state: DepositoryTypes.BlockchainStateStruct,
+        blockchainState: DepositoryTypes.BlockchainStateStruct,
         overrides?: CallOverrides
     ): Promise<string>
 
@@ -325,7 +325,7 @@ export interface IDepository extends BaseContract {
         depositID(
             deposit: DepositoryTypes.DepositStruct,
             condition: DepositoryTypes.UnlockConditionStruct,
-            state: DepositoryTypes.BlockchainStateStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             overrides?: CallOverrides
         ): Promise<string>
 
@@ -369,13 +369,13 @@ export interface IDepository extends BaseContract {
             depositID?: BytesLike | null,
             deposit?: null,
             unlocker?: null,
-            state?: null
+            blockchainState?: null
         ): DepositLockedEventFilter
         DepositLocked(
             depositID?: BytesLike | null,
             deposit?: null,
             unlocker?: null,
-            state?: null
+            blockchainState?: null
         ): DepositLockedEventFilter
 
         'DepositUnlocked(bytes32)'(depositID?: BytesLike | null): DepositUnlockedEventFilter
@@ -414,7 +414,7 @@ export interface IDepository extends BaseContract {
         depositID(
             deposit: DepositoryTypes.DepositStruct,
             condition: DepositoryTypes.UnlockConditionStruct,
-            state: DepositoryTypes.BlockchainStateStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
@@ -468,7 +468,7 @@ export interface IDepository extends BaseContract {
         depositID(
             deposit: DepositoryTypes.DepositStruct,
             condition: DepositoryTypes.UnlockConditionStruct,
-            state: DepositoryTypes.BlockchainStateStruct,
+            blockchainState: DepositoryTypes.BlockchainStateStruct,
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
