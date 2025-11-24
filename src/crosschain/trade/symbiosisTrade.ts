@@ -52,21 +52,15 @@ class OutNotInitializedError extends Error {
     }
 }
 
-export abstract class SymbiosisTrade {
-    public tokenAmountIn: TokenAmount
-    public tokenAmountInMin: TokenAmount
-    public tokenOut: Token
-    public to: string
-    public slippage: number
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export interface SymbiosisTrade extends SymbiosisTradeParams {}
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export abstract class SymbiosisTrade {
     protected out?: SymbiosisTradeOutResult
 
-    protected constructor({ tokenAmountIn, tokenAmountInMin, tokenOut, to, slippage }: SymbiosisTradeParams) {
-        this.tokenAmountIn = tokenAmountIn
-        this.tokenAmountInMin = tokenAmountInMin
-        this.tokenOut = tokenOut
-        this.to = to
-        this.slippage = slippage
+    protected constructor(params: SymbiosisTradeParams) {
+        Object.assign(this, params)
     }
 
     get tradeType(): SymbiosisTradeType {

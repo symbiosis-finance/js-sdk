@@ -1,4 +1,4 @@
-export { AggregatorTrade } from './aggregatorTrade'
+export { AggregatorTrade, AggregatorTradeParams } from './aggregatorTrade'
 export { OctoPoolTrade } from './octoPoolTrade'
 export { OneInchTrade } from './oneInchTrade'
 export { OpenOceanTrade } from './openOceanTrade'
