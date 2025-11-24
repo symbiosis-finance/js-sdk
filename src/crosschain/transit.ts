@@ -290,7 +290,8 @@ export class Transit {
             involvedChainIds.push(tradeAmountOut.token.chainFromId)
         }
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(tradeAmountIn.token.chainId, involvedChainIds)
-        if (volumeFeeCollector && this.omniPoolConfig.coinGeckoId !== 'usd-coin') {
+        const isOnChainFeePool = ['usd-coin', 'symbiosis-finance'].includes(this.omniPoolConfig.coinGeckoId)
+        if (volumeFeeCollector && !isOnChainFeePool) {
             volumeFeeCall = getVolumeFeeCall({
                 feeCollector: volumeFeeCollector,
                 amountIn: amountOut,
