@@ -13,7 +13,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -88,8 +88,25 @@ export interface SwapUnlockerInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'encodeSolution', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'Swap(address,uint256,uint256,address,address)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'Swap'): EventFragment
 }
+
+export type SwapEvent = TypedEvent<
+    [string, BigNumber, BigNumber, string, string],
+    {
+        outToken: string
+        outMinAmount: BigNumber
+        outAmount: BigNumber
+        swapper: string
+        target: string
+    }
+>
+
+export type SwapEventFilter = TypedEventFilter<SwapEvent>
 
 export interface SwapUnlocker extends BaseContract {
     contractName: 'SwapUnlocker'
@@ -163,7 +180,16 @@ export interface SwapUnlocker extends BaseContract {
         ): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'Swap(address,uint256,uint256,address,address)'(
+            outToken?: null,
+            outMinAmount?: null,
+            outAmount?: null,
+            swapper?: null,
+            target?: null
+        ): SwapEventFilter
+        Swap(outToken?: null, outMinAmount?: null, outAmount?: null, swapper?: null, target?: null): SwapEventFilter
+    }
 
     estimateGas: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>

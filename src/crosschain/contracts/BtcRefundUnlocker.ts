@@ -13,7 +13,7 @@ import {
     Signer,
     utils,
 } from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import { Listener, Provider } from '@ethersproject/providers'
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
@@ -76,8 +76,16 @@ export interface BtcRefundUnlockerInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'synthesis', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
 
-    events: {}
+    events: {
+        'Refund(bytes,uint256)': EventFragment
+    }
+
+    getEvent(nameOrSignatureOrTopic: 'Refund'): EventFragment
 }
+
+export type RefundEvent = TypedEvent<[string, BigNumber], { refundAddress: string; stableBridgingFee: BigNumber }>
+
+export type RefundEventFilter = TypedEventFilter<RefundEvent>
 
 export interface BtcRefundUnlocker extends BaseContract {
     contractName: 'BtcRefundUnlocker'
@@ -163,7 +171,10 @@ export interface BtcRefundUnlocker extends BaseContract {
         ): Promise<void>
     }
 
-    filters: {}
+    filters: {
+        'Refund(bytes,uint256)'(refundAddress?: null, stableBridgingFee?: null): RefundEventFilter
+        Refund(refundAddress?: null, stableBridgingFee?: null): RefundEventFilter
+    }
 
     estimateGas: {
         decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
