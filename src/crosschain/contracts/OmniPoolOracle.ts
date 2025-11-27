@@ -156,14 +156,8 @@ export interface OmniPoolOracle extends BaseContract {
         quoteDeposit(
             _id: BigNumberish,
             _amount: BigNumberish,
-            overrides?: CallOverrides
-        ): Promise<
-            [BigNumber, BigNumber, BigNumber] & {
-                lpTokenToMint: BigNumber
-                liabilityToMint: BigNumber
-                reward: BigNumber
-            }
-        >
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
         quoteFrom(
             _fromAsset: BigNumberish,
@@ -173,21 +167,15 @@ export interface OmniPoolOracle extends BaseContract {
         ): Promise<
             [BigNumber, BigNumber] & {
                 actualToAmount: BigNumber
-                lpFeeAmount: BigNumber
+                totalFee: BigNumber
             }
         >
 
         quoteWithdraw(
             _id: BigNumberish,
             _liquidity: BigNumberish,
-            overrides?: CallOverrides
-        ): Promise<
-            [BigNumber, BigNumber, BigNumber] & {
-                amount: BigNumber
-                liabilityToBurn: BigNumber
-                fee: BigNumber
-            }
-        >
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
 
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
@@ -224,38 +212,21 @@ export interface OmniPoolOracle extends BaseContract {
     quoteDeposit(
         _id: BigNumberish,
         _amount: BigNumberish,
-        overrides?: CallOverrides
-    ): Promise<
-        [BigNumber, BigNumber, BigNumber] & {
-            lpTokenToMint: BigNumber
-            liabilityToMint: BigNumber
-            reward: BigNumber
-        }
-    >
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     quoteFrom(
         _fromAsset: BigNumberish,
         _toAsset: BigNumberish,
         _fromAmount: BigNumberish,
         overrides?: CallOverrides
-    ): Promise<
-        [BigNumber, BigNumber] & {
-            actualToAmount: BigNumber
-            lpFeeAmount: BigNumber
-        }
-    >
+    ): Promise<[BigNumber, BigNumber] & { actualToAmount: BigNumber; totalFee: BigNumber }>
 
     quoteWithdraw(
         _id: BigNumberish,
         _liquidity: BigNumberish,
-        overrides?: CallOverrides
-    ): Promise<
-        [BigNumber, BigNumber, BigNumber] & {
-            amount: BigNumber
-            liabilityToBurn: BigNumber
-            fee: BigNumber
-        }
-    >
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
 
     renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
 
@@ -309,7 +280,7 @@ export interface OmniPoolOracle extends BaseContract {
         ): Promise<
             [BigNumber, BigNumber] & {
                 actualToAmount: BigNumber
-                lpFeeAmount: BigNumber
+                totalFee: BigNumber
             }
         >
 
@@ -372,7 +343,11 @@ export interface OmniPoolOracle extends BaseContract {
 
         poolDev(overrides?: CallOverrides): Promise<BigNumber>
 
-        quoteDeposit(_id: BigNumberish, _amount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+        quoteDeposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
         quoteFrom(
             _fromAsset: BigNumberish,
@@ -381,7 +356,11 @@ export interface OmniPoolOracle extends BaseContract {
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
-        quoteWithdraw(_id: BigNumberish, _liquidity: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+        quoteWithdraw(
+            _id: BigNumberish,
+            _liquidity: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
 
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
 
@@ -419,7 +398,11 @@ export interface OmniPoolOracle extends BaseContract {
 
         poolDev(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-        quoteDeposit(_id: BigNumberish, _amount: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+        quoteDeposit(
+            _id: BigNumberish,
+            _amount: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
 
         quoteFrom(
             _fromAsset: BigNumberish,
@@ -431,7 +414,7 @@ export interface OmniPoolOracle extends BaseContract {
         quoteWithdraw(
             _id: BigNumberish,
             _liquidity: BigNumberish,
-            overrides?: CallOverrides
+            overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
         renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
