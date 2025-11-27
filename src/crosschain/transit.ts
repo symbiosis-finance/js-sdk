@@ -5,7 +5,6 @@ import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './
 import { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 import { OctoPoolTrade } from './trade'
 import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
-import { getVolumeFeeCall } from './feeCall/getVolumeFeeCall'
 
 interface CreateOctoPoolTradeParams {
     tokenAmountIn: TokenAmount
@@ -18,7 +17,6 @@ export interface TransitOutResult {
     trade: OctoPoolTrade
     amountOut: TokenAmount
     amountOutMin: TokenAmount
-    volumeFeeCall?: MultiCallItem
     partnerFeeCall?: MultiCallItem
 }
 
@@ -108,11 +106,6 @@ export class Transit {
         return this.out.trade
     }
 
-    get volumeFeeCall(): MultiCallItem | undefined {
-        this.assertOutInitialized('volumeFeeCall')
-        return this.out.volumeFeeCall
-    }
-
     get partnerFeeCall(): MultiCallItem | undefined {
         this.assertOutInitialized('partnerFeeCall')
         return this.out.partnerFeeCall
@@ -131,13 +124,12 @@ export class Transit {
             to,
         })
 
-        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(trade)
+        const { amountOut, amountOutMin, partnerFeeCall } = await this.getAmountsOut(trade)
 
         this.out = {
             amountOut,
             amountOutMin,
             trade,
-            volumeFeeCall,
             partnerFeeCall,
         }
         return this
@@ -160,13 +152,6 @@ export class Transit {
         receiveSides.push(this.trade.routerAddress)
         paths.push(...[this.trade.tokenAmountIn.token.address, this.trade.amountOut.token.address])
         offsets.push(this.trade.callDataOffset)
-
-        if (this.volumeFeeCall) {
-            calldatas.push(this.volumeFeeCall.data)
-            receiveSides.push(this.volumeFeeCall.to)
-            paths.push(this.volumeFeeCall.amountIn.token.address)
-            offsets.push(this.volumeFeeCall.offset)
-        }
 
         if (this.partnerFeeCall) {
             calldatas.push(this.partnerFeeCall.data)
@@ -220,11 +205,10 @@ export class Transit {
         )
         this.trade.applyAmountIn(newAmountIn, newAmountInMin)
 
-        const { amountOut, amountOutMin, volumeFeeCall, partnerFeeCall } = await this.getAmountsOut(this.trade)
+        const { amountOut, amountOutMin, partnerFeeCall } = await this.getAmountsOut(this.trade)
 
         this.out = {
             trade: this.trade,
-            volumeFeeCall,
             partnerFeeCall,
             amountOut,
             amountOutMin,
@@ -273,33 +257,12 @@ export class Transit {
     private async getAmountsOut(trade: OctoPoolTrade): Promise<{
         amountOut: TokenAmount
         amountOutMin: TokenAmount
-        volumeFeeCall: MultiCallItem | undefined
         partnerFeeCall: MultiCallItem | undefined
     }> {
-        const { tokenAmountIn: tradeAmountIn, amountOut: tradeAmountOut, amountOutMin: tradeAmountOutMin } = trade
-        let volumeFeeCall: MultiCallItem | undefined = undefined
+        const { amountOut: tradeAmountOut, amountOutMin: tradeAmountOutMin } = trade
 
         let amountOut = tradeAmountOut
         let amountOutMin = tradeAmountOutMin
-
-        const involvedChainIds = [tradeAmountIn.token.chainId, tradeAmountOut.token.chainId]
-        if (tradeAmountIn.token.chainFromId) {
-            involvedChainIds.push(tradeAmountIn.token.chainFromId)
-        }
-        if (tradeAmountOut.token.chainFromId) {
-            involvedChainIds.push(tradeAmountOut.token.chainFromId)
-        }
-        const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(tradeAmountIn.token.chainId, involvedChainIds)
-        const isOnChainFeePool = ['usd-coin', 'symbiosis-finance'].includes(this.omniPoolConfig.coinGeckoId)
-        if (volumeFeeCollector && !isOnChainFeePool) {
-            volumeFeeCall = getVolumeFeeCall({
-                feeCollector: volumeFeeCollector,
-                amountIn: amountOut,
-                amountInMin: amountOutMin,
-            })
-            amountOut = volumeFeeCall.amountOut
-            amountOutMin = volumeFeeCall.amountOutMin
-        }
 
         const partnerFeeCall = await getPartnerFeeCall({
             symbiosis: this.symbiosis,
@@ -314,7 +277,6 @@ export class Transit {
 
         if (this.direction === 'mint') {
             return {
-                volumeFeeCall,
                 partnerFeeCall,
                 amountOut,
                 amountOutMin,
@@ -342,7 +304,6 @@ export class Transit {
         }
 
         return {
-            volumeFeeCall,
             partnerFeeCall,
             amountOut,
             amountOutMin,

@@ -298,9 +298,6 @@ export abstract class BaseSwapping {
         if (this.transit.partnerFeeCall) {
             fees.push(...this.transit.partnerFeeCall.fees)
         }
-        if (this.transit.volumeFeeCall) {
-            fees.push(...this.transit.volumeFeeCall.fees)
-        }
 
         return {
             ...payload,
