@@ -1,4 +1,4 @@
-import { Log, Provider, StaticJsonRpcProvider } from '@ethersproject/providers'
+import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Signer, utils, BigNumber } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
@@ -125,7 +125,7 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
 ]
 
 export class Symbiosis {
-    public providers: Map<ChainId, Provider>
+    public providers: Map<ChainId, StaticJsonRpcProvider>
 
     public readonly cache: Cache
     public readonly config: Config
@@ -451,7 +451,7 @@ export class Symbiosis {
         return new Zapping(this, omniPoolConfig)
     }
 
-    public getProvider(chainId: ChainId, rpc?: string): Provider {
+    public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {
         if (rpc) {
             const url = isTronChainId(chainId) ? `${rpc}/jsonrpc` : rpc
 
