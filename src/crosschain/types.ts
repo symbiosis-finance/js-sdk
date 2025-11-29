@@ -51,7 +51,7 @@ export type DepositoryConfig = {
     timedUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress
     priceEstimation: PriceEstimationConfig
-    refundDelay: number // Minimal delay before refund
+    refundDelay?: number // Minimal delay before refund
     withdrawDelay: number // Minimal delay before withdraw
     minAmountDelay: number // Minimal delay before swap with minimal amount
 }
