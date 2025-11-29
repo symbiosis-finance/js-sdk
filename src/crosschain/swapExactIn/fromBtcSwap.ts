@@ -381,13 +381,14 @@ async function buildOnChainSwap(
         const targetCall = isOutputNative
             ? nativeUnwrapCall(dep, tokenAmountOut.token, to)
             : erc20TransferCall(tokenAmountOut.token, to)
-        const call = await buildDepositCall({
+        const call = await buildBtcDepositCall({
             context,
             dep,
-            syBtcAmount,
+            btcConfig,
+            extraBranches: [],
+            tokenAmountIn: syBtcAmount,
             tokenAmountOut,
             tokenAmountOutMin,
-            btcConfig,
             ...targetCall,
         })
 
@@ -448,16 +449,17 @@ async function buildCrossChainSwap(
     if (dep) {
         if (swapExactInResult.tradeA) {
             // There is DEX-swap on BSC, lock to Depository instead.
-            const call = await buildDepositCall({
+            const call = await buildBtcDepositCall({
                 context,
                 dep,
-                syBtcAmount,
+                tokenAmountIn: syBtcAmount,
                 tokenAmountOut: swapExactInResult.tradeA.amountOut,
                 tokenAmountOutMin: swapExactInResult.tradeA.amountOutMin,
                 btcConfig,
                 target: tx.relayRecipient,
                 targetCalldata: tx.otherSideCalldata,
                 targetOffset: 100n, // metaSynthesize struct size
+                extraBranches: [],
             })
             return [
                 {
@@ -525,44 +527,83 @@ async function buildCrossChainSwap(
 type BuildDepositCallParameters = {
     context: SwapExactInParams
     dep: DepositoryContext
-    syBtcAmount: TokenAmount
+    tokenAmountIn: TokenAmount
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
-    btcConfig: BtcConfig
     target: string
     targetCalldata: BytesLike
     targetOffset: BigNumberish
+    extraBranches: DepositoryTypes.UnlockConditionStruct[]
 }
 
+type BuildBtcDepositCallParameters = BuildDepositCallParameters & {
+    btcConfig: BtcConfig
+}
+
+async function makeTimed(
+    dep: DepositoryContext,
+    delay: number,
+    next: DepositoryTypes.UnlockConditionStruct
+): Promise<DepositoryTypes.UnlockConditionStruct> {
+    if (dep.cfg.withdrawDelay === 0) return next
+    const timedWithdrawCondition = await dep.timedUnlocker.encodeCondition({
+        next,
+        delay,
+    })
+    return {
+        unlocker: dep.timedUnlocker.address,
+        condition: timedWithdrawCondition,
+    }
+}
+
+// Build Depository call with BTC refund.
+async function buildBtcDepositCall({
+    context,
+    dep,
+    btcConfig,
+    extraBranches,
+    ...params
+}: BuildBtcDepositCallParameters): Promise<MultiCallItem> {
+    const { refundAddress } = context
+    // Optional BTC refund.
+    if (refundAddress !== undefined && refundAddress !== '' && dep.btcRefundUnlocker && dep.cfg.refundDelay) {
+        const refundScript = getPkScript(refundAddress, btcConfig.btc.chainId)
+        const btcRefundCondition = await dep.btcRefundUnlocker.encodeCondition({
+            refundAddress: refundScript,
+        })
+        extraBranches.push(
+            await makeTimed(dep, dep.cfg.refundDelay, {
+                unlocker: dep.btcRefundUnlocker.address,
+                condition: btcRefundCondition,
+            })
+        )
+    } else {
+        console.warn('locking btc without refund unlocker')
+    }
+
+    return await buildDepositCall({
+        context,
+        dep,
+        extraBranches,
+        ...params,
+    })
+}
+
+// Build Depository call.
 async function buildDepositCall({
     context,
     dep,
-    syBtcAmount,
+    tokenAmountIn,
     tokenAmountOut,
     tokenAmountOutMin,
-    btcConfig,
     target,
     targetCalldata,
     targetOffset,
+    extraBranches,
 }: BuildDepositCallParameters): Promise<MultiCallItem> {
-    const { to, refundAddress } = context
-    const fromToken = syBtcAmount.token
+    const { to } = context
+    const fromToken = tokenAmountIn.token
     const toToken = tokenAmountOut.token
-
-    async function makeTimed(
-        delay: number,
-        next: DepositoryTypes.UnlockConditionStruct
-    ): Promise<DepositoryTypes.UnlockConditionStruct> {
-        if (dep.cfg.withdrawDelay === 0) return next
-        const timedWithdrawCondition = await dep.timedUnlocker.encodeCondition({
-            next,
-            delay,
-        })
-        return {
-            unlocker: dep.timedUnlocker.address,
-            condition: timedWithdrawCondition,
-        }
-    }
 
     const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
@@ -593,7 +634,7 @@ async function buildDepositCall({
         }
         const swapCondition = await dep.swapUnlocker.encodeCondition(condData)
         branches.push(
-            await makeTimed(dep.cfg.minAmountDelay, {
+            await makeTimed(dep, dep.cfg.minAmountDelay, {
                 unlocker: dep.swapUnlocker.address,
                 condition: swapCondition,
             })
@@ -602,42 +643,28 @@ async function buildDepositCall({
 
     // Transit token withdraw (i.e. syBTC)
     {
-        const withdrawCall = erc20TransferCall(syBtcAmount.token, to)
+        const withdrawCall = erc20TransferCall(tokenAmountIn.token, to)
         const withdrawCondition = await dep.swapUnlocker.encodeCondition({
             outToken: fromToken.address, // destination token
-            outMinAmount: syBtcAmount.toBigInt(),
+            outMinAmount: tokenAmountIn.toBigInt(),
             ...withdrawCall,
         })
         branches.push(
-            await makeTimed(dep.cfg.withdrawDelay, {
+            await makeTimed(dep, dep.cfg.withdrawDelay, {
                 unlocker: dep.swapUnlocker.address,
                 condition: withdrawCondition,
             })
         )
     }
 
-    // Optional BTC refund.
-    if (refundAddress !== undefined && refundAddress !== '' && dep.btcRefundUnlocker !== undefined) {
-        const refundScript = getPkScript(refundAddress, btcConfig.btc.chainId)
-        const btcRefundCondition = await dep.btcRefundUnlocker.encodeCondition({
-            refundAddress: refundScript,
-        })
-        branches.push(
-            await makeTimed(dep.cfg.refundDelay, {
-                unlocker: dep.btcRefundUnlocker.address,
-                condition: btcRefundCondition,
-            })
-        )
-    } else {
-        console.warn('locking btc without refund unlocker')
-    }
+    branches.push(...extraBranches)
 
     // Compose all branches.
     const condition = await dep.branchedUnlocker.encodeCondition({ branches })
     const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
     const deposit = {
         token: fromToken.address, // source token
-        amount: syBtcAmount.toBigInt(), // amount of fromToken
+        amount: tokenAmountIn.toBigInt(), // amount of fromToken
         nonce: nonce, // To be able to create identical deposits
     }
     const unlocker = {
@@ -653,11 +680,11 @@ async function buildDepositCall({
         routes: [
             {
                 provider: 'depository',
-                tokens: [syBtcAmount.token, tokenAmountOut.token],
+                tokens: [tokenAmountIn.token, tokenAmountOut.token],
             },
         ],
         value: '0',
-        amountIn: syBtcAmount,
+        amountIn: tokenAmountIn,
         amountOut: tokenAmountOut,
         amountOutMin: tokenAmountOutMin,
         fees: [],
