@@ -56,7 +56,7 @@ type MetaRouteParams = {
 
 export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
-    public amountInUsd: TokenAmount | undefined
+    public amountInUsd?: TokenAmount
 
     protected from!: Address
     protected to!: Address
@@ -66,9 +66,9 @@ export abstract class BaseSwapping {
     protected deadline!: number
     protected revertableAddresses!: { AB: string; BC: string }
 
-    protected tradeA: SymbiosisTrade | undefined
+    protected tradeA?: SymbiosisTrade
     protected transit!: Transit
-    protected tradeC: SymbiosisTrade | undefined
+    protected tradeC?: SymbiosisTrade
 
     protected readonly symbiosis: Symbiosis
     protected synthesisV2!: Synthesis
