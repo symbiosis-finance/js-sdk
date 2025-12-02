@@ -1,5 +1,5 @@
 import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Signer, utils, BigNumber } from 'ethers'
+import { BigNumber, Signer, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
 import TronWeb, { TransactionInfo } from 'tronweb'
@@ -136,7 +136,7 @@ export class Symbiosis {
 
     private signature: string | undefined
     public sdkDurationMetric?: Histogram<string>
-    public priceImpactSwapMetric?: Histogram<string>
+    public priceImpactSwapMetric?: Counter<string>
     public counter?: Counter<string>
 
     public feesConfig?: FeeConfig[]
@@ -153,7 +153,7 @@ export class Symbiosis {
         priceImpactSwap,
     }: {
         symbiosisSdkDuration: Histogram<string>
-        priceImpactSwap: Histogram<string>
+        priceImpactSwap: Counter<string>
     }) {
         this.sdkDurationMetric = symbiosisSdkDuration
         this.priceImpactSwapMetric = priceImpactSwap
@@ -351,21 +351,21 @@ export class Symbiosis {
             return
         }
         const priceImpactN = Number(priceImpact.toSignificant(2))
-        if (priceImpactN > -0.5) {
+
+        // less than 1% of price impact
+        if (priceImpactN > -1) {
             return
         }
 
         const amountBucket = getAmountBucket(Number(tokenAmountFrom.toSignificant(4)))
 
-        this.priceImpactSwapMetric.observe(
-            {
-                pool: poolConfig.coinGeckoId,
-                token_from: formatTokenName(tokenAmountFrom.token),
-                token_to: formatTokenName(tokenTo),
-                amount: amountBucket,
-            },
-            Math.abs(priceImpactN)
-        )
+        this.priceImpactSwapMetric.inc({
+            pool: poolConfig.coinGeckoId,
+            token_from: formatTokenName(tokenAmountFrom.token),
+            token_to: formatTokenName(tokenTo),
+            amount: amountBucket,
+            price_impact: Math.ceil(priceImpactN),
+        })
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {
