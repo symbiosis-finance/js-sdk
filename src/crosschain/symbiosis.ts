@@ -350,8 +350,8 @@ export class Symbiosis {
         if (!this.priceImpactSwapMetric) {
             return
         }
-        const priceImpactN = Number(priceImpact.toSignificant())
-        if (priceImpactN <= -0.5) {
+        const priceImpactN = Number(priceImpact.toSignificant(2))
+        if (priceImpactN > -0.5) {
             return
         }
 
@@ -360,8 +360,8 @@ export class Symbiosis {
         this.priceImpactSwapMetric.observe(
             {
                 pool: poolConfig.coinGeckoId,
-                tokenFrom: formatTokenName(tokenAmountFrom.token),
-                tokenTo: formatTokenName(tokenTo),
+                token_from: formatTokenName(tokenAmountFrom.token),
+                token_to: formatTokenName(tokenTo),
                 amount: amountBucket,
             },
             Math.abs(priceImpactN)
