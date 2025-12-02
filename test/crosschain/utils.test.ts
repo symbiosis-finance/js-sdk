@@ -1,6 +1,14 @@
 import { describe, expect, test } from 'vitest'
-import { calculateGasMargin, getMinAmount, splitSlippage } from '../../src'
+import { calculateGasMargin, getAmountBucket, getMinAmount, splitSlippage } from '../../src'
 import { BigNumber } from 'ethers'
+
+test('#getBucket', () => {
+    expect(getAmountBucket(300)).toBe(100)
+    expect(getAmountBucket(0.1)).toBe(0.1)
+    expect(getAmountBucket(0.000001)).toBe(0.001)
+    expect(getAmountBucket(15000)).toBe(10000)
+    expect(getAmountBucket(1500000)).toBe(1000000)
+})
 
 describe('#getMinAmount', () => {
     test('100 3%', () => {

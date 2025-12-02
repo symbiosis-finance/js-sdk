@@ -14,6 +14,7 @@ export { SymbiosisTradeType, IzumiTrade, AggregatorTrade, AggregatorTradeParams 
 export * from './waitForComplete'
 export * from './coingecko'
 export * from './config'
+export * from './utils'
 export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
 export type { Multicall, MulticallRouter } from './contracts'
 export { FEE_COLLECTOR_ADDRESSES, THOR_TOKENS, CHAIN_FLIP_SOL_TOKENS, CHAIN_FLIP_BTC_TOKENS } from './swapExactIn'

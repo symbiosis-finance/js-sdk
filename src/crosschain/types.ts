@@ -298,8 +298,8 @@ export type CounterParams = {
 }
 
 export type PriceImpactMetricParams = {
-    name_from: string
-    name_to: string
-    token_amount: number
-    price_impact: number
+    poolConfig: OmniPoolConfig
+    tokenAmountFrom: TokenAmount
+    tokenTo: Token
+    priceImpact: Percent
 }

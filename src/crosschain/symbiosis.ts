@@ -91,7 +91,8 @@ import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
 import { TonClient4 } from '@ton/ton'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { CoinGecko } from './coingecko'
-import { isTonChainId, getUnwrapDustLimit } from './chainUtils'
+import { getUnwrapDustLimit, isTonChainId } from './chainUtils'
+import { formatTokenName, getAmountBucket } from './utils'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
@@ -345,43 +346,26 @@ export class Symbiosis {
         this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
     }
 
-    public trackPriceImpactSwap({ name_from, name_to, token_amount, price_impact }: PriceImpactMetricParams) {
+    public trackPriceImpactSwap({ poolConfig, tokenAmountFrom, tokenTo, priceImpact }: PriceImpactMetricParams) {
         if (!this.priceImpactSwapMetric) {
             return
         }
-        const amountBucket = [
-            0.001, 0.01, 0.1, 0.5, 1, 5, 10, 50, 100, 1000, 3000, 5000, 10_000, 20_000, 50_000, 100_000, 200_000,
-            500_000, 1_000_000,
-        ]
-
-        const findNearestAmountIndex = (amount: number): number => {
-            if (amount <= amountBucket[0]) {
-                return 0
-            }
-            if (amount >= amountBucket[amountBucket.length - 1]) {
-                return amountBucket.length - 1
-            }
-
-            let nearestIndex = 0
-            let minDifference = Math.abs(amount - amountBucket[0])
-
-            for (let i = 1; i < amountBucket.length; i++) {
-                const difference = Math.abs(amount - amountBucket[i])
-                if (difference < minDifference) {
-                    minDifference = difference
-                    nearestIndex = i
-                }
-            }
-
-            return nearestIndex
+        const priceImpactN = Number(priceImpact.toSignificant())
+        if (priceImpactN <= -0.5) {
+            return
         }
 
-        if (price_impact >= 0.5) {
-            const amountIndex = findNearestAmountIndex(token_amount)
-            const amount_usd_bucket = amountBucket[amountIndex]
+        const amountBucket = getAmountBucket(Number(tokenAmountFrom.toSignificant(4)))
 
-            this.priceImpactSwapMetric.observe({ name_from, name_to, amount_usd: amount_usd_bucket }, price_impact)
-        }
+        this.priceImpactSwapMetric.observe(
+            {
+                pool: poolConfig.coinGeckoId,
+                tokenFrom: formatTokenName(tokenAmountFrom.token),
+                tokenTo: formatTokenName(tokenTo),
+                amount: amountBucket,
+            },
+            Math.abs(priceImpactN)
+        )
     }
 
     public getVolumeFeeCollector(chainId: ChainId, involvedChainIds: ChainId[]): VolumeFeeCollector | undefined {
