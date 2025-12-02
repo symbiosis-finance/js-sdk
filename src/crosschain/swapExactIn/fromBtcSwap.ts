@@ -20,6 +20,7 @@ import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import type { DepositoryContext } from '../symbiosis'
 import { AggregatorTrade } from '../trade'
+import type { SymbiosisTrade } from '../trade/symbiosisTrade'
 import type {
     Address,
     BtcAddress,
@@ -169,6 +170,8 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
         amountOutMin,
         priceImpact,
         routes,
+        tradeA,
+        tradeC,
     } = await buildTail(context, btcConfig, syBtcAmount)
     fees.push(...swapFees)
     // <<
@@ -212,6 +215,8 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
             ...routes,
         ],
         fees,
+        tradeA,
+        tradeC,
     }
 }
 
@@ -226,6 +231,8 @@ async function buildTail(
     priceImpact: Percent
     amountOut: TokenAmount
     amountOutMin: TokenAmount
+    tradeA?: SymbiosisTrade
+    tradeC?: SymbiosisTrade
 }> {
     const { symbiosis, partnerAddress, to, tokenOut } = context
 
@@ -261,10 +268,11 @@ async function buildTail(
     const isOnChain = tokenOut.chainId === chainId
     const buildSwapFunc = isOnChain ? buildOnChainSwap : buildCrossChainSwap
 
-    const swapCalls = await buildSwapFunc(context, syBtcAmount, btcConfig)
+    const swapResult = await buildSwapFunc(context, syBtcAmount, btcConfig)
     let amountOut = syBtcAmount
     let amountOutMin = syBtcAmount
     let priceImpact = new Percent('0', BIPS_BASE)
+    const swapCalls = swapResult.calls
 
     if (swapCalls.length > 0) {
         calls.push(...swapCalls)
@@ -291,7 +299,16 @@ async function buildTail(
         receiveSideOffset: 36,
     })
 
-    return { tail, fees, routes, priceImpact, amountOut, amountOutMin }
+    return {
+        tail,
+        fees,
+        routes,
+        priceImpact,
+        amountOut,
+        amountOutMin,
+        tradeA: swapResult.tradeA,
+        tradeC: swapResult.tradeC,
+    }
 }
 
 type CallData = {
@@ -322,15 +339,21 @@ function nativeUnwrapCall(dep: DepositoryContext, tokenOut: Token, to: Address):
     }
 }
 
+interface SwapResult {
+    calls: MultiCallItem[]
+    tradeA?: SymbiosisTrade
+    tradeC?: SymbiosisTrade
+}
+
 async function buildOnChainSwap(
     context: SwapExactInParams,
     syBtcAmount: TokenAmount,
     btcConfig: BtcConfig
-): Promise<MultiCallItem[]> {
+): Promise<SwapResult> {
     const { to, tokenAmountIn, symbiosis } = context
 
     if (syBtcAmount.token.equals(context.tokenOut)) {
-        return []
+        return { calls: [] }
     }
     const dep = await symbiosis.depository(syBtcAmount.token.chainId)
     let isOutputNative = false
@@ -392,46 +415,52 @@ async function buildOnChainSwap(
             ...targetCall,
         })
 
-        return [
-            {
-                ...call,
-                amountOut: new TokenAmount(originalTokenOut, tokenAmountOut.raw.toString()),
-                amountOutMin: new TokenAmount(originalTokenOut, tokenAmountOutMin.raw.toString()),
-                fees: [], // TODO: calculate fees (how?)
-                priceImpact: new Percent('0', BIPS_BASE), // TODO: calculate priceImpact (how?)
-            },
-        ]
+        return {
+            calls: [
+                {
+                    ...call,
+                    amountOut: new TokenAmount(originalTokenOut, tokenAmountOut.raw.toString()),
+                    amountOutMin: new TokenAmount(originalTokenOut, tokenAmountOutMin.raw.toString()),
+                    fees: [], // TODO: calculate fees (how?)
+                    priceImpact: new Percent('0', BIPS_BASE), // TODO: calculate priceImpact (how?)
+                },
+            ],
+            tradeA: aggregatorTrade ?? undefined,
+        }
     }
 
     if (!aggregatorTrade) {
         throw new SdkError('AggregatorTrade is not initialized')
     }
-    return [
-        {
-            to: aggregatorTrade.routerAddress,
-            data: aggregatorTrade.callData,
-            offset: aggregatorTrade.callDataOffset,
-            fees: aggregatorTrade.fees || [],
-            amountOut: aggregatorTrade.amountOut,
-            amountOutMin: aggregatorTrade.amountOutMin,
-            amountIn: syBtcAmount,
-            routes: [
-                {
-                    provider: aggregatorTrade.tradeType,
-                    tokens: [syBtcAmount.token, aggregatorTrade.tokenOut],
-                },
-            ],
-            value: '0',
-            priceImpact: aggregatorTrade.priceImpact,
-        },
-    ]
+    return {
+        calls: [
+            {
+                to: aggregatorTrade.routerAddress,
+                data: aggregatorTrade.callData,
+                offset: aggregatorTrade.callDataOffset,
+                fees: aggregatorTrade.fees || [],
+                amountOut: aggregatorTrade.amountOut,
+                amountOutMin: aggregatorTrade.amountOutMin,
+                amountIn: syBtcAmount,
+                routes: [
+                    {
+                        provider: aggregatorTrade.tradeType,
+                        tokens: [syBtcAmount.token, aggregatorTrade.tokenOut],
+                    },
+                ],
+                value: '0',
+                priceImpact: aggregatorTrade.priceImpact,
+            },
+        ],
+        tradeA: aggregatorTrade ?? undefined,
+    }
 }
 
 async function buildCrossChainSwap(
     context: SwapExactInParams,
     syBtcAmount: TokenAmount,
     btcConfig: BtcConfig
-): Promise<MultiCallItem[]> {
+): Promise<SwapResult> {
     const { to, symbiosis } = context
 
     const swapExactInResult = await bestPoolSwapping({
@@ -461,32 +490,40 @@ async function buildCrossChainSwap(
                 targetOffset: 100n, // metaSynthesize struct size
                 extraBranches: [],
             })
-            return [
-                {
-                    ...call,
-                    fees: [...call.fees, ...swapExactInResult.fees],
-                    amountOut: swapExactInResult.tokenAmountOut,
-                    amountOutMin: swapExactInResult.tokenAmountOutMin,
-                    routes: swapExactInResult.routes,
-                    priceImpact: swapExactInResult.priceImpact,
-                },
-            ]
+            return {
+                calls: [
+                    {
+                        ...call,
+                        fees: [...call.fees, ...swapExactInResult.fees],
+                        amountOut: swapExactInResult.tokenAmountOut,
+                        amountOutMin: swapExactInResult.tokenAmountOutMin,
+                        routes: swapExactInResult.routes,
+                        priceImpact: swapExactInResult.priceImpact,
+                    },
+                ],
+                tradeA: swapExactInResult.tradeA,
+                tradeC: swapExactInResult.tradeC,
+            }
         } else {
             // There is no on-chain swap, Depository is not needed.
-            return [
-                {
-                    to: tx.relayRecipient,
-                    data: tx.otherSideCalldata,
-                    offset: 100, // metaSynthesize struct
-                    fees: swapExactInResult.fees,
-                    routes: swapExactInResult.routes,
-                    value: '0',
-                    amountIn: syBtcAmount,
-                    amountOut: swapExactInResult.tokenAmountOut,
-                    amountOutMin: swapExactInResult.tokenAmountOutMin,
-                    priceImpact: swapExactInResult.priceImpact,
-                },
-            ]
+            return {
+                calls: [
+                    {
+                        to: tx.relayRecipient,
+                        data: tx.otherSideCalldata,
+                        offset: 100, // metaSynthesize struct
+                        fees: swapExactInResult.fees,
+                        routes: swapExactInResult.routes,
+                        value: '0',
+                        amountIn: syBtcAmount,
+                        amountOut: swapExactInResult.tokenAmountOut,
+                        amountOutMin: swapExactInResult.tokenAmountOutMin,
+                        priceImpact: swapExactInResult.priceImpact,
+                    },
+                ],
+                tradeA: swapExactInResult.tradeA,
+                tradeC: swapExactInResult.tradeC,
+            }
         }
     } else {
         const calls: MultiCallItem[] = []
@@ -520,7 +557,7 @@ async function buildCrossChainSwap(
             amountOutMin: swapExactInResult.tokenAmountOutMin,
             priceImpact: swapExactInResult.priceImpact,
         })
-        return calls
+        return { calls }
     }
 }
 
