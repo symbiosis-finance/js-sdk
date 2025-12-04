@@ -10,7 +10,7 @@ import { getExternalId, getInternalId, isTronChainId, prepareTronTransaction, Tr
 import { MulticallRouter } from './contracts'
 import { ChainId } from '../constants'
 import { OctoPoolTrade } from './trade'
-import { OmniPoolConfig } from './types'
+import { Address, OmniPoolConfig } from './types'
 import { PendingRequest } from './revertRequest'
 import { TRON_PORTAL_ABI } from './tronAbis'
 import { CROSS_CHAIN_ID } from './constants'
@@ -407,7 +407,7 @@ export class RevertPending {
             throw new SdkError(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
-        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
+        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address as Address
 
         const octoPoolTrade = new OctoPoolTrade({
             tokenAmountIn: amount,
@@ -417,7 +417,7 @@ export class RevertPending {
             deadline: this.deadline,
             symbiosis: this.symbiosis,
             to,
-            omniPoolConfig: this.omniPoolConfig,
+            poolConfig: this.omniPoolConfig,
         })
         await octoPoolTrade.init()
 

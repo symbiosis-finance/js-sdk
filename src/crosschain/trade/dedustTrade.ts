@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, OpenedContract, toNano } from '@ton/core'
+import { Address as AddressTon, beginCell, Cell, OpenedContract, toNano } from '@ton/core'
 import {
     Asset,
     Factory,
@@ -19,7 +19,7 @@ import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symb
 import JSBI from 'jsbi'
 import { BIPS_BASE } from '../constants'
 import { ChainId } from '../../constants'
-import { TonAddress, FeeItem } from '../types'
+import { TonAddress, FeeItem, Address } from '../types'
 import { CoinGecko } from '../coingecko'
 import { DedustTradeError } from '../sdkError'
 
@@ -32,28 +32,28 @@ interface DedustTradeParams extends SymbiosisTradeParams {
 
 interface JettonSwapParams {
     queryId?: number | bigint
-    destination: Address
+    destination: AddressTon
     amountIn: bigint
-    responseAddress?: Address | null
-    poolAddress: Address
-    recipientAddress?: Address | null
+    responseAddress?: AddressTon | null
+    poolAddress: AddressTon
+    recipientAddress?: AddressTon | null
     minAmountOut: bigint
 }
 
 interface MultiHopSwapParams {
     queryId?: number | bigint
-    destination: Address
+    destination: AddressTon
     amountIn: bigint
-    responseAddress?: Address | null
-    poolAddressTonOut: Address
-    poolAddressTonIn: Address
+    responseAddress?: AddressTon | null
+    poolAddressTonOut: AddressTon
+    poolAddressTonIn: AddressTon
     minAmountTon: bigint
     minAmountOut: bigint
 }
 
 interface TonSwapParams {
     queryId?: number | bigint
-    poolAddress: Address
+    poolAddress: AddressTon
     value: bigint
     minAmountOut: bigint
 }
@@ -61,27 +61,20 @@ interface TonSwapParams {
 interface CallDataResult {
     expectedAmountOut: bigint
     minAmountOut: bigint
-    to: Address
+    to: AddressTon
     body: Cell
     value: bigint
     fees: FeeItem[]
 }
 
 export class DedustTrade extends SymbiosisTrade {
-    public readonly symbiosis: Symbiosis
-    public readonly deadline: number
-    public readonly to: string
-    public readonly from: string
+    public readonly symbiosis!: Symbiosis
+    public readonly deadline!: number
+    public readonly to!: Address
+    public readonly from!: string
 
     public constructor(params: DedustTradeParams) {
         super(params)
-
-        const { symbiosis, deadline, to, from } = params
-
-        this.symbiosis = symbiosis
-        this.deadline = deadline
-        this.to = to
-        this.from = from
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -143,7 +136,7 @@ export class DedustTrade extends SymbiosisTrade {
         // TON -> jetton
         if (tokenAmountIn.token.isNative) {
             const tonVault = client.open(await factory.getNativeVault())
-            const tokenB = Asset.jetton(Address.parse(tokenOut.tonAddress))
+            const tokenB = Asset.jetton(AddressTon.parse(tokenOut.tonAddress))
 
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [Asset.native(), tokenB]))
 
@@ -151,13 +144,13 @@ export class DedustTrade extends SymbiosisTrade {
                 throw new DedustTradeError('Vault (TON) Dedust does not exist.')
             }
         } else if (tokenOut.isNative) {
-            const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
+            const tokenA = Asset.jetton(AddressTon.parse(tokenAmountIn.token.tonAddress))
 
             // jetton -> TON
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [tokenA, Asset.native()]))
         } else {
-            const tokenA = Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
-            const tokenB = Asset.jetton(Address.parse(tokenOut.tonAddress))
+            const tokenA = Asset.jetton(AddressTon.parse(tokenAmountIn.token.tonAddress))
+            const tokenB = Asset.jetton(AddressTon.parse(tokenOut.tonAddress))
 
             // jetton -> jetton
             pool = client.open(await factory.getPool(PoolType.VOLATILE, [tokenA, tokenB]))
@@ -167,14 +160,14 @@ export class DedustTrade extends SymbiosisTrade {
                 const [poolTonOut, poolTonIn] = await Promise.all([
                     client.open(
                         await factory.getPool(PoolType.VOLATILE, [
-                            Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress)),
+                            Asset.jetton(AddressTon.parse(tokenAmountIn.token.tonAddress)),
                             Asset.native(),
                         ])
                     ),
                     client.open(
                         await factory.getPool(PoolType.VOLATILE, [
                             Asset.native(),
-                            Asset.jetton(Address.parse(tokenOut.tonAddress)),
+                            Asset.jetton(AddressTon.parse(tokenOut.tonAddress)),
                         ])
                     ),
                 ])
@@ -200,7 +193,7 @@ export class DedustTrade extends SymbiosisTrade {
         const tonVault = client.open(await factory.getNativeVault())
         const isTonIn = tokenAmountIn.token.isNative
 
-        const tokenIn = isTonIn ? Asset.native() : Asset.jetton(Address.parse(tokenAmountIn.token.tonAddress))
+        const tokenIn = isTonIn ? Asset.native() : Asset.jetton(AddressTon.parse(tokenAmountIn.token.tonAddress))
 
         const { pool, secondPool } = await this.findPool(tokenAmountIn, tokenOut)
 
@@ -257,7 +250,7 @@ export class DedustTrade extends SymbiosisTrade {
         }
 
         let txParams: { body: Cell; value: bigint } | null = null
-        let tokenInWalletAddress: Address | null = null
+        let tokenInWalletAddress: AddressTon | null = null
 
         // TON -> jetton
         if (isTonIn) {
@@ -275,20 +268,20 @@ export class DedustTrade extends SymbiosisTrade {
         } else if (tokenOut.isNative && tokenIn.address) {
             const tokenInVault = client.open(await factory.getJettonVault(tokenIn.address))
             const tokenInRoot = client.open(JettonRoot.createFromAddress(tokenIn.address))
-            tokenInWalletAddress = client.open(await tokenInRoot.getWallet(Address.parse(this.from))).address
+            tokenInWalletAddress = client.open(await tokenInRoot.getWallet(AddressTon.parse(this.from))).address
 
             txParams = this.buildJettonSwapCalldata({
                 queryId: 0,
                 poolAddress: pool.address,
                 destination: tokenInVault.address,
                 amountIn: BigInt(tokenAmountIn.raw.toString()),
-                responseAddress: Address.parse(this.from),
+                responseAddress: AddressTon.parse(this.from),
                 minAmountOut,
             })
         } else if (tokenIn.address) {
             const tokenInVault = client.open(await factory.getJettonVault(tokenIn.address))
             const tokenInRoot = client.open(JettonRoot.createFromAddress(tokenIn.address))
-            tokenInWalletAddress = client.open(await tokenInRoot.getWallet(Address.parse(this.from))).address
+            tokenInWalletAddress = client.open(await tokenInRoot.getWallet(AddressTon.parse(this.from))).address
 
             // jetton -> jetton
 
@@ -299,7 +292,7 @@ export class DedustTrade extends SymbiosisTrade {
                     destination: tokenInVault.address,
                     poolAddressTonOut: pool.address,
                     poolAddressTonIn: secondPool.address,
-                    responseAddress: Address.parse(this.from),
+                    responseAddress: AddressTon.parse(this.from),
                     minAmountTon,
                     minAmountOut,
                 })
@@ -309,7 +302,7 @@ export class DedustTrade extends SymbiosisTrade {
                     poolAddress: pool.address,
                     destination: tokenInVault.address,
                     amountIn: BigInt(tokenAmountIn.raw.toString()),
-                    responseAddress: Address.parse(this.from),
+                    responseAddress: AddressTon.parse(this.from),
                     minAmountOut,
                 })
             }
@@ -344,7 +337,7 @@ export class DedustTrade extends SymbiosisTrade {
                 .storeRef(
                     beginCell()
                         .storeUint(0, 32) // deadline
-                        .storeAddress(Address.parse(this.to)) // recipientAddress
+                        .storeAddress(AddressTon.parse(this.to)) // recipientAddress
                         .storeAddress(TON_REFERRAL_ADDRESS) // referralAddress
                         .storeMaybeRef(null) // fulfillPayload
                         .storeMaybeRef(null) // rejectPayload
@@ -378,7 +371,7 @@ export class DedustTrade extends SymbiosisTrade {
                         poolAddress,
                         limit: minAmountOut,
                         swapParams: {
-                            recipientAddress: Address.parse(this.to),
+                            recipientAddress: AddressTon.parse(this.to),
                             referralAddress: TON_REFERRAL_ADDRESS,
                         },
                     })
@@ -412,7 +405,7 @@ export class DedustTrade extends SymbiosisTrade {
                         poolAddress: poolAddressTonOut,
                         limit: minAmountTon,
                         swapParams: {
-                            recipientAddress: Address.parse(this.to),
+                            recipientAddress: AddressTon.parse(this.to),
                             referralAddress: TON_REFERRAL_ADDRESS,
                         },
                         next: {

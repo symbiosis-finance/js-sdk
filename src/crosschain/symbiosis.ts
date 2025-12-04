@@ -7,17 +7,13 @@ import type { Counter, Histogram } from 'prom-client'
 import { ChainId } from '../constants'
 import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
 import {
-    BranchedUnlocker,
     BranchedUnlocker__factory,
     Bridge,
     Bridge__factory,
-    BtcRefundUnlocker,
     BtcRefundUnlocker__factory,
     Fabric,
     Fabric__factory,
-    IDepository,
     IDepository__factory,
-    IRouter,
     IRouter__factory,
     MetaRouter,
     MetaRouter__factory,
@@ -29,11 +25,9 @@ import {
     OmniPoolOracle__factory,
     Portal,
     Portal__factory,
-    SwapUnlocker,
     SwapUnlocker__factory,
     Synthesis,
     Synthesis__factory,
-    TimedUnlocker,
     TimedUnlocker__factory,
     TonBridge,
     TonBridge__factory,
@@ -54,7 +48,6 @@ import {
     ChainConfig,
     Config,
     CounterParams,
-    DepositoryConfig,
     EvmAddress,
     FeeConfig,
     MetricParams,
@@ -93,22 +86,13 @@ import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { CoinGecko } from './coingecko'
 import { getUnwrapDustLimit, isTonChainId } from './chainUtils'
 import { formatTokenName, getAmountBucket } from './utils'
+import { DepositoryContext } from './depository'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
-export type DiscountTier = {
+export interface DiscountTier {
     amount: string
     discount: number
-}
-
-export type DepositoryContext = {
-    cfg: DepositoryConfig
-    depository: IDepository
-    router: IRouter
-    branchedUnlocker: BranchedUnlocker
-    swapUnlocker: SwapUnlocker
-    timedUnlocker: TimedUnlocker
-    btcRefundUnlocker?: BtcRefundUnlocker
 }
 
 const defaultFetch: typeof fetch = (url, init) => {
@@ -507,7 +491,7 @@ export class Symbiosis {
             const depository = IDepository__factory.connect(cfg.depository, signerOrProvider)
             const routerAddress = await depository.router()
 
-            return {
+            return new DepositoryContext({
                 cfg,
                 depository,
                 router: IRouter__factory.connect(routerAddress, signerOrProvider),
@@ -517,7 +501,7 @@ export class Symbiosis {
                     : undefined,
                 timedUnlocker: TimedUnlocker__factory.connect(cfg.timedUnlocker, signerOrProvider),
                 branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
-            }
+            })
         })
     }
 
