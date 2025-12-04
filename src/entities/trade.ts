@@ -10,6 +10,7 @@ import { Price } from './fractions/price'
 import { Pair } from './pair'
 import { Route } from './route'
 import { tokenEquals, Token, WETH } from './token'
+import { InsufficientInputAmountError, InsufficientReservesError } from '..'
 
 /**
  * Returns the percent difference between the mid price and the execution price, i.e. price impact.
@@ -240,12 +241,13 @@ export class Trade {
         currentPairs: Pair[] = [],
         originalAmountIn: TokenAmount = tokenAmountIn,
         bestTrades: Trade[] = []
-    ): Trade[] {
+    ): Trade {
         invariant(pairs.length > 0, 'PAIRS')
         invariant(maxHops > 0, 'MAX_HOPS')
         invariant(originalAmountIn === tokenAmountIn || currentPairs.length > 0, 'INVALID_RECURSION')
 
         const amountIn = wrappedAmount(tokenAmountIn)
+        const errors = []
         for (let i = 0; i < pairs.length; i++) {
             const pair = pairs[i]
             // pair irrelevant
@@ -255,9 +257,10 @@ export class Trade {
             let amountOut: TokenAmount
             try {
                 ;[amountOut] = pair.getOutputAmount(amountIn)
-            } catch (error: any) {
+            } catch (error) {
                 // input too low
-                if (error.isInsufficientInputAmountError) {
+                if (error instanceof InsufficientInputAmountError) {
+                    errors.push(error)
                     continue
                 }
                 throw error
@@ -293,7 +296,8 @@ export class Trade {
             }
         }
 
-        return bestTrades
+        if (bestTrades.length) return bestTrades[0]
+        throw AggregateError(errors, 'failed to find UniswapV2 route')
     }
 
     /**
@@ -335,9 +339,9 @@ export class Trade {
             let amountIn: TokenAmount
             try {
                 ;[amountIn] = pair.getInputAmount(amountOut)
-            } catch (error: any) {
+            } catch (error) {
                 // not enough liquidity in this pair
-                if (error.isInsufficientReservesError) {
+                if (error instanceof InsufficientReservesError) {
                     continue
                 }
                 throw error
