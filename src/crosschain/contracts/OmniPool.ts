@@ -28,7 +28,13 @@ export interface OmniPoolInterface extends utils.Interface {
         'changeMaxSupply(uint256,uint256)': FunctionFragment
         'deposit(uint256,uint256,uint256,address,uint256)': FunctionFragment
         'devaddr()': FunctionFragment
+        'dynamicFeeMaximum()': FunctionFragment
+        'dynamicFeePow()': FunctionFragment
+        'dynamicFeeThreshold()': FunctionFragment
+        'feeCounter()': FunctionFragment
+        'feeReceiver()': FunctionFragment
         'feeTo()': FunctionFragment
+        'getFeeCollected(uint256)': FunctionFragment
         'globalEquilCovRatio()': FunctionFragment
         'indexToAsset(uint256)': FunctionFragment
         'initialize(uint256,uint256)': FunctionFragment
@@ -47,7 +53,10 @@ export interface OmniPoolInterface extends utils.Interface {
         'setA(uint256)': FunctionFragment
         'setApprovalForAll(address,bool)': FunctionFragment
         'setAssetStatus(uint256,bool)': FunctionFragment
+        'setDynamicFeeParameters(uint256,uint256,uint256)': FunctionFragment
+        'setFeeCounter(address)': FunctionFragment
         'setFeeRatio(uint256)': FunctionFragment
+        'setFeeReceiver(address)': FunctionFragment
         'setFeeTo(address)': FunctionFragment
         'setLPFee(uint256)': FunctionFragment
         'setMintFeeThreshold(uint256)': FunctionFragment
@@ -73,7 +82,13 @@ export interface OmniPoolInterface extends utils.Interface {
         values: [BigNumberish, BigNumberish, BigNumberish, string, BigNumberish]
     ): string
     encodeFunctionData(functionFragment: 'devaddr', values?: undefined): string
+    encodeFunctionData(functionFragment: 'dynamicFeeMaximum', values?: undefined): string
+    encodeFunctionData(functionFragment: 'dynamicFeePow', values?: undefined): string
+    encodeFunctionData(functionFragment: 'dynamicFeeThreshold', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeCounter', values?: undefined): string
+    encodeFunctionData(functionFragment: 'feeReceiver', values?: undefined): string
     encodeFunctionData(functionFragment: 'feeTo', values?: undefined): string
+    encodeFunctionData(functionFragment: 'getFeeCollected', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'globalEquilCovRatio', values?: undefined): string
     encodeFunctionData(functionFragment: 'indexToAsset', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'initialize', values: [BigNumberish, BigNumberish]): string
@@ -98,7 +113,13 @@ export interface OmniPoolInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'setA', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'setApprovalForAll', values: [string, boolean]): string
     encodeFunctionData(functionFragment: 'setAssetStatus', values: [BigNumberish, boolean]): string
+    encodeFunctionData(
+        functionFragment: 'setDynamicFeeParameters',
+        values: [BigNumberish, BigNumberish, BigNumberish]
+    ): string
+    encodeFunctionData(functionFragment: 'setFeeCounter', values: [string]): string
     encodeFunctionData(functionFragment: 'setFeeRatio', values: [BigNumberish]): string
+    encodeFunctionData(functionFragment: 'setFeeReceiver', values: [string]): string
     encodeFunctionData(functionFragment: 'setFeeTo', values: [string]): string
     encodeFunctionData(functionFragment: 'setLPFee', values: [BigNumberish]): string
     encodeFunctionData(functionFragment: 'setMintFeeThreshold', values: [BigNumberish]): string
@@ -126,7 +147,13 @@ export interface OmniPoolInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'changeMaxSupply', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'deposit', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'devaddr', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'dynamicFeeMaximum', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'dynamicFeePow', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'dynamicFeeThreshold', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeCounter', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'feeReceiver', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'feeTo', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'getFeeCollected', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'globalEquilCovRatio', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'indexToAsset', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
@@ -145,7 +172,10 @@ export interface OmniPoolInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: 'setA', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setApprovalForAll', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setAssetStatus', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setDynamicFeeParameters', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFeeCounter', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setFeeRatio', data: BytesLike): Result
+    decodeFunctionResult(functionFragment: 'setFeeReceiver', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setFeeTo', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setLPFee', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'setMintFeeThreshold', data: BytesLike): Result
@@ -164,10 +194,14 @@ export interface OmniPoolInterface extends utils.Interface {
         'AssetAdded(address)': EventFragment
         'AssetStatusChanged(address,bool)': EventFragment
         'Deposit(address,address,uint256,uint256,address)': EventFragment
+        'FeeCollected(address,uint256,uint256)': EventFragment
         'FillPool(address,uint256)': EventFragment
         'Initialized(uint8)': EventFragment
         'NewA(uint256)': EventFragment
+        'NewDynamicFeeParameters(uint256,uint256,uint256)': EventFragment
         'NewFee(uint256)': EventFragment
+        'NewFeeCounter(address)': EventFragment
+        'NewFeeReceiver(address)': EventFragment
         'NewFeeTo(address)': EventFragment
         'NewLPFee(uint256)': EventFragment
         'NewMaxSupply(address,uint256)': EventFragment
@@ -187,10 +221,14 @@ export interface OmniPoolInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'AssetAdded'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'AssetStatusChanged'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Deposit'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'FeeCollected'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'FillPool'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewA'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewDynamicFeeParameters'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewFee'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewFeeCounter'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'NewFeeReceiver'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewFeeTo'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewLPFee'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'NewMaxSupply'): EventFragment
@@ -234,6 +272,13 @@ export type DepositEvent = TypedEvent<
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>
 
+export type FeeCollectedEvent = TypedEvent<
+    [string, BigNumber, BigNumber],
+    { token: string; amount: BigNumber; fee: BigNumber }
+>
+
+export type FeeCollectedEventFilter = TypedEventFilter<FeeCollectedEvent>
+
 export type FillPoolEvent = TypedEvent<[string, BigNumber], { token: string; amount: BigNumber }>
 
 export type FillPoolEventFilter = TypedEventFilter<FillPoolEvent>
@@ -246,9 +291,24 @@ export type NewAEvent = TypedEvent<[BigNumber], { value: BigNumber }>
 
 export type NewAEventFilter = TypedEventFilter<NewAEvent>
 
+export type NewDynamicFeeParametersEvent = TypedEvent<
+    [BigNumber, BigNumber, BigNumber],
+    { threshold: BigNumber; multiplier: BigNumber; pow: BigNumber }
+>
+
+export type NewDynamicFeeParametersEventFilter = TypedEventFilter<NewDynamicFeeParametersEvent>
+
 export type NewFeeEvent = TypedEvent<[BigNumber], { lpDividendRatio: BigNumber }>
 
 export type NewFeeEventFilter = TypedEventFilter<NewFeeEvent>
+
+export type NewFeeCounterEvent = TypedEvent<[string], { newFeeCounter: string }>
+
+export type NewFeeCounterEventFilter = TypedEventFilter<NewFeeCounterEvent>
+
+export type NewFeeReceiverEvent = TypedEvent<[string], { _newFeeReceiver: string }>
+
+export type NewFeeReceiverEventFilter = TypedEventFilter<NewFeeReceiverEvent>
 
 export type NewFeeToEvent = TypedEvent<[string], { addr: string }>
 
@@ -395,7 +455,19 @@ export interface OmniPool extends BaseContract {
 
         devaddr(overrides?: CallOverrides): Promise<[string]>
 
+        dynamicFeeMaximum(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        dynamicFeePow(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        dynamicFeeThreshold(overrides?: CallOverrides): Promise<[BigNumber]>
+
+        feeCounter(overrides?: CallOverrides): Promise<[string]>
+
+        feeReceiver(overrides?: CallOverrides): Promise<[string]>
+
         feeTo(overrides?: CallOverrides): Promise<[string]>
+
+        getFeeCollected(_asset: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
 
         globalEquilCovRatio(overrides?: CallOverrides): Promise<
             [BigNumber, BigNumber] & {
@@ -483,8 +555,25 @@ export interface OmniPool extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
+        setDynamicFeeParameters(
+            _newDynamicFeeThreshold: BigNumberish,
+            _newDynamicFeeMaximum: BigNumberish,
+            _newDynamicFeePow: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setFeeCounter(
+            _newFeeCounter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
         setFeeRatio(
             _newLpDividendRatio: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<ContractTransaction>
+
+        setFeeReceiver(
+            _newFeeReceiver: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<ContractTransaction>
 
@@ -579,7 +668,19 @@ export interface OmniPool extends BaseContract {
 
     devaddr(overrides?: CallOverrides): Promise<string>
 
+    dynamicFeeMaximum(overrides?: CallOverrides): Promise<BigNumber>
+
+    dynamicFeePow(overrides?: CallOverrides): Promise<BigNumber>
+
+    dynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+    feeCounter(overrides?: CallOverrides): Promise<string>
+
+    feeReceiver(overrides?: CallOverrides): Promise<string>
+
     feeTo(overrides?: CallOverrides): Promise<string>
+
+    getFeeCollected(_asset: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
     globalEquilCovRatio(
         overrides?: CallOverrides
@@ -661,8 +762,25 @@ export interface OmniPool extends BaseContract {
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
+    setDynamicFeeParameters(
+        _newDynamicFeeThreshold: BigNumberish,
+        _newDynamicFeeMaximum: BigNumberish,
+        _newDynamicFeePow: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    setFeeCounter(
+        _newFeeCounter: string,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
     setFeeRatio(
         _newLpDividendRatio: BigNumberish,
+        overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>
+
+    setFeeReceiver(
+        _newFeeReceiver: string,
         overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>
 
@@ -753,7 +871,19 @@ export interface OmniPool extends BaseContract {
 
         devaddr(overrides?: CallOverrides): Promise<string>
 
+        dynamicFeeMaximum(overrides?: CallOverrides): Promise<BigNumber>
+
+        dynamicFeePow(overrides?: CallOverrides): Promise<BigNumber>
+
+        dynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeCounter(overrides?: CallOverrides): Promise<string>
+
+        feeReceiver(overrides?: CallOverrides): Promise<string>
+
         feeTo(overrides?: CallOverrides): Promise<string>
+
+        getFeeCollected(_asset: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
         globalEquilCovRatio(overrides?: CallOverrides): Promise<
             [BigNumber, BigNumber] & {
@@ -823,7 +953,18 @@ export interface OmniPool extends BaseContract {
 
         setAssetStatus(_id: BigNumberish, _active: boolean, overrides?: CallOverrides): Promise<void>
 
+        setDynamicFeeParameters(
+            _newDynamicFeeThreshold: BigNumberish,
+            _newDynamicFeeMaximum: BigNumberish,
+            _newDynamicFeePow: BigNumberish,
+            overrides?: CallOverrides
+        ): Promise<void>
+
+        setFeeCounter(_newFeeCounter: string, overrides?: CallOverrides): Promise<void>
+
         setFeeRatio(_newLpDividendRatio: BigNumberish, overrides?: CallOverrides): Promise<void>
+
+        setFeeReceiver(_newFeeReceiver: string, overrides?: CallOverrides): Promise<void>
 
         setFeeTo(_newFeeTo: string, overrides?: CallOverrides): Promise<void>
 
@@ -902,6 +1043,9 @@ export interface OmniPool extends BaseContract {
             to?: string | null
         ): DepositEventFilter
 
+        'FeeCollected(address,uint256,uint256)'(token?: null, amount?: null, fee?: null): FeeCollectedEventFilter
+        FeeCollected(token?: null, amount?: null, fee?: null): FeeCollectedEventFilter
+
         'FillPool(address,uint256)'(token?: string | null, amount?: null): FillPoolEventFilter
         FillPool(token?: string | null, amount?: null): FillPoolEventFilter
 
@@ -911,8 +1055,21 @@ export interface OmniPool extends BaseContract {
         'NewA(uint256)'(value?: null): NewAEventFilter
         NewA(value?: null): NewAEventFilter
 
+        'NewDynamicFeeParameters(uint256,uint256,uint256)'(
+            threshold?: null,
+            multiplier?: null,
+            pow?: null
+        ): NewDynamicFeeParametersEventFilter
+        NewDynamicFeeParameters(threshold?: null, multiplier?: null, pow?: null): NewDynamicFeeParametersEventFilter
+
         'NewFee(uint256)'(lpDividendRatio?: null): NewFeeEventFilter
         NewFee(lpDividendRatio?: null): NewFeeEventFilter
+
+        'NewFeeCounter(address)'(newFeeCounter?: null): NewFeeCounterEventFilter
+        NewFeeCounter(newFeeCounter?: null): NewFeeCounterEventFilter
+
+        'NewFeeReceiver(address)'(_newFeeReceiver?: null): NewFeeReceiverEventFilter
+        NewFeeReceiver(_newFeeReceiver?: null): NewFeeReceiverEventFilter
 
         'NewFeeTo(address)'(addr?: string | null): NewFeeToEventFilter
         NewFeeTo(addr?: string | null): NewFeeToEventFilter
@@ -1043,7 +1200,19 @@ export interface OmniPool extends BaseContract {
 
         devaddr(overrides?: CallOverrides): Promise<BigNumber>
 
+        dynamicFeeMaximum(overrides?: CallOverrides): Promise<BigNumber>
+
+        dynamicFeePow(overrides?: CallOverrides): Promise<BigNumber>
+
+        dynamicFeeThreshold(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeCounter(overrides?: CallOverrides): Promise<BigNumber>
+
+        feeReceiver(overrides?: CallOverrides): Promise<BigNumber>
+
         feeTo(overrides?: CallOverrides): Promise<BigNumber>
+
+        getFeeCollected(_asset: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
         globalEquilCovRatio(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -1107,8 +1276,25 @@ export interface OmniPool extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
+        setDynamicFeeParameters(
+            _newDynamicFeeThreshold: BigNumberish,
+            _newDynamicFeeMaximum: BigNumberish,
+            _newDynamicFeePow: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setFeeCounter(
+            _newFeeCounter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
         setFeeRatio(
             _newLpDividendRatio: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<BigNumber>
+
+        setFeeReceiver(
+            _newFeeReceiver: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<BigNumber>
 
@@ -1205,7 +1391,19 @@ export interface OmniPool extends BaseContract {
 
         devaddr(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
+        dynamicFeeMaximum(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        dynamicFeePow(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        dynamicFeeThreshold(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeCounter(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        feeReceiver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
         feeTo(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        getFeeCollected(_asset: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         globalEquilCovRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
@@ -1275,8 +1473,25 @@ export interface OmniPool extends BaseContract {
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 
+        setDynamicFeeParameters(
+            _newDynamicFeeThreshold: BigNumberish,
+            _newDynamicFeeMaximum: BigNumberish,
+            _newDynamicFeePow: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setFeeCounter(
+            _newFeeCounter: string,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
         setFeeRatio(
             _newLpDividendRatio: BigNumberish,
+            overrides?: Overrides & { from?: string | Promise<string> }
+        ): Promise<PopulatedTransaction>
+
+        setFeeReceiver(
+            _newFeeReceiver: string,
             overrides?: Overrides & { from?: string | Promise<string> }
         ): Promise<PopulatedTransaction>
 

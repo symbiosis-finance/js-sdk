@@ -23,7 +23,7 @@ export class OmniLiquidity {
 
         const index = await this.pool.assetToIndex(this.tokenAmountIn.token.address)
 
-        const depositEstimate = await this.poolOracle.quoteDeposit(index, this.tokenAmountIn.raw.toString())
+        const depositEstimate = await this.poolOracle.callStatic.quoteDeposit(index, this.tokenAmountIn.raw.toString())
 
         const lpToken = new Token({
             address: this.pool.address as Address,
