@@ -73,9 +73,9 @@ const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
 }
 
 export class OneInchTrade extends SymbiosisTrade {
-    private readonly symbiosis!: Symbiosis
-    private readonly from!: string
-    private readonly protocols!: OneInchProtocols
+    private readonly symbiosis: Symbiosis
+    private readonly from: string
+    private readonly protocols: OneInchProtocols
 
     static isAvailable(chainId: ChainId): boolean {
         return ONE_INCH_CHAINS.includes(chainId)
@@ -83,7 +83,9 @@ export class OneInchTrade extends SymbiosisTrade {
 
     public constructor(params: OneInchTradeParams) {
         super(params)
-        this.protocols = this.protocols || []
+        this.symbiosis = params.symbiosis
+        this.from = params.from
+        this.protocols = params.protocols || []
     }
 
     get tradeType(): SymbiosisTradeType {

@@ -22,7 +22,7 @@ import { CoinGecko } from '../coingecko'
 import { BIPS_BASE } from '../constants'
 import { DedustTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import type { Address, FeeItem, TonAddress } from '../types'
+import type { FeeItem, TonAddress } from '../types'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 
@@ -71,13 +71,15 @@ interface CallDataResult {
 }
 
 export class DedustTrade extends SymbiosisTrade {
-    public readonly symbiosis!: Symbiosis
-    public readonly deadline!: number
-    public readonly to!: Address
-    public readonly from!: string
+    public readonly symbiosis: Symbiosis
+    public readonly deadline: number
+    public readonly from: string
 
     public constructor(params: DedustTradeParams) {
         super(params)
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
+        this.from = params.from
     }
 
     get tradeType(): SymbiosisTradeType {

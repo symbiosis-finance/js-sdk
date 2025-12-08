@@ -15,12 +15,15 @@ interface OctoPoolTradeParams extends SymbiosisTradeParams {
 }
 
 export class OctoPoolTrade extends SymbiosisTrade implements OctoPoolTradeParams {
-    public readonly symbiosis!: Symbiosis
-    public readonly deadline!: number
-    public readonly poolConfig!: OmniPoolConfig
+    public readonly symbiosis: Symbiosis
+    public readonly deadline: number
+    public readonly poolConfig: OmniPoolConfig
 
     public constructor(params: OctoPoolTradeParams) {
         super(params)
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
+        this.poolConfig = params.poolConfig
     }
 
     get tradeType(): SymbiosisTradeType {

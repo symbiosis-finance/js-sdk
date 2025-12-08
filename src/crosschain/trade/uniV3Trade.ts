@@ -118,8 +118,8 @@ interface UniV3TradeParams extends SymbiosisTradeParams {
 }
 
 export class UniV3Trade extends SymbiosisTrade {
-    private readonly symbiosis!: Symbiosis
-    private readonly deadline!: number
+    private readonly symbiosis: Symbiosis
+    private readonly deadline: number
 
     static isSupported(chainId: ChainId): boolean {
         return !!DEPLOYMENT_ADDRESSES[chainId]
@@ -127,6 +127,8 @@ export class UniV3Trade extends SymbiosisTrade {
 
     public constructor(params: UniV3TradeParams) {
         super(params)
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
     }
 
     get tradeType(): SymbiosisTradeType {
