@@ -42,11 +42,12 @@ interface BuildSwapInstructionsParams {
 }
 
 export class RaydiumTrade extends SymbiosisTrade {
-    public readonly symbiosis!: Symbiosis
+    public readonly symbiosis: Symbiosis
     private solanaToPubkey: PublicKey
 
     public constructor(params: RaydiumTradeParams) {
         super(params)
+        this.symbiosis = params.symbiosis
         this.solanaToPubkey = new PublicKey(params.to)
     }
 

@@ -61,7 +61,11 @@ export abstract class SymbiosisTrade {
     protected out?: SymbiosisTradeOutResult
 
     protected constructor(params: SymbiosisTradeParams) {
-        Object.assign(this, params)
+        this.tokenAmountIn = params.tokenAmountIn
+        this.tokenAmountInMin = params.tokenAmountInMin
+        this.tokenOut = params.tokenOut
+        this.slippage = params.slippage
+        this.to = params.to
     }
 
     get tradeType(): SymbiosisTradeType {

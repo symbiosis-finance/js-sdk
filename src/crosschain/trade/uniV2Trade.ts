@@ -45,8 +45,8 @@ type UniV2Router = UniLikeRouter | AvaxRouter | AdaRouter | KavaRouter | KimRout
 export class UniV2Trade extends SymbiosisTrade {
     private router!: UniV2Router
 
-    private readonly symbiosis!: Symbiosis
-    private readonly deadline!: number
+    private readonly symbiosis: Symbiosis
+    private readonly deadline: number
 
     static isSupported(symbiosis: Symbiosis, chainId: ChainId): boolean {
         return symbiosis.chainConfig(chainId).router !== AddressZero
@@ -54,6 +54,8 @@ export class UniV2Trade extends SymbiosisTrade {
 
     public constructor(params: UniV2TradeParams) {
         super(params)
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -94,10 +96,16 @@ export class UniV2Trade extends SymbiosisTrade {
 
         let trade: Trade
         try {
-            trade = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
+            const { trades, errors } = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
                 maxHops: 3,
                 maxNumResults: 1,
             })
+            if (trades.length === 0)
+                throw AggregateError(
+                    errors,
+                    `failed to obtain any trades for ${this.tokenAmountIn} -> ${this.tokenOut}`
+                )
+            else trade = trades[0]
         } catch (e) {
             throw new UniV2TradeError('bestTradeExactIn failed', e)
         }

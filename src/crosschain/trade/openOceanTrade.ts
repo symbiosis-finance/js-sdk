@@ -162,7 +162,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
 export class OpenOceanTrade extends SymbiosisTrade {
     private readonly chain: OpenOceanChain
     private readonly endpoint: string
-    private readonly symbiosis!: Symbiosis
+    private readonly symbiosis: Symbiosis
 
     static isAvailable(chainId: ChainId): boolean {
         return Object.keys(OPEN_OCEAN_NETWORKS).includes(chainId.toString())
@@ -170,7 +170,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
 
     public constructor(params: OpenOceanTradeParams) {
         super(params)
-
+        this.symbiosis = params.symbiosis
         const chainId = this.tokenAmountIn.token.chainId
         const chain = OPEN_OCEAN_NETWORKS[chainId]
         if (!chain) {

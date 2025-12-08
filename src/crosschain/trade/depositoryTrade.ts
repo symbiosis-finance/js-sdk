@@ -1,6 +1,7 @@
-import { TokenAmount } from '../../entities'
-import { DepositParameters, DepositoryContext } from '../depository'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import type { TokenAmount } from '../../entities'
+import type { DepositParameters, DepositoryContext } from '../depository'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 export class DepositoryTrade extends SymbiosisTrade {
     constructor(
