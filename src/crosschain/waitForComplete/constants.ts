@@ -4,6 +4,6 @@ export const DEFAULT_EXCEED_DELAY = 1000 * 60 * 20 // 20 minutes
 export class TxNotFound extends Error {
     constructor(txId: string) {
         super(`Transaction ${txId} not found`)
-        this.name = 'TxNotFound'
+        this.name = this.constructor.name
     }
 }

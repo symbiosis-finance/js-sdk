@@ -73,7 +73,7 @@ describe('WrapTrade', () => {
 
             const newAmountIn = new TokenAmount(tokenAmountIn.token, '90')
             const newAmountInMin = new TokenAmount(tokenAmountIn.token, '80')
-            trade.applyAmountIn(newAmountIn, newAmountInMin)
+            await trade.applyAmountIn(newAmountIn, newAmountInMin)
 
             test('amountIn', () => {
                 expect(trade.tokenAmountIn.equalTo(newAmountIn)).toBeTruthy()
@@ -176,7 +176,7 @@ describe('WrapTrade', () => {
 
             const newAmountIn = new TokenAmount(tokenAmountIn.token, '90')
             const newAmountInMin = new TokenAmount(tokenAmountIn.token, '80')
-            trade.applyAmountIn(newAmountIn, newAmountInMin)
+            await trade.applyAmountIn(newAmountIn, newAmountInMin)
 
             test('amountIn', () => {
                 expect(trade.tokenAmountIn.equalTo(newAmountIn)).toBeTruthy()

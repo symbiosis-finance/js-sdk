@@ -5,13 +5,13 @@ import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
 import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
 import type { Symbiosis } from './symbiosis'
 import { OctoPoolTrade } from './trade'
-import type { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
+import type { Address, BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 
 interface CreateOctoPoolTradeParams {
     tokenAmountIn: TokenAmount
     tokenAmountInMin: TokenAmount
     tokenOut: Token
-    to: string
+    to: Address
 }
 
 export interface TransitOutResult {
@@ -116,7 +116,7 @@ export class Transit {
         const { tradeAmountIn, tradeAmountInMin } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         const tradeTokenOut = this.getTradeTokenOut()
 
-        const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
+        const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address as Address
 
         const trade = await this.createOctoPoolTrade({
             tokenAmountIn: tradeAmountIn,
@@ -222,7 +222,7 @@ export class Transit {
             slippage: this.slippage,
             deadline: this.deadline,
             symbiosis: this.symbiosis,
-            omniPoolConfig: this.omniPoolConfig,
+            poolConfig: this.omniPoolConfig,
         })
         await trade.init()
 
