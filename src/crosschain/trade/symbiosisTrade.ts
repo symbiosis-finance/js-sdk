@@ -1,7 +1,9 @@
-import { Percent, Token, TokenAmount } from '../../entities'
 import { BigNumber } from 'ethers'
-import { Address, FeeItem } from '../types'
+
+import type { Percent, Token } from '../../entities'
+import { TokenAmount } from '../../entities'
 import { TradeError } from '../sdkError'
+import type { Address, FeeItem } from '../types'
 
 export type SymbiosisTradeType =
     | 'uni-v2'

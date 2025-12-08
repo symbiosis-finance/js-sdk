@@ -1,9 +1,10 @@
+import { Token } from '@uniswap/sdk-core'
 import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 import { computePoolAddress, Pool } from '@uniswap/v3-sdk'
+import type { FeeAmount } from '@uniswap/v3-sdk/dist/constants'
 import { ethers } from 'ethers'
-import { FeeAmount } from '@uniswap/v3-sdk/dist/constants'
-import { Token } from '@uniswap/sdk-core'
-import { UniV3Factory } from '../../contracts'
+
+import type { UniV3Factory } from '../../contracts'
 
 export async function getPool(
     factory: UniV3Factory,

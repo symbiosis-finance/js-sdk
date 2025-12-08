@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { ChainId, Symbiosis, Token, TokenAmount } from '../../src'
 import { BigNumber } from 'ethers'
-import { Transit } from '../../src/crosschain/transit'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+
+import { ChainId, Symbiosis, Token, TokenAmount } from '../../src'
 import { OctoPoolTrade } from '../../src/crosschain/trade'
+import { Transit } from '../../src/crosschain/transit'
 
 const DECIMALS = BigNumber.from(10).pow(18)
 

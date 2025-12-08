@@ -1,33 +1,29 @@
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { ChainId, TokenConstructor } from '../../../constants'
+import { ChainId } from '../../../constants'
 import { getMulticall } from '../../multicall'
 
-import { ChainConfig, Config, OmniPoolConfig } from '../../types'
-import {
-    Bridge,
-    Bridge__factory,
-    Fabric,
-    Fabric__factory,
-    MetaRouter,
-    MetaRouter__factory,
-    OmniPool,
-    OmniPool__factory,
-    Portal,
-    Portal__factory,
-    Synthesis,
-    Synthesis__factory,
-} from '../../contracts'
-import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Token } from '../../../entities'
-import { config as mainnet } from '../mainnet'
-import { config as testnet } from '../testnet'
-import { config as dev } from '../dev'
-import { config as beta } from '../beta'
-import type { ConfigName } from '../../symbiosis'
 import { Contract } from '@ethersproject/contracts'
+import { StaticJsonRpcProvider } from '@ethersproject/providers'
+import fs from 'fs'
+import type { TokenConstructor } from '../../../entities'
+import { Token } from '../../../entities'
 import ERC20 from '../../abis/ERC20.json'
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
-import fs from 'fs'
+import type { Bridge, Fabric, MetaRouter, OmniPool, Portal, Synthesis } from '../../contracts'
+import {
+    Bridge__factory,
+    Fabric__factory,
+    MetaRouter__factory,
+    OmniPool__factory,
+    Portal__factory,
+    Synthesis__factory,
+} from '../../contracts'
+import type { ConfigName } from '../../symbiosis'
+import type { ChainConfig, Config, OmniPoolConfig } from '../../types'
+import { config as beta } from '../beta'
+import { config as dev } from '../dev'
+import { config as mainnet } from '../mainnet'
+import { config as testnet } from '../testnet'
 
 export type Id = number
 

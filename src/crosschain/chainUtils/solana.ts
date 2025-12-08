@@ -1,11 +1,6 @@
-import {
-    AddressLookupTableAccount,
-    Connection,
-    PublicKey,
-    SystemProgram,
-    TransactionMessage,
-    VersionedTransaction,
-} from '@solana/web3.js'
+import type { AddressLookupTableAccount } from '@solana/web3.js'
+import { Connection, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js'
+
 import { ChainId } from '../../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../entities'
 

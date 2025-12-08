@@ -1,7 +1,9 @@
-import { Percent, TokenAmount, wrappedToken } from '../../entities'
-import { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData } from '../types'
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import type { TransactionRequest } from '@ethersproject/providers'
+import { Address } from '@ton/core'
+
+import { Percent, TokenAmount, wrappedToken } from '../../entities'
+import type { TronTransactionData } from '../chainUtils'
 import {
     buildSynthesize,
     getExternalId,
@@ -11,13 +13,12 @@ import {
     isTronChainId,
     prepareTronTransaction,
     tonAdvisorMock,
-    TronTransactionData,
 } from '../chainUtils'
-import { TRON_PORTAL_ABI } from '../tronAbis'
-import { TransactionRequest } from '@ethersproject/providers'
-import { Portal__factory, Synthesis__factory } from '../contracts'
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
-import { Address } from '@ton/core'
+import { Portal__factory, Synthesis__factory } from '../contracts'
+import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import { TRON_PORTAL_ABI } from '../tronAbis'
+import type { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData } from '../types'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context

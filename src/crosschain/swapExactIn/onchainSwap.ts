@@ -1,10 +1,10 @@
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { aggregatorsSwap } from './aggregatorsSwap'
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { theBest } from './utils'
-import { isOctoPoolSwapSupported, octoPoolSwap } from './octoPoolSwap'
 import { dedustSwap, isDedustSwapSupported } from './dedustSwap'
-import { isStonfiSwapSupported, stonfiSwap } from './stonfiSwap'
+import { isOctoPoolSwapSupported, octoPoolSwap } from './octoPoolSwap'
 import { isOnChainSolanaSwapSupported, onChainSolanaSwap } from './onChainSolanaSwap'
+import { isStonfiSwapSupported, stonfiSwap } from './stonfiSwap'
+import { theBest } from './utils'
 
 export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = params

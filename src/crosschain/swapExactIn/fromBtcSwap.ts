@@ -1,11 +1,26 @@
-import { TransactionRequest } from '@ethersproject/providers'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { BigNumber, BigNumberish } from 'ethers'
-import { BytesLike, isAddress } from 'ethers/lib/utils'
+import type { TransactionRequest } from '@ethersproject/providers'
 import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
 import { randomBytes } from 'crypto'
+import type { BigNumberish } from 'ethers'
+import { BigNumber } from 'ethers'
+import type { BytesLike } from 'ethers/lib/utils'
+import { isAddress } from 'ethers/lib/utils'
 
-import {
+import { ChainId } from '../../constants'
+import type { Token } from '../../entities'
+import { Percent, TokenAmount, wrappedToken } from '../../entities'
+import { getBtcPortalFee, getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
+import { BIPS_BASE } from '../constants'
+import { ERC20__factory, IRouter__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
+import type { DepositoryTypes } from '../contracts/IDepository'
+import type { MetaRouteStructs } from '../contracts/MetaRouter'
+import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
+import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
+import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import type { DepositoryContext } from '../symbiosis'
+import { AggregatorTrade } from '../trade'
+import type {
     Address,
     BtcAddress,
     BtcConfig,
@@ -16,22 +31,9 @@ import {
     SwapExactInParams,
     SwapExactInResult,
 } from '../types'
-import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
-
-import { ERC20__factory, IRouter__factory, MetaRouter__factory, SymBtc__factory } from '../contracts'
-import { AmountLessThanFeeError, SdkError } from '../sdkError'
-import { getBtcPortalFee, getPkScript, isBtcChainId, isEvmChainId, isTronChainId } from '../chainUtils'
-import { MetaRouteStructs } from '../contracts/MetaRouter'
-import { AggregatorTrade } from '../trade'
 import { isUseOneInchOnly } from '../utils'
-import { theBest } from './utils'
-import { ChainId } from '../../constants'
-import { BIPS_BASE } from '../constants'
 import { bestPoolSwapping } from './crosschainSwap/bestPoolSwapping'
-import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
-import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
-import { DepositoryContext } from '../symbiosis'
-import { DepositoryTypes } from '../contracts/IDepository'
+import { theBest } from './utils'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context

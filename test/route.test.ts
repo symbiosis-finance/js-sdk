@@ -1,5 +1,6 @@
-import { Token, WETH, ChainId, Pair, TokenAmount, Route } from '../src'
 import { describe, expect, test } from 'vitest'
+
+import { ChainId, Pair, Route, Token, TokenAmount, WETH } from '../src'
 
 describe('Route', () => {
     const token0 = new Token({

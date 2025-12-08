@@ -1,6 +1,7 @@
-import { describe, expect, test } from 'vitest'
-import { calculateGasMargin, getAmountBucket, getMinAmount, splitSlippage } from '../../src'
 import { BigNumber } from 'ethers'
+import { describe, expect, test } from 'vitest'
+
+import { calculateGasMargin, getAmountBucket, getMinAmount, splitSlippage } from '../../src'
 
 test('#getBucket', () => {
     expect(getAmountBucket(300)).toBe(100)

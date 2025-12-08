@@ -1,15 +1,15 @@
-import { Quote, RegularQuote, SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
+import type { Quote, RegularQuote, VaultSwapResponse } from '@chainflip/sdk/swap'
+import { SwapSDK } from '@chainflip/sdk/swap'
 
 import { TokenAmount } from '../../../entities'
-import { BaseSwapping } from '../../swapping'
-import { MulticallRouter } from '../../contracts'
-import { OneInchProtocols } from '../../trade/oneInchTrade'
-import { Address, EvmAddress, OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
-import { ChainFlipError } from '../../sdkError'
 import { getMinAmount, isEvmChainId } from '../../chainUtils'
-
+import type { MulticallRouter } from '../../contracts'
+import { ChainFlipError } from '../../sdkError'
+import { BaseSwapping } from '../../swapping'
+import type { OneInchProtocols } from '../../trade/oneInchTrade'
+import type { Address, EvmAddress, OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
+import type { ChainFlipConfig } from './types'
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
-import { ChainFlipConfig } from './types'
 
 export interface ZappingChainFlipExactInParams {
     tokenAmountIn: TokenAmount

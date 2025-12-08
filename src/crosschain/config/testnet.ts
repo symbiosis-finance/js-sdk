@@ -1,6 +1,6 @@
 import { ChainId } from '../../constants'
-import { Config } from '../types'
 import { Token } from '../../entities'
+import type { Config } from '../types'
 
 export const config: Config = {
     advisor: {

@@ -1,19 +1,21 @@
-import { SwapSDK, VaultSwapResponse } from '@chainflip/sdk/swap'
+import type { VaultSwapResponse } from '@chainflip/sdk/swap'
+import { SwapSDK } from '@chainflip/sdk/swap'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { BigNumber, BytesLike, utils } from 'ethers'
+import type { BytesLike } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 
-import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { Percent, TokenAmount } from '../../../entities'
-import { onchainSwap } from '../onchainSwap'
 import { getMinAmount, isEvmChainId, tronAddressToEvm } from '../../chainUtils'
-import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
-import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
-import { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
+import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
+import type { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
+import { onchainSwap } from '../onchainSwap'
 
+import type { Symbiosis } from '../../symbiosis'
+import type { ChainFlipConfig } from './types'
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
-import { ChainFlipConfig } from './types'
-import { Symbiosis } from '../../symbiosis'
 
 type MulticallItem = {
     data: BytesLike

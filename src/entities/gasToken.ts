@@ -1,5 +1,5 @@
-import { Address } from '..'
 import { ChainId } from '../constants'
+import type { Address } from '../crosschain/types'
 import { Token } from './token'
 
 const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>

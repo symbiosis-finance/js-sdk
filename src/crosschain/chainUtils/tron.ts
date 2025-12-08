@@ -1,13 +1,16 @@
-import { JsonFragment } from '@ethersproject/abi'
+import type { JsonFragment } from '@ethersproject/abi'
 import { getAddress } from '@ethersproject/address'
-import { BytesLike, concat, hexDataSlice } from '@ethersproject/bytes'
+import type { BytesLike } from '@ethersproject/bytes'
+import { concat, hexDataSlice } from '@ethersproject/bytes'
 import { keccak256 as kekKeccak256 } from '@ethersproject/keccak256'
-import BigNumber from 'bignumber.js'
+import type BigNumber from 'bignumber.js'
 import { utils } from 'ethers'
-import TronWeb, { TransactionInfo } from 'tronweb'
+import type { TransactionInfo } from 'tronweb'
+import TronWeb from 'tronweb'
+
 import { ChainId } from '../../constants'
-import { Chain, Token } from '../../entities'
-import { EvmAddress } from '..'
+import type { Chain, Token } from '../../entities'
+import type { EvmAddress } from '../types'
 
 export interface TronTransactionData {
     chain_id: number

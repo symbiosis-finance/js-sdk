@@ -1,13 +1,12 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
 import { MaxUint256 } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import type { TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
-import { Percent, Token, TokenAmount, wrappedToken } from '../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
-import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
-import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, WrapTrade } from './trade'
+
+import type { Token } from '../entities'
+import { Percent, TokenAmount, wrappedToken } from '../entities'
+import type { TronTransactionData } from './chainUtils'
 import {
     buildMetaSynthesize,
     getExternalId,
@@ -17,12 +16,15 @@ import {
     isTronToken,
     prepareTronTransaction,
     tronAddressToEvm,
-    TronTransactionData,
 } from './chainUtils'
-import { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
+import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
+import type { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { OmniLiquidity } from './omniLiquidity'
+import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
+import type { Symbiosis } from './symbiosis'
+import { AggregatorTrade, WrapTrade } from './trade'
 import { TRON_METAROUTER_ABI } from './tronAbis'
-import {
+import type {
     OmniPoolConfig,
     RouteItem,
     SwapExactInResult,

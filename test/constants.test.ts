@@ -1,5 +1,5 @@
-import { ChainId, INIT_CODE_HASH } from '../src/constants'
 import { describe, expect, test } from 'vitest'
+import { ChainId, INIT_CODE_HASH } from '../src/constants'
 
 describe('constants', () => {
     describe('INIT_CODE_HASH', () => {

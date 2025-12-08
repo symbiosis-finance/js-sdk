@@ -1,43 +1,66 @@
-import { Log, StaticJsonRpcProvider } from '@ethersproject/providers'
-import { BigNumber, Signer, utils } from 'ethers'
+import type { Log } from '@ethersproject/providers'
+import { StaticJsonRpcProvider } from '@ethersproject/providers'
+import { parseUnits } from '@ethersproject/units'
+import { getHttpV4Endpoint } from '@orbs-network/ton-access'
+import { TonClient4 } from '@ton/ton'
+import type { Signer } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import isomorphicFetch from 'isomorphic-unfetch'
 import JSBI from 'jsbi'
-import TronWeb, { TransactionInfo } from 'tronweb'
 import type { Counter, Histogram } from 'prom-client'
+import type { TransactionInfo } from 'tronweb'
+import TronWeb from 'tronweb'
+
 import { ChainId } from '../constants'
-import { Chain, chains, Token, TokenAmount, wrappedToken } from '../entities'
-import {
+import type { Chain, Token } from '../entities'
+import { chains, TokenAmount, wrappedToken } from '../entities'
+import { delay } from '../utils'
+import { Cache } from './cache'
+import { getUnwrapDustLimit, isTonChainId } from './chainUtils'
+import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
+import { CoinGecko } from './coingecko'
+import { config as beta } from './config/beta'
+import type { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
+import { ConfigCache } from './config/cache/cache'
+import { config as dev } from './config/dev'
+import { config as mainnet } from './config/mainnet'
+import { config as testnet } from './config/testnet'
+import type {
     BranchedUnlocker,
-    BranchedUnlocker__factory,
     Bridge,
-    Bridge__factory,
     BtcRefundUnlocker,
-    BtcRefundUnlocker__factory,
     Fabric,
-    Fabric__factory,
     IDepository,
-    IDepository__factory,
     IRouter,
-    IRouter__factory,
     MetaRouter,
-    MetaRouter__factory,
     MulticallRouter,
-    MulticallRouter__factory,
     OmniPool,
-    OmniPool__factory,
     OmniPoolOracle,
-    OmniPoolOracle__factory,
     Portal,
-    Portal__factory,
     SwapUnlocker,
-    SwapUnlocker__factory,
     Synthesis,
-    Synthesis__factory,
     TimedUnlocker,
-    TimedUnlocker__factory,
     TonBridge,
+} from './contracts'
+import {
+    BranchedUnlocker__factory,
+    Bridge__factory,
+    BtcRefundUnlocker__factory,
+    Fabric__factory,
+    IDepository__factory,
+    IRouter__factory,
+    MetaRouter__factory,
+    MulticallRouter__factory,
+    OmniPool__factory,
+    OmniPoolOracle__factory,
+    Portal__factory,
+    SwapUnlocker__factory,
+    Synthesis__factory,
+    TimedUnlocker__factory,
     TonBridge__factory,
 } from './contracts'
+import { RevertPending } from './revert'
+import type { PendingRequest } from './revertRequest'
 import {
     AdvisorError,
     aggregatorErrorToText,
@@ -47,9 +70,9 @@ import {
     NoTransitTokenError,
     SdkError,
 } from './sdkError'
-import { RevertPending } from './revert'
-import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
-import {
+import { swapExactIn } from './swapExactIn'
+import { SwappingMiddleware } from './swapping'
+import type {
     BtcConfig,
     ChainConfig,
     Config,
@@ -67,15 +90,7 @@ import {
     SwapExactInResult,
     VolumeFeeCollector,
 } from './types'
-import { Zapping } from './zapping'
-import { config as mainnet } from './config/mainnet'
-import { config as testnet } from './config/testnet'
-import { config as dev } from './config/dev'
-import { config as beta } from './config/beta'
-import { ConfigCache } from './config/cache/cache'
-import { Id, OmniPoolInfo, TokenInfo } from './config/cache/builder'
-import { PendingRequest } from './revertRequest'
-import { delay } from '../utils'
+import { formatTokenName, getAmountBucket } from './utils'
 import {
     waitForBtcCommitTxMined,
     waitForBtcDepositAccepted,
@@ -83,16 +98,8 @@ import {
     waitForComplete,
     waitFromTonTxMined,
 } from './waitForComplete'
-import { Cache } from './cache'
-import { SwappingMiddleware } from './swapping'
-import { parseUnits } from '@ethersproject/units'
-import { swapExactIn } from './swapExactIn'
-import { WaitForCompleteParams } from './waitForComplete/waitForComplete'
-import { TonClient4 } from '@ton/ton'
-import { getHttpV4Endpoint } from '@orbs-network/ton-access'
-import { CoinGecko } from './coingecko'
-import { getUnwrapDustLimit, isTonChainId } from './chainUtils'
-import { formatTokenName, getAmountBucket } from './utils'
+import type { WaitForCompleteParams } from './waitForComplete/waitForComplete'
+import { Zapping } from './zapping'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 

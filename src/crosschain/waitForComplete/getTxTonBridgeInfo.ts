@@ -1,6 +1,6 @@
-import { Cell, Slice, Transaction } from '@ton/core'
-import { ChainId } from '../../constants'
-import { BridgeTxInfo } from './types'
+import type { Cell, Slice, Transaction } from '@ton/core'
+import type { ChainId } from '../../constants'
+import type { BridgeTxInfo } from './types'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const ORACLE_REQUEST_OPCODE = 0x7b425851

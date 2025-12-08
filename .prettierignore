@@ -1,3 +1,4 @@
 # Ignore artifacts:
 .husky
 *.yml
+src/crosschain/contracts/

@@ -1,7 +1,8 @@
-import invariant from 'tiny-invariant'
-import { ChainId, Pair, Percent, Route, Router, Token, TokenAmount, Trade } from '../src'
 import JSBI from 'jsbi'
+import invariant from 'tiny-invariant'
 import { describe, expect, test } from 'vitest'
+
+import { ChainId, Pair, Percent, Route, Router, Token, TokenAmount, Trade } from '../src'
 
 function checkDeadline(deadline: string[] | string): void {
     expect(typeof deadline).toBe('string')

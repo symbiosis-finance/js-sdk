@@ -1,5 +1,6 @@
-import { ChainId, Token, Pair, TokenAmount, WETH, Price } from '../src'
 import { describe, expect, test } from 'vitest'
+
+import { ChainId, Pair, Price, Token, TokenAmount, WETH } from '../src'
 
 describe('Pair', () => {
     const USDC = new Token({

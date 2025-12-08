@@ -1,6 +1,6 @@
-import { Asset, Chain } from '@chainflip/sdk/swap'
+import type { Asset, Chain } from '@chainflip/sdk/swap'
 
-import { Token } from '../../../entities'
+import type { Token } from '../../../entities'
 
 export enum ChainFlipChainId {
     Ethereum = 1,

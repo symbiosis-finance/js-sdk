@@ -1,27 +1,17 @@
-import { Price, TokenAmount } from './fractions'
-import invariant from 'tiny-invariant'
-import JSBI from 'jsbi'
-import { keccak256, pack } from '@ethersproject/solidity'
 import { getCreate2Address as getEvmCreate2Address } from '@ethersproject/address'
+import type { BytesLike } from '@ethersproject/bytes'
+import { keccak256, pack } from '@ethersproject/solidity'
+import JSBI from 'jsbi'
+import invariant from 'tiny-invariant'
 
-import {
-    _1000,
-    _997,
-    BigintIsh,
-    ChainId,
-    FACTORY_ADDRESS,
-    FIVE,
-    INIT_CODE_HASH,
-    MINIMUM_LIQUIDITY,
-    ONE,
-    ZERO,
-} from '../constants'
-import { parseBigintIsh, sqrt } from '../utils'
+import type { EvmAddress, NonEmptyAddress } from '..'
+import type { BigintIsh } from '../constants'
+import { _1000, _997, ChainId, FACTORY_ADDRESS, FIVE, INIT_CODE_HASH, MINIMUM_LIQUIDITY, ONE, ZERO } from '../constants'
 import { getTronCreate2Address, isTronChainId } from '../crosschain/chainUtils/tron'
 import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
+import { parseBigintIsh, sqrt } from '../utils'
+import { Price, TokenAmount } from './fractions'
 import { Token } from './token'
-import { BytesLike } from '@ethersproject/bytes'
-import { EvmAddress, NonEmptyAddress } from '..'
 
 export class MapWithDefault<K, V> extends Map<K, V> {
     #default: () => V

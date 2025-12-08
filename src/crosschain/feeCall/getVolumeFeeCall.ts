@@ -1,8 +1,9 @@
-import { Percent, TokenAmount } from '../../entities'
-import { MultiCallItem, VolumeFeeCollector } from '../types'
-import { OctoPoolFeeCollector__factory } from '../contracts'
-import { BIPS_BASE } from '../constants'
 import { BigNumber } from 'ethers'
+
+import { Percent, TokenAmount } from '../../entities'
+import { BIPS_BASE } from '../constants'
+import { OctoPoolFeeCollector__factory } from '../contracts'
+import type { MultiCallItem, VolumeFeeCollector } from '../types'
 
 export function getVolumeFeeCall({
     feeCollector,

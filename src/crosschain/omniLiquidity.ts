@@ -1,7 +1,8 @@
-import { Address } from '.'
-import { Percent, Token, TokenAmount } from '../entities'
+import type { Address } from '.'
+import type { Percent } from '../entities'
+import { Token, TokenAmount } from '../entities'
 import { getMinAmount } from './chainUtils'
-import { OmniPool, OmniPoolOracle } from './contracts'
+import type { OmniPool, OmniPoolOracle } from './contracts'
 
 export class OmniLiquidity {
     public amountOut!: TokenAmount

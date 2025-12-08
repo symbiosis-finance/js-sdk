@@ -1,7 +1,8 @@
 import TronWeb from 'tronweb'
-import { ChainId } from '../../constants'
+
+import type { ChainId } from '../../constants'
 import { isTronChainId } from '../chainUtils/tron'
-import { SwapExactInTransactionPayload } from '../types'
+import type { SwapExactInTransactionPayload } from '../types'
 
 interface PreparePayloadParams {
     chainId: ChainId

@@ -1,6 +1,7 @@
 import JSBI from 'jsbi'
-import { ChainId, Pair, Percent, Route, Token, TokenAmount, Trade, TradeType } from '../src'
 import { describe, expect, test } from 'vitest'
+
+import { ChainId, Pair, Percent, Route, Token, TokenAmount, Trade, TradeType } from '../src'
 
 describe('Trade', () => {
     const token0 = new Token({

@@ -1,5 +1,6 @@
-import { SelectMode, SwapExactInResult } from '../types'
-import { AggregateSdkError, NoRouteError, SdkError } from '../sdkError'
+import type { SdkError } from '../sdkError'
+import { AggregateSdkError, NoRouteError } from '../sdkError'
+import type { SelectMode, SwapExactInResult } from '../types'
 
 export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
     if (promises.length === 0) {

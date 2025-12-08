@@ -1,7 +1,9 @@
-import { Provider } from '@ethersproject/providers'
-import { ChainId } from '../constants'
+import type { Provider } from '@ethersproject/providers'
+
+import type { ChainId } from '../constants'
 import { MULTICALL_ADDRESSES } from './constants'
-import { Multicall, Multicall__factory } from './contracts'
+import type { Multicall } from './contracts'
+import { Multicall__factory } from './contracts'
 
 export class NoMulticallAddressError extends Error {
     public constructor(chainId: ChainId) {

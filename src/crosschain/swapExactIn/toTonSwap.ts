@@ -1,6 +1,6 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { theBest } from './utils'
 import { SwappingToTon } from '../swapping'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { theBest } from './utils'
 
 // Symbiosis bridge
 function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {

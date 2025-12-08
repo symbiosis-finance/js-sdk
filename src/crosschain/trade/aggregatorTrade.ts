@@ -1,14 +1,17 @@
-import { Symbiosis } from '../symbiosis'
-import { OneInchProtocols, OneInchTrade } from './oneInchTrade'
-import { OpenOceanTrade } from './openOceanTrade'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { utils } from 'ethers'
+
+import type { Percent, Token, TokenAmount } from '../../entities'
+import { AggregateSdkError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { Address, FeeItem } from '../types'
 import { IzumiTrade } from './izumiTrade'
+import type { OneInchProtocols } from './oneInchTrade'
+import { OneInchTrade } from './oneInchTrade'
+import { OpenOceanTrade } from './openOceanTrade'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
-import { Percent, Token, TokenAmount } from '../../entities'
-import { utils } from 'ethers'
-import { Address, FeeItem } from '../types'
-import { AggregateSdkError } from '../sdkError'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 

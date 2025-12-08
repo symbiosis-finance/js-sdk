@@ -1,15 +1,16 @@
+import type { LogDescription } from '@ethersproject/abi'
+import type { TransactionReceipt } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
-import type { Symbiosis } from './symbiosis'
-import { ChainId } from '../constants'
-import { Portal__factory, Synthesis__factory } from './contracts'
-import { TransactionReceipt } from '@ethersproject/providers'
-import { LogDescription } from '@ethersproject/abi'
+import { utils } from 'ethers'
+
+import type { ChainId } from '../constants'
 import { TokenAmount } from '../entities'
 import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils'
-import { SynthesizeRequestEvent } from './contracts/Portal'
-import { utils } from 'ethers'
-import { OmniPoolConfig } from './types'
+import { Portal__factory, Synthesis__factory } from './contracts'
+import type { SynthesizeRequestEvent } from './contracts/Portal'
 import { AggregateSdkError, SdkError } from './sdkError'
+import type { Symbiosis } from './symbiosis'
+import type { OmniPoolConfig } from './types'
 
 type InitProps = {
     validateState: boolean

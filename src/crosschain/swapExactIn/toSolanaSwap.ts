@@ -1,8 +1,8 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { ChainId } from '../../constants'
-import { theBest } from './utils'
+import type { ChainId } from '../../constants'
 import { isSolanaChainId } from '../chainUtils'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { solanaChainFlipSwap } from './swapChainFlip'
+import { theBest } from './utils'
 
 function isChainFlipAvailable(chainId: ChainId) {
     return isSolanaChainId(chainId)

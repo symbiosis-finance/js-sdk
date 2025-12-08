@@ -1,15 +1,18 @@
+import type { RouterInfo } from '@ston-fi/api'
+import { StonApiClient } from '@ston-fi/api'
 import { dexFactory } from '@ston-fi/sdk'
-import { RouterInfo, StonApiClient } from '@ston-fi/api'
-import { OpenedContract, SenderArguments } from '@ton/core'
-import { TonClient4 } from '@ton/ton'
-import { BaseRouterV2_1 } from '@ston-fi/sdk/dist/contracts/dex/v2_1/router/BaseRouterV2_1'
+import type { BaseRouterV2_1 } from '@ston-fi/sdk/dist/contracts/dex/v2_1/router/BaseRouterV2_1'
+import type { OpenedContract, SenderArguments } from '@ton/core'
+import type { TonClient4 } from '@ton/ton'
 
-import { Percent, Token, TokenAmount } from '../../entities'
+import type { Token } from '../../entities'
+import { Percent, TokenAmount } from '../../entities'
 import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { TonAddress } from '..'
 import { StonFiTradeError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { TonAddress } from '../types'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis

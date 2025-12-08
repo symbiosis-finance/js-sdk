@@ -1,8 +1,9 @@
-import { Symbiosis } from '../symbiosis'
+import type { LogDescription } from '@ethersproject/abi'
+import type { Log } from '@ethersproject/providers'
+
+import type { ChainId } from '../../constants'
 import { getLogWithTimeout } from '../chainUtils'
-import { LogDescription } from '@ethersproject/abi'
-import { Log } from '@ethersproject/providers'
-import { ChainId } from '../../constants'
+import type { Symbiosis } from '../symbiosis'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
 

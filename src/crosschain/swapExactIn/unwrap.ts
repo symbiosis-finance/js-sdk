@@ -1,10 +1,11 @@
-import { Percent, TokenAmount, WETH } from '../../entities'
-import { Weth__factory } from '../contracts'
-import { getFunctionSelector } from '../chainUtils/tron'
-import { preparePayload } from './preparePayload'
-import { SwapExactInParams, SwapExactInResult } from '../types'
 import { AddressZero } from '@ethersproject/constants/lib/addresses'
+
+import { Percent, TokenAmount, WETH } from '../../entities'
+import { getFunctionSelector } from '../chainUtils/tron'
 import { BIPS_BASE } from '../constants'
+import { Weth__factory } from '../contracts'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { preparePayload } from './preparePayload'
 
 export function isUnwrapSupported(params: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, from, to } = params
