@@ -241,7 +241,7 @@ export class Trade {
         currentPairs: Pair[] = [],
         originalAmountIn: TokenAmount = tokenAmountIn,
         bestTrades: Trade[] = []
-    ): Trade {
+    ): { trades: Trade[]; errors: Error[] } {
         invariant(pairs.length > 0, 'PAIRS')
         invariant(maxHops > 0, 'MAX_HOPS')
         invariant(originalAmountIn === tokenAmountIn || currentPairs.length > 0, 'INVALID_RECURSION')
@@ -296,8 +296,7 @@ export class Trade {
             }
         }
 
-        if (bestTrades.length) return bestTrades[0]
-        throw AggregateError(errors, 'failed to find UniswapV2 route')
+        return { trades: bestTrades, errors }
     }
 
     /**

@@ -52,7 +52,7 @@ describe('Trade', () => {
                 [pair_0_1, pair_0_2, pair_1_2],
                 new TokenAmount(token0, JSBI.BigInt(100)),
                 token2
-            )
+            ).trades
             expect(result).toHaveLength(2)
             expect(result[0].route.pairs).toHaveLength(1) // 0 -> 2 at 10:11
             expect(result[0].route.path).toEqual([token0, token2])
@@ -76,7 +76,7 @@ describe('Trade', () => {
                 new TokenAmount(token0, JSBI.BigInt(10)),
                 token2,
                 { maxHops: 1 }
-            )
+            ).trades
             expect(result).toHaveLength(1)
             expect(result[0].route.pairs).toHaveLength(1) // 0 -> 2 at 10:11
             expect(result[0].route.path).toEqual([token0, token2])
@@ -87,7 +87,7 @@ describe('Trade', () => {
                 [pair_0_1, pair_0_2, pair_1_2],
                 new TokenAmount(token0, JSBI.BigInt(1)),
                 token2
-            )
+            ).trades
             expect(result).toHaveLength(1)
             expect(result[0].route.pairs).toHaveLength(1) // 0 -> 2 at 10:11
             expect(result[0].route.path).toEqual([token0, token2])
