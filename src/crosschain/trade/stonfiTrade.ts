@@ -21,9 +21,9 @@ interface StonfiTradeParams extends SymbiosisTradeParams {
 }
 
 export class StonfiTrade extends SymbiosisTrade {
-    public readonly symbiosis: Symbiosis
-    public readonly deadline: number
-    public readonly from: string
+    public readonly symbiosis!: Symbiosis
+    public readonly deadline!: number
+    public readonly from!: string
 
     private readonly stonClient: StonApiClient
     private tonClient: TonClient4 | null = null
@@ -33,9 +33,6 @@ export class StonfiTrade extends SymbiosisTrade {
 
     public constructor(params: StonfiTradeParams) {
         super(params)
-        this.symbiosis = params.symbiosis
-        this.deadline = params.deadline
-        this.from = params.from
         this.stonClient = new StonApiClient()
     }
 

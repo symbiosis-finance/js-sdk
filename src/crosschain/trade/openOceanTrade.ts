@@ -162,7 +162,7 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
 export class OpenOceanTrade extends SymbiosisTrade {
     private readonly chain: OpenOceanChain
     private readonly endpoint: string
-    private readonly symbiosis: Symbiosis
+    private readonly symbiosis!: Symbiosis
 
     static isAvailable(chainId: ChainId): boolean {
         return Object.keys(OPEN_OCEAN_NETWORKS).includes(chainId.toString())
@@ -177,7 +177,6 @@ export class OpenOceanTrade extends SymbiosisTrade {
             throw new OpenOceanTradeError('Unsupported chain')
         }
         this.chain = chain
-        this.symbiosis = params.symbiosis
         this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${chainId}`
     }
 

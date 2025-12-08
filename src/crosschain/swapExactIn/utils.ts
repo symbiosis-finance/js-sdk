@@ -25,6 +25,9 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
         const { value } = item
 
         if (result && result.tokenAmountOut.greaterThan(value.tokenAmountOut)) {
+            errors.push(
+                new SdkError(`tokenAmountOut is not enough (${result.tokenAmountOut} <= ${value.tokenAmountOut})`)
+            )
             continue
         }
 
@@ -32,7 +35,7 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
     }
 
     if (!result) {
-        throw new AggregateSdkError(errors, 'Build route error')
+        throw new AggregateSdkError(errors, `Build route error (tried ${promises.length} routes)`)
     }
 
     return result

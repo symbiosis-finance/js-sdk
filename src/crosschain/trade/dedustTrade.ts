@@ -39,7 +39,7 @@ interface JettonSwapParams {
     amountIn: bigint
     responseAddress?: AddressTon | null
     poolAddress: AddressTon
-    recipientAddress?: Address | null
+    recipientAddress?: AddressTon | null
     minAmountOut: bigint
 }
 
@@ -71,20 +71,13 @@ interface CallDataResult {
 }
 
 export class DedustTrade extends SymbiosisTrade {
-    public readonly symbiosis: Symbiosis
-    public readonly deadline: number
-    public readonly to: string
-    public readonly from: string
+    public readonly symbiosis!: Symbiosis
+    public readonly deadline!: number
+    public readonly to!: Address
+    public readonly from!: string
 
     public constructor(params: DedustTradeParams) {
         super(params)
-
-        const { symbiosis, deadline, to, from } = params
-
-        this.symbiosis = symbiosis
-        this.deadline = deadline
-        this.to = to
-        this.from = from
     }
 
     get tradeType(): SymbiosisTradeType {

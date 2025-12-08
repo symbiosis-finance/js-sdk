@@ -63,16 +63,12 @@ interface JupiterSwapResponse {
 const JUPITER_API_URL = 'https://lite-api.jup.ag/swap/v1'
 
 export class JupiterTrade extends SymbiosisTrade {
-    public readonly symbiosis: Symbiosis
+    public readonly symbiosis!: Symbiosis
     private solanaToPubKey: PublicKey
 
     public constructor(params: JupiterTradeParams) {
         super(params)
-
-        const { symbiosis, to } = params
-
-        this.symbiosis = symbiosis
-        this.solanaToPubKey = new PublicKey(to)
+        this.solanaToPubKey = new PublicKey(params.to)
     }
 
     get tradeType(): SymbiosisTradeType {
