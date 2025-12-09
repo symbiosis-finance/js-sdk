@@ -2,518 +2,643 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    BytesLike,
-    CallOverrides,
-    ContractTransaction,
-    Overrides,
-    PayableOverrides,
-    PopulatedTransaction,
-    Signer,
-    utils,
-} from 'ethers'
-import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
-import { Listener, Provider } from '@ethersproject/providers'
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
+import { Listener, Provider } from "@ethersproject/providers";
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export declare namespace DepositoryTypes {
-    export type DepositStruct = {
-        token: string
-        amount: BigNumberish
-        nonce: BigNumberish
-    }
+  export type DepositStruct = {
+    token: string;
+    amount: BigNumberish;
+    nonce: BigNumberish;
+  };
 
-    export type DepositStructOutput = [string, BigNumber, BigNumber] & {
-        token: string
-        amount: BigNumber
-        nonce: BigNumber
-    }
+  export type DepositStructOutput = [string, BigNumber, BigNumber] & {
+    token: string;
+    amount: BigNumber;
+    nonce: BigNumber;
+  };
 
-    export type UnlockConditionStruct = {
-        unlocker: string
-        condition: BytesLike
-    }
+  export type UnlockConditionStruct = {
+    unlocker: string;
+    condition: BytesLike;
+  };
 
-    export type UnlockConditionStructOutput = [string, string] & {
-        unlocker: string
-        condition: string
-    }
+  export type UnlockConditionStructOutput = [string, string] & {
+    unlocker: string;
+    condition: string;
+  };
 
-    export type BlockchainStateStruct = {
-        blockNumber: BigNumberish
-        timestamp: BigNumberish
-    }
+  export type BlockchainStateStruct = {
+    blockNumber: BigNumberish;
+    timestamp: BigNumberish;
+  };
 
-    export type BlockchainStateStructOutput = [BigNumber, BigNumber] & {
-        blockNumber: BigNumber
-        timestamp: BigNumber
-    }
+  export type BlockchainStateStructOutput = [BigNumber, BigNumber] & {
+    blockNumber: BigNumber;
+    timestamp: BigNumber;
+  };
 }
 
 export interface IDepositoryInterface extends utils.Interface {
-    contractName: 'IDepository'
-    functions: {
-        'UPGRADE_INTERFACE_VERSION()': FunctionFragment
-        'acceptOwnership()': FunctionFragment
-        'depositID((address,uint256,uint256),(address,bytes),(uint256,uint256))': FunctionFragment
-        'depositStatus(bytes32)': FunctionFragment
-        'initialize()': FunctionFragment
-        'lock((address,uint256,uint256),(address,bytes))': FunctionFragment
-        'owner()': FunctionFragment
-        'pendingOwner()': FunctionFragment
-        'proxiableUUID()': FunctionFragment
-        'renounceOwnership()': FunctionFragment
-        'router()': FunctionFragment
-        'setRouter(address)': FunctionFragment
-        'transferOwnership(address)': FunctionFragment
-        'unlock((address,uint256,uint256),(address,bytes),(uint256,uint256),bytes)': FunctionFragment
-        'upgradeToAndCall(address,bytes)': FunctionFragment
-    }
+  contractName: "IDepository";
+  functions: {
+    "UPGRADE_INTERFACE_VERSION()": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
+    "depositID((address,uint256,uint256),(address,bytes),(uint256,uint256))": FunctionFragment;
+    "depositStatus(bytes32)": FunctionFragment;
+    "initialize()": FunctionFragment;
+    "lock((address,uint256,uint256),(address,bytes))": FunctionFragment;
+    "owner()": FunctionFragment;
+    "pendingOwner()": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "router()": FunctionFragment;
+    "setRouter(address)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "unlock((address,uint256,uint256),(address,bytes),(uint256,uint256),bytes)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+  };
 
-    encodeFunctionData(functionFragment: 'UPGRADE_INTERFACE_VERSION', values?: undefined): string
-    encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
-    encodeFunctionData(
-        functionFragment: 'depositID',
-        values: [
-            DepositoryTypes.DepositStruct,
-            DepositoryTypes.UnlockConditionStruct,
-            DepositoryTypes.BlockchainStateStruct
-        ]
-    ): string
-    encodeFunctionData(functionFragment: 'depositStatus', values: [BytesLike]): string
-    encodeFunctionData(functionFragment: 'initialize', values?: undefined): string
-    encodeFunctionData(
-        functionFragment: 'lock',
-        values: [DepositoryTypes.DepositStruct, DepositoryTypes.UnlockConditionStruct]
-    ): string
-    encodeFunctionData(functionFragment: 'owner', values?: undefined): string
-    encodeFunctionData(functionFragment: 'pendingOwner', values?: undefined): string
-    encodeFunctionData(functionFragment: 'proxiableUUID', values?: undefined): string
-    encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
-    encodeFunctionData(functionFragment: 'router', values?: undefined): string
-    encodeFunctionData(functionFragment: 'setRouter', values: [string]): string
-    encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
-    encodeFunctionData(
-        functionFragment: 'unlock',
-        values: [
-            DepositoryTypes.DepositStruct,
-            DepositoryTypes.UnlockConditionStruct,
-            DepositoryTypes.BlockchainStateStruct,
-            BytesLike
-        ]
-    ): string
-    encodeFunctionData(functionFragment: 'upgradeToAndCall', values: [string, BytesLike]): string
+  encodeFunctionData(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositID",
+    values: [
+      DepositoryTypes.DepositStruct,
+      DepositoryTypes.UnlockConditionStruct,
+      DepositoryTypes.BlockchainStateStruct
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositStatus",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lock",
+    values: [
+      DepositoryTypes.DepositStruct,
+      DepositoryTypes.UnlockConditionStruct
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pendingOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "router", values?: undefined): string;
+  encodeFunctionData(functionFragment: "setRouter", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unlock",
+    values: [
+      DepositoryTypes.DepositStruct,
+      DepositoryTypes.UnlockConditionStruct,
+      DepositoryTypes.BlockchainStateStruct,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
+  ): string;
 
-    decodeFunctionResult(functionFragment: 'UPGRADE_INTERFACE_VERSION', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'depositID', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'depositStatus', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'lock', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'pendingOwner', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'proxiableUUID', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'router', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'setRouter', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'upgradeToAndCall', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "depositID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositStatus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lock", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setRouter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
 
-    events: {
-        'DepositLocked(bytes32,tuple,tuple,tuple)': EventFragment
-        'DepositUnlocked(bytes32)': EventFragment
-        'Initialized(uint64)': EventFragment
-        'OwnershipTransferStarted(address,address)': EventFragment
-        'OwnershipTransferred(address,address)': EventFragment
-        'SetRouter(address,address)': EventFragment
-        'Upgraded(address)': EventFragment
-    }
+  events: {
+    "DepositLocked(bytes32,tuple,tuple,tuple)": EventFragment;
+    "DepositUnlocked(bytes32)": EventFragment;
+    "Initialized(uint64)": EventFragment;
+    "OwnershipTransferStarted(address,address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "SetRouter(address,address)": EventFragment;
+    "Upgraded(address)": EventFragment;
+  };
 
-    getEvent(nameOrSignatureOrTopic: 'DepositLocked'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'DepositUnlocked'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferStarted'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'SetRouter'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'Upgraded'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "DepositLocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DepositUnlocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SetRouter"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
 export type DepositLockedEvent = TypedEvent<
-    [
-        string,
-        DepositoryTypes.DepositStructOutput,
-        DepositoryTypes.UnlockConditionStructOutput,
-        DepositoryTypes.BlockchainStateStructOutput
-    ],
-    {
-        depositID: string
-        deposit: DepositoryTypes.DepositStructOutput
-        unlocker: DepositoryTypes.UnlockConditionStructOutput
-        blockchainState: DepositoryTypes.BlockchainStateStructOutput
-    }
->
+  [
+    string,
+    DepositoryTypes.DepositStructOutput,
+    DepositoryTypes.UnlockConditionStructOutput,
+    DepositoryTypes.BlockchainStateStructOutput
+  ],
+  {
+    depositID: string;
+    deposit: DepositoryTypes.DepositStructOutput;
+    unlocker: DepositoryTypes.UnlockConditionStructOutput;
+    blockchainState: DepositoryTypes.BlockchainStateStructOutput;
+  }
+>;
 
-export type DepositLockedEventFilter = TypedEventFilter<DepositLockedEvent>
+export type DepositLockedEventFilter = TypedEventFilter<DepositLockedEvent>;
 
-export type DepositUnlockedEvent = TypedEvent<[string], { depositID: string }>
+export type DepositUnlockedEvent = TypedEvent<[string], { depositID: string }>;
 
-export type DepositUnlockedEventFilter = TypedEventFilter<DepositUnlockedEvent>
+export type DepositUnlockedEventFilter = TypedEventFilter<DepositUnlockedEvent>;
 
-export type InitializedEvent = TypedEvent<[BigNumber], { version: BigNumber }>
+export type InitializedEvent = TypedEvent<[BigNumber], { version: BigNumber }>;
 
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export type OwnershipTransferStartedEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
+export type OwnershipTransferStartedEvent = TypedEvent<
+  [string, string],
+  { previousOwner: string; newOwner: string }
+>;
 
-export type OwnershipTransferStartedEventFilter = TypedEventFilter<OwnershipTransferStartedEvent>
+export type OwnershipTransferStartedEventFilter =
+  TypedEventFilter<OwnershipTransferStartedEvent>;
 
-export type OwnershipTransferredEvent = TypedEvent<[string, string], { previousOwner: string; newOwner: string }>
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  { previousOwner: string; newOwner: string }
+>;
 
-export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
 
-export type SetRouterEvent = TypedEvent<[string, string], { oldRouter: string; newRouter: string }>
+export type SetRouterEvent = TypedEvent<
+  [string, string],
+  { oldRouter: string; newRouter: string }
+>;
 
-export type SetRouterEventFilter = TypedEventFilter<SetRouterEvent>
+export type SetRouterEventFilter = TypedEventFilter<SetRouterEvent>;
 
-export type UpgradedEvent = TypedEvent<[string], { implementation: string }>
+export type UpgradedEvent = TypedEvent<[string], { implementation: string }>;
 
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface IDepository extends BaseContract {
-    contractName: 'IDepository'
-    connect(signerOrProvider: Signer | Provider | string): this
-    attach(addressOrName: string): this
-    deployed(): Promise<this>
+  contractName: "IDepository";
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-    interface: IDepositoryInterface
+  interface: IDepositoryInterface;
 
-    queryFilter<TEvent extends TypedEvent>(
-        event: TypedEventFilter<TEvent>,
-        fromBlockOrBlockhash?: string | number | undefined,
-        toBlock?: string | number | undefined
-    ): Promise<Array<TEvent>>
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
-    listeners(eventName?: string): Array<Listener>
-    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-    removeAllListeners(eventName?: string): this
-    off: OnEvent<this>
-    on: OnEvent<this>
-    once: OnEvent<this>
-    removeListener: OnEvent<this>
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-    functions: {
-        UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<[string]>
+  functions: {
+    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<[string]>;
 
-        acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
-
-        depositID(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            overrides?: CallOverrides
-        ): Promise<[string]>
-
-        depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
-
-        initialize(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
-
-        lock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        owner(overrides?: CallOverrides): Promise<[string]>
-
-        pendingOwner(overrides?: CallOverrides): Promise<[string]>
-
-        proxiableUUID(overrides?: CallOverrides): Promise<[string]>
-
-        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
-
-        router(overrides?: CallOverrides): Promise<[string]>
-
-        setRouter(
-            _router: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        transferOwnership(
-            newOwner: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        unlock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            solution: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        upgradeToAndCall(
-            newImplementation: string,
-            data: BytesLike,
-            overrides?: PayableOverrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-    }
-
-    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<string>
-
-    acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    acceptOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     depositID(
-        deposit: DepositoryTypes.DepositStruct,
-        condition: DepositoryTypes.UnlockConditionStruct,
-        blockchainState: DepositoryTypes.BlockchainStateStruct,
-        overrides?: CallOverrides
-    ): Promise<string>
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>
+    depositStatus(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    initialize(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    initialize(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     lock(
-        deposit: DepositoryTypes.DepositStruct,
-        condition: DepositoryTypes.UnlockConditionStruct,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<string>
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    pendingOwner(overrides?: CallOverrides): Promise<string>
+    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
 
-    proxiableUUID(overrides?: CallOverrides): Promise<string>
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-    renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<ContractTransaction>
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    router(overrides?: CallOverrides): Promise<string>
+    router(overrides?: CallOverrides): Promise<[string]>;
 
     setRouter(
-        _router: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _router: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
-        newOwner: string,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     unlock(
-        deposit: DepositoryTypes.DepositStruct,
-        condition: DepositoryTypes.UnlockConditionStruct,
-        blockchainState: DepositoryTypes.BlockchainStateStruct,
-        solution: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      solution: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     upgradeToAndCall(
-        newImplementation: string,
-        data: BytesLike,
-        overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+  };
 
-    callStatic: {
-        UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<string>
+  UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<string>;
 
-        acceptOwnership(overrides?: CallOverrides): Promise<void>
+  acceptOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        depositID(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            overrides?: CallOverrides
-        ): Promise<string>
+  depositID(
+    deposit: DepositoryTypes.DepositStruct,
+    condition: DepositoryTypes.UnlockConditionStruct,
+    blockchainState: DepositoryTypes.BlockchainStateStruct,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-        depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>
+  depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-        initialize(overrides?: CallOverrides): Promise<void>
+  initialize(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        lock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            overrides?: CallOverrides
-        ): Promise<void>
+  lock(
+    deposit: DepositoryTypes.DepositStruct,
+    condition: DepositoryTypes.UnlockConditionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        owner(overrides?: CallOverrides): Promise<string>
+  owner(overrides?: CallOverrides): Promise<string>;
 
-        pendingOwner(overrides?: CallOverrides): Promise<string>
+  pendingOwner(overrides?: CallOverrides): Promise<string>;
 
-        proxiableUUID(overrides?: CallOverrides): Promise<string>
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-        renounceOwnership(overrides?: CallOverrides): Promise<void>
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        router(overrides?: CallOverrides): Promise<string>
+  router(overrides?: CallOverrides): Promise<string>;
 
-        setRouter(_router: string, overrides?: CallOverrides): Promise<void>
+  setRouter(
+    _router: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        unlock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            solution: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
+  unlock(
+    deposit: DepositoryTypes.DepositStruct,
+    condition: DepositoryTypes.UnlockConditionStruct,
+    blockchainState: DepositoryTypes.BlockchainStateStruct,
+    solution: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        upgradeToAndCall(newImplementation: string, data: BytesLike, overrides?: CallOverrides): Promise<void>
-    }
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-    filters: {
-        'DepositLocked(bytes32,tuple,tuple,tuple)'(
-            depositID?: BytesLike | null,
-            deposit?: null,
-            unlocker?: null,
-            blockchainState?: null
-        ): DepositLockedEventFilter
-        DepositLocked(
-            depositID?: BytesLike | null,
-            deposit?: null,
-            unlocker?: null,
-            blockchainState?: null
-        ): DepositLockedEventFilter
+  callStatic: {
+    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<string>;
 
-        'DepositUnlocked(bytes32)'(depositID?: BytesLike | null): DepositUnlockedEventFilter
-        DepositUnlocked(depositID?: BytesLike | null): DepositUnlockedEventFilter
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
-        'Initialized(uint64)'(version?: null): InitializedEventFilter
-        Initialized(version?: null): InitializedEventFilter
+    depositID(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-        'OwnershipTransferStarted(address,address)'(
-            previousOwner?: string | null,
-            newOwner?: string | null
-        ): OwnershipTransferStartedEventFilter
-        OwnershipTransferStarted(
-            previousOwner?: string | null,
-            newOwner?: string | null
-        ): OwnershipTransferStartedEventFilter
+    depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-        'OwnershipTransferred(address,address)'(
-            previousOwner?: string | null,
-            newOwner?: string | null
-        ): OwnershipTransferredEventFilter
-        OwnershipTransferred(previousOwner?: string | null, newOwner?: string | null): OwnershipTransferredEventFilter
+    initialize(overrides?: CallOverrides): Promise<void>;
 
-        'SetRouter(address,address)'(oldRouter?: string | null, newRouter?: string | null): SetRouterEventFilter
-        SetRouter(oldRouter?: string | null, newRouter?: string | null): SetRouterEventFilter
+    lock(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-        'Upgraded(address)'(implementation?: string | null): UpgradedEventFilter
-        Upgraded(implementation?: string | null): UpgradedEventFilter
-    }
+    owner(overrides?: CallOverrides): Promise<string>;
 
-    estimateGas: {
-        UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<BigNumber>
+    pendingOwner(overrides?: CallOverrides): Promise<string>;
 
-        acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-        depositID(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            overrides?: CallOverrides
-        ): Promise<BigNumber>
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-        depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+    router(overrides?: CallOverrides): Promise<string>;
 
-        initialize(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+    setRouter(_router: string, overrides?: CallOverrides): Promise<void>;
 
-        lock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-        owner(overrides?: CallOverrides): Promise<BigNumber>
+    unlock(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      solution: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-        pendingOwner(overrides?: CallOverrides): Promise<BigNumber>
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
-        proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>
+  filters: {
+    "DepositLocked(bytes32,tuple,tuple,tuple)"(
+      depositID?: BytesLike | null,
+      deposit?: null,
+      unlocker?: null,
+      blockchainState?: null
+    ): DepositLockedEventFilter;
+    DepositLocked(
+      depositID?: BytesLike | null,
+      deposit?: null,
+      unlocker?: null,
+      blockchainState?: null
+    ): DepositLockedEventFilter;
 
-        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+    "DepositUnlocked(bytes32)"(
+      depositID?: BytesLike | null
+    ): DepositUnlockedEventFilter;
+    DepositUnlocked(depositID?: BytesLike | null): DepositUnlockedEventFilter;
 
-        router(overrides?: CallOverrides): Promise<BigNumber>
+    "Initialized(uint64)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
-        setRouter(_router: string, overrides?: Overrides & { from?: string | Promise<string> }): Promise<BigNumber>
+    "OwnershipTransferStarted(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+    OwnershipTransferStarted(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
 
-        transferOwnership(
-            newOwner: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
 
-        unlock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            solution: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
+    "SetRouter(address,address)"(
+      oldRouter?: string | null,
+      newRouter?: string | null
+    ): SetRouterEventFilter;
+    SetRouter(
+      oldRouter?: string | null,
+      newRouter?: string | null
+    ): SetRouterEventFilter;
 
-        upgradeToAndCall(
-            newImplementation: string,
-            data: BytesLike,
-            overrides?: PayableOverrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-    }
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
+  };
 
-    populateTransaction: {
-        UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>
+  estimateGas: {
+    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<BigNumber>;
 
-        acceptOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+    acceptOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        depositID(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            overrides?: CallOverrides
-        ): Promise<PopulatedTransaction>
+    depositID(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-        depositStatus(arg0: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    depositStatus(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-        initialize(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+    initialize(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        lock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
+    lock(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-        pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
-        proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
-        renounceOwnership(overrides?: Overrides & { from?: string | Promise<string> }): Promise<PopulatedTransaction>
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        router(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    router(overrides?: CallOverrides): Promise<BigNumber>;
 
-        setRouter(
-            _router: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
+    setRouter(
+      _router: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        transferOwnership(
-            newOwner: string,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        unlock(
-            deposit: DepositoryTypes.DepositStruct,
-            condition: DepositoryTypes.UnlockConditionStruct,
-            blockchainState: DepositoryTypes.BlockchainStateStruct,
-            solution: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
+    unlock(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      solution: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        upgradeToAndCall(
-            newImplementation: string,
-            data: BytesLike,
-            overrides?: PayableOverrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-    }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    UPGRADE_INTERFACE_VERSION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    depositID(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    depositStatus(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lock(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setRouter(
+      _router: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unlock(
+      deposit: DepositoryTypes.DepositStruct,
+      condition: DepositoryTypes.UnlockConditionStruct,
+      blockchainState: DepositoryTypes.BlockchainStateStruct,
+      solution: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+  };
 }

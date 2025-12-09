@@ -26,7 +26,7 @@ import {
     HyperSwapRouter__factory,
     KavaRouter__factory,
     KimRouter__factory,
-    Pair__factory,
+    UniV2Pair__factory,
     UniLikeRouter__factory,
 } from '../contracts'
 import { getMulticall } from '../multicall'
@@ -200,7 +200,7 @@ export class UniV2Trade extends SymbiosisTrade {
             return Pair.getAddress(tokenA, tokenB)
         })
 
-        const pairInterface = Pair__factory.createInterface()
+        const pairInterface = UniV2Pair__factory.createInterface()
         const getReservesData = pairInterface.encodeFunctionData('getReserves')
 
         const calls = pairAddresses.map((pairAddress) => ({

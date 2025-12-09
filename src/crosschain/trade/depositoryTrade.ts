@@ -1,5 +1,5 @@
 import type { TokenAmount } from '../../entities'
-import type { DepositParameters, DepositoryContext } from '../depository'
+import type { DepositoryContext, DepositParameters } from '../depository'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 
@@ -26,6 +26,16 @@ export class DepositoryTrade extends SymbiosisTrade {
         if (this.baseTrade) {
             // If we have a base trade - then just reinit itself.
             await this.baseTrade.applyAmountIn(newAmountIn, newAmountInMin)
+
+            // overwrite depositParams with a new amountIn after patching
+            const { tokenAmountIn, to, amountOut, amountOutMin } = this.baseTrade
+            this.depositParams = {
+                ...this.depositParams,
+                tokenAmountIn,
+                to,
+                amountOut,
+                amountOutMin,
+            }
             await this.init()
         } else {
             await super.applyAmountIn(newAmountIn, newAmountInMin)

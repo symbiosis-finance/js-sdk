@@ -75,7 +75,7 @@ export const EventIds = {
     OracleRequest: BigInt(2067945553),
 }
 
-export class Bridge implements Contract {
+class Bridge implements Contract {
     constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
 
     // Creates forward payload for 'synthesize' endpoint
