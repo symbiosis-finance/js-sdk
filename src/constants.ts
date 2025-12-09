@@ -1,5 +1,5 @@
 import JSBI from 'jsbi'
-import { Address, EvmAddress } from '.'
+import type { EvmAddress } from './crosschain/types'
 
 // exports for external consumption
 export type BigintIsh = JSBI | bigint | string
@@ -7,23 +7,6 @@ export type BigintIsh = JSBI | bigint | string
 export type Icons = {
     large?: string
     small?: string
-}
-
-export type TokenConstructor = {
-    name?: string
-    symbol?: string
-    address: Address
-    decimals: number
-    chainId: ChainId
-    isNative?: boolean
-    chainFromId?: ChainId
-    icons?: Icons
-    userToken?: boolean
-    deprecated?: boolean
-    attributes?: {
-        solana?: string
-        ton?: string
-    }
 }
 
 export type ChainConstructor = {

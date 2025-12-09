@@ -1,8 +1,8 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { Token } from '../../entities'
 import { ChainId } from '../../constants'
-import { theBest } from './utils'
+import { Token } from '../../entities'
 import { ZappingThor } from '../swapping'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { theBest } from './utils'
 
 const ETH_USDC = new Token({
     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',

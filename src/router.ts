@@ -1,8 +1,8 @@
 import invariant from 'tiny-invariant'
 
 import { ChainId, TradeType } from './constants'
+import type { Percent, TokenAmount, Trade } from './entities'
 import { validateAndParseAddress } from './utils'
-import { Percent, TokenAmount, Trade } from './entities'
 
 /**
  * Options for producing the arguments to send call to the router.

@@ -1,11 +1,12 @@
-import { Token } from '../token'
-import { TokenAmount } from './tokenAmount'
-import { tokenEquals } from '../token'
-import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
+import invariant from 'tiny-invariant'
+import type { Token } from '../token'
+import { tokenEquals } from '../token'
+import { TokenAmount } from './tokenAmount'
 
-import { BigintIsh, Rounding, TEN } from '../../constants'
-import { Route } from '../route'
+import type { BigintIsh, Rounding } from '../../constants'
+import { TEN } from '../../constants'
+import type { Route } from '../route'
 import { Fraction } from './fraction'
 
 export class Price extends Fraction {

@@ -1,16 +1,18 @@
-import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
-import { Percent, TokenAmount, wrappedToken } from '../../entities'
-import { OneInchOracle__factory } from '../contracts'
-import { Symbiosis } from '../symbiosis'
-import { getMinAmount } from '../chainUtils'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getMulticall } from '../multicall'
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 import JSBI from 'jsbi'
+
+import type { Address } from '..'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
+import { Percent, TokenAmount, wrappedToken } from '../../entities'
+import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
-import { Address } from '..'
+import { OneInchOracle__factory } from '../contracts'
+import { getMulticall } from '../multicall'
 import { OneInchTradeError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 export type OneInchProtocols = string[]
 

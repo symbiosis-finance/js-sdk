@@ -1,9 +1,11 @@
-import { Symbiosis } from '../symbiosis'
-import { Percent, Token, TokenAmount } from '../../entities'
-import { MultiCallItem, PartnerFeeCallParams } from '../types'
-import { PartnerFeeCollector__factory } from '../contracts'
 import { BigNumber } from 'ethers'
+
+import type { Token } from '../../entities'
+import { Percent, TokenAmount } from '../../entities'
 import { BIPS_BASE } from '../constants'
+import { PartnerFeeCollector__factory } from '../contracts'
+import type { Symbiosis } from '../symbiosis'
+import type { MultiCallItem, PartnerFeeCallParams } from '../types'
 
 async function getPartnerFeeCallParams({
     symbiosis,

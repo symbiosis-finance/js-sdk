@@ -1,13 +1,15 @@
 import { AddressZero } from '@ethersproject/constants'
-import { BigNumber, BytesLike, utils } from 'ethers'
+import type { BytesLike } from 'ethers'
+import { BigNumber, utils } from 'ethers'
+
 import { ChainId } from '../../constants'
 import { GAS_TOKEN, TokenAmount } from '../../entities'
-import { onchainSwap } from './onchainSwap'
-import { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
-import { FeeCollector__factory } from '../contracts'
-import { preparePayload } from './preparePayload'
 import { getFunctionSelector, tronAddressToEvm } from '../chainUtils/tron'
+import { FeeCollector__factory } from '../contracts'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
+import { onchainSwap } from './onchainSwap'
+import { preparePayload } from './preparePayload'
 
 export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ZKSYNC_MAINNET]: '0x35e3dc1f3383bD348EC651EdD73fE1d7a7dA5AAa',

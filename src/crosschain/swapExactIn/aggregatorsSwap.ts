@@ -1,6 +1,6 @@
 import { AggregatorTrade } from '../trade'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { preparePayload } from './preparePayload'
-import { SwapExactInParams, SwapExactInResult } from '../types'
 
 export async function aggregatorsSwap({
     symbiosis,

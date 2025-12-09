@@ -1,13 +1,13 @@
+import type { ChainId } from '../../../constants'
+import { Token, wrappedToken } from '../../../entities'
+import { NoTransitTokenError, SdkError } from '../../sdkError'
 import type { ConfigName } from '../../symbiosis'
+import type { OmniPoolConfig } from '../../types'
+import beta from './beta.json'
+import type { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
+import dev from './dev.json'
 import mainnet from './mainnet.json'
 import testnet from './testnet.json'
-import dev from './dev.json'
-import beta from './beta.json'
-import { NoTransitTokenError, SdkError } from '../../sdkError'
-import { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
-import { ChainId } from '../../../constants'
-import { Token, wrappedToken } from '../../../entities'
-import { OmniPoolConfig } from '../../types'
 
 export class ConfigCache {
     private readonly data: ConfigCacheData

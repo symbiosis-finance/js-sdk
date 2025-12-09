@@ -1,5 +1,5 @@
+import type { BtcConfig } from '../types'
 import { fetchData, longPolling } from './utils'
-import { BtcConfig } from '../types'
 
 interface Wrap {
     commitTx: string

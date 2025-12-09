@@ -1,32 +1,24 @@
+import type { Currency } from '@uniswap/sdk-core'
+import { CurrencyAmount, Percent as PercentUni, TradeType, validateAndParseAddress } from '@uniswap/sdk-core'
+import type { MethodParameters, Pool, SwapOptions } from '@uniswap/v3-sdk'
+import { encodeRouteToPath, FeeAmount, Multicall, Payments, Route, SelfPermit, toHex, Trade } from '@uniswap/v3-sdk'
+import JSBI from 'jsbi'
+import invariant from 'tiny-invariant'
+
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
-import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import {
-    encodeRouteToPath,
-    FeeAmount,
-    MethodParameters,
-    Multicall,
-    Payments,
-    Pool,
-    Route,
-    SelfPermit,
-    SwapOptions,
-    toHex,
-    Trade,
-} from '@uniswap/v3-sdk'
-import { getPool } from './uniV3Trade/pool'
-import { Currency, CurrencyAmount, Percent as PercentUni, TradeType, validateAndParseAddress } from '@uniswap/sdk-core'
-import { getOutputQuote } from './uniV3Trade/getOutputQuote'
-import JSBI from 'jsbi'
-import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
-import invariant from 'tiny-invariant'
-import { AggregateSdkError, UniV3TradeError } from '../sdkError'
-import { BIPS_BASE } from '../constants'
 import { getMinAmount } from '../chainUtils'
-import { IV3SwapRouter } from '../contracts/UniV3Router02'
-import { Address } from '..'
+import { BIPS_BASE } from '../constants'
+import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts'
+import type { IV3SwapRouter } from '../contracts/UniV3Router02'
+import { AggregateSdkError, UniV3TradeError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { Address } from '../types'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
+import { getOutputQuote } from './uniV3Trade/getOutputQuote'
+import { getPool } from './uniV3Trade/pool'
+import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
 
 interface Deployment {
     factory: Address

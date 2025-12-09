@@ -1,18 +1,13 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
-import { TransactionRequest } from '@ethersproject/providers'
+import type { TransactionRequest } from '@ethersproject/providers'
 import JSBI from 'jsbi'
-import { Percent, Profiler, Token, TokenAmount, wrappedToken } from '../../entities'
-import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
-import { Portal__factory, Synthesis, Synthesis__factory } from '../contracts'
-import type { Symbiosis } from '../symbiosis'
-import { AggregatorTrade, WrapTrade } from '../trade'
-import { Transit } from '../transit'
-import { SdkError } from '../sdkError'
-import { SymbiosisTrade } from '../trade/symbiosisTrade'
-import { OneInchProtocols } from '../trade/oneInchTrade'
+
+import { ChainId } from '../../constants'
+import type { Token } from '../../entities'
+import { Percent, Profiler, TokenAmount, wrappedToken } from '../../entities'
+import type { DetailedSlippage, TronTransactionData } from '../chainUtils'
 import {
     buildMetaSynthesize,
-    DetailedSlippage,
     getExternalId,
     getInternalId,
     isEvmChainId,
@@ -22,10 +17,18 @@ import {
     prepareTronTransaction,
     splitSlippage,
     tronAddressToEvm,
-    TronTransactionData,
 } from '../chainUtils'
+import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
+import type { Synthesis } from '../contracts'
+import { Portal__factory, Synthesis__factory } from '../contracts'
+import { SdkError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import { AggregatorTrade, WrapTrade } from '../trade'
+import type { OneInchProtocols } from '../trade/oneInchTrade'
+import type { SymbiosisTrade } from '../trade/symbiosisTrade'
+import { Transit } from '../transit'
 import { TRON_METAROUTER_ABI } from '../tronAbis'
-import {
+import type {
     Address,
     EvmAddress,
     FeeItem,
@@ -37,8 +40,6 @@ import {
     TonTransactionData,
     TradeAContext,
 } from '../types'
-import { createFakeAmount } from '../../utils'
-import { ChainId } from '../../constants'
 import { isUseOneInchOnly } from '../utils'
 
 type MetaRouteParams = {
@@ -906,4 +907,11 @@ export abstract class BaseSwapping {
     protected extraSwapTokens(): Address[] {
         return []
     }
+}
+
+function createFakeAmount(tokenAmount: TokenAmount, token: Token) {
+    const decimalsA = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(tokenAmount.token.decimals))
+    const decimalsB = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(token.decimals))
+    const fakeAmountRaw = JSBI.divide(JSBI.multiply(tokenAmount.raw, decimalsB), decimalsA)
+    return new TokenAmount(token, fakeAmountRaw)
 }

@@ -1,6 +1,6 @@
+import type { Address, SwapExactInParams, SwapExactInResult } from '../types'
 import { BaseSwapping } from './baseSwapping'
 import { Swapping } from './swapping'
-import { Address, SwapExactInParams, SwapExactInResult } from '../types'
 
 export class SwappingMiddleware extends BaseSwapping {
     protected middlewareAddress!: Address

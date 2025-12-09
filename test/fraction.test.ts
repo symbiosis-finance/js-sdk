@@ -1,6 +1,7 @@
-import { Fraction } from '../src'
 import JSBI from 'jsbi'
 import { describe, expect, test } from 'vitest'
+
+import { Fraction } from '../src'
 
 describe.only('Fraction', () => {
     describe('#quotient', () => {

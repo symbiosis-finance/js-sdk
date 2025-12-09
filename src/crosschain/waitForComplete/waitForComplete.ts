@@ -1,15 +1,15 @@
-import { Contract, EventFilter } from 'ethers'
-import { ChainId } from '../../constants'
-import { Symbiosis } from '../symbiosis'
-import { TxNotFound } from './constants'
+import type { Transaction } from '@ton/core'
+import type { Contract, EventFilter } from 'ethers'
+
+import type { ChainId } from '../../constants'
+import { isTonChainId } from '../chainUtils'
 import { getExternalId, getLogWithTimeout } from '../chainUtils/evm'
 import { tronAddressToEvm } from '../chainUtils/tron'
-import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
-import { isTonChainId } from '../chainUtils'
-
-import { BridgeRequestType, BridgeTxInfo } from './types'
+import type { Symbiosis } from '../symbiosis'
+import { TxNotFound } from './constants'
 import { getTxTonBridgeInfo } from './getTxTonBridgeInfo'
-import { Transaction } from '@ton/core'
+import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
+import type { BridgeRequestType, BridgeTxInfo } from './types'
 
 export interface WaitForCompleteParams {
     symbiosis: Symbiosis

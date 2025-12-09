@@ -1,17 +1,19 @@
 import BNJS from 'bignumber.js'
 import { BigNumber } from 'ethers'
 import { AbiCoder } from 'ethers/lib/utils'
+
+import type { Address } from '..'
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
+import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
+import type { Multicall2 } from '../contracts/Multicall'
 import { getMulticall } from '../multicall'
-import { Symbiosis } from '../symbiosis'
-import { getMinAmount } from '../chainUtils'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { Multicall2 } from '../contracts/Multicall'
-import { Address } from '..'
 import { IzumiTradeError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 interface IzumiAddresses {
     factory: Address

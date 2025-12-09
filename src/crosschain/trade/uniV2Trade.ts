@@ -1,34 +1,39 @@
-import { Provider } from '@ethersproject/providers'
+import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import type { Provider } from '@ethersproject/providers'
 import JSBI from 'jsbi'
+
+import type { Address } from '..'
 import { ChainId } from '../../constants'
-import { Pair, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
+import type { Token } from '../../entities'
+import { Pair, Percent, TokenAmount, Trade, wrappedToken } from '../../entities'
 import { Router } from '../../router'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils'
+import { getFunctionSelector } from '../chainUtils/tron'
 import { BIPS_BASE } from '../constants'
-import {
+import type {
     AdaRouter,
-    AdaRouter__factory,
     AvaxRouter,
-    AvaxRouter__factory,
     DragonswapRouter,
-    DragonswapRouter__factory,
     HyperSwapRouter,
-    HyperSwapRouter__factory,
     KavaRouter,
-    KavaRouter__factory,
     KimRouter,
+    UniLikeRouter,
+} from '../contracts'
+import {
+    AdaRouter__factory,
+    AvaxRouter__factory,
+    DragonswapRouter__factory,
+    HyperSwapRouter__factory,
+    KavaRouter__factory,
     KimRouter__factory,
     Pair__factory,
-    UniLikeRouter,
     UniLikeRouter__factory,
 } from '../contracts'
 import { getMulticall } from '../multicall'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, getAllPairCombinations } from '../chainUtils'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { getFunctionSelector } from '../chainUtils/tron'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { Symbiosis } from '../symbiosis'
-import { Address } from '..'
 import { UniV2TradeError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis

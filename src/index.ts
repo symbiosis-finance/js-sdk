@@ -4,17 +4,16 @@ export { JSBI }
 export {
     BigintIsh,
     ChainId,
-    TradeType,
-    Rounding,
     FACTORY_ADDRESS,
     INIT_CODE_HASH,
     MINIMUM_LIQUIDITY,
+    Rounding,
+    TradeType,
     ZERO,
-    Icons,
 } from './constants'
 
-export * from './errors'
-export * from './entities'
-export * from './router'
 export * from './crosschain'
 export * from './crosschain/swapExactIn'
+export * from './entities'
+export * from './errors'
+export * from './router'

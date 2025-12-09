@@ -1,5 +1,5 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
 import { OctoPoolTrade } from '../trade'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isOctoPoolSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis } = context

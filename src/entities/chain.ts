@@ -1,4 +1,4 @@
-import { ChainConstructor, ChainId, Icons } from '../constants'
+import { ChainId, type ChainConstructor, type Icons } from '../constants'
 
 export class Chain {
     public readonly id: ChainId

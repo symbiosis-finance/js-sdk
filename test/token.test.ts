@@ -1,5 +1,6 @@
-import { ChainId, Token } from '../src'
 import { describe, expect, test } from 'vitest'
+
+import { ChainId, Token } from '../src'
 
 describe('Token', () => {
     const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'

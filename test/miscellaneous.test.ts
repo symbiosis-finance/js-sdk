@@ -1,6 +1,7 @@
-import { ChainId, Token, TokenAmount, Pair, InsufficientInputAmountError } from '../src'
-import { sortedInsert } from '../src/utils'
 import { describe, expect, test } from 'vitest'
+
+import { ChainId, InsufficientInputAmountError, Pair, Token, TokenAmount } from '../src'
+import { sortedInsert } from '../src/utils'
 
 describe('miscellaneous', () => {
     test('getLiquidityMinted:0', async () => {

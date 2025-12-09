@@ -1,8 +1,9 @@
 import TronWeb from 'tronweb'
-import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
-import { GAS_TOKEN, Token, TokenAmount, WETH } from '../../entities'
-import { isSolanaChainId, isTonChainId, isTronToken } from '../chainUtils'
+import type { Token, TokenAmount } from '../../entities'
+import { GAS_TOKEN, WETH } from '../../entities'
 import { Cache } from '../cache'
+import { isSolanaChainId, isTonChainId, isTronToken } from '../chainUtils'
+import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 
 export class CoinGecko {
     #apiUrl: string

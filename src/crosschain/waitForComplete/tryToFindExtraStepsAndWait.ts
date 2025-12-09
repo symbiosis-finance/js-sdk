@@ -1,14 +1,16 @@
-import { ChainId } from '../../constants'
-import { Symbiosis } from '../symbiosis'
+import type { SwapStatusResponseV2 } from '@chainflip/sdk/swap'
+import { SwapSDK } from '@chainflip/sdk/swap'
+import type { LogDescription } from '@ethersproject/abi'
+import type { TransactionReceipt } from '@ethersproject/providers'
+import type { BigNumber } from 'ethers'
+
+import type { ChainId } from '../../constants'
+import { Synthesis__factory } from '../contracts'
+import type { Symbiosis } from '../symbiosis'
+import type { BtcConfig } from '../types'
 import { TxNotFound } from './constants'
 import { fetchData, longPolling } from './utils'
-import { TransactionReceipt } from '@ethersproject/providers'
-import { Synthesis__factory } from '../contracts'
-import { BigNumber } from 'ethers'
-import { LogDescription } from '@ethersproject/abi'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
-import { SwapSDK, SwapStatusResponseV2 } from '@chainflip/sdk/swap'
-import { BtcConfig } from '../types'
 
 interface ThorStatusResponse {
     observed_tx: {

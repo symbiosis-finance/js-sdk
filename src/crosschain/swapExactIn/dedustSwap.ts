@@ -1,6 +1,6 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
 import { isTonChainId } from '../chainUtils'
 import { DedustTrade } from '../trade'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isDedustSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context

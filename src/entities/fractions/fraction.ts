@@ -1,11 +1,11 @@
-import invariant from 'tiny-invariant'
-import JSBI from 'jsbi'
-import _Decimal from 'decimal.js-light'
 import _Big from 'big.js'
+import _Decimal from 'decimal.js-light'
+import JSBI from 'jsbi'
+import invariant from 'tiny-invariant'
 import toFormat from 'toformat'
 
-import { BigintIsh, Rounding } from '../../constants'
-import { ONE } from '../../constants'
+import type { BigintIsh } from '../../constants'
+import { ONE, Rounding } from '../../constants'
 import { parseBigintIsh } from '../../utils'
 
 // Reexport from 'big.js'

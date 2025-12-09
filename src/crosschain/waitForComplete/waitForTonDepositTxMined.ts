@@ -1,11 +1,12 @@
-import { Address, Cell, Transaction } from '@ton/core'
-import { Maybe } from '@ton/ton/dist/utils/maybe'
+import { AddressZero } from '@ethersproject/constants'
+import type { Cell, Transaction } from '@ton/core'
+import { Address } from '@ton/core'
+import type { Maybe } from '@ton/ton/dist/utils/maybe'
 import { solidityKeccak256 } from 'ethers/lib/utils'
 
-import { ChainId } from '../../constants'
+import type { ChainId } from '../../constants'
+import type { Symbiosis } from '../symbiosis'
 import { longPolling } from './utils'
-import { Symbiosis } from '../symbiosis'
-import { AddressZero } from '@ethersproject/constants'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2

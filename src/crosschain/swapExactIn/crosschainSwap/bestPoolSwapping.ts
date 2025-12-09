@@ -1,6 +1,7 @@
-import { Token, wrappedToken } from '../../../entities'
+import type { Token } from '../../../entities'
+import { wrappedToken } from '../../../entities'
+import type { Symbiosis } from '../../symbiosis'
 import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
-import { Symbiosis } from '../../symbiosis'
 import { theBest } from '../utils'
 
 export interface Route {

@@ -1,18 +1,21 @@
-import { Filter, Log } from '@ethersproject/providers'
+import type { Filter, Log } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { BigNumber, utils } from 'ethers'
 import JSBI from 'jsbi'
-import { BigintIsh, ChainId, ONE } from '../../constants'
-import { Fraction, Percent, Token, TokenAmount, Trade, wrappedToken } from '../../entities'
+import flatMap from 'lodash.flatmap'
+
+import type { BigintIsh, ChainId } from '../../constants'
+import { ONE } from '../../constants'
+import type { Token, Trade } from '../../entities'
+import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
 import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../constants'
+import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
-import flatMap from 'lodash.flatmap'
-import { SdkError } from '../sdkError'
 import { isBtcChainId } from './btc'
-import { isTronChainId } from './tron'
-import { isTonChainId } from './ton'
 import { isSolanaChainId } from './solana'
+import { isTonChainId } from './ton'
+import { isTronChainId } from './tron'
 
 interface GetInternalIdParams {
     contractAddress: string

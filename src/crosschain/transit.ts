@@ -1,10 +1,11 @@
-import { Symbiosis } from './symbiosis'
-import { chains, Token, TokenAmount } from '../entities'
-import { ChainId } from '../constants'
-import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
-import { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
-import { OctoPoolTrade } from './trade'
+import type { ChainId } from '../constants'
+import type { Token } from '../entities'
+import { chains, TokenAmount } from '../entities'
 import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
+import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
+import type { Symbiosis } from './symbiosis'
+import { OctoPoolTrade } from './trade'
+import type { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 
 interface CreateOctoPoolTradeParams {
     tokenAmountIn: TokenAmount

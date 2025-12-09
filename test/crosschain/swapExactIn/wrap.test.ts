@@ -1,16 +1,9 @@
-import { describe, expect, test } from 'vitest'
-import { isWrapSupported, wrap } from '../../../src/crosschain/swapExactIn/wrap'
-import {
-    ChainId,
-    GAS_TOKEN,
-    Percent,
-    SwapExactInParams,
-    SwapExactInResult,
-    Symbiosis,
-    TokenAmount,
-    WETH,
-} from '../../../src'
 import TronWeb from 'tronweb'
+import { describe, expect, test } from 'vitest'
+
+import type { SwapExactInParams, SwapExactInResult } from '../../../src'
+import { ChainId, GAS_TOKEN, Percent, Symbiosis, TokenAmount, WETH } from '../../../src'
+import { isWrapSupported, wrap } from '../../../src/crosschain/swapExactIn/wrap'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 

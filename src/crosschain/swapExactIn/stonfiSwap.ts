@@ -1,6 +1,6 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { StonfiTrade } from '../trade'
 import { isTonChainId } from '../chainUtils'
+import { StonfiTrade } from '../trade'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isStonfiSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context

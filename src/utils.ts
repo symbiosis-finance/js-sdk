@@ -1,10 +1,10 @@
-import invariant from 'tiny-invariant'
-import JSBI from 'jsbi'
 import { getAddress } from '@ethersproject/address'
+import JSBI from 'jsbi'
+import invariant from 'tiny-invariant'
 
-import { BigintIsh, ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from './constants'
-import { Token, TokenAmount } from './entities'
-import { Address, EvmAddress } from '.'
+import type { BigintIsh } from './constants'
+import { ONE, SOLIDITY_TYPE_MAXIMA, SolidityType, THREE, TWO, ZERO } from './constants'
+import type { Address, EvmAddress } from './crosschain/types'
 
 export function validateSolidityTypeInstance(value: JSBI, solidityType: SolidityType): void {
     invariant(JSBI.greaterThanOrEqual(value, ZERO), `${value} is not a ${solidityType}.`)
@@ -82,13 +82,6 @@ export function sortedInsert<T>(items: T[], add: T, maxSize: number, comparator:
         items.splice(lo, 0, add)
         return isFull ? items.pop()! : null
     }
-}
-
-export const createFakeAmount = (tokenAmount: TokenAmount, token: Token) => {
-    const decimalsA = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(tokenAmount.token.decimals))
-    const decimalsB = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(token.decimals))
-    const fakeAmountRaw = JSBI.divide(JSBI.multiply(tokenAmount.raw, decimalsB), decimalsA)
-    return new TokenAmount(token, fakeAmountRaw)
 }
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))

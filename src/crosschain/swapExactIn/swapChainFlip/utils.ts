@@ -1,10 +1,11 @@
-import { Quote, SwapSDK } from '@chainflip/sdk/swap'
+import type { Quote, SwapSDK } from '@chainflip/sdk/swap'
 
 import { ChainId } from '../../../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
-import { ChainFlipAssetId, ChainFlipChainId, ChainFlipToken } from './types'
+import type { Cache } from '../../cache'
 import { ChainFlipError } from '../../sdkError'
-import { Cache } from '../../cache'
+import type { ChainFlipToken } from './types'
+import { ChainFlipAssetId, ChainFlipChainId } from './types'
 
 export const ChainFlipBrokerAccount = 'cFJZvt5AiEGwUiFFNxhDuLRcgC1WBR6tE7gaQQfe8dqbzoYkx'
 export const ChainFlipBrokerFeeBps = 20

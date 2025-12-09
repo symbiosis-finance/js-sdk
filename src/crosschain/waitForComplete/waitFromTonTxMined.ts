@@ -1,7 +1,8 @@
-import { Address, Transaction } from '@ton/core'
+import type { Transaction } from '@ton/core'
+import { Address } from '@ton/core'
 
+import type { Symbiosis } from '../symbiosis'
 import { longPolling } from './utils'
-import { Symbiosis } from '../symbiosis'
 
 class waitFromTonTxCompleteError extends Error {
     constructor(message: string) {

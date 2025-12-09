@@ -1,12 +1,14 @@
-import { PublicKey } from '@solana/web3.js'
-import { API_URLS, ApiSwapV1Out, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
+import type { ApiSwapV1Out } from '@raydium-io/raydium-sdk-v2'
+import { API_URLS, parseTokenAccountResp } from '@raydium-io/raydium-sdk-v2'
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { PublicKey } from '@solana/web3.js'
 
 import { Percent, TokenAmount } from '../../entities'
-import { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { getSolanaConnection } from '../chainUtils'
 import { RaydiumTradeError } from '../sdkError'
+import type { Symbiosis } from '../symbiosis'
+import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string

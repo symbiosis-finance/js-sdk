@@ -1,13 +1,13 @@
-import { SwapExactInParams, SwapExactInResult } from '../../types'
-import { GAS_TOKEN } from '../../../entities'
 import { ChainId } from '../../../constants'
+import { GAS_TOKEN } from '../../../entities'
+import { ChainFlipError } from '../../sdkError'
+import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
-
+import type { ChainFlipConfig, ChainFlipToken } from './types'
+import { ChainFlipAssetId, ChainFlipChainId } from './types'
+import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
-import { ChainFlipAssetId, ChainFlipChainId, ChainFlipConfig, ChainFlipToken } from './types'
-import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
-import { ChainFlipError } from '../../sdkError'
 
 const CF_BTC_BTC: ChainFlipToken = {
     chainId: ChainFlipChainId.Bitcoin,

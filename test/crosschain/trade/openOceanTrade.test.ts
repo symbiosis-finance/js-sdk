@@ -1,8 +1,9 @@
-import { describe, expect, test, vi } from 'vitest'
-import { OpenOceanTrade } from '../../../src/crosschain/trade'
-import { ChainId, Symbiosis, Token, TokenAmount } from '../../../src'
 import { BigNumber } from 'ethers'
-import { OpenOceanQuote } from '../../../src/crosschain/trade/openOceanTrade'
+import { describe, expect, test, vi } from 'vitest'
+
+import { ChainId, Symbiosis, Token, TokenAmount } from '../../../src'
+import { OpenOceanTrade } from '../../../src/crosschain/trade'
+import type { OpenOceanQuote } from '../../../src/crosschain/trade/openOceanTrade'
 
 describe('OpenOceanTrade', () => {
     const symbiosis = new Symbiosis('mainnet', 'test')

@@ -2,14 +2,14 @@ import invariant from 'tiny-invariant'
 
 import { ONE, TradeType, ZERO } from '../constants'
 import { sortedInsert } from '../utils'
-
-import { TokenAmount } from './fractions/tokenAmount'
 import { Fraction } from './fractions/fraction'
 import { Percent } from './fractions/percent'
 import { Price } from './fractions/price'
-import { Pair } from './pair'
+import { TokenAmount } from './fractions/tokenAmount'
+import type { Pair } from './pair'
 import { Route } from './route'
-import { tokenEquals, Token, WETH } from './token'
+import type { Token } from './token'
+import { tokenEquals, WETH } from './token'
 
 /**
  * Returns the percent difference between the mid price and the execution price, i.e. price impact.

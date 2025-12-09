@@ -1,9 +1,10 @@
 import TronWeb from 'tronweb'
-import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
-import { GAS_TOKEN, Token, TokenAmount, WETH } from '../../entities'
+import type { TokenAmount } from '../../entities'
+import { GAS_TOKEN, Token, WETH } from '../../entities'
 import { isSolanaChainId, isTonChainId, isTronToken } from '../chainUtils'
 import { AdvisorError } from '../sdkError'
-import { Address } from '../types'
+import type { Address } from '../types'
+import { COINGECKO_GAS_TOKEN_IDS, COINGECKO_PLATFORMS } from './constants'
 
 const getTokenPriceFromAdvisor = async (token: Token): Promise<number> => {
     const isWrappedToken = WETH[token.chainId].equals(token)

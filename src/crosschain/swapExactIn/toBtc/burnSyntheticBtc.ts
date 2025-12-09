@@ -1,6 +1,6 @@
-import { SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBest } from '../utils'
 import { ZappingBtc } from '../../swapping'
+import type { SwapExactInParams, SwapExactInResult } from '../../types'
+import { theBest } from '../utils'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {

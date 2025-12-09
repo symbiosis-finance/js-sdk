@@ -1,6 +1,6 @@
-import { SwapExactInParams, SwapExactInResult } from '../types'
-import { RaydiumTrade } from '../trade'
 import { addSolanaFee, isSolanaChainId } from '../chainUtils'
+import { RaydiumTrade } from '../trade'
+import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isRaydiumSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut } = context

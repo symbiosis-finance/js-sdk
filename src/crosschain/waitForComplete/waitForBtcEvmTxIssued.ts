@@ -1,7 +1,7 @@
-import { Symbiosis } from '../symbiosis'
 import { getLogWithTimeout } from '../chainUtils'
 import { SymBtc__factory } from '../contracts'
-import { BtcConfig } from '../types'
+import type { Symbiosis } from '../symbiosis'
+import type { BtcConfig } from '../types'
 import { waitForDepositUnlocked } from './waitForDepositUnlocked'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h

@@ -1,5 +1,5 @@
+import type { ConfigName } from '../../../symbiosis'
 import { Builder } from '../builder'
-import { ConfigName } from '../../../symbiosis'
 
 const env = process.env.ENV as ConfigName
 
