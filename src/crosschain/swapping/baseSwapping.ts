@@ -189,16 +189,14 @@ export abstract class BaseSwapping {
             this.buildTransit(transitAmountIn, transitAmountInMin).init(),
             (async () => {
                 if (this.transitTokenOut.equals(tokenOut)) {
-                    // No need to trade on chain C if transit token is what the user needs.
+                    // No need to trade on chain C if a transit token is what the user needs.
                     return
                 }
                 // NOTE actually amountInMin == amountIn, because we don't know the correct amounts
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
                 const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
 
-                const tradeC = await this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin)
-                await tradeC.init()
-                return tradeC
+                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin)
             })(),
         ] as const
 
