@@ -1,6 +1,8 @@
 import JSBI from 'jsbi'
+
 export { JSBI }
 
+export type { Icons } from './constants'
 export {
     BigintIsh,
     ChainId,

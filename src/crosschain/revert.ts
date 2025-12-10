@@ -16,7 +16,7 @@ import { AmountLessThanFeeError, SdkError } from './sdkError'
 import type { Symbiosis } from './symbiosis'
 import { OctoPoolTrade } from './trade'
 import { TRON_PORTAL_ABI } from './tronAbis'
-import type { OmniPoolConfig } from './types'
+import type { Address, OmniPoolConfig } from './types'
 
 type RevertBase = {
     type: 'tron' | 'evm'
@@ -410,7 +410,7 @@ export class RevertPending {
             throw new SdkError(`Cannot find synthetic token between mChain and ${chainIdFrom}`)
         }
 
-        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address
+        const to = this.symbiosis.metaRouter(this.omniPoolConfig.chainId).address as Address
 
         const octoPoolTrade = new OctoPoolTrade({
             tokenAmountIn: amount,
@@ -420,7 +420,7 @@ export class RevertPending {
             deadline: this.deadline,
             symbiosis: this.symbiosis,
             to,
-            omniPoolConfig: this.omniPoolConfig,
+            poolConfig: this.omniPoolConfig,
         })
         await octoPoolTrade.init()
 

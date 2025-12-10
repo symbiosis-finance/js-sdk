@@ -1,6 +1,7 @@
 import invariant from 'tiny-invariant'
 
 import { ONE, TradeType, ZERO } from '../constants'
+import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
 import { sortedInsert } from '../utils'
 import { Fraction } from './fractions/fraction'
 import { Percent } from './fractions/percent'
@@ -240,12 +241,13 @@ export class Trade {
         currentPairs: Pair[] = [],
         originalAmountIn: TokenAmount = tokenAmountIn,
         bestTrades: Trade[] = []
-    ): Trade[] {
+    ): { trades: Trade[]; errors: Error[] } {
         invariant(pairs.length > 0, 'PAIRS')
         invariant(maxHops > 0, 'MAX_HOPS')
         invariant(originalAmountIn === tokenAmountIn || currentPairs.length > 0, 'INVALID_RECURSION')
 
         const amountIn = wrappedAmount(tokenAmountIn)
+        const errors = []
         for (let i = 0; i < pairs.length; i++) {
             const pair = pairs[i]
             // pair irrelevant
@@ -255,9 +257,10 @@ export class Trade {
             let amountOut: TokenAmount
             try {
                 ;[amountOut] = pair.getOutputAmount(amountIn)
-            } catch (error: any) {
+            } catch (error) {
                 // input too low
-                if (error.isInsufficientInputAmountError) {
+                if (error instanceof InsufficientInputAmountError) {
+                    errors.push(error)
                     continue
                 }
                 throw error
@@ -293,7 +296,7 @@ export class Trade {
             }
         }
 
-        return bestTrades
+        return { trades: bestTrades, errors }
     }
 
     /**
@@ -335,9 +338,9 @@ export class Trade {
             let amountIn: TokenAmount
             try {
                 ;[amountIn] = pair.getInputAmount(amountOut)
-            } catch (error: any) {
+            } catch (error) {
                 // not enough liquidity in this pair
-                if (error.isInsufficientReservesError) {
+                if (error instanceof InsufficientReservesError) {
                     continue
                 }
                 throw error

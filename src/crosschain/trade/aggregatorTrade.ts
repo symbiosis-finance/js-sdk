@@ -1,4 +1,5 @@
 import { utils } from 'ethers'
+import invariant from 'tiny-invariant'
 
 import type { Percent, Token, TokenAmount } from '../../entities'
 import { AggregateSdkError } from '../sdkError'
@@ -35,7 +36,8 @@ class TradeNotInitializedError extends Error {
 export interface AggregatorTrade extends AggregatorTradeParams {}
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class AggregatorTrade extends SymbiosisTrade {
-    protected trade: Trade | undefined
+    // The best found trade. It is always set after waiting for init().
+    protected trade!: Trade
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
@@ -193,14 +195,12 @@ export class AggregatorTrade extends SymbiosisTrade {
                 const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
 
                 if (allTradesFinished) {
-                    const theBestTrade = this.selectTheBestTrade(successTrades)
-                    if (theBestTrade) {
-                        resolve(theBestTrade)
-                    } else {
+                    if (successTrades.length === 0) {
                         reject(new AggregateSdkError(errors, `AggregatorTrade: all trades failed`))
+                    } else {
+                        resolve(this.selectTheBestTrade(successTrades))
                     }
                     clearInterval(intervalId)
-                    return
                 } else if (diff >= (this.firstTimeoutMs || 200)) {
                     const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
                     const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
@@ -216,8 +216,9 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this
     }
 
-    private selectTheBestTrade(trades: Trade[]) {
-        let bestTrade: Trade | undefined = undefined
+    private selectTheBestTrade(trades: Trade[]): Trade {
+        invariant(trades.length >= 1)
+        let bestTrade!: Trade
         for (const trade of trades) {
             if (!bestTrade) {
                 bestTrade = trade
@@ -271,14 +272,15 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this.trade.priceImpact
     }
 
+    // Needed only for Tron.
     get functionSelector(): string | undefined {
         this.assertTradeInitialized('functionSelector')
         return this.trade.functionSelector
     }
 
-    public applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
+    public async applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
         this.assertTradeInitialized('applyAmountIn')
-        this.trade.applyAmountIn(newAmountIn, newAmountInMin)
+        await this.trade.applyAmountIn(newAmountIn, newAmountInMin)
     }
 
     get fees(): FeeItem[] | undefined {

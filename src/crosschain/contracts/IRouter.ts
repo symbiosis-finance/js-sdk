@@ -2,145 +2,163 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    BytesLike,
-    CallOverrides,
-    ContractTransaction,
-    Overrides,
-    PopulatedTransaction,
-    Signer,
-    utils,
-} from 'ethers'
-import { FunctionFragment, Result } from '@ethersproject/abi'
-import { Listener, Provider } from '@ethersproject/providers'
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import { FunctionFragment, Result } from "@ethersproject/abi";
+import { Listener, Provider } from "@ethersproject/providers";
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface IRouterInterface extends utils.Interface {
-    contractName: 'IRouter'
-    functions: {
-        'externalCall(address,uint256,address,bytes,uint256)': FunctionFragment
-        'transferNative(address,address,uint256)': FunctionFragment
-    }
+  contractName: "IRouter";
+  functions: {
+    "externalCall(address,uint256,address,bytes,uint256)": FunctionFragment;
+    "transferNative(address,address,uint256)": FunctionFragment;
+  };
 
-    encodeFunctionData(
-        functionFragment: 'externalCall',
-        values: [string, BigNumberish, string, BytesLike, BigNumberish]
-    ): string
-    encodeFunctionData(functionFragment: 'transferNative', values: [string, string, BigNumberish]): string
+  encodeFunctionData(
+    functionFragment: "externalCall",
+    values: [string, BigNumberish, string, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferNative",
+    values: [string, string, BigNumberish]
+  ): string;
 
-    decodeFunctionResult(functionFragment: 'externalCall', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'transferNative', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "externalCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferNative",
+    data: BytesLike
+  ): Result;
 
-    events: {}
+  events: {};
 }
 
 export interface IRouter extends BaseContract {
-    contractName: 'IRouter'
-    connect(signerOrProvider: Signer | Provider | string): this
-    attach(addressOrName: string): this
-    deployed(): Promise<this>
+  contractName: "IRouter";
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-    interface: IRouterInterface
+  interface: IRouterInterface;
 
-    queryFilter<TEvent extends TypedEvent>(
-        event: TypedEventFilter<TEvent>,
-        fromBlockOrBlockhash?: string | number | undefined,
-        toBlock?: string | number | undefined
-    ): Promise<Array<TEvent>>
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
-    listeners(eventName?: string): Array<Listener>
-    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-    removeAllListeners(eventName?: string): this
-    off: OnEvent<this>
-    on: OnEvent<this>
-    once: OnEvent<this>
-    removeListener: OnEvent<this>
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-    functions: {
-        externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
-            _calldata: BytesLike,
-            _offset: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-
-        transferNative(
-            token: string,
-            to: string,
-            amount: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-    }
-
+  functions: {
     externalCall(
-        _token: string,
-        _amount: BigNumberish,
-        _receiveSide: string,
-        _calldata: BytesLike,
-        _offset: BigNumberish,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      _token: string,
+      _amount: BigNumberish,
+      _receiveSide: string,
+      _calldata: BytesLike,
+      _offset: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     transferNative(
-        token: string,
-        to: string,
-        amount: BigNumberish,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+  };
 
-    callStatic: {
-        externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
-            _calldata: BytesLike,
-            _offset: BigNumberish,
-            overrides?: CallOverrides
-        ): Promise<void>
+  externalCall(
+    _token: string,
+    _amount: BigNumberish,
+    _receiveSide: string,
+    _calldata: BytesLike,
+    _offset: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-        transferNative(token: string, to: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>
-    }
+  transferNative(
+    token: string,
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-    filters: {}
+  callStatic: {
+    externalCall(
+      _token: string,
+      _amount: BigNumberish,
+      _receiveSide: string,
+      _calldata: BytesLike,
+      _offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    estimateGas: {
-        externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
-            _calldata: BytesLike,
-            _offset: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
+    transferNative(
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
-        transferNative(
-            token: string,
-            to: string,
-            amount: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-    }
+  filters: {};
 
-    populateTransaction: {
-        externalCall(
-            _token: string,
-            _amount: BigNumberish,
-            _receiveSide: string,
-            _calldata: BytesLike,
-            _offset: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
+  estimateGas: {
+    externalCall(
+      _token: string,
+      _amount: BigNumberish,
+      _receiveSide: string,
+      _calldata: BytesLike,
+      _offset: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-        transferNative(
-            token: string,
-            to: string,
-            amount: BigNumberish,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-    }
+    transferNative(
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    externalCall(
+      _token: string,
+      _amount: BigNumberish,
+      _receiveSide: string,
+      _calldata: BytesLike,
+      _offset: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferNative(
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+  };
 }

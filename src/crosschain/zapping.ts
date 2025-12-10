@@ -25,6 +25,7 @@ import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, WrapTrade } from './trade'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import type {
+    Address,
     OmniPoolConfig,
     RouteItem,
     SwapExactInResult,
@@ -44,7 +45,7 @@ export class Zapping {
     protected multicallRouter: MulticallRouter
 
     private from!: string
-    private to!: string
+    private to!: Address
     private revertableAddress!: string
     private tokenAmountIn!: TokenAmount
     private slippage!: number
@@ -298,7 +299,7 @@ export class Zapping {
     private buildTradeA(): AggregatorTrade | WrapTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitTokenIn
-        const from = this.symbiosis.metaRouter(chainId).address
+        const from = this.symbiosis.metaRouter(chainId).address as Address
         const to = from
 
         if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {

@@ -127,10 +127,8 @@ export class UniV3Trade extends SymbiosisTrade {
 
     public constructor(params: UniV3TradeParams) {
         super(params)
-
-        const { symbiosis, deadline } = params
-        this.symbiosis = symbiosis
-        this.deadline = deadline
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
     }
 
     get tradeType(): SymbiosisTradeType {

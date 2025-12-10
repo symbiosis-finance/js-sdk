@@ -11,6 +11,7 @@ import type { BtcConfig } from '../types'
 import { TxNotFound } from './constants'
 import { fetchData, longPolling } from './utils'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
+import { waitForDepositUnlocked } from './waitForDepositUnlocked'
 
 interface ThorStatusResponse {
     observed_tx: {
@@ -22,7 +23,7 @@ interface ThorStatusResponse {
     }
 }
 
-type ExtraStep = 'thorChain' | 'burnRequestBtc' | 'burnRequestTon' | 'swapEthToTon' | 'chainFlip'
+type ExtraStep = 'thorChain' | 'burnRequestBtc' | 'burnRequestTon' | 'swapEthToTon' | 'chainFlip' | 'depository'
 
 export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
@@ -76,6 +77,14 @@ export async function tryToFindExtraStepsAndWait(
         return {
             extraStep: 'chainFlip',
             outHash,
+        }
+    }
+
+    const depositUnlocked = await waitForDepositUnlocked(symbiosis, chainId, txHash)
+    if (depositUnlocked) {
+        return {
+            extraStep: 'depository',
+            outHash: depositUnlocked.transactionHash,
         }
     }
 

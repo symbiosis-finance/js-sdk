@@ -26,7 +26,7 @@ import {
     HyperSwapRouter__factory,
     KavaRouter__factory,
     KimRouter__factory,
-    Pair__factory,
+    UniV2Pair__factory,
     UniLikeRouter__factory,
 } from '../contracts'
 import { getMulticall } from '../multicall'
@@ -54,10 +54,8 @@ export class UniV2Trade extends SymbiosisTrade {
 
     public constructor(params: UniV2TradeParams) {
         super(params)
-
-        const { symbiosis, deadline } = params
-        this.symbiosis = symbiosis
-        this.deadline = deadline
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -96,19 +94,20 @@ export class UniV2Trade extends SymbiosisTrade {
             60 // 1 minute
         )
 
-        let trade
+        let trade: Trade
         try {
-            const [t] = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
+            const { trades, errors } = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
                 maxHops: 3,
                 maxNumResults: 1,
             })
-            trade = t
+            if (trades.length === 0)
+                throw AggregateError(
+                    errors,
+                    `failed to obtain any trades for ${this.tokenAmountIn} -> ${this.tokenOut}`
+                )
+            else trade = trades[0]
         } catch (e) {
             throw new UniV2TradeError('bestTradeExactIn failed', e)
-        }
-
-        if (!trade) {
-            throw new UniV2TradeError('Cannot create trade')
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
@@ -201,7 +200,7 @@ export class UniV2Trade extends SymbiosisTrade {
             return Pair.getAddress(tokenA, tokenB)
         })
 
-        const pairInterface = Pair__factory.createInterface()
+        const pairInterface = UniV2Pair__factory.createInterface()
         const getReservesData = pairInterface.encodeFunctionData('getReserves')
 
         const calls = pairAddresses.map((pairAddress) => ({

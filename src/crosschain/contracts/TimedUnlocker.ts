@@ -2,202 +2,258 @@
 /* tslint:disable */
 /* eslint-disable */
 import {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    BytesLike,
-    CallOverrides,
-    ContractTransaction,
-    Overrides,
-    PopulatedTransaction,
-    Signer,
-    utils,
-} from 'ethers'
-import { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
-import { Listener, Provider } from '@ethersproject/providers'
-import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
+import { Listener, Provider } from "@ethersproject/providers";
+import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export declare namespace DepositoryTypes {
-    export type UnlockConditionStruct = {
-        unlocker: string
-        condition: BytesLike
-    }
+  export type UnlockConditionStruct = {
+    unlocker: string;
+    condition: BytesLike;
+  };
 
-    export type UnlockConditionStructOutput = [string, string] & {
-        unlocker: string
-        condition: string
-    }
+  export type UnlockConditionStructOutput = [string, string] & {
+    unlocker: string;
+    condition: string;
+  };
 
-    export type DepositStruct = {
-        token: string
-        amount: BigNumberish
-        nonce: BigNumberish
-    }
+  export type DepositStruct = {
+    token: string;
+    amount: BigNumberish;
+    nonce: BigNumberish;
+  };
 
-    export type DepositStructOutput = [string, BigNumber, BigNumber] & {
-        token: string
-        amount: BigNumber
-        nonce: BigNumber
-    }
+  export type DepositStructOutput = [string, BigNumber, BigNumber] & {
+    token: string;
+    amount: BigNumber;
+    nonce: BigNumber;
+  };
 
-    export type BlockchainStateStruct = {
-        blockNumber: BigNumberish
-        timestamp: BigNumberish
-    }
+  export type BlockchainStateStruct = {
+    blockNumber: BigNumberish;
+    timestamp: BigNumberish;
+  };
 
-    export type BlockchainStateStructOutput = [BigNumber, BigNumber] & {
-        blockNumber: BigNumber
-        timestamp: BigNumber
-    }
+  export type BlockchainStateStructOutput = [BigNumber, BigNumber] & {
+    blockNumber: BigNumber;
+    timestamp: BigNumber;
+  };
 }
 
 export declare namespace TimedUnlocker {
-    export type ConditionStruct = {
-        delay: BigNumberish
-        next: DepositoryTypes.UnlockConditionStruct
-    }
+  export type ConditionStruct = {
+    delay: BigNumberish;
+    next: DepositoryTypes.UnlockConditionStruct;
+  };
 
-    export type ConditionStructOutput = [BigNumber, DepositoryTypes.UnlockConditionStructOutput] & {
-        delay: BigNumber
-        next: DepositoryTypes.UnlockConditionStructOutput
-    }
+  export type ConditionStructOutput = [
+    BigNumber,
+    DepositoryTypes.UnlockConditionStructOutput
+  ] & { delay: BigNumber; next: DepositoryTypes.UnlockConditionStructOutput };
 }
 
 export interface TimedUnlockerInterface extends utils.Interface {
-    contractName: 'TimedUnlocker'
-    functions: {
-        'decodeCondition(bytes)': FunctionFragment
-        'encodeCondition((uint256,(address,bytes)))': FunctionFragment
-        'unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)': FunctionFragment
-    }
+  contractName: "TimedUnlocker";
+  functions: {
+    "decodeCondition(bytes)": FunctionFragment;
+    "encodeCondition((uint256,(address,bytes)))": FunctionFragment;
+    "unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)": FunctionFragment;
+  };
 
-    encodeFunctionData(functionFragment: 'decodeCondition', values: [BytesLike]): string
-    encodeFunctionData(functionFragment: 'encodeCondition', values: [TimedUnlocker.ConditionStruct]): string
-    encodeFunctionData(
-        functionFragment: 'unlock',
-        values: [string, DepositoryTypes.DepositStruct, DepositoryTypes.BlockchainStateStruct, BytesLike, BytesLike]
-    ): string
+  encodeFunctionData(
+    functionFragment: "decodeCondition",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "encodeCondition",
+    values: [TimedUnlocker.ConditionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unlock",
+    values: [
+      string,
+      DepositoryTypes.DepositStruct,
+      DepositoryTypes.BlockchainStateStruct,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
 
-    decodeFunctionResult(functionFragment: 'decodeCondition', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'encodeCondition', data: BytesLike): Result
-    decodeFunctionResult(functionFragment: 'unlock', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "decodeCondition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "encodeCondition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
 
-    events: {
-        'Unlocked(uint256,uint256,uint256)': EventFragment
-    }
+  events: {
+    "Unlocked(uint256,uint256,uint256)": EventFragment;
+  };
 
-    getEvent(nameOrSignatureOrTopic: 'Unlocked'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "Unlocked"): EventFragment;
 }
 
 export type UnlockedEvent = TypedEvent<
-    [BigNumber, BigNumber, BigNumber],
-    { currentTimestamp: BigNumber; lockTimestamp: BigNumber; delay: BigNumber }
->
+  [BigNumber, BigNumber, BigNumber],
+  { currentTimestamp: BigNumber; lockTimestamp: BigNumber; delay: BigNumber }
+>;
 
-export type UnlockedEventFilter = TypedEventFilter<UnlockedEvent>
+export type UnlockedEventFilter = TypedEventFilter<UnlockedEvent>;
 
 export interface TimedUnlocker extends BaseContract {
-    contractName: 'TimedUnlocker'
-    connect(signerOrProvider: Signer | Provider | string): this
-    attach(addressOrName: string): this
-    deployed(): Promise<this>
+  contractName: "TimedUnlocker";
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-    interface: TimedUnlockerInterface
+  interface: TimedUnlockerInterface;
 
-    queryFilter<TEvent extends TypedEvent>(
-        event: TypedEventFilter<TEvent>,
-        fromBlockOrBlockhash?: string | number | undefined,
-        toBlock?: string | number | undefined
-    ): Promise<Array<TEvent>>
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>
-    listeners(eventName?: string): Array<Listener>
-    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-    removeAllListeners(eventName?: string): this
-    off: OnEvent<this>
-    on: OnEvent<this>
-    once: OnEvent<this>
-    removeListener: OnEvent<this>
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-    functions: {
-        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<[TimedUnlocker.ConditionStructOutput]>
+  functions: {
+    decodeCondition(
+      condition: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[TimedUnlocker.ConditionStructOutput]>;
 
-        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<[string]>
-
-        unlock(
-            router: string,
-            deposit: DepositoryTypes.DepositStruct,
-            lockState: DepositoryTypes.BlockchainStateStruct,
-            condition: BytesLike,
-            solution: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<ContractTransaction>
-    }
-
-    decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<TimedUnlocker.ConditionStructOutput>
-
-    encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
+    encodeCondition(
+      c: TimedUnlocker.ConditionStruct,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     unlock(
-        router: string,
-        deposit: DepositoryTypes.DepositStruct,
-        lockState: DepositoryTypes.BlockchainStateStruct,
-        condition: BytesLike,
-        solution: BytesLike,
-        overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>
+      router: string,
+      deposit: DepositoryTypes.DepositStruct,
+      lockState: DepositoryTypes.BlockchainStateStruct,
+      condition: BytesLike,
+      solution: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+  };
 
-    callStatic: {
-        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<TimedUnlocker.ConditionStructOutput>
+  decodeCondition(
+    condition: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<TimedUnlocker.ConditionStructOutput>;
 
-        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<string>
+  encodeCondition(
+    c: TimedUnlocker.ConditionStruct,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-        unlock(
-            router: string,
-            deposit: DepositoryTypes.DepositStruct,
-            lockState: DepositoryTypes.BlockchainStateStruct,
-            condition: BytesLike,
-            solution: BytesLike,
-            overrides?: CallOverrides
-        ): Promise<void>
-    }
+  unlock(
+    router: string,
+    deposit: DepositoryTypes.DepositStruct,
+    lockState: DepositoryTypes.BlockchainStateStruct,
+    condition: BytesLike,
+    solution: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-    filters: {
-        'Unlocked(uint256,uint256,uint256)'(
-            currentTimestamp?: null,
-            lockTimestamp?: null,
-            delay?: null
-        ): UnlockedEventFilter
-        Unlocked(currentTimestamp?: null, lockTimestamp?: null, delay?: null): UnlockedEventFilter
-    }
+  callStatic: {
+    decodeCondition(
+      condition: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<TimedUnlocker.ConditionStructOutput>;
 
-    estimateGas: {
-        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+    encodeCondition(
+      c: TimedUnlocker.ConditionStruct,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<BigNumber>
+    unlock(
+      router: string,
+      deposit: DepositoryTypes.DepositStruct,
+      lockState: DepositoryTypes.BlockchainStateStruct,
+      condition: BytesLike,
+      solution: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
-        unlock(
-            router: string,
-            deposit: DepositoryTypes.DepositStruct,
-            lockState: DepositoryTypes.BlockchainStateStruct,
-            condition: BytesLike,
-            solution: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<BigNumber>
-    }
+  filters: {
+    "Unlocked(uint256,uint256,uint256)"(
+      currentTimestamp?: null,
+      lockTimestamp?: null,
+      delay?: null
+    ): UnlockedEventFilter;
+    Unlocked(
+      currentTimestamp?: null,
+      lockTimestamp?: null,
+      delay?: null
+    ): UnlockedEventFilter;
+  };
 
-    populateTransaction: {
-        decodeCondition(condition: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+  estimateGas: {
+    decodeCondition(
+      condition: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-        encodeCondition(c: TimedUnlocker.ConditionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    encodeCondition(
+      c: TimedUnlocker.ConditionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-        unlock(
-            router: string,
-            deposit: DepositoryTypes.DepositStruct,
-            lockState: DepositoryTypes.BlockchainStateStruct,
-            condition: BytesLike,
-            solution: BytesLike,
-            overrides?: Overrides & { from?: string | Promise<string> }
-        ): Promise<PopulatedTransaction>
-    }
+    unlock(
+      router: string,
+      deposit: DepositoryTypes.DepositStruct,
+      lockState: DepositoryTypes.BlockchainStateStruct,
+      condition: BytesLike,
+      solution: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    decodeCondition(
+      condition: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    encodeCondition(
+      c: TimedUnlocker.ConditionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    unlock(
+      router: string,
+      deposit: DepositoryTypes.DepositStruct,
+      lockState: DepositoryTypes.BlockchainStateStruct,
+      condition: BytesLike,
+      solution: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+  };
 }

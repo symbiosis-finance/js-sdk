@@ -68,11 +68,8 @@ export class JupiterTrade extends SymbiosisTrade {
 
     public constructor(params: JupiterTradeParams) {
         super(params)
-
-        const { symbiosis, to } = params
-
-        this.symbiosis = symbiosis
-        this.solanaToPubKey = new PublicKey(to)
+        this.symbiosis = params.symbiosis
+        this.solanaToPubKey = new PublicKey(params.to)
     }
 
     get tradeType(): SymbiosisTradeType {

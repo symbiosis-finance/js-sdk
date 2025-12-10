@@ -24,6 +24,7 @@ import { Portal__factory, Synthesis__factory } from '../contracts'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
+import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
 import type { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { Transit } from '../transit'
@@ -56,19 +57,19 @@ type MetaRouteParams = {
 
 export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
-    public amountInUsd: TokenAmount | undefined
+    public amountInUsd?: TokenAmount
 
     protected from!: Address
     protected to!: Address
-    protected tokenAmountIn!: TokenAmount
-    protected tokenOut!: Token
+    tokenAmountIn!: TokenAmount
+    tokenOut!: Token
     protected slippage!: DetailedSlippage
     protected deadline!: number
     protected revertableAddresses!: { AB: string; BC: string }
 
-    protected tradeA: SymbiosisTrade | undefined
+    protected tradeA?: SymbiosisTrade
     protected transit!: Transit
-    protected tradeC: SymbiosisTrade | undefined
+    protected tradeC?: SymbiosisTrade
 
     protected readonly symbiosis: Symbiosis
     protected synthesisV2!: Synthesis
@@ -179,26 +180,25 @@ export abstract class BaseSwapping {
         const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
         const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountIn
 
-        const promises = []
-        promises.push(this.buildTransit(transitAmountIn, transitAmountInMin).init())
         routes.push({
             provider: 'symbiosis',
             tokens: [this.transitTokenIn, this.transitTokenOut],
         })
         routeType.push('TRANSIT')
-
-        promises.push(
+        const promises = [
+            this.buildTransit(transitAmountIn, transitAmountInMin).init(),
             (async () => {
                 if (this.transitTokenOut.equals(tokenOut)) {
+                    // No need to trade on chain C if a transit token is what the user needs.
                     return
                 }
                 // NOTE actually amountInMin == amountIn, because we don't know the correct amounts
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
                 const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
 
-                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin).init()
-            })()
-        )
+                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin)
+            })(),
+        ] as const
 
         const endTimerTransit = this.symbiosis.createMetricTimer()
         const [transit, tradeC] = await Promise.all(promises)
@@ -209,11 +209,11 @@ export abstract class BaseSwapping {
             tokenOut: this.transitTokenOut,
         })
         this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
-        this.transit = transit as Transit
+        this.transit = transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()
         this.profiler.tick('POST_TRANSIT_1')
-        this.tradeC = tradeC as SymbiosisTrade | undefined
+        this.tradeC = tradeC
 
         if (this.tradeC) {
             routes.push({
@@ -241,7 +241,7 @@ export abstract class BaseSwapping {
 
         await this.transit.applyFees(fee1, fee2)
         if (this.tradeC) {
-            this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
+            await this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
         }
         this.profiler.tick('PATCHING')
 
@@ -520,7 +520,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
+            preferOneInchUsage: isUseOneInchOnly(this),
         })
     }
 
@@ -543,17 +543,18 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount) {
+    // Return initialized SymbiosisTrade.
+    protected async buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount): Promise<SymbiosisTrade> {
         if (WrapTrade.isSupported(amountIn.token, this.tokenOut)) {
-            return new WrapTrade({
+            // We need to just wrap or unwrap the token.
+            return await new WrapTrade({
                 tokenAmountIn: amountIn,
                 tokenAmountInMin: amountInMin,
                 tokenOut: this.tokenOut,
                 to: this.to,
-            })
+            }).init()
         }
-
-        return new AggregatorTrade({
+        const aggTrade = await new AggregatorTrade({
             tokenAmountIn: amountIn,
             tokenAmountInMin: amountInMin,
             tokenOut: this.tokenOut,
@@ -564,8 +565,23 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
-        })
+            preferOneInchUsage: isUseOneInchOnly(this),
+        }).init()
+        const dep = await this.symbiosis.depository(this.transitTokenOut.chainId)
+        if (dep) {
+            const depositParams = {
+                tokenAmountIn: aggTrade.tokenAmountIn,
+                to: aggTrade.to,
+                amountOut: aggTrade.amountOut,
+                amountOutMin: aggTrade.amountOutMin,
+                extraBranches: [],
+                ...dep.makeTargetCall(aggTrade),
+            }
+            // If there is Depository on C chain then use aggTrade for price detection.
+            return await new DepositoryTrade(aggTrade, dep, depositParams, aggTrade).init()
+        } else {
+            return aggTrade
+        }
     }
 
     protected metaBurnSyntheticToken(fee1: TokenAmount): [string, string] {

@@ -36,7 +36,7 @@ export async function octoPoolSwap({
         tokenAmountIn,
         tokenAmountInMin: tokenAmountIn,
         tokenOut,
-        omniPoolConfig: tokenInPool,
+        poolConfig: tokenInPool,
         to,
         slippage,
         deadline,

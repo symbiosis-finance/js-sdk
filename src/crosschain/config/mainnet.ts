@@ -900,6 +900,20 @@ export const config: Config = {
             portal: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             fabric: '0x2eE9559387b806E88fd46b9DA160D64A29CE7Da0',
             multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0x84b10469dB07446D5fc7156aeFdd6B7117108A73',
+                swapUnlocker: '0x735b0C4c6CECA292A775E4183f0F0e18BB17DD61',
+                branchedUnlocker: '0x0b58028dc4fbb8D403ED21Ce57343559FF15daB3',
+                timedUnlocker: '0x859aF64068f5Dd2c6dcFf7F31c93f42Dbb03DD84',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.OPTIMISM_MAINNET,

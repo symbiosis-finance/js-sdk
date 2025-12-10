@@ -30,7 +30,7 @@ describe('OctoPoolTrade', () => {
             to,
             slippage,
             symbiosis,
-            omniPoolConfig,
+            poolConfig: omniPoolConfig,
             deadline,
         })
         test('tradeType', () => {
@@ -49,7 +49,7 @@ describe('OctoPoolTrade', () => {
             to,
             slippage,
             symbiosis,
-            omniPoolConfig,
+            poolConfig: omniPoolConfig,
             deadline,
         })
         await trade.init()
@@ -102,7 +102,7 @@ describe('OctoPoolTrade', () => {
         // was 90, now 40
         const newAmountInRawMin = BigNumber.from(40).mul(DECIMALS)
         const newAmountInMin = new TokenAmount(tokenAmountIn.token, newAmountInRawMin.toString())
-        trade.applyAmountIn(newAmountIn, newAmountInMin)
+        await trade.applyAmountIn(newAmountIn, newAmountInMin)
 
         test('amountIn', () => {
             expect(trade.tokenAmountIn.equalTo(newAmountIn)).toBeTruthy()

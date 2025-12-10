@@ -1,8 +1,13 @@
 import { ChainId } from '../constants'
-import type { Token } from '../entities'
+import type { Token, TokenAmount } from '../entities'
 
-export function isUseOneInchOnly(tokenIn: Token, tokenOut: Token): boolean {
-    return [tokenIn.chainId, tokenOut.chainId].some((i) => i === ChainId.TRON_MAINNET)
+interface TokensInAndOut {
+    tokenAmountIn: TokenAmount
+    tokenOut: Token
+}
+
+export function isUseOneInchOnly(context: TokensInAndOut): boolean {
+    return [context.tokenAmountIn.token.chainId, context.tokenOut.chainId].some((i) => i === ChainId.TRON_MAINNET)
 }
 
 export function getAmountBucket(amount: number): number {
