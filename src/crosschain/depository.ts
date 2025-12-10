@@ -72,6 +72,10 @@ export class DepositoryContext {
         }
     }
 
+    private rmConditionMethod(data: string): string {
+        return '0x' + data.slice(10)
+    }
+
     makeTargetCall(context: { tokenOut: Token; to: Address }): CallData {
         return context.tokenOut.isNative
             ? this.nativeUnwrapCall(context.tokenOut, context.to)
@@ -103,10 +107,10 @@ export class DepositoryContext {
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
             }
-            const swapCondition = await this.swapUnlocker.encodeCondition(condData)
+            const swapCondition = this.swapUnlocker.interface.encodeFunctionData('encodeCondition', [condData])
             branches.push({
                 unlocker: this.swapUnlocker.address,
-                condition: swapCondition,
+                condition: this.rmConditionMethod(swapCondition),
             })
         }
 
@@ -119,11 +123,11 @@ export class DepositoryContext {
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
             }
-            const swapCondition = await this.swapUnlocker.encodeCondition(condData)
+            const swapCondition = this.swapUnlocker.interface.encodeFunctionData('encodeCondition', [condData])
             branches.push(
-                await this.makeTimed(this.cfg.minAmountDelay, {
+                this.makeTimed(this.cfg.minAmountDelay, {
                     unlocker: this.swapUnlocker.address,
-                    condition: swapCondition,
+                    condition: this.rmConditionMethod(swapCondition),
                 })
             )
         }
@@ -131,15 +135,17 @@ export class DepositoryContext {
         // Transit token withdraw (i.e. syBTC)
         {
             const withdrawCall = this.erc20TransferCall(tokenAmountIn.token, to)
-            const withdrawCondition = await this.swapUnlocker.encodeCondition({
-                outToken: fromToken.address, // destination token
-                outMinAmount: tokenAmountIn.toBigInt(),
-                ...withdrawCall,
-            })
+            const withdrawCondition = this.swapUnlocker.interface.encodeFunctionData('encodeCondition', [
+                {
+                    outToken: fromToken.address, // destination token
+                    outMinAmount: tokenAmountIn.toBigInt(),
+                    ...withdrawCall,
+                },
+            ])
             branches.push(
-                await this.makeTimed(this.cfg.withdrawDelay, {
+                this.makeTimed(this.cfg.withdrawDelay, {
                     unlocker: this.swapUnlocker.address,
-                    condition: withdrawCondition,
+                    condition: this.rmConditionMethod(withdrawCondition),
                 })
             )
         }
@@ -147,7 +153,7 @@ export class DepositoryContext {
         branches.push(...extraBranches)
 
         // Compose all branches.
-        const condition = await this.branchedUnlocker.encodeCondition({ branches })
+        const condition = this.branchedUnlocker.interface.encodeFunctionData('encodeCondition', [{ branches }])
         const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
         const deposit = {
             token: fromToken.address, // source token
@@ -156,13 +162,13 @@ export class DepositoryContext {
         }
         const unlocker = {
             unlocker: this.branchedUnlocker.address,
-            condition: condition,
+            condition: this.rmConditionMethod(condition),
         }
-        const lockTx = await this.depository.populateTransaction.lock(deposit, unlocker)
+        const lockData = this.depository.interface.encodeFunctionData('lock', [deposit, unlocker])
 
         return {
             routerAddress: this.depository.address as Address,
-            callData: lockTx.data!,
+            callData: lockData,
             callDataOffset: 4 + 32 + 32, // Offset to `amount` field in DepositoryTypes.Deposit
             minReceivedOffset: 123, // FIXME: calculate correct offset.
             route: [tokenAmountIn.token, amountOut.token],
@@ -174,18 +180,17 @@ export class DepositoryContext {
         }
     }
 
-    async makeTimed(
-        delay: number,
-        next: DepositoryTypes.UnlockConditionStruct
-    ): Promise<DepositoryTypes.UnlockConditionStruct> {
+    makeTimed(delay: number, next: DepositoryTypes.UnlockConditionStruct): DepositoryTypes.UnlockConditionStruct {
         if (this.cfg.withdrawDelay === 0) return next
-        const timedWithdrawCondition = await this.timedUnlocker.encodeCondition({
-            next,
-            delay,
-        })
+        const timedWithdrawCondition = this.timedUnlocker.interface.encodeFunctionData('encodeCondition', [
+            {
+                next,
+                delay,
+            },
+        ])
         return {
             unlocker: this.timedUnlocker.address,
-            condition: timedWithdrawCondition,
+            condition: this.rmConditionMethod(timedWithdrawCondition),
         }
     }
 }
