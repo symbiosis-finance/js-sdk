@@ -1043,4 +1043,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
         },
     }),
+    [ChainId.MONAD_MAINNET]: new Token({
+        chainId: ChainId.MONAD_MAINNET,
+        address: '0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A',
+        decimals: 18,
+        symbol: 'WMON',
+        isNative: false,
+        name: 'Wrapped MON',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
+        },
+    }),
 }

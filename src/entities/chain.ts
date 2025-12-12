@@ -818,6 +818,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
         },
     }),
+    new Chain({
+        id: ChainId.MONAD_MAINNET,
+        name: 'Monad',
+        disabled: false,
+        explorer: 'https://monadscan.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

@@ -157,6 +157,10 @@ const OPEN_OCEAN_NETWORKS: Partial<Record<ChainId, OpenOceanChain>> = {
         slug: 'hyperevm',
         nativeTokenAddress: AddressZero,
     },
+    [ChainId.MONAD_MAINNET]: {
+        slug: 'monad',
+        nativeTokenAddress: AddressZero,
+    },
 }
 
 export class OpenOceanTrade extends SymbiosisTrade {

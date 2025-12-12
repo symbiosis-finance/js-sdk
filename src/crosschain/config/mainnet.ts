@@ -626,8 +626,8 @@ export const config: Config = {
         },
         {
             id: ChainId.KAVA_MAINNET,
-            rpc: 'https://rpc.ankr.com/kava_evm',
-            spareRpcs: ['https://kava-evm-rpc.publicnode.com', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
+            rpc: 'https://kava-evm-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.ankr.com/kava_evm', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -711,8 +711,12 @@ export const config: Config = {
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
-            rpc: 'https://mainnet.era.zksync.io',
-            spareRpcs: ['https://rpc.ankr.com/zksync_era', 'https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
+            rpc: 'https://zksync.drpc.org',
+            spareRpcs: [
+                'https://rpc.ankr.com/zksync_era',
+                'https://zksync.meowrpc.com',
+                'https://mainnet.era.zksync.io',
+            ],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -985,12 +989,8 @@ export const config: Config = {
         },
         {
             id: ChainId.POLYGON_ZK,
-            rpc: 'https://rpc.ankr.com/polygon_zkevm',
-            spareRpcs: [
-                'https://polygon-zkevm.drpc.org',
-                'https://zkevm-rpc.com',
-                'https://polygon-zkevm-mainnet.public.blastapi.io',
-            ],
+            rpc: 'https://polygon-zkevm.drpc.org',
+            spareRpcs: ['https://zkevm-rpc.com', 'https://polygon-zkevm-mainnet.public.blastapi.io'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1859,8 +1859,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BSQUARED_MAINNET,
-            rpc: 'https://rpc.bsquared.network',
-            spareRpcs: ['https://b2-mainnet.alt.technology'],
+            rpc: 'https://b2-mainnet.alt.technology',
+            spareRpcs: ['https://rpc.bsquared.network'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -2169,8 +2169,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BERACHAIN_MAINNET,
-            rpc: 'https://rpc.berachain.com',
-            spareRpcs: [],
+            rpc: 'https://berachain-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.berachain.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -2434,6 +2434,34 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.MONAD_MAINNET,
+            rpc: 'https://rpc.monad.xyz',
+            spareRpcs: ['https://rpc1.monad.xyz', 'https://rpc2.monad.xyz', 'https://monad-mainnet.drpc.org'],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x754704Bc059F8C67012fEd69BC8A327a5aafb603',
+                    chainId: ChainId.MONAD_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
                     },
                 },
             ],

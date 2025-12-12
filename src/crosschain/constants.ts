@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants'
 import { Percent, Token, WETH } from '../entities'
-import { EvmAddress } from './types'
+import type { EvmAddress } from './types'
 
 export const CROSS_CHAIN_ID = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
@@ -86,6 +86,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.KATANA_MAINNET]: [WETH[ChainId.KATANA_MAINNET]],
     [ChainId.APECHAIN_MAINNET]: [WETH[ChainId.APECHAIN_MAINNET]],
     [ChainId.PLASMA_MAINNET]: [WETH[ChainId.PLASMA_MAINNET]],
+    [ChainId.MONAD_MAINNET]: [WETH[ChainId.MONAD_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -471,6 +472,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.KATANA_MAINNET]: [],
     [ChainId.APECHAIN_MAINNET]: [],
     [ChainId.PLASMA_MAINNET]: [],
+    [ChainId.MONAD_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -618,6 +620,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.PLASMA_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.PLASMA_MAINNET],
     ],
+    [ChainId.MONAD_MAINNET]: [
+        WETH[ChainId.MONAD_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MONAD_MAINNET],
+    ],
 }
 
 /**
@@ -710,6 +716,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: EvmAddress } = {
     [ChainId.KATANA_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
     [ChainId.APECHAIN_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.PLASMA_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
+    [ChainId.MONAD_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, EvmAddress>> = {
