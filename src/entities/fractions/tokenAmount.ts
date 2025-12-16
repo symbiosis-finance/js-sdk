@@ -62,7 +62,7 @@ export class TokenAmount extends Fraction {
         return BigInt(this.raw.toString())
     }
 
-    public convertTo(other: Token, price: number): TokenAmount {
+    public convertTo(other: Token, price: Decimal): TokenAmount {
         const dec = new Decimal(10).pow(other.decimals)
         const thisD = this.toDecimal()
         return new TokenAmount(other, thisD.mul(price).mul(dec).toInteger().toFixed())

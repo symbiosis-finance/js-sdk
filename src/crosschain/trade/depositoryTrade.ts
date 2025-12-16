@@ -28,13 +28,10 @@ export class DepositoryTrade extends SymbiosisTrade {
             await this.baseTrade.applyAmountIn(newAmountIn, newAmountInMin)
 
             // overwrite depositParams with a new amountIn after patching
-            const { tokenAmountIn, to, amountOut, amountOutMin } = this.baseTrade
+            const { tokenAmountIn } = this.baseTrade
             this.depositParams = {
                 ...this.depositParams,
                 tokenAmountIn,
-                to,
-                amountOut,
-                amountOutMin,
             }
             await this.init()
         } else {

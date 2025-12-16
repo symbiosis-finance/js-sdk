@@ -9,6 +9,8 @@ type NotVoid<T> = void extends T ? never : T
 export class Cache {
     private data = new Map<string, CacheItem>()
 
+    constructor(public maxSize?: number) {}
+
     async get<T>(
         key: string[],
         func: () => Promise<NotVoid<T>>,
@@ -23,11 +25,12 @@ export class Cache {
             else return cached.result as T
         }
         const set = (result?: T, exception?: unknown) => {
-            this.data.set(stringKey, {
-                result: result,
-                exception: exception,
-                expiresAt: now + ttl,
-            })
+            if (this.maxSize === undefined || this.data.size < this.maxSize)
+                this.data.set(stringKey, {
+                    result: result,
+                    exception: exception,
+                    expiresAt: now + ttl,
+                })
         }
 
         try {

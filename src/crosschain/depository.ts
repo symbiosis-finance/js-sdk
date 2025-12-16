@@ -2,27 +2,30 @@ import { randomBytes } from 'crypto'
 import type { BigNumberish, BytesLike } from 'ethers'
 
 import type { Token, TokenAmount } from '../entities'
-import { Percent, wrappedAmount, wrappedToken } from '../entities'
+import { Percent, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
 import type {
     BranchedUnlocker,
     BtcRefundUnlocker,
     IDepository,
     IRouter,
-    SwapUnlocker,
+    TimescaledPricedSwapUnlocker,
     TimedUnlocker,
+    WithdrawUnlocker,
 } from './contracts'
 import { ERC20__factory, IRouter__factory } from './contracts'
 import type { DepositoryTypes } from './contracts/IDepository'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
+import Decimal from 'decimal.js-light'
 
 interface DepositoryContext_ {
     cfg: DepositoryConfig
     depository: IDepository
     router: IRouter
     branchedUnlocker: BranchedUnlocker
-    swapUnlocker: SwapUnlocker
+    timescaledPricedSwapUnlocker: TimescaledPricedSwapUnlocker
+    withdrawUnlocker: WithdrawUnlocker
     timedUnlocker: TimedUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
 }
@@ -36,13 +39,31 @@ interface CallData {
     targetOffset: BigNumberish
 }
 
-export interface DepositParameters extends CallData {
-    readonly to: Address
+export interface Prices {
+    bestPrice: Decimal
+    slippedPrice: Decimal
+}
+
+export interface TokenAmounts {
+    amountOut: TokenAmount
+    amountOutMin: TokenAmount
+}
+
+export function amountsToPrices(outAmounts: TokenAmounts, amountIn: TokenAmount): Prices {
+    return {
+        bestPrice: outAmounts.amountOut.toDecimal().dividedBy(amountIn.toDecimal()),
+        slippedPrice: outAmounts.amountOutMin.toDecimal().dividedBy(amountIn.toDecimal()),
+    }
+}
+
+export interface DepositParameters extends CallData, Prices {
+    readonly to: Address // receiver
+    readonly outToken: Token
     readonly tokenAmountIn: TokenAmount
-    readonly amountOut: TokenAmount
-    readonly amountOutMin: TokenAmount
     readonly extraBranches: DepositoryTypes.UnlockConditionStruct[]
 }
+
+const WAD = new Decimal(10).pow(18)
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class DepositoryContext {
@@ -86,65 +107,45 @@ export class DepositoryContext {
     async buildDepositCall({
         to,
         tokenAmountIn,
-        amountOut,
-        amountOutMin,
+        outToken,
+        bestPrice,
+        slippedPrice,
         target,
         targetCalldata,
         targetOffset,
         extraBranches,
     }: DepositParameters): Promise<SymbiosisTradeOutResult> {
-        const fromToken = tokenAmountIn.token
-        const toToken = wrappedAmount(amountOut).token
-
         const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
         // Normal swap.
         {
             const condData = {
-                outToken: toToken.address, // destination token
-                outMinAmount: amountOut.toBigInt(),
+                outToken: wrappedToken(outToken).address, // destination token
+                startMinPrice: bestPrice.mul(WAD).toFixed(0),
+                duration: this.cfg.minAmountDelay,
+                discount: bestPrice.sub(slippedPrice).mul(WAD).toFixed(0),
                 target, // target to call after validation
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
             }
-            const swapCondition = this.swapUnlocker.interface.encodeFunctionData('encodeCondition', [condData])
+            const swapCondition = this.timescaledPricedSwapUnlocker.interface.encodeFunctionData('encodeCondition', [
+                condData,
+            ])
             branches.push({
-                unlocker: this.swapUnlocker.address,
+                unlocker: this.timescaledPricedSwapUnlocker.address,
                 condition: this.rmConditionMethod(swapCondition),
             })
         }
 
-        // Minimal swap - with maximal slippage.
-        {
-            const condData = {
-                outToken: toToken.address, // destination token
-                outMinAmount: amountOutMin.toBigInt(),
-                target, // target to call after validation
-                targetCalldata, // calldata to call on target.
-                targetOffset, // offset to patch-in amountTo in targetCalldata
-            }
-            const swapCondition = this.swapUnlocker.interface.encodeFunctionData('encodeCondition', [condData])
-            branches.push(
-                this.makeTimed(this.cfg.minAmountDelay, {
-                    unlocker: this.swapUnlocker.address,
-                    condition: this.rmConditionMethod(swapCondition),
-                })
-            )
-        }
-
-        // Transit token withdraw (i.e. syBTC)
+        // Transit token (like syBTC) withdraw.
         {
             const withdrawCall = this.erc20TransferCall(tokenAmountIn.token, to)
-            const withdrawCondition = this.swapUnlocker.interface.encodeFunctionData('encodeCondition', [
-                {
-                    outToken: fromToken.address, // destination token
-                    outMinAmount: tokenAmountIn.toBigInt(),
-                    ...withdrawCall,
-                },
+            const withdrawCondition = this.withdrawUnlocker.interface.encodeFunctionData('encodeCondition', [
+                withdrawCall,
             ])
             branches.push(
                 this.makeTimed(this.cfg.withdrawDelay, {
-                    unlocker: this.swapUnlocker.address,
+                    unlocker: this.withdrawUnlocker.address,
                     condition: this.rmConditionMethod(withdrawCondition),
                 })
             )
@@ -156,7 +157,7 @@ export class DepositoryContext {
         const condition = this.branchedUnlocker.interface.encodeFunctionData('encodeCondition', [{ branches }])
         const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
         const deposit = {
-            token: fromToken.address, // source token
+            token: tokenAmountIn.token.address, // source token
             amount: tokenAmountIn.toBigInt(), // amount of fromToken
             nonce: nonce, // To be able to create identical deposits
         }
@@ -171,10 +172,10 @@ export class DepositoryContext {
             callData: lockData,
             callDataOffset: 4 + 32 + 32, // Offset to `amount` field in DepositoryTypes.Deposit
             minReceivedOffset: 123, // FIXME: calculate correct offset.
-            route: [tokenAmountIn.token, amountOut.token],
+            route: [tokenAmountIn.token, outToken],
             value: 0n,
-            amountOut: amountOut,
-            amountOutMin: amountOutMin,
+            amountOut: tokenAmountIn.convertTo(outToken, bestPrice),
+            amountOutMin: tokenAmountIn.convertTo(outToken, slippedPrice),
             priceImpact: new Percent('0', BIPS_BASE),
             // TODO: add functionSelector with deposit(...) for Tron support.
         }

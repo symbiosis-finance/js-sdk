@@ -17,34 +17,17 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export declare namespace SwapUnlocker {
+export declare namespace WithdrawUnlocker {
   export type ConditionStruct = {
-    outToken: string;
-    outMinAmount: BigNumberish;
     target: string;
     targetCalldata: BytesLike;
     targetOffset: BigNumberish;
   };
 
-  export type ConditionStructOutput = [
-    string,
-    BigNumber,
-    string,
-    string,
-    BigNumber
-  ] & {
-    outToken: string;
-    outMinAmount: BigNumber;
+  export type ConditionStructOutput = [string, string, BigNumber] & {
     target: string;
     targetCalldata: string;
     targetOffset: BigNumber;
-  };
-
-  export type SolutionStruct = { swapper: string; swapCalldata: BytesLike };
-
-  export type SolutionStructOutput = [string, string] & {
-    swapper: string;
-    swapCalldata: string;
   };
 }
 
@@ -72,12 +55,11 @@ export declare namespace DepositoryTypes {
   };
 }
 
-export interface SwapUnlockerInterface extends utils.Interface {
-  contractName: "SwapUnlocker";
+export interface WithdrawUnlockerInterface extends utils.Interface {
+  contractName: "WithdrawUnlocker";
   functions: {
     "decodeCondition(bytes)": FunctionFragment;
-    "encodeCondition((address,uint256,address,bytes,uint256))": FunctionFragment;
-    "encodeSolution((address,bytes))": FunctionFragment;
+    "encodeCondition((address,bytes,uint256))": FunctionFragment;
     "unlock(address,(address,uint256,uint256),(uint256,uint256),bytes,bytes)": FunctionFragment;
   };
 
@@ -87,11 +69,7 @@ export interface SwapUnlockerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "encodeCondition",
-    values: [SwapUnlocker.ConditionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "encodeSolution",
-    values: [SwapUnlocker.SolutionStruct]
+    values: [WithdrawUnlocker.ConditionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "unlock",
@@ -112,39 +90,29 @@ export interface SwapUnlockerInterface extends utils.Interface {
     functionFragment: "encodeCondition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "encodeSolution",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
 
   events: {
-    "Swap(address,uint256,uint256,address,address)": EventFragment;
+    "Withdraw(address,uint256,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Swap"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
-export type SwapEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string],
-  {
-    outToken: string;
-    outMinAmount: BigNumber;
-    outAmount: BigNumber;
-    swapper: string;
-    target: string;
-  }
+export type WithdrawEvent = TypedEvent<
+  [string, BigNumber, string],
+  { outToken: string; outAmount: BigNumber; target: string }
 >;
 
-export type SwapEventFilter = TypedEventFilter<SwapEvent>;
+export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 
-export interface SwapUnlocker extends BaseContract {
-  contractName: "SwapUnlocker";
+export interface WithdrawUnlocker extends BaseContract {
+  contractName: "WithdrawUnlocker";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SwapUnlockerInterface;
+  interface: WithdrawUnlockerInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -169,24 +137,19 @@ export interface SwapUnlocker extends BaseContract {
     decodeCondition(
       condition: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[SwapUnlocker.ConditionStructOutput]>;
+    ): Promise<[WithdrawUnlocker.ConditionStructOutput]>;
 
     encodeCondition(
-      c: SwapUnlocker.ConditionStruct,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    encodeSolution(
-      s: SwapUnlocker.SolutionStruct,
+      c: WithdrawUnlocker.ConditionStruct,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     unlock(
       router: string,
       deposit: DepositoryTypes.DepositStruct,
-      lockState: DepositoryTypes.BlockchainStateStruct,
+      arg2: DepositoryTypes.BlockchainStateStruct,
       condition: BytesLike,
-      solution: BytesLike,
+      arg4: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -194,24 +157,19 @@ export interface SwapUnlocker extends BaseContract {
   decodeCondition(
     condition: BytesLike,
     overrides?: CallOverrides
-  ): Promise<SwapUnlocker.ConditionStructOutput>;
+  ): Promise<WithdrawUnlocker.ConditionStructOutput>;
 
   encodeCondition(
-    c: SwapUnlocker.ConditionStruct,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  encodeSolution(
-    s: SwapUnlocker.SolutionStruct,
+    c: WithdrawUnlocker.ConditionStruct,
     overrides?: CallOverrides
   ): Promise<string>;
 
   unlock(
     router: string,
     deposit: DepositoryTypes.DepositStruct,
-    lockState: DepositoryTypes.BlockchainStateStruct,
+    arg2: DepositoryTypes.BlockchainStateStruct,
     condition: BytesLike,
-    solution: BytesLike,
+    arg4: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -219,43 +177,34 @@ export interface SwapUnlocker extends BaseContract {
     decodeCondition(
       condition: BytesLike,
       overrides?: CallOverrides
-    ): Promise<SwapUnlocker.ConditionStructOutput>;
+    ): Promise<WithdrawUnlocker.ConditionStructOutput>;
 
     encodeCondition(
-      c: SwapUnlocker.ConditionStruct,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    encodeSolution(
-      s: SwapUnlocker.SolutionStruct,
+      c: WithdrawUnlocker.ConditionStruct,
       overrides?: CallOverrides
     ): Promise<string>;
 
     unlock(
       router: string,
       deposit: DepositoryTypes.DepositStruct,
-      lockState: DepositoryTypes.BlockchainStateStruct,
+      arg2: DepositoryTypes.BlockchainStateStruct,
       condition: BytesLike,
-      solution: BytesLike,
+      arg4: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    "Swap(address,uint256,uint256,address,address)"(
+    "Withdraw(address,uint256,address)"(
       outToken?: null,
-      outMinAmount?: null,
       outAmount?: null,
-      swapper?: null,
       target?: null
-    ): SwapEventFilter;
-    Swap(
+    ): WithdrawEventFilter;
+    Withdraw(
       outToken?: null,
-      outMinAmount?: null,
       outAmount?: null,
-      swapper?: null,
       target?: null
-    ): SwapEventFilter;
+    ): WithdrawEventFilter;
   };
 
   estimateGas: {
@@ -265,21 +214,16 @@ export interface SwapUnlocker extends BaseContract {
     ): Promise<BigNumber>;
 
     encodeCondition(
-      c: SwapUnlocker.ConditionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    encodeSolution(
-      s: SwapUnlocker.SolutionStruct,
+      c: WithdrawUnlocker.ConditionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     unlock(
       router: string,
       deposit: DepositoryTypes.DepositStruct,
-      lockState: DepositoryTypes.BlockchainStateStruct,
+      arg2: DepositoryTypes.BlockchainStateStruct,
       condition: BytesLike,
-      solution: BytesLike,
+      arg4: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -291,21 +235,16 @@ export interface SwapUnlocker extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     encodeCondition(
-      c: SwapUnlocker.ConditionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    encodeSolution(
-      s: SwapUnlocker.SolutionStruct,
+      c: WithdrawUnlocker.ConditionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     unlock(
       router: string,
       deposit: DepositoryTypes.DepositStruct,
-      lockState: DepositoryTypes.BlockchainStateStruct,
+      arg2: DepositoryTypes.BlockchainStateStruct,
       condition: BytesLike,
-      solution: BytesLike,
+      arg4: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

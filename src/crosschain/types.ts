@@ -44,11 +44,12 @@ export type PriceEstimationConfig = {
 }
 
 // Addresses of Depository contracts
-export type DepositoryConfig = {
+export interface DepositoryConfig {
     depository: EvmAddress
-    swapUnlocker: EvmAddress
+    withdrawUnlocker: EvmAddress
     branchedUnlocker: EvmAddress
     timedUnlocker: EvmAddress
+    timescaledPricedSwapUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress
     priceEstimation: PriceEstimationConfig
     refundDelay?: number // Minimal delay before refund

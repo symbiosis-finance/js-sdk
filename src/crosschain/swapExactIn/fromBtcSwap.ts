@@ -12,7 +12,8 @@ import { getBtcPortalFee, getPkScript, isBtcChainId, isEvmChainId, isTronChainId
 import { BIPS_BASE } from '../constants'
 import { MetaRouter__factory, SymBtc__factory } from '../contracts'
 import type { MetaRouteStructs } from '../contracts/MetaRouter'
-import type { DepositoryContext, DepositParameters } from '../depository'
+import type { Prices, DepositoryContext, DepositParameters } from '../depository'
+import { amountsToPrices } from '../depository'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
@@ -36,6 +37,7 @@ import type {
 import { isUseOneInchOnly } from '../utils'
 import { crosschainSwap } from './crosschainSwap'
 import { theBest } from './utils'
+import Decimal from 'decimal.js-light'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -348,26 +350,25 @@ type SwapResultCrossChain = SwapResult & {
     result: SwapExactInResult
 }
 
-interface TokenOutAmounts {
-    tokenAmountOut: TokenAmount
-    tokenAmountOutMin: TokenAmount
+async function getCoingeckoPrice(tokenIn: Token, tokenOut: Token, symbiosis: Symbiosis): Promise<Decimal> {
+    const coinGecko = symbiosis.coinGecko
+    const [inPrice, outPrice] = await Promise.all([
+        coinGecko.getTokenPriceCached(tokenIn),
+        coinGecko.getTokenPriceCached(tokenOut),
+    ])
+    return new Decimal(inPrice).dividedBy(outPrice)
 }
 
-async function estimateAmountOutUsingCoingecko(
+async function estimatePricesUsingCoingecko(
     tokenAmountIn: TokenAmount,
     tokenOut: Token,
     symbiosis: Symbiosis,
     cfg: PriceEstimationConfig
-): Promise<TokenOutAmounts> {
-    const coinGecko = symbiosis.coinGecko
-    const [inPrice, outPrice] = await Promise.all([
-        coinGecko.getTokenPriceCached(tokenAmountIn.token),
-        coinGecko.getTokenPriceCached(tokenOut),
-    ])
-    const price = inPrice / outPrice
+): Promise<Prices> {
+    const price = await getCoingeckoPrice(tokenAmountIn.token, tokenOut, symbiosis)
     return {
-        tokenAmountOut: tokenAmountIn.convertTo(tokenOut, price * (1 - cfg.slippageNorm)),
-        tokenAmountOutMin: tokenAmountIn.convertTo(tokenOut, price * (1 - cfg.slippageMax)),
+        bestPrice: price.mul(1 - cfg.slippageNorm),
+        slippedPrice: price.mul(1 - cfg.slippageMax),
     }
 }
 
@@ -384,25 +385,19 @@ async function makeAggregatorTrade(context: SwapExactInParams, tokenAmountIn: To
     return aggregatorTrade
 }
 
-async function estimateAmountOutUsingAggregators(
-    context: SwapExactInParams,
-    tokenAmountIn: TokenAmount
-): Promise<TokenOutAmounts> {
+async function estimatePricesUsingAggregators(context: SwapExactInParams, tokenAmountIn: TokenAmount): Promise<Prices> {
     const aggregatorTrade = await makeAggregatorTrade(context, tokenAmountIn)
-    return {
-        tokenAmountOut: aggregatorTrade.amountOut,
-        tokenAmountOutMin: aggregatorTrade.amountOutMin,
-    }
+    return amountsToPrices(aggregatorTrade, tokenAmountIn)
 }
 
-async function estimateAmountOut(
+async function estimatePrices(
     context: SwapExactInParams,
     tokenAmountIn: TokenAmount,
     dep: DepositoryContext
-): Promise<TokenOutAmounts> {
+): Promise<Prices> {
     if (dep.cfg.priceEstimation.enabled) {
         try {
-            return await estimateAmountOutUsingCoingecko(
+            return await estimatePricesUsingCoingecko(
                 tokenAmountIn,
                 context.tokenOut,
                 context.symbiosis,
@@ -413,7 +408,7 @@ async function estimateAmountOut(
         }
     }
     // Price estimation disabled - fallback to aggregators.
-    return estimateAmountOutUsingAggregators(context, tokenAmountIn)
+    return estimatePricesUsingAggregators(context, tokenAmountIn)
 }
 
 function tradeToMulticall(trade: SymbiosisTrade): MultiCallItem {
@@ -446,7 +441,7 @@ async function buildOnChainSwap(
     let trade: SymbiosisTrade
     const dep = await symbiosis.depository(syBtcAmount.token.chainId)
     if (dep) {
-        const { tokenAmountOut, tokenAmountOutMin } = await estimateAmountOut(context, syBtcAmount, dep)
+        const prices = await estimatePrices(context, syBtcAmount, dep)
         trade = await buildBtcDepositCall(dep, {
             tradeParams: {
                 ...context,
@@ -459,8 +454,8 @@ async function buildOnChainSwap(
                 to: context.to,
                 extraBranches: [],
                 tokenAmountIn: syBtcAmount,
-                amountOut: tokenAmountOut,
-                amountOutMin: tokenAmountOutMin,
+                outToken: context.tokenOut,
+                ...prices,
                 ...dep.makeTargetCall(context),
             },
         })
@@ -507,8 +502,8 @@ async function buildCrossChainSwap(
                 depositParams: {
                     ...context,
                     tokenAmountIn: syBtcAmount,
-                    amountOut: swapExactInResult.tradeA.amountOut,
-                    amountOutMin: swapExactInResult.tradeA.amountOutMin,
+                    outToken: swapExactInResult.tradeA.amountOut.token,
+                    ...amountsToPrices(swapExactInResult.tradeA, syBtcAmount),
                     target: tx.relayRecipient as NonEmptyAddress,
                     targetCalldata: tx.otherSideCalldata,
                     targetOffset: 100n, // metaSynthesize struct size
@@ -594,7 +589,7 @@ async function buildBtcDepositCall(
             refundAddress: refundScript,
         })
         depositParams.extraBranches.push(
-            await dep.makeTimed(dep.cfg.refundDelay, {
+            dep.makeTimed(dep.cfg.refundDelay, {
                 unlocker: dep.btcRefundUnlocker.address,
                 condition: btcRefundCondition,
             })

@@ -48,10 +48,11 @@ import {
     OmniPool__factory,
     OmniPoolOracle__factory,
     Portal__factory,
-    SwapUnlocker__factory,
     Synthesis__factory,
     TimedUnlocker__factory,
+    TimescaledPricedSwapUnlocker__factory,
     TonBridge__factory,
+    WithdrawUnlocker__factory,
 } from './contracts'
 import { DepositoryContext } from './depository'
 import { RevertPending } from './revert'
@@ -502,12 +503,16 @@ export class Symbiosis {
                 cfg,
                 depository,
                 router: IRouter__factory.connect(routerAddress, signerOrProvider),
-                swapUnlocker: SwapUnlocker__factory.connect(cfg.swapUnlocker, signerOrProvider),
                 btcRefundUnlocker: cfg.btcRefundUnlocker
                     ? BtcRefundUnlocker__factory.connect(cfg.btcRefundUnlocker, signerOrProvider)
                     : undefined,
                 timedUnlocker: TimedUnlocker__factory.connect(cfg.timedUnlocker, signerOrProvider),
                 branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
+                timescaledPricedSwapUnlocker: TimescaledPricedSwapUnlocker__factory.connect(
+                    cfg.timescaledPricedSwapUnlocker,
+                    signerOrProvider
+                ),
+                withdrawUnlocker: WithdrawUnlocker__factory.connect(cfg.withdrawUnlocker, signerOrProvider),
             })
         })
     }

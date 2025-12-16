@@ -42,6 +42,8 @@ import type {
     TradeAContext,
 } from '../types'
 import { isUseOneInchOnly } from '../utils'
+import type { DepositParameters } from '../depository'
+import { amountsToPrices } from '../depository'
 
 type MetaRouteParams = {
     amount: string
@@ -572,11 +574,11 @@ export abstract class BaseSwapping {
             const depositParams = {
                 tokenAmountIn: aggTrade.tokenAmountIn,
                 to: aggTrade.to,
-                amountOut: aggTrade.amountOut,
-                amountOutMin: aggTrade.amountOutMin,
+                outToken: aggTrade.amountOut.token,
+                ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
                 extraBranches: [],
                 ...dep.makeTargetCall(aggTrade),
-            }
+            } as DepositParameters
             // If there is Depository on C chain then use aggTrade for price detection.
             return await new DepositoryTrade(aggTrade, dep, depositParams, aggTrade).init()
         } else {
