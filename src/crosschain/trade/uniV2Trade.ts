@@ -26,8 +26,8 @@ import {
     HyperSwapRouter__factory,
     KavaRouter__factory,
     KimRouter__factory,
-    UniV2Pair__factory,
     UniLikeRouter__factory,
+    UniV2Pair__factory,
 } from '../contracts'
 import { getMulticall } from '../multicall'
 import { UniV2TradeError } from '../sdkError'

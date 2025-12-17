@@ -2,7 +2,6 @@ import JSBI from 'jsbi'
 
 export { JSBI }
 
-export type { Icons } from './constants'
 export {
     BigintIsh,
     ChainId,
@@ -13,6 +12,7 @@ export {
     TradeType,
     ZERO,
 } from './constants'
+export type { Icons } from './constants'
 
 export * from './crosschain'
 export * from './crosschain/swapExactIn'

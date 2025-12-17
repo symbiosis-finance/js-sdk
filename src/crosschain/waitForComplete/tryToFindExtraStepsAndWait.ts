@@ -10,8 +10,8 @@ import type { Symbiosis } from '../symbiosis'
 import type { BtcConfig } from '../types'
 import { TxNotFound } from './constants'
 import { fetchData, longPolling } from './utils'
-import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 import { waitForDepositUnlocked } from './waitForDepositUnlocked'
+import { waitForTonTxComplete } from './waitForTonDepositTxMined'
 
 interface ThorStatusResponse {
     observed_tx: {
