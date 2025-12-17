@@ -49,7 +49,7 @@ export interface DepositoryConfig {
     withdrawUnlocker: EvmAddress
     branchedUnlocker: EvmAddress
     timedUnlocker: EvmAddress
-    timescaledPricedSwapUnlocker: EvmAddress
+    timedSwapUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress
     priceEstimation: PriceEstimationConfig
     refundDelay?: number // Minimal delay before refund

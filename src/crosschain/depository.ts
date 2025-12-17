@@ -11,7 +11,7 @@ import type {
     IDepository,
     IRouter,
     TimedUnlocker,
-    TimescaledPricedSwapUnlocker,
+    TimedSwapUnlocker,
     WithdrawUnlocker,
 } from './contracts'
 import { ERC20__factory, IRouter__factory } from './contracts'
@@ -24,7 +24,7 @@ interface DepositoryContext_ {
     depository: IDepository
     router: IRouter
     branchedUnlocker: BranchedUnlocker
-    timescaledPricedSwapUnlocker: TimescaledPricedSwapUnlocker
+    timedSwapUnlocker: TimedSwapUnlocker
     withdrawUnlocker: WithdrawUnlocker
     timedUnlocker: TimedUnlocker
     btcRefundUnlocker?: BtcRefundUnlocker
@@ -128,11 +128,9 @@ export class DepositoryContext {
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
             }
-            const swapCondition = this.timescaledPricedSwapUnlocker.interface.encodeFunctionData('encodeCondition', [
-                condData,
-            ])
+            const swapCondition = this.timedSwapUnlocker.interface.encodeFunctionData('encodeCondition', [condData])
             branches.push({
-                unlocker: this.timescaledPricedSwapUnlocker.address,
+                unlocker: this.timedSwapUnlocker.address,
                 condition: this.rmConditionMethod(swapCondition),
             })
         }

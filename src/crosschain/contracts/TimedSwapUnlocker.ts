@@ -128,26 +128,26 @@ export interface TimedSwapUnlockerInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
 
   events: {
-    "TimescaledPricedSwap(address,uint256,uint256,uint256,address,address)": EventFragment;
+    "TimedPricedSwap(address,uint256,uint256,uint256,uint256,address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "TimescaledPricedSwap"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TimedPricedSwap"): EventFragment;
 }
 
-export type TimescaledPricedSwapEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber, string, string],
+export type TimedPricedSwapEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber, BigNumber, string, string],
   {
     outToken: string;
     delay: BigNumber;
-    price: BigNumber;
+    providedPrice: BigNumber;
+    requiredPrice: BigNumber;
     outAmount: BigNumber;
     swapper: string;
     target: string;
   }
 >;
 
-export type TimescaledPricedSwapEventFilter =
-  TypedEventFilter<TimescaledPricedSwapEvent>;
+export type TimedPricedSwapEventFilter = TypedEventFilter<TimedPricedSwapEvent>;
 
 export interface TimedSwapUnlocker extends BaseContract {
   contractName: "TimedSwapUnlocker";
@@ -259,22 +259,24 @@ export interface TimedSwapUnlocker extends BaseContract {
   };
 
   filters: {
-    "TimescaledPricedSwap(address,uint256,uint256,uint256,address,address)"(
+    "TimedPricedSwap(address,uint256,uint256,uint256,uint256,address,address)"(
       outToken?: null,
       delay?: null,
-      price?: null,
+      providedPrice?: null,
+      requiredPrice?: null,
       outAmount?: null,
       swapper?: null,
       target?: null
-    ): TimescaledPricedSwapEventFilter;
-    TimescaledPricedSwap(
+    ): TimedPricedSwapEventFilter;
+    TimedPricedSwap(
       outToken?: null,
       delay?: null,
-      price?: null,
+      providedPrice?: null,
+      requiredPrice?: null,
       outAmount?: null,
       swapper?: null,
       target?: null
-    ): TimescaledPricedSwapEventFilter;
+    ): TimedPricedSwapEventFilter;
   };
 
   estimateGas: {

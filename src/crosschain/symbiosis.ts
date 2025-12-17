@@ -50,7 +50,7 @@ import {
     Portal__factory,
     Synthesis__factory,
     TimedUnlocker__factory,
-    TimescaledPricedSwapUnlocker__factory,
+    TimedSwapUnlocker__factory,
     TonBridge__factory,
     WithdrawUnlocker__factory,
 } from './contracts'
@@ -508,10 +508,7 @@ export class Symbiosis {
                     : undefined,
                 timedUnlocker: TimedUnlocker__factory.connect(cfg.timedUnlocker, signerOrProvider),
                 branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
-                timescaledPricedSwapUnlocker: TimescaledPricedSwapUnlocker__factory.connect(
-                    cfg.timescaledPricedSwapUnlocker,
-                    signerOrProvider
-                ),
+                timedSwapUnlocker: TimedSwapUnlocker__factory.connect(cfg.timedSwapUnlocker, signerOrProvider),
                 withdrawUnlocker: WithdrawUnlocker__factory.connect(cfg.withdrawUnlocker, signerOrProvider),
             })
         })
