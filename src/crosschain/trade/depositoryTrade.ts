@@ -1,5 +1,5 @@
 import type { TokenAmount } from '../../entities'
-import type { DepositoryContext, DepositParameters } from '../depository'
+import type { DepositoryContext, DepositParams } from '../depository'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 
@@ -7,14 +7,14 @@ export class DepositoryTrade extends SymbiosisTrade {
     constructor(
         params: SymbiosisTradeParams,
         private dep: DepositoryContext,
-        private depositParams: DepositParameters,
+        private depositParams: DepositParams,
         private baseTrade?: SymbiosisTrade
     ) {
         super(params)
     }
 
     async init(): Promise<this> {
-        this.out = await this.dep.buildDepositCall(this.depositParams)
+        this.buildDepositCall(this.depositParams)
         return this
     }
 
@@ -22,20 +22,23 @@ export class DepositoryTrade extends SymbiosisTrade {
         return 'depository'
     }
 
-    async applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount): Promise<void> {
+    applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount): void {
         if (this.baseTrade) {
             // If we have a base trade - then just reinit itself.
-            await this.baseTrade.applyAmountIn(newAmountIn, newAmountInMin)
+            this.baseTrade.applyAmountIn(newAmountIn, newAmountInMin)
 
             // overwrite depositParams with a new amountIn after patching
             const { tokenAmountIn } = this.baseTrade
-            this.depositParams = {
+            this.buildDepositCall({
                 ...this.depositParams,
                 tokenAmountIn,
-            }
-            await this.init()
+            })
         } else {
-            await super.applyAmountIn(newAmountIn, newAmountInMin)
+            super.applyAmountIn(newAmountIn, newAmountInMin)
         }
+    }
+
+    private buildDepositCall(params: DepositParams) {
+        this.out = this.dep.buildDepositCall(params)
     }
 }

@@ -21,6 +21,8 @@ import {
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import type { Synthesis } from '../contracts'
 import { Portal__factory, Synthesis__factory } from '../contracts'
+import type { DepositParams } from '../depository'
+import { amountsToPrices } from '../depository'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, WrapTrade } from '../trade'
@@ -42,8 +44,6 @@ import type {
     TradeAContext,
 } from '../types'
 import { isUseOneInchOnly } from '../utils'
-import type { DepositParameters } from '../depository'
-import { amountsToPrices } from '../depository'
 
 type MetaRouteParams = {
     amount: string
@@ -578,7 +578,7 @@ export abstract class BaseSwapping {
                 ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
                 extraBranches: [],
                 ...dep.makeTargetCall(aggTrade),
-            } as DepositParameters
+            } as DepositParams
             // If there is Depository on C chain then use aggTrade for price detection.
             return await new DepositoryTrade(aggTrade, dep, depositParams, aggTrade).init()
         } else {

@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers'
 import type { BytesLike } from 'ethers/lib/utils'
 import { isAddress } from 'ethers/lib/utils'
 
+import Decimal from 'decimal.js-light'
 import { ChainId } from '../../constants'
 import type { Token } from '../../entities'
 import { Percent, TokenAmount } from '../../entities'
@@ -12,7 +13,7 @@ import { getBtcPortalFee, getPkScript, isBtcChainId, isEvmChainId, isTronChainId
 import { BIPS_BASE } from '../constants'
 import { MetaRouter__factory, SymBtc__factory } from '../contracts'
 import type { MetaRouteStructs } from '../contracts/MetaRouter'
-import type { Prices, DepositoryContext, DepositParameters } from '../depository'
+import type { DepositoryContext, DepositParams, Prices } from '../depository'
 import { amountsToPrices } from '../depository'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
@@ -37,7 +38,6 @@ import type {
 import { isUseOneInchOnly } from '../utils'
 import { crosschainSwap } from './crosschainSwap'
 import { theBest } from './utils'
-import Decimal from 'decimal.js-light'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenAmountIn, symbiosis } = context
@@ -570,17 +570,17 @@ async function buildCrossChainSwap(
     }
 }
 
-interface SyBtcDepositParameters {
+interface SyBtcDepositParams {
     tradeParams: SymbiosisTradeParams
     refundAddress?: BtcAddress | EmptyAddress
     btcConfig: BtcConfig
-    depositParams: DepositParameters
+    depositParams: DepositParams
 }
 
 // Build Depository call with BTC refund.
 async function buildBtcDepositCall(
     dep: DepositoryContext,
-    { refundAddress, btcConfig, depositParams, tradeParams }: SyBtcDepositParameters
+    { refundAddress, btcConfig, depositParams, tradeParams }: SyBtcDepositParams
 ): Promise<SymbiosisTrade> {
     // Optional BTC refund.
     if (refundAddress && dep.btcRefundUnlocker && dep.cfg.refundDelay) {

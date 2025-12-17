@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import type { BigNumberish, BytesLike } from 'ethers'
 
+import Decimal from 'decimal.js-light'
 import type { Token, TokenAmount } from '../entities'
 import { Percent, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
@@ -9,15 +10,14 @@ import type {
     BtcRefundUnlocker,
     IDepository,
     IRouter,
-    TimescaledPricedSwapUnlocker,
     TimedUnlocker,
+    TimescaledPricedSwapUnlocker,
     WithdrawUnlocker,
 } from './contracts'
 import { ERC20__factory, IRouter__factory } from './contracts'
 import type { DepositoryTypes } from './contracts/IDepository'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
-import Decimal from 'decimal.js-light'
 
 interface DepositoryContext_ {
     cfg: DepositoryConfig
@@ -56,7 +56,7 @@ export function amountsToPrices(outAmounts: TokenAmounts, amountIn: TokenAmount)
     }
 }
 
-export interface DepositParameters extends CallData, Prices {
+export interface DepositParams extends CallData, Prices {
     readonly to: Address // receiver
     readonly outToken: Token
     readonly tokenAmountIn: TokenAmount
@@ -104,7 +104,7 @@ export class DepositoryContext {
     }
 
     // Build Depository call.
-    async buildDepositCall({
+    buildDepositCall({
         to,
         tokenAmountIn,
         outToken,
@@ -114,7 +114,7 @@ export class DepositoryContext {
         targetCalldata,
         targetOffset,
         extraBranches,
-    }: DepositParameters): Promise<SymbiosisTradeOutResult> {
+    }: DepositParams): SymbiosisTradeOutResult {
         const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
         // Normal swap.
@@ -171,7 +171,7 @@ export class DepositoryContext {
             routerAddress: this.depository.address as Address,
             callData: lockData,
             callDataOffset: 4 + 32 + 32, // Offset to `amount` field in DepositoryTypes.Deposit
-            minReceivedOffset: 123, // FIXME: calculate correct offset.
+            minReceivedOffset: 0,
             route: [tokenAmountIn.token, outToken],
             value: 0n,
             amountOut: tokenAmountIn.convertTo(outToken, bestPrice),
