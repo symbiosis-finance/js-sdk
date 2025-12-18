@@ -2,16 +2,15 @@ import { randomBytes } from 'crypto'
 import type { BigNumberish, BytesLike } from 'ethers'
 
 import type { Token } from '../entities'
-import { TokenAmount } from '../entities'
-import { Percent, wrappedToken } from '../entities'
+import { Percent, TokenAmount, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
 import type {
     BranchedUnlocker,
     BtcRefundUnlocker,
     IDepository,
     IRouter,
-    TimedUnlocker,
     TimedSwapUnlocker,
+    TimedUnlocker,
     WithdrawUnlocker,
 } from './contracts'
 import { ERC20__factory, IRouter__factory } from './contracts'
@@ -122,7 +121,6 @@ export class DepositoryContext {
     }: DepositParams): SymbiosisTradeOutResult {
         const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
-        outToken.decimals
         // Normal swap.
         {
             const condData = {

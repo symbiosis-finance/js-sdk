@@ -49,8 +49,8 @@ import {
     OmniPoolOracle__factory,
     Portal__factory,
     Synthesis__factory,
-    TimedUnlocker__factory,
     TimedSwapUnlocker__factory,
+    TimedUnlocker__factory,
     TonBridge__factory,
     WithdrawUnlocker__factory,
 } from './contracts'

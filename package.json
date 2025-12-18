@@ -20,10 +20,10 @@
         "start": "tsup --watch",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
-        "prepare": "npm run build",
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
         "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
-        "test": "vitest test/crosschain"
+        "test": "vitest test/crosschain",
+        "prepare": "npm run build-contracts"
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
