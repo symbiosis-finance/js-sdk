@@ -15,8 +15,9 @@ describe('amountsToPrices', async () => {
             amountOutMin: new TokenAmount(tokenOut, BigInt(90) * decimalsOut),
         }
         const prices = amountsToPrices(tokenAmounts, amountIn)
-        expect(prices.bestPrice).toEqual(BigInt(1) * WAD)
-        expect(prices.slippedPrice).toEqual((BigInt(90) * WAD) / BigInt(100))
+        const resultDecimals = (decimalsOut / decimalsIn) * WAD
+        expect(prices.bestPrice).toEqual(BigInt(1) * resultDecimals)
+        expect(prices.slippedPrice).toEqual((BigInt(90) * resultDecimals) / BigInt(100))
     }
 
     test('different decimals', () => {

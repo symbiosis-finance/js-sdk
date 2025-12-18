@@ -65,11 +65,6 @@ export class Fraction {
         return new Fraction(JSBI.remainder(this.numerator, this.denominator), this.denominator)
     }
 
-    public toDecimal(): _Decimal {
-        const numStr = this.numerator.toString()
-        return new _Decimal(numStr).div(this.denominator.toString())
-    }
-
     public invert(): Fraction {
         return new Fraction(this.denominator, this.numerator)
     }
