@@ -1,8 +1,8 @@
 import { randomBytes } from 'crypto'
 import type { BigNumberish, BytesLike } from 'ethers'
 
-import Decimal from 'decimal.js-light'
-import type { Token, TokenAmount } from '../entities'
+import type { Token } from '../entities'
+import { TokenAmount } from '../entities'
 import { Percent, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
 import type {
@@ -39,9 +39,12 @@ interface CallData {
     targetOffset: BigNumberish
 }
 
+type WadDecimal = bigint // Decimal with 18 digits after point.
+const WAD = BigInt(1e18)
+
 export interface Prices {
-    bestPrice: Decimal
-    slippedPrice: Decimal
+    bestPrice: WadDecimal
+    slippedPrice: WadDecimal
 }
 
 export interface TokenAmounts {
@@ -51,8 +54,8 @@ export interface TokenAmounts {
 
 export function amountsToPrices(outAmounts: TokenAmounts, amountIn: TokenAmount): Prices {
     return {
-        bestPrice: outAmounts.amountOut.toDecimal().dividedBy(amountIn.toDecimal()),
-        slippedPrice: outAmounts.amountOutMin.toDecimal().dividedBy(amountIn.toDecimal()),
+        bestPrice: (outAmounts.amountOut.toBigInt() * WAD) / amountIn.toBigInt(),
+        slippedPrice: (outAmounts.amountOutMin.toBigInt() * WAD) / amountIn.toBigInt(),
     }
 }
 
@@ -63,7 +66,9 @@ export interface DepositParams extends CallData, Prices {
     readonly extraBranches: DepositoryTypes.UnlockConditionStruct[]
 }
 
-const WAD = new Decimal(10).pow(18)
+function convertTokenAmount(amountIn: TokenAmount, tokenOut: Token, price: WadDecimal): TokenAmount {
+    return new TokenAmount(tokenOut, (amountIn.toBigInt() * price) / WAD)
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class DepositoryContext {
@@ -117,13 +122,14 @@ export class DepositoryContext {
     }: DepositParams): SymbiosisTradeOutResult {
         const branches: DepositoryTypes.UnlockConditionStruct[] = []
 
+        outToken.decimals
         // Normal swap.
         {
             const condData = {
                 outToken: wrappedToken(outToken).address, // destination token
-                startMinPrice: bestPrice.mul(WAD).toFixed(0),
+                startMinPrice: bestPrice,
                 duration: this.cfg.minAmountDelay,
-                discount: bestPrice.sub(slippedPrice).mul(WAD).toFixed(0),
+                discount: bestPrice,
                 target, // target to call after validation
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
@@ -172,8 +178,8 @@ export class DepositoryContext {
             minReceivedOffset: 0,
             route: [tokenAmountIn.token, outToken],
             value: 0n,
-            amountOut: tokenAmountIn.convertTo(outToken, bestPrice),
-            amountOutMin: tokenAmountIn.convertTo(outToken, slippedPrice),
+            amountOut: convertTokenAmount(tokenAmountIn, outToken, bestPrice),
+            amountOutMin: convertTokenAmount(tokenAmountIn, outToken, slippedPrice),
             priceImpact: new Percent('0', BIPS_BASE),
             // TODO: add functionSelector with deposit(...) for Tron support.
         }
