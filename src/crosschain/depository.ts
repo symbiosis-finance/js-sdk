@@ -17,6 +17,7 @@ import { ERC20__factory, IRouter__factory } from './contracts'
 import type { DepositoryTypes } from './contracts/IDepository'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
+import Decimal from 'decimal.js-light'
 
 interface DepositoryContext_ {
     cfg: DepositoryConfig
@@ -51,11 +52,19 @@ export interface TokenAmounts {
     amountOutMin: TokenAmount
 }
 
+export function toWad(d: Decimal): WadDecimal {
+    return (BigInt(d.toNumber() * 1_000_000) * WAD) / 1_000_000n
+}
+
 export function amountsToPrices(outAmounts: TokenAmounts, amountIn: TokenAmount): Prices {
     return {
         bestPrice: (outAmounts.amountOut.toBigInt() * WAD) / amountIn.toBigInt(),
         slippedPrice: (outAmounts.amountOutMin.toBigInt() * WAD) / amountIn.toBigInt(),
     }
+}
+
+export function covertHumanPriceToWad(price: Decimal, srcToken: Token, dstToken: Token): WadDecimal {
+    return toWad(price.mul(new Decimal(10).pow(dstToken.decimals - srcToken.decimals)))
 }
 
 export interface DepositParams extends CallData, Prices {

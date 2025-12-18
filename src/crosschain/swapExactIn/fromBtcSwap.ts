@@ -14,7 +14,7 @@ import { BIPS_BASE } from '../constants'
 import { MetaRouter__factory, SymBtc__factory } from '../contracts'
 import type { MetaRouteStructs } from '../contracts/MetaRouter'
 import type { DepositoryContext, DepositParams, Prices } from '../depository'
-import { amountsToPrices } from '../depository'
+import { amountsToPrices, covertHumanPriceToWad } from '../depository'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
@@ -367,8 +367,8 @@ async function estimatePricesUsingCoingecko(
 ): Promise<Prices> {
     const price = await getCoingeckoPrice(tokenAmountIn.token, tokenOut, symbiosis)
     return {
-        bestPrice: price.mul(1 - cfg.slippageNorm),
-        slippedPrice: price.mul(1 - cfg.slippageMax),
+        bestPrice: covertHumanPriceToWad(price.mul(1 - cfg.slippageNorm), tokenAmountIn.token, tokenOut),
+        slippedPrice: covertHumanPriceToWad(price.mul(1 - cfg.slippageMax), tokenAmountIn.token, tokenOut),
     }
 }
 
