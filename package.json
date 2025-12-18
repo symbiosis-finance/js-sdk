@@ -23,7 +23,7 @@
         "build-contracts": "typechain --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
         "build-config-cache": "ts-node -O '{\"module\":\"commonjs\"}' --files ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
         "test": "vitest test/crosschain",
-        "prepare": "npm run build-contracts"
+        "prepare": "npm run build-contracts && npm run build"
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
