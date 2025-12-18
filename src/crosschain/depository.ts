@@ -136,7 +136,7 @@ export class DepositoryContext {
                 outToken: wrappedToken(outToken).address, // destination token
                 startMinPrice: bestPrice,
                 duration: this.cfg.minAmountDelay,
-                discount: bestPrice,
+                discount: bestPrice - slippedPrice,
                 target, // target to call after validation
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
