@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import type { BigNumberish, BytesLike } from 'ethers'
 
+import Decimal from 'decimal.js-light'
 import type { Token } from '../entities'
 import { Percent, TokenAmount, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
@@ -17,7 +18,6 @@ import { ERC20__factory, IRouter__factory } from './contracts'
 import type { DepositoryTypes } from './contracts/IDepository'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
-import Decimal from 'decimal.js-light'
 
 interface DepositoryContext_ {
     cfg: DepositoryConfig
