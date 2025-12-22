@@ -71,6 +71,7 @@ export interface DepositParams extends CallData, Prices {
     readonly to: Address // receiver
     readonly outToken: Token
     readonly tokenAmountIn: TokenAmount
+    readonly tokenAmountInMin: TokenAmount
     readonly extraBranches: DepositoryTypes.UnlockConditionStruct[]
 }
 
@@ -120,6 +121,7 @@ export class DepositoryContext {
     buildDepositCall({
         to,
         tokenAmountIn,
+        tokenAmountInMin,
         outToken,
         bestPrice,
         slippedPrice,
@@ -186,7 +188,7 @@ export class DepositoryContext {
             route: [tokenAmountIn.token, outToken],
             value: 0n,
             amountOut: convertTokenAmount(tokenAmountIn, outToken, bestPrice),
-            amountOutMin: convertTokenAmount(tokenAmountIn, outToken, slippedPrice),
+            amountOutMin: convertTokenAmount(tokenAmountInMin, outToken, slippedPrice),
             priceImpact: new Percent('0', BIPS_BASE),
             // TODO: add functionSelector with deposit(...) for Tron support.
         }

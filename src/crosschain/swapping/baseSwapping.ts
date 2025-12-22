@@ -573,6 +573,7 @@ export abstract class BaseSwapping {
         if (dep) {
             const depositParams = {
                 tokenAmountIn: aggTrade.tokenAmountIn,
+                tokenAmountInMin: aggTrade.tokenAmountInMin,
                 to: aggTrade.to,
                 outToken: aggTrade.amountOut.token,
                 ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),

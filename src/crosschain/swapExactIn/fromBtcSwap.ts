@@ -454,6 +454,7 @@ async function buildOnChainSwap(
                 to: context.to,
                 extraBranches: [],
                 tokenAmountIn: syBtcAmount,
+                tokenAmountInMin: syBtcAmountMin,
                 outToken: context.tokenOut,
                 ...prices,
                 ...dep.makeTargetCall(context),
@@ -502,6 +503,7 @@ async function buildCrossChainSwap(
                 depositParams: {
                     ...context,
                     tokenAmountIn: syBtcAmount,
+                    tokenAmountInMin: syBtcAmountMin,
                     outToken: swapExactInResult.tradeA.amountOut.token,
                     ...amountsToPrices(swapExactInResult.tradeA, syBtcAmount),
                     target: tx.relayRecipient as NonEmptyAddress,
