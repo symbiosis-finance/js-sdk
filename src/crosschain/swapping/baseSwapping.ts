@@ -10,6 +10,7 @@ import {
     buildMetaSynthesize,
     getExternalId,
     getInternalId,
+    getMinAmount,
     isEvmChainId,
     isTonChainId,
     isTronChainId,
@@ -194,9 +195,11 @@ export abstract class BaseSwapping {
                     // No need to trade on chain C if a transit token is what the user needs.
                     return
                 }
-                // NOTE actually amountInMin == amountIn, because we don't know the correct amounts
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
-                const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
+                const fakeTradeCAmountInMin = createFakeAmount(
+                    new TokenAmount(transitAmountIn.token, getMinAmount(this.slippage['B'], transitAmountInMin.raw)),
+                    this.transitTokenOut
+                )
 
                 return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin)
             })(),
@@ -243,7 +246,7 @@ export abstract class BaseSwapping {
 
         await this.transit.applyFees(fee1, fee2)
         if (this.tradeC) {
-            await this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
+            this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
         }
         this.profiler.tick('PATCHING')
 
@@ -580,7 +583,7 @@ export abstract class BaseSwapping {
                 extraBranches: [],
                 ...dep.makeTargetCall(aggTrade),
             } as DepositParams
-            // If there is Depository on C chain then use aggTrade for price detection.
+            // If there is a Depository on a C chain, then use aggTrade for price detection.
             return await new DepositoryTrade(aggTrade, dep, depositParams, aggTrade).init()
         } else {
             return aggTrade
