@@ -2,11 +2,11 @@ import JSBI from 'jsbi'
 export { JSBI }
 
 export {
-    Icons,
     BigintIsh,
     ChainId,
     FACTORY_ADDRESS,
     INIT_CODE_HASH,
+    Icons,
     MINIMUM_LIQUIDITY,
     Rounding,
     TradeType,

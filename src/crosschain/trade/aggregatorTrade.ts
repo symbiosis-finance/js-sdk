@@ -39,7 +39,8 @@ export class AggregatorTrade extends SymbiosisTrade {
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
-        this.preferOneInchUsage = params.preferOneInchUsage || false
+        // 1inch quota is exceeded too quickly to we allowed to use OO as well
+        this.preferOneInchUsage = false // params.preferOneInchUsage || false
     }
 
     get tradeType(): SymbiosisTradeType {
