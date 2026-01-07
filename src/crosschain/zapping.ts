@@ -60,7 +60,10 @@ export class Zapping {
     private readonly pool!: OmniPool
     private readonly poolOracle!: OmniPoolOracle
 
-    public constructor(private readonly symbiosis: Symbiosis, private readonly omniPoolConfig: OmniPoolConfig) {
+    public constructor(
+        private readonly symbiosis: Symbiosis,
+        private readonly omniPoolConfig: OmniPoolConfig
+    ) {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
 

@@ -207,7 +207,7 @@ export function calldataWithoutSelector(data: string): string {
 }
 
 function encodeCondition<
-    Unlocker extends OneOf<TimedUnlocker | BranchedUnlocker | WithdrawUnlocker | TimedSwapUnlocker>
+    Unlocker extends OneOf<TimedUnlocker | BranchedUnlocker | WithdrawUnlocker | TimedSwapUnlocker>,
 >(unlocker: Unlocker, condition: Parameters<Unlocker['functions']['encodeCondition']>[0]): string {
     const attrs = flatten(condition, 'condition')
     return withSyncSpan(

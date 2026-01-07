@@ -104,7 +104,7 @@ export type OneOf<
     union extends object,
     fallback extends object | undefined = undefined,
     ///
-    keys extends KeyofUnion<union> = KeyofUnion<union>
+    keys extends KeyofUnion<union> = KeyofUnion<union>,
 > = union extends infer item
     ? Prettify<
           item & {
@@ -124,18 +124,18 @@ type Primitive = string | number | boolean
 type FlattenValue<T> = T extends bigint
     ? string
     : T extends (infer U)[]
-    ? U extends Primitive
-        ? T
-        : never // Keep arrays of primitives
-    : T
+      ? U extends Primitive
+          ? T
+          : never // Keep arrays of primitives
+      : T
 
 // Recursive type to generate the flattened object structure
 type FlattenObject<T, Prefix extends string = ''> = {
     [K in keyof T & (string | number)]: T[K] extends Primitive | Primitive[]
         ? { [P in `${Prefix}${K}`]: FlattenValue<T[K]> }
         : T[K] extends object
-        ? FlattenObject<T[K], `${Prefix}${K}.`>
-        : never
+          ? FlattenObject<T[K], `${Prefix}${K}.`>
+          : never
 }[keyof T & (string | number)]
 
 // Helper to collapse the union into a single object
