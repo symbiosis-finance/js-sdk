@@ -16,6 +16,7 @@ import type {
 } from './contracts'
 import { ERC20__factory, IRouter__factory } from './contracts'
 import type { DepositoryTypes } from './contracts/IDepository'
+import { flatten, withSyncSpan, type OneOf } from './tracing'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
 
@@ -107,10 +108,6 @@ export class DepositoryContext {
         }
     }
 
-    private rmConditionMethod(data: string): string {
-        return '0x' + data.slice(10)
-    }
-
     makeTargetCall(context: { tokenOut: Token; to: Address }): CallData {
         return context.tokenOut.isNative
             ? this.nativeUnwrapCall(context.tokenOut, context.to)
@@ -143,23 +140,21 @@ export class DepositoryContext {
                 targetCalldata, // calldata to call on target.
                 targetOffset, // offset to patch-in amountTo in targetCalldata
             }
-            const swapCondition = this.timedSwapUnlocker.interface.encodeFunctionData('encodeCondition', [condData])
+            const condition = encodeCondition(this.timedSwapUnlocker, condData)
             branches.push({
                 unlocker: this.timedSwapUnlocker.address,
-                condition: this.rmConditionMethod(swapCondition),
+                condition,
             })
         }
 
         // Transit token (like syBTC) withdraw.
         {
             const withdrawCall = this.erc20TransferCall(tokenAmountIn.token, to)
-            const withdrawCondition = this.withdrawUnlocker.interface.encodeFunctionData('encodeCondition', [
-                withdrawCall,
-            ])
+            const condition = encodeCondition(this.withdrawUnlocker, withdrawCall)
             branches.push(
                 this.makeTimed(this.cfg.withdrawDelay, {
                     unlocker: this.withdrawUnlocker.address,
-                    condition: this.rmConditionMethod(withdrawCondition),
+                    condition,
                 })
             )
         }
@@ -167,7 +162,7 @@ export class DepositoryContext {
         branches.push(...extraBranches)
 
         // Compose all branches.
-        const condition = this.branchedUnlocker.interface.encodeFunctionData('encodeCondition', [{ branches }])
+        const condition = encodeCondition(this.branchedUnlocker, { branches })
         const nonce = BigInt(`0x${randomBytes(32).toString('hex')}`)
         const deposit = {
             token: tokenAmountIn.token.address, // source token
@@ -176,7 +171,7 @@ export class DepositoryContext {
         }
         const unlocker = {
             unlocker: this.branchedUnlocker.address,
-            condition: this.rmConditionMethod(condition),
+            condition,
         }
         const lockData = this.depository.interface.encodeFunctionData('lock', [deposit, unlocker])
 
@@ -196,15 +191,32 @@ export class DepositoryContext {
 
     makeTimed(delay: number, next: DepositoryTypes.UnlockConditionStruct): DepositoryTypes.UnlockConditionStruct {
         if (this.cfg.withdrawDelay === 0) return next
-        const timedWithdrawCondition = this.timedUnlocker.interface.encodeFunctionData('encodeCondition', [
-            {
-                next,
-                delay,
-            },
-        ])
+        const timedWithdrawCondition = encodeCondition(this.timedUnlocker, {
+            next,
+            delay,
+        })
         return {
             unlocker: this.timedUnlocker.address,
-            condition: this.rmConditionMethod(timedWithdrawCondition),
+            condition: timedWithdrawCondition,
         }
     }
+}
+
+export function calldataWithoutSelector(data: string): string {
+    return '0x' + data.slice(10)
+}
+
+function encodeCondition<
+    Unlocker extends OneOf<TimedUnlocker | BranchedUnlocker | WithdrawUnlocker | TimedSwapUnlocker>
+>(unlocker: Unlocker, condition: Parameters<Unlocker['functions']['encodeCondition']>[0]): string {
+    const attrs = flatten(condition, 'condition')
+    return withSyncSpan(
+        'encodeCondition',
+        { 'unlocker.name': unlocker.contractName, 'unlocker.address': unlocker.address, ...attrs },
+        () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const data = unlocker.interface.encodeFunctionData('encodeCondition' as any, [condition] as any)
+            return calldataWithoutSelector(data)
+        }
+    )
 }

@@ -166,7 +166,7 @@ export class UniV2Trade extends SymbiosisTrade {
             method = methodName.replace('ETH', 'SEI')
         }
 
-        const functionAbi = this.router.interface.getFunction(method)
+        const functionAbi = this.router.interface.getFunction(method as any)
 
         return {
             functionSelector: getFunctionSelector(functionAbi),

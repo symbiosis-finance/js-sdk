@@ -26,6 +26,7 @@ import type { DepositParams } from '../depository'
 import { amountsToPrices } from '../depository'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
+import { withTracing } from '../tracing'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
@@ -92,6 +93,10 @@ export abstract class BaseSwapping {
         this.profiler = new Profiler()
     }
 
+    @withTracing({
+        onCall: (...args) => ({ to: args[3] }),
+        onReturn: (ret: SwapExactInResult) => ({ priceImpact: ret.priceImpact.toFixed() }),
+    })
     async doExactIn({
         tokenAmountIn,
         tokenOut,

@@ -14,11 +14,12 @@ import { BIPS_BASE } from '../constants'
 import { MetaRouter__factory, SymBtc__factory } from '../contracts'
 import type { MetaRouteStructs } from '../contracts/MetaRouter'
 import type { DepositoryContext, DepositParams, Prices } from '../depository'
-import { amountsToPrices, covertHumanPriceToWad } from '../depository'
+import { amountsToPrices, covertHumanPriceToWad, calldataWithoutSelector } from '../depository'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
+import { withSpan, wrapToSpan } from '../tracing'
 import { AggregatorTrade } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { SymbiosisTrade, SymbiosisTradeParams } from '../trade/symbiosisTrade'
@@ -58,27 +59,40 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         throw new SdkError(`tokenAmountIn is not BTC token`)
     }
 
-    const promises: Promise<SwapExactInResult>[] = []
+    return await withSpan(
+        'fromBtcSwap',
+        { tokenAmountIn: tokenAmountIn.toString(), tokenOut: tokenOut.toString() },
+        async () => {
+            const promises: Promise<SwapExactInResult>[] = []
 
-    // configs except syBTC on zksync
-    const allConfigs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
-    // prefer to use destination chain syBTC to avoid cross-chain routing
-    const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
-    const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
-    configs.forEach((btcConfig) => {
-        promises.push(
-            (async () => {
-                try {
-                    return await fromBtcSwapInternal(context, btcConfig)
-                } catch (err) {
-                    console.log(err)
-                    throw err
-                }
-            })()
-        )
-    })
+            // configs except syBTC on zksync
+            const allConfigs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+            // prefer to use destination chain syBTC to avoid cross-chain routing
+            const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
+            const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
+            configs.forEach((btcConfig: BtcConfig) => {
+                promises.push(
+                    (async () => {
+                        try {
+                            return await withSpan(
+                                'fromBtcSwapInternal',
+                                {
+                                    'symbtc.chainId': btcConfig.symBtc.chainId,
+                                    'symbtc.address': btcConfig.symBtc.address,
+                                },
+                                () => fromBtcSwapInternal(context, btcConfig)
+                            )
+                        } catch (err) {
+                            console.log(err)
+                            throw err
+                        }
+                    })()
+                )
+            })
 
-    return theBest(promises, selectMode)
+            return theBest(promises, selectMode)
+        }
+    )
 }
 
 async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcConfig): Promise<SwapExactInResult> {
@@ -232,7 +246,19 @@ async function fromBtcSwapInternal(context: SwapExactInParams, btcConfig: BtcCon
     }
 }
 
-async function buildTail(
+const buildTail = wrapToSpan(
+    'buildTail',
+    (_, __, syBtcAmount: TokenAmount, syBtcAmountMin: TokenAmount) => ({
+        'fromBtc.syBtcAmount': syBtcAmount.toString(),
+        'fromBtc.syBtcAmountMin': syBtcAmountMin.toString(),
+    }),
+    (result) => ({
+        'fromBtc.priceImpact': result.priceImpact.toFixed(),
+    }),
+    buildTail_
+)
+
+async function buildTail_(
     context: SwapExactInParams,
     btcConfig: BtcConfig,
     syBtcAmount: TokenAmount,
@@ -249,7 +275,6 @@ async function buildTail(
 }> {
     const { symbiosis, partnerAddress, to, tokenOut } = context
 
-    const { symBtc } = btcConfig
     const chainId = syBtcAmount.token.chainId
 
     const calls: MultiCallItem[] = []
@@ -321,12 +346,15 @@ async function buildTail(
         [...calls.map((i) => i.offset)],
         to,
     ])
-    const symBtcContract = SymBtc__factory.connect(symBtc.address, symbiosis.getProvider(chainId))
-    const tail = await symBtcContract.callStatic.packBTCTransactionTail({
+    const tailArgs = {
         receiveSide: multicallRouter.address,
         receiveSideCalldata: multicallCalldata,
         receiveSideOffset: 36,
-    })
+    }
+    const symbtcIface = SymBtc__factory.createInterface()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = symbtcIface.encodeFunctionData('packBTCTransactionTail' as any, [tailArgs] as any)
+    const tail = calldataWithoutSelector(data)
 
     return {
         tail,
@@ -474,7 +502,17 @@ function decodeMetaRoute(calldata: BytesLike): MetaRouteStructs.MetaRouteTransac
     return result._metarouteTransaction as MetaRouteStructs.MetaRouteTransactionStruct
 }
 
-async function buildCrossChainSwap(
+const buildCrossChainSwap = wrapToSpan(
+    'buildCrossChainSwap',
+    null,
+    (result) => ({
+        tokenAmountOut: result.result.tokenAmountOut.toString(),
+        tokenAmountOutMin: result.result.tokenAmountOutMin.toString(),
+    }),
+    buildCrossChainSwap_
+)
+
+async function buildCrossChainSwap_(
     context: SwapExactInParams,
     btcConfig: BtcConfig,
     syBtcAmount: TokenAmount,
@@ -579,8 +617,18 @@ interface SyBtcDepositParams {
     depositParams: DepositParams
 }
 
+const buildBtcDepositCall = wrapToSpan(
+    'buildBtcDepositCall',
+    () => ({}),
+    (result) => ({
+        amountOut: result.amountOut.toString(),
+        amountOutMin: result.amountOutMin.toString(),
+    }),
+    buildBtcDepositCall_
+)
+
 // Build Depository call with BTC refund.
-async function buildBtcDepositCall(
+async function buildBtcDepositCall_(
     dep: DepositoryContext,
     { refundAddress, btcConfig, depositParams, tradeParams }: SyBtcDepositParams
 ): Promise<SymbiosisTrade> {
