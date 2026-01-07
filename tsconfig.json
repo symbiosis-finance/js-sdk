@@ -2,8 +2,9 @@
     "include": ["./src/**/*", "./test/**/*"],
     "exclude": ["node_modules", "dist"],
     "compilerOptions": {
-        "target": "es2021",
         "module": "esnext",
+        "target": "es2024",
+        "moduleResolution": "bundler",
         "importHelpers": false,
         "skipLibCheck": true,
         "declaration": true,
@@ -19,7 +20,6 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "node",
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "allowJs": true
