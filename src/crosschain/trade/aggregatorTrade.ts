@@ -13,6 +13,7 @@ import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
+import { withTracing } from '../tracing'
 
 type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
 
@@ -32,6 +33,105 @@ class TradeNotInitializedError extends Error {
     }
 }
 
+class Trades {
+    trades: Trade[] = []
+    errors: Error[] = []
+    tradesCount: number = 0
+    startTime: number = Date.now()
+    prom: Promise<Trade>
+    resolve!: (trade: Trade) => void
+    reject!: (err: Error) => void
+
+    constructor(
+        private firstTimeoutMs: number | undefined,
+        private onError: (provider: string, err: Error) => void
+    ) {
+        this.prom = new Promise((resolve, reject) => {
+            this.resolve = resolve
+            this.reject = reject
+        })
+    }
+
+    push(trade: Promise<Trade>, provider: string) {
+        this.tradesCount++
+        withTimeout(trade, provider)
+            .then(this.success.bind(this))
+            .catch((err) => {
+                this.onError(provider, err)
+                this.fail(err)
+            })
+    }
+
+    success(trade: Trade) {
+        this.trades.push(trade)
+        this.check()
+    }
+
+    fail(error: Error) {
+        this.errors.push(error)
+        this.check()
+    }
+
+    check() {
+        const diff = Date.now() - this.startTime
+        const allTradesFinished = this.trades.length + this.errors.length === this.tradesCount
+
+        if (allTradesFinished) {
+            if (this.trades.length === 0) {
+                this.reject(new AggregateSdkError(this.errors, `AggregatorTrade: all trades failed`))
+            } else {
+                this.resolve(this.selectTheBestTrade())
+            }
+        } else if (diff >= (this.firstTimeoutMs || 200)) {
+            const oneInch = this.trades.find((trade) => trade.constructor.name === OneInchTrade.name)
+            const openOcean = this.trades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
+
+            if (oneInch || openOcean) {
+                this.resolve(this.selectTheBestTrade())
+            }
+        }
+    }
+
+    private selectTheBestTrade(): Trade {
+        invariant(this.trades.length >= 1)
+        let bestTrade!: Trade
+        for (const trade of this.trades) {
+            if (!bestTrade) {
+                bestTrade = trade
+                continue
+            }
+
+            if (trade.amountOut.greaterThan(bestTrade.amountOut)) {
+                bestTrade = trade
+            }
+        }
+        return bestTrade
+    }
+
+    wait(): Promise<Trade> {
+        const intervalId = setInterval(this.check, 50)
+        this.prom.finally(() => clearInterval(intervalId))
+        return this.prom
+    }
+}
+
+function withTimeout<T>(promise: Promise<T>, name: string, timeout: number = 30_000 /* 30 seconds */): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const timer = setTimeout(() => {
+            reject(new Error(`Timeout: ${name}`))
+        }, timeout)
+        promise
+            .then((res) => {
+                clearTimeout(timer)
+                resolve(res)
+            })
+            .catch((err) => {
+                clearTimeout(timer)
+                reject(err)
+            })
+    })
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface AggregatorTrade extends AggregatorTradeParams {}
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
@@ -49,21 +149,18 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this.trade.tradeType
     }
 
+    @withTracing({ name: 'AggregatorTrade.init' })
     public async init() {
         const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenAmountInMin, tokenOut, oneInchProtocols } =
             this.params
 
-        const trades: (Trade | undefined)[] = []
-        const errors: Error[] = []
-
-        function successTrade(trade: Trade) {
-            trades.push(trade)
-        }
-
-        function failTrade(e: Error) {
-            trades.push(undefined)
-            errors.push(e)
-        }
+        const trades = new Trades(this.firstTimeoutMs, (provider: string, e: Error) => {
+            symbiosis.trackAggregatorError({
+                provider,
+                reason: e.message,
+                chain_id: String(tokenOut.chain?.id),
+            })
+        })
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)
         const isOneInchClient = clientId === '1inch'
@@ -77,25 +174,6 @@ export class AggregatorTrade extends SymbiosisTrade {
             isOpenOceanAvailable = false
         }
 
-        const timeout = 30000 // 30s
-        const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
-            return new Promise<T>((resolve, reject) => {
-                const timer = setTimeout(() => {
-                    reject(new Error(`Timeout: ${name}`))
-                }, timeout)
-                promise
-                    .then((res) => {
-                        clearTimeout(timer)
-                        resolve(res)
-                    })
-                    .catch((err) => {
-                        clearTimeout(timer)
-                        reject(err)
-                    })
-            })
-        }
-
-        let tradesCount = 0
         if (isOneInchAvailable) {
             const oneInchTrade = new OneInchTrade({
                 symbiosis,
@@ -107,18 +185,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 protocols: oneInchProtocols,
             })
-
-            tradesCount += 1
-            withTimeout(oneInchTrade.init(), '1inch')
-                .then(successTrade)
-                .catch((e: Error) => {
-                    symbiosis.trackAggregatorError({
-                        provider: '1inch',
-                        reason: e.message,
-                        chain_id: String(tokenOut.chain?.id),
-                    })
-                    failTrade(e)
-                })
+            trades.push(oneInchTrade.init(), '1inch')
         }
 
         if (isOpenOceanAvailable) {
@@ -131,17 +198,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
             })
 
-            tradesCount += 1
-            withTimeout(openOceanTrade.init(), 'OpenOcean')
-                .then(successTrade)
-                .catch((e: Error) => {
-                    symbiosis.trackAggregatorError({
-                        provider: 'OpenOcean',
-                        reason: e.message,
-                        chain_id: String(tokenOut.chain?.id),
-                    })
-                    failTrade(e)
-                })
+            trades.push(openOceanTrade.init(), 'OpenOcean')
         }
 
         if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
@@ -154,8 +211,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            tradesCount += 1
-            withTimeout(izumiTrade.init(), 'Izumi').then(successTrade).catch(failTrade)
+            trades.push(izumiTrade.init(), 'Izumi')
         }
 
         if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
@@ -168,8 +224,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
             })
-            tradesCount += 1
-            withTimeout(uniV3Trade.init(), 'UniV3').then(successTrade).catch(failTrade)
+            trades.push(uniV3Trade.init(), 'UniV3')
         }
 
         if (isOtherClient && UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
@@ -182,54 +237,12 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 deadline,
             })
-
-            tradesCount += 1
-            withTimeout(uniV2Trade.init(), 'UniV2').then(successTrade).catch(failTrade)
+            trades.push(uniV2Trade.init(), 'UniV2')
         }
 
-        this.trade = await new Promise((resolve, reject) => {
-            const startTime = Date.now()
-            const intervalId = setInterval(() => {
-                const diff = Date.now() - startTime
-                const allTradesFinished = trades.length === tradesCount
-                const successTrades: Trade[] = trades.filter(Boolean) as Trade[]
-
-                if (allTradesFinished) {
-                    if (successTrades.length === 0) {
-                        reject(new AggregateSdkError(errors, `AggregatorTrade: all trades failed`))
-                    } else {
-                        resolve(this.selectTheBestTrade(successTrades))
-                    }
-                    clearInterval(intervalId)
-                } else if (diff >= (this.firstTimeoutMs || 200)) {
-                    const oneInch = successTrades.find((trade) => trade.constructor.name === OneInchTrade.name)
-                    const openOcean = successTrades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
-
-                    if (oneInch || openOcean) {
-                        resolve(this.selectTheBestTrade(successTrades))
-                        clearInterval(intervalId)
-                    }
-                }
-            }, 50)
-        })
+        this.trade = await trades.wait()
 
         return this
-    }
-
-    private selectTheBestTrade(trades: Trade[]): Trade {
-        invariant(trades.length >= 1)
-        let bestTrade!: Trade
-        for (const trade of trades) {
-            if (!bestTrade) {
-                bestTrade = trade
-                continue
-            }
-
-            if (trade.amountOut.greaterThan(bestTrade.amountOut)) {
-                bestTrade = trade
-            }
-        }
-        return bestTrade
     }
 
     get amountOut(): TokenAmount {
