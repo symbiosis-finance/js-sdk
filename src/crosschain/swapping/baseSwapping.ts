@@ -553,7 +553,13 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    // Return initialized SymbiosisTrade.
+    /**
+     * Build final trade.
+     * @param amountIn
+     * @param amountInMin
+     * @returns initialized SymbiosisTrade.
+     */
+    @withTracing()
     protected async buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount): Promise<SymbiosisTrade> {
         if (WrapTrade.isSupported(amountIn.token, this.tokenOut)) {
             // We need to just wrap or unwrap the token.

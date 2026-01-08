@@ -63,6 +63,7 @@ export function wrapToSpan<F extends (...args: any) => any>(
 export type AnyArgs = any[]
 
 export type AsyncMethod<This, Args extends AnyArgs, Return> = (this: This, ...args: Args) => Promise<Return>
+export type Method<This, Args extends AnyArgs, Return> = (this: This, ...args: Args) => Return
 
 export interface DecoratorOptions<Args extends AnyArgs, Return> {
     name?: string
@@ -70,14 +71,36 @@ export interface DecoratorOptions<Args extends AnyArgs, Return> {
     onReturn?: (result: Return) => Attributes
 }
 
-export function withTracing<This, Args extends AnyArgs, Return, F extends AsyncMethod<This, Args, Return>>(
-    options?: DecoratorOptions<Args, Return>
-) {
+export function withTracing<
+    This,
+    Args extends AnyArgs,
+    Return,
+    F extends AsyncMethod<This, Args, Return>,
+    Options extends DecoratorOptions<Args, Return>,
+>(options?: Options) {
     return function (originalMethod: F | undefined, context: ClassMethodDecoratorContext) {
         return (
             originalMethod &&
             (async function (this: This, ...args: Parameters<F>): Promise<Return> {
                 return await withSpan(
+                    options?.name ?? context.name.toString(),
+                    options?.onCall ? options.onCall(...args) : {},
+                    () => originalMethod.apply(this, args),
+                    options?.onReturn
+                )
+            } as F)
+        )
+    }
+}
+
+export function withTracingSync<This, Args extends AnyArgs, Return, F extends Method<This, Args, Return>>(
+    options?: DecoratorOptions<Args, Return>
+) {
+    return function (originalMethod: F | undefined, context: ClassMethodDecoratorContext) {
+        return (
+            originalMethod &&
+            (function (this: This, ...args: Parameters<F>): Return {
+                return withSyncSpan(
                     options?.name ?? context.name.toString(),
                     options?.onCall ? options.onCall(...args) : {},
                     () => originalMethod.apply(this, args),

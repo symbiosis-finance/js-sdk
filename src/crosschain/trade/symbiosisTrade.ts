@@ -143,7 +143,9 @@ export abstract class SymbiosisTrade {
         return this.out.fees
     }
 
-    // Patches calldata using offsets from minReceivedOffset, minReceivedOffset2, callDataOffset
+    /**
+     * Patches calldata using offsets from minReceivedOffset, minReceivedOffset2, callDataOffset
+     */
     public applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
         this.assertOutInitialized('applyAmountIn')
 

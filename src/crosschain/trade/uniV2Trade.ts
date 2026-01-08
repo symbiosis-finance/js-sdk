@@ -34,6 +34,7 @@ import { UniV2TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
+import { withTracing } from '../tracing'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -62,6 +63,7 @@ export class UniV2Trade extends SymbiosisTrade {
         return 'uni-v2'
     }
 
+    @withTracing({ name: 'UniV2Trade.init' })
     public async init() {
         const { chainId } = this.tokenAmountIn.token
 
@@ -176,6 +178,7 @@ export class UniV2Trade extends SymbiosisTrade {
         }
     }
 
+    @withTracing()
     private static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token): Promise<Pair[]> {
         const allPairCombinations = getAllPairCombinations(tokenIn, tokenOut)
         return await UniV2Trade.allPairs(provider, allPairCombinations)
