@@ -95,7 +95,7 @@ export abstract class BaseSwapping {
 
     @withTracing({
         onCall: (...args) => ({ to: args[3] }),
-        onReturn: (ret: SwapExactInResult) => ({ priceImpact: ret.priceImpact.toFixed() }),
+        onReturn: (ret) => ({ priceImpact: (ret as SwapExactInResult).priceImpact.toFixed() }),
     })
     async doExactIn({
         tokenAmountIn,

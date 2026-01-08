@@ -24,12 +24,12 @@ export class Cache {
         return await withSpan('Cache.get', { cacheKey: stringKey }, async (span: Span) => {
             const now = Math.floor(Date.now() / 1000)
             const cached = this.data.get(stringKey)
-            if (cached) span.setAttribute("expiresAt", cached.expiresAt)
+            if (cached) span.setAttribute('expiresAt', cached.expiresAt)
             if (cached && now < cached.expiresAt) {
                 if (cached.exception) throw cached.exception
                 else return cached.result as T
             }
-            span.setAttribute("miss", true)
+            span.setAttribute('miss', true)
             const set = (result?: T, exception?: unknown) => {
                 if (this.maxSize === undefined || this.data.size < this.maxSize)
                     this.data.set(stringKey, {
