@@ -71,42 +71,40 @@ export interface DecoratorOptions<Args extends AnyArgs, Return> {
     onReturn?: (result: Return) => Attributes
 }
 
-export function withTracing<
-    This,
-    Args extends AnyArgs,
-    Return,
-    F extends AsyncMethod<This, Args, Return>,
-    Options extends DecoratorOptions<Args, Return>,
->(options?: Options) {
-    return function (originalMethod: F | undefined, context: ClassMethodDecoratorContext) {
+export function withTracing<This, Args extends AnyArgs, Return>(options?: DecoratorOptions<Args, Return>) {
+    return function (
+        originalMethod: AsyncMethod<This, Args, Return> | undefined,
+        context: ClassMethodDecoratorContext<This, AsyncMethod<This, Args, Return>>
+    ) {
         return (
             originalMethod &&
-            (async function (this: This, ...args: Parameters<F>): Promise<Return> {
+            (async function (this: This, ...args: Args): Promise<Return> {
                 return await withSpan(
                     options?.name ?? context.name.toString(),
                     options?.onCall ? options.onCall(...args) : {},
                     () => originalMethod.apply(this, args),
                     options?.onReturn
                 )
-            } as F)
+            } as AsyncMethod<This, Args, Return>)
         )
     }
 }
 
-export function withTracingSync<This, Args extends AnyArgs, Return, F extends Method<This, Args, Return>>(
-    options?: DecoratorOptions<Args, Return>
-) {
-    return function (originalMethod: F | undefined, context: ClassMethodDecoratorContext) {
+export function withTracingSync<This, Args extends AnyArgs, Return>(options?: DecoratorOptions<Args, Return>) {
+    return function (
+        originalMethod: Method<This, Args, Return> | undefined,
+        context: ClassMethodDecoratorContext<This, Method<This, Args, Return>>
+    ) {
         return (
             originalMethod &&
-            (function (this: This, ...args: Parameters<F>): Return {
+            (function (this: This, ...args: Args): Return {
                 return withSyncSpan(
                     options?.name ?? context.name.toString(),
                     options?.onCall ? options.onCall(...args) : {},
                     () => originalMethod.apply(this, args),
                     options?.onReturn
                 )
-            } as F)
+            } as Method<This, Args, Return>)
         )
     }
 }
