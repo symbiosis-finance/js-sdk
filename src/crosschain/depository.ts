@@ -2,9 +2,10 @@ import { randomBytes } from 'crypto'
 import type { BigNumberish, BytesLike } from 'ethers'
 
 import Decimal from 'decimal.js-light'
-import type { Token } from '../entities'
 import { Percent, TokenAmount, wrappedToken } from '../entities'
 import { BIPS_BASE } from './constants'
+import { ERC20__factory, IRouter__factory } from './contracts'
+import { flatten, withSyncSpan, withTracingSync } from './tracing'
 import type {
     BranchedUnlocker,
     BtcRefundUnlocker,
@@ -14,9 +15,9 @@ import type {
     TimedUnlocker,
     WithdrawUnlocker,
 } from './contracts'
-import { ERC20__factory, IRouter__factory } from './contracts'
+import type { Token } from '../entities'
 import type { DepositoryTypes } from './contracts/IDepository'
-import { flatten, withSyncSpan, type OneOf } from './tracing'
+import type { OneOf } from './tracing'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
 
@@ -114,7 +115,23 @@ export class DepositoryContext {
             : this.erc20TransferCall(context.tokenOut, context.to)
     }
 
-    // Build Depository call.
+    /**
+     *  Build Depository call.
+     */
+    @withTracingSync({
+        onCall: (params: DepositParams) => ({
+            to: params.to,
+            tokenAmountIn: params.tokenAmountIn.toString(),
+            tokenAmountInMin: params.tokenAmountInMin.toString(),
+            bestPrice: `${params.bestPrice}`,
+            slippedPrice: `${params.slippedPrice}`,
+        }),
+        onReturn: (result: SymbiosisTradeOutResult) => ({
+            amountOut: result.amountOut.toString(),
+            amountOutMin: result.amountOutMin.toString(),
+            priceImpact: result.priceImpact.toFixed(),
+        }),
+    })
     buildDepositCall({
         to,
         tokenAmountIn,
