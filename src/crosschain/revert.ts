@@ -1,5 +1,4 @@
-import { MaxUint256 } from '@ethersproject/constants'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { MaxUint256, AddressZero } from '@ethersproject/constants'
 import type { TransactionRequest } from '@ethersproject/providers'
 import type { BigNumberish, BytesLike } from 'ethers'
 import JSBI from 'jsbi'

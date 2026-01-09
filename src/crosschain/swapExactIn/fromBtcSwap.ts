@@ -1,11 +1,11 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import type { TransactionRequest } from '@ethersproject/providers'
 import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
 import { BigNumber } from 'ethers'
 import type { BytesLike } from 'ethers/lib/utils'
 import { isAddress } from 'ethers/lib/utils'
-
 import Decimal from 'decimal.js-light'
+
 import { ChainId } from '../../constants'
 import type { Token } from '../../entities'
 import { Percent, TokenAmount } from '../../entities'

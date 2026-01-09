@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import type { Provider } from '@ethersproject/providers'
 import JSBI from 'jsbi'
 

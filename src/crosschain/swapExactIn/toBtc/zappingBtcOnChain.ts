@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import type { BytesLike } from 'ethers'
 import { BigNumber, utils } from 'ethers'
 

@@ -1,10 +1,8 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
-import { ChainId } from '../../../constants'
-import { getMulticall } from '../../multicall'
-
+import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import fs from 'fs'
+
 import type { TokenConstructor } from '../../../entities'
 import { Token } from '../../../entities'
 import ERC20 from '../../abis/ERC20.json'
@@ -20,6 +18,8 @@ import {
 } from '../../contracts'
 import type { ConfigName } from '../../symbiosis'
 import type { ChainConfig, Config, OmniPoolConfig } from '../../types'
+import { ChainId } from '../../../constants'
+import { getMulticall } from '../../multicall'
 import { config as beta } from '../beta'
 import { config as dev } from '../dev'
 import { config as mainnet } from '../mainnet'

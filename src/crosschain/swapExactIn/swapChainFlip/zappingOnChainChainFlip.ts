@@ -1,6 +1,6 @@
 import type { VaultSwapResponse } from '@chainflip/sdk/swap'
 import { SwapSDK } from '@chainflip/sdk/swap'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import type { BytesLike } from 'ethers'
 import { BigNumber, utils } from 'ethers'
 
