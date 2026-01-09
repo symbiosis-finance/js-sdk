@@ -5,7 +5,7 @@ import fs from 'fs'
 
 import type { TokenConstructor } from '../../../entities'
 import { Token } from '../../../entities'
-import ERC20 from '../../abis/ERC20.json'
+import ERC20 from '../../abis/ERC20.json' with { type: 'json' }
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import type { Bridge, Fabric, MetaRouter, OmniPool, Portal, Synthesis } from '../../contracts'
 import {

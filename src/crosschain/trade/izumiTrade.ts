@@ -1,6 +1,6 @@
 import BNJS from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { AbiCoder } from 'ethers/lib/utils'
+import { AbiCoder } from '@ethersproject/abi'
 
 import type { Address } from '..'
 import { ChainId } from '../../constants'
