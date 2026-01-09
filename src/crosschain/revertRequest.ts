@@ -167,7 +167,7 @@ export class RevertRequest {
         private transactionHash: string
     ) {}
 
-    async init({ validateState = false, synthesizeRequestFinder }: InitProps): Promise<PendingRequest | null> {
+    async init({ validateState = false, synthesizeRequestFinder }: InitProps): Promise<PendingRequest> {
         const provider = this.symbiosis.getProvider(this.chainId)
 
         const receipt = await provider.getTransactionReceipt(this.transactionHash)
