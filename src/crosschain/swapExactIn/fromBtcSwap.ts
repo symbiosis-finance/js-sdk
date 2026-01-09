@@ -3,7 +3,7 @@ import type { TransactionRequest } from '@ethersproject/providers'
 import { validate as validateBitcoinAddress } from 'bitcoin-address-validation'
 import { BigNumber } from 'ethers'
 import { isAddress } from '@ethersproject/address'
-import type {BytesLike} from '@ethersproject/bytes'
+import type { BytesLike } from '@ethersproject/bytes'
 import Decimal from 'decimal.js-light'
 
 import { ChainId } from '../../constants'

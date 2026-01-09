@@ -16,11 +16,11 @@
     "type": "module",
     "exports": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.esm.js"
+        "default": "./dist/index.js"
     },
     "scripts": {
-        "build": "tsup",
-        "start": "tsup --watch",
+        "build": "rm -fr ./dist && tsc",
+        "start": "tsc --watch",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
         "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
@@ -93,7 +93,6 @@
         "prettier-plugin-organize-imports": "^4.3.0",
         "prom-client": "^15.1.3",
         "ts-node": "^10.9.1",
-        "tsup": "^8.5.1",
         "typechain": "^8.3.2",
         "typescript": "^5.0.4",
         "vitest": "^4.0.16"
