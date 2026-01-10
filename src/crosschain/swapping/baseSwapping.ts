@@ -94,7 +94,20 @@ export abstract class BaseSwapping {
     }
 
     @withTracing({
-        onCall: (params) => ({ to: params.to }),
+        onCall: function (params) {
+            return {
+                tokenAmountIn: params.tokenAmountIn.toString(),
+                tokenOut: params.tokenOut.toString(),
+                to: params.to,
+                slippage: params.slippage,
+                deadline: params.deadline,
+                transitTokenIn: params.transitTokenIn?.toString(),
+                transitTokenOut: params.transitTokenOut?.toString(),
+                partnerAddress: params.partnerAddress,
+                'omniPool.chainId': this.omniPoolConfig.chainId,
+                'omniPool.address': this.omniPoolConfig.address,
+            }
+        },
         onReturn: (ret) => ({ priceImpact: ret.priceImpact.toFixed() }),
     })
     async doExactIn({
@@ -166,15 +179,7 @@ export abstract class BaseSwapping {
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
-            this.tradeA = this.buildTradeA(tradeAContext)
-            const endTimerTradeA = this.symbiosis.createMetricTimer()
-            await this.tradeA.init()
-            endTimerTradeA?.({
-                operation: 'tradeA',
-                kind: 'crosschain-swap',
-                tokenIn: this.tokenAmountIn.token,
-                tokenOut: this.transitTokenIn,
-            })
+            this.tradeA = await this.buildTradeA(tradeAContext)
             this.profiler.tick('A')
             routes.push({
                 provider: this.tradeA.tradeType,
@@ -499,7 +504,15 @@ export abstract class BaseSwapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
-    protected buildTradeA(tradeAContext?: TradeAContext): SymbiosisTrade {
+    @withTracing({
+        onCall: function (tradeAContext?: TradeAContext) {
+            return {
+                tradeAContext,
+                tokenOut: this.transitTokenIn.toString(),
+            }
+        },
+    })
+    protected async buildTradeA(tradeAContext?: TradeAContext): Promise<SymbiosisTrade> {
         const tokenOut = this.transitTokenIn
 
         if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
@@ -519,7 +532,7 @@ export abstract class BaseSwapping {
         }
         const to = from
 
-        return new AggregatorTrade({
+        const trade = new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
             tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
             tokenOut,
@@ -532,6 +545,16 @@ export abstract class BaseSwapping {
             oneInchProtocols: this.oneInchProtocols,
             preferOneInchUsage: isUseOneInchOnly(this),
         })
+
+        const endTimerTradeA = this.symbiosis.createMetricTimer()
+        await trade.init()
+        endTimerTradeA?.({
+            operation: 'tradeA',
+            kind: 'crosschain-swap',
+            tokenIn: this.tokenAmountIn.token,
+            tokenOut: this.transitTokenIn,
+        })
+        return trade
     }
 
     protected buildTransit(amountIn: TokenAmount, amountInMin: TokenAmount): Transit {

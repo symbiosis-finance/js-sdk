@@ -65,13 +65,15 @@ export type AnyArgs = any[]
 export type AsyncMethod<This, Args extends AnyArgs, Return> = (this: This, ...args: Args) => Promise<Return>
 export type Method<This, Args extends AnyArgs, Return> = (this: This, ...args: Args) => Return
 
-export interface DecoratorOptions<Args extends AnyArgs, Return> {
+export interface DecoratorOptions<This extends NonNullable<any>, Args extends AnyArgs, Return> {
     name?: string
-    onCall?: (...args: Args) => Attributes
-    onReturn?: (result: Return) => Attributes
+    onCall?: (this: This, ...args: Args) => Attributes
+    onReturn?: (this: This, result: Return) => Attributes
 }
 
-export function withTracing<This, Args extends AnyArgs, Return>(options?: DecoratorOptions<Args, Return>) {
+export function withTracing<This extends NonNullable<any>, Args extends AnyArgs, Return>(
+    options?: DecoratorOptions<This, Args, Return>
+) {
     return function (
         originalMethod: AsyncMethod<This, Args, Return> | undefined,
         context: ClassMethodDecoratorContext<This, AsyncMethod<This, Args, Return>>
@@ -81,16 +83,16 @@ export function withTracing<This, Args extends AnyArgs, Return>(options?: Decora
             (async function (this: This, ...args: Args): Promise<Return> {
                 return await withSpan(
                     options?.name ?? context.name.toString(),
-                    options?.onCall ? options.onCall(...args) : {},
+                    options?.onCall ? options.onCall.apply(this, args) : {},
                     () => originalMethod.apply(this, args),
-                    options?.onReturn
+                    options?.onReturn ? options.onReturn.bind(this) : undefined
                 )
             } as AsyncMethod<This, Args, Return>)
         )
     }
 }
 
-export function withTracingSync<This, Args extends AnyArgs, Return>(options?: DecoratorOptions<Args, Return>) {
+export function withTracingSync<This, Args extends AnyArgs, Return>(options?: DecoratorOptions<This, Args, Return>) {
     return function (
         originalMethod: Method<This, Args, Return> | undefined,
         context: ClassMethodDecoratorContext<This, Method<This, Args, Return>>
@@ -100,9 +102,9 @@ export function withTracingSync<This, Args extends AnyArgs, Return>(options?: De
             (function (this: This, ...args: Args): Return {
                 return withSyncSpan(
                     options?.name ?? context.name.toString(),
-                    options?.onCall ? options.onCall(...args) : {},
+                    options?.onCall ? options.onCall.apply(this, args) : {},
                     () => originalMethod.apply(this, args),
-                    options?.onReturn
+                    options?.onReturn ? options.onReturn.bind(this) : undefined
                 )
             } as Method<This, Args, Return>)
         )
