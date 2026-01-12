@@ -114,7 +114,7 @@ export class Transit {
     }
 
     @withTracing({
-        onCall: function() {
+        onCall: function () {
             return {
                 tokenAmountIn: this.amountIn.toString(),
                 tokenAmountInMin: this.amountInMin.toString(),
@@ -123,12 +123,12 @@ export class Transit {
                 fee2: this.fee2?.toString(),
             }
         },
-        onReturn: function() {
+        onReturn: function () {
             return {
                 tokenAmountOut: this.out?.amountOut.toString(),
                 tokenAmountOutMin: this.out?.amountOutMin.toString(),
             }
-        }
+        },
     })
     public async init(): Promise<Transit> {
         const { tradeAmountIn, tradeAmountInMin } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
