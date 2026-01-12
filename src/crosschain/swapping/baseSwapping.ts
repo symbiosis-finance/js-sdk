@@ -508,6 +508,8 @@ export abstract class BaseSwapping {
         onCall: function (tradeAContext?: TradeAContext) {
             return {
                 tradeAContext,
+                tokenAmountIn: this.tokenAmountIn.toString(),
+                tokenAmountInMin: this.tokenAmountIn.toString(),
                 tokenOut: this.transitTokenIn.toString(),
             }
         },
