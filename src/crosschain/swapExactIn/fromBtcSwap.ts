@@ -467,7 +467,10 @@ class FromBtcTrader {
                 return {
                     crossChain: {
                         ...swapExactInResult,
-                        tradeA: result, // overwrite tradeA by depositoryTrade
+                        routes: [
+                            { provider: result.tradeType, tokens: result.route },
+                            ...swapExactInResult.routes.slice(1),
+                        ],
                     },
                     calls: [tradeToMulticall(result)],
                 }
