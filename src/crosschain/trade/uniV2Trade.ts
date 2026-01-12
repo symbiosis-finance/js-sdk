@@ -63,7 +63,7 @@ export class UniV2Trade extends SymbiosisTrade {
         return 'uni-v2'
     }
 
-    @withTracing({ name: 'UniV2Trade.init' })
+    @withTracing()
     public async init() {
         const { chainId } = this.tokenAmountIn.token
 
