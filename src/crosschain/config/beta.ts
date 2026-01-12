@@ -127,25 +127,25 @@ export const config: Config = {
     },
     fallbackReceiver: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     btcConfigs: [
-        {
-            btc: new Token({
-                deprecated: true,
-                name: 'Bitcoin',
-                symbol: 'BTC',
-                address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
-                chainId: ChainId.BTC_MAINNET,
-                decimals: 8,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                },
-            }),
-            symBtc: {
-                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-                chainId: ChainId.ZKSYNC_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
-        },
+        // {
+        //     btc: new Token({
+        //         deprecated: true,
+        //         name: 'Bitcoin',
+        //         symbol: 'BTC',
+        //         address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
+        //         chainId: ChainId.BTC_MAINNET,
+        //         decimals: 8,
+        //         icons: {
+        //             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //         },
+        //     }),
+        //     symBtc: {
+        //         address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
+        //         chainId: ChainId.ZKSYNC_MAINNET,
+        //     },
+        //     forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
+        // },
         {
             btc: new Token({
                 name: 'Bitcoin',
@@ -164,24 +164,24 @@ export const config: Config = {
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
         },
-        {
-            btc: new Token({
-                name: 'Bitcoin',
-                symbol: 'BTC',
-                address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
-                chainId: ChainId.BTC_MAINNET,
-                decimals: 8,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                },
-            }),
-            symBtc: {
-                address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
-                chainId: ChainId.RSK_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
-        },
+        // {
+        //     btc: new Token({
+        //         name: 'Bitcoin',
+        //         symbol: 'BTC',
+        //         address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
+        //         chainId: ChainId.BTC_MAINNET,
+        //         decimals: 8,
+        //         icons: {
+        //             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //         },
+        //     }),
+        //     symBtc: {
+        //         address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
+        //         chainId: ChainId.RSK_MAINNET,
+        //     },
+        //     forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
+        // },
     ],
     chains: [
         {
