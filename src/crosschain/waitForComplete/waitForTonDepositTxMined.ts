@@ -1,8 +1,8 @@
 import { AddressZero } from '@ethersproject/constants'
+import { keccak256 } from '@ethersproject/solidity'
 import type { Cell, Transaction } from '@ton/core'
 import { Address } from '@ton/core'
 import type { Maybe } from '@ton/ton/dist/utils/maybe'
-import { solidityKeccak256 } from 'ethers/lib/utils'
 
 import type { ChainId } from '../../constants'
 import type { Symbiosis } from '../symbiosis'
@@ -61,7 +61,7 @@ function _getExternalIdTon({
     receiveSide: string
     chainId: ChainId
 }) {
-    return solidityKeccak256(['bytes32', 'address', 'uint256'], [internalId, receiveSide, chainId])
+    return keccak256(['bytes32', 'address', 'uint256'], [internalId, receiveSide, chainId])
 }
 
 class WaitForTonTxCompleteError extends Error {

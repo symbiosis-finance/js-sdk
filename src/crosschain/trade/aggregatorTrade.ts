@@ -109,7 +109,7 @@ class Trades {
     }
 
     wait(): Promise<Trade> {
-        const intervalId = setInterval(this.check, 50)
+        const intervalId = setInterval(() => this.check(), 50)
         this.prom.finally(() => clearInterval(intervalId))
         return this.prom
     }

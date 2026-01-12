@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import BigNumber from 'bignumber.js'
 
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'

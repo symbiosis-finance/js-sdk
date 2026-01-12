@@ -1,3 +1,4 @@
+import { withTracing } from '../tracing'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../types'
 import { BaseSwapping } from './baseSwapping'
 import { Swapping } from './swapping'
@@ -7,6 +8,14 @@ export class SwappingMiddleware extends BaseSwapping {
     protected middlewareData!: string
     protected middlewareOffset!: number
 
+    @withTracing({
+        onCall: function (_) {
+            return {
+                'omniPool.chainId': this.omniPoolConfig.chainId,
+                'omniPool.address': this.omniPoolConfig.address,
+            }
+        },
+    })
     public async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const { middlewareCall } = params
         if (!middlewareCall) {

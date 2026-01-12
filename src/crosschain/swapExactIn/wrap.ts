@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 
 import { Percent, TokenAmount, WETH } from '../../entities'
 import { getFunctionSelector } from '../chainUtils/tron'
