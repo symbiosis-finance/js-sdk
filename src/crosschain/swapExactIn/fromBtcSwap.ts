@@ -337,9 +337,9 @@ class FromBtcTrader {
             tokenAmountOutMin = res.tokenAmountOutMin
             priceImpact = res.priceImpact
         } else if (tradeA) {
-            // Onchain case wit swap.
+            // Onchain case with a swap.
             fees.push(...(tradeA.fees || []))
-            routes.push({ provider: 'depository', tokens: tradeA.route }) // TODO: pass provider from tail call.
+            routes.push({ provider: tradeA.tradeType, tokens: tradeA.route })
             tokenAmountOut = tradeA.amountOut
             tokenAmountOutMin = tradeA.amountOut
             priceImpact = tradeA.priceImpact
