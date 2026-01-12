@@ -71,7 +71,17 @@ export interface DecoratorOptions<This extends NonNullable<any>, Args extends An
     onReturn?: (this: This, result: Return) => Attributes
 }
 
-export function withTracing<This extends NonNullable<any>, Args extends AnyArgs, Return>(
+interface HasConstructor {
+    constructor: {
+        name: string
+    }
+}
+
+function getSpanName<This extends HasConstructor>(owner: This, context: ClassMethodDecoratorContext<This>): string {
+    return `${owner.constructor.name}.${String(context.name)}`
+}
+
+export function withTracing<This extends HasConstructor, Args extends AnyArgs, Return>(
     options?: DecoratorOptions<This, Args, Return>
 ) {
     return function (
@@ -82,7 +92,7 @@ export function withTracing<This extends NonNullable<any>, Args extends AnyArgs,
             originalMethod &&
             (async function (this: This, ...args: Args): Promise<Return> {
                 return await withSpan(
-                    options?.name ?? context.name.toString(),
+                    options?.name ?? getSpanName(this, context),
                     options?.onCall ? options.onCall.apply(this, args) : {},
                     () => originalMethod.apply(this, args),
                     options?.onReturn ? options.onReturn.bind(this) : undefined
@@ -92,7 +102,9 @@ export function withTracing<This extends NonNullable<any>, Args extends AnyArgs,
     }
 }
 
-export function withTracingSync<This, Args extends AnyArgs, Return>(options?: DecoratorOptions<This, Args, Return>) {
+export function withTracingSync<This extends HasConstructor, Args extends AnyArgs, Return>(
+    options?: DecoratorOptions<This, Args, Return>
+) {
     return function (
         originalMethod: Method<This, Args, Return> | undefined,
         context: ClassMethodDecoratorContext<This, Method<This, Args, Return>>
@@ -101,7 +113,7 @@ export function withTracingSync<This, Args extends AnyArgs, Return>(options?: De
             originalMethod &&
             (function (this: This, ...args: Args): Return {
                 return withSyncSpan(
-                    options?.name ?? context.name.toString(),
+                    options?.name ?? getSpanName(this, context),
                     options?.onCall ? options.onCall.apply(this, args) : {},
                     () => originalMethod.apply(this, args),
                     options?.onReturn ? options.onReturn.bind(this) : undefined
