@@ -203,7 +203,7 @@ class FromBtcTrader {
             )
         }
         syBtcAmount = syBtcAmount.subtract(btcForwarderFee)
-        syBtcAmountMin = syBtcAmount.subtract(btcForwarderFee)
+        syBtcAmountMin = syBtcAmountMin.subtract(btcForwarderFee)
         fees.push({
             provider: 'symbiosis',
             description: 'BTC Forwarder fee',
@@ -293,10 +293,12 @@ class FromBtcTrader {
         const partnerFeeCall = await getPartnerFeeCall({
             symbiosis,
             amountIn: syBtcAmount,
+            amountInMin: syBtcAmountMin,
             partnerAddress,
         })
         if (partnerFeeCall) {
             syBtcAmount = partnerFeeCall.amountOut // override
+            syBtcAmountMin = partnerFeeCall.amountOutMin // override
             calls.push(partnerFeeCall)
             fees.push(...partnerFeeCall.fees)
         }
@@ -306,8 +308,10 @@ class FromBtcTrader {
             const volumeFeeCall = getVolumeFeeCall({
                 feeCollector,
                 amountIn: syBtcAmount,
+                amountInMin: syBtcAmountMin,
             })
             syBtcAmount = volumeFeeCall.amountOut // override
+            syBtcAmountMin = volumeFeeCall.amountOutMin // override
             calls.push(volumeFeeCall)
             fees.push(...volumeFeeCall.fees)
         }
