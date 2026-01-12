@@ -149,7 +149,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         return this.trade.tradeType
     }
 
-    @withTracing({ name: 'AggregatorTrade.init' })
+    @withTracing()
     public async init() {
         const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenAmountInMin, tokenOut, oneInchProtocols } =
             this.params
