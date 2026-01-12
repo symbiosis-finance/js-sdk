@@ -91,12 +91,8 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
 
 type SwapResult = {
     calls: MultiCallItem[]
-    result?: SwapExactInResult
-    tradeA?: SymbiosisTrade
-}
-
-type SwapResultCrossChain = SwapResult & {
-    result: SwapExactInResult
+    onChain?: SymbiosisTrade
+    crossChain?: SwapExactInResult
 }
 
 interface BuildBtcTailResult {
@@ -327,22 +323,22 @@ class FromBtcTrader {
         if (swapResult.calls) {
             calls.push(...swapResult.calls)
         }
-        const res = swapResult.result
-        const tradeA = swapResult.tradeA
-        if (res) {
+        const crossChain = swapResult.crossChain
+        const onChain = swapResult.onChain
+        if (crossChain) {
             // Crosschain case.
-            fees.push(...(res.fees || []))
-            routes.push(...res.routes)
-            tokenAmountOut = res.tokenAmountOut
-            tokenAmountOutMin = res.tokenAmountOutMin
-            priceImpact = res.priceImpact
-        } else if (tradeA) {
+            fees.push(...(crossChain.fees || []))
+            routes.push(...crossChain.routes)
+            tokenAmountOut = crossChain.tokenAmountOut
+            tokenAmountOutMin = crossChain.tokenAmountOutMin
+            priceImpact = crossChain.priceImpact
+        } else if (onChain) {
             // Onchain case with a swap.
-            fees.push(...(tradeA.fees || []))
-            routes.push({ provider: tradeA.tradeType, tokens: tradeA.route })
-            tokenAmountOut = tradeA.amountOut
-            tokenAmountOutMin = tradeA.amountOut
-            priceImpact = tradeA.priceImpact
+            fees.push(...(onChain.fees || []))
+            routes.push({ provider: onChain.tradeType, tokens: onChain.route })
+            tokenAmountOut = onChain.amountOut
+            tokenAmountOutMin = onChain.amountOut
+            priceImpact = onChain.priceImpact
         } else {
             // Onchain case with syBTC target.
             tokenAmountOut = syBtcAmount
@@ -376,8 +372,8 @@ class FromBtcTrader {
             priceImpact,
             tokenAmountOut,
             tokenAmountOutMin,
-            tradeA: tradeA || res?.tradeA,
-            tradeC: res?.tradeC,
+            tradeA: onChain || crossChain?.tradeA,
+            tradeC: crossChain?.tradeC,
         }
     }
 
@@ -418,21 +414,25 @@ class FromBtcTrader {
         }
         return {
             calls: [tradeToMulticall(trade)],
-            tradeA: trade,
+            onChain: trade,
         }
     }
 
     @withTracing({
-        onReturn: (result: SwapResultCrossChain) => ({
-            tokenAmountOut: result.result.tokenAmountOut.toString(),
-            tokenAmountOutMin: result.result.tokenAmountOutMin.toString(),
+        onCall: (_, syBtcAmount, syBtcAmountMin) => ({
+            syBtcAmount: syBtcAmount.toString(),
+            syBtcAmountMin: syBtcAmountMin.toString(),
+        }),
+        onReturn: (result: SwapResult) => ({
+            tokenAmountOut: result.crossChain?.tokenAmountOut.toString(),
+            tokenAmountOutMin: result.crossChain?.tokenAmountOutMin.toString(),
         }),
     })
     async buildCrossChainSwap(
         context: SwapExactInParams,
         syBtcAmount: TokenAmount,
         syBtcAmountMin: TokenAmount
-    ): Promise<SwapResultCrossChain> {
+    ): Promise<SwapResult> {
         const { to, symbiosis } = context
 
         const swapExactInResult = await crosschainSwap({
@@ -465,13 +465,16 @@ class FromBtcTrader {
                     },
                 })
                 return {
-                    result: swapExactInResult,
+                    crossChain: {
+                        ...swapExactInResult,
+                        tradeA: result, // overwrite tradeA by depositoryTrade
+                    },
                     calls: [tradeToMulticall(result)],
                 }
             } else {
                 // There is no on-chain swap, Depository is not needed.
                 return {
-                    result: swapExactInResult,
+                    crossChain: swapExactInResult,
                     calls: [
                         {
                             to: tx.relayRecipient,
@@ -520,7 +523,7 @@ class FromBtcTrader {
                 amountOutMin: swapExactInResult.tokenAmountOutMin,
                 priceImpact: swapExactInResult.priceImpact,
             })
-            return { calls, result: swapExactInResult }
+            return { calls, crossChain: swapExactInResult }
         }
     }
 
@@ -633,8 +636,8 @@ function tradeToMulticall(trade: SymbiosisTrade): MultiCallItem {
         to: trade.routerAddress,
         value: '0',
         priceImpact: trade.priceImpact,
-        fees: [],
-        routes: [],
+        fees: trade.fees || [],
+        routes: [{ provider: trade.tradeType, tokens: trade.route }],
     }
 }
 
