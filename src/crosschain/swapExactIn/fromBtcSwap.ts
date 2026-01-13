@@ -430,8 +430,8 @@ class FromBtcTrader {
         onReturn: (result: SwapResult) => ({
             tokenAmountOut: result.crossChain?.tokenAmountOut.toString(),
             tokenAmountOutMin: result.crossChain?.tokenAmountOutMin.toString(),
-            tradeAAmountOut: result.crossChain?.tradeA?.amountOutMin.toString(),
-            tradeAAmountOutMin: result.crossChain?.tradeA?.amountOut.toString(),
+            tradeAAmountOut: result.crossChain?.tradeA?.amountOut.toString(),
+            tradeAAmountOutMin: result.crossChain?.tradeA?.amountOutMin.toString(),
         }),
     })
     async buildCrossChainSwap(
