@@ -35,16 +35,8 @@ export class OctoPoolTrade extends SymbiosisTrade implements OctoPoolTradeParams
         const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.poolConfig, this.tokenOut)
 
         const amountIn = BigNumber.from(this.tokenAmountIn.raw.toString())
-        const amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
-
         const quote = await this.quote(indexIn, indexOut, amountIn)
-
-        let quoteMin = quote
-        if (amountInMin.lt(amountIn)) {
-            quoteMin = quote.mul(amountInMin).div(amountIn) // proportionally
-        }
-
-        quoteMin = BigNumber.from(getMinAmount(this.slippage, quoteMin.toString()).toString())
+        const quoteMin = BigNumber.from(getMinAmount(this.slippage, quote.toString()).toString())
 
         const callData = OmniPool__factory.createInterface().encodeFunctionData('swap', [
             indexIn,

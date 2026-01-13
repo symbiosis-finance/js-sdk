@@ -175,6 +175,7 @@ export type TradeAContext = 'metaRouter' | 'multicallRouter'
 export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
+    tokenAmountInMin?: TokenAmount
     tokenOut: Token
     from: Address
     to: Address

@@ -66,6 +66,7 @@ export abstract class BaseSwapping {
     protected from!: Address
     protected to!: Address
     tokenAmountIn!: TokenAmount
+    tokenAmountInMin!: TokenAmount
     tokenOut!: Token
     protected slippage!: DetailedSlippage
     protected deadline!: number
@@ -112,6 +113,7 @@ export abstract class BaseSwapping {
     })
     async doExactIn({
         tokenAmountIn,
+        tokenAmountInMin,
         tokenOut,
         from,
         to,
@@ -130,6 +132,7 @@ export abstract class BaseSwapping {
         this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
+        this.tokenAmountInMin = tokenAmountInMin || tokenAmountIn
         this.tokenOut = tokenOut
         this.transitTokenIn =
             transitTokenIn || this.symbiosis.transitToken(this.tokenAmountIn.token.chainId, this.omniPoolConfig)
@@ -191,7 +194,7 @@ export abstract class BaseSwapping {
         }
 
         const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountIn
+        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountInMin
 
         routes.push({
             provider: 'symbiosis',
@@ -509,7 +512,7 @@ export abstract class BaseSwapping {
             return {
                 tradeAContext,
                 tokenAmountIn: this.tokenAmountIn.toString(),
-                tokenAmountInMin: this.tokenAmountIn.toString(),
+                tokenAmountInMin: this.tokenAmountInMin.toString(),
                 tokenOut: this.transitTokenIn.toString(),
             }
         },
@@ -520,7 +523,7 @@ export abstract class BaseSwapping {
         if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: this.tokenAmountIn,
-                tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
+                tokenAmountInMin: this.tokenAmountInMin,
                 tokenOut,
                 to: this.to,
             })
@@ -536,7 +539,7 @@ export abstract class BaseSwapping {
 
         const trade = new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
-            tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
+            tokenAmountInMin: this.tokenAmountInMin,
             tokenOut,
             from,
             to,

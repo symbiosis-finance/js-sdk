@@ -195,15 +195,15 @@ class FromBtcTrader {
             refundAddress: refundAddress as BtcAddress,
             clientId: symbiosis.clientId,
         })
-        const btcForwarderFee = new TokenAmount(syBtc, btcForwarderFeeRaw.toString())
-        const btcForwarderFeeMax = btcForwarderFee.add(btcForwarderFee) // +100% of fee
+        const btcForwarderFee = new TokenAmount(syBtc, btcForwarderFeeRaw.min.toString())
+        const btcForwarderFeeMax = new TokenAmount(syBtc, btcForwarderFeeRaw.max.toString())
         if (syBtcAmount.lessThan(btcForwarderFeeMax)) {
             throw new AmountLessThanFeeError(
                 `Amount ${syBtcAmount.toSignificant()} less than btcForwarderFeeMax ${btcForwarderFeeMax.toSignificant()}`
             )
         }
         syBtcAmount = syBtcAmount.subtract(btcForwarderFee)
-        syBtcAmountMin = syBtcAmountMin.subtract(btcForwarderFee)
+        syBtcAmountMin = syBtcAmountMin.subtract(btcForwarderFeeMax)
         fees.push({
             provider: 'symbiosis',
             description: 'BTC Forwarder fee',
@@ -444,6 +444,7 @@ class FromBtcTrader {
         const swapExactInResult = await crosschainSwap({
             ...context,
             tokenAmountIn: syBtcAmount,
+            tokenAmountInMin: syBtcAmountMin,
             from: to, // to be able to revert a tx
             tradeAContext: 'multicallRouter',
             partnerAddress: undefined, // don't need to call partner fee twice
@@ -694,7 +695,7 @@ async function estimateWrap({
     amount,
     refundAddress,
     clientId,
-}: EstimateWrapParams): Promise<BigNumber> {
+}: EstimateWrapParams): Promise<{ min: BigNumber; max: BigNumber }> {
     const estimateWrapApiUrl = new URL(`${forwarderUrl}/estimate-wrap`)
     const myHeaders = new Headers({
         accept: 'application/json',
@@ -729,9 +730,12 @@ async function estimateWrap({
         throw new SdkError(json.message ?? text)
     }
 
-    const { revealTxFee } = await response.json()
+    const { revealTxFee, feeLimit } = await response.json()
 
-    return BigNumber.from(revealTxFee)
+    return {
+        min: BigNumber.from(revealTxFee),
+        max: BigNumber.from(feeLimit),
+    }
 }
 
 type WrapParams = EstimateWrapParams & {

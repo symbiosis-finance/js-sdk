@@ -77,8 +77,8 @@ describe('OpenOceanTrade', () => {
                 expect(trade.amountOut).toEqual(expectedAmountOut)
             })
             test('amountOutMin', () => {
-                // 9000000 * 0.99 (slippage)
-                const expectedAmountOut = new TokenAmount(tokenOut, '8910000')
+                // 9000000 * 0.99 (slippage) + slippage based on amounts
+                const expectedAmountOut = new TokenAmount(tokenOut, '8010000')
                 expect(trade.amountOutMin.raw.toString()).toEqual(expectedAmountOut.raw.toString())
             })
         })

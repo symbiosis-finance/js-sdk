@@ -4,6 +4,7 @@ import type { Percent, Token } from '../../entities'
 import { TokenAmount } from '../../entities'
 import { TradeError } from '../sdkError'
 import type { Address, FeeItem } from '../types'
+import { BIPS_BASE } from '../constants'
 
 export type SymbiosisTradeType =
     | 'uni-v2'
@@ -64,7 +65,7 @@ export abstract class SymbiosisTrade {
         this.tokenAmountIn = params.tokenAmountIn
         this.tokenAmountInMin = params.tokenAmountInMin
         this.tokenOut = params.tokenOut
-        this.slippage = params.slippage
+        this.slippage = SymbiosisTrade.getFlexSlippage(params.tokenAmountIn, params.tokenAmountInMin, params.slippage)
         this.to = params.to
     }
 
@@ -141,6 +142,16 @@ export abstract class SymbiosisTrade {
     get fees(): FeeItem[] | undefined {
         this.assertOutInitialized('fees')
         return this.out.fees
+    }
+
+    /**
+     *  Increase slippage proportionally to the input amounts difference
+     */
+    private static getFlexSlippage(tokenAmountIn: TokenAmount, tokenAmountInMin: TokenAmount, slippage: number) {
+        const amountIn = BigNumber.from(tokenAmountIn.raw.toString())
+        const amountInMin = BigNumber.from(tokenAmountInMin.raw.toString())
+        const extraSlippageBps = amountIn.sub(amountInMin).mul(BIPS_BASE.toString()).div(amountIn).toNumber()
+        return slippage + extraSlippageBps
     }
 
     /**

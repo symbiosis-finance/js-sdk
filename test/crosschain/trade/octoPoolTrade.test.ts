@@ -68,21 +68,21 @@ describe('OctoPoolTrade', () => {
             expect(trade.amountOut).toEqual(expectedAmountOut)
         })
         test('amountOutMin', () => {
-            // 80 * (90/100) * 0.99 (slippage)
-            const expectedAmountOut = new TokenAmount(tokenOut, '71280000000000000000')
+            // 80 * 0.89 (1% slippage + 10% extra slippage)
+            const expectedAmountOut = new TokenAmount(tokenOut, '71200000000000000000')
             expect(trade.amountOutMin.raw.toString()).toEqual(expectedAmountOut.raw.toString())
         })
 
         test('calldata', () => {
             const deadlineHex = deadline.toString(16).padStart(64, '0')
             const dataWithoutDeadline =
-                '0x8f6bdeaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000056bc75e2d63100000000000000000000000000000000000000000000000000003dd356e57a5d800000000000000000000000000001111111111111111111111111111111111111111'
+                '0x8f6bdeaa000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000056bc75e2d63100000000000000000000000000000000000000000000000000003dc1936c427d000000000000000000000000000001111111111111111111111111111111111111111'
             const data = dataWithoutDeadline + deadlineHex
             expect(trade.callData).toEqual(data)
             // includes amountIn 100000000000000000000
             expect(data.includes('56BC75E2D63100000'.toLowerCase())).toBeTruthy()
-            // includes minReceived 71280000000000000000
-            expect(data.includes('3DD356E57A5D80000'.toLowerCase())).toBeTruthy()
+            // includes minReceived 71200000000000000000
+            expect(data.includes('3DC1936C427D00000'.toLowerCase())).toBeTruthy()
         })
         test('callDataOffset', () => {
             expect(trade.callDataOffset).toEqual(100)
@@ -99,8 +99,8 @@ describe('OctoPoolTrade', () => {
         const newAmountInRaw = BigNumber.from(50).mul(DECIMALS)
         const newAmountIn = new TokenAmount(tokenAmountIn.token, newAmountInRaw.toString())
 
-        // was 90, now 40
-        const newAmountInRawMin = BigNumber.from(40).mul(DECIMALS)
+        // was 90, now 36
+        const newAmountInRawMin = BigNumber.from(36).mul(DECIMALS)
         const newAmountInMin = new TokenAmount(tokenAmountIn.token, newAmountInRawMin.toString())
         await trade.applyAmountIn(newAmountIn, newAmountInMin)
 
@@ -113,21 +113,21 @@ describe('OctoPoolTrade', () => {
             expect(trade.amountOut.raw.toString()).toEqual('40000000000000000000')
         })
         test('amountOutMin', () => {
-            // 71.28 * (40/90)
-            expect(trade.amountOutMin.raw.toString()).toEqual('31680000000000000000')
+            // 71.2 * (36/90)
+            expect(trade.amountOutMin.raw.toString()).toEqual('28480000000000000000')
         })
 
         test('calldata', () => {
             const deadlineHex = deadline.toString(16).padStart(64, '0')
             const dataWithoutDeadline =
-                '0x8f6bdeaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000002b5e3af16b1880000000000000000000000000000000000000000000000000001b7a5f826f46000000000000000000000000000001111111111111111111111111111111111111111'
+                '0x8f6bdeaa00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000002b5e3af16b18800000000000000000000000000000000000000000000000000018b3d491b432000000000000000000000000000001111111111111111111111111111111111111111'
             const data = dataWithoutDeadline + deadlineHex
 
             expect(trade.callData).toEqual(data)
             // includes amountIn 50000000000000000000
             expect(data.includes('2B5E3AF16B1880000'.toLowerCase())).toBeTruthy()
-            // includes minReceived 31680000000000000000
-            expect(data.includes('1B7A5F826F4600000'.toLowerCase())).toBeTruthy()
+            // includes minReceived 28480000000000000000
+            expect(data.includes('18B3D491B43200000'.toLowerCase())).toBeTruthy()
         })
     })
 })
