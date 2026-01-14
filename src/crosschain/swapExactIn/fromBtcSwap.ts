@@ -457,7 +457,12 @@ class FromBtcTrader {
             if (swapExactInResult.tradeA) {
                 // There is DEX-swap on BSC, lock to Depository instead.
                 const result = await this.buildBtcDepositCall(dep, {
-                    tradeParams: { ...context, tokenAmountIn: syBtcAmount, tokenAmountInMin: syBtcAmountMin },
+                    tradeParams: {
+                        ...context,
+                        tokenAmountIn: syBtcAmount,
+                        tokenAmountInMin: syBtcAmountMin,
+                        slippage: swapExactInResult.tradeA.slippage, // use slippage from tradeA that replaced by depository
+                    },
                     refundAddress: context.refundAddress,
                     depositParams: {
                         ...context,

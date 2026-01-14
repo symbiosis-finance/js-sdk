@@ -623,7 +623,15 @@ export abstract class BaseSwapping {
                 ...dep.makeTargetCall(aggTrade),
             } as DepositParams
             // If there is a Depository on a C chain, then use aggTrade for price detection.
-            return await new DepositoryTrade(aggTrade, dep, depositParams, aggTrade).init()
+            return await new DepositoryTrade(
+                {
+                    ...aggTrade,
+                    slippage: this.slippage['C'],
+                },
+                dep,
+                depositParams,
+                aggTrade
+            ).init()
         } else {
             return aggTrade
         }
