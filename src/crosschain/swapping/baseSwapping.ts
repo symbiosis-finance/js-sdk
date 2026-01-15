@@ -526,7 +526,7 @@ export abstract class BaseSwapping {
                 tokenAmountInMin: this.tokenAmountInMin,
                 tokenOut,
                 to: this.to,
-            })
+            }).init()
         }
 
         const chainId = this.tokenAmountIn.token.chainId
@@ -591,7 +591,7 @@ export abstract class BaseSwapping {
     protected async buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount): Promise<SymbiosisTrade> {
         if (WrapTrade.isSupported(amountIn.token, this.tokenOut)) {
             // We need to just wrap or unwrap the token.
-            return await new WrapTrade({
+            return new WrapTrade({
                 tokenAmountIn: amountIn,
                 tokenAmountInMin: amountInMin,
                 tokenOut: this.tokenOut,
@@ -623,7 +623,7 @@ export abstract class BaseSwapping {
                 ...dep.makeTargetCall(aggTrade),
             } as DepositParams
             // If there is a Depository on a C chain, then use aggTrade for price detection.
-            return await new DepositoryTrade(
+            return new DepositoryTrade(
                 {
                     ...aggTrade,
                     slippage: this.slippage['C'],

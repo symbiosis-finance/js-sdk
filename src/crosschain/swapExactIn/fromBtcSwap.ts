@@ -571,7 +571,7 @@ class FromBtcTrader {
             console.warn('locking btc without refund unlocker')
         }
 
-        return await new DepositoryTrade(tradeParams, dep, depositParams).init()
+        return new DepositoryTrade(tradeParams, dep, depositParams).init()
     }
 }
 
