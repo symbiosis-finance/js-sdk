@@ -108,10 +108,13 @@ class Trades {
         return bestTrade
     }
 
-    wait(): Promise<Trade> {
+    async wait(): Promise<Trade> {
         const intervalId = setInterval(() => this.check(), 50)
-        this.prom.finally(() => clearInterval(intervalId))
-        return this.prom
+        try {
+            return await this.prom
+        } finally {
+            clearInterval(intervalId)
+        }
     }
 }
 
