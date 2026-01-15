@@ -497,11 +497,11 @@ export const config: Config = {
                     slippageNorm: 0.001,
                 },
                 depository: '0x1fb3b385ad2BfC7B28D65863bAEc04094895B813',
-                timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
-                withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
                 btcRefundUnlocker: '0x34cD33622305FF33fF6AA181608FEe8c4B84A3F6',
                 branchedUnlocker: '0x6efE952b894dBaf9d3d4693251bD50d44D55959A',
                 timedUnlocker: '0x1601724898092218020EaA76584b7449216F31C7',
+                timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
+                withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
                 minAmountDelay: 600, // 10 mins
                 refundDelay: 1800, // 30 mins
                 withdrawDelay: 3600, // 60 mins
@@ -908,10 +908,10 @@ export const config: Config = {
                     slippageNorm: 0.001,
                 },
                 depository: '0x84b10469dB07446D5fc7156aeFdd6B7117108A73',
-                timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
-                withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
                 branchedUnlocker: '0x0b58028dc4fbb8D403ED21Ce57343559FF15daB3',
                 timedUnlocker: '0x859aF64068f5Dd2c6dcFf7F31c93f42Dbb03DD84',
+                timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
+                withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
                 minAmountDelay: 600, // 10 mins
                 refundDelay: 1800, // 30 mins
                 withdrawDelay: 3600, // 60 mins
