@@ -1001,12 +1001,8 @@ export const config: Config = {
         },
         {
             id: ChainId.POLYGON_ZK,
-            rpc: 'https://rpc.ankr.com/polygon_zkevm',
-            spareRpcs: [
-                'https://polygon-zkevm.drpc.org',
-                'https://zkevm-rpc.com',
-                'https://polygon-zkevm-mainnet.public.blastapi.io',
-            ],
+            rpc: 'https://zkevm-rpc.com',
+            spareRpcs: ['https://polygon-zkevm.drpc.org', 'https://polygon-zkevm-mainnet.public.blastapi.io'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1679,8 +1675,8 @@ export const config: Config = {
         },
         {
             id: ChainId.SEI_EVM_MAINNET,
-            rpc: 'https://evm-rpc.sei-apis.com',
-            spareRpcs: [],
+            rpc: 'https://sei-evm-rpc.stakeme.pro',
+            spareRpcs: ['https://evm-rpc.sei-apis.com', 'https://sei-public.nodies.app'],
             filterBlockOffset: 1000,
             stables: [
                 {
