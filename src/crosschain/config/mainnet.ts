@@ -546,6 +546,21 @@ export const config: Config = {
             portal: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0xE7eb022E21e85200E7b0dAEBF3757764e83F5c4e',
+                branchedUnlocker: '0xBd28baAd2Fb52097AdE7F4c246e3f34781b2DF55',
+                timedUnlocker: '0x325355fd8a19A6AF1728410712DaCB830fA55673',
+                timedSwapUnlocker: '0xADd54888275fbb4E4D194d5E0Fd7C8D04FceA8d3',
+                withdrawUnlocker: '0x593F262190e510A37605E85Ca93406013301245d',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.MATIC_MAINNET,
