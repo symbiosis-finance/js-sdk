@@ -10,7 +10,7 @@ import type { PartnerFeeCollector } from './contracts'
 import type { Symbiosis } from './symbiosis'
 import type { SymbiosisTradeType } from './trade'
 import type { OneInchProtocols } from './trade/oneInchTrade'
-import type { SymbiosisKind, SymbiosisTrade } from './trade/symbiosisTrade'
+import type { SymbiosisTrade } from './trade/symbiosisTrade'
 
 export enum Field {
     INPUT = 'INPUT',
@@ -44,14 +44,15 @@ export type PriceEstimationConfig = {
 }
 
 // Addresses of Depository contracts
-export type DepositoryConfig = {
+export interface DepositoryConfig {
     depository: EvmAddress
-    swapUnlocker: EvmAddress
+    withdrawUnlocker: EvmAddress
     branchedUnlocker: EvmAddress
     timedUnlocker: EvmAddress
+    timedSwapUnlocker: EvmAddress
     btcRefundUnlocker?: EvmAddress
     priceEstimation: PriceEstimationConfig
-    refundDelay: number // Minimal delay before refund
+    refundDelay?: number // Minimal delay before refund
     withdrawDelay: number // Minimal delay before withdraw
     minAmountDelay: number // Minimal delay before swap with minimal amount
 }
@@ -174,6 +175,7 @@ export type TradeAContext = 'metaRouter' | 'multicallRouter'
 export interface SwapExactInParams {
     symbiosis: Symbiosis
     tokenAmountIn: TokenAmount
+    tokenAmountInMin?: TokenAmount
     tokenOut: Token
     from: Address
     to: Address
@@ -182,7 +184,7 @@ export interface SwapExactInParams {
     transitTokenIn?: Token
     transitTokenOut?: Token
     oneInchProtocols?: OneInchProtocols
-    middlewareCall?: MiddlewareCall
+    middlewareCall?: MiddlewareCall // Destination for funds instead of `to`. Deprecated.
     revertableAddresses?: RevertableAddress[]
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
@@ -246,7 +248,10 @@ export type FeeItem = {
     description?: string
 }
 
-export type SwapExactInResult = {
+export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
+
+// Result of swapExactIn() method.
+export type SwapExactInResult = SwapExactInTransactionPayload & {
     kind: SymbiosisKind
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
@@ -261,9 +266,9 @@ export type SwapExactInResult = {
     poolAddress?: string
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
-} & SwapExactInTransactionPayload
+}
 
-export type MultiCallItem = {
+export interface MultiCallItem {
     to: string
     data: BytesLike
     offset: number

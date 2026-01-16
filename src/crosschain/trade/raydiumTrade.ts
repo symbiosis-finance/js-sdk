@@ -47,11 +47,8 @@ export class RaydiumTrade extends SymbiosisTrade {
 
     public constructor(params: RaydiumTradeParams) {
         super(params)
-
-        const { symbiosis, to } = params
-
-        this.symbiosis = symbiosis
-        this.solanaToPubkey = new PublicKey(to)
+        this.symbiosis = params.symbiosis
+        this.solanaToPubkey = new PublicKey(params.to)
     }
 
     get tradeType(): SymbiosisTradeType {

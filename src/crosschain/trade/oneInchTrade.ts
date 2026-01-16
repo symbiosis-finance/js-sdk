@@ -83,11 +83,9 @@ export class OneInchTrade extends SymbiosisTrade {
 
     public constructor(params: OneInchTradeParams) {
         super(params)
-
-        const { symbiosis, from, protocols } = params
-        this.symbiosis = symbiosis
-        this.from = from
-        this.protocols = protocols || []
+        this.symbiosis = params.symbiosis
+        this.from = params.from
+        this.protocols = params.protocols || []
     }
 
     get tradeType(): SymbiosisTradeType {

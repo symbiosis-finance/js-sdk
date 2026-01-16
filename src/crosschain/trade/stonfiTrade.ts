@@ -1,7 +1,7 @@
 import type { RouterInfo } from '@ston-fi/api'
 import { StonApiClient } from '@ston-fi/api'
 import { dexFactory } from '@ston-fi/sdk'
-import type { BaseRouterV2_1 } from '@ston-fi/sdk/dist/contracts/dex/v2_1/router/BaseRouterV2_1'
+import type { RouterV2_1 } from '@ston-fi/sdk/dex/v2_1'
 import type { OpenedContract, SenderArguments } from '@ton/core'
 import type { TonClient4 } from '@ton/ton'
 
@@ -29,7 +29,7 @@ export class StonfiTrade extends SymbiosisTrade {
     private tonClient: TonClient4 | null = null
     private routerMetadata: RouterInfo | null = null
     private dexContracts: ReturnType<typeof dexFactory> | null = null
-    private router: OpenedContract<BaseRouterV2_1> | null = null
+    private router: OpenedContract<RouterV2_1> | null = null
 
     public constructor(params: StonfiTradeParams) {
         super(params)
@@ -95,8 +95,8 @@ export class StonfiTrade extends SymbiosisTrade {
         if (!this.dexContracts) {
             throw new StonFiTradeError('Failed to get dex contracts')
         }
-        const routerContract = this.dexContracts.Router.create(metadata.address)
-        this.router = this.tonClient!.open(routerContract) as OpenedContract<BaseRouterV2_1>
+        const routerContract = this.dexContracts.Router.create(metadata.address) as unknown as RouterV2_1
+        this.router = this.tonClient!.open(routerContract)
     }
 
     public async buildCalldata(

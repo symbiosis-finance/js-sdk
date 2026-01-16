@@ -1,4 +1,5 @@
 import JSBI from 'jsbi'
+
 export { JSBI }
 
 export {
@@ -6,12 +7,12 @@ export {
     ChainId,
     FACTORY_ADDRESS,
     INIT_CODE_HASH,
-    Icons,
     MINIMUM_LIQUIDITY,
     Rounding,
     TradeType,
     ZERO,
 } from './constants'
+export type { Icons } from './constants'
 
 export * from './crosschain'
 export * from './crosschain/swapExactIn'

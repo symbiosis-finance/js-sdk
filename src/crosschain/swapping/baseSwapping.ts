@@ -10,6 +10,7 @@ import {
     buildMetaSynthesize,
     getExternalId,
     getInternalId,
+    getMinAmount,
     isEvmChainId,
     isTonChainId,
     isTronChainId,
@@ -21,9 +22,13 @@ import {
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import type { Synthesis } from '../contracts'
 import { Portal__factory, Synthesis__factory } from '../contracts'
+import type { DepositParams } from '../depository'
+import { amountsToPrices } from '../depository'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
+import { withTracing } from '../tracing'
 import { AggregatorTrade, WrapTrade } from '../trade'
+import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
 import type { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { Transit } from '../transit'
@@ -56,19 +61,20 @@ type MetaRouteParams = {
 
 export abstract class BaseSwapping {
     // TODO rename to `transitAmount`
-    public amountInUsd: TokenAmount | undefined
+    public amountInUsd?: TokenAmount
 
     protected from!: Address
     protected to!: Address
-    protected tokenAmountIn!: TokenAmount
-    protected tokenOut!: Token
+    tokenAmountIn!: TokenAmount
+    tokenAmountInMin!: TokenAmount
+    tokenOut!: Token
     protected slippage!: DetailedSlippage
     protected deadline!: number
     protected revertableAddresses!: { AB: string; BC: string }
 
-    protected tradeA: SymbiosisTrade | undefined
+    protected tradeA?: SymbiosisTrade
     protected transit!: Transit
-    protected tradeC: SymbiosisTrade | undefined
+    protected tradeC?: SymbiosisTrade
 
     protected readonly symbiosis: Symbiosis
     protected synthesisV2!: Synthesis
@@ -88,8 +94,26 @@ export abstract class BaseSwapping {
         this.profiler = new Profiler()
     }
 
+    @withTracing({
+        onCall: function (params) {
+            return {
+                tokenAmountIn: params.tokenAmountIn.toString(),
+                tokenOut: params.tokenOut.toString(),
+                to: params.to,
+                slippage: params.slippage,
+                deadline: params.deadline,
+                transitTokenIn: params.transitTokenIn?.toString(),
+                transitTokenOut: params.transitTokenOut?.toString(),
+                partnerAddress: params.partnerAddress,
+                'omniPool.chainId': this.omniPoolConfig.chainId,
+                'omniPool.address': this.omniPoolConfig.address,
+            }
+        },
+        onReturn: (ret) => ({ priceImpact: ret.priceImpact.toFixed() }),
+    })
     async doExactIn({
         tokenAmountIn,
+        tokenAmountInMin,
         tokenOut,
         from,
         to,
@@ -108,6 +132,7 @@ export abstract class BaseSwapping {
         this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
+        this.tokenAmountInMin = tokenAmountInMin || tokenAmountIn
         this.tokenOut = tokenOut
         this.transitTokenIn =
             transitTokenIn || this.symbiosis.transitToken(this.tokenAmountIn.token.chainId, this.omniPoolConfig)
@@ -157,15 +182,7 @@ export abstract class BaseSwapping {
         }
 
         if (!this.transitTokenIn.equals(tokenAmountIn.token)) {
-            this.tradeA = this.buildTradeA(tradeAContext)
-            const endTimerTradeA = this.symbiosis.createMetricTimer()
-            await this.tradeA.init()
-            endTimerTradeA?.({
-                operation: 'tradeA',
-                kind: 'crosschain-swap',
-                tokenIn: this.tokenAmountIn.token,
-                tokenOut: this.transitTokenIn,
-            })
+            this.tradeA = await this.buildTradeA(tradeAContext)
             this.profiler.tick('A')
             routes.push({
                 provider: this.tradeA.tradeType,
@@ -177,28 +194,29 @@ export abstract class BaseSwapping {
         }
 
         const transitAmountIn = this.tradeA ? this.tradeA.amountOut : this.tokenAmountIn
-        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountIn
+        const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountInMin
 
-        const promises = []
-        promises.push(this.buildTransit(transitAmountIn, transitAmountInMin).init())
         routes.push({
             provider: 'symbiosis',
             tokens: [this.transitTokenIn, this.transitTokenOut],
         })
         routeType.push('TRANSIT')
-
-        promises.push(
+        const promises = [
+            this.buildTransit(transitAmountIn, transitAmountInMin).init(),
             (async () => {
                 if (this.transitTokenOut.equals(tokenOut)) {
+                    // No need to trade on chain C if a transit token is what the user needs.
                     return
                 }
-                // NOTE actually amountInMin == amountIn, because we don't know the correct amounts
                 const fakeTradeCAmountIn = createFakeAmount(transitAmountIn, this.transitTokenOut)
-                const fakeTradeCAmountInMin = createFakeAmount(transitAmountInMin, this.transitTokenOut)
+                const fakeTradeCAmountInMin = createFakeAmount(
+                    new TokenAmount(transitAmountIn.token, getMinAmount(this.slippage['B'], transitAmountInMin.raw)),
+                    this.transitTokenOut
+                )
 
-                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin).init()
-            })()
-        )
+                return this.buildTradeC(fakeTradeCAmountIn, fakeTradeCAmountInMin)
+            })(),
+        ] as const
 
         const endTimerTransit = this.symbiosis.createMetricTimer()
         const [transit, tradeC] = await Promise.all(promises)
@@ -209,11 +227,11 @@ export abstract class BaseSwapping {
             tokenOut: this.transitTokenOut,
         })
         this.profiler.tick(tradeC ? 'TRANSIT + C' : 'TRANSIT')
-        this.transit = transit as Transit
+        this.transit = transit
         // this call is necessary because buildMulticall depends on the result of doPostTransitAction
         await this.doPostTransitAction()
         this.profiler.tick('POST_TRANSIT_1')
-        this.tradeC = tradeC as SymbiosisTrade | undefined
+        this.tradeC = tradeC
 
         if (this.tradeC) {
             routes.push({
@@ -489,16 +507,26 @@ export abstract class BaseSwapping {
         return new Percent(pi.numerator, pi.denominator)
     }
 
-    protected buildTradeA(tradeAContext?: TradeAContext): SymbiosisTrade {
+    @withTracing({
+        onCall: function (tradeAContext?: TradeAContext) {
+            return {
+                tradeAContext,
+                tokenAmountIn: this.tokenAmountIn.toString(),
+                tokenAmountInMin: this.tokenAmountInMin.toString(),
+                tokenOut: this.transitTokenIn.toString(),
+            }
+        },
+    })
+    protected async buildTradeA(tradeAContext?: TradeAContext): Promise<SymbiosisTrade> {
         const tokenOut = this.transitTokenIn
 
         if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {
             return new WrapTrade({
                 tokenAmountIn: this.tokenAmountIn,
-                tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
+                tokenAmountInMin: this.tokenAmountInMin,
                 tokenOut,
                 to: this.to,
-            })
+            }).init()
         }
 
         const chainId = this.tokenAmountIn.token.chainId
@@ -509,9 +537,9 @@ export abstract class BaseSwapping {
         }
         const to = from
 
-        return new AggregatorTrade({
+        const trade = new AggregatorTrade({
             tokenAmountIn: this.tokenAmountIn,
-            tokenAmountInMin: this.tokenAmountIn, // correct because it is tradeA
+            tokenAmountInMin: this.tokenAmountInMin,
             tokenOut,
             from,
             to,
@@ -520,8 +548,18 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
+            preferOneInchUsage: isUseOneInchOnly(this),
         })
+
+        const endTimerTradeA = this.symbiosis.createMetricTimer()
+        await trade.init()
+        endTimerTradeA?.({
+            operation: 'tradeA',
+            kind: 'crosschain-swap',
+            tokenIn: this.tokenAmountIn.token,
+            tokenOut: this.transitTokenIn,
+        })
+        return trade
     }
 
     protected buildTransit(amountIn: TokenAmount, amountInMin: TokenAmount): Transit {
@@ -543,17 +581,24 @@ export abstract class BaseSwapping {
         return this.to
     }
 
-    protected buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount) {
+    /**
+     * Build final trade.
+     * @param amountIn
+     * @param amountInMin
+     * @returns initialized SymbiosisTrade.
+     */
+    @withTracing()
+    protected async buildTradeC(amountIn: TokenAmount, amountInMin: TokenAmount): Promise<SymbiosisTrade> {
         if (WrapTrade.isSupported(amountIn.token, this.tokenOut)) {
+            // We need to just wrap or unwrap the token.
             return new WrapTrade({
                 tokenAmountIn: amountIn,
                 tokenAmountInMin: amountInMin,
                 tokenOut: this.tokenOut,
                 to: this.to,
-            })
+            }).init()
         }
-
-        return new AggregatorTrade({
+        const aggTrade = await new AggregatorTrade({
             tokenAmountIn: amountIn,
             tokenAmountInMin: amountInMin,
             tokenOut: this.tokenOut,
@@ -564,8 +609,32 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this.tokenAmountIn.token, this.tokenOut),
-        })
+            preferOneInchUsage: isUseOneInchOnly(this),
+        }).init()
+        const dep = await this.symbiosis.depository(this.transitTokenOut.chainId)
+        if (dep) {
+            const depositParams = {
+                tokenAmountIn: aggTrade.tokenAmountIn,
+                tokenAmountInMin: aggTrade.tokenAmountInMin,
+                to: aggTrade.to,
+                outToken: aggTrade.amountOut.token,
+                ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
+                extraBranches: [],
+                ...dep.makeTargetCall(aggTrade),
+            } as DepositParams
+            // If there is a Depository on a C chain, then use aggTrade for price detection.
+            return new DepositoryTrade(
+                {
+                    ...aggTrade,
+                    slippage: this.slippage['C'],
+                },
+                dep,
+                depositParams,
+                aggTrade
+            ).init()
+        } else {
+            return aggTrade
+        }
     }
 
     protected metaBurnSyntheticToken(fee1: TokenAmount): [string, string] {

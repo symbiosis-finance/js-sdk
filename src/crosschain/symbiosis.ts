@@ -26,20 +26,14 @@ import { config as dev } from './config/dev'
 import { config as mainnet } from './config/mainnet'
 import { config as testnet } from './config/testnet'
 import type {
-    BranchedUnlocker,
     Bridge,
-    BtcRefundUnlocker,
     Fabric,
-    IDepository,
-    IRouter,
     MetaRouter,
     MulticallRouter,
     OmniPool,
     OmniPoolOracle,
     Portal,
-    SwapUnlocker,
     Synthesis,
-    TimedUnlocker,
     TonBridge,
 } from './contracts'
 import {
@@ -54,11 +48,13 @@ import {
     OmniPool__factory,
     OmniPoolOracle__factory,
     Portal__factory,
-    SwapUnlocker__factory,
     Synthesis__factory,
+    TimedSwapUnlocker__factory,
     TimedUnlocker__factory,
     TonBridge__factory,
+    WithdrawUnlocker__factory,
 } from './contracts'
+import { DepositoryContext } from './depository'
 import { RevertPending } from './revert'
 import type { PendingRequest } from './revertRequest'
 import {
@@ -77,7 +73,6 @@ import type {
     ChainConfig,
     Config,
     CounterParams,
-    DepositoryConfig,
     EvmAddress,
     FeeConfig,
     MetricParams,
@@ -103,19 +98,9 @@ import { Zapping } from './zapping'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
-export type DiscountTier = {
+export interface DiscountTier {
     amount: string
     discount: number
-}
-
-export type DepositoryContext = {
-    cfg: DepositoryConfig
-    depository: IDepository
-    router: IRouter
-    branchedUnlocker: BranchedUnlocker
-    swapUnlocker: SwapUnlocker
-    timedUnlocker: TimedUnlocker
-    btcRefundUnlocker?: BtcRefundUnlocker
 }
 
 const defaultFetch: typeof fetch = (url, init) => {
@@ -514,17 +499,18 @@ export class Symbiosis {
             const depository = IDepository__factory.connect(cfg.depository, signerOrProvider)
             const routerAddress = await depository.router()
 
-            return {
+            return new DepositoryContext({
                 cfg,
                 depository,
                 router: IRouter__factory.connect(routerAddress, signerOrProvider),
-                swapUnlocker: SwapUnlocker__factory.connect(cfg.swapUnlocker, signerOrProvider),
                 btcRefundUnlocker: cfg.btcRefundUnlocker
                     ? BtcRefundUnlocker__factory.connect(cfg.btcRefundUnlocker, signerOrProvider)
                     : undefined,
                 timedUnlocker: TimedUnlocker__factory.connect(cfg.timedUnlocker, signerOrProvider),
                 branchedUnlocker: BranchedUnlocker__factory.connect(cfg.branchedUnlocker, signerOrProvider),
-            }
+                timedSwapUnlocker: TimedSwapUnlocker__factory.connect(cfg.timedSwapUnlocker, signerOrProvider),
+                withdrawUnlocker: WithdrawUnlocker__factory.connect(cfg.withdrawUnlocker, signerOrProvider),
+            })
         })
     }
 

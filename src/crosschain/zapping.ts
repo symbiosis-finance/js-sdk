@@ -1,5 +1,4 @@
-import { MaxUint256 } from '@ethersproject/constants'
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { MaxUint256, AddressZero } from '@ethersproject/constants'
 import type { TransactionRequest } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 import JSBI from 'jsbi'
@@ -25,6 +24,7 @@ import type { Symbiosis } from './symbiosis'
 import { AggregatorTrade, WrapTrade } from './trade'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import type {
+    Address,
     OmniPoolConfig,
     RouteItem,
     SwapExactInResult,
@@ -44,7 +44,7 @@ export class Zapping {
     protected multicallRouter: MulticallRouter
 
     private from!: string
-    private to!: string
+    private to!: Address
     private revertableAddress!: string
     private tokenAmountIn!: TokenAmount
     private slippage!: number
@@ -59,7 +59,10 @@ export class Zapping {
     private readonly pool!: OmniPool
     private readonly poolOracle!: OmniPoolOracle
 
-    public constructor(private readonly symbiosis: Symbiosis, private readonly omniPoolConfig: OmniPoolConfig) {
+    public constructor(
+        private readonly symbiosis: Symbiosis,
+        private readonly omniPoolConfig: OmniPoolConfig
+    ) {
         this.pool = this.symbiosis.omniPool(omniPoolConfig)
         this.poolOracle = this.symbiosis.omniPoolOracle(omniPoolConfig)
 
@@ -298,7 +301,7 @@ export class Zapping {
     private buildTradeA(): AggregatorTrade | WrapTrade {
         const chainId = this.tokenAmountIn.token.chainId
         const tokenOut = this.transitTokenIn
-        const from = this.symbiosis.metaRouter(chainId).address
+        const from = this.symbiosis.metaRouter(chainId).address as Address
         const to = from
 
         if (WrapTrade.isSupported(this.tokenAmountIn.token, tokenOut)) {

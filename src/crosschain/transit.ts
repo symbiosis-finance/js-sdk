@@ -4,14 +4,15 @@ import { chains, TokenAmount } from '../entities'
 import { getPartnerFeeCall } from './feeCall/getPartnerFeeCall'
 import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
 import type { Symbiosis } from './symbiosis'
+import { withTracing } from './tracing'
 import { OctoPoolTrade } from './trade'
-import type { BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
+import type { Address, BridgeDirection, MultiCallItem, OmniPoolConfig } from './types'
 
 interface CreateOctoPoolTradeParams {
     tokenAmountIn: TokenAmount
     tokenAmountInMin: TokenAmount
     tokenOut: Token
-    to: string
+    to: Address
 }
 
 export interface TransitOutResult {
@@ -112,11 +113,28 @@ export class Transit {
         return this.out.partnerFeeCall
     }
 
+    @withTracing({
+        onCall: function () {
+            return {
+                tokenAmountIn: this.amountIn.toString(),
+                tokenAmountInMin: this.amountInMin.toString(),
+                slippage: this.slippage,
+                fee1: this.fee1?.toString(),
+                fee2: this.fee2?.toString(),
+            }
+        },
+        onReturn: function () {
+            return {
+                tokenAmountOut: this.out?.amountOut.toString(),
+                tokenAmountOutMin: this.out?.amountOutMin.toString(),
+            }
+        },
+    })
     public async init(): Promise<Transit> {
         const { tradeAmountIn, tradeAmountInMin } = this.getTradeAmountsIn(this.amountIn, this.amountInMin)
         const tradeTokenOut = this.getTradeTokenOut()
 
-        const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address
+        const to = this.symbiosis.multicallRouter(this.omniPoolConfig.chainId).address as Address
 
         const trade = await this.createOctoPoolTrade({
             tokenAmountIn: tradeAmountIn,
@@ -222,7 +240,7 @@ export class Transit {
             slippage: this.slippage,
             deadline: this.deadline,
             symbiosis: this.symbiosis,
-            omniPoolConfig: this.omniPoolConfig,
+            poolConfig: this.omniPoolConfig,
         })
         await trade.init()
 

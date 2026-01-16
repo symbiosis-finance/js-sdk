@@ -4,6 +4,7 @@ import type { Percent, Token } from '../../entities'
 import { TokenAmount } from '../../entities'
 import { TradeError } from '../sdkError'
 import type { Address, FeeItem } from '../types'
+import { BIPS_BASE } from '../constants'
 
 export type SymbiosisTradeType =
     | 'uni-v2'
@@ -22,30 +23,28 @@ export type SymbiosisTradeType =
     | 'jupiter'
     | 'depository'
 
-export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
-
 export interface SymbiosisTradeParams {
     tokenAmountIn: TokenAmount
     tokenAmountInMin: TokenAmount
     tokenOut: Token
-    to: string
+    to: Address
     slippage: number
 }
 
 export interface SymbiosisTradeOutResult {
-    amountOut: TokenAmount
-    amountOutMin: TokenAmount
-    routerAddress: Address
+    amountOut: TokenAmount // Expected output amount.
+    amountOutMin: TokenAmount // Minimum output amount.
+    routerAddress: Address // Target to call with callData.
     route: Token[]
     priceImpact: Percent
-    callData: string
-    callDataOffset: number
-    minReceivedOffset: number
-    minReceivedOffset2?: number
-    functionSelector?: string
-    instructions?: string
-    fees?: FeeItem[]
-    value?: bigint
+    callData: string // Calldata to call on routerAddress.
+    callDataOffset: number // Offset to amountIn in callData. Used by applyAmountIn() to patch input amount.
+    minReceivedOffset: number // Offset to minAmountOut in callData. Used by applyAmountIn() to patch output amount.
+    minReceivedOffset2?: number // Another optional offset to minAmountOut in callData. Used by applyAmountIn() to patch output amount.
+    functionSelector?: string // Needed only for Tron. See https://developers.tron.network/reference/triggersmartcontract
+    instructions?: string // Needed only for Solana.
+    fees?: FeeItem[] // Fees to show in Web APP.
+    value?: bigint // Native (gas) token value.
 }
 
 class OutNotInitializedError extends Error {
@@ -57,12 +56,17 @@ class OutNotInitializedError extends Error {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface SymbiosisTrade extends SymbiosisTradeParams {}
 
+// Base class for all trades.
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export abstract class SymbiosisTrade {
     protected out?: SymbiosisTradeOutResult
 
     protected constructor(params: SymbiosisTradeParams) {
-        Object.assign(this, params)
+        this.tokenAmountIn = params.tokenAmountIn
+        this.tokenAmountInMin = params.tokenAmountInMin
+        this.tokenOut = params.tokenOut
+        this.slippage = SymbiosisTrade.getFlexSlippage(params.tokenAmountIn, params.tokenAmountInMin, params.slippage)
+        this.to = params.to
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -123,11 +127,13 @@ export abstract class SymbiosisTrade {
         return this.out.priceImpact
     }
 
+    // Needed only for Tron - see https://developers.tron.network/reference/triggersmartcontract
     get functionSelector(): string | undefined {
         this.assertOutInitialized('functionSelector')
         return this.out.functionSelector
     }
 
+    // Needed only for Solana.
     get instructions(): string | undefined {
         this.assertOutInitialized('instructions')
         return this.out.instructions
@@ -138,6 +144,19 @@ export abstract class SymbiosisTrade {
         return this.out.fees
     }
 
+    /**
+     *  Increase slippage proportionally to the input amounts difference
+     */
+    private static getFlexSlippage(tokenAmountIn: TokenAmount, tokenAmountInMin: TokenAmount, slippage: number) {
+        const amountIn = BigNumber.from(tokenAmountIn.raw.toString())
+        const amountInMin = BigNumber.from(tokenAmountInMin.raw.toString())
+        const extraSlippageBps = amountIn.sub(amountInMin).mul(BIPS_BASE.toString()).div(amountIn).toNumber()
+        return slippage + extraSlippageBps
+    }
+
+    /**
+     * Patches calldata using offsets from minReceivedOffset, minReceivedOffset2, callDataOffset
+     */
     public applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
         this.assertOutInitialized('applyAmountIn')
 

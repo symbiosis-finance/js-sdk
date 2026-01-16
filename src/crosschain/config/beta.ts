@@ -127,25 +127,25 @@ export const config: Config = {
     },
     fallbackReceiver: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     btcConfigs: [
-        {
-            btc: new Token({
-                deprecated: true,
-                name: 'Bitcoin',
-                symbol: 'BTC',
-                address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
-                chainId: ChainId.BTC_MAINNET,
-                decimals: 8,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                },
-            }),
-            symBtc: {
-                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-                chainId: ChainId.ZKSYNC_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
-        },
+        // {
+        //     btc: new Token({
+        //         deprecated: true,
+        //         name: 'Bitcoin',
+        //         symbol: 'BTC',
+        //         address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
+        //         chainId: ChainId.BTC_MAINNET,
+        //         decimals: 8,
+        //         icons: {
+        //             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //         },
+        //     }),
+        //     symBtc: {
+        //         address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
+        //         chainId: ChainId.ZKSYNC_MAINNET,
+        //     },
+        //     forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
+        // },
         {
             btc: new Token({
                 name: 'Bitcoin',
@@ -164,24 +164,24 @@ export const config: Config = {
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
         },
-        {
-            btc: new Token({
-                name: 'Bitcoin',
-                symbol: 'BTC',
-                address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
-                chainId: ChainId.BTC_MAINNET,
-                decimals: 8,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                },
-            }),
-            symBtc: {
-                address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
-                chainId: ChainId.RSK_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
-        },
+        // {
+        //     btc: new Token({
+        //         name: 'Bitcoin',
+        //         symbol: 'BTC',
+        //         address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
+        //         chainId: ChainId.BTC_MAINNET,
+        //         decimals: 8,
+        //         icons: {
+        //             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+        //         },
+        //     }),
+        //     symBtc: {
+        //         address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
+        //         chainId: ChainId.RSK_MAINNET,
+        //     },
+        //     forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
+        // },
     ],
     chains: [
         {
@@ -496,11 +496,12 @@ export const config: Config = {
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
-                depository: '0xf4129114Ae290a595A24EA3C5D3DD56a702C98EF',
-                swapUnlocker: '0x7A77bf653D31215e96cfE6b2FC4d1A6631b5e6F2',
-                btcRefundUnlocker: '0x020cb1cA3d555AF714CE0643d8e128441Fe59b9C',
-                branchedUnlocker: '0xc43631b5a5Fb1FA277026c80c75b9834456faD2c',
-                timedUnlocker: '0xF7839D4116F3DD127fDE40fE6478fAA810782676',
+                depository: '0x1fb3b385ad2BfC7B28D65863bAEc04094895B813',
+                btcRefundUnlocker: '0x34cD33622305FF33fF6AA181608FEe8c4B84A3F6',
+                branchedUnlocker: '0x6efE952b894dBaf9d3d4693251bD50d44D55959A',
+                timedUnlocker: '0x1601724898092218020EaA76584b7449216F31C7',
+                timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
+                withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
                 minAmountDelay: 600, // 10 mins
                 refundDelay: 1800, // 30 mins
                 withdrawDelay: 3600, // 60 mins
@@ -654,8 +655,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BOBA_MAINNET,
-            rpc: 'https://lightning-replica.boba.network',
-            spareRpcs: ['https://replica.boba.network', 'https://1rpc.io/boba/eth', 'https://mainnet.boba.network'],
+            rpc: 'https://mainnet.boba.network',
+            spareRpcs: ['https://1rpc.io/boba/eth', 'https://boba-ethereum.gateway.tenderly.co'],
             filterBlockOffset: 3000,
             stables: [
                 {
@@ -900,6 +901,21 @@ export const config: Config = {
             portal: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             fabric: '0x2eE9559387b806E88fd46b9DA160D64A29CE7Da0',
             multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0x84b10469dB07446D5fc7156aeFdd6B7117108A73',
+                branchedUnlocker: '0x0b58028dc4fbb8D403ED21Ce57343559FF15daB3',
+                timedUnlocker: '0x859aF64068f5Dd2c6dcFf7F31c93f42Dbb03DD84',
+                timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
+                withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.OPTIMISM_MAINNET,

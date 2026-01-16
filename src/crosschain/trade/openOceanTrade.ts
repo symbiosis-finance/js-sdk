@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import BigNumber from 'bignumber.js'
 
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
@@ -174,14 +174,13 @@ export class OpenOceanTrade extends SymbiosisTrade {
 
     public constructor(params: OpenOceanTradeParams) {
         super(params)
-
+        this.symbiosis = params.symbiosis
         const chainId = this.tokenAmountIn.token.chainId
         const chain = OPEN_OCEAN_NETWORKS[chainId]
         if (!chain) {
             throw new OpenOceanTradeError('Unsupported chain')
         }
         this.chain = chain
-        this.symbiosis = params.symbiosis
         this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${chainId}`
     }
 

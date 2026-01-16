@@ -305,6 +305,6 @@ export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTrad
     return {
         A: hasTradeA ? Math.floor((avg + addition) * 100) / 100 : 0,
         B: Math.floor(symbiosisPoolSlippage * 100) / 100,
-        C: hasTradeC ? Math.floor((avg + addition + symbiosisPoolSlippage) * 100) / 100 : 0,
+        C: hasTradeC ? Math.floor((avg + addition) * 100) / 100 : 0,
     }
 }

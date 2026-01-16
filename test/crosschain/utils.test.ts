@@ -80,7 +80,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 0,
             B: 20,
-            C: 300,
+            C: 280,
         })
     })
 
@@ -89,7 +89,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 140,
             B: 20,
-            C: 160,
+            C: 140,
         })
     })
 
@@ -107,7 +107,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 0,
             B: 20,
-            C: 150,
+            C: 130,
         })
     })
     test('1.5% true true', () => {
@@ -115,7 +115,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 65,
             B: 20,
-            C: 85,
+            C: 65,
         })
     })
 
@@ -125,7 +125,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 40,
             B: 20,
-            C: 60,
+            C: 40,
         })
     })
 
@@ -143,7 +143,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 0,
             B: 20,
-            C: 50,
+            C: 30,
         })
     })
     test('0.5% true true', () => {
@@ -151,7 +151,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 16.66,
             B: 16.66,
-            C: 33.33,
+            C: 16.66,
         })
     })
 
@@ -160,7 +160,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 6.66,
             B: 6.66,
-            C: 13.33,
+            C: 6.66,
         })
     })
     test('0.2% true false', () => {
@@ -176,7 +176,7 @@ describe('#splitSlippage', () => {
         expect(detailedSlippage).toStrictEqual({
             A: 0,
             B: 10,
-            C: 20,
+            C: 10,
         })
     })
     test('0.2% false false', () => {

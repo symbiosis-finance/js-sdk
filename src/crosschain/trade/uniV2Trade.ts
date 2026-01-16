@@ -1,4 +1,4 @@
-import { AddressZero } from '@ethersproject/constants/lib/addresses'
+import { AddressZero } from '@ethersproject/constants'
 import type { Provider } from '@ethersproject/providers'
 import JSBI from 'jsbi'
 
@@ -26,14 +26,15 @@ import {
     HyperSwapRouter__factory,
     KavaRouter__factory,
     KimRouter__factory,
-    Pair__factory,
     UniLikeRouter__factory,
+    UniV2Pair__factory,
 } from '../contracts'
 import { getMulticall } from '../multicall'
 import { UniV2TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
+import { withTracing } from '../tracing'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -54,16 +55,15 @@ export class UniV2Trade extends SymbiosisTrade {
 
     public constructor(params: UniV2TradeParams) {
         super(params)
-
-        const { symbiosis, deadline } = params
-        this.symbiosis = symbiosis
-        this.deadline = deadline
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
     }
 
     get tradeType(): SymbiosisTradeType {
         return 'uni-v2'
     }
 
+    @withTracing()
     public async init() {
         const { chainId } = this.tokenAmountIn.token
 
@@ -96,19 +96,20 @@ export class UniV2Trade extends SymbiosisTrade {
             60 // 1 minute
         )
 
-        let trade
+        let trade: Trade
         try {
-            const [t] = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
+            const { trades, errors } = Trade.bestTradeExactIn(pairs, this.tokenAmountIn, this.tokenOut, {
                 maxHops: 3,
                 maxNumResults: 1,
             })
-            trade = t
+            if (trades.length === 0)
+                throw AggregateError(
+                    errors,
+                    `failed to obtain any trades for ${this.tokenAmountIn} -> ${this.tokenOut}`
+                )
+            else trade = trades[0]
         } catch (e) {
             throw new UniV2TradeError('bestTradeExactIn failed', e)
-        }
-
-        if (!trade) {
-            throw new UniV2TradeError('Cannot create trade')
         }
 
         const dexFee = this.symbiosis.dexFee(chainId)
@@ -167,7 +168,7 @@ export class UniV2Trade extends SymbiosisTrade {
             method = methodName.replace('ETH', 'SEI')
         }
 
-        const functionAbi = this.router.interface.getFunction(method)
+        const functionAbi = this.router.interface.getFunction(method as any)
 
         return {
             functionSelector: getFunctionSelector(functionAbi),
@@ -177,6 +178,7 @@ export class UniV2Trade extends SymbiosisTrade {
         }
     }
 
+    @withTracing()
     private static async getPairs(provider: Provider, tokenIn: Token, tokenOut: Token): Promise<Pair[]> {
         const allPairCombinations = getAllPairCombinations(tokenIn, tokenOut)
         return await UniV2Trade.allPairs(provider, allPairCombinations)
@@ -201,7 +203,7 @@ export class UniV2Trade extends SymbiosisTrade {
             return Pair.getAddress(tokenA, tokenB)
         })
 
-        const pairInterface = Pair__factory.createInterface()
+        const pairInterface = UniV2Pair__factory.createInterface()
         const getReservesData = pairInterface.encodeFunctionData('getReserves')
 
         const calls = pairAddresses.map((pairAddress) => ({

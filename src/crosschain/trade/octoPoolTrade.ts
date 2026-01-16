@@ -11,21 +11,19 @@ import { SymbiosisTrade } from './symbiosisTrade'
 interface OctoPoolTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     deadline: number
-    omniPoolConfig: OmniPoolConfig
+    poolConfig: OmniPoolConfig
 }
 
-export class OctoPoolTrade extends SymbiosisTrade {
+export class OctoPoolTrade extends SymbiosisTrade implements OctoPoolTradeParams {
     public readonly symbiosis: Symbiosis
     public readonly deadline: number
     public readonly poolConfig: OmniPoolConfig
 
     public constructor(params: OctoPoolTradeParams) {
         super(params)
-
-        const { symbiosis, omniPoolConfig, deadline } = params
-        this.symbiosis = symbiosis
-        this.deadline = deadline
-        this.poolConfig = omniPoolConfig
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
+        this.poolConfig = params.poolConfig
     }
 
     get tradeType(): SymbiosisTradeType {
@@ -37,16 +35,8 @@ export class OctoPoolTrade extends SymbiosisTrade {
         const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.poolConfig, this.tokenOut)
 
         const amountIn = BigNumber.from(this.tokenAmountIn.raw.toString())
-        const amountInMin = BigNumber.from(this.tokenAmountInMin.raw.toString())
-
         const quote = await this.quote(indexIn, indexOut, amountIn)
-
-        let quoteMin = quote
-        if (amountInMin.lt(amountIn)) {
-            quoteMin = quote.mul(amountInMin).div(amountIn) // proportionally
-        }
-
-        quoteMin = BigNumber.from(getMinAmount(this.slippage, quoteMin.toString()).toString())
+        const quoteMin = BigNumber.from(getMinAmount(this.slippage, quote.toString()).toString())
 
         const callData = OmniPool__factory.createInterface().encodeFunctionData('swap', [
             indexIn,

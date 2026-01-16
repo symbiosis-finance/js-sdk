@@ -1,7 +1,6 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 
-import Decimal from 'decimal.js-light'
 import type { BigintIsh } from '../../constants'
 import { Rounding, SolidityType, TEN } from '../../constants'
 import { parseBigintIsh, validateSolidityTypeInstance } from '../../utils'
@@ -60,11 +59,5 @@ export class TokenAmount extends Fraction {
 
     public toBigInt(): bigint {
         return BigInt(this.raw.toString())
-    }
-
-    public convertTo(other: Token, price: number): TokenAmount {
-        const dec = new Decimal(10).pow(other.decimals)
-        const thisD = this.toDecimal()
-        return new TokenAmount(other, thisD.mul(price).mul(dec).toInteger().toFixed())
     }
 }

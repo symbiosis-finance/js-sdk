@@ -3,11 +3,11 @@ import { Token, wrappedToken } from '../../../entities'
 import { NoTransitTokenError, SdkError } from '../../sdkError'
 import type { ConfigName } from '../../symbiosis'
 import type { OmniPoolConfig } from '../../types'
-import beta from './beta.json'
+import beta from './beta.json' with { type: 'json' }
 import type { ConfigCacheData, Id, OmniPoolInfo, TokenInfo } from './builder'
-import dev from './dev.json'
-import mainnet from './mainnet.json'
-import testnet from './testnet.json'
+import dev from './dev.json' with { type: 'json' }
+import mainnet from './mainnet.json' with { type: 'json' }
+import testnet from './testnet.json' with { type: 'json' }
 
 export class ConfigCache {
     private readonly data: ConfigCacheData

@@ -16,9 +16,9 @@ import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
-import { getOutputQuote } from './uniV3Trade/getOutputQuote'
-import { getPool } from './uniV3Trade/pool'
-import { toUniCurrency, toUniCurrencyAmount } from './uniV3Trade/toUniTypes'
+import { getOutputQuote } from './uniV3TradeImpl/getOutputQuote'
+import { getPool } from './uniV3TradeImpl/pool'
+import { toUniCurrency, toUniCurrencyAmount } from './uniV3TradeImpl/toUniTypes'
 
 interface Deployment {
     factory: Address
@@ -127,10 +127,8 @@ export class UniV3Trade extends SymbiosisTrade {
 
     public constructor(params: UniV3TradeParams) {
         super(params)
-
-        const { symbiosis, deadline } = params
-        this.symbiosis = symbiosis
-        this.deadline = deadline
+        this.symbiosis = params.symbiosis
+        this.deadline = params.deadline
     }
 
     get tradeType(): SymbiosisTradeType {

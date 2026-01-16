@@ -73,7 +73,7 @@ export class Token {
     }
 
     public toString(): string {
-        return this.symbol || this.name || this.address
+        return `${this.symbol || this.name || this.address}@${this.chainId}`
     }
 
     /**
