@@ -49,6 +49,7 @@ export const COINGECKO_PLATFORMS = new Map([
     [ChainId.KATANA_MAINNET, 'katana'],
     [ChainId.APECHAIN_MAINNET, 'apechain'],
     [ChainId.PLASMA_MAINNET, 'plasma'],
+    [ChainId.MONAD_MAINNET, 'monad'],
 ])
 
 export const COINGECKO_GAS_TOKEN_IDS = new Map([
@@ -101,4 +102,5 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.KATANA_MAINNET, 'ethereum'],
     [ChainId.APECHAIN_MAINNET, 'apecoin'],
     [ChainId.PLASMA_MAINNET, 'plasma'],
+    [ChainId.MONAD_MAINNET, 'monad'],
 ])

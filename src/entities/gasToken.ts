@@ -114,4 +114,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.KATANA_MAINNET]: GAS(ChainId.KATANA_MAINNET, 'ETH', 1027),
     [ChainId.APECHAIN_MAINNET]: GAS(ChainId.APECHAIN_MAINNET, 'APE', 18876),
     [ChainId.PLASMA_MAINNET]: GAS(ChainId.PLASMA_MAINNET, 'XPL', 36645),
+    [ChainId.MONAD_MAINNET]: GAS(ChainId.MONAD_MAINNET, 'MON', 30495),
 }
