@@ -22,13 +22,13 @@ import {
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import type { Synthesis } from '../contracts'
 import { Portal__factory, Synthesis__factory } from '../contracts'
-import type { DepositParams } from '../depository'
-import { amountsToPrices } from '../depository'
+// import type { DepositParams } from '../depository'
+// import { amountsToPrices } from '../depository'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { withTracing } from '../tracing'
 import { AggregatorTrade, WrapTrade } from '../trade'
-import { DepositoryTrade } from '../trade/depositoryTrade'
+// import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
 import type { SymbiosisTrade } from '../trade/symbiosisTrade'
 import { Transit } from '../transit'
@@ -598,7 +598,7 @@ export abstract class BaseSwapping {
                 to: this.to,
             }).init()
         }
-        const aggTrade = await new AggregatorTrade({
+        return new AggregatorTrade({
             tokenAmountIn: amountIn,
             tokenAmountInMin: amountInMin,
             tokenOut: this.tokenOut,
@@ -611,30 +611,30 @@ export abstract class BaseSwapping {
             oneInchProtocols: this.oneInchProtocols,
             preferOneInchUsage: isUseOneInchOnly(this),
         }).init()
-        const dep = await this.symbiosis.depository(this.transitTokenOut.chainId)
-        if (dep) {
-            const depositParams = {
-                tokenAmountIn: aggTrade.tokenAmountIn,
-                tokenAmountInMin: aggTrade.tokenAmountInMin,
-                to: aggTrade.to,
-                outToken: aggTrade.amountOut.token,
-                ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
-                extraBranches: [],
-                ...dep.makeTargetCall(aggTrade),
-            } as DepositParams
-            // If there is a Depository on a C chain, then use aggTrade for price detection.
-            return new DepositoryTrade(
-                {
-                    ...aggTrade,
-                    slippage: this.slippage['C'],
-                },
-                dep,
-                depositParams,
-                aggTrade
-            ).init()
-        } else {
-            return aggTrade
-        }
+        // const dep = await this.symbiosis.depository(this.transitTokenOut.chainId)
+        // if (dep) {
+        //     const depositParams = {
+        //         tokenAmountIn: aggTrade.tokenAmountIn,
+        //         tokenAmountInMin: aggTrade.tokenAmountInMin,
+        //         to: aggTrade.to,
+        //         outToken: aggTrade.amountOut.token,
+        //         ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
+        //         extraBranches: [],
+        //         ...dep.makeTargetCall(aggTrade),
+        //     } as DepositParams
+        //     // If there is a Depository on a C chain, then use aggTrade for price detection.
+        //     return new DepositoryTrade(
+        //         {
+        //             ...aggTrade,
+        //             slippage: this.slippage['C'],
+        //         },
+        //         dep,
+        //         depositParams,
+        //         aggTrade
+        //     ).init()
+        // } else {
+        //     return aggTrade
+        // }
     }
 
     protected metaBurnSyntheticToken(fee1: TokenAmount): [string, string] {
