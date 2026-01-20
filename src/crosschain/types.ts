@@ -193,6 +193,7 @@ export interface SwapExactInParams {
     generateBtcDepositAddress?: boolean
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean
+    depositoryEnabled?: boolean
 }
 
 export type BtcTransactionData = {

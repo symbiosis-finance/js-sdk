@@ -22,7 +22,7 @@ import {
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import type { Synthesis } from '../contracts'
 import { Portal__factory, Synthesis__factory } from '../contracts'
-import type { DepositParams } from '../depository'
+import type { DepositoryContext, DepositParams } from '../depository'
 import { amountsToPrices } from '../depository'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
@@ -86,12 +86,17 @@ export abstract class BaseSwapping {
     protected oneInchProtocols?: OneInchProtocols
     protected partnerAddress?: EvmAddress
 
+    protected depositoryEnabled: boolean
+    protected depository: DepositoryContext | null
+
     private profiler: Profiler
 
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
         this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
         this.profiler = new Profiler()
+        this.depositoryEnabled = true
+        this.depository = null
     }
 
     @withTracing({
@@ -125,9 +130,13 @@ export abstract class BaseSwapping {
         revertableAddresses,
         tradeAContext,
         partnerAddress,
+        depositoryEnabled,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
+
+        this.depositoryEnabled = !!depositoryEnabled
+        this.depository = await this.symbiosis.depository(this.transitTokenOut.chainId)
 
         this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
@@ -611,8 +620,8 @@ export abstract class BaseSwapping {
             oneInchProtocols: this.oneInchProtocols,
             preferOneInchUsage: isUseOneInchOnly(this),
         }).init()
-        const dep = await this.symbiosis.depository(this.transitTokenOut.chainId)
-        if (dep) {
+
+        if (this.depositoryEnabled && this.depository) {
             const depositParams = {
                 tokenAmountIn: aggTrade.tokenAmountIn,
                 tokenAmountInMin: aggTrade.tokenAmountInMin,
@@ -620,7 +629,7 @@ export abstract class BaseSwapping {
                 outToken: aggTrade.amountOut.token,
                 ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
                 extraBranches: [],
-                ...dep.makeTargetCall(aggTrade),
+                ...this.depository.makeTargetCall(aggTrade),
             } as DepositParams
             // If there is a Depository on a C chain, then use aggTrade for price detection.
             return new DepositoryTrade(
@@ -628,7 +637,7 @@ export abstract class BaseSwapping {
                     ...aggTrade,
                     slippage: this.slippage['C'],
                 },
-                dep,
+                this.depository,
                 depositParams,
                 aggTrade
             ).init()

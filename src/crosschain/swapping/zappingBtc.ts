@@ -108,6 +108,7 @@ export class ZappingBtc extends BaseSwapping {
             transitTokenIn,
             transitTokenOut,
             partnerAddress,
+            depositoryEnabled: false,
         })
 
         let amountOut = result.tokenAmountOut

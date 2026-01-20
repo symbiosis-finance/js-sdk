@@ -152,6 +152,7 @@ export class ZappingThor extends BaseSwapping {
             transitTokenIn,
             transitTokenOut,
             partnerAddress,
+            depositoryEnabled: false,
         })
 
         return {

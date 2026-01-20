@@ -17,6 +17,7 @@ export class SwappingToTon extends BaseSwapping {
         return this.doExactIn({
             ...params,
             to: params.from,
+            depositoryEnabled: false,
         })
     }
 

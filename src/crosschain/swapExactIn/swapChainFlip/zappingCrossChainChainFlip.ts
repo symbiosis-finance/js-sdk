@@ -117,6 +117,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             transitTokenIn,
             transitTokenOut,
             partnerAddress: this.partnerAddress,
+            depositoryEnabled: false,
         })
 
         const { egressAmount, recommendedSlippageTolerancePercent } = this.chainFlipQuote
