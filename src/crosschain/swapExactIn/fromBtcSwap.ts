@@ -410,7 +410,7 @@ class FromBtcTrader {
                     tokenAmountInMin: syBtcAmountMin,
                     outToken: context.tokenOut,
                     ...prices,
-                    ...dep.makeTargetCall(context),
+                    ...dep.makeTargetCall({ tokenOut: context.tokenOut, to: context.to }),
                 },
             })
         } else {
@@ -469,7 +469,13 @@ class FromBtcTrader {
                         tokenAmountIn: syBtcAmount,
                         tokenAmountInMin: syBtcAmountMin,
                         outToken: swapExactInResult.tradeA.amountOut.token,
-                        ...amountsToPrices(swapExactInResult.tradeA, syBtcAmount),
+                        ...amountsToPrices(
+                            {
+                                amountOut: swapExactInResult.tradeA.amountOut,
+                                amountOutMin: swapExactInResult.tradeA.amountOutMin,
+                            },
+                            syBtcAmount
+                        ),
                         target: tx.relayRecipient as NonEmptyAddress,
                         targetCalldata: tx.otherSideCalldata,
                         targetOffset: 100n, // metaSynthesize struct size
@@ -616,8 +622,14 @@ async function makeAggregatorTrade(context: SwapExactInParams, tokenAmountIn: To
 }
 
 async function estimatePricesUsingAggregators(context: SwapExactInParams, tokenAmountIn: TokenAmount): Promise<Prices> {
-    const aggregatorTrade = await makeAggregatorTrade(context, tokenAmountIn)
-    return amountsToPrices(aggregatorTrade, tokenAmountIn)
+    const aggTrade = await makeAggregatorTrade(context, tokenAmountIn)
+    return amountsToPrices(
+        {
+            amountOut: aggTrade.amountOut,
+            amountOutMin: aggTrade.amountOutMin,
+        },
+        tokenAmountIn
+    )
 }
 
 async function estimatePrices(

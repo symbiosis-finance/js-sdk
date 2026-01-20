@@ -67,7 +67,7 @@ import {
     SdkError,
 } from './sdkError'
 import { swapExactIn } from './swapExactIn'
-import { SwappingMiddleware } from './swapping'
+import { Swapping } from './swapping'
 import type {
     BtcConfig,
     ChainConfig,
@@ -416,7 +416,7 @@ export class Symbiosis {
     }
 
     public newSwapping(omniPoolConfig: OmniPoolConfig) {
-        return new SwappingMiddleware(this, omniPoolConfig)
+        return new Swapping(this, omniPoolConfig)
     }
 
     public newRevertPending(request: PendingRequest) {

@@ -109,10 +109,8 @@ export class DepositoryContext {
         }
     }
 
-    makeTargetCall(context: { tokenOut: Token; to: Address }): CallData {
-        return context.tokenOut.isNative
-            ? this.nativeUnwrapCall(context.tokenOut, context.to)
-            : this.erc20TransferCall(context.tokenOut, context.to)
+    makeTargetCall({ tokenOut, to }: { tokenOut: Token; to: Address }): CallData {
+        return tokenOut.isNative ? this.nativeUnwrapCall(tokenOut, to) : this.erc20TransferCall(tokenOut, to)
     }
 
     /**

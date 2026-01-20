@@ -617,10 +617,16 @@ export abstract class BaseSwapping {
                 tokenAmountIn: aggTrade.tokenAmountIn,
                 tokenAmountInMin: aggTrade.tokenAmountInMin,
                 to: aggTrade.to,
-                outToken: aggTrade.amountOut.token,
-                ...amountsToPrices(aggTrade, aggTrade.tokenAmountIn),
+                outToken: aggTrade.tokenOut,
+                ...amountsToPrices(
+                    {
+                        amountOut: aggTrade.amountOut,
+                        amountOutMin: aggTrade.amountOutMin,
+                    },
+                    aggTrade.tokenAmountIn
+                ),
                 extraBranches: [],
-                ...dep.makeTargetCall(aggTrade),
+                ...dep.makeTargetCall({ tokenOut: aggTrade.tokenOut, to: aggTrade.to }),
             } as DepositParams
             // If there is a Depository on a C chain, then use aggTrade for price detection.
             return new DepositoryTrade(
