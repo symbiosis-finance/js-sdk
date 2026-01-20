@@ -135,9 +135,6 @@ export abstract class BaseSwapping {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
-        this.depositoryEnabled = !!depositoryEnabled
-        this.depository = await this.symbiosis.depository(this.transitTokenOut.chainId)
-
         this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
         this.tokenAmountIn = tokenAmountIn
@@ -148,6 +145,11 @@ export abstract class BaseSwapping {
 
         this.transitTokenOut =
             transitTokenOut || this.symbiosis.transitToken(this.tokenOut.chainId, this.omniPoolConfig)
+
+        if (depositoryEnabled !== undefined) {
+            this.depositoryEnabled = depositoryEnabled
+        }
+        this.depository = await this.symbiosis.depository(this.transitTokenOut.chainId)
 
         this.from = tronAddressToEvm(from)
         this.to = tronAddressToEvm(to)
