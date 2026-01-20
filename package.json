@@ -19,8 +19,8 @@
         "default": "./dist/index.js"
     },
     "scripts": {
-        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist/index.js",
-        "start": "tsc-watch --onSuccess 'fix-esm-import-path dist/index.js'",
+        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist",
+        "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
         "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
