@@ -131,43 +131,6 @@ export const config: Config = {
             btc: new Token({
                 name: 'Bitcoin',
                 symbol: 'BTC',
-                address: '0x648b87fcf5d3fa4948e85ba515a41334933220ba',
-                chainId: ChainId.BTC_MAINNET,
-                decimals: 8,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                },
-            }),
-            symBtc: {
-                address: '0x1cEaeda3D17936916D0F3E866Aa5Ef861F544840',
-                chainId: ChainId.CITREA_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/citrea/forwarder/api/v1',
-        },
-        {
-            btc: new Token({
-                deprecated: true,
-                name: 'Bitcoin',
-                symbol: 'BTC',
-                address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
-                chainId: ChainId.BTC_MAINNET,
-                decimals: 8,
-                icons: {
-                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-                },
-            }),
-            symBtc: {
-                address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-                chainId: ChainId.ZKSYNC_MAINNET,
-            },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
-        },
-        {
-            btc: new Token({
-                name: 'Bitcoin',
-                symbol: 'BTC',
                 address: '0x1dfc1e32d75b3f4cb2f2b1bcecad984e99eeba05',
                 chainId: ChainId.BTC_MAINNET,
                 decimals: 8,
@@ -180,7 +143,7 @@ export const config: Config = {
                 address: '0xa1262496e84a9663b7AB64ed96C152A23d0B7214',
                 chainId: ChainId.BSC_MAINNET,
             },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc-v2/forwarder/api/v1',
         },
         {
             btc: new Token({
@@ -199,6 +162,24 @@ export const config: Config = {
                 chainId: ChainId.RSK_MAINNET,
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
+        },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x648b87fcf5d3fa4948e85ba515a41334933220ba',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x1cEaeda3D17936916D0F3E866Aa5Ef861F544840',
+                chainId: ChainId.CITREA_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/citrea/forwarder/api/v1',
         },
     ],
     chains: [
