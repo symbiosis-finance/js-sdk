@@ -42,6 +42,7 @@ export class Cache {
             try {
                 const result = await func()
                 set(result)
+                span.setAttribute('result', String(result))
                 return result
             } catch (exc) {
                 if (cacheExceptions) set(undefined, exc)
