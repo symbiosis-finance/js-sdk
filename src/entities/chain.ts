@@ -828,6 +828,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
         },
     }),
+    new Chain({
+        id: ChainId.CITREA_MAINNET,
+        name: 'Citrea',
+        disabled: false,
+        explorer: 'https://explorer.mainnet.citrea.xyz',
+        icons: {
+            small: 'https://explorer.mainnet.citrea.xyz/assets/favicon/favicon-48x48.png',
+            large: 'https://explorer.mainnet.citrea.xyz/assets/favicon/favicon-48x48.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

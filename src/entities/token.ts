@@ -1055,4 +1055,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
         },
     }),
+    [ChainId.CITREA_MAINNET]: new Token({
+        chainId: ChainId.CITREA_MAINNET,
+        address: '0x3100000000000000000000000000000000000006',
+        decimals: 18,
+        symbol: 'WCBTC',
+        isNative: false,
+        name: 'Wrapped CBTC',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png', // TODO change icon
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png', // TODO change icon
+        },
+    }),
 }

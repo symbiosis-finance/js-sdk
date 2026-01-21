@@ -129,6 +129,24 @@ export const config: Config = {
     btcConfigs: [
         {
             btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x648b87fcf5d3fa4948e85ba515a41334933220ba',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x1cEaeda3D17936916D0F3E866Aa5Ef861F544840',
+                chainId: ChainId.CITREA_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/citrea/forwarder/api/v1',
+        },
+        {
+            btc: new Token({
                 deprecated: true,
                 name: 'Bitcoin',
                 symbol: 'BTC',
@@ -2505,6 +2523,34 @@ export const config: Config = {
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.CITREA_MAINNET,
+            rpc: 'https://rpc.mainnet.citrea.xyz',
+            spareRpcs: [],
+            filterBlockOffset: 1000,
+            stables: [
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0x384157027B1CDEAc4e26e3709667BB28735379Bb',
+                    chainId: ChainId.CITREA_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0xf1C374D065719Ce1Fdc63E2c5C13146813c0A83b',
+            multicallRouter: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
         },
     ],
 }
