@@ -15,8 +15,14 @@
     },
     "type": "module",
     "exports": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./*": {
+            "types": "./dist/*.d.ts",
+            "import": "./dist/*.js"
+        }
     },
     "scripts": {
         "build": "rm -fr ./dist && tsc && fix-esm-import-path dist",
