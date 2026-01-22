@@ -6,7 +6,7 @@ import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 
 import { ChainId } from '../../constants'
-import { Percent, Token, TokenAmount } from '../../entities'
+import { Percent, Token, TokenAmount, WETH } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts'
@@ -43,13 +43,7 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
                 chainId: ChainId.UNICHAIN_MAINNET,
                 decimals: 6,
             }),
-            new Token({
-                name: 'Wrapped ETH',
-                symbol: 'WETH',
-                address: '0x4200000000000000000000000000000000000006',
-                chainId: ChainId.UNICHAIN_MAINNET,
-                decimals: 18,
-            }),
+            WETH[ChainId.UNICHAIN_MAINNET],
         ],
     },
     [ChainId.SONEIUM_MAINNET]: {
@@ -71,13 +65,7 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
                 chainId: ChainId.SONEIUM_MAINNET,
                 decimals: 6,
             }),
-            new Token({
-                name: 'Wrapped ETH',
-                symbol: 'WETH',
-                address: '0x4200000000000000000000000000000000000006',
-                chainId: ChainId.SONEIUM_MAINNET,
-                decimals: 18,
-            }),
+            WETH[ChainId.SONEIUM_MAINNET],
         ],
     },
     [ChainId.HYPERLIQUID_MAINNET]: {
@@ -85,30 +73,21 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         quoter: '0x03A918028f22D9E1473B7959C927AD7425A45C7C',
         swap02: '0x6D99e7f6747AF2cDbB5164b6DD50e40D4fDe1e77',
         initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
-        baseTokens: [
-            new Token({
-                name: 'Wrapped HYPE',
-                symbol: 'WHYPE',
-                address: '0x5555555555555555555555555555555555555555',
-                chainId: ChainId.HYPERLIQUID_MAINNET,
-                decimals: 18,
-            }),
-        ],
+        baseTokens: [WETH[ChainId.HYPERLIQUID_MAINNET]],
     },
     [ChainId.BERACHAIN_MAINNET]: {
         factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
         quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
         swap02: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
         initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
-        baseTokens: [
-            new Token({
-                name: 'Wrapped BERA',
-                symbol: 'WBERA',
-                address: '0x6969696969696969696969696969696969696969',
-                chainId: ChainId.BERACHAIN_MAINNET,
-                decimals: 18,
-            }),
-        ],
+        baseTokens: [WETH[ChainId.BERACHAIN_MAINNET]],
+    },
+    [ChainId.CITREA_MAINNET]: {
+        factory: '0x9136D17Ec096AAd031D442a796cd5984128cF0b2',
+        quoter: '0x14985Bc2967Dd38B1e71540d926F2c8f0dA0a1B5',
+        swap02: '0x2d11a82633adD5b8742311fDa0E751264d093E7f',
+        initCodeHash: '0x851d77a45b8b9a205fb9f44cb829cceba85282714d2603d601840640628a3da7',
+        baseTokens: [WETH[ChainId.CITREA_MAINNET]],
     },
 }
 
