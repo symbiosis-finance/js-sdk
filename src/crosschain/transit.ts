@@ -1,3 +1,4 @@
+import { Bytes } from '@ethersproject/bytes'
 import type { ChainId } from '../constants'
 import type { Token } from '../entities'
 import { chains, TokenAmount } from '../entities'
@@ -39,6 +40,13 @@ type TransitParams = {
     fee1?: TokenAmount
     fee2?: TokenAmount
     partnerAddress?: string
+}
+
+export interface CallsResult {
+    calldatas: (string | Bytes)[]
+    receiveSides: string[]
+    paths: string[]
+    offsets: number[]
 }
 
 export class Transit {
@@ -158,7 +166,7 @@ export class Transit {
         return this.direction === 'v2'
     }
 
-    public calls() {
+    public calls(): CallsResult {
         this.assertOutInitialized('calls')
 
         const calldatas = []
