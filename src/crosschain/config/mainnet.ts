@@ -2509,7 +2509,7 @@ export const config: Config = {
             id: ChainId.CITREA_MAINNET,
             rpc: 'https://rpc.mainnet.citrea.xyz',
             spareRpcs: [],
-            filterBlockOffset: 1000,
+            filterBlockOffset: 500,
             stables: [
                 {
                     name: 'Symbiosis BTC',

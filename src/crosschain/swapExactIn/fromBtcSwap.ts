@@ -65,8 +65,7 @@ export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExact
         async () => {
             const promises: Promise<SwapExactInResult>[] = []
 
-            // configs except syBTC on zksync
-            const allConfigs = symbiosis.config.btcConfigs.filter((i) => i.symBtc.chainId !== ChainId.ZKSYNC_MAINNET)
+            const allConfigs = symbiosis.config.btcConfigs
             // prefer to use destination chain syBTC to avoid cross-chain routing
             const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
             const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs

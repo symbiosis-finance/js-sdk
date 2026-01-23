@@ -8,9 +8,7 @@ export const fetchData = async (url: URL) => {
         throw new Error(json.message ?? text)
     }
 
-    const data = await response.json()
-
-    return data
+    return response.json()
 }
 
 interface LongPollingParams<T> {
@@ -19,6 +17,7 @@ interface LongPollingParams<T> {
     pollingFunction: () => Promise<T | undefined>
     successCondition: (result: T) => boolean
     error?: Error
+    abortSignal?: AbortSignal
 }
 
 export async function longPolling<T>({
@@ -27,12 +26,29 @@ export async function longPolling<T>({
     pollingFunction,
     successCondition,
     error,
+    abortSignal,
 }: LongPollingParams<T>): Promise<T> {
     return new Promise((resolve, reject) => {
         let pastTime = 0
         let result: T | undefined
 
+        const maybeCleanupOnAbort = () => {
+            if (!abortSignal) {
+                return false
+            }
+            if (!abortSignal.aborted) {
+                return false
+            }
+            clearInterval(interval)
+            reject(error ?? new Error('Long polling aborted'))
+            return true
+        }
+
         const func = async () => {
+            if (maybeCleanupOnAbort()) {
+                return
+            }
+
             pastTime += pollingInterval
             if (pastTime > exceedDelay) {
                 clearInterval(interval)
@@ -47,13 +63,33 @@ export async function longPolling<T>({
                 console.error('Long Polling function error', error)
             } finally {
                 if (result && successCondition(result)) {
-                    resolve(result)
-                    clearInterval(interval)
+                    if (abortSignal?.aborted) {
+                        clearInterval(interval)
+                        reject(error ?? new Error('Long polling aborted'))
+                    } else {
+                        resolve(result)
+                        clearInterval(interval)
+                    }
                 }
             }
         }
 
         func()
         const interval = setInterval(func, pollingInterval)
+
+        if (abortSignal) {
+            if (abortSignal.aborted) {
+                maybeCleanupOnAbort()
+                return
+            }
+
+            abortSignal.addEventListener(
+                'abort',
+                () => {
+                    maybeCleanupOnAbort()
+                },
+                { once: true }
+            )
+        }
     })
 }

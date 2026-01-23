@@ -12,8 +12,8 @@ import type { TransactionInfo } from 'tronweb'
 import TronWeb from 'tronweb'
 
 import { ChainId } from '../constants'
-import type { Chain, Token } from '../entities'
-import { chains, TokenAmount, wrappedToken } from '../entities'
+import type { Chain } from '../entities'
+import { chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { delay } from '../utils'
 import { Cache } from './cache'
 import { getUnwrapDustLimit, isTonChainId } from './chainUtils'
@@ -248,6 +248,14 @@ export class Symbiosis {
             } else {
                 throw new SdkError('Unknown config name')
             }
+
+            // restore Token objects after structuredClone
+            this.config.btcConfigs = this.config.btcConfigs.map((btcConfig) => {
+                return {
+                    ...btcConfig,
+                    btc: new Token(btcConfig.btc),
+                }
+            })
 
             if (overrideConfig?.chains) {
                 const { chains } = overrideConfig
@@ -745,11 +753,25 @@ export class Symbiosis {
     }
 
     public async waitForBtcDepositAccepted(depositAddress: string) {
-        return Promise.any(
-            this.config.btcConfigs.map((btcConfig) => {
-                return waitForBtcDepositAccepted(btcConfig, depositAddress)
+        const controllers = this.config.btcConfigs.map(() => new AbortController())
+
+        const promises = this.config.btcConfigs.map((btcConfig, index) => {
+            const controller = controllers[index]
+            const { signal } = controller
+
+            return waitForBtcDepositAccepted(btcConfig, depositAddress, signal).then((result) => {
+                // once one promise finished canceling others
+                controllers.forEach((c, i) => {
+                    if (i !== index) {
+                        c.abort()
+                    }
+                })
+
+                return result
             })
-        )
+        })
+
+        return Promise.any(promises)
     }
 
     public async waitForBtcCommitTxMined(btcConfig: BtcConfig, commitTx: string) {

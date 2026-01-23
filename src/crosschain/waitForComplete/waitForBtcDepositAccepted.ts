@@ -42,7 +42,8 @@ export class WaitWrapBtcTxToCompleteError extends Error {
 
 export async function waitForBtcDepositAccepted(
     btcConfig: BtcConfig,
-    depositAddress: string
+    depositAddress: string,
+    abortSignal?: AbortSignal
 ): Promise<BtcDepositAcceptedResult | undefined> {
     const { forwarderUrl } = btcConfig
     const addressInfoUrl = new URL(`${forwarderUrl}/address?address=${depositAddress}`)
@@ -60,5 +61,6 @@ export async function waitForBtcDepositAccepted(
         },
         successCondition: (txInfo) => !!txInfo,
         error: new WaitWrapBtcTxToCompleteError('getting TransactionBtcInfo timeout exceed'),
+        abortSignal,
     })
 }
