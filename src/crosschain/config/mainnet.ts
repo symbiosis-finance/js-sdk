@@ -1246,7 +1246,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x6E0617948FE030A7E4970F8389D4AD295F249B7E',
+            router: '0x8747979E9965C33e07D497008b08570e51FFCCD0',
             dexFee: 30,
             metaRouter: '0x0863786bbf4561f4a2a8be5a9ddf152afd8ae25c',
             metaRouterGateway: '0x49e1816a2cf475515e7c80c9f0f0e16ae499198b',
