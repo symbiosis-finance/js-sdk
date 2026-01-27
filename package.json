@@ -15,12 +15,18 @@
     },
     "type": "module",
     "exports": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./*": {
+            "types": "./dist/*.d.ts",
+            "import": "./dist/*.js"
+        }
     },
     "scripts": {
-        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist/index.js",
-        "start": "tsc-watch --onSuccess 'fix-esm-import-path dist/index.js'",
+        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist",
+        "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
         "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
@@ -96,7 +102,7 @@
         "tsc-watch": "^7.2.0",
         "tsx": "^4.21.0",
         "typechain": "^8.3.2",
-        "typescript": "^5.0.4",
+        "typescript": "^5.9.3",
         "vitest": "^4.0.16"
     },
     "engines": {
