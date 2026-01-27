@@ -838,6 +838,16 @@ export const chains: Chain[] = [
             large: 'https://explorer.mainnet.citrea.xyz/assets/favicon/favicon-48x48.png',
         },
     }),
+    new Chain({
+        id: ChainId.QUAI_MAINNET,
+        name: 'Quai',
+        disabled: false,
+        explorer: 'https://quaiscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

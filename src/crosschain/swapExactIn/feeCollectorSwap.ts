@@ -67,6 +67,7 @@ export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.PLASMA_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
     [ChainId.MONAD_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
     [ChainId.CITREA_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf', // TODO change to a fee collector with non-zero fee
+    [ChainId.QUAI_MAINNET]: '0x002552D322dDACe745FC143A2f838769da92AFc0',
 }
 
 export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {

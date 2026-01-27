@@ -2533,5 +2533,33 @@ export const config: Config = {
             fabric: '0xf1C374D065719Ce1Fdc63E2c5C13146813c0A83b',
             multicallRouter: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
         },
+        {
+            id: ChainId.QUAI_MAINNET,
+            rpc: 'https://rpc.quai.network/cyprus1',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Wrapped QUAI',
+                    symbol: 'WQUAI',
+                    address: '0x006C3e2AaAE5DB1bCd11A1a097cE572312EADdBB',
+                    chainId: ChainId.QUAI_MAINNET,
+                    decimals: 18,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x001C50a8527fA172A5FBcb65e5402D55cf319ADe',
+            metaRouterGateway: '0x0024334B36aDe5b7FD9b168aD68Ad288d85Ba261',
+            bridge: '0x003d4d57930b2E0887606bE461ab167CAC2E769e',
+            synthesis: '0x004E53ED63b674B1e64Bed32eF037e1f94fc1996',
+            portal: '0x003d9F9666853fD4A10351FF5364c602470A7cF6',
+            fabric: '0x005a04B1EB81A8d1591602eb58742DEee478485D',
+            multicallRouter: '0x0049ff6C9ACe2BAf67ad0466D82e0A2Dc7E309d1',
+        },
     ],
 }

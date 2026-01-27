@@ -1067,4 +1067,16 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png', // TODO change icon
         },
     }),
+    [ChainId.QUAI_MAINNET]: new Token({
+        chainId: ChainId.QUAI_MAINNET,
+        address: '0x006C3e2AaAE5DB1bCd11A1a097cE572312EADdBB',
+        decimals: 18,
+        symbol: 'WQUAI',
+        isNative: false,
+        name: 'Wrapped QUAI',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
+        },
+    }),
 }

@@ -51,6 +51,7 @@ export const COINGECKO_PLATFORMS = new Map([
     [ChainId.PLASMA_MAINNET, 'plasma'],
     [ChainId.MONAD_MAINNET, 'monad'],
     [ChainId.CITREA_MAINNET, 'ethereum'], // TODO change to a correct platform
+    [ChainId.QUAI_MAINNET, 'quai-network'],
 ])
 
 export const COINGECKO_GAS_TOKEN_IDS = new Map([
@@ -105,4 +106,5 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.PLASMA_MAINNET, 'plasma'],
     [ChainId.MONAD_MAINNET, 'monad'],
     [ChainId.CITREA_MAINNET, 'bitcoin'], // TODO update if needed
+    [ChainId.QUAI_MAINNET, 'quai-network'],
 ])
