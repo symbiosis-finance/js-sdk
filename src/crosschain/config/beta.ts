@@ -127,25 +127,6 @@ export const config: Config = {
     },
     fallbackReceiver: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     btcConfigs: [
-        // {
-        //     btc: new Token({
-        //         deprecated: true,
-        //         name: 'Bitcoin',
-        //         symbol: 'BTC',
-        //         address: '0xc102C66D4a1e1865Ee962084626Cf4c27D5BFc74',
-        //         chainId: ChainId.BTC_MAINNET,
-        //         decimals: 8,
-        //         icons: {
-        //             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-        //             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-        //         },
-        //     }),
-        //     symBtc: {
-        //         address: '0x49731d3c7234619a74B4c095838AfbC19cC44f28',
-        //         chainId: ChainId.ZKSYNC_MAINNET,
-        //     },
-        //     forwarderUrl: 'https://btc-forwarder.symbiosis.finance/zksync/forwarder/api/v1',
-        // },
         {
             btc: new Token({
                 name: 'Bitcoin',
@@ -162,26 +143,44 @@ export const config: Config = {
                 address: '0xa1262496e84a9663b7AB64ed96C152A23d0B7214',
                 chainId: ChainId.BSC_MAINNET,
             },
-            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc/forwarder/api/v1',
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/bsc-v2/forwarder/api/v1',
         },
-        // {
-        //     btc: new Token({
-        //         name: 'Bitcoin',
-        //         symbol: 'BTC',
-        //         address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
-        //         chainId: ChainId.BTC_MAINNET,
-        //         decimals: 8,
-        //         icons: {
-        //             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-        //             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-        //         },
-        //     }),
-        //     symBtc: {
-        //         address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
-        //         chainId: ChainId.RSK_MAINNET,
-        //     },
-        //     forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
-        // },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x334524a0adb21425afcf77ac40580d68e30e51d8',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0xc17d768bf4fdc6f20a4a0d8be8767840d106d077',
+                chainId: ChainId.RSK_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/rsk/forwarder/api/v1',
+        },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x648b87fcf5d3fa4948e85ba515a41334933220ba',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x1cEaeda3D17936916D0F3E866Aa5Ef861F544840',
+                chainId: ChainId.CITREA_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/citrea/forwarder/api/v1',
+        },
     ],
     chains: [
         {
@@ -546,6 +545,21 @@ export const config: Config = {
             portal: '0xE75C7E85FE6ADd07077467064aD15847E6ba9877',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0xE7eb022E21e85200E7b0dAEBF3757764e83F5c4e',
+                branchedUnlocker: '0xBd28baAd2Fb52097AdE7F4c246e3f34781b2DF55',
+                timedUnlocker: '0x325355fd8a19A6AF1728410712DaCB830fA55673',
+                timedSwapUnlocker: '0xADd54888275fbb4E4D194d5E0Fd7C8D04FceA8d3',
+                withdrawUnlocker: '0x593F262190e510A37605E85Ca93406013301245d',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.MATIC_MAINNET,
@@ -627,8 +641,8 @@ export const config: Config = {
         },
         {
             id: ChainId.KAVA_MAINNET,
-            rpc: 'https://rpc.ankr.com/kava_evm',
-            spareRpcs: ['https://kava-evm-rpc.publicnode.com', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
+            rpc: 'https://kava-evm-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.ankr.com/kava_evm', 'https://evm.kava.io', 'https://evm.kava-rpc.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -712,8 +726,12 @@ export const config: Config = {
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
-            rpc: 'https://mainnet.era.zksync.io',
-            spareRpcs: ['https://rpc.ankr.com/zksync_era', 'https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
+            rpc: 'https://zksync.drpc.org',
+            spareRpcs: [
+                'https://rpc.ankr.com/zksync_era',
+                'https://zksync.meowrpc.com',
+                'https://mainnet.era.zksync.io',
+            ],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1383,8 +1401,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BAHAMUT_MAINNET,
-            rpc: 'https://bahamut-eu-1.nodes.guru',
-            spareRpcs: ['https://bahamut-rpc.publicnode.com', 'https://rpc.ankr.com/bahamut'],
+            rpc: 'https://rpc1.bahamut.io',
+            spareRpcs: ['https://rpc2.bahamut.io', 'https://rpc.ankr.com/bahamut'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1871,8 +1889,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BSQUARED_MAINNET,
-            rpc: 'https://rpc.bsquared.network',
-            spareRpcs: ['https://b2-mainnet.alt.technology'],
+            rpc: 'https://b2-mainnet.alt.technology',
+            spareRpcs: ['https://rpc.bsquared.network'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -2181,8 +2199,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BERACHAIN_MAINNET,
-            rpc: 'https://rpc.berachain.com',
-            spareRpcs: [],
+            rpc: 'https://berachain-rpc.publicnode.com',
+            spareRpcs: ['https://rpc.berachain.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -2458,6 +2476,62 @@ export const config: Config = {
             portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.MONAD_MAINNET,
+            rpc: 'https://rpc.monad.xyz',
+            spareRpcs: ['https://rpc1.monad.xyz', 'https://rpc2.monad.xyz', 'https://monad-mainnet.drpc.org'],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0x754704Bc059F8C67012fEd69BC8A327a5aafb603',
+                    chainId: ChainId.MONAD_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x292fC50e4eB66C3f6514b9E402dBc25961824D62',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
+        },
+        {
+            id: ChainId.CITREA_MAINNET,
+            rpc: 'https://rpc.mainnet.citrea.xyz',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0x384157027B1CDEAc4e26e3709667BB28735379Bb',
+                    chainId: ChainId.CITREA_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0xcE8f24A58D85eD5c5A6824f7be1F8d4711A0eb4C',
+            metaRouterGateway: '0xAdB2d3b711Bb8d8Ea92ff70292c466140432c278',
+            bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
+            synthesis: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
+            portal: '0x0000000000000000000000000000000000000000',
+            fabric: '0xf1C374D065719Ce1Fdc63E2c5C13146813c0A83b',
+            multicallRouter: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
         },
     ],
 }

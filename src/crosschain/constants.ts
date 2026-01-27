@@ -87,6 +87,7 @@ export const WETH_ONLY: ChainTokensList = {
     [ChainId.APECHAIN_MAINNET]: [WETH[ChainId.APECHAIN_MAINNET]],
     [ChainId.PLASMA_MAINNET]: [WETH[ChainId.PLASMA_MAINNET]],
     [ChainId.MONAD_MAINNET]: [WETH[ChainId.MONAD_MAINNET]],
+    [ChainId.CITREA_MAINNET]: [WETH[ChainId.CITREA_MAINNET]],
 }
 
 export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
@@ -473,6 +474,7 @@ export const DEX_TOKENS_TO_CHECK_TRADES_AGAINST = {
     [ChainId.APECHAIN_MAINNET]: [],
     [ChainId.PLASMA_MAINNET]: [],
     [ChainId.MONAD_MAINNET]: [],
+    [ChainId.CITREA_MAINNET]: [],
 }
 
 // used to construct intermediary pairs for trading
@@ -624,6 +626,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokensList = {
         WETH[ChainId.MONAD_MAINNET],
         ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.MONAD_MAINNET],
     ],
+    [ChainId.CITREA_MAINNET]: [
+        WETH[ChainId.CITREA_MAINNET],
+        ...DEX_TOKENS_TO_CHECK_TRADES_AGAINST[ChainId.CITREA_MAINNET],
+    ],
 }
 
 /**
@@ -717,6 +723,7 @@ export const MULTICALL_ADDRESSES: { [chainId in ChainId]?: EvmAddress } = {
     [ChainId.APECHAIN_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
     [ChainId.PLASMA_MAINNET]: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
     [ChainId.MONAD_MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    [ChainId.CITREA_MAINNET]: '0xA738e84fdE890Bc60b99AF7ccE43990E534304de',
 }
 
 export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, EvmAddress>> = {
@@ -725,4 +732,5 @@ export const MULTICALL_ROUTER_V2: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ZKSYNC_MAINNET]: '0x7D2172C9bf79263FFf6E456c423a5e3E69F9AA4b',
     [ChainId.BSC_MAINNET]: '0xeB278638fFa33CC776230dE4FF88eD5142ed8c1A',
     [ChainId.RSK_MAINNET]: '0xca506793a420e901bbca8066be5661e3c52c84c2',
+    [ChainId.CITREA_MAINNET]: '0xf85FC807D05d3Ab2309364226970aAc57b4e1ea4',
 }

@@ -115,4 +115,5 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.APECHAIN_MAINNET]: GAS(ChainId.APECHAIN_MAINNET, 'APE', 18876),
     [ChainId.PLASMA_MAINNET]: GAS(ChainId.PLASMA_MAINNET, 'XPL', 36645),
     [ChainId.MONAD_MAINNET]: GAS(ChainId.MONAD_MAINNET, 'MON', 30495),
+    [ChainId.CITREA_MAINNET]: GAS(ChainId.CITREA_MAINNET, 'CBTC', 1), // TODO change iconId
 }

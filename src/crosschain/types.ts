@@ -100,7 +100,7 @@ export type SwapLimit = {
 export type BtcConfig = {
     btc: Token
     symBtc: {
-        address: string
+        address: EvmAddress
         chainId: ChainId
     }
     forwarderUrl: string

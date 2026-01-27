@@ -15,6 +15,7 @@ export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> 
     [ChainId.ZKSYNC_MAINNET]: '0x35e3dc1f3383bD348EC651EdD73fE1d7a7dA5AAa',
     [ChainId.BSC_MAINNET]: '0x628613064b1902a1A422825cf11B687C6f17961E',
     [ChainId.RSK_MAINNET]: '0xa257f3fe4e4032291516dc355edf90664e9eb932',
+    [ChainId.CITREA_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
 }
 
 export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
@@ -65,6 +66,7 @@ export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.APECHAIN_MAINNET]: '0x2b7Aa8bDc40B6d3d19d0dE7480c4db8d5B6495e2',
     [ChainId.PLASMA_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
     [ChainId.MONAD_MAINNET]: '0x6AEb9b27590387b8Fd0560C52f6B968C59C10Fab',
+    [ChainId.CITREA_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf', // TODO change to a fee collector with non-zero fee
 }
 
 export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean {
