@@ -83,9 +83,9 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         baseTokens: [WETH[ChainId.BERACHAIN_MAINNET]],
     },
     [ChainId.CITREA_MAINNET]: {
-        factory: '0x9136D17Ec096AAd031D442a796cd5984128cF0b2',
-        quoter: '0x14985Bc2967Dd38B1e71540d926F2c8f0dA0a1B5',
-        swap02: '0x2d11a82633adD5b8742311fDa0E751264d093E7f',
+        factory: '0xd809b1285aDd8eeaF1B1566Bf31B2B4C4Bba8e82',
+        quoter: '0x428f20dd8926Eabe19653815Ed0BE7D6c36f8425',
+        swap02: '0x565eD3D57fe40f78A46f348C220121AE093c3cF8',
         initCodeHash: '0x851d77a45b8b9a205fb9f44cb829cceba85282714d2603d601840640628a3da7',
         baseTokens: [WETH[ChainId.CITREA_MAINNET]],
     },
