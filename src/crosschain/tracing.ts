@@ -61,7 +61,6 @@ export function wrapToSpan<F extends (...args: any) => any>(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyArgs = any[]
-
 export type AsyncMethod<This, Args extends AnyArgs, Return> = (this: This, ...args: Args) => Promise<Return>
 export type Method<This, Args extends AnyArgs, Return> = (this: This, ...args: Args) => Return
 
