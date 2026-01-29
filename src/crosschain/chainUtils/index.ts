@@ -1,5 +1,6 @@
 export * from './btc'
 export * from './evm'
+export * from './quai'
 export * from './solana'
 export * from './ton'
 export {
