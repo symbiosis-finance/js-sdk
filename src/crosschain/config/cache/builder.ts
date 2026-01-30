@@ -178,13 +178,11 @@ export class Builder {
         console.log('checkMetarouters')
         const chains = this.config.chains
 
-        let error = false
-        for (let i = 0; i < chains.length; i++) {
-            const chain = chains[i]
+        const promises = chains.map(async (chain) => {
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
             if (isBtcChainId(chain.id) || isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
-                continue
+                return
             }
 
             const portal = this.portal(chain.id)
@@ -195,7 +193,7 @@ export class Builder {
 
             const synthesis = this.synthesis(chain.id)
             let synthesisMetaRouter
-            // NOTE because there is separate metarouter for btc integration
+            // NOTE because there is a separate metarouter for btc integration
             if (
                 synthesis.address !== AddressZero &&
                 chain.id !== ChainId.ARBITRUM_MAINNET &&
@@ -214,7 +212,7 @@ export class Builder {
                     portalMetaRouter,
                     synthesisMetaRouter,
                 })
-                error = true
+                throw new Error(`MetaRouter mismatch for ${chain.id}`)
             }
 
             const metaRouterGatewayAddressFromConfig = chain.metaRouterGateway.toLowerCase()
@@ -226,13 +224,10 @@ export class Builder {
                     metaRouterGatewayAddressFromConfig,
                     metaRouterGatewayAddressFromContract,
                 })
-                error = true
+                throw new Error(`MetaRouter mismatch for ${chain.id}`)
             }
-        }
-
-        if (error) {
-            throw new Error('There are differences')
-        }
+        })
+        await Promise.all(promises)
     }
 
     private async buildOmniPools(tokens: TokenInfo[]): Promise<OmniPoolInfo[]> {

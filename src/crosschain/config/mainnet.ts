@@ -333,9 +333,9 @@ export const config: Config = {
             metaRouter: '0xf621Fb08BBE51aF70e7E0F4EA63496894166Ff7F',
             metaRouterGateway: '0xfCEF2Fe72413b65d3F393d278A714caD87512bcd',
             bridge: '0x5523985926Aa12BA58DC5Ad00DDca99678D7227E',
-            synthesis: '0x0000000000000000000000000000000000000000',
+            synthesis: '0xD7c3DF25683871d18BC838E4F619126442Dd38B3',
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
-            fabric: '0x0000000000000000000000000000000000000000',
+            fabric: '0xbBFb7cb70f84fb6fE1Cb13e42A0B71EFDe769428',
             multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
         },
         {
@@ -1224,9 +1224,9 @@ export const config: Config = {
             metaRouter: '0x691df9C4561d95a4a726313089c8536dd682b946',
             metaRouterGateway: '0x41Ae964d0F61Bb5F5e253141A462aD6F3b625B92',
             bridge: '0x8097f0B9f06C27AF9579F75762F971D745bb222F',
-            synthesis: '0x0000000000000000000000000000000000000000',
+            synthesis: '0x9F6424FE88fBe7785Fa34F0E369F192bF38E7A6e',
             portal: '0xEE981B2459331AD268cc63CE6167b446AF4161f8',
-            fabric: '0x0000000000000000000000000000000000000000',
+            fabric: '0x44487a445a7595446309464A82244B4bD4e325D5',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
         },
         {
