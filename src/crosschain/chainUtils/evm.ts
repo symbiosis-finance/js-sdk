@@ -13,6 +13,7 @@ import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
 import { isBtcChainId } from './btc'
+import { isQuaiChainId } from './quai'
 import { isSolanaChainId } from './solana'
 import { isTonChainId } from './ton'
 import { isTronChainId } from './tron'
@@ -32,7 +33,13 @@ interface GetExternalIdParams {
 
 export function isEvmChainId(chainId: ChainId | undefined) {
     if (!chainId) return false
-    return !isBtcChainId(chainId) && !isTronChainId(chainId) && !isTonChainId(chainId) && !isSolanaChainId(chainId)
+    return (
+        !isBtcChainId(chainId) &&
+        !isTronChainId(chainId) &&
+        !isTonChainId(chainId) &&
+        !isSolanaChainId(chainId) &&
+        !isQuaiChainId(chainId)
+    )
 }
 
 export function getInternalId({ contractAddress, requestCount, chainId }: GetInternalIdParams): string {
