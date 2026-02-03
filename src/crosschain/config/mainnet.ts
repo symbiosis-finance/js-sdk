@@ -1246,7 +1246,7 @@ export const config: Config = {
                     },
                 },
             ],
-            router: '0x8747979E9965C33e07D497008b08570e51FFCCD0',
+            router: '0x6E0617948FE030A7E4970F8389D4AD295F249B7E',
             dexFee: 30,
             metaRouter: '0x0863786bbf4561f4a2a8be5a9ddf152afd8ae25c',
             metaRouterGateway: '0x49e1816a2cf475515e7c80c9f0f0e16ae499198b',
@@ -2532,6 +2532,22 @@ export const config: Config = {
             portal: '0x0000000000000000000000000000000000000000',
             fabric: '0xf1C374D065719Ce1Fdc63E2c5C13146813c0A83b',
             multicallRouter: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0x6Dc500d82e334bDB16cc4Fa3B241a05414714032',
+                btcRefundUnlocker: '0xc6c6AD9263d21D239029175D8226c3a549606881',
+                branchedUnlocker: '0x6e09E7f8779fE1733dbF59CDae7B5aC4DD664199',
+                timedUnlocker: '0x314F9213989370921c6b3b13b3E8460a1C8341d0',
+                timedSwapUnlocker: '0x503Ca86bF0be0A9Ec67EA42eaf458b7EB9432F44',
+                withdrawUnlocker: '0x06848b52101352c3568e40DeF2df57e83648b5ad',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.QUAI_MAINNET,

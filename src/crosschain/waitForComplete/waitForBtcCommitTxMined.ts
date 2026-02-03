@@ -44,7 +44,7 @@ export async function waitForBtcCommitTxMined({
 }: WaitForBtcCommitTxMinedParams): Promise<Response | undefined> {
     const { forwarderUrl } = btcConfig
     const wrapsUrl = new URL(`${forwarderUrl}/wraps`)
-    wrapsUrl.searchParams.append('limit', '20')
+    wrapsUrl.searchParams.append('length', '20')
 
     return longPolling<Response | undefined>({
         pollingFunction: async () => {
