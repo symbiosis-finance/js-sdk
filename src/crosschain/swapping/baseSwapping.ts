@@ -5,13 +5,14 @@ import JSBI from 'jsbi'
 import { ChainId } from '../../constants'
 import type { Token } from '../../entities'
 import { Percent, Profiler, TokenAmount, wrappedToken } from '../../entities'
-import type { DetailedSlippage, TronTransactionData } from '../chainUtils'
+import type { DetailedSlippage, TronTransactionData } from '../chainUtils';
 import {
     buildMetaSynthesize,
     getExternalId,
     getInternalId,
     getMinAmount,
     isEvmChainId,
+    isQuaiChainId,
     isTonChainId,
     isTronChainId,
     isTronToken,
@@ -282,7 +283,7 @@ export abstract class BaseSwapping {
 
         let payload: SwapExactInTransactionPayload
 
-        if (isEvmChainId(this.tokenAmountIn.token.chainId)) {
+        if (isEvmChainId(this.tokenAmountIn.token.chainId) || isQuaiChainId(this.tokenAmountIn.token.chainId)) {
             const metaRouteParams = this.getMetaRouteParams(fee1, fee2)
             const transactionRequest = this.getEvmTransactionRequest(metaRouteParams)
             payload = {

@@ -5,7 +5,7 @@ import { utils } from 'ethers'
 
 import type { ChainId } from '../constants'
 import { TokenAmount } from '../entities'
-import { getExternalId, isEvmChainId, isTronChainId } from './chainUtils'
+import { getExternalId, isEvmChainId, isQuaiChainId, isTronChainId } from './chainUtils'
 import { Portal__factory, Synthesis__factory } from './contracts'
 import type { SynthesizeRequestEvent } from './contracts/Portal'
 import { AggregateSdkError, SdkError } from './sdkError'
@@ -71,7 +71,7 @@ export const findSourceChainData = async (
 
     const chains = symbiosis
         .chains()
-        .filter((chain) => isEvmChainId(chain.id) || isTronChainId(chain.id))
+        .filter((chain) => isEvmChainId(chain.id) || isTronChainId(chain.id) || isQuaiChainId(chain.id))
         .filter((chain) => {
             return chain.id !== chainIdFrom && chain.id !== chainIdTo
         })

@@ -9,6 +9,7 @@ import {
     getExternalId,
     getInternalId,
     isEvmChainId,
+    isQuaiChainId,
     isTonChainId,
     isTronChainId,
     prepareTronTransaction,
@@ -242,7 +243,7 @@ async function getTransactionPayload(
         }
     }
 
-    if (isEvmChainId(chainIdIn)) {
+    if (isEvmChainId(chainIdIn) || isQuaiChainId(chainIdIn)) {
         const transactionRequest = getEvmTransactionRequest(context, fee, revertableAddress, direction)
 
         return {
