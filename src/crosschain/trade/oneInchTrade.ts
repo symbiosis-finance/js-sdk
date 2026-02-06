@@ -43,15 +43,15 @@ interface OneInchTradeParams extends SymbiosisTradeParams {
 }
 
 const ONE_INCH_CHAINS: ChainId[] = [
-    // ChainId.ETH_MAINNET,
-    // ChainId.BSC_MAINNET,
-    // ChainId.MATIC_MAINNET,
-    // ChainId.OPTIMISM_MAINNET,
-    // ChainId.ARBITRUM_MAINNET,
-    // ChainId.AVAX_MAINNET,
-    // ChainId.ZKSYNC_MAINNET,
-    // ChainId.BASE_MAINNET,
-    // ChainId.GNOSIS_MAINNET,
+    ChainId.ETH_MAINNET,
+    ChainId.BSC_MAINNET,
+    ChainId.MATIC_MAINNET,
+    ChainId.OPTIMISM_MAINNET,
+    ChainId.ARBITRUM_MAINNET,
+    ChainId.AVAX_MAINNET,
+    ChainId.ZKSYNC_MAINNET,
+    ChainId.BASE_MAINNET,
+    ChainId.GNOSIS_MAINNET,
     // ChainId.UNICHAIN_MAINNET, // TODO
     // ChainId.LINEA_MAINNET, // TODO
     // ChainId.SONIC_MAINNET, // TODO
