@@ -36,11 +36,14 @@ export const CHAIN_FLIP_BTC_TOKENS = CONFIGS.map((i) => i.tokenIn)
 export async function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
 
-    // via stable pool only
-    const poolConfig = symbiosis.config.omniPools[0]
+    const poolConfig = symbiosis.config.omniPools.find((pool) => {
+        return pool.coinGeckoId === 'usd-coin'
+    })
+    if (!poolConfig) {
+        throw new ChainFlipError('No USD pool found')
+    }
 
     const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
-
     if (!CF_CONFIGS.length) {
         throw new ChainFlipError('No config found for tokenOut')
     }

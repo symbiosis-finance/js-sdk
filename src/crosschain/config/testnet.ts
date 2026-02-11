@@ -13,7 +13,7 @@ export const config: Config = {
             address: '0xFC385a59b2728cA437057E3cDBA4a2611B75c406', // BTC octopool
             oracle: '0xfdF3dBF16a7Dc8078FE4E9D0c1ac391dfb8B19aF',
             generalPurpose: true,
-            coinGeckoId: 'btc-mutiny',
+            coinGeckoId: 'bitcoin',
         },
         // {
         //     chainId: ChainId.BSC_TESTNET,

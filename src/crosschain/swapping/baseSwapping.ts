@@ -5,7 +5,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../../constants'
 import type { Token } from '../../entities'
 import { Percent, Profiler, TokenAmount, wrappedToken } from '../../entities'
-import type { DetailedSlippage, TronTransactionData } from '../chainUtils';
+import type { DetailedSlippage, TronTransactionData } from '../chainUtils'
 import {
     buildMetaSynthesize,
     getExternalId,

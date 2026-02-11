@@ -87,7 +87,21 @@ export type OmniPoolConfig = {
     address: Address
     oracle: string
     generalPurpose: boolean
-    coinGeckoId: string
+    coinGeckoId:
+        | 'usd-coin'
+        | 'weth'
+        | 'bitcoin'
+        | 'milady-meme-coin'
+        | 'frax'
+        | 'g-token'
+        | 'wrapped-ton'
+        | 'catizen'
+        | 'uxlink'
+        | 'pineye'
+        | 'binancecoin'
+        | 'symbiosis-finance'
+        | 'apecoin'
+        | 'evaa-protocol'
 }
 
 export type SwapLimit = {

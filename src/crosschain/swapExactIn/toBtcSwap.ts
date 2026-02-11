@@ -7,7 +7,6 @@ import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { theBest } from './utils'
 
 function isThorChainAvailable(chainId: ChainId) {
-    return false
     return chainId === ChainId.BTC_MAINNET
 }
 

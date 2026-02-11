@@ -232,7 +232,7 @@ export class ZappingThor extends BaseSwapping {
         url.searchParams.set('destination', this.bitcoinAddress)
         url.searchParams.set('streaming_interval', '1')
         url.searchParams.set('streaming_quantity', '0')
-        url.searchParams.set('affiliate', 'sy')
+        url.searchParams.set('affiliate', 'symbiosis')
         url.searchParams.set('affiliate_bps', '20')
 
         const response = await fetch(url.toString(), {

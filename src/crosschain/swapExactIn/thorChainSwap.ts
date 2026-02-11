@@ -3,6 +3,7 @@ import { Token } from '../../entities'
 import { ZappingThor } from '../swapping'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { theBest } from './utils'
+import { ThorChainError } from '../sdkError'
 
 const ETH_USDC = new Token({
     address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -32,8 +33,14 @@ export const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, partnerAddress } = context
 
-    // via stable pool only
-    const poolConfig = symbiosis.config.omniPools[0]
+    const poolConfig = symbiosis.config.omniPools.find((pool) => {
+        return pool.coinGeckoId === 'usd-coin'
+    })
+    if (!poolConfig) {
+        throw new ThorChainError('No USD pool found')
+    }
+
+    // TODO add on-chain zapping here
 
     const promises = THOR_TOKENS.map((thorToken) => {
         const zappingThor = new ZappingThor(symbiosis, poolConfig)
