@@ -284,7 +284,7 @@ export interface DetailedSlippage {
 }
 
 export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
-    const minSlippage = 20 // 0.2%
+    const minSlippage = 10 // 0.1%
     if (totalSlippage < minSlippage) {
         throw new SdkError(`Slippage cannot be less than ${(minSlippage / 100).toString()}%`)
     }

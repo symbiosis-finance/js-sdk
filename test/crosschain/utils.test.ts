@@ -187,6 +187,13 @@ describe('#splitSlippage', () => {
         })
     })
     test('0.1% false false', () => {
-        expect(() => splitSlippage(10, false, false)).toThrowError('Slippage cannot be less than 0.2%')
+        expect(splitSlippage(10, false, false)).toStrictEqual({
+            A: 0,
+            B: 10,
+            C: 0,
+        })
+    })
+    test('0.05% false false', () => {
+        expect(() => splitSlippage(5, false, false)).toThrowError('Slippage cannot be less than 0.1%')
     })
 })
