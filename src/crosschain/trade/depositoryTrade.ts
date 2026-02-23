@@ -41,5 +41,10 @@ export class DepositoryTrade extends SymbiosisTrade {
 
     private buildDepositCall(params: DepositParams) {
         this.out = this.dep.buildDepositCall(params)
+
+        // use priceImpact of a trade that builds a quote for the depository trade
+        if (this.baseTrade) {
+            this.out.priceImpact = this.baseTrade.priceImpact
+        }
     }
 }
