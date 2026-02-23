@@ -89,6 +89,14 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         initCodeHash: '0x851d77a45b8b9a205fb9f44cb829cceba85282714d2603d601840640628a3da7',
         baseTokens: [WETH[ChainId.CITREA_MAINNET]],
     },
+    // oku.trade
+    [ChainId.TELOS_MAINNET]: {
+        factory: '0xcb2436774C3e191c85056d248EF4260ce5f27A9D',
+        quoter: '0x5911cB3633e764939edc2d92b7e1ad375Bb57649',
+        swap02: '0xaa52bB8110fE38D0d2d2AF0B85C3A3eE622CA455',
+        // initCodeHash: '',
+        baseTokens: [WETH[ChainId.TELOS_MAINNET]],
+    },
 }
 
 interface UniV3TradeParams extends SymbiosisTradeParams {
