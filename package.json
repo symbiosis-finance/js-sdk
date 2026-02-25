@@ -14,18 +14,22 @@
         "url": "https://github.com/symbiosis-finance/js-sdk/issues"
     },
     "type": "module",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/index.js",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
+            "import": "./dist/index.js",
+            "require": "./dist/cjs/index.js"
         },
         "./*": {
             "types": "./dist/*.d.ts",
-            "import": "./dist/*.js"
+            "import": "./dist/*.js",
+            "require": "./dist/cjs/*.js"
         }
     },
     "scripts": {
-        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist",
+        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist && tsc -p tsconfig.cjs.json --noCheck && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
         "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
