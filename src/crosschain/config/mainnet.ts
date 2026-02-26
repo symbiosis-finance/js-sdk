@@ -726,12 +726,8 @@ export const config: Config = {
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
-            rpc: 'https://zksync.drpc.org',
-            spareRpcs: [
-                'https://rpc.ankr.com/zksync_era',
-                'https://zksync.meowrpc.com',
-                'https://mainnet.era.zksync.io',
-            ],
+            rpc: 'https://mainnet.era.zksync.io',
+            spareRpcs: ['https://rpc.ankr.com/zksync_era', 'https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
             filterBlockOffset: 1000,
             stables: [
                 {
