@@ -726,12 +726,8 @@ export const config: Config = {
         },
         {
             id: ChainId.ZKSYNC_MAINNET,
-            rpc: 'https://zksync.drpc.org',
-            spareRpcs: [
-                'https://rpc.ankr.com/zksync_era',
-                'https://zksync.meowrpc.com',
-                'https://mainnet.era.zksync.io',
-            ],
+            rpc: 'https://mainnet.era.zksync.io',
+            spareRpcs: ['https://rpc.ankr.com/zksync_era', 'https://zksync.meowrpc.com', 'https://zksync.drpc.org'],
             filterBlockOffset: 1000,
             stables: [
                 {
@@ -1698,6 +1694,18 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    name: 'USD Coin',
+                    symbol: 'USDC',
+                    address: '0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392',
+                    chainId: ChainId.SEI_EVM_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+                {
+                    // deprecated: true,
                     name: 'USD Coin via Noble',
                     symbol: 'USDC.n',
                     address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',

@@ -10,6 +10,7 @@ import type { Symbiosis } from '../symbiosis'
 import type { Address, NonEmptyAddress } from '../types'
 import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
+import { validateCallData } from './validateCallData'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -194,6 +195,14 @@ export class OpenOceanTrade extends SymbiosisTrade {
         try {
             const { data, outAmount, to, price_impact: priceImpactString } = response
             const { amountOffset, minReceivedOffset } = this.getOffsets(data)
+
+            await validateCallData(
+                this.symbiosis.getProvider(this.tokenAmountIn.token.chainId),
+                this.to,
+                to,
+                data,
+                this.tokenAmountIn
+            )
 
             const amountOut = new TokenAmount(this.tokenOut, outAmount)
 

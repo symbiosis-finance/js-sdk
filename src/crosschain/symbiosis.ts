@@ -658,13 +658,13 @@ export class Symbiosis {
             throw new SdkError(`Cannot find token for chain ${chainId}`)
         }
 
-        // if token is from manager chain (token's chainIs equals to pool chainId)
+        // if the token is from the manager chain (token's chainIs equals to pool chainId)
         if (chainId === pool.chainId) {
             return tokens[0]
         }
 
-        // find the FIRST suitable token from the tokens list
-        // e.g. the first token has priority
+        // find the FIRST suitable token from the token list
+        // e.g., the first token has priority
         const transitToken = tokens.find((token) => {
             return this.getOmniPoolByToken(token)?.id === pool.id
         })
