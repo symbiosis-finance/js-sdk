@@ -21,13 +21,6 @@ export const config: Config = {
         //     oracle: '0x7a62416f10cd039cb538953953f94316FE1c32FA',
         //     generalPurpose: true,
         // },
-        {
-            chainId: ChainId.BSC_TESTNET,
-            address: '0x2826c540065C8eD792d7100ca89628E986f2F42E', // TON octopool
-            oracle: '0xaF123f922b9cAe0F525c2E5A95314D7E8E229413',
-            generalPurpose: true, // maybe in prod false, eth -\-> ton
-            coinGeckoId: 'wrapped-ton',
-        },
     ],
     revertableAddress: {
         [ChainId.TRON_TESTNET]: '0x1b5D6DDF6086Bb06616f58274F894099c31e9DB5',
