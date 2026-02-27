@@ -400,15 +400,6 @@ export function tonAdvisorMock(feeToken: Token) {
     if (feeToken.symbol?.toLowerCase().includes('usdt')) {
         feeRaw = '0.5'
     }
-    if (feeToken.symbol?.toLowerCase().includes('uxlink')) {
-        feeRaw = '1'
-    }
-    if (feeToken.symbol?.toLowerCase().includes('cati')) {
-        feeRaw = '1'
-    }
-    if (feeToken.symbol?.toLowerCase().includes('pineye')) {
-        feeRaw = '1000'
-    }
     if (feeToken.symbol?.toLowerCase().includes('evaa')) {
         feeRaw = '1'
     }

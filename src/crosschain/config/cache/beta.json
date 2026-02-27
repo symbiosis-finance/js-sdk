@@ -8,47 +8,48 @@
             "coinGeckoId": "usd-coin",
             "id": 0,
             "tokens": [
-                { "index": 0, "tokenId": 133 },
-                { "index": 1, "tokenId": 143 },
-                { "index": 2, "tokenId": 153 },
-                { "index": 3, "tokenId": 154 },
-                { "index": 4, "tokenId": 159 },
-                { "index": 5, "tokenId": 142 },
-                { "index": 6, "tokenId": 160 },
-                { "index": 7, "tokenId": 167 },
-                { "index": 8, "tokenId": 174 },
-                { "index": 9, "tokenId": 176 },
-                { "index": 10, "tokenId": 178 },
-                { "index": 11, "tokenId": 166 },
-                { "index": 12, "tokenId": 152 },
-                { "index": 13, "tokenId": 184 },
-                { "index": 14, "tokenId": 158 },
-                { "index": 15, "tokenId": 189 },
-                { "index": 16, "tokenId": 182 },
-                { "index": 17, "tokenId": 157 },
-                { "index": 18, "tokenId": 191 },
-                { "index": 19, "tokenId": 193 },
-                { "index": 20, "tokenId": 196 },
-                { "index": 21, "tokenId": 179 },
-                { "index": 22, "tokenId": 202 },
-                { "index": 23, "tokenId": 199 },
-                { "index": 24, "tokenId": 161 },
-                { "index": 25, "tokenId": 210 },
-                { "index": 26, "tokenId": 211 },
-                { "index": 27, "tokenId": 213 },
-                { "index": 28, "tokenId": 212 },
-                { "index": 29, "tokenId": 216 },
-                { "index": 30, "tokenId": 219 },
-                { "index": 31, "tokenId": 224 },
-                { "index": 32, "tokenId": 225 },
-                { "index": 33, "tokenId": 229 },
-                { "index": 34, "tokenId": 203 },
-                { "index": 35, "tokenId": 201 },
-                { "index": 36, "tokenId": 241 },
-                { "index": 37, "tokenId": 198 },
-                { "index": 38, "tokenId": 243 },
-                { "index": 39, "tokenId": 237 },
-                { "index": 40, "tokenId": 244 }
+                { "index": 0, "tokenId": 115 },
+                { "index": 1, "tokenId": 122 },
+                { "index": 2, "tokenId": 130 },
+                { "index": 3, "tokenId": 131 },
+                { "index": 4, "tokenId": 135 },
+                { "index": 5, "tokenId": 121 },
+                { "index": 6, "tokenId": 136 },
+                { "index": 7, "tokenId": 143 },
+                { "index": 8, "tokenId": 147 },
+                { "index": 9, "tokenId": 149 },
+                { "index": 10, "tokenId": 151 },
+                { "index": 11, "tokenId": 142 },
+                { "index": 12, "tokenId": 129 },
+                { "index": 13, "tokenId": 157 },
+                { "index": 14, "tokenId": 134 },
+                { "index": 15, "tokenId": 160 },
+                { "index": 16, "tokenId": 155 },
+                { "index": 17, "tokenId": 133 },
+                { "index": 18, "tokenId": 162 },
+                { "index": 19, "tokenId": 164 },
+                { "index": 20, "tokenId": 167 },
+                { "index": 21, "tokenId": 152 },
+                { "index": 22, "tokenId": 173 },
+                { "index": 23, "tokenId": 170 },
+                { "index": 24, "tokenId": 137 },
+                { "index": 25, "tokenId": 182 },
+                { "index": 26, "tokenId": 183 },
+                { "index": 27, "tokenId": 185 },
+                { "index": 28, "tokenId": 184 },
+                { "index": 29, "tokenId": 188 },
+                { "index": 30, "tokenId": 191 },
+                { "index": 31, "tokenId": 193 },
+                { "index": 32, "tokenId": 194 },
+                { "index": 33, "tokenId": 198 },
+                { "index": 34, "tokenId": 174 },
+                { "index": 35, "tokenId": 172 },
+                { "index": 36, "tokenId": 210 },
+                { "index": 37, "tokenId": 169 },
+                { "index": 38, "tokenId": 212 },
+                { "index": 39, "tokenId": 206 },
+                { "index": 40, "tokenId": 213 },
+                { "index": 41, "tokenId": 181 }
             ]
         },
         {
@@ -59,35 +60,35 @@
             "coinGeckoId": "weth",
             "id": 1,
             "tokens": [
-                { "index": 0, "tokenId": 162 },
-                { "index": 1, "tokenId": 180 },
-                { "index": 2, "tokenId": 168 },
-                { "index": 3, "tokenId": 155 },
-                { "index": 4, "tokenId": 144 },
-                { "index": 5, "tokenId": 175 },
-                { "index": 6, "tokenId": 177 },
-                { "index": 7, "tokenId": 135 },
-                { "index": 8, "tokenId": 181 },
-                { "index": 9, "tokenId": 185 },
-                { "index": 10, "tokenId": 188 },
-                { "index": 11, "tokenId": 192 },
-                { "index": 12, "tokenId": 195 },
-                { "index": 13, "tokenId": 197 },
-                { "index": 14, "tokenId": 200 },
-                { "index": 15, "tokenId": 205 },
-                { "index": 16, "tokenId": 207 },
-                { "index": 17, "tokenId": 209 },
-                { "index": 18, "tokenId": 214 },
-                { "index": 19, "tokenId": 227 },
-                { "index": 20, "tokenId": 228 },
-                { "index": 21, "tokenId": 230 },
-                { "index": 22, "tokenId": 231 },
-                { "index": 23, "tokenId": 232 },
-                { "index": 24, "tokenId": 233 },
-                { "index": 25, "tokenId": 234 },
-                { "index": 26, "tokenId": 236 },
-                { "index": 27, "tokenId": 239 },
-                { "index": 28, "tokenId": 240 }
+                { "index": 0, "tokenId": 138 },
+                { "index": 1, "tokenId": 153 },
+                { "index": 2, "tokenId": 144 },
+                { "index": 3, "tokenId": 132 },
+                { "index": 4, "tokenId": 123 },
+                { "index": 5, "tokenId": 148 },
+                { "index": 6, "tokenId": 150 },
+                { "index": 7, "tokenId": 117 },
+                { "index": 8, "tokenId": 154 },
+                { "index": 9, "tokenId": 158 },
+                { "index": 10, "tokenId": 159 },
+                { "index": 11, "tokenId": 163 },
+                { "index": 12, "tokenId": 166 },
+                { "index": 13, "tokenId": 168 },
+                { "index": 14, "tokenId": 171 },
+                { "index": 15, "tokenId": 176 },
+                { "index": 16, "tokenId": 178 },
+                { "index": 17, "tokenId": 180 },
+                { "index": 18, "tokenId": 186 },
+                { "index": 19, "tokenId": 196 },
+                { "index": 20, "tokenId": 197 },
+                { "index": 21, "tokenId": 199 },
+                { "index": 22, "tokenId": 200 },
+                { "index": 23, "tokenId": 201 },
+                { "index": 24, "tokenId": 202 },
+                { "index": 25, "tokenId": 203 },
+                { "index": 26, "tokenId": 205 },
+                { "index": 27, "tokenId": 208 },
+                { "index": 28, "tokenId": 209 }
             ]
         },
         {
@@ -98,41 +99,15 @@
             "coinGeckoId": "bitcoin",
             "id": 2,
             "tokens": [
-                { "index": 0, "tokenId": 136 },
-                { "index": 1, "tokenId": 145 },
-                { "index": 2, "tokenId": 163 },
-                { "index": 3, "tokenId": 204 },
-                { "index": 4, "tokenId": 206 },
-                { "index": 5, "tokenId": 208 },
-                { "index": 6, "tokenId": 165 },
-                { "index": 7, "tokenId": 218 },
-                { "index": 8, "tokenId": 226 }
-            ]
-        },
-        {
-            "chainId": 13863860,
-            "address": "0xAF8Ba1498e1EddD602Aab9cDe4BC6A3a83400165",
-            "oracle": "0x422A0A054Eb5a7424d9E3042862546a3F04e3596",
-            "generalPurpose": false,
-            "coinGeckoId": "milady-meme-coin",
-            "id": 3,
-            "tokens": [
-                { "index": 0, "tokenId": 137 },
-                { "index": 1, "tokenId": 170 }
-            ]
-        },
-        {
-            "chainId": 13863860,
-            "address": "0x92114294E42A96C9eF3163DA18Ee7eFdbA6cc661",
-            "oracle": "0xd29bfF100F5599522D94E7aEDf2d6B65357c7516",
-            "generalPurpose": false,
-            "coinGeckoId": "frax",
-            "id": 4,
-            "tokens": [
-                { "index": 0, "tokenId": 138 },
-                { "index": 1, "tokenId": 156 },
-                { "index": 2, "tokenId": 171 },
-                { "index": 3, "tokenId": 215 }
+                { "index": 0, "tokenId": 118 },
+                { "index": 1, "tokenId": 124 },
+                { "index": 2, "tokenId": 139 },
+                { "index": 3, "tokenId": 175 },
+                { "index": 4, "tokenId": 177 },
+                { "index": 5, "tokenId": 179 },
+                { "index": 6, "tokenId": 141 },
+                { "index": 7, "tokenId": 190 },
+                { "index": 8, "tokenId": 195 }
             ]
         },
         {
@@ -141,61 +116,12 @@
             "oracle": "0xDC636B062AB02C51b79cFaA6C5De7B7fFeAc2717",
             "generalPurpose": false,
             "coinGeckoId": "g-token",
-            "id": 5,
+            "id": 3,
             "tokens": [
-                { "index": 0, "tokenId": 139 },
-                { "index": 1, "tokenId": 147 },
-                { "index": 2, "tokenId": 217 },
-                { "index": 3, "tokenId": 190 }
-            ]
-        },
-        {
-            "chainId": 13863860,
-            "address": "0x7E60A78518E7c9267ae0795E9914F19Cd7CdA168",
-            "oracle": "0xAa444c22297b0dBd97bBf316dC0b7C64b33aa64C",
-            "generalPurpose": false,
-            "coinGeckoId": "wrapped-ton",
-            "id": 6,
-            "tokens": [
-                { "index": 0, "tokenId": 140 },
-                { "index": 1, "tokenId": 148 }
-            ]
-        },
-        {
-            "chainId": 13863860,
-            "address": "0x53a9dbeA6013B22A8AF3Ae8AAac8Fd31759aD287",
-            "oracle": "0x9C15664C49065b8E20EcE570f0818a68b71A00DA",
-            "generalPurpose": false,
-            "coinGeckoId": "catizen",
-            "id": 7,
-            "tokens": [
-                { "index": 0, "tokenId": 221 },
-                { "index": 1, "tokenId": 186 }
-            ]
-        },
-        {
-            "chainId": 13863860,
-            "address": "0xcd5a0263DD8e29D9727865dcaD0f9D56C6e1Db93",
-            "oracle": "0x8d448bDb0c7a5fFf6A4ddf4b815bD517727E0aE5",
-            "generalPurpose": false,
-            "coinGeckoId": "uxlink",
-            "id": 8,
-            "tokens": [
-                { "index": 0, "tokenId": 220 },
-                { "index": 1, "tokenId": 172 },
-                { "index": 2, "tokenId": 187 }
-            ]
-        },
-        {
-            "chainId": 13863860,
-            "address": "0xb2EF74C1120C662984f907ea08096eDAAD94D54E",
-            "oracle": "0x4E73aF5663c997A796FF2cc1AD8C5d406541b4F2",
-            "generalPurpose": false,
-            "coinGeckoId": "pineye",
-            "id": 9,
-            "tokens": [
-                { "index": 0, "tokenId": 149 },
-                { "index": 1, "tokenId": 222 }
+                { "index": 0, "tokenId": 119 },
+                { "index": 1, "tokenId": 126 },
+                { "index": 2, "tokenId": 189 },
+                { "index": 3, "tokenId": 161 }
             ]
         },
         {
@@ -204,10 +130,10 @@
             "oracle": "0xCCc50a096E3078508FCb14Ac0B4DF3330C32BD96",
             "generalPurpose": false,
             "coinGeckoId": "binancecoin",
-            "id": 10,
+            "id": 4,
             "tokens": [
-                { "index": 0, "tokenId": 150 },
-                { "index": 1, "tokenId": 235 }
+                { "index": 0, "tokenId": 127 },
+                { "index": 1, "tokenId": 204 }
             ]
         },
         {
@@ -216,15 +142,15 @@
             "oracle": "0xf02bBC9de6e443eFDf3FC41851529C2c3B9E5e0C",
             "generalPurpose": false,
             "coinGeckoId": "symbiosis-finance",
-            "id": 11,
+            "id": 5,
             "tokens": [
-                { "index": 0, "tokenId": 134 },
-                { "index": 1, "tokenId": 169 },
-                { "index": 2, "tokenId": 146 },
-                { "index": 3, "tokenId": 164 },
-                { "index": 4, "tokenId": 183 },
-                { "index": 5, "tokenId": 194 },
-                { "index": 6, "tokenId": 31 }
+                { "index": 0, "tokenId": 116 },
+                { "index": 1, "tokenId": 145 },
+                { "index": 2, "tokenId": 125 },
+                { "index": 3, "tokenId": 140 },
+                { "index": 4, "tokenId": 156 },
+                { "index": 5, "tokenId": 165 },
+                { "index": 6, "tokenId": 24 }
             ]
         },
         {
@@ -233,12 +159,12 @@
             "oracle": "0x258EF63a81bade0c31c7C4ae75d2CD5332034bEE",
             "generalPurpose": false,
             "coinGeckoId": "apecoin",
-            "id": 12,
+            "id": 6,
             "tokens": [
-                { "index": 0, "tokenId": 141 },
-                { "index": 1, "tokenId": 173 },
-                { "index": 2, "tokenId": 242 },
-                { "index": 3, "tokenId": 238 }
+                { "index": 0, "tokenId": 120 },
+                { "index": 1, "tokenId": 146 },
+                { "index": 2, "tokenId": 211 },
+                { "index": 3, "tokenId": 207 }
             ]
         },
         {
@@ -247,10 +173,10 @@
             "oracle": "0x3930C108ae8e85aAdc0d833D2096b8778eaf4432",
             "generalPurpose": false,
             "coinGeckoId": "evaa-protocol",
-            "id": 13,
+            "id": 7,
             "tokens": [
-                { "index": 0, "tokenId": 151 },
-                { "index": 1, "tokenId": 223 }
+                { "index": 0, "tokenId": 128 },
+                { "index": 1, "tokenId": 192 }
             ]
         }
     ],
@@ -327,20 +253,6 @@
         },
         {
             "decimals": 18,
-            "symbol": "LADYS",
-            "name": "Milady Meme Coin",
-            "chainId": 1,
-            "address": "0x12970E6868f88f6557B76120662c1B3E50A646bf",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 5
-        },
-        {
-            "decimals": 18,
             "symbol": "pufETH",
             "name": "pufETH",
             "chainId": 1,
@@ -351,21 +263,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 6
-        },
-        {
-            "decimals": 18,
-            "symbol": "FRAX",
-            "name": "Frax",
-            "chainId": 1,
-            "address": "0x853d955aCEf822Db058eb8505911ED77F175b99e",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 7
+            "id": 5
         },
         {
             "decimals": 18,
@@ -379,21 +277,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 8
-        },
-        {
-            "decimals": 9,
-            "symbol": "WTON",
-            "name": "Wrapped TON",
-            "chainId": 1,
-            "address": "0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
-            },
-            "isNative": false,
-            "deprecated": true,
-            "id": 9
+            "id": 6
         },
         {
             "decimals": 18,
@@ -407,7 +291,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 10
+            "id": 7
         },
         {
             "decimals": 18,
@@ -421,7 +305,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 11
+            "id": 8
         },
         {
             "decimals": 18,
@@ -435,7 +319,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 12
+            "id": 9
         },
         {
             "decimals": 18,
@@ -449,7 +333,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 13
+            "id": 10
         },
         {
             "decimals": 18,
@@ -463,7 +347,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 14
+            "id": 11
         },
         {
             "decimals": 18,
@@ -477,7 +361,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 15
+            "id": 12
         },
         {
             "decimals": 18,
@@ -491,35 +375,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 16
-        },
-        {
-            "decimals": 9,
-            "symbol": "WTON",
-            "name": "Wrapped TON",
-            "chainId": 56,
-            "address": "0x76A797A59Ba2C17726896976B7B3747BfD1d220f",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
-            },
-            "isNative": false,
-            "deprecated": true,
-            "id": 17
-        },
-        {
-            "decimals": 18,
-            "symbol": "GPTW",
-            "name": "GPT Wars",
-            "chainId": 56,
-            "address": "0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592",
-            "icons": {
-                "large": "https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893",
-                "small": "https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 18
+            "id": 13
         },
         {
             "decimals": 8,
@@ -533,21 +389,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 19
-        },
-        {
-            "decimals": 18,
-            "symbol": "PINEYE",
-            "name": "PinEye",
-            "chainId": 56,
-            "address": "0x4b3a2187648902082db0a44e8235d57F3f23DD10",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 20
+            "id": 14
         },
         {
             "decimals": 18,
@@ -561,7 +403,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 21
+            "id": 15
         },
         {
             "decimals": 18,
@@ -575,7 +417,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 22
+            "id": 16
         },
         {
             "decimals": 6,
@@ -589,7 +431,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 23
+            "id": 17
         },
         {
             "decimals": 6,
@@ -603,7 +445,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 24
+            "id": 18
         },
         {
             "decimals": 6,
@@ -617,7 +459,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 25
+            "id": 19
         },
         {
             "decimals": 18,
@@ -631,21 +473,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 26
-        },
-        {
-            "decimals": 18,
-            "symbol": "FRAX",
-            "name": "Frax",
-            "chainId": 137,
-            "address": "0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 27
+            "id": 20
         },
         {
             "decimals": 6,
@@ -659,7 +487,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 28
+            "id": 21
         },
         {
             "decimals": 6,
@@ -673,7 +501,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 29
+            "id": 22
         },
         {
             "decimals": 6,
@@ -687,7 +515,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 30
+            "id": 23
         },
         {
             "decimals": 18,
@@ -701,7 +529,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 31
+            "id": 24
         },
         {
             "decimals": 6,
@@ -715,7 +543,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 32
+            "id": 25
         },
         {
             "decimals": 6,
@@ -729,7 +557,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 33
+            "id": 26
         },
         {
             "decimals": 18,
@@ -743,7 +571,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 34
+            "id": 27
         },
         {
             "decimals": 8,
@@ -757,7 +585,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 35
+            "id": 28
         },
         {
             "decimals": 18,
@@ -771,7 +599,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 36
+            "id": 29
         },
         {
             "decimals": 8,
@@ -785,7 +613,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 37
+            "id": 30
         },
         {
             "decimals": 6,
@@ -799,7 +627,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 38
+            "id": 31
         },
         {
             "decimals": 6,
@@ -813,7 +641,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 39
+            "id": 32
         },
         {
             "decimals": 18,
@@ -827,7 +655,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 40
+            "id": 33
         },
         {
             "decimals": 18,
@@ -841,49 +669,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 41
-        },
-        {
-            "decimals": 18,
-            "symbol": "LADYS",
-            "name": "Milady Meme Coin",
-            "chainId": 42161,
-            "address": "0x3b60FF35D3f7F62d636b067dD0dC0dFdAd670E4E",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 42
-        },
-        {
-            "decimals": 18,
-            "symbol": "FRAX",
-            "name": "Frax",
-            "chainId": 42161,
-            "address": "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 43
-        },
-        {
-            "decimals": 18,
-            "symbol": "UXLINK",
-            "name": "UXLINK Token",
-            "chainId": 42161,
-            "address": "0x1A6B3A62391ECcaaa992ade44cd4AFe6bEC8CfF1",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 44
+            "id": 34
         },
         {
             "decimals": 18,
@@ -897,7 +683,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 45
+            "id": 35
         },
         {
             "decimals": 6,
@@ -911,7 +697,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 46
+            "id": 36
         },
         {
             "decimals": 18,
@@ -925,7 +711,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 47
+            "id": 37
         },
         {
             "decimals": 6,
@@ -939,7 +725,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 48
+            "id": 38
         },
         {
             "decimals": 18,
@@ -953,7 +739,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 49
+            "id": 39
         },
         {
             "decimals": 6,
@@ -967,7 +753,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 50
+            "id": 40
         },
         {
             "decimals": 6,
@@ -981,7 +767,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 51
+            "id": 41
         },
         {
             "decimals": 18,
@@ -995,7 +781,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 52
+            "id": 42
         },
         {
             "decimals": 18,
@@ -1009,7 +795,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 53
+            "id": 43
         },
         {
             "decimals": 6,
@@ -1023,7 +809,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 54
+            "id": 44
         },
         {
             "decimals": 18,
@@ -1037,7 +823,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 55
+            "id": 45
         },
         {
             "decimals": 6,
@@ -1051,7 +837,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 56
+            "id": 46
         },
         {
             "decimals": 18,
@@ -1065,35 +851,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 57
-        },
-        {
-            "decimals": 18,
-            "symbol": "CATI",
-            "name": "Catizen",
-            "chainId": 5000,
-            "address": "0x1Bdd8878252DaddD3Af2ba30628813271294eDc0",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 58
-        },
-        {
-            "decimals": 18,
-            "symbol": "UXLINK",
-            "name": "UXLINK Token",
-            "chainId": 5000,
-            "address": "0x482deB2F7B9608a80eA91E71F06380E9891501C6",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 59
+            "id": 47
         },
         {
             "decimals": 18,
@@ -1107,7 +865,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 60
+            "id": 48
         },
         {
             "decimals": 6,
@@ -1121,7 +879,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 61
+            "id": 49
         },
         {
             "decimals": 18,
@@ -1135,7 +893,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 62
+            "id": 50
         },
         {
             "decimals": 6,
@@ -1149,7 +907,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 63
+            "id": 51
         },
         {
             "decimals": 18,
@@ -1163,7 +921,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 64
+            "id": 52
         },
         {
             "decimals": 6,
@@ -1177,7 +935,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 65
+            "id": 53
         },
         {
             "decimals": 18,
@@ -1191,21 +949,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 66
-        },
-        {
-            "decimals": 18,
-            "symbol": "pufETH",
-            "name": "pufETH",
-            "chainId": 534352,
-            "address": "0xc4d46E8402F476F269c379677C99F18E22Ea030e",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 67
+            "id": 54
         },
         {
             "decimals": 18,
@@ -1219,7 +963,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 68
+            "id": 55
         },
         {
             "decimals": 6,
@@ -1233,21 +977,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 69
-        },
-        {
-            "decimals": 18,
-            "symbol": "pufETH",
-            "name": "pufETH",
-            "chainId": 169,
-            "address": "0xA53E005Cecd3D7C89A4AE814617cC14828b6527E",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 70
+            "id": 56
         },
         {
             "decimals": 18,
@@ -1261,7 +991,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 71
+            "id": 57
         },
         {
             "decimals": 6,
@@ -1275,7 +1005,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 72
+            "id": 58
         },
         {
             "decimals": 6,
@@ -1289,7 +1019,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 73
+            "id": 59
         },
         {
             "decimals": 18,
@@ -1303,7 +1033,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 74
+            "id": 60
         },
         {
             "decimals": 6,
@@ -1317,7 +1047,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 75
+            "id": 61
         },
         {
             "decimals": 18,
@@ -1331,7 +1061,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 76
+            "id": 62
         },
         {
             "decimals": 6,
@@ -1345,7 +1075,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 77
+            "id": 63
         },
         {
             "decimals": 18,
@@ -1359,7 +1089,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 78
+            "id": 64
         },
         {
             "decimals": 8,
@@ -1373,7 +1103,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 79
+            "id": 65
         },
         {
             "decimals": 18,
@@ -1387,7 +1117,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 80
+            "id": 66
         },
         {
             "decimals": 18,
@@ -1401,7 +1131,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 81
+            "id": 67
         },
         {
             "decimals": 18,
@@ -1415,21 +1145,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 82
-        },
-        {
-            "decimals": 18,
-            "symbol": "pufETH",
-            "name": "pufETH",
-            "chainId": 810180,
-            "address": "0x1B49eCf1A8323Db4abf48b2F5EFaA33F7DdAB3FC",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 83
+            "id": 68
         },
         {
             "decimals": 8,
@@ -1443,7 +1159,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 84
+            "id": 69
         },
         {
             "decimals": 18,
@@ -1457,7 +1173,21 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 85
+            "id": 70
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDC",
+            "name": "USD Coin",
+            "chainId": 1329,
+            "address": "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392",
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png"
+            },
+            "isNative": false,
+            "deprecated": false,
+            "id": 71
         },
         {
             "decimals": 6,
@@ -1471,7 +1201,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 86
+            "id": 72
         },
         {
             "decimals": 6,
@@ -1485,35 +1215,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 87
-        },
-        {
-            "decimals": 18,
-            "symbol": "GPTW",
-            "name": "GPT Wars",
-            "chainId": 1329,
-            "address": "0xcB0DdC112EF317271266c83D7179Bf9186b9C658",
-            "icons": {
-                "large": "https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893",
-                "small": "https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 88
-        },
-        {
-            "decimals": 18,
-            "symbol": "pufETH",
-            "name": "pufETH",
-            "chainId": 7000,
-            "address": "0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "id": 89
+            "id": 73
         },
         {
             "decimals": 6,
@@ -1527,7 +1229,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 90
+            "id": 74
         },
         {
             "decimals": 6,
@@ -1541,7 +1243,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 91
+            "id": 75
         },
         {
             "decimals": 18,
@@ -1555,7 +1257,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 92
+            "id": 76
         },
         {
             "decimals": 18,
@@ -1569,7 +1271,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 93
+            "id": 77
         },
         {
             "decimals": 6,
@@ -1583,7 +1285,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 94
+            "id": 78
         },
         {
             "decimals": 18,
@@ -1597,7 +1299,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 95
+            "id": 79
         },
         {
             "decimals": 18,
@@ -1611,7 +1313,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 96
+            "id": 80
         },
         {
             "decimals": 6,
@@ -1626,52 +1328,7 @@
             "isNative": false,
             "deprecated": false,
             "attributes": { "ton": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" },
-            "id": 97
-        },
-        {
-            "decimals": 9,
-            "symbol": "UXLINK",
-            "name": "UXLINK Token",
-            "chainId": 85918,
-            "address": "0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "attributes": { "ton": "EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5" },
-            "id": 98
-        },
-        {
-            "decimals": 9,
-            "symbol": "CATI",
-            "name": "Catizen",
-            "chainId": 85918,
-            "address": "0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "attributes": { "ton": "EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7" },
-            "id": 99
-        },
-        {
-            "decimals": 9,
-            "symbol": "PINEYE",
-            "name": "PinEye",
-            "chainId": 85918,
-            "address": "0x0d2d353642cFFC051A2694C51B6C00e787EB4590",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png"
-            },
-            "isNative": false,
-            "deprecated": false,
-            "attributes": { "ton": "EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU" },
-            "id": 100
+            "id": 81
         },
         {
             "decimals": 9,
@@ -1686,7 +1343,7 @@
             "isNative": false,
             "deprecated": false,
             "attributes": { "ton": "EQBKMfjX_a_dsOLm-juxyVZytFP7_KKnzGv6J01kGc72gVBp" },
-            "id": 101
+            "id": 82
         },
         {
             "decimals": 6,
@@ -1700,7 +1357,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 102
+            "id": 83
         },
         {
             "decimals": 6,
@@ -1714,7 +1371,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 103
+            "id": 84
         },
         {
             "decimals": 18,
@@ -1728,7 +1385,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 104
+            "id": 85
         },
         {
             "decimals": 18,
@@ -1742,7 +1399,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 105
+            "id": 86
         },
         {
             "decimals": 18,
@@ -1756,7 +1413,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 106
+            "id": 87
         },
         {
             "decimals": 6,
@@ -1770,7 +1427,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 107
+            "id": 88
         },
         {
             "decimals": 18,
@@ -1784,7 +1441,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 108
+            "id": 89
         },
         {
             "decimals": 18,
@@ -1798,7 +1455,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 109
+            "id": 90
         },
         {
             "decimals": 18,
@@ -1812,7 +1469,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 110
+            "id": 91
         },
         {
             "decimals": 18,
@@ -1826,7 +1483,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 111
+            "id": 92
         },
         {
             "decimals": 18,
@@ -1840,7 +1497,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 112
+            "id": 93
         },
         {
             "decimals": 18,
@@ -1854,7 +1511,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 113
+            "id": 94
         },
         {
             "decimals": 18,
@@ -1868,7 +1525,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 114
+            "id": 95
         },
         {
             "decimals": 6,
@@ -1882,7 +1539,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 115
+            "id": 96
         },
         {
             "decimals": 18,
@@ -1896,7 +1553,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 116
+            "id": 97
         },
         {
             "decimals": 18,
@@ -1910,7 +1567,7 @@
             },
             "isNative": false,
             "deprecated": true,
-            "id": 117
+            "id": 98
         },
         {
             "decimals": 18,
@@ -1924,7 +1581,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 118
+            "id": 99
         },
         {
             "decimals": 6,
@@ -1938,7 +1595,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 119
+            "id": 100
         },
         {
             "decimals": 18,
@@ -1952,7 +1609,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 120
+            "id": 101
         },
         {
             "decimals": 6,
@@ -1966,7 +1623,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 121
+            "id": 102
         },
         {
             "decimals": 6,
@@ -1980,7 +1637,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 122
+            "id": 103
         },
         {
             "decimals": 8,
@@ -1994,7 +1651,21 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 123
+            "id": 104
+        },
+        {
+            "decimals": 18,
+            "symbol": "WQUAI",
+            "name": "Wrapped QUAI",
+            "chainId": 9,
+            "address": "0x006C3e2AaAE5DB1bCd11A1a097cE572312EADdBB",
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png"
+            },
+            "isNative": false,
+            "deprecated": false,
+            "id": 105
         },
         {
             "decimals": 8,
@@ -2008,7 +1679,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 124
+            "id": 106
         },
         {
             "decimals": 8,
@@ -2022,7 +1693,7 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 125
+            "id": 107
         },
         {
             "decimals": 8,
@@ -2036,7 +1707,23 @@
             },
             "isNative": false,
             "deprecated": false,
-            "id": 126
+            "id": 108
+        },
+        {
+            "decimals": 18,
+            "symbol": "QUAI",
+            "name": "Quai Network",
+            "chainId": 1,
+            "address": "0x70b7f7044D2ca8E2F1E999B90EF16d7Cb7A0cDA1",
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png"
+            },
+            "chainFromId": 9,
+            "isNative": false,
+            "deprecated": false,
+            "id": 109,
+            "originalId": 105
         },
         {
             "decimals": 18,
@@ -2051,24 +1738,8 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 127,
+            "id": 110,
             "originalId": 1
-        },
-        {
-            "decimals": 18,
-            "symbol": "GPTW",
-            "name": "GPT Wars",
-            "chainId": 56,
-            "address": "0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592",
-            "icons": {
-                "large": "https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893",
-                "small": "https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893"
-            },
-            "chainFromId": 1329,
-            "isNative": false,
-            "deprecated": false,
-            "id": 128,
-            "originalId": 88
         },
         {
             "decimals": 8,
@@ -2083,8 +1754,8 @@
             "chainFromId": 3652501241,
             "isNative": false,
             "deprecated": false,
-            "id": 129,
-            "originalId": 124
+            "id": 111,
+            "originalId": 106
         },
         {
             "decimals": 6,
@@ -2099,7 +1770,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 130,
+            "id": 112,
             "originalId": 0
         },
         {
@@ -2115,7 +1786,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 131,
+            "id": 113,
             "originalId": 2
         },
         {
@@ -2131,7 +1802,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 132,
+            "id": 114,
             "originalId": 3
         },
         {
@@ -2147,7 +1818,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 133,
+            "id": 115,
             "originalId": 0
         },
         {
@@ -2163,7 +1834,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 134,
+            "id": 116,
             "originalId": 1
         },
         {
@@ -2179,7 +1850,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 135,
+            "id": 117,
             "originalId": 2
         },
         {
@@ -2195,40 +1866,8 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 136,
+            "id": 118,
             "originalId": 4
-        },
-        {
-            "decimals": 18,
-            "symbol": "sLADYS",
-            "name": "Synthetic Milady Coin (Ethereum)",
-            "chainId": 13863860,
-            "address": "0x7c53c182534f585B48BC7759e94E2606C87A5703",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png"
-            },
-            "chainFromId": 1,
-            "isNative": false,
-            "deprecated": false,
-            "id": 137,
-            "originalId": 5
-        },
-        {
-            "decimals": 18,
-            "symbol": "sFRAX",
-            "name": "Synthetic Frax (Ethereum)",
-            "chainId": 13863860,
-            "address": "0xb7F32D4B660B040d4407f3d3cccc3Abf44d5a087",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
-            },
-            "chainFromId": 1,
-            "isNative": false,
-            "deprecated": false,
-            "id": 138,
-            "originalId": 7
         },
         {
             "decimals": 18,
@@ -2243,24 +1882,8 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 139,
-            "originalId": 8
-        },
-        {
-            "decimals": 9,
-            "symbol": "sWTON",
-            "name": "Synthetic WTON From Ethereum",
-            "chainId": 13863860,
-            "address": "0x31EE88E4d61C5452893fCEF729dFb026a9e9B897",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
-            },
-            "chainFromId": 1,
-            "isNative": false,
-            "deprecated": true,
-            "id": 140,
-            "originalId": 9
+            "id": 119,
+            "originalId": 6
         },
         {
             "decimals": 18,
@@ -2275,8 +1898,8 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 141,
-            "originalId": 10
+            "id": 120,
+            "originalId": 7
         },
         {
             "decimals": 18,
@@ -2291,8 +1914,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 142,
-            "originalId": 11
+            "id": 121,
+            "originalId": 8
         },
         {
             "decimals": 18,
@@ -2307,8 +1930,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": true,
-            "id": 143,
-            "originalId": 12
+            "id": 122,
+            "originalId": 9
         },
         {
             "decimals": 18,
@@ -2323,8 +1946,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 144,
-            "originalId": 13
+            "id": 123,
+            "originalId": 10
         },
         {
             "decimals": 18,
@@ -2339,8 +1962,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 145,
-            "originalId": 14
+            "id": 124,
+            "originalId": 11
         },
         {
             "decimals": 18,
@@ -2355,8 +1978,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 146,
-            "originalId": 15
+            "id": 125,
+            "originalId": 12
         },
         {
             "decimals": 18,
@@ -2371,40 +1994,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 147,
-            "originalId": 16
-        },
-        {
-            "decimals": 9,
-            "symbol": "sWTON",
-            "name": "Synthetic WTON From BNB",
-            "chainId": 13863860,
-            "address": "0x33A269e3F826af65c644Bf77c00556143F737F7a",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png"
-            },
-            "chainFromId": 56,
-            "isNative": false,
-            "deprecated": true,
-            "id": 148,
-            "originalId": 17
-        },
-        {
-            "decimals": 18,
-            "symbol": "sPINEYE",
-            "name": "Synthetic PINEYE (BSC)",
-            "chainId": 13863860,
-            "address": "0xF11cBDEf4b47B264cB372E5e80eD44ea37f7e382",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png"
-            },
-            "chainFromId": 56,
-            "isNative": false,
-            "deprecated": false,
-            "id": 149,
-            "originalId": 20
+            "id": 126,
+            "originalId": 13
         },
         {
             "decimals": 18,
@@ -2419,8 +2010,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 150,
-            "originalId": 21
+            "id": 127,
+            "originalId": 15
         },
         {
             "decimals": 18,
@@ -2435,8 +2026,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 151,
-            "originalId": 22
+            "id": 128,
+            "originalId": 16
         },
         {
             "decimals": 6,
@@ -2451,8 +2042,8 @@
             "chainFromId": 43114,
             "isNative": false,
             "deprecated": false,
-            "id": 152,
-            "originalId": 23
+            "id": 129,
+            "originalId": 17
         },
         {
             "decimals": 6,
@@ -2467,8 +2058,8 @@
             "chainFromId": 43114,
             "isNative": false,
             "deprecated": true,
-            "id": 153,
-            "originalId": 24
+            "id": 130,
+            "originalId": 18
         },
         {
             "decimals": 6,
@@ -2483,8 +2074,8 @@
             "chainFromId": 137,
             "isNative": false,
             "deprecated": false,
-            "id": 154,
-            "originalId": 25
+            "id": 131,
+            "originalId": 19
         },
         {
             "decimals": 18,
@@ -2499,24 +2090,8 @@
             "chainFromId": 137,
             "isNative": false,
             "deprecated": false,
-            "id": 155,
-            "originalId": 26
-        },
-        {
-            "decimals": 18,
-            "symbol": "sFRAX",
-            "name": "Synthetic Frax (Polygon)",
-            "chainId": 13863860,
-            "address": "0x9049d84152F59D72b67bAD30638eDd80D623a997",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
-            },
-            "chainFromId": 137,
-            "isNative": false,
-            "deprecated": false,
-            "id": 156,
-            "originalId": 27
+            "id": 132,
+            "originalId": 20
         },
         {
             "decimals": 6,
@@ -2531,8 +2106,8 @@
             "chainFromId": 40,
             "isNative": false,
             "deprecated": false,
-            "id": 157,
-            "originalId": 28
+            "id": 133,
+            "originalId": 21
         },
         {
             "decimals": 6,
@@ -2547,8 +2122,8 @@
             "chainFromId": 2222,
             "isNative": false,
             "deprecated": false,
-            "id": 158,
-            "originalId": 29
+            "id": 134,
+            "originalId": 22
         },
         {
             "decimals": 6,
@@ -2563,8 +2138,8 @@
             "chainFromId": 288,
             "isNative": false,
             "deprecated": false,
-            "id": 159,
-            "originalId": 30
+            "id": 135,
+            "originalId": 23
         },
         {
             "decimals": 6,
@@ -2579,8 +2154,8 @@
             "chainFromId": 324,
             "isNative": false,
             "deprecated": false,
-            "id": 160,
-            "originalId": 32
+            "id": 136,
+            "originalId": 25
         },
         {
             "decimals": 6,
@@ -2595,8 +2170,8 @@
             "chainFromId": 324,
             "isNative": false,
             "deprecated": true,
-            "id": 161,
-            "originalId": 33
+            "id": 137,
+            "originalId": 26
         },
         {
             "decimals": 18,
@@ -2611,8 +2186,8 @@
             "chainFromId": 324,
             "isNative": false,
             "deprecated": false,
-            "id": 162,
-            "originalId": 34
+            "id": 138,
+            "originalId": 27
         },
         {
             "decimals": 8,
@@ -2627,8 +2202,8 @@
             "chainFromId": 324,
             "isNative": false,
             "deprecated": true,
-            "id": 163,
-            "originalId": 35
+            "id": 139,
+            "originalId": 28
         },
         {
             "decimals": 18,
@@ -2643,8 +2218,8 @@
             "chainFromId": 324,
             "isNative": false,
             "deprecated": false,
-            "id": 164,
-            "originalId": 36
+            "id": 140,
+            "originalId": 29
         },
         {
             "decimals": 8,
@@ -2659,8 +2234,8 @@
             "chainFromId": 324,
             "isNative": false,
             "deprecated": true,
-            "id": 165,
-            "originalId": 37
+            "id": 141,
+            "originalId": 30
         },
         {
             "decimals": 6,
@@ -2675,8 +2250,8 @@
             "chainFromId": 42161,
             "isNative": false,
             "deprecated": false,
-            "id": 166,
-            "originalId": 38
+            "id": 142,
+            "originalId": 31
         },
         {
             "decimals": 6,
@@ -2691,8 +2266,8 @@
             "chainFromId": 42161,
             "isNative": false,
             "deprecated": true,
-            "id": 167,
-            "originalId": 39
+            "id": 143,
+            "originalId": 32
         },
         {
             "decimals": 18,
@@ -2707,8 +2282,8 @@
             "chainFromId": 42161,
             "isNative": false,
             "deprecated": false,
-            "id": 168,
-            "originalId": 40
+            "id": 144,
+            "originalId": 33
         },
         {
             "decimals": 18,
@@ -2723,56 +2298,8 @@
             "chainFromId": 42161,
             "isNative": false,
             "deprecated": false,
-            "id": 169,
-            "originalId": 41
-        },
-        {
-            "decimals": 18,
-            "symbol": "sLADYS",
-            "name": "Synthetic Milady Coin (Arbitrum)",
-            "chainId": 13863860,
-            "address": "0xAD87744e87344306BBcfa23F6ae36c69B968e0A4",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png"
-            },
-            "chainFromId": 42161,
-            "isNative": false,
-            "deprecated": false,
-            "id": 170,
-            "originalId": 42
-        },
-        {
-            "decimals": 18,
-            "symbol": "sFRAX",
-            "name": "Synthetic Frax (Arbitrum One)",
-            "chainId": 13863860,
-            "address": "0x72c12938e7b8a4c2f18Ae1b4948E32D64F52a68B",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png"
-            },
-            "chainFromId": 42161,
-            "isNative": false,
-            "deprecated": false,
-            "id": 171,
-            "originalId": 43
-        },
-        {
-            "decimals": 18,
-            "symbol": "sUXLINK",
-            "name": "Synthetic UXLINK (Arbitrum)",
-            "chainId": 13863860,
-            "address": "0xF909804F4aE12b37c39F8916f84D0629461F0F76",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
-            },
-            "chainFromId": 42161,
-            "isNative": false,
-            "deprecated": false,
-            "id": 172,
-            "originalId": 44
+            "id": 145,
+            "originalId": 34
         },
         {
             "decimals": 18,
@@ -2787,8 +2314,8 @@
             "chainFromId": 42161,
             "isNative": false,
             "deprecated": false,
-            "id": 173,
-            "originalId": 45
+            "id": 146,
+            "originalId": 35
         },
         {
             "decimals": 6,
@@ -2803,8 +2330,8 @@
             "chainFromId": 10,
             "isNative": false,
             "deprecated": false,
-            "id": 174,
-            "originalId": 46
+            "id": 147,
+            "originalId": 36
         },
         {
             "decimals": 18,
@@ -2819,8 +2346,8 @@
             "chainFromId": 10,
             "isNative": false,
             "deprecated": false,
-            "id": 175,
-            "originalId": 47
+            "id": 148,
+            "originalId": 37
         },
         {
             "decimals": 6,
@@ -2835,8 +2362,8 @@
             "chainFromId": 42170,
             "isNative": false,
             "deprecated": false,
-            "id": 176,
-            "originalId": 48
+            "id": 149,
+            "originalId": 38
         },
         {
             "decimals": 18,
@@ -2851,8 +2378,8 @@
             "chainFromId": 42170,
             "isNative": false,
             "deprecated": false,
-            "id": 177,
-            "originalId": 49
+            "id": 150,
+            "originalId": 39
         },
         {
             "decimals": 6,
@@ -2867,8 +2394,8 @@
             "chainFromId": 1101,
             "isNative": false,
             "deprecated": false,
-            "id": 178,
-            "originalId": 50
+            "id": 151,
+            "originalId": 40
         },
         {
             "decimals": 6,
@@ -2883,8 +2410,8 @@
             "chainFromId": 1101,
             "isNative": false,
             "deprecated": true,
-            "id": 179,
-            "originalId": 51
+            "id": 152,
+            "originalId": 41
         },
         {
             "decimals": 18,
@@ -2899,8 +2426,8 @@
             "chainFromId": 1101,
             "isNative": false,
             "deprecated": false,
-            "id": 180,
-            "originalId": 52
+            "id": 153,
+            "originalId": 42
         },
         {
             "decimals": 18,
@@ -2915,8 +2442,8 @@
             "chainFromId": 59144,
             "isNative": false,
             "deprecated": false,
-            "id": 181,
-            "originalId": 53
+            "id": 154,
+            "originalId": 43
         },
         {
             "decimals": 6,
@@ -2931,8 +2458,8 @@
             "chainFromId": 59144,
             "isNative": false,
             "deprecated": false,
-            "id": 182,
-            "originalId": 54
+            "id": 155,
+            "originalId": 44
         },
         {
             "decimals": 18,
@@ -2947,8 +2474,8 @@
             "chainFromId": 59144,
             "isNative": false,
             "deprecated": false,
-            "id": 183,
-            "originalId": 55
+            "id": 156,
+            "originalId": 45
         },
         {
             "decimals": 6,
@@ -2963,8 +2490,8 @@
             "chainFromId": 5000,
             "isNative": false,
             "deprecated": false,
-            "id": 184,
-            "originalId": 56
+            "id": 157,
+            "originalId": 46
         },
         {
             "decimals": 18,
@@ -2979,40 +2506,8 @@
             "chainFromId": 5000,
             "isNative": false,
             "deprecated": false,
-            "id": 185,
-            "originalId": 57
-        },
-        {
-            "decimals": 18,
-            "symbol": "sCATI",
-            "name": "Synthetic CATI (Mantle)",
-            "chainId": 13863860,
-            "address": "0x4c5A6c3fDc33BEF6a84acD42bF77a2F1f2e6AB9E",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png"
-            },
-            "chainFromId": 5000,
-            "isNative": false,
-            "deprecated": false,
-            "id": 186,
-            "originalId": 58
-        },
-        {
-            "decimals": 18,
-            "symbol": "sUXLINK",
-            "name": "Synthetic UXLINK (Mantle)",
-            "chainId": 13863860,
-            "address": "0xaC159831FFD470dfeB11359433076800DA2bA01D",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
-            },
-            "chainFromId": 5000,
-            "isNative": false,
-            "deprecated": false,
-            "id": 187,
-            "originalId": 59
+            "id": 158,
+            "originalId": 47
         },
         {
             "decimals": 18,
@@ -3027,8 +2522,8 @@
             "chainFromId": 8453,
             "isNative": false,
             "deprecated": false,
-            "id": 188,
-            "originalId": 60
+            "id": 159,
+            "originalId": 48
         },
         {
             "decimals": 6,
@@ -3043,8 +2538,8 @@
             "chainFromId": 8453,
             "isNative": false,
             "deprecated": false,
-            "id": 189,
-            "originalId": 61
+            "id": 160,
+            "originalId": 49
         },
         {
             "decimals": 18,
@@ -3059,8 +2554,8 @@
             "chainFromId": 8453,
             "isNative": false,
             "deprecated": false,
-            "id": 190,
-            "originalId": 62
+            "id": 161,
+            "originalId": 50
         },
         {
             "decimals": 6,
@@ -3075,8 +2570,8 @@
             "chainFromId": 728126428,
             "isNative": false,
             "deprecated": false,
-            "id": 191,
-            "originalId": 63
+            "id": 162,
+            "originalId": 51
         },
         {
             "decimals": 18,
@@ -3091,8 +2586,8 @@
             "chainFromId": 534352,
             "isNative": false,
             "deprecated": false,
-            "id": 192,
-            "originalId": 64
+            "id": 163,
+            "originalId": 52
         },
         {
             "decimals": 6,
@@ -3107,8 +2602,8 @@
             "chainFromId": 534352,
             "isNative": false,
             "deprecated": false,
-            "id": 193,
-            "originalId": 65
+            "id": 164,
+            "originalId": 53
         },
         {
             "decimals": 18,
@@ -3123,8 +2618,8 @@
             "chainFromId": 534352,
             "isNative": false,
             "deprecated": false,
-            "id": 194,
-            "originalId": 66
+            "id": 165,
+            "originalId": 54
         },
         {
             "decimals": 18,
@@ -3139,8 +2634,8 @@
             "chainFromId": 169,
             "isNative": false,
             "deprecated": false,
-            "id": 195,
-            "originalId": 68
+            "id": 166,
+            "originalId": 55
         },
         {
             "decimals": 6,
@@ -3155,8 +2650,8 @@
             "chainFromId": 169,
             "isNative": false,
             "deprecated": false,
-            "id": 196,
-            "originalId": 69
+            "id": 167,
+            "originalId": 56
         },
         {
             "decimals": 18,
@@ -3171,8 +2666,8 @@
             "chainFromId": 1088,
             "isNative": false,
             "deprecated": false,
-            "id": 197,
-            "originalId": 71
+            "id": 168,
+            "originalId": 57
         },
         {
             "decimals": 6,
@@ -3187,8 +2682,8 @@
             "chainFromId": 5165,
             "isNative": false,
             "deprecated": false,
-            "id": 198,
-            "originalId": 72
+            "id": 169,
+            "originalId": 58
         },
         {
             "decimals": 6,
@@ -3203,8 +2698,8 @@
             "chainFromId": 5165,
             "isNative": false,
             "deprecated": true,
-            "id": 199,
-            "originalId": 73
+            "id": 170,
+            "originalId": 59
         },
         {
             "decimals": 18,
@@ -3219,8 +2714,8 @@
             "chainFromId": 34443,
             "isNative": false,
             "deprecated": false,
-            "id": 200,
-            "originalId": 74
+            "id": 171,
+            "originalId": 60
         },
         {
             "decimals": 6,
@@ -3235,8 +2730,8 @@
             "chainFromId": 30,
             "isNative": false,
             "deprecated": false,
-            "id": 201,
-            "originalId": 75
+            "id": 172,
+            "originalId": 61
         },
         {
             "decimals": 18,
@@ -3251,8 +2746,8 @@
             "chainFromId": 30,
             "isNative": false,
             "deprecated": true,
-            "id": 202,
-            "originalId": 76
+            "id": 173,
+            "originalId": 62
         },
         {
             "decimals": 6,
@@ -3267,8 +2762,8 @@
             "chainFromId": 30,
             "isNative": false,
             "deprecated": true,
-            "id": 203,
-            "originalId": 77
+            "id": 174,
+            "originalId": 63
         },
         {
             "decimals": 18,
@@ -3283,8 +2778,8 @@
             "chainFromId": 30,
             "isNative": false,
             "deprecated": false,
-            "id": 204,
-            "originalId": 78
+            "id": 175,
+            "originalId": 64
         },
         {
             "decimals": 18,
@@ -3299,8 +2794,8 @@
             "chainFromId": 81457,
             "isNative": false,
             "deprecated": false,
-            "id": 205,
-            "originalId": 80
+            "id": 176,
+            "originalId": 66
         },
         {
             "decimals": 18,
@@ -3315,8 +2810,8 @@
             "chainFromId": 4200,
             "isNative": false,
             "deprecated": false,
-            "id": 206,
-            "originalId": 81
+            "id": 177,
+            "originalId": 67
         },
         {
             "decimals": 18,
@@ -3331,8 +2826,8 @@
             "chainFromId": 810180,
             "isNative": false,
             "deprecated": false,
-            "id": 207,
-            "originalId": 82
+            "id": 178,
+            "originalId": 68
         },
         {
             "decimals": 8,
@@ -3347,8 +2842,8 @@
             "chainFromId": 1116,
             "isNative": false,
             "deprecated": false,
-            "id": 208,
-            "originalId": 84
+            "id": 179,
+            "originalId": 69
         },
         {
             "decimals": 18,
@@ -3363,8 +2858,24 @@
             "chainFromId": 167000,
             "isNative": false,
             "deprecated": false,
-            "id": 209,
-            "originalId": 85
+            "id": 180,
+            "originalId": 70
+        },
+        {
+            "decimals": 6,
+            "symbol": "sUSDC",
+            "name": "USDC From Sei",
+            "chainId": 13863860,
+            "address": "0x6aa3dE76db338d04c085c4244DB6B77C0bB84C38",
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png"
+            },
+            "chainFromId": 1329,
+            "isNative": false,
+            "deprecated": false,
+            "id": 181,
+            "originalId": 71
         },
         {
             "decimals": 6,
@@ -3379,8 +2890,8 @@
             "chainFromId": 1329,
             "isNative": false,
             "deprecated": false,
-            "id": 210,
-            "originalId": 86
+            "id": 182,
+            "originalId": 72
         },
         {
             "decimals": 6,
@@ -3395,8 +2906,8 @@
             "chainFromId": 1329,
             "isNative": false,
             "deprecated": true,
-            "id": 211,
-            "originalId": 87
+            "id": 183,
+            "originalId": 73
         },
         {
             "decimals": 6,
@@ -3411,8 +2922,8 @@
             "chainFromId": 7000,
             "isNative": false,
             "deprecated": false,
-            "id": 212,
-            "originalId": 90
+            "id": 184,
+            "originalId": 74
         },
         {
             "decimals": 6,
@@ -3427,8 +2938,8 @@
             "chainFromId": 25,
             "isNative": false,
             "deprecated": false,
-            "id": 213,
-            "originalId": 91
+            "id": 185,
+            "originalId": 75
         },
         {
             "decimals": 18,
@@ -3443,8 +2954,8 @@
             "chainFromId": 252,
             "isNative": false,
             "deprecated": false,
-            "id": 214,
-            "originalId": 92
+            "id": 186,
+            "originalId": 76
         },
         {
             "decimals": 18,
@@ -3459,8 +2970,8 @@
             "chainFromId": 252,
             "isNative": false,
             "deprecated": false,
-            "id": 215,
-            "originalId": 93
+            "id": 187,
+            "originalId": 77
         },
         {
             "decimals": 6,
@@ -3475,8 +2986,8 @@
             "chainFromId": 1625,
             "isNative": false,
             "deprecated": false,
-            "id": 216,
-            "originalId": 94
+            "id": 188,
+            "originalId": 78
         },
         {
             "decimals": 18,
@@ -3491,8 +3002,8 @@
             "chainFromId": 1625,
             "isNative": false,
             "deprecated": false,
-            "id": 217,
-            "originalId": 95
+            "id": 189,
+            "originalId": 79
         },
         {
             "decimals": 18,
@@ -3507,8 +3018,8 @@
             "chainFromId": 223,
             "isNative": false,
             "deprecated": false,
-            "id": 218,
-            "originalId": 96
+            "id": 190,
+            "originalId": 80
         },
         {
             "decimals": 6,
@@ -3524,59 +3035,8 @@
             "isNative": false,
             "deprecated": false,
             "attributes": { "ton": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs" },
-            "id": 219,
-            "originalId": 97
-        },
-        {
-            "decimals": 9,
-            "symbol": "sUXLINK",
-            "name": "Synthetic UXLINK (TON)",
-            "chainId": 13863860,
-            "address": "0xd3aa3C34A322DBeD3b9EcA30ade18F5F0E1A5280",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png"
-            },
-            "chainFromId": 85918,
-            "isNative": false,
-            "deprecated": false,
-            "attributes": { "ton": "EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5" },
-            "id": 220,
-            "originalId": 98
-        },
-        {
-            "decimals": 9,
-            "symbol": "sCATI",
-            "name": "Synthetic CATI (TON)",
-            "chainId": 13863860,
-            "address": "0x639F17BEDaADa19Dd6e83f36552a3168CD683Fcd",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png"
-            },
-            "chainFromId": 85918,
-            "isNative": false,
-            "deprecated": false,
-            "attributes": { "ton": "EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7" },
-            "id": 221,
-            "originalId": 99
-        },
-        {
-            "decimals": 9,
-            "symbol": "sPINEYE",
-            "name": "Synthetic PINEYE (TON)",
-            "chainId": 13863860,
-            "address": "0x91Ddc82b6C1841570B7c1277Ead216df204aa323",
-            "icons": {
-                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png",
-                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png"
-            },
-            "chainFromId": 85918,
-            "isNative": false,
-            "deprecated": false,
-            "attributes": { "ton": "EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU" },
-            "id": 222,
-            "originalId": 100
+            "id": 191,
+            "originalId": 81
         },
         {
             "decimals": 9,
@@ -3592,8 +3052,8 @@
             "isNative": false,
             "deprecated": false,
             "attributes": { "ton": "EQBKMfjX_a_dsOLm-juxyVZytFP7_KKnzGv6J01kGc72gVBp" },
-            "id": 223,
-            "originalId": 101
+            "id": 192,
+            "originalId": 82
         },
         {
             "decimals": 6,
@@ -3608,8 +3068,8 @@
             "chainFromId": 388,
             "isNative": false,
             "deprecated": false,
-            "id": 224,
-            "originalId": 102
+            "id": 193,
+            "originalId": 83
         },
         {
             "decimals": 6,
@@ -3624,8 +3084,8 @@
             "chainFromId": 2818,
             "isNative": false,
             "deprecated": false,
-            "id": 225,
-            "originalId": 103
+            "id": 194,
+            "originalId": 84
         },
         {
             "decimals": 18,
@@ -3640,8 +3100,8 @@
             "chainFromId": 2345,
             "isNative": false,
             "deprecated": false,
-            "id": 226,
-            "originalId": 104
+            "id": 195,
+            "originalId": 85
         },
         {
             "decimals": 18,
@@ -3656,8 +3116,8 @@
             "chainFromId": 146,
             "isNative": false,
             "deprecated": false,
-            "id": 227,
-            "originalId": 105
+            "id": 196,
+            "originalId": 86
         },
         {
             "decimals": 18,
@@ -3672,8 +3132,8 @@
             "chainFromId": 2741,
             "isNative": false,
             "deprecated": false,
-            "id": 228,
-            "originalId": 106
+            "id": 197,
+            "originalId": 87
         },
         {
             "decimals": 6,
@@ -3688,8 +3148,8 @@
             "chainFromId": 100,
             "isNative": false,
             "deprecated": false,
-            "id": 229,
-            "originalId": 107
+            "id": 198,
+            "originalId": 88
         },
         {
             "decimals": 18,
@@ -3704,8 +3164,8 @@
             "chainFromId": 100,
             "isNative": false,
             "deprecated": false,
-            "id": 230,
-            "originalId": 108
+            "id": 199,
+            "originalId": 89
         },
         {
             "decimals": 18,
@@ -3720,8 +3180,8 @@
             "chainFromId": 80094,
             "isNative": false,
             "deprecated": false,
-            "id": 231,
-            "originalId": 109
+            "id": 200,
+            "originalId": 90
         },
         {
             "decimals": 18,
@@ -3736,8 +3196,8 @@
             "chainFromId": 130,
             "isNative": false,
             "deprecated": false,
-            "id": 232,
-            "originalId": 110
+            "id": 201,
+            "originalId": 91
         },
         {
             "decimals": 18,
@@ -3752,8 +3212,8 @@
             "chainFromId": 1868,
             "isNative": false,
             "deprecated": false,
-            "id": 233,
-            "originalId": 111
+            "id": 202,
+            "originalId": 92
         },
         {
             "decimals": 18,
@@ -3768,8 +3228,8 @@
             "chainFromId": 204,
             "isNative": false,
             "deprecated": false,
-            "id": 234,
-            "originalId": 112
+            "id": 203,
+            "originalId": 93
         },
         {
             "decimals": 18,
@@ -3784,8 +3244,8 @@
             "chainFromId": 204,
             "isNative": false,
             "deprecated": false,
-            "id": 235,
-            "originalId": 113
+            "id": 204,
+            "originalId": 94
         },
         {
             "decimals": 18,
@@ -3800,8 +3260,8 @@
             "chainFromId": 999,
             "isNative": false,
             "deprecated": false,
-            "id": 236,
-            "originalId": 114
+            "id": 205,
+            "originalId": 95
         },
         {
             "decimals": 6,
@@ -3816,8 +3276,8 @@
             "chainFromId": 999,
             "isNative": false,
             "deprecated": false,
-            "id": 237,
-            "originalId": 115
+            "id": 206,
+            "originalId": 96
         },
         {
             "decimals": 18,
@@ -3832,8 +3292,8 @@
             "chainFromId": 999,
             "isNative": false,
             "deprecated": false,
-            "id": 238,
-            "originalId": 116
+            "id": 207,
+            "originalId": 97
         },
         {
             "decimals": 18,
@@ -3848,8 +3308,8 @@
             "chainFromId": 747474,
             "isNative": false,
             "deprecated": true,
-            "id": 239,
-            "originalId": 117
+            "id": 208,
+            "originalId": 98
         },
         {
             "decimals": 18,
@@ -3864,8 +3324,8 @@
             "chainFromId": 747474,
             "isNative": false,
             "deprecated": false,
-            "id": 240,
-            "originalId": 118
+            "id": 209,
+            "originalId": 99
         },
         {
             "decimals": 6,
@@ -3880,8 +3340,8 @@
             "chainFromId": 747474,
             "isNative": false,
             "deprecated": false,
-            "id": 241,
-            "originalId": 119
+            "id": 210,
+            "originalId": 100
         },
         {
             "decimals": 18,
@@ -3896,8 +3356,8 @@
             "chainFromId": 33139,
             "isNative": false,
             "deprecated": false,
-            "id": 242,
-            "originalId": 120
+            "id": 211,
+            "originalId": 101
         },
         {
             "decimals": 6,
@@ -3912,8 +3372,8 @@
             "chainFromId": 9745,
             "isNative": false,
             "deprecated": false,
-            "id": 243,
-            "originalId": 121
+            "id": 212,
+            "originalId": 102
         },
         {
             "decimals": 6,
@@ -3928,8 +3388,8 @@
             "chainFromId": 143,
             "isNative": false,
             "deprecated": false,
-            "id": 244,
-            "originalId": 122
+            "id": 213,
+            "originalId": 103
         },
         {
             "decimals": 18,
@@ -3944,8 +3404,8 @@
             "chainFromId": 56,
             "isNative": false,
             "deprecated": false,
-            "id": 245,
-            "originalId": 127
+            "id": 214,
+            "originalId": 110
         },
         {
             "decimals": 6,
@@ -3960,8 +3420,24 @@
             "chainFromId": 40,
             "isNative": false,
             "deprecated": false,
-            "id": 246,
-            "originalId": 130
+            "id": 215,
+            "originalId": 112
+        },
+        {
+            "decimals": 18,
+            "symbol": "QUAI",
+            "name": "Quai Network",
+            "chainId": 8453,
+            "address": "0x5c97D726bf5130AE15408cE32bc764e458320D2f",
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png"
+            },
+            "chainFromId": 9,
+            "isNative": false,
+            "deprecated": false,
+            "id": 216,
+            "originalId": 105
         },
         {
             "decimals": 6,
@@ -3976,7 +3452,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 247,
+            "id": 217,
             "originalId": 0
         },
         {
@@ -3992,7 +3468,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 248,
+            "id": 218,
             "originalId": 2
         },
         {
@@ -4008,7 +3484,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 249,
+            "id": 219,
             "originalId": 3
         },
         {
@@ -4024,7 +3500,7 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 250,
+            "id": 220,
             "originalId": 4
         },
         {
@@ -4040,8 +3516,8 @@
             "chainFromId": 3652501241,
             "isNative": false,
             "deprecated": false,
-            "id": 251,
-            "originalId": 125
+            "id": 221,
+            "originalId": 107
         },
         {
             "decimals": 18,
@@ -4056,8 +3532,8 @@
             "chainFromId": 1,
             "isNative": false,
             "deprecated": false,
-            "id": 252,
-            "originalId": 6
+            "id": 222,
+            "originalId": 5
         },
         {
             "decimals": 8,
@@ -4072,8 +3548,24 @@
             "chainFromId": 3652501241,
             "isNative": false,
             "deprecated": false,
-            "id": 253,
-            "originalId": 126
+            "id": 223,
+            "originalId": 108
+        },
+        {
+            "decimals": 6,
+            "symbol": "USDT",
+            "name": "Tether USD",
+            "chainId": 9,
+            "address": "0x0049F7cbCa3556C2DfaE62Aafa7015F99de1b8f5",
+            "icons": {
+                "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
+                "small": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+            },
+            "chainFromId": 1,
+            "isNative": false,
+            "deprecated": false,
+            "id": 224,
+            "originalId": 3
         }
     ]
 }

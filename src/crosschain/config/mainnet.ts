@@ -33,60 +33,12 @@ export const config: Config = {
             coinGeckoId: 'bitcoin',
         },
         {
-            // LADYS
-            chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0xAF8Ba1498e1EddD602Aab9cDe4BC6A3a83400165',
-            oracle: '0x422A0A054Eb5a7424d9E3042862546a3F04e3596',
-            generalPurpose: false,
-            coinGeckoId: 'milady-meme-coin',
-        },
-        {
-            // FRAX
-            chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0x92114294E42A96C9eF3163DA18Ee7eFdbA6cc661',
-            oracle: '0xd29bfF100F5599522D94E7aEDf2d6B65357c7516',
-            generalPurpose: false,
-            coinGeckoId: 'frax',
-        },
-        {
             // G
             chainId: ChainId.SYMBIOSIS_MAINNET,
             address: '0x20C54Cc697329333fe00DeD49C7dCA8c83dcE65b',
             oracle: '0xDC636B062AB02C51b79cFaA6C5De7B7fFeAc2717',
             generalPurpose: false,
             coinGeckoId: 'g-token',
-        },
-        {
-            // WTON
-            chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0x7E60A78518E7c9267ae0795E9914F19Cd7CdA168',
-            oracle: '0xAa444c22297b0dBd97bBf316dC0b7C64b33aa64C',
-            generalPurpose: false,
-            coinGeckoId: 'wrapped-ton',
-        },
-        {
-            // CATI
-            chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0x53a9dbeA6013B22A8AF3Ae8AAac8Fd31759aD287',
-            oracle: '0x9C15664C49065b8E20EcE570f0818a68b71A00DA',
-            generalPurpose: false,
-            coinGeckoId: 'catizen',
-        },
-        {
-            // UXLINK
-            chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0xcd5a0263DD8e29D9727865dcaD0f9D56C6e1Db93',
-            oracle: '0x8d448bDb0c7a5fFf6A4ddf4b815bD517727E0aE5',
-            generalPurpose: false,
-            coinGeckoId: 'uxlink',
-        },
-        {
-            // PINEYE
-            chainId: ChainId.SYMBIOSIS_MAINNET,
-            address: '0xb2EF74C1120C662984f907ea08096eDAAD94D54E',
-            oracle: '0x4E73aF5663c997A796FF2cc1AD8C5d406541b4F2',
-            generalPurpose: false,
-            coinGeckoId: 'pineye',
         },
         {
             // WBNB
@@ -249,7 +201,6 @@ export const config: Config = {
                     },
                 },
                 {
-                    deprecated: false,
                     name: 'Wrapped BTC',
                     symbol: 'WBTC',
                     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -258,17 +209,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
-                    },
-                },
-                {
-                    name: 'Milady Meme Coin',
-                    symbol: 'LADYS',
-                    address: '0x12970E6868f88f6557B76120662c1B3E50A646bf',
-                    chainId: ChainId.ETH_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
                     },
                 },
                 {
@@ -283,17 +223,6 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Frax',
-                    symbol: 'FRAX',
-                    address: '0x853d955aCEf822Db058eb8505911ED77F175b99e',
-                    chainId: ChainId.ETH_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
-                    },
-                },
-                {
                     name: 'Gravity',
                     symbol: 'G',
                     address: '0x9C7BEBa8F6eF6643aBd725e45a4E8387eF260649',
@@ -302,18 +231,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32120.png',
-                    },
-                },
-                {
-                    deprecated: true,
-                    name: 'Wrapped TON',
-                    symbol: 'WTON',
-                    address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1',
-                    chainId: ChainId.ETH_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
                     },
                 },
                 {
@@ -413,29 +330,6 @@ export const config: Config = {
                     },
                 },
                 {
-                    deprecated: true,
-                    name: 'Wrapped TON',
-                    symbol: 'WTON',
-                    address: '0x76A797A59Ba2C17726896976B7B3747BfD1d220f',
-                    chainId: ChainId.BSC_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-                    },
-                },
-                {
-                    name: 'GPT Wars',
-                    symbol: 'GPTW',
-                    address: '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592',
-                    chainId: ChainId.BSC_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
-                        small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
-                    },
-                },
-                {
                     name: 'Symbiosis BTC',
                     symbol: 'syBTC',
                     address: '0xA67c48F86Fc6d0176Dca38883CA8153C76a532c7',
@@ -444,17 +338,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
                         small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
-                    },
-                },
-                {
-                    name: 'PinEye',
-                    symbol: 'PINEYE',
-                    address: '0x4b3a2187648902082db0a44e8235d57F3f23DD10',
-                    chainId: ChainId.BSC_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
                     },
                 },
                 {
@@ -587,17 +470,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
-                    },
-                },
-                {
-                    name: 'Frax',
-                    symbol: 'FRAX',
-                    address: '0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89',
-                    chainId: ChainId.MATIC_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
                     },
                 },
             ],
@@ -862,39 +734,6 @@ export const config: Config = {
                     },
                 },
                 {
-                    name: 'Milady Meme Coin',
-                    symbol: 'LADYS',
-                    address: '0x3b60FF35D3f7F62d636b067dD0dC0dFdAd670E4E',
-                    chainId: ChainId.ARBITRUM_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/25023.png',
-                    },
-                },
-                {
-                    name: 'Frax',
-                    symbol: 'FRAX',
-                    address: '0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F',
-                    chainId: ChainId.ARBITRUM_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/6952.png',
-                    },
-                },
-                {
-                    name: 'UXLINK Token',
-                    symbol: 'UXLINK',
-                    address: '0x1A6B3A62391ECcaaa992ade44cd4AFe6bEC8CfF1',
-                    chainId: ChainId.ARBITRUM_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                    },
-                },
-                {
                     name: 'ApeCoin',
                     symbol: 'APE',
                     address: '0x7f9FBf9bDd3F4105C478b996B648FE6e828a1e98',
@@ -1142,28 +981,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
-                {
-                    name: 'Catizen',
-                    symbol: 'CATI',
-                    address: '0x1Bdd8878252DaddD3Af2ba30628813271294eDc0',
-                    chainId: ChainId.MANTLE_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32966.png',
-                    },
-                },
-                {
-                    name: 'UXLINK Token',
-                    symbol: 'UXLINK',
-                    address: '0x482deB2F7B9608a80eA91E71F06380E9891501C6',
-                    chainId: ChainId.MANTLE_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                    },
-                },
             ],
             router: '0xDd0840118bF9CCCc6d67b2944ddDfbdb995955FD',
             dexFee: 30,
@@ -1291,17 +1108,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/15084.png',
                     },
                 },
-                {
-                    name: 'pufETH',
-                    symbol: 'pufETH',
-                    address: '0xc4d46E8402F476F269c379677C99F18E22Ea030e',
-                    chainId: ChainId.SCROLL_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png',
-                    },
-                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
@@ -1339,17 +1145,6 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-                    },
-                },
-                {
-                    name: 'pufETH',
-                    symbol: 'pufETH',
-                    address: '0xA53E005Cecd3D7C89A4AE814617cC14828b6527E',
-                    chainId: ChainId.MANTA_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png',
                     },
                 },
             ],
@@ -1609,17 +1404,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png',
                     },
                 },
-                {
-                    name: 'pufETH',
-                    symbol: 'pufETH',
-                    address: '0x1B49eCf1A8323Db4abf48b2F5EFaA33F7DdAB3FC',
-                    chainId: ChainId.ZKLINK_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png',
-                    },
-                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
@@ -1728,17 +1512,6 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/825.png',
                     },
                 },
-                {
-                    name: 'GPT Wars',
-                    symbol: 'GPTW',
-                    address: '0xcB0DdC112EF317271266c83D7179Bf9186b9C658',
-                    chainId: ChainId.SEI_EVM_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
-                        small: 'https://assets.coingecko.com/coins/images/51157/standard/GPTW_200x200.png?1730238893',
-                    },
-                },
             ],
             router: '0xa4cF2F53D1195aDDdE9e4D3aCa54f556895712f2',
             dexFee: 30,
@@ -1756,17 +1529,6 @@ export const config: Config = {
             spareRpcs: ['https://zetachain-mainnet-archive.allthatnode.com:8545'],
             filterBlockOffset: 1000,
             stables: [
-                {
-                    name: 'pufETH',
-                    symbol: 'pufETH',
-                    address: '0x1e4bF3CaBD7707089138dD5a545B077413FA83Fc',
-                    chainId: ChainId.ZETACHAIN_MAINNET,
-                    decimals: 18,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29325.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/29325.png',
-                    },
-                },
                 {
                     name: 'ZetaChain ZRC20 USDC on ETH',
                     symbol: 'USDC.ETH',
@@ -1940,48 +1702,6 @@ export const config: Config = {
                     },
                     attributes: {
                         ton: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
-                    },
-                },
-                {
-                    name: 'UXLINK Token',
-                    symbol: 'UXLINK',
-                    address: '0x678F2a82c73C69338a00d1Cf2BA8aB7887BD3293',
-                    chainId: ChainId.TON_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32257.png',
-                    },
-                    attributes: {
-                        ton: 'EQBh9XACT0B60U8Q48VnjyqCxzxpM4oA0c8rqKt4h70yk1V5',
-                    },
-                },
-                {
-                    name: 'Catizen',
-                    symbol: 'CATI',
-                    address: '0x73f9a6D3AD10BaB08E6dbC7bEfa5e42b695F5400',
-                    chainId: ChainId.TON_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33057.png',
-                    },
-                    attributes: {
-                        ton: 'EQD-cvR0Nz6XAyRBvbhz-abTrRC6sI5tvHvvpeQraV9UAAD7',
-                    },
-                },
-                {
-                    name: 'PinEye',
-                    symbol: 'PINEYE',
-                    address: '0x0d2d353642cFFC051A2694C51B6C00e787EB4590',
-                    chainId: ChainId.TON_MAINNET,
-                    decimals: 9,
-                    icons: {
-                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33862.png',
-                    },
-                    attributes: {
-                        ton: 'EQDY2MzMJY_9OWm9UyQNLTU2Qs_8BRomlMUbbADnh-tFkLaU',
                     },
                 },
                 {
