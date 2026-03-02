@@ -569,7 +569,7 @@ export const config: Config = {
         },
         {
             id: ChainId.SYMBIOSIS_MAINNET,
-            rpc: 'https://symbiosis.calderachain.xyz/http',
+            rpc: 'https://mainnet-replica-fsn.symbiosis.finance/http',
             spareRpcs: [],
             filterBlockOffset: 1000,
             partnerFeeCollector: '0x783EE304C54d4658f59EAefb73b32D37ee466e23',
