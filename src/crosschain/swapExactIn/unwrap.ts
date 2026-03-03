@@ -4,6 +4,7 @@ import { Percent, TokenAmount, WETH } from '../../entities'
 import { getFunctionSelector } from '../chainUtils/tron'
 import { BIPS_BASE } from '../constants'
 import { Weth__factory } from '../contracts'
+import { SymbiosisTradeType } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { preparePayload } from './preparePayload'
 
@@ -57,7 +58,7 @@ export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResu
         fees: [],
         routes: [
             {
-                provider: 'wrap',
+                provider: SymbiosisTradeType.WRAP,
                 tokens: [params.tokenAmountIn.token, params.tokenOut],
             },
         ],

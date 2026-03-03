@@ -1,5 +1,5 @@
 import { isTonChainId } from '../chainUtils'
-import { StonfiTrade } from '../trade'
+import { StonfiTrade, SymbiosisTradeType } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isStonfiSwapSupported(context: SwapExactInParams): boolean {
@@ -30,7 +30,7 @@ export async function stonfiSwap({
 
     await trade.init().catch((e) => {
         symbiosis.trackAggregatorError({
-            provider: 'stonfi',
+            provider: SymbiosisTradeType.STONFI,
             reason: e.message,
             chain_id: String(tokenOut.chain?.id),
         })
@@ -57,7 +57,7 @@ export async function stonfiSwap({
         fees: trade.fees ?? [],
         routes: [
             {
-                provider: 'stonfi',
+                provider: SymbiosisTradeType.STONFI,
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],

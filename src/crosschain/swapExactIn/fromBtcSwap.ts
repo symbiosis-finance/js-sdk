@@ -36,6 +36,7 @@ import type {
     SwapExactInParams,
     SwapExactInResult,
 } from '../types'
+import { SymbiosisTradeType } from '../trade'
 import { isUseOneInchOnly } from '../utils'
 import { crosschainSwap } from './crosschainSwap'
 import { theBest } from './utils'
@@ -159,7 +160,7 @@ class FromBtcTrader {
         }
         syBtcAmount = syBtcAmount.subtract(btcPortalFee)
         fees.push({
-            provider: 'symbiosis',
+            provider: SymbiosisTradeType.SYMBIOSIS,
             description: 'BTC Portal fee',
             value: new TokenAmount(btc, btcPortalFee.raw),
         })
@@ -176,7 +177,7 @@ class FromBtcTrader {
         }
         syBtcAmount = syBtcAmount.subtract(mintFee)
         fees.push({
-            provider: 'symbiosis',
+            provider: SymbiosisTradeType.SYMBIOSIS,
             description: 'Mint fee',
             value: mintFee,
         })
@@ -204,7 +205,7 @@ class FromBtcTrader {
         syBtcAmount = syBtcAmount.subtract(btcForwarderFee)
         syBtcAmountMin = syBtcAmountMin.subtract(btcForwarderFeeMax)
         fees.push({
-            provider: 'symbiosis',
+            provider: SymbiosisTradeType.SYMBIOSIS,
             description: 'BTC Forwarder fee',
             value: new TokenAmount(btc, btcForwarderFeeMax.raw),
         })
@@ -256,7 +257,7 @@ class FromBtcTrader {
             amountInUsd: tokenAmountOut,
             routes: [
                 {
-                    provider: 'symbiosis',
+                    provider: SymbiosisTradeType.SYMBIOSIS,
                     tokens: [btc, syBtc],
                 },
                 ...routes,

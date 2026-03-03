@@ -9,8 +9,7 @@ import { IzumiTrade } from './izumiTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { withTracing } from '../tracing'
@@ -25,6 +24,7 @@ export interface AggregatorTradeParams extends SymbiosisTradeParams {
     preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
     firstTimeoutMs?: number // stop waiting for other quotes after this timeout if at least a single quote is available.
+    disabledProviders?: SymbiosisTradeType[]
 }
 
 class TradeNotInitializedError extends Error {
@@ -155,8 +155,18 @@ export class AggregatorTrade extends SymbiosisTrade {
 
     @withTracing()
     public async init() {
-        const { from, slippage, symbiosis, deadline, to, tokenAmountIn, tokenAmountInMin, tokenOut, oneInchProtocols } =
-            this.params
+        const {
+            from,
+            slippage,
+            symbiosis,
+            deadline,
+            to,
+            tokenAmountIn,
+            tokenAmountInMin,
+            tokenOut,
+            oneInchProtocols,
+            disabledProviders,
+        } = this.params
 
         const trades = new Trades(this.firstTimeoutMs, (provider: string, e: Error) => {
             symbiosis.trackAggregatorError({
@@ -171,9 +181,16 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOpenOceanClient = clientId === 'openocean'
         const isOtherClient = !isOneInchClient && !isOpenOceanClient
 
-        const isOneInchAvailable = OneInchTrade.isAvailable(tokenAmountIn.token.chainId) && !isOpenOceanClient
+        const isOneInchAvailable =
+            OneInchTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            !isOpenOceanClient &&
+            !disabledProviders?.includes(SymbiosisTradeType.ONE_INCH)
 
-        let isOpenOceanAvailable = OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) && !isOneInchClient
+        let isOpenOceanAvailable =
+            OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            !isOneInchClient &&
+            !disabledProviders?.includes(SymbiosisTradeType.OPEN_OCEAN)
+
         if (this.preferOneInchUsage && isOneInchAvailable) {
             isOpenOceanAvailable = false
         }
@@ -205,7 +222,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(openOceanTrade.init(), 'OpenOcean')
         }
 
-        if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId)) {
+        if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId) && !disabledProviders?.includes(SymbiosisTradeType.IZUMI)) {
             const izumiTrade = new IzumiTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -218,7 +235,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(izumiTrade.init(), 'Izumi')
         }
 
-        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId)) {
+        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId) && !disabledProviders?.includes(SymbiosisTradeType.UNI_V3)) {
             const uniV3Trade = new UniV3Trade({
                 symbiosis,
                 tokenAmountIn,
@@ -231,7 +248,11 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(uniV3Trade.init(), 'UniV3')
         }
 
-        if (isOtherClient && UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId)) {
+        if (
+            isOtherClient &&
+            UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId) &&
+            !disabledProviders?.includes(SymbiosisTradeType.UNI_V2)
+        ) {
             const uniV2Trade = new UniV2Trade({
                 symbiosis,
                 tokenAmountIn,

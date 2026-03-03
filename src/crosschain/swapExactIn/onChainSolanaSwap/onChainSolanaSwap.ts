@@ -1,5 +1,6 @@
 import { addSolanaFee, isSolanaChainId } from '../../chainUtils/solana'
 import { JupiterTrade, RaydiumTrade } from '../../trade'
+import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 
 export function isOnChainSolanaSwapSupported(context: SwapExactInParams): boolean {
@@ -15,27 +16,36 @@ export function onChainSolanaSwap({
     from,
     to,
     slippage,
+    disabledProviders,
 }: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const raydiumTradeInstance = new RaydiumTrade({
-        symbiosis,
-        tokenAmountIn,
-        tokenAmountInMin: tokenAmountIn,
-        tokenOut,
-        from,
-        to,
-        slippage,
-    })
+    const tradeInstances: (RaydiumTrade | JupiterTrade)[] = []
 
-    const jupiterTradeInstance = new JupiterTrade({
-        symbiosis,
-        tokenAmountIn,
-        tokenAmountInMin: tokenAmountIn,
-        tokenOut,
-        to,
-        slippage,
-    })
+    if (!disabledProviders?.includes(SymbiosisTradeType.RAYDIUM)) {
+        tradeInstances.push(
+            new RaydiumTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin: tokenAmountIn,
+                tokenOut,
+                from,
+                to,
+                slippage,
+            })
+        )
+    }
 
-    const tradeInstances = [raydiumTradeInstance, jupiterTradeInstance]
+    if (!disabledProviders?.includes(SymbiosisTradeType.JUPITER)) {
+        tradeInstances.push(
+            new JupiterTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin: tokenAmountIn,
+                tokenOut,
+                to,
+                slippage,
+            })
+        )
+    }
 
     return tradeInstances.map(async (instance) => {
         const trade = await instance.init().catch((e) => {
@@ -62,7 +72,7 @@ export function onChainSolanaSwap({
             fees: fee
                 ? [
                       {
-                          provider: 'symbiosis',
+                          provider: SymbiosisTradeType.SYMBIOSIS,
                           value: fee,
                           description: 'Symbiosis on-chain fee',
                       },

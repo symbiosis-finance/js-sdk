@@ -14,7 +14,7 @@ export { CHAIN_FLIP_BTC_TOKENS, CHAIN_FLIP_SOL_TOKENS, FEE_COLLECTOR_ADDRESSES, 
 export * from './swapping'
 export * from './symbiosis'
 export * from './tracing'
-export { AggregatorTrade, AggregatorTradeParams, IzumiTrade, SymbiosisTradeType } from './trade'
+export { AggregatorTrade, AggregatorTradeParams, FILTERABLE_PROVIDERS, IzumiTrade, SymbiosisTradeType } from './trade'
 export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
 export * from './types'
 export * from './utils'

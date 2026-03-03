@@ -7,6 +7,7 @@ import { GAS_TOKEN, TokenAmount } from '../../entities'
 import { getFunctionSelector, tronAddressToEvm } from '../chainUtils/tron'
 import { FeeCollector__factory } from '../contracts'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import { SymbiosisTradeType } from '../trade'
 import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
 import { onchainSwap } from './onchainSwap'
 import { preparePayload } from './preparePayload'
@@ -156,7 +157,7 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
         approveTo: approveAddress,
         fees: [
             {
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 value: feeTokenAmount,
                 description: 'Symbiosis on-chain fee',
             },

@@ -4,8 +4,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Percent, TokenAmount } from '../../entities'
 import { JupiterTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 
 interface JupiterTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -73,7 +72,7 @@ export class JupiterTrade extends SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        return 'jupiter'
+        return SymbiosisTradeType.JUPITER
     }
 
     public async init() {

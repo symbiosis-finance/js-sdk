@@ -6,8 +6,7 @@ import { BIPS_BASE } from '../constants'
 import { Unwrapper__factory, Weth__factory } from '../contracts'
 import { WrapTradeError } from '../sdkError'
 import type { EvmAddress } from '../types'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
     [ChainId.ETH_MAINNET]: '0x5ad095DE83693ba063941f2f2C5A0dF02383B651',
@@ -65,7 +64,7 @@ export class WrapTrade extends SymbiosisTrade {
     }
 
     public get tradeType(): SymbiosisTradeType {
-        return 'wrap'
+        return SymbiosisTradeType.WRAP
     }
 
     public async init() {

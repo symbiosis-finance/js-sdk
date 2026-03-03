@@ -8,7 +8,7 @@ import type { TronTransactionData } from './chainUtils'
 import type { ConfigCacheData } from './config/cache/builder'
 import type { PartnerFeeCollector } from './contracts'
 import type { Symbiosis } from './symbiosis'
-import type { SymbiosisTradeType } from './trade'
+import { SymbiosisTradeType } from './trade'
 import type { OneInchProtocols } from './trade/oneInchTrade'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
 
@@ -202,6 +202,7 @@ export interface SwapExactInParams {
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean
     depositoryEnabled?: boolean
+    disabledProviders?: SymbiosisTradeType[]
 }
 
 export type BtcTransactionData = {

@@ -5,6 +5,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { BIPS_BASE } from '../constants'
 import { PartnerFeeCollector__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
+import { SymbiosisTradeType } from '../trade'
 import type { MultiCallItem, PartnerFeeCallParams } from '../types'
 
 async function getPartnerFeeCallParams({
@@ -92,7 +93,7 @@ function getPartnerFeeCallItem({
         offset: 36,
         fees: [
             {
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 description: 'Partner fee',
                 value: fee,
             },
