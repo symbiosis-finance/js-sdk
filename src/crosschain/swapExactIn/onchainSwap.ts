@@ -1,4 +1,4 @@
-import { DedustTrade, OctoPoolTrade, StonfiTrade } from '../trade'
+import { DedustTrade, StonfiTrade } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { aggregatorsSwap } from './aggregatorsSwap'
 import { dedustSwap, isDedustSwapSupported } from './dedustSwap'
