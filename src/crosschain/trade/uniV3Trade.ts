@@ -14,8 +14,7 @@ import type { IV3SwapRouter } from '../contracts/UniV3Router02'
 import { AggregateSdkError, UniV3TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 import { getOutputQuote } from './uniV3TradeImpl/getOutputQuote'
 import { getPool } from './uniV3TradeImpl/pool'
 import { toUniCurrency, toUniCurrencyAmount } from './uniV3TradeImpl/toUniTypes'
@@ -119,7 +118,7 @@ export class UniV3Trade extends SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        return 'uni-v3'
+        return SymbiosisTradeType.UNI_V3
     }
 
     public async init() {

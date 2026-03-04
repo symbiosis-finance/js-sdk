@@ -7,8 +7,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { getSolanaConnection } from '../chainUtils'
 import { RaydiumTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -52,7 +51,7 @@ export class RaydiumTrade extends SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        return 'raydium'
+        return SymbiosisTradeType.RAYDIUM
     }
 
     public async init() {

@@ -31,7 +31,7 @@ import { withTracing } from '../tracing'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
-import type { SymbiosisTrade } from '../trade/symbiosisTrade'
+import { SymbiosisTrade, SymbiosisTradeType } from '../trade/symbiosisTrade'
 import { Transit } from '../transit'
 import { TRON_METAROUTER_ABI } from '../tronAbis'
 import type {
@@ -85,6 +85,7 @@ export abstract class BaseSwapping {
 
     protected omniPoolConfig: OmniPoolConfig
     protected oneInchProtocols?: OneInchProtocols
+    protected disabledProviders?: SymbiosisTradeType[]
     protected partnerAddress?: EvmAddress
 
     protected depositoryEnabled: boolean
@@ -132,12 +133,14 @@ export abstract class BaseSwapping {
         tradeAContext,
         partnerAddress,
         depositoryEnabled,
+        disabledProviders,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
         this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
+        this.disabledProviders = disabledProviders
         this.tokenAmountIn = tokenAmountIn
         this.tokenAmountInMin = tokenAmountInMin || tokenAmountIn
         this.tokenOut = tokenOut
@@ -200,7 +203,7 @@ export abstract class BaseSwapping {
                 provider: this.tradeA.tradeType,
                 tokens: [this.tradeA.tokenAmountIn.token, this.tradeA.amountOut.token],
             })
-            if (this.tradeA.tradeType !== 'wrap') {
+            if (this.tradeA.tradeType !== SymbiosisTradeType.WRAP) {
                 routeType.push('ANY')
             }
         }
@@ -209,7 +212,7 @@ export abstract class BaseSwapping {
         const transitAmountInMin = this.tradeA ? this.tradeA.amountOutMin : this.tokenAmountInMin
 
         routes.push({
-            provider: 'symbiosis',
+            provider: SymbiosisTradeType.SYMBIOSIS,
             tokens: [this.transitTokenIn, this.transitTokenOut],
         })
         routeType.push('TRANSIT')
@@ -250,7 +253,7 @@ export abstract class BaseSwapping {
                 provider: this.tradeC.tradeType,
                 tokens: [this.tradeC.tokenAmountIn.token, this.tradeC.amountOut.token],
             })
-            if (this.tradeC.tradeType !== 'wrap') {
+            if (this.tradeC.tradeType !== SymbiosisTradeType.WRAP) {
                 routeType.push('ANY')
             }
         }
@@ -311,7 +314,7 @@ export abstract class BaseSwapping {
 
         const fees: FeeItem[] = [
             {
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 value: fee1,
                 description: 'Cross-chain fee',
                 save: save1,
@@ -319,7 +322,7 @@ export abstract class BaseSwapping {
         ]
         if (fee2) {
             fees.push({
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 value: fee2,
                 description: 'Cross-chain fee',
                 save: save2,
@@ -561,6 +564,7 @@ export abstract class BaseSwapping {
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
             preferOneInchUsage: isUseOneInchOnly(this),
+            disabledProviders: this.disabledProviders,
         })
 
         const endTimerTradeA = this.symbiosis.createMetricTimer()
@@ -622,6 +626,7 @@ export abstract class BaseSwapping {
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
             preferOneInchUsage: isUseOneInchOnly(this),
+            disabledProviders: this.disabledProviders,
         }).init()
 
         if (this.depositoryEnabled && this.depository) {

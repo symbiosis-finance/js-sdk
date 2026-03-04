@@ -1,3 +1,4 @@
+import { DedustTrade, StonfiTrade } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { aggregatorsSwap } from './aggregatorsSwap'
 import { dedustSwap, isDedustSwapSupported } from './dedustSwap'
@@ -13,7 +14,7 @@ export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
 }
 
 export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { selectMode } = params
+    const { selectMode, disabledProviders } = params
 
     const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
 
@@ -25,11 +26,11 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         promises.push(...onChainSolanaSwap(params))
     }
 
-    if (isStonfiSwapSupported(params)) {
+    if (isStonfiSwapSupported(params) && StonfiTrade.isAllowed(disabledProviders)) {
         promises.push(stonfiSwap(params))
     }
 
-    if (isDedustSwapSupported(params)) {
+    if (isDedustSwapSupported(params) && DedustTrade.isAllowed(disabledProviders)) {
         promises.push(dedustSwap(params))
     }
 

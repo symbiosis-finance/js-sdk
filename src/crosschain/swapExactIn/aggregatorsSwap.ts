@@ -11,6 +11,7 @@ export async function aggregatorsSwap({
     tokenAmountIn,
     tokenOut,
     oneInchProtocols,
+    disabledProviders,
 }: SwapExactInParams): Promise<SwapExactInResult> {
     const aggregatorTrade = new AggregatorTrade({
         symbiosis,
@@ -23,6 +24,7 @@ export async function aggregatorsSwap({
         tokenOut,
         deadline,
         oneInchProtocols,
+        disabledProviders,
     })
 
     const endTimer = symbiosis.createMetricTimer()

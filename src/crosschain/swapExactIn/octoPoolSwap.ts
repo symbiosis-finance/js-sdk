@@ -1,4 +1,4 @@
-import { OctoPoolTrade } from '../trade'
+import { OctoPoolTrade, SymbiosisTradeType } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isOctoPoolSwapSupported(context: SwapExactInParams): boolean {
@@ -59,7 +59,7 @@ export async function octoPoolSwap({
         fees: [],
         routes: [
             {
-                provider: 'octopool',
+                provider: SymbiosisTradeType.OCTOPOOL,
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],

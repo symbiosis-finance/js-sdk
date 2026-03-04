@@ -13,6 +13,7 @@ import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
+import { SymbiosisTradeType } from '../../trade'
 import type { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
@@ -232,14 +233,14 @@ async function getBurnCall({
         offset: 68,
         fees: [
             {
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 description: 'Burn fee',
                 value: fee,
             },
         ],
         routes: [
             {
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 tokens: [amountIn.token, tokenOut],
             },
         ],

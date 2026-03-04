@@ -12,6 +12,7 @@ import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../sdkError'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
+import { SymbiosisTradeType } from '../trade'
 import type { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { BaseSwapping } from './baseSwapping'
 
@@ -149,7 +150,7 @@ export class ZappingBtc extends BaseSwapping {
         const fees = [
             ...result.fees,
             {
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 description: 'BTC fee',
                 value: this.minBtcFee,
             } as FeeItem,
@@ -157,7 +158,7 @@ export class ZappingBtc extends BaseSwapping {
 
         if (partnerFee) {
             fees.push({
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 description: 'Partner fee',
                 value: partnerFee,
             } as FeeItem)
@@ -165,7 +166,7 @@ export class ZappingBtc extends BaseSwapping {
 
         if (volumeFee) {
             fees.push({
-                provider: 'symbiosis',
+                provider: SymbiosisTradeType.SYMBIOSIS,
                 description: 'Volume fee',
                 value: volumeFee,
             } as FeeItem)
@@ -179,7 +180,7 @@ export class ZappingBtc extends BaseSwapping {
             routes: [
                 ...result.routes,
                 {
-                    provider: 'symbiosis',
+                    provider: SymbiosisTradeType.SYMBIOSIS,
                     tokens: [syBtc, btc],
                 },
             ],

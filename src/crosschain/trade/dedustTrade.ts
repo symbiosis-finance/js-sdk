@@ -23,8 +23,7 @@ import { BIPS_BASE } from '../constants'
 import { DedustTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { FeeItem, TonAddress } from '../types'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -83,7 +82,7 @@ export class DedustTrade extends SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        return 'dedust'
+        return SymbiosisTradeType.DEDUST
     }
 
     public async init() {
@@ -227,12 +226,12 @@ export class DedustTrade extends SymbiosisTrade {
                 })
 
             fees.push({
-                provider: 'dedust',
+                provider: SymbiosisTradeType.DEDUST,
                 value: new TokenAmount(GAS_TOKEN[ChainId.TON_MAINNET], firstPoolTradeFee),
                 description: 'Dedust fee',
             })
             fees.push({
-                provider: 'dedust',
+                provider: SymbiosisTradeType.DEDUST,
                 value: new TokenAmount(tokenOut, secondPoolTradeFee),
                 description: 'Dedust fee',
             })
@@ -246,7 +245,7 @@ export class DedustTrade extends SymbiosisTrade {
             })
 
             fees.push({
-                provider: 'dedust',
+                provider: SymbiosisTradeType.DEDUST,
                 value: new TokenAmount(tokenOut, tradeFee),
                 description: 'Dedust fee',
             })

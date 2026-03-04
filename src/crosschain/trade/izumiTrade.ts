@@ -12,8 +12,7 @@ import type { Multicall2 } from '../contracts/Multicall'
 import { getMulticall } from '../multicall'
 import { IzumiTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-import { SymbiosisTrade } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
 
 interface IzumiAddresses {
     factory: Address
@@ -271,7 +270,7 @@ export class IzumiTrade extends SymbiosisTrade {
     }
 
     get tradeType(): SymbiosisTradeType {
-        return 'izumi'
+        return SymbiosisTradeType.IZUMI
     }
 
     public async init() {

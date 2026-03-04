@@ -6,22 +6,37 @@ import { TradeError } from '../sdkError'
 import type { Address, FeeItem } from '../types'
 import { BIPS_BASE } from '../constants'
 
-export type SymbiosisTradeType =
-    | 'uni-v2'
-    | 'uni-v3'
-    | '1inch'
-    | 'open-ocean'
-    | 'wrap'
-    | 'izumi'
-    | 'octopool'
-    | 'symbiosis'
-    | 'thorchain-bridge'
-    | 'chainflip-bridge'
-    | 'raydium'
-    | 'stonfi'
-    | 'dedust'
-    | 'jupiter'
-    | 'depository'
+export enum SymbiosisTradeType {
+    UNI_V2 = 'uni-v2',
+    UNI_V3 = 'uni-v3',
+    ONE_INCH = '1inch',
+    OPEN_OCEAN = 'open-ocean',
+    WRAP = 'wrap',
+    IZUMI = 'izumi',
+    OCTOPOOL = 'octopool',
+    SYMBIOSIS = 'symbiosis',
+    THORCHAIN_BRIDGE = 'thorchain-bridge',
+    CHAINFLIP_BRIDGE = 'chainflip-bridge',
+    RAYDIUM = 'raydium',
+    STONFI = 'stonfi',
+    DEDUST = 'dedust',
+    JUPITER = 'jupiter',
+    DEPOSITORY = 'depository',
+}
+
+export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
+    SymbiosisTradeType.ONE_INCH,
+    SymbiosisTradeType.OPEN_OCEAN,
+    SymbiosisTradeType.UNI_V2,
+    SymbiosisTradeType.UNI_V3,
+    SymbiosisTradeType.IZUMI,
+    SymbiosisTradeType.THORCHAIN_BRIDGE,
+    SymbiosisTradeType.CHAINFLIP_BRIDGE,
+    SymbiosisTradeType.RAYDIUM,
+    SymbiosisTradeType.JUPITER,
+    SymbiosisTradeType.STONFI,
+    SymbiosisTradeType.DEDUST,
+]
 
 export interface SymbiosisTradeParams {
     tokenAmountIn: TokenAmount
@@ -59,6 +74,10 @@ export interface SymbiosisTrade extends SymbiosisTradeParams {}
 // Base class for all trades.
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export abstract class SymbiosisTrade {
+    static isAllowed(disabledProviders?: SymbiosisTradeType[]): boolean {
+        return !disabledProviders?.includes(this.prototype.tradeType)
+    }
+
     protected out?: SymbiosisTradeOutResult
 
     protected constructor(params: SymbiosisTradeParams) {
