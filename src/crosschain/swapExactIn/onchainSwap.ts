@@ -1,4 +1,4 @@
-import { SymbiosisTradeType } from '../trade/symbiosisTrade'
+import { DedustTrade, OctoPoolTrade, StonfiTrade } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { aggregatorsSwap } from './aggregatorsSwap'
 import { dedustSwap, isDedustSwapSupported } from './dedustSwap'
@@ -18,7 +18,7 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
 
     const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
 
-    if (isOctoPoolSwapSupported(params) && !disabledProviders?.includes(SymbiosisTradeType.OCTOPOOL)) {
+    if (isOctoPoolSwapSupported(params)) {
         promises.push(octoPoolSwap(params))
     }
 
@@ -26,11 +26,11 @@ export async function onchainSwap(params: SwapExactInParams): Promise<SwapExactI
         promises.push(...onChainSolanaSwap(params))
     }
 
-    if (isStonfiSwapSupported(params) && !disabledProviders?.includes(SymbiosisTradeType.STONFI)) {
+    if (isStonfiSwapSupported(params) && StonfiTrade.isAllowed(disabledProviders)) {
         promises.push(stonfiSwap(params))
     }
 
-    if (isDedustSwapSupported(params) && !disabledProviders?.includes(SymbiosisTradeType.DEDUST)) {
+    if (isDedustSwapSupported(params) && DedustTrade.isAllowed(disabledProviders)) {
         promises.push(dedustSwap(params))
     }
 

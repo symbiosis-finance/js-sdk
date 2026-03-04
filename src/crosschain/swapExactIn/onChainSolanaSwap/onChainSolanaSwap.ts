@@ -20,7 +20,7 @@ export function onChainSolanaSwap({
 }: SwapExactInParams): Promise<SwapExactInResult>[] {
     const tradeInstances: (RaydiumTrade | JupiterTrade)[] = []
 
-    if (!disabledProviders?.includes(SymbiosisTradeType.RAYDIUM)) {
+    if (RaydiumTrade.isAllowed(disabledProviders)) {
         tradeInstances.push(
             new RaydiumTrade({
                 symbiosis,
@@ -34,7 +34,7 @@ export function onChainSolanaSwap({
         )
     }
 
-    if (!disabledProviders?.includes(SymbiosisTradeType.JUPITER)) {
+    if (JupiterTrade.isAllowed(disabledProviders)) {
         tradeInstances.push(
             new JupiterTrade({
                 symbiosis,

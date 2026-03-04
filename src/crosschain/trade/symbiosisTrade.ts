@@ -74,6 +74,10 @@ export interface SymbiosisTrade extends SymbiosisTradeParams {}
 // Base class for all trades.
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export abstract class SymbiosisTrade {
+    static isAllowed(disabledProviders?: SymbiosisTradeType[]): boolean {
+        return !disabledProviders?.includes(this.prototype.tradeType)
+    }
+
     protected out?: SymbiosisTradeOutResult
 
     protected constructor(params: SymbiosisTradeParams) {

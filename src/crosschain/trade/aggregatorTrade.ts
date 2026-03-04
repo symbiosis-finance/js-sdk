@@ -184,12 +184,12 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isOneInchAvailable =
             OneInchTrade.isAvailable(tokenAmountIn.token.chainId) &&
             !isOpenOceanClient &&
-            !disabledProviders?.includes(SymbiosisTradeType.ONE_INCH)
+            OneInchTrade.isAllowed(disabledProviders)
 
         let isOpenOceanAvailable =
             OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) &&
             !isOneInchClient &&
-            !disabledProviders?.includes(SymbiosisTradeType.OPEN_OCEAN)
+            OpenOceanTrade.isAllowed(disabledProviders)
 
         if (this.preferOneInchUsage && isOneInchAvailable) {
             isOpenOceanAvailable = false
@@ -222,7 +222,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(openOceanTrade.init(), 'OpenOcean')
         }
 
-        if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId) && !disabledProviders?.includes(SymbiosisTradeType.IZUMI)) {
+        if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId) && IzumiTrade.isAllowed(disabledProviders)) {
             const izumiTrade = new IzumiTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -235,7 +235,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(izumiTrade.init(), 'Izumi')
         }
 
-        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId) && !disabledProviders?.includes(SymbiosisTradeType.UNI_V3)) {
+        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId) && UniV3Trade.isAllowed(disabledProviders)) {
             const uniV3Trade = new UniV3Trade({
                 symbiosis,
                 tokenAmountIn,
@@ -251,7 +251,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         if (
             isOtherClient &&
             UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId) &&
-            !disabledProviders?.includes(SymbiosisTradeType.UNI_V2)
+            UniV2Trade.isAllowed(disabledProviders)
         ) {
             const uniV2Trade = new UniV2Trade({
                 symbiosis,
