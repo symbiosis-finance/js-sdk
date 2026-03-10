@@ -4,25 +4,10 @@ import { SOL_USDC } from '../../chainUtils'
 import { ChainFlipError } from '../../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
-import type { ChainFlipConfig, ChainFlipToken } from './types'
-import { ChainFlipAssetId, ChainFlipChainId } from './types'
-import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
+import type { ChainFlipConfig } from './types'
+import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, CF_SOL_SOL, CF_SOL_USDC, ETH_USDC } from './utils'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
-
-const CF_SOL_SOL: ChainFlipToken = {
-    chainId: ChainFlipChainId.Solana,
-    assetId: ChainFlipAssetId.SOL,
-    chain: 'Solana',
-    asset: 'SOL',
-}
-
-const CF_SOL_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Solana,
-    assetId: ChainFlipAssetId.solUSDC,
-    chain: 'Solana',
-    asset: 'USDC',
-}
 
 const CONFIGS: ChainFlipConfig[] = [
     {

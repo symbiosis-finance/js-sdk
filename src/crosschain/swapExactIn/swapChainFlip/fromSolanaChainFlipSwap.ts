@@ -15,87 +15,54 @@ import { ChainFlipError } from '../../sdkError'
 import { JupiterTrade, SymbiosisTradeType } from '../../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
-import type { ChainFlipConfig, ChainFlipToken } from './types'
-import { ChainFlipAssetId, ChainFlipChainId } from './types'
+import type { ChainFlipConfig } from './types'
 import {
     ARB_USDC,
+    CF_ARB_ETH,
     CF_ARB_USDC,
+    CF_BTC_BTC,
+    CF_ETH_ETH,
     CF_ETH_USDC,
+    CF_SOL_SOL,
+    CF_SOL_USDC,
     ChainFlipBrokerAccount,
     ChainFlipBrokerFeeBps,
     checkMinAmount,
     ETH_USDC,
 } from './utils'
 
-const SOL_TOKEN = GAS_TOKEN[ChainId.SOLANA_MAINNET]
-
-const CF_SOL_SOL: ChainFlipToken = {
-    chainId: ChainFlipChainId.Solana,
-    assetId: ChainFlipAssetId.SOL,
-    chain: 'Solana',
-    asset: 'SOL',
-}
-
-const CF_SOL_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Solana,
-    assetId: ChainFlipAssetId.solUSDC,
-    chain: 'Solana',
-    asset: 'USDC',
-}
-
-const CF_BTC_BTC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Bitcoin,
-    assetId: ChainFlipAssetId.BTC,
-    chain: 'Bitcoin',
-    asset: 'BTC',
-}
-
-const CF_ETH_ETH: ChainFlipToken = {
-    chainId: ChainFlipChainId.Ethereum,
-    assetId: ChainFlipAssetId.ETH,
-    chain: 'Ethereum',
-    asset: 'ETH',
-}
-
-const CF_ARB_ETH: ChainFlipToken = {
-    chainId: ChainFlipChainId.Arbitrum,
-    assetId: ChainFlipAssetId.arbETH,
-    chain: 'Arbitrum',
-    asset: 'ETH',
-}
-
 const CONFIGS: ChainFlipConfig[] = [
     // SOL → BTC
     {
-        tokenIn: SOL_TOKEN,
+        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_SOL_SOL,
         dest: CF_BTC_BTC,
     },
     // SOL → ETH
     {
-        tokenIn: SOL_TOKEN,
+        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         tokenOut: GAS_TOKEN[ChainId.ETH_MAINNET],
         src: CF_SOL_SOL,
         dest: CF_ETH_ETH,
     },
     // SOL → ETH USDC
     {
-        tokenIn: SOL_TOKEN,
+        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         tokenOut: ETH_USDC,
         src: CF_SOL_SOL,
         dest: CF_ETH_USDC,
     },
     // SOL → ARB ETH
     {
-        tokenIn: SOL_TOKEN,
+        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         tokenOut: GAS_TOKEN[ChainId.ARBITRUM_MAINNET],
         src: CF_SOL_SOL,
         dest: CF_ARB_ETH,
     },
     // SOL → ARB USDC
     {
-        tokenIn: SOL_TOKEN,
+        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         tokenOut: ARB_USDC,
         src: CF_SOL_SOL,
         dest: CF_ARB_USDC,

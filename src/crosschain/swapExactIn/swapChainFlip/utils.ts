@@ -34,6 +34,34 @@ export const ETH_USDC = new Token({
     },
 })
 
+export const CF_BTC_BTC: ChainFlipToken = {
+    chainId: ChainFlipChainId.Bitcoin,
+    assetId: ChainFlipAssetId.BTC,
+    chain: 'Bitcoin',
+    asset: 'BTC',
+}
+
+export const CF_ETH_ETH: ChainFlipToken = {
+    chainId: ChainFlipChainId.Ethereum,
+    assetId: ChainFlipAssetId.ETH,
+    chain: 'Ethereum',
+    asset: 'ETH',
+}
+
+export const CF_ETH_USDC: ChainFlipToken = {
+    chainId: ChainFlipChainId.Ethereum,
+    assetId: ChainFlipAssetId.USDC,
+    chain: 'Ethereum',
+    asset: 'USDC',
+}
+
+export const CF_ARB_ETH: ChainFlipToken = {
+    chainId: ChainFlipChainId.Arbitrum,
+    assetId: ChainFlipAssetId.arbETH,
+    chain: 'Arbitrum',
+    asset: 'ETH',
+}
+
 export const CF_ARB_USDC: ChainFlipToken = {
     chainId: ChainFlipChainId.Arbitrum,
     assetId: ChainFlipAssetId.USDC,
@@ -41,10 +69,17 @@ export const CF_ARB_USDC: ChainFlipToken = {
     asset: 'USDC',
 }
 
-export const CF_ETH_USDC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Ethereum,
-    assetId: ChainFlipAssetId.USDC,
-    chain: 'Ethereum',
+export const CF_SOL_SOL: ChainFlipToken = {
+    chainId: ChainFlipChainId.Solana,
+    assetId: ChainFlipAssetId.SOL,
+    chain: 'Solana',
+    asset: 'SOL',
+}
+
+export const CF_SOL_USDC: ChainFlipToken = {
+    chainId: ChainFlipChainId.Solana,
+    assetId: ChainFlipAssetId.solUSDC,
+    chain: 'Solana',
     asset: 'USDC',
 }
 
