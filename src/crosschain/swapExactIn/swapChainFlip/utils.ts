@@ -65,6 +65,21 @@ export async function checkMinAmount(cache: Cache, chainFlipSdk: SwapSDK, amount
         if (max) {
             maxThreshold = new TokenAmount(ETH_USDC, max.toString())
         }
+    } else if (amountIn.token.chainId === ChainId.SOLANA_MAINNET && amountIn.token.isNative) {
+        const SOL = GAS_TOKEN[ChainId.SOLANA_MAINNET]
+        minThreshold = new TokenAmount(SOL, swapLimits.minimumSwapAmounts.Solana.SOL.toString())
+        const max = swapLimits.maximumSwapAmounts.Solana.SOL
+        if (max) {
+            maxThreshold = new TokenAmount(SOL, max.toString())
+        }
+    } else if (amountIn.token.chainId === ChainId.SOLANA_MAINNET && !amountIn.token.isNative) {
+        // SOL USDC
+        const SOL_USDC_TOKEN = amountIn.token
+        minThreshold = new TokenAmount(SOL_USDC_TOKEN, swapLimits.minimumSwapAmounts.Solana.USDC.toString())
+        const max = swapLimits.maximumSwapAmounts.Solana.USDC
+        if (max) {
+            maxThreshold = new TokenAmount(SOL_USDC_TOKEN, max.toString())
+        }
     }
 
     if (minThreshold && amountIn.lessThan(minThreshold)) {

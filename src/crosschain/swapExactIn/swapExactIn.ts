@@ -7,6 +7,7 @@ import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 import { isOnchainSwapSupported, onchainSwap } from './onchainSwap'
 import { isToBtcSwapSupported, toBtcSwap } from './toBtcSwap'
 import { isToSolanaSwapSupported, toSolanaSwap } from './toSolanaSwap'
+import { fromSolanaSwap, isFromSolanaSwapSupported } from './fromSolanaSwap'
 import { toTonSwap } from './toTonSwap'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
@@ -50,6 +51,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
+    }
+
+    if (isFromSolanaSwapSupported(params)) {
+        return fromSolanaSwap(params)
     }
 
     if (isToSolanaSwapSupported(params)) {
