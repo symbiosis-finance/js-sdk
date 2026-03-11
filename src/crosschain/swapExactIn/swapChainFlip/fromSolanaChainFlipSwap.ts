@@ -104,7 +104,7 @@ const CONFIGS: ChainFlipConfig[] = [
     },
 ]
 
-export const CHAIN_FLIP_FROM_SOL_TOKENS_OUT = CONFIGS.map((c) => c.tokenOut)
+export const CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT = CONFIGS.map((c) => c.tokenOut)
 
 export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, selectMode } = context

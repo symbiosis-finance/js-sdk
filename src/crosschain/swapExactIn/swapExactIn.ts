@@ -45,6 +45,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return onchainSwap(params)
     }
 
+    if (isBridgeSupported(params)) {
+        return bridge(params)
+    }
+
     if (isFromBtcSwapSupported(params)) {
         return fromBtcSwap(params)
     }
@@ -59,10 +63,6 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isToSolanaSwapSupported(params)) {
         return toSolanaSwap(params)
-    }
-
-    if (isBridgeSupported(params)) {
-        return bridge(params)
     }
 
     if (isTonChainId(tokenOut.chainId)) {

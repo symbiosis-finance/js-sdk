@@ -10,7 +10,13 @@ export * from './omniLiquidity'
 export * from './revert'
 export * from './revertRequest'
 export * from './sdkError'
-export { CHAIN_FLIP_BTC_TOKENS, CHAIN_FLIP_SOL_TOKENS, FEE_COLLECTOR_ADDRESSES, THOR_TOKENS } from './swapExactIn'
+export {
+    CHAIN_FLIP_TO_BTC_TOKENS_IN,
+    CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT,
+    CHAIN_FLIP_TO_SOLANA_TOKENS_IN,
+    FEE_COLLECTOR_ADDRESSES,
+    THOR_TOKENS,
+} from './swapExactIn'
 export * from './swapping'
 export * from './symbiosis'
 export * from './tracing'

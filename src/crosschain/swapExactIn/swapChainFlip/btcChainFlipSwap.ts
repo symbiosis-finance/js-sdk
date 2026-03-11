@@ -23,7 +23,7 @@ const CONFIGS: ChainFlipConfig[] = [
     },
 ]
 
-export const CHAIN_FLIP_BTC_TOKENS = CONFIGS.map((i) => i.tokenIn)
+export const CHAIN_FLIP_TO_BTC_TOKENS_IN = CONFIGS.map((i) => i.tokenIn)
 
 export async function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
