@@ -106,7 +106,12 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     }
 
     // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap({ ...params, tokenAmountIn: inTokenAmount, from: feeCollectorAddress })
+    const result = await onchainSwap({
+        ...params,
+        tokenAmountIn: inTokenAmount,
+        origin: params.from,
+        from: feeCollectorAddress,
+    })
 
     let value: string = ''
     let callData: BytesLike = ''

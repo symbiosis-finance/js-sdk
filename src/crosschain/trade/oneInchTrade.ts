@@ -38,6 +38,7 @@ interface OneInchError {
 interface OneInchTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
+    origin?: Address
     protocols?: OneInchProtocols
 }
 
@@ -74,6 +75,7 @@ const ONE_INCH_ORACLE_MAP: { [chainId in ChainId]?: string } = {
 export class OneInchTrade extends SymbiosisTrade {
     private readonly symbiosis: Symbiosis
     private readonly from: string
+    private readonly origin?: Address
     private readonly protocols: OneInchProtocols
 
     static isAvailable(chainId: ChainId): boolean {
@@ -84,6 +86,7 @@ export class OneInchTrade extends SymbiosisTrade {
         super(params)
         this.symbiosis = params.symbiosis
         this.from = params.from
+        this.origin = params.origin
         this.protocols = params.protocols || []
     }
 
@@ -114,6 +117,7 @@ export class OneInchTrade extends SymbiosisTrade {
         searchParams.set('dst', toTokenAddress)
         searchParams.set('amount', this.tokenAmountIn.raw.toString())
         searchParams.set('from', this.from)
+        searchParams.set('origin', this.origin || this.from)
         searchParams.set('slippage', (this.slippage / 100).toFixed(4))
         searchParams.set('receiver', this.to)
         searchParams.set('disableEstimate', 'true')
