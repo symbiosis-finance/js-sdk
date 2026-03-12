@@ -557,6 +557,7 @@ export abstract class BaseSwapping {
             tokenAmountInMin: this.tokenAmountInMin,
             tokenOut,
             from,
+            origin: this.from, // for 1inch
             to,
             slippage: this.slippage['A'],
             symbiosis: this.symbiosis,

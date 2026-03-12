@@ -9,7 +9,7 @@ import { IzumiTrade } from './izumiTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import type { SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import type { SymbiosisTradeType, SymbiosisTradeParams } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
@@ -20,6 +20,7 @@ type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trad
 export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
+    origin?: Address
     clientId: string
     deadline: number // epoch
     preferOneInchUsage?: boolean
@@ -158,6 +159,7 @@ export class AggregatorTrade extends SymbiosisTrade {
     public async init() {
         const {
             from,
+            origin,
             slippage,
             symbiosis,
             deadline,
@@ -203,6 +205,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 tokenAmountInMin,
                 tokenOut,
                 from,
+                origin,
                 to,
                 slippage,
                 protocols: oneInchProtocols,

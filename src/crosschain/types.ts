@@ -186,6 +186,7 @@ export interface SwapExactInParams {
     tokenAmountInMin?: TokenAmount
     tokenOut: Token
     from: Address
+    origin?: Address // in terms of 1inch it's a sender of the tx
     to: Address
     slippage: number
     deadline: number
