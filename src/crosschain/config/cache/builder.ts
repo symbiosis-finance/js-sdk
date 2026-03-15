@@ -146,9 +146,8 @@ export class Builder {
                     if (token.address === '0xB52E582263c1d0189b3cc1402c1B7205b7F2E9Ba') {
                         continue
                     }
-
-                    // FIXME remove skipping GPTW on BSC chain if whitelisted on portal
-                    if (token.address.toLowerCase() === '0xB3F4D70C6a18cC0F2D1205dbF3B21cB73e1B0592'.toLowerCase()) {
+                    // syBTC on ETH chain
+                    if (token.address === '0x01a8b61E7b03891a736B5DF865E0EF9C511850ad') {
                         continue
                     }
 
@@ -194,11 +193,13 @@ export class Builder {
             const synthesis = this.synthesis(chain.id)
             let synthesisMetaRouter
             // NOTE because there is a separate metarouter for btc integration
+            // FIXME !!!
             if (
                 synthesis.address !== AddressZero &&
                 chain.id !== ChainId.ARBITRUM_MAINNET &&
                 chain.id !== ChainId.ZKSYNC_MAINNET &&
-                chain.id !== ChainId.BSC_MAINNET
+                chain.id !== ChainId.BSC_MAINNET &&
+                chain.id !== ChainId.ETH_MAINNET
             ) {
                 synthesisMetaRouter = (await synthesis.callStatic.metaRouter()).toLowerCase()
             }

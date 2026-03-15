@@ -133,6 +133,24 @@ export const config: Config = {
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/citrea/forwarder/api/v1',
         },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x85a8741794a22a9b3d2adb2c6cec605b6232b2e8',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x4e70A309eB5c60528cC984f4D3eb508935889B7d',
+                chainId: ChainId.ETH_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/eth/forwarder/api/v1',
+        },
     ],
     chains: [
         {
@@ -242,6 +260,17 @@ export const config: Config = {
                     icons: {
                         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
+                    },
+                },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0x01a8b61E7b03891a736B5DF865E0EF9C511850ad',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
                     },
                 },
             ],
