@@ -258,6 +258,29 @@ export class Builder {
                         return
                     }
 
+                    // >>> TODO delete after removing the tokens from BTC pool
+                    if (asset.token.toLowerCase() === '0xDBe47ce2c0d1Fd3793D29ac6cCb928C306E10a80'.toLowerCase()) {
+                        console.log(`!active. skip sWBTC from Ethereum`)
+                        return
+                    }
+                    if (asset.token.toLowerCase() === '0xA8Cd384E4B10c9Ec05c5436E005BD8b64569796a'.toLowerCase()) {
+                        console.log(`!active. skip sWBTC from Core`)
+                        return
+                    }
+                    if (asset.token.toLowerCase() === '0xFD638c0965B008A39A36f561a8e69388115F8F9d'.toLowerCase()) {
+                        console.log(`!active. skip sWBTC from Goat`)
+                        return
+                    }
+                    if (asset.token.toLowerCase() === '0xfB64E541C7ededc97ed0652405444aa47b91C1C1'.toLowerCase()) {
+                        console.log(`!active. skip sWBTC from zkSync`)
+                        return
+                    }
+
+                    if (asset.token.toLowerCase() === '0x1Aac380230382D6382c8a7FfEe3E24A26ab917cf'.toLowerCase()) {
+                        console.log(`!active. skip ssyBTC from zkSync`)
+                        return
+                    }
+                    // <<<
                     const token = tokens.find(
                         (t) =>
                             t.address.toLowerCase() === asset.token.toLowerCase() &&
