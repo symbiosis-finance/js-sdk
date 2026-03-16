@@ -162,14 +162,14 @@ describe('#getRoutes', () => {
             })
             expect(results.length).not.toEqual(0)
             const result = results[0]
-            expect(result.optimal).toEqual(true)
-            expect(result.poolConfig.coinGeckoId).toEqual('symbiosis-finance')
+            expect(result.optimal).toEqual(false)
+            expect(result.poolConfig.coinGeckoId).toEqual('usd-coin')
 
             expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.ETH_MAINNET)
-            expect(result.transitTokenIn.address).toStrictEqual(Ethereum_SIS.address)
+            expect(result.transitTokenIn.address).toStrictEqual(Ethereum_USDC.address)
 
             expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.ARBITRUM_MAINNET)
-            expect(result.transitTokenOut.address).toStrictEqual(Arbitrum_SIS.address)
+            expect(result.transitTokenOut.address).toStrictEqual(Arbitrum_USDC.address)
         })
         test('Arbitrum.USDT -> Ethereum.SIS', () => {
             const results = getRoutes({

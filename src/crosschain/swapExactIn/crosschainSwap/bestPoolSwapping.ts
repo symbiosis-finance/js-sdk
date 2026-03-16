@@ -129,6 +129,7 @@ function getOptimalRoute({
         for (const poolConfig of omniPools) {
             try {
                 const transitTokenIn = symbiosis.transitToken(tokenIn.chainId, poolConfig)
+                // tokenOut is a pool token that's why we can choose any pool, not only generalPurpose
                 const transitTokenOut = symbiosis.transitTokens(tokenOut.chainId, poolConfig).find((transitToken) => {
                     return transitToken.equals(wrappedToken(tokenOut))
                 })
@@ -154,8 +155,11 @@ function getOptimalRoute({
 
     // if destination chain routing is allowed
     if (!disableDstChainRouting) {
-        for (const poolConfig of omniPools) {
+        // we have to use general purpose pools in order not to allow to get "strange tokens" on a dest chain
+        const generalPurposePools = omniPools.filter((poolConfig) => poolConfig.generalPurpose)
+        for (const poolConfig of generalPurposePools) {
             try {
+                // tokenIn is a pool token
                 const transitTokenIn = symbiosis.transitTokens(tokenIn.chainId, poolConfig).find((transitToken) => {
                     return transitToken.equals(wrappedToken(tokenIn))
                 })
@@ -189,7 +193,7 @@ function getOptimalRoute({
                 continue
             }
             const transitTokenOut = symbiosis.transitToken(tokenOut.chainId, poolConfig)
-            if (disableDstChainRouting && !transitTokenIn.equals(wrappedToken(tokenOut))) {
+            if (disableDstChainRouting && !transitTokenOut.equals(wrappedToken(tokenOut))) {
                 continue
             }
 
