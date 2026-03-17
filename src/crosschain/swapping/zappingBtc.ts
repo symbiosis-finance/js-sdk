@@ -29,6 +29,7 @@ interface ZappingBtcExactInParams {
     transitTokenIn: Token
     transitTokenOut: Token
     partnerAddress?: EvmAddress
+    fallbackReceiver?: EvmAddress
     disabledProviders?: SymbiosisTradeType[]
 }
 
@@ -82,6 +83,7 @@ export class ZappingBtc extends BaseSwapping {
         transitTokenIn,
         transitTokenOut,
         partnerAddress,
+        fallbackReceiver,
         disabledProviders,
     }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
         if (!syBtc.chainFromId) {
@@ -99,7 +101,7 @@ export class ZappingBtc extends BaseSwapping {
 
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.fallbackReceiver
+            this.evmTo = fallbackReceiver ?? this.symbiosis.config.fallbackReceiver
         }
         const result = await this.doExactIn({
             tokenAmountIn,

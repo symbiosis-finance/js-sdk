@@ -31,7 +31,8 @@ const AVAX_USDC = new Token({
 export const THOR_TOKENS = [ETH_USDC, AVAX_USDC]
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, partnerAddress } = context
+    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, partnerAddress, fallbackReceiver } =
+        context
 
     const poolConfig = symbiosis.config.omniPools.find((pool) => {
         return pool.coinGeckoId === 'usd-coin'
@@ -53,6 +54,7 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
             slippage,
             deadline,
             partnerAddress,
+            fallbackReceiver,
         })
     })
 
