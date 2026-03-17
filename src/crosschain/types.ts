@@ -198,6 +198,7 @@ export interface SwapExactInParams {
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
     partnerAddress?: EvmAddress
+    fallbackReceiver?: EvmAddress
     refundAddress?: BtcAddress | EmptyAddress
     generateBtcDepositAddress?: boolean
     disableSrcChainRouting?: boolean

@@ -36,7 +36,7 @@ export async function ZappingOnChainChainFlip(
 
     let evmTo = from
     if (!isEvmChainId(chainId)) {
-        evmTo = symbiosis.config.fallbackReceiver
+        evmTo = params.fallbackReceiver ?? symbiosis.config.fallbackReceiver
     }
 
     const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]

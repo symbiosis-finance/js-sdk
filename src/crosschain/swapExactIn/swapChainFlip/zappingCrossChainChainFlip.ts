@@ -30,13 +30,15 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected config!: ChainFlipConfig
     protected evmTo!: Address // should be EvmAddress actually
     protected dstAddress: string
+    protected fallbackReceiver: EvmAddress
 
     public constructor(context: SwapExactInParams, omniPoolConfig: OmniPoolConfig) {
-        const { symbiosis, to, partnerAddress } = context
+        const { symbiosis, to, partnerAddress, fallbackReceiver } = context
         super(symbiosis, omniPoolConfig)
 
         this.dstAddress = to
         this.partnerAddress = partnerAddress
+        this.fallbackReceiver = fallbackReceiver ?? this.symbiosis.config.fallbackReceiver
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
@@ -106,7 +108,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         }
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.fallbackReceiver
+            this.evmTo = this.fallbackReceiver
         }
         const result = await this.doExactIn({
             tokenAmountIn,

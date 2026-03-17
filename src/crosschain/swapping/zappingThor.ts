@@ -22,6 +22,7 @@ export interface ZappingThorExactInParams {
     slippage: number
     deadline: number
     partnerAddress?: EvmAddress
+    fallbackReceiver?: EvmAddress
     oneInchProtocols?: OneInchProtocols
 }
 
@@ -114,6 +115,7 @@ export class ZappingThor extends BaseSwapping {
         slippage,
         deadline,
         partnerAddress,
+        fallbackReceiver,
     }: ZappingThorExactInParams): Promise<SwapExactInResult> {
         const isAddressValid = validate(to)
         if (!isAddressValid) {
@@ -128,7 +130,7 @@ export class ZappingThor extends BaseSwapping {
 
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
-            this.evmTo = this.symbiosis.config.fallbackReceiver
+            this.evmTo = fallbackReceiver ?? this.symbiosis.config.fallbackReceiver
         }
 
         // check if there is "Available" ThorChain pool at the moment
