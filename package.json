@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "3.10.16",
+    "version": "3.10.17",
     "typings": "dist/esm/index.d.ts",
     "files": [
         "dist"
@@ -44,7 +44,7 @@
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
-        "@chainflip/sdk": "^1.11.2",
+        "@chainflip/sdk": "^2.1.1",
         "@dedust/sdk": "^0.8.7",
         "@ethersproject/abi": "^5.8.0",
         "@ethersproject/address": "^5.8.0",

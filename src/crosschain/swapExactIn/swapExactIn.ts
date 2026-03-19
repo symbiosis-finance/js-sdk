@@ -49,16 +49,18 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return bridge(params)
     }
 
+    // flow FROM
     if (isFromBtcSwapSupported(params)) {
         return fromBtcSwap(params)
     }
 
-    if (isToBtcSwapSupported(params)) {
-        return toBtcSwap(params)
-    }
-
     if (isFromSolanaSwapSupported(params)) {
         return fromSolanaSwap(params)
+    }
+
+    // flow TO
+    if (isToBtcSwapSupported(params)) {
+        return toBtcSwap(params)
     }
 
     if (isToSolanaSwapSupported(params)) {

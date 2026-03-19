@@ -8,7 +8,7 @@ import JSBI from 'jsbi'
 import { ChainId } from '../../../constants'
 import type { Token } from '../../../entities'
 import { GAS_TOKEN, Percent, TokenAmount } from '../../../entities'
-import { getMinAmount, getSolanaConnection, SOL_USDC } from '../../chainUtils'
+import { getMinAmount, getSolanaConnection } from '../../chainUtils'
 import { BIPS_BASE } from '../../constants'
 import { getTokenPriceUsd } from '../../coingecko/getTokenPriceUsd'
 import { ChainFlipError } from '../../sdkError'
@@ -28,88 +28,67 @@ import {
     ChainFlipBrokerAccount,
     ChainFlipBrokerFeeBps,
     checkMinAmount,
-    ETH_USDC,
 } from './utils'
 
 const CONFIGS: ChainFlipConfig[] = [
     // SOL → BTC
     {
-        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
-        tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_SOL_SOL,
-        dest: CF_BTC_BTC,
+        dst: CF_BTC_BTC,
     },
     // SOL → ETH
     {
-        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
-        tokenOut: GAS_TOKEN[ChainId.ETH_MAINNET],
         src: CF_SOL_SOL,
-        dest: CF_ETH_ETH,
+        dst: CF_ETH_ETH,
     },
     // SOL → ETH USDC
     {
-        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
-        tokenOut: ETH_USDC,
         src: CF_SOL_SOL,
-        dest: CF_ETH_USDC,
+        dst: CF_ETH_USDC,
     },
     // SOL → ARB ETH
     {
-        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
-        tokenOut: GAS_TOKEN[ChainId.ARBITRUM_MAINNET],
         src: CF_SOL_SOL,
-        dest: CF_ARB_ETH,
+        dst: CF_ARB_ETH,
     },
     // SOL → ARB USDC
     {
-        tokenIn: GAS_TOKEN[ChainId.SOLANA_MAINNET],
-        tokenOut: ARB_USDC,
         src: CF_SOL_SOL,
-        dest: CF_ARB_USDC,
+        dst: CF_ARB_USDC,
     },
     // SOL USDC → BTC
     {
-        tokenIn: SOL_USDC,
-        tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_SOL_USDC,
-        dest: CF_BTC_BTC,
+        dst: CF_BTC_BTC,
     },
     // SOL USDC → ETH
     {
-        tokenIn: SOL_USDC,
-        tokenOut: GAS_TOKEN[ChainId.ETH_MAINNET],
         src: CF_SOL_USDC,
-        dest: CF_ETH_ETH,
+        dst: CF_ETH_ETH,
     },
     // SOL USDC → ETH USDC
     {
-        tokenIn: SOL_USDC,
-        tokenOut: ETH_USDC,
         src: CF_SOL_USDC,
-        dest: CF_ETH_USDC,
+        dst: CF_ETH_USDC,
     },
     // SOL USDC → ARB ETH
     {
-        tokenIn: SOL_USDC,
-        tokenOut: GAS_TOKEN[ChainId.ARBITRUM_MAINNET],
         src: CF_SOL_USDC,
-        dest: CF_ARB_ETH,
+        dst: CF_ARB_ETH,
     },
     // SOL USDC → ARB USDC
     {
-        tokenIn: SOL_USDC,
-        tokenOut: ARB_USDC,
         src: CF_SOL_USDC,
-        dest: CF_ARB_USDC,
+        dst: CF_ARB_USDC,
     },
 ]
 
-export const CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT = CONFIGS.map((c) => c.tokenOut)
+export const CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT = CONFIGS.map((c) => c.dst.token)
 
 export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, selectMode } = context
 
-    const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
+    const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
     if (!CF_CONFIGS.length) {
         throw new ChainFlipError('No ChainFlip config found for tokenOut')
     }
@@ -117,7 +96,7 @@ export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promi
     const promises: Promise<SwapExactInResult>[] = []
 
     for (const config of CF_CONFIGS) {
-        if (tokenAmountIn.token.equals(config.tokenIn)) {
+        if (tokenAmountIn.token.equals(config.src.token)) {
             // Exact tokenIn match — direct vault swap
             promises.push(directSolanaVaultSwap(context, config))
         } else {
@@ -137,7 +116,7 @@ export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promi
 
 async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFlipConfig): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis } = params
-    const { src, dest, tokenOut } = config
+    const { src, dst } = config
 
     const chainFlipSdk = new SwapSDK({ network: 'mainnet', enabledFeatures: { dca: true } })
 
@@ -149,8 +128,8 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
             amount: tokenAmountIn.raw.toString(),
             srcChain: src.chain,
             srcAsset: src.asset,
-            destChain: dest.chain,
-            destAsset: dest.asset,
+            destChain: dst.chain,
+            destAsset: dst.asset,
             isVaultSwap: true,
             brokerCommissionBps: ChainFlipBrokerFeeBps,
         })
@@ -188,12 +167,12 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
     const { egressAmount, recommendedSlippageTolerancePercent } = quote
     const egressAmountMin = getMinAmount(recommendedSlippageTolerancePercent * 100, egressAmount)
     const { usdcFeeToken, solFeeToken, btcFeeToken, ethFeeToken, arbEthFeeToken } = getChainFlipFeeExtended(quote)
-    const priceImpact = await calcPriceImpact(tokenAmountIn.token, tokenOut, quote.depositAmount, egressAmount)
+    const priceImpact = await calcPriceImpact(tokenAmountIn.token, dst.token, quote.depositAmount, egressAmount)
 
     return {
         kind: 'crosschain-swap',
-        tokenAmountOut: new TokenAmount(tokenOut, egressAmount),
-        tokenAmountOutMin: new TokenAmount(tokenOut, egressAmountMin),
+        tokenAmountOut: new TokenAmount(dst.token, egressAmount),
+        tokenAmountOutMin: new TokenAmount(dst.token, egressAmountMin),
         priceImpact,
         approveTo: '0x0000000000000000000000000000000000000000',
         amountInUsd: tokenAmountIn,
@@ -206,7 +185,7 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
         ],
-        routes: [{ provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [tokenAmountIn.token, tokenOut] }],
+        routes: [{ provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [tokenAmountIn.token, dst.token] }],
     }
 }
 
@@ -214,14 +193,14 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
 
 async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainFlipConfig): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, slippage, symbiosis } = params
-    const { src, dest, tokenIn: cfTokenIn, tokenOut } = config
+    const { src, dst } = config
 
     // Step 1: Jupiter swap tokenIn → config.tokenIn
     const jupiterTrade = new JupiterTrade({
         symbiosis,
         tokenAmountIn,
         tokenAmountInMin: tokenAmountIn,
-        tokenOut: cfTokenIn,
+        tokenOut: src.token,
         to: from,
         slippage,
     })
@@ -230,7 +209,7 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
         symbiosis.trackAggregatorError({
             provider: SymbiosisTradeType.JUPITER,
             reason: e.message,
-            chain_id: String(cfTokenIn.chain?.id),
+            chain_id: String(src.token.chain?.id),
         })
         throw e
     })
@@ -248,8 +227,8 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
             amount: swapAmountIn.raw.toString(),
             srcChain: src.chain,
             srcAsset: src.asset,
-            destChain: dest.chain,
-            destAsset: dest.asset,
+            destChain: dst.chain,
+            destAsset: dst.asset,
             isVaultSwap: true,
             brokerCommissionBps: ChainFlipBrokerFeeBps,
         })
@@ -296,13 +275,13 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
     const { usdcFeeToken, solFeeToken, btcFeeToken, ethFeeToken, arbEthFeeToken } = getChainFlipFeeExtended(quote)
 
     // Total price impact = Jupiter pre-swap impact + ChainFlip bridge impact
-    const cfPriceImpact = await calcPriceImpact(cfTokenIn, tokenOut, quote.depositAmount, egressAmount)
+    const cfPriceImpact = await calcPriceImpact(src.token, dst.token, quote.depositAmount, egressAmount)
     const priceImpact = jupiterTrade.priceImpact.add(cfPriceImpact)
 
     return {
         kind: 'crosschain-swap',
-        tokenAmountOut: new TokenAmount(tokenOut, egressAmount),
-        tokenAmountOutMin: new TokenAmount(tokenOut, egressAmountMin),
+        tokenAmountOut: new TokenAmount(dst.token, egressAmount),
+        tokenAmountOutMin: new TokenAmount(dst.token, egressAmountMin),
         priceImpact,
         approveTo: '0x0000000000000000000000000000000000000000',
         amountInUsd: swapAmountIn,
@@ -316,8 +295,8 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
         ],
         routes: [
-            { provider: SymbiosisTradeType.JUPITER, tokens: [tokenAmountIn.token, cfTokenIn] },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [cfTokenIn, tokenOut] },
+            { provider: SymbiosisTradeType.JUPITER, tokens: [tokenAmountIn.token, src.token] },
+            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [src.token, dst.token] },
         ],
     }
 }
@@ -434,7 +413,7 @@ function getChainFlipFeeExtended(quote: Quote) {
     })
 
     return {
-        usdcFeeToken: new TokenAmount(ARB_USDC, usdcFee.toString()),
+        usdcFeeToken: new TokenAmount(ARB_USDC, usdcFee.toString()), // FIXME ARB_USDC is not correct
         solFeeToken: new TokenAmount(SOL, solFee.toString()),
         btcFeeToken: new TokenAmount(BTC, btcFee.toString()),
         ethFeeToken: new TokenAmount(ETH, ethFee.toString()),
