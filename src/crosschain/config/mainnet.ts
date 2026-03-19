@@ -290,7 +290,7 @@ export const config: Config = {
                     slippageNorm: 0.001,
                 },
                 depository: '0x84DEB7FC54a1F734aEF6DDC0C0F74182BDF941a8',
-                btcRefundUnlocker: '0x2FDA62B753EE9f48b4F2Ecb3f4F13DA83c1eA882',
+                btcRefundUnlocker: '0x9a99eb7e9794Ef5A7c00C87D64eE067CFC10c9F0',
                 branchedUnlocker: '0x22278Fe9A52a8CCB3A914F3f61bB6c70fe5fd9A1',
                 timedUnlocker: '0xEc148F80d699b0eAF65dd5438CdE4b380DeD8a3b',
                 timedSwapUnlocker: '0x6B6B4573Dc625BE635843aB8800becDEc38D1987',
