@@ -28,11 +28,10 @@ export interface ChainFlipToken {
     assetId: ChainFlipAssetId
     chain: Exclude<Chain, 'Polkadot'>
     asset: Asset
+    token: Token
 }
 
 export interface ChainFlipConfig {
-    tokenIn: Token
-    tokenOut: Token
     src: ChainFlipToken
-    dest: ChainFlipToken
+    dst: ChainFlipToken
 }

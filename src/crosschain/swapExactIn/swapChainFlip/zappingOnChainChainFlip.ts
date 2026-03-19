@@ -79,11 +79,11 @@ export async function ZappingOnChainChainFlip(
     const fees: FeeItem[] = []
     const routes: RouteItem[] = []
     let swapCall: SwapCall | undefined = undefined
-    const swapCallRequired = !tokenAmountIn.token.equals(config.tokenIn)
+    const swapCallRequired = !tokenAmountIn.token.equals(config.src.token)
     if (swapCallRequired) {
         swapCall = await getSwapCall({
             ...params,
-            tokenOut: config.tokenIn,
+            tokenOut: config.src.token,
             from: multicallRouterAddress,
             to: multicallRouterAddress,
         })
@@ -231,7 +231,7 @@ async function getDepositCall({
     receiverAddress: string
     refundAddress: string
 }): Promise<Call> {
-    const { src, dest, tokenOut } = config
+    const { src, dst } = config
     const chainFlipSdk = new SwapSDK({
         network: 'mainnet',
         enabledFeatures: { dca: true },
@@ -245,8 +245,8 @@ async function getDepositCall({
             amount: amountIn.raw.toString(),
             srcChain: src.chain,
             srcAsset: src.asset,
-            destChain: dest.chain,
-            destAsset: dest.asset,
+            destChain: dst.chain,
+            destAsset: dst.asset,
             isVaultSwap: true,
             brokerCommissionBps: ChainFlipBrokerFeeBps,
         })
@@ -289,8 +289,8 @@ async function getDepositCall({
 
     return {
         amountIn,
-        amountOut: new TokenAmount(tokenOut, egressAmount),
-        amountOutMin: new TokenAmount(tokenOut, egressAmountMin),
+        amountOut: new TokenAmount(dst.token, egressAmount),
+        amountOutMin: new TokenAmount(dst.token, egressAmountMin),
         to,
         data: calldata,
         value: '0',
@@ -315,7 +315,7 @@ async function getDepositCall({
         routes: [
             {
                 provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
-                tokens: [amountIn.token, tokenOut],
+                tokens: [amountIn.token, dst.token],
             },
         ],
     }

@@ -6,6 +6,7 @@ import type { Cache } from '../../cache'
 import { ChainFlipError } from '../../sdkError'
 import type { ChainFlipToken } from './types'
 import { ChainFlipAssetId, ChainFlipChainId } from './types'
+import { SOL_USDC } from '../../chainUtils'
 
 export const ChainFlipBrokerAccount = 'cFJZvt5AiEGwUiFFNxhDuLRcgC1WBR6tE7gaQQfe8dqbzoYkx'
 export const ChainFlipBrokerFeeBps = 20
@@ -39,6 +40,7 @@ export const CF_BTC_BTC: ChainFlipToken = {
     assetId: ChainFlipAssetId.BTC,
     chain: 'Bitcoin',
     asset: 'BTC',
+    token: GAS_TOKEN[ChainId.BTC_MAINNET],
 }
 
 export const CF_ETH_ETH: ChainFlipToken = {
@@ -46,6 +48,7 @@ export const CF_ETH_ETH: ChainFlipToken = {
     assetId: ChainFlipAssetId.ETH,
     chain: 'Ethereum',
     asset: 'ETH',
+    token: GAS_TOKEN[ChainId.ETH_MAINNET],
 }
 
 export const CF_ETH_USDC: ChainFlipToken = {
@@ -53,6 +56,7 @@ export const CF_ETH_USDC: ChainFlipToken = {
     assetId: ChainFlipAssetId.USDC,
     chain: 'Ethereum',
     asset: 'USDC',
+    token: ETH_USDC,
 }
 
 export const CF_ARB_ETH: ChainFlipToken = {
@@ -60,13 +64,15 @@ export const CF_ARB_ETH: ChainFlipToken = {
     assetId: ChainFlipAssetId.arbETH,
     chain: 'Arbitrum',
     asset: 'ETH',
+    token: GAS_TOKEN[ChainId.ARBITRUM_MAINNET],
 }
 
 export const CF_ARB_USDC: ChainFlipToken = {
     chainId: ChainFlipChainId.Arbitrum,
-    assetId: ChainFlipAssetId.USDC,
+    assetId: ChainFlipAssetId.arbUSDC,
     chain: 'Arbitrum',
     asset: 'USDC',
+    token: ARB_USDC,
 }
 
 export const CF_SOL_SOL: ChainFlipToken = {
@@ -74,6 +80,7 @@ export const CF_SOL_SOL: ChainFlipToken = {
     assetId: ChainFlipAssetId.SOL,
     chain: 'Solana',
     asset: 'SOL',
+    token: GAS_TOKEN[ChainId.SOLANA_MAINNET],
 }
 
 export const CF_SOL_USDC: ChainFlipToken = {
@@ -81,6 +88,7 @@ export const CF_SOL_USDC: ChainFlipToken = {
     assetId: ChainFlipAssetId.solUSDC,
     chain: 'Solana',
     asset: 'USDC',
+    token: SOL_USDC,
 }
 
 export async function checkMinAmount(cache: Cache, chainFlipSdk: SwapSDK, amountIn: TokenAmount) {

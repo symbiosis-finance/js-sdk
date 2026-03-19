@@ -49,15 +49,15 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
     protected async doPostTransitAction() {
         await checkMinAmount(this.symbiosis.cache, this.chainFlipSdk, this.transit.amountOutMin)
 
-        const { src, dest } = this.config
+        const { src, dst } = this.config
         let quote: RegularQuote | undefined
         try {
             const { quotes } = await this.chainFlipSdk.getQuoteV2({
                 amount: this.transit.amountOut.raw.toString(),
                 srcChain: src.chain,
                 srcAsset: src.asset,
-                destChain: dest.chain,
-                destAsset: dest.asset,
+                destChain: dst.chain,
+                destAsset: dst.asset,
                 isVaultSwap: true,
                 brokerCommissionBps: ChainFlipBrokerFeeBps,
             })
@@ -97,7 +97,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         slippage,
         deadline,
     }: ZappingChainFlipExactInParams): Promise<SwapExactInResult> {
-        const chainFlipTokenIn = config.tokenIn
+        const chainFlipTokenIn = config.src.token
         this.config = config
         this.multicallRouter = this.symbiosis.multicallRouter(chainFlipTokenIn.chainId)
 
@@ -127,8 +127,8 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         const egressAmountMin = getMinAmount(recommendedSlippageTolerancePercent * 100, egressAmount)
 
         const { usdcFeeToken, solFeeToken, btcFeeToken } = getChainFlipFee(this.chainFlipQuote)
-        const amountOut = new TokenAmount(config.tokenOut, egressAmount)
-        const amountOutMin = new TokenAmount(config.tokenOut, egressAmountMin)
+        const amountOut = new TokenAmount(config.dst.token, egressAmount)
+        const amountOutMin = new TokenAmount(config.dst.token, egressAmountMin)
 
         return {
             ...result,
@@ -196,11 +196,11 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         if (chain !== 'Arbitrum' && chain !== 'Ethereum') {
             throw new ChainFlipError(`Incorrect source chain: ${chain}`)
         }
-        const { tokenIn } = this.config
+        const { src } = this.config
         const { calldata, to } = this.chainFlipVaultSwapResponse
         callDatas.push(calldata)
         receiveSides.push(to)
-        path.push(tokenIn.address)
+        path.push(src.token.address)
         offsets.push(164)
 
         return this.multicallRouter.interface.encodeFunctionData('multicall', [

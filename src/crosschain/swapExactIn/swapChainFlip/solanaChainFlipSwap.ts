@@ -1,42 +1,31 @@
-import { ChainId } from '../../../constants'
-import { GAS_TOKEN } from '../../../entities'
-import { SOL_USDC } from '../../chainUtils'
 import { ChainFlipError } from '../../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
 import type { ChainFlipConfig } from './types'
-import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, CF_SOL_SOL, CF_SOL_USDC, ETH_USDC } from './utils'
+import { CF_ARB_USDC, CF_ETH_USDC, CF_SOL_SOL, CF_SOL_USDC } from './utils'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
 
 const CONFIGS: ChainFlipConfig[] = [
     {
-        tokenIn: ARB_USDC,
-        tokenOut: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         src: CF_ARB_USDC,
-        dest: CF_SOL_SOL,
+        dst: CF_SOL_SOL,
     },
     {
-        tokenIn: ARB_USDC,
-        tokenOut: SOL_USDC,
         src: CF_ARB_USDC,
-        dest: CF_SOL_USDC,
+        dst: CF_SOL_USDC,
     },
     {
-        tokenIn: ETH_USDC,
-        tokenOut: GAS_TOKEN[ChainId.SOLANA_MAINNET],
         src: CF_ETH_USDC,
-        dest: CF_SOL_SOL,
+        dst: CF_SOL_SOL,
     },
     {
-        tokenIn: ETH_USDC,
-        tokenOut: SOL_USDC,
         src: CF_ETH_USDC,
-        dest: CF_SOL_USDC,
+        dst: CF_SOL_USDC,
     },
 ]
 
-export const CHAIN_FLIP_TO_SOLANA_TOKENS_IN = CONFIGS.map((i) => i.tokenIn)
+export const CHAIN_FLIP_TO_SOLANA_TOKENS_IN = CONFIGS.map((i) => i.src.token)
 
 export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
@@ -48,14 +37,14 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
         throw new ChainFlipError('No USD pool found')
     }
 
-    const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
+    const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
     if (!CF_CONFIGS.length) {
         throw new ChainFlipError('No config found for tokenOut')
     }
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    if (CF_CONFIGS.some((config) => config.tokenIn.chainId === tokenAmountIn.token.chainId)) {
+    if (CF_CONFIGS.some((config) => config.src.token.chainId === tokenAmountIn.token.chainId)) {
         const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
 
         promises.push(...onChainPromises)
