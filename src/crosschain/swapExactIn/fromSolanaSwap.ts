@@ -6,7 +6,6 @@ import { fromSolanaChainFlipSwap } from './swapChainFlip'
 import { theBest } from './utils'
 
 function isChainFlipAvailable(chainId: ChainId) {
-    return false
     return isSolanaChainId(chainId)
 }
 
