@@ -22,7 +22,11 @@ function isChainFlipAvailable(chainId: ChainId) {
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
     const { tokenOut } = context
 
-    return isThorChainAvailable(tokenOut.chainId) || isNativeAvailable(tokenOut.chainId)
+    return (
+        isThorChainAvailable(tokenOut.chainId) ||
+        isNativeAvailable(tokenOut.chainId) ||
+        isChainFlipAvailable(tokenOut.chainId)
+    )
 }
 
 export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {

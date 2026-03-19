@@ -413,7 +413,7 @@ function getChainFlipFeeExtended(quote: Quote) {
     })
 
     return {
-        usdcFeeToken: new TokenAmount(ARB_USDC, usdcFee.toString()),
+        usdcFeeToken: new TokenAmount(ARB_USDC, usdcFee.toString()), // FIXME ARB_USDC is not correct
         solFeeToken: new TokenAmount(SOL, solFee.toString()),
         btcFeeToken: new TokenAmount(BTC, btcFee.toString()),
         ethFeeToken: new TokenAmount(ETH, ethFee.toString()),

@@ -23,7 +23,7 @@ export const ARB_USDC = new Token({
     },
 })
 
-export const ETH_USDC = new Token({
+const ETH_USDC = new Token({
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     chainId: ChainId.ETH_MAINNET,
     decimals: 6,
@@ -90,6 +90,16 @@ export const CF_SOL_USDC: ChainFlipToken = {
     asset: 'USDC',
     token: SOL_USDC,
 }
+
+export const CHAIN_FLIP_TOKENS: ChainFlipToken[] = [
+    CF_BTC_BTC,
+    CF_ETH_ETH,
+    CF_ETH_USDC,
+    CF_ARB_ETH,
+    CF_ARB_USDC,
+    CF_SOL_SOL,
+    CF_SOL_USDC,
+]
 
 export async function checkMinAmount(cache: Cache, chainFlipSdk: SwapSDK, amountIn: TokenAmount) {
     const swapLimits = await cache.get(['chainFlip', 'getSwapLimits'], () => chainFlipSdk.getSwapLimits(), 24 * 60 * 60) // 24 hours
