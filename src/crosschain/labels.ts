@@ -86,8 +86,8 @@ export function computeOnchainDstLabels(trade: SymbiosisTrade): SwapLabel[] {
     if (!isRealSwap(trade)) return []
 
     const labels: SwapLabel[] = ['dst-chain-swap']
-    if (trade.isMixedValue) {
-        labels.push('mixed-value-tokens')
-    }
+    // if (trade.isMixedValue) {
+    //     labels.push('mixed-value-tokens')
+    // }
     return labels
 }
