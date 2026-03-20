@@ -78,6 +78,7 @@ export function onChainSolanaSwap({
                       },
                   ]
                 : [],
+            labels: [],
             routes: [
                 {
                     provider: trade.tradeType,

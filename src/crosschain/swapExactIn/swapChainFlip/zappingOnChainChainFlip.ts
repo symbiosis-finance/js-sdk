@@ -151,6 +151,7 @@ export async function ZappingOnChainChainFlip(
         priceImpact: priceImpact,
         amountInUsd: depositAmount,
         approveTo: approveAddress,
+        labels: ['partner-swap'],
         routes,
         fees,
         kind: 'crosschain-swap',

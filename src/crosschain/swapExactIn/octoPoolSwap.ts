@@ -57,6 +57,7 @@ export async function octoPoolSwap({
             value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
         },
         fees: [],
+        labels: ['octopool-swap'],
         routes: [
             {
                 provider: SymbiosisTradeType.OCTOPOOL,

@@ -54,6 +54,7 @@ export async function raydiumSwap({
                 description: 'Symbiosis on-chain fee',
             },
         ],
+        labels: [],
         routes: [
             {
                 provider: SymbiosisTradeType.RAYDIUM,

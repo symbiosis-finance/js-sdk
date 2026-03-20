@@ -17,6 +17,7 @@ import {
     tronAddressToEvm,
 } from './chainUtils'
 import { BIPS_BASE, CROSS_CHAIN_ID } from './constants'
+import { computeCrosschainLabels } from './labels'
 import type { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { OmniLiquidity } from './omniLiquidity'
 import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
@@ -159,6 +160,7 @@ export class Zapping {
                     value: fee,
                 },
             ],
+            labels: computeCrosschainLabels({ tradeA: this.tradeA }),
             routes,
             kind: 'crosschain-swap',
             approveTo: this.symbiosis.chainConfig(tokenAmountIn.token.chainId).metaRouterGateway,
