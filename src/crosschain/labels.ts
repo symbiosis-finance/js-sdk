@@ -26,6 +26,8 @@ const STABLE_SYMBOLS = new Set([
     'SYUSDC',
     'SYUSDT',
     'SYDAI',
+    'USDC.E',
+    'USDC.N',
 ])
 
 const ETH_SYMBOLS = new Set(['ETH', 'WETH', 'STETH', 'WSTETH', 'RETH', 'WEETH', 'SYETH'])
