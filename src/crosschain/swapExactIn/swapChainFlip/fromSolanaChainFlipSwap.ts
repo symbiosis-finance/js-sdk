@@ -185,6 +185,7 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
         ],
+        labels: ['partner-swap'],
         routes: [{ provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [tokenAmountIn.token, dst.token] }],
     }
 }
@@ -294,6 +295,7 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
         ],
+        labels: ['partner-swap'],
         routes: [
             { provider: SymbiosisTradeType.JUPITER, tokens: [tokenAmountIn.token, src.token] },
             { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [src.token, dst.token] },

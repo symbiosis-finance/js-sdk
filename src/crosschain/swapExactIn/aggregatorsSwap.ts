@@ -60,6 +60,7 @@ export async function aggregatorsSwap({
         tokenAmountOutMin: amountOutMin,
         priceImpact,
         fees: [],
+        labels: [],
         routes: [
             {
                 provider: tradeType,

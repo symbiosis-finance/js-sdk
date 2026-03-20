@@ -8,7 +8,8 @@ import type { TronTransactionData } from './chainUtils'
 import type { ConfigCacheData } from './config/cache/builder'
 import type { PartnerFeeCollector } from './contracts'
 import type { Symbiosis } from './symbiosis'
-import { SymbiosisTradeType } from './trade'
+import type { SwapLabel } from './labels'
+import type { SymbiosisTradeType } from './trade'
 import type { OneInchProtocols } from './trade/oneInchTrade'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
 
@@ -271,6 +272,7 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     approveTo: string
     routes: RouteItem[]
     fees: FeeItem[]
+    labels: SwapLabel[]
 
     amountInUsd?: TokenAmount
     timeLog?: ProfilerItem[]

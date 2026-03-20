@@ -28,10 +28,12 @@ import { amountsToPrices } from '../depository'
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { withTracing } from '../tracing'
+import { computeCrosschainLabels } from '../labels'
 import { AggregatorTrade, WrapTrade } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
-import { SymbiosisTrade, SymbiosisTradeType } from '../trade/symbiosisTrade'
+import type { SymbiosisTrade } from '../trade/symbiosisTrade'
+import { SymbiosisTradeType } from '../trade/symbiosisTrade'
 import { Transit } from '../transit'
 import { TRON_METAROUTER_ABI } from '../tronAbis'
 import type {
@@ -342,6 +344,10 @@ export abstract class BaseSwapping {
             approveTo: this.approveTo(),
             routes,
             fees,
+            labels: computeCrosschainLabels({
+                tradeA: this.tradeA,
+                tradeC: this.tradeC,
+            }),
             amountInUsd: this.amountInUsd,
             timeLog: this.profiler.toString(),
             routeType: routeType.join('-'),

@@ -42,6 +42,7 @@ export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactIn
             ],
         },
         fees: trade.fees ?? [],
+        labels: [],
         routes: [
             {
                 provider: SymbiosisTradeType.DEDUST,

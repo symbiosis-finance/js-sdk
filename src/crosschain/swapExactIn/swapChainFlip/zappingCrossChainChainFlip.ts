@@ -134,6 +134,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             ...result,
             tokenAmountOut: amountOut,
             tokenAmountOutMin: amountOutMin,
+            labels: [...result.labels, 'partner-swap' as const],
             routes: [
                 ...result.routes,
                 {

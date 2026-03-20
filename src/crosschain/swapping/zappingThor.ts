@@ -162,6 +162,7 @@ export class ZappingThor extends BaseSwapping {
             ...result,
             tokenAmountOut: this.thorQuote.amountOut,
             tokenAmountOutMin: this.thorQuote.amountOutMin,
+            labels: [...result.labels, 'partner-swap' as const],
             routes: [
                 ...result.routes,
                 {
