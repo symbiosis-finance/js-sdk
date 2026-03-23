@@ -325,13 +325,6 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     changelly?: ChangellyTransactionData
 }
 
-export type ChangellyCompletionResult = {
-    status: 'finished'
-    payoutHash: string
-    payoutHashLink: string
-    amountTo: string
-}
-
 export interface MultiCallItem {
     to: string
     data: BytesLike
