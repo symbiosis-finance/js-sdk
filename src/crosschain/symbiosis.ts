@@ -40,6 +40,7 @@ import {
     BranchedUnlocker__factory,
     Bridge__factory,
     BtcRefundUnlocker__factory,
+    DepositoryV3__factory,
     Fabric__factory,
     IDepository__factory,
     IRouter__factory,
@@ -55,6 +56,7 @@ import {
     WithdrawUnlocker__factory,
 } from './contracts'
 import { DepositoryContext } from './depository'
+import type { DepositoryV3 } from './contracts'
 import { RevertPending } from './revert'
 import type { PendingRequest } from './revertRequest'
 import {
@@ -521,6 +523,14 @@ export class Symbiosis {
                 withdrawUnlocker: WithdrawUnlocker__factory.connect(cfg.withdrawUnlocker, signerOrProvider),
             })
         })
+    }
+
+    public depositoryV3(chainId: ChainId): DepositoryV3 | null {
+        const cfg = this.chainConfig(chainId).depositoryV3
+        if (!cfg) {
+            return null
+        }
+        return DepositoryV3__factory.connect(cfg.depository, this.getProvider(chainId))
     }
 
     public omniPool(config: OmniPoolConfig, signer?: Signer): OmniPool {

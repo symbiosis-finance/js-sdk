@@ -37,7 +37,7 @@
         "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
-        "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
+        "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/**/*.json' && npm run prettier:fix",
         "build-config-cache": "tsx ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
         "test": "vitest test/crosschain",
         "prepare": "npm run build-contracts && npm run build"

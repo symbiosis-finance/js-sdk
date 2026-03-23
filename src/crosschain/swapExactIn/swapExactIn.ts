@@ -2,6 +2,7 @@ import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
 import { crosschainSwap } from './crosschainSwap'
+import { depositoryV3Swap, isDepositoryV3SwapSupported } from './depositoryV3Swap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 import { isOnchainSwapSupported, onchainSwap } from './onchainSwap'
@@ -47,6 +48,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isBridgeSupported(params)) {
         return bridge(params)
+    }
+
+    if (isDepositoryV3SwapSupported(params)) {
+        return depositoryV3Swap(params)
     }
 
     // flow FROM

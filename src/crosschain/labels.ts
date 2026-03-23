@@ -2,7 +2,13 @@ import type { Token } from '../entities'
 import { SymbiosisTradeType } from './trade'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
 
-export type SwapLabel = 'src-chain-swap' | 'octopool-swap' | 'dst-chain-swap' | 'mixed-value-tokens' | 'partner-swap'
+export type SwapLabel =
+    | 'src-chain-swap'
+    | 'octopool-swap'
+    | 'dst-chain-swap'
+    | 'mixed-value-tokens'
+    | 'partner-swap'
+    | 'intent'
 
 type ValueCategory = 'stable-usd' | 'btc' | 'eth' | 'other'
 
