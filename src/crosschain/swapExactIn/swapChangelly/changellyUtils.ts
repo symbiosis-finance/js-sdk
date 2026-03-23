@@ -9,7 +9,7 @@ export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token)
     const address = isSolanaChainId(token.chainId) ? (token.solAddress || token.address) : token.address
     const key = token.isNative
         ? `${token.chainId}:native`
-        : `${token.chainId}:${address.toLowerCase()}`
+        : `${token.chainId}:${isSolanaChainId(token.chainId) ? address : address.toLowerCase()}`
 
     // Fast path: hardcoded map
     const ticker = CHANGELLY_TRANSIT_TOKEN_MAP.get(key)
@@ -44,7 +44,10 @@ async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, str
                 if (chainId === undefined) continue
 
                 if (currency.contractAddress) {
-                    map.set(`${chainId}:${currency.contractAddress.toLowerCase()}`, currency.ticker)
+                    const contractKey = isSolanaChainId(chainId)
+                        ? currency.contractAddress
+                        : currency.contractAddress.toLowerCase()
+                    map.set(`${chainId}:${contractKey}`, currency.ticker)
                 } else {
                     map.set(`${chainId}:native`, currency.ticker)
                 }

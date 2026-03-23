@@ -11,7 +11,7 @@ import { JettonMaster } from '@ton/ton'
 import TronWeb from 'tronweb'
 
 import { Token, TokenAmount } from '../../../entities'
-import { isTonChainId, isTronChainId } from '../../chainUtils'
+import { isEvmChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import { isSolanaChainId, getSolanaConnection } from '../../chainUtils/solana'
 import { ChangellyError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
@@ -214,6 +214,10 @@ export async function buildChangellyTradeTx(
         return { type: 'tron', tx, changelly: changellyData }
     }
 
+    if (!isEvmChainId(chainId)) {
+        throw new ChangellyError(`Unsupported source chain: ${chainId}`)
+    }
+
     const tx = buildEvmTransfer(depositAddress, token, amount, chainId)
     return { type: 'evm', tx, changelly: changellyData }
 }
@@ -279,23 +283,19 @@ function buildEvmTransfer(
 }
 
 function buildTronTransfer(depositAddress: string, token: Token, amount: string, ownerAddress: string): TronTxData {
-    const tronAddress = TronWeb.address.fromHex(depositAddress)
-
-    const tronOwner = TronWeb.address.fromHex(ownerAddress)
-
     if (token.isNative) {
         return {
             chain_id: token.chainId,
             call_value: amount,
-            contract_address: tronAddress,
+            contract_address: depositAddress,
             fee_limit: TRON_TRANSFER_FEE_LIMIT,
             function_selector: '',
-            owner_address: tronOwner,
+            owner_address: ownerAddress,
             raw_parameter: '',
         }
     }
 
-    const toParam = TronWeb.address.toHex(tronAddress).replace(/^41/, '').padStart(64, '0')
+    const toParam = TronWeb.address.toHex(depositAddress).replace(/^41/, '').padStart(64, '0')
     const amountParam = BigInt(amount).toString(16).padStart(64, '0')
     return {
         chain_id: token.chainId,
@@ -303,7 +303,7 @@ function buildTronTransfer(depositAddress: string, token: Token, amount: string,
         contract_address: TronWeb.address.fromHex(token.address),
         fee_limit: TRON_TRANSFER_FEE_LIMIT,
         function_selector: 'transfer(address,uint256)',
-        owner_address: tronOwner,
+        owner_address: ownerAddress,
         raw_parameter: `${toParam}${amountParam}`,
     }
 }

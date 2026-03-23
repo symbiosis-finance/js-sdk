@@ -139,7 +139,7 @@ export class Symbiosis {
     public readonly oneInchConfig: OneInchConfig
     public readonly volumeFeeCollectors: VolumeFeeCollector[]
     public readonly openOceanConfig: OpenOceanConfig
-    public readonly changellyConfig: ChangellyConfig
+    private readonly changellyConfig: ChangellyConfig
     public readonly changelly: ChangellyClient
 
     public readonly fetch: typeof fetch
