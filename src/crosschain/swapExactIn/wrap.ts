@@ -65,6 +65,7 @@ export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult
         priceImpact: new Percent('0', BIPS_BASE),
         approveTo,
         fees: [],
+        labels: [],
         routes: [
             {
                 provider: SymbiosisTradeType.WRAP,

@@ -55,6 +55,7 @@ export async function stonfiSwap({
             ],
         },
         fees: trade.fees ?? [],
+        labels: [],
         routes: [
             {
                 provider: SymbiosisTradeType.STONFI,

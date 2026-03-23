@@ -121,6 +121,7 @@ function baseResult(params: SwapExactInParams, estimate: ChangellyEstimateResult
             },
         ],
         fees: estimate.fees,
+        labels: [],
     }
 }
 

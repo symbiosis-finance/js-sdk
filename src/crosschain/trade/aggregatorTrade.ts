@@ -9,7 +9,8 @@ import { IzumiTrade } from './izumiTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import type { SymbiosisTradeType, SymbiosisTradeParams } from './symbiosisTrade'
+import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { withTracing } from '../tracing'
@@ -19,6 +20,7 @@ type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trad
 export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
+    origin?: Address
     clientId: string
     deadline: number // epoch
     preferOneInchUsage?: boolean
@@ -135,7 +137,7 @@ function withTimeout<T>(promise: Promise<T>, name: string, timeout: number = 30_
     })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging,@typescript-eslint/no-empty-object-type
 export interface AggregatorTrade extends AggregatorTradeParams {}
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class AggregatorTrade extends SymbiosisTrade {
@@ -157,6 +159,7 @@ export class AggregatorTrade extends SymbiosisTrade {
     public async init() {
         const {
             from,
+            origin,
             slippage,
             symbiosis,
             deadline,
@@ -202,6 +205,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 tokenAmountInMin,
                 tokenOut,
                 from,
+                origin,
                 to,
                 slippage,
                 protocols: oneInchProtocols,
@@ -222,7 +226,11 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(openOceanTrade.init(), 'OpenOcean')
         }
 
-        if (isOtherClient && IzumiTrade.isSupported(tokenAmountIn.token.chainId) && IzumiTrade.isAllowed(disabledProviders)) {
+        if (
+            isOtherClient &&
+            IzumiTrade.isSupported(tokenAmountIn.token.chainId) &&
+            IzumiTrade.isAllowed(disabledProviders)
+        ) {
             const izumiTrade = new IzumiTrade({
                 symbiosis,
                 tokenAmountIn,
@@ -235,7 +243,11 @@ export class AggregatorTrade extends SymbiosisTrade {
             trades.push(izumiTrade.init(), 'Izumi')
         }
 
-        if (isOtherClient && UniV3Trade.isSupported(tokenAmountIn.token.chainId) && UniV3Trade.isAllowed(disabledProviders)) {
+        if (
+            isOtherClient &&
+            UniV3Trade.isSupported(tokenAmountIn.token.chainId) &&
+            UniV3Trade.isAllowed(disabledProviders)
+        ) {
             const uniV3Trade = new UniV3Trade({
                 symbiosis,
                 tokenAmountIn,

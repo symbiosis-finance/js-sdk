@@ -76,6 +76,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
                 value: fee,
             },
         ],
+        labels: [],
         routes: [
             {
                 provider: SymbiosisTradeType.SYMBIOSIS,

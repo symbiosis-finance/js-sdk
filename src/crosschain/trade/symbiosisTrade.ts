@@ -5,6 +5,7 @@ import { TokenAmount } from '../../entities'
 import { TradeError } from '../sdkError'
 import type { Address, FeeItem } from '../types'
 import { BIPS_BASE } from '../constants'
+import { getValueCategory } from '../labels'
 
 export enum SymbiosisTradeType {
     UNI_V2 = 'uni-v2',
@@ -92,6 +93,10 @@ export abstract class SymbiosisTrade {
 
     get tradeType(): SymbiosisTradeType {
         throw new TradeError('Implement me')
+    }
+
+    get isMixedValue(): boolean {
+        return getValueCategory(this.tokenAmountIn.token) !== getValueCategory(this.tokenOut)
     }
 
     public async init(): Promise<this> {

@@ -140,6 +140,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
         tokenAmountOutMin: burnCall.amountOutMin,
         priceImpact,
         approveTo,
+        labels: [],
         routes: calls.map((i) => i.routes).flat(),
         fees: calls.map((i) => i.fees).flat(),
         transactionType: 'evm',

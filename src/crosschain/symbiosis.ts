@@ -92,6 +92,7 @@ import {
     waitForBtcCommitTxMined,
     waitForBtcDepositAccepted,
     waitForBtcEvmTxIssued,
+    waitForChainFlipTxComplete,
     waitForComplete,
     waitFromTonTxMined,
 } from './waitForComplete'
@@ -795,6 +796,10 @@ export class Symbiosis {
 
     public async waitFromTonTxMined(address: string, contractAddress: string) {
         return waitFromTonTxMined({ symbiosis: this, address, contractAddress })
+    }
+
+    public async waitForChainFlipTxComplete(txHash: string) {
+        return waitForChainFlipTxComplete({ txHash })
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {

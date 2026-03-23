@@ -48,6 +48,14 @@ const Blast_ETH = GAS_TOKEN[ChainId.BLAST_MAINNET]
 const Base_ETH = GAS_TOKEN[ChainId.BASE_MAINNET]
 const Base_WETH = WETH[ChainId.BASE_MAINNET]
 
+const BNB_BNB = GAS_TOKEN[ChainId.BSC_MAINNET]
+const BNB_ETH = new Token({
+    name: 'ETH',
+    address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
+    chainId: ChainId.BSC_MAINNET,
+    decimals: 18,
+})
+
 const Arbitrum_ETH = GAS_TOKEN[ChainId.ARBITRUM_MAINNET]
 const Arbitrum_WETH = WETH[ChainId.ARBITRUM_MAINNET]
 const Arbitrum_USDC = new Token({
@@ -81,6 +89,23 @@ describe('#getRoutes', () => {
             const result = results[0]
             expect(result.optimal).toEqual(true)
             shouldGoViaEth(result, ChainId.ETH_MAINNET, ChainId.BASE_MAINNET)
+        })
+        test('Base.ETH -> BNB.BNB', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: Base_ETH,
+                tokenOut: BNB_BNB,
+            })
+            expect(results.length).not.toEqual(0)
+            const result = results[0]
+            expect(result.optimal).toEqual(true)
+            expect(result.poolConfig.coinGeckoId).toEqual('weth')
+
+            expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.BASE_MAINNET)
+            expect(result.transitTokenIn.address).toStrictEqual(WETH[ChainId.BASE_MAINNET].address)
+
+            expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.BSC_MAINNET)
+            expect(result.transitTokenOut.address).toStrictEqual(BNB_ETH.address)
         })
 
         test('Ethereum.WETH -> Base.WETH', () => {
@@ -162,14 +187,14 @@ describe('#getRoutes', () => {
             })
             expect(results.length).not.toEqual(0)
             const result = results[0]
-            expect(result.optimal).toEqual(true)
-            expect(result.poolConfig.coinGeckoId).toEqual('symbiosis-finance')
+            expect(result.optimal).toEqual(false)
+            expect(result.poolConfig.coinGeckoId).toEqual('usd-coin')
 
             expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.ETH_MAINNET)
-            expect(result.transitTokenIn.address).toStrictEqual(Ethereum_SIS.address)
+            expect(result.transitTokenIn.address).toStrictEqual(Ethereum_USDC.address)
 
             expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.ARBITRUM_MAINNET)
-            expect(result.transitTokenOut.address).toStrictEqual(Arbitrum_SIS.address)
+            expect(result.transitTokenOut.address).toStrictEqual(Arbitrum_USDC.address)
         })
         test('Arbitrum.USDT -> Ethereum.SIS', () => {
             const results = getRoutes({

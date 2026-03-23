@@ -17,6 +17,7 @@ export const ZERO_FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> 
     [ChainId.BSC_MAINNET]: '0x628613064b1902a1A422825cf11B687C6f17961E',
     [ChainId.RSK_MAINNET]: '0xa257f3fe4e4032291516dc355edf90664e9eb932',
     [ChainId.CITREA_MAINNET]: '0x45CFd6FB7999328F189aaD2739Fba4Be6C45E5bf',
+    [ChainId.ETH_MAINNET]: '0x92114294E42A96C9eF3163DA18Ee7eFdbA6cc661',
 }
 
 export const FEE_COLLECTOR_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
@@ -106,7 +107,12 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     }
 
     // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap({ ...params, tokenAmountIn: inTokenAmount, from: feeCollectorAddress })
+    const result = await onchainSwap({
+        ...params,
+        tokenAmountIn: inTokenAmount,
+        origin: params.from,
+        from: feeCollectorAddress,
+    })
 
     let value: string = ''
     let callData: BytesLike = ''

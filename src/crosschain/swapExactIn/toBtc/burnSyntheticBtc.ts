@@ -4,7 +4,15 @@ import { theBest } from '../utils'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 
 export async function burnSyntheticBtc(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, symbiosis, to, selectMode, disableSrcChainRouting, disableDstChainRouting, disabledProviders } = context
+    const {
+        tokenAmountIn,
+        symbiosis,
+        to,
+        selectMode,
+        disableSrcChainRouting,
+        disableDstChainRouting,
+        disabledProviders,
+    } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
@@ -36,7 +44,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                 })
                 combinations.forEach(({ transitTokenIn, transitTokenOut }) => {
                     const zappingBtc = new ZappingBtc(symbiosis, poolConfig)
-                    const { from, slippage, deadline, partnerAddress } = context
+                    const { from, slippage, deadline, partnerAddress, fallbackReceiver } = context
 
                     const promise = zappingBtc.exactIn({
                         tokenAmountIn,
@@ -48,6 +56,7 @@ export async function burnSyntheticBtc(context: SwapExactInParams): Promise<Swap
                         transitTokenIn,
                         transitTokenOut,
                         partnerAddress,
+                        fallbackReceiver,
                         disabledProviders,
                     })
                     promises.push(promise)

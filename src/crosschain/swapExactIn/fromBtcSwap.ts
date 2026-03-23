@@ -37,6 +37,8 @@ import type {
     SwapExactInResult,
 } from '../types'
 import { SymbiosisTradeType } from '../trade'
+import { computeOnchainDstLabels } from '../labels'
+import type { SwapLabel } from '../labels'
 import { isUseOneInchOnly } from '../utils'
 import { crosschainSwap } from './crosschainSwap'
 import { theBest } from './utils'
@@ -102,6 +104,7 @@ interface BuildBtcTailResult {
     priceImpact: Percent
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
+    labels: SwapLabel[]
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
 }
@@ -218,6 +221,7 @@ class FromBtcTrader {
             tokenAmountOutMin,
             priceImpact,
             routes,
+            labels,
             tradeA,
             tradeC,
         } = await this.buildTail(context, syBtcAmount, syBtcAmountMin)
@@ -262,6 +266,7 @@ class FromBtcTrader {
                 },
                 ...routes,
             ],
+            labels,
             fees,
             tradeA,
             tradeC,
@@ -369,6 +374,9 @@ class FromBtcTrader {
         const data = symbtcIface.encodeFunctionData('packBTCTransactionTail' as any, [tailArgs] as any)
         const tail = calldataWithoutSelector(data)
 
+        // Propagate labels from the inner crosschain result, or compute from the onchain leg
+        const labels: SwapLabel[] = crossChain?.labels ?? (onChain ? computeOnchainDstLabels(onChain) : [])
+
         return {
             tail,
             fees,
@@ -376,6 +384,7 @@ class FromBtcTrader {
             priceImpact,
             tokenAmountOut,
             tokenAmountOutMin,
+            labels,
             tradeA: onChain || crossChain?.tradeA,
             tradeC: crossChain?.tradeC,
         }
@@ -610,6 +619,7 @@ async function makeAggregatorTrade(context: SwapExactInParams, tokenAmountIn: To
         from: context.to, // there is no from address, set user's address
         clientId: context.symbiosis.clientId,
         preferOneInchUsage: isUseOneInchOnly(context),
+        disabledProviders: context.disabledProviders,
     })
     await aggregatorTrade.init()
     return aggregatorTrade

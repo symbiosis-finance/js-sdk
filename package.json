@@ -1,7 +1,7 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "3.10.7",
-    "typings": "dist/index.d.ts",
+    "version": "3.10.21",
+    "typings": "dist/esm/index.d.ts",
     "files": [
         "dist"
     ],
@@ -15,21 +15,25 @@
     },
     "type": "module",
     "main": "./dist/cjs/index.js",
-    "module": "./dist/index.js",
+    "module": "./dist/esm/index.js",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
+            "types": "./dist/esm/index.d.ts",
+            "node": "./dist/cjs/index.js",
+            "import": "./dist/esm/index.js",
             "require": "./dist/cjs/index.js"
         },
         "./*": {
-            "types": "./dist/*.d.ts",
-            "import": "./dist/*.js",
+            "types": "./dist/esm/*.d.ts",
+            "node": "./dist/cjs/*.js",
+            "import": "./dist/esm/*.js",
             "require": "./dist/cjs/*.js"
         }
     },
     "scripts": {
-        "build": "rm -fr ./dist && tsc && fix-esm-import-path dist && tsc -p tsconfig.cjs.json --noCheck && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+        "build": "rm -fr ./dist && npm run build-esm && npm run build-cjs",
+        "build-esm": "rm -fr ./dist/esm && tsc && fix-esm-import-path dist/esm",
+        "build-cjs": "rm -fr ./dist/cjs && tsc -p tsconfig.cjs.json --noCheck && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
         "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
@@ -40,7 +44,7 @@
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
-        "@chainflip/sdk": "^1.11.2",
+        "@chainflip/sdk": "^2.1.1",
         "@dedust/sdk": "^0.8.7",
         "@ethersproject/abi": "^5.8.0",
         "@ethersproject/address": "^5.8.0",

@@ -133,6 +133,24 @@ export const config: Config = {
             },
             forwarderUrl: 'https://btc-forwarder.symbiosis.finance/citrea/forwarder/api/v1',
         },
+        {
+            btc: new Token({
+                name: 'Bitcoin',
+                symbol: 'BTC',
+                address: '0x85a8741794a22a9b3d2adb2c6cec605b6232b2e8',
+                chainId: ChainId.BTC_MAINNET,
+                decimals: 8,
+                icons: {
+                    large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                    small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
+                },
+            }),
+            symBtc: {
+                address: '0x4e70A309eB5c60528cC984f4D3eb508935889B7d',
+                chainId: ChainId.ETH_MAINNET,
+            },
+            forwarderUrl: 'https://btc-forwarder.symbiosis.finance/eth/forwarder/api/v1',
+        },
     ],
     chains: [
         {
@@ -269,6 +287,17 @@ export const config: Config = {
                         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
                     },
                 },
+                {
+                    name: 'Symbiosis BTC',
+                    symbol: 'syBTC',
+                    address: '0x01a8b61E7b03891a736B5DF865E0EF9C511850ad',
+                    chainId: ChainId.ETH_MAINNET,
+                    decimals: 8,
+                    icons: {
+                        large: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                        small: 'https://assets.coingecko.com/coins/images/50472/standard/NewOption_06.png?1727849200',
+                    },
+                },
             ],
             router: '0x0000000000000000000000000000000000000000',
             dexFee: 0,
@@ -279,6 +308,22 @@ export const config: Config = {
             portal: '0xb8f275fBf7A959F4BCE59999A2EF122A099e81A8',
             fabric: '0xbBFb7cb70f84fb6fE1Cb13e42A0B71EFDe769428',
             multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0x84DEB7FC54a1F734aEF6DDC0C0F74182BDF941a8',
+                btcRefundUnlocker: '0x9a99eb7e9794Ef5A7c00C87D64eE067CFC10c9F0',
+                branchedUnlocker: '0x22278Fe9A52a8CCB3A914F3f61bB6c70fe5fd9A1',
+                timedUnlocker: '0xEc148F80d699b0eAF65dd5438CdE4b380DeD8a3b',
+                timedSwapUnlocker: '0x6B6B4573Dc625BE635843aB8800becDEc38D1987',
+                withdrawUnlocker: '0xcd108089057dD0e9f841eb9e00fCF5105534341E',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.BSC_MAINNET,
@@ -1356,6 +1401,22 @@ export const config: Config = {
             portal: '0x5aa5f7f84ed0e5db0a4a85c3947ea16b53352fd4',
             fabric: '0x7775b274f0c3fa919b756b22a4d9674e55927ab8',
             multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9',
+            depository: {
+                priceEstimation: {
+                    enabled: true,
+                    slippageMax: 0.02,
+                    slippageNorm: 0.001,
+                },
+                depository: '0x84DEB7FC54a1F734aEF6DDC0C0F74182BDF941a8',
+                btcRefundUnlocker: '0x6Cc4BBC663bC576af5E95bC85337f895C8ba1D88',
+                branchedUnlocker: '0x22278Fe9A52a8CCB3A914F3f61bB6c70fe5fd9A1',
+                timedUnlocker: '0xEc148F80d699b0eAF65dd5438CdE4b380DeD8a3b',
+                timedSwapUnlocker: '0x6B6B4573Dc625BE635843aB8800becDEc38D1987',
+                withdrawUnlocker: '0xcd108089057dD0e9f841eb9e00fCF5105534341E',
+                minAmountDelay: 600, // 10 mins
+                refundDelay: 1800, // 30 mins
+                withdrawDelay: 3600, // 60 mins
+            },
         },
         {
             id: ChainId.BLAST_MAINNET,

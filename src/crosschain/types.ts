@@ -8,7 +8,8 @@ import type { TronTransactionData } from './chainUtils'
 import type { ConfigCacheData } from './config/cache/builder'
 import type { PartnerFeeCollector } from './contracts'
 import type { Symbiosis } from './symbiosis'
-import { SymbiosisTradeType } from './trade'
+import type { SwapLabel } from './labels'
+import type { SymbiosisTradeType } from './trade'
 import type { OneInchProtocols } from './trade/oneInchTrade'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
 
@@ -192,6 +193,7 @@ export interface SwapExactInParams {
     tokenAmountInMin?: TokenAmount
     tokenOut: Token
     from: Address
+    origin?: Address // in terms of 1inch it's a sender of the tx
     to: Address
     slippage: number
     deadline: number
@@ -203,7 +205,8 @@ export interface SwapExactInParams {
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
     partnerAddress?: EvmAddress
-    refundAddress?: string
+    refundAddress?: Address
+    fallbackReceiver?: EvmAddress
     generateBtcDepositAddress?: boolean
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean
@@ -311,6 +314,7 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     approveTo: string
     routes: RouteItem[]
     fees: FeeItem[]
+    labels: SwapLabel[]
 
     amountInUsd?: TokenAmount
     timeLog?: ProfilerItem[]

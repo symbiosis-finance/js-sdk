@@ -1,37 +1,23 @@
-import { ChainId } from '../../../constants'
-import { GAS_TOKEN } from '../../../entities'
 import { ChainFlipError } from '../../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
-import type { ChainFlipConfig, ChainFlipToken } from './types'
-import { ChainFlipAssetId, ChainFlipChainId } from './types'
-import { ARB_USDC, CF_ARB_USDC, CF_ETH_USDC, ETH_USDC } from './utils'
+import type { ChainFlipConfig } from './types'
+import { CF_ARB_USDC, CF_BTC_BTC, CF_ETH_USDC } from './utils'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
 import { ZappingOnChainChainFlip } from './zappingOnChainChainFlip'
 
-const CF_BTC_BTC: ChainFlipToken = {
-    chainId: ChainFlipChainId.Bitcoin,
-    assetId: ChainFlipAssetId.BTC,
-    chain: 'Bitcoin',
-    asset: 'BTC',
-}
-
 const CONFIGS: ChainFlipConfig[] = [
     {
-        tokenIn: ARB_USDC,
-        tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_ARB_USDC,
-        dest: CF_BTC_BTC,
+        dst: CF_BTC_BTC,
     },
     {
-        tokenIn: ETH_USDC,
-        tokenOut: GAS_TOKEN[ChainId.BTC_MAINNET],
         src: CF_ETH_USDC,
-        dest: CF_BTC_BTC,
+        dst: CF_BTC_BTC,
     },
 ]
 
-export const CHAIN_FLIP_BTC_TOKENS = CONFIGS.map((i) => i.tokenIn)
+export const CHAIN_FLIP_TO_BTC_TOKENS_IN = CONFIGS.map((i) => i.src.token)
 
 export async function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
@@ -43,14 +29,14 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
         throw new ChainFlipError('No USD pool found')
     }
 
-    const CF_CONFIGS = CONFIGS.filter((config) => config.tokenOut.equals(tokenOut))
+    const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
     if (!CF_CONFIGS.length) {
         throw new ChainFlipError('No config found for tokenOut')
     }
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    if (CF_CONFIGS.some((config) => config.tokenIn.chainId === tokenAmountIn.token.chainId)) {
+    if (CF_CONFIGS.some((config) => config.src.token.chainId === tokenAmountIn.token.chainId)) {
         const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
         promises.push(...onChainPromises)
     }
