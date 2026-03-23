@@ -1,4 +1,16 @@
 export { AggregatorTrade, AggregatorTradeParams } from './aggregatorTrade'
+export {
+    CHANGELLY_NATIVE_DECIMALS,
+    isChangellyNativeChainId,
+    isChangellySupportedChainId,
+    isChangellyTradeChainId,
+} from '../swapExactIn/swapChangelly/constants'
+export {
+    buildChangellyTradeTx,
+    createChangellyDeposit,
+    getChangellyEstimate,
+} from '../swapExactIn/swapChangelly/changellyTrade'
+export type { BuildChangellyTradeTxParams, BuildChangellyTradeTxResult, ChangellyEstimateResult, CreateChangellyDepositParams } from '../swapExactIn/swapChangelly/changellyTrade'
 export { DedustTrade } from './dedustTrade'
 export { IzumiTrade } from './izumiTrade'
 export { JupiterTrade } from './jupiterTrade'

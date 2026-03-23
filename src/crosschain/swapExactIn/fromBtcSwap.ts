@@ -402,7 +402,7 @@ class FromBtcTrader {
                     tokenAmountIn: syBtcAmount,
                     tokenAmountInMin: syBtcAmountMin,
                 },
-                refundAddress: context.refundAddress,
+                refundAddress: context.refundAddress as BtcAddress | undefined,
                 depositParams: {
                     to: context.to,
                     extraBranches: [],
@@ -463,7 +463,7 @@ class FromBtcTrader {
                         tokenAmountInMin: syBtcAmountMin,
                         slippage: swapExactInResult.tradeA.slippage, // use slippage from tradeA that replaced by depository
                     },
-                    refundAddress: context.refundAddress,
+                    refundAddress: context.refundAddress as BtcAddress | undefined,
                     depositParams: {
                         ...context,
                         tokenAmountIn: syBtcAmount,

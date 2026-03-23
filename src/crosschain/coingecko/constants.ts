@@ -52,6 +52,15 @@ export const COINGECKO_PLATFORMS = new Map([
     [ChainId.MONAD_MAINNET, 'monad'],
     [ChainId.CITREA_MAINNET, 'ethereum'], // TODO change to a correct platform
     [ChainId.QUAI_MAINNET, 'quai-network'],
+    [ChainId.XMR_MAINNET, 'monero'],
+    [ChainId.XLM_MAINNET, 'stellar'],
+    [ChainId.XRP_MAINNET, 'ripple'],
+    [ChainId.ADA_MAINNET, 'cardano'],
+    [ChainId.BCH_MAINNET, 'bitcoin-cash'],
+    [ChainId.SUI_MAINNET, 'sui'],
+    [ChainId.DOGE_MAINNET, 'dogecoin'],
+    [ChainId.LTC_MAINNET, 'litecoin'],
+    [ChainId.CANTON_MAINNET, 'canton'],
 ])
 
 export const COINGECKO_GAS_TOKEN_IDS = new Map([
@@ -107,4 +116,13 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.MONAD_MAINNET, 'monad'],
     [ChainId.CITREA_MAINNET, 'bitcoin'], // TODO update if needed
     [ChainId.QUAI_MAINNET, 'quai-network'],
+    [ChainId.XMR_MAINNET, 'monero'],
+    [ChainId.XLM_MAINNET, 'stellar'],
+    [ChainId.XRP_MAINNET, 'ripple'],
+    [ChainId.ADA_MAINNET, 'cardano'],
+    [ChainId.BCH_MAINNET, 'bitcoin-cash'],
+    [ChainId.SUI_MAINNET, 'sui'],
+    [ChainId.DOGE_MAINNET, 'dogecoin'],
+    [ChainId.LTC_MAINNET, 'litecoin'],
+    [ChainId.CANTON_MAINNET, 'canton'],
 ])

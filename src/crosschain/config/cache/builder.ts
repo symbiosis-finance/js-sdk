@@ -7,6 +7,7 @@ import type { TokenConstructor } from '../../../entities'
 import { Token } from '../../../entities'
 import ERC20 from '../../abis/ERC20.json' with { type: 'json' }
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
+import { isChangellyNativeChainId } from '../../swapExactIn/swapChangelly/constants'
 import type { Bridge, Fabric, MetaRouter, OmniPool, Portal, Synthesis } from '../../contracts'
 import {
     Bridge__factory,
@@ -65,11 +66,13 @@ export class Builder {
         }
 
         this.providers = new Map(
-            this.config.chains.map((chainConfig) => {
-                const rpc = isTronChainId(chainConfig.id) ? `${chainConfig.rpc}/jsonrpc` : chainConfig.rpc
+            this.config.chains
+                .filter((chainConfig) => !isChangellyNativeChainId(chainConfig.id))
+                .map((chainConfig) => {
+                    const rpc = isTronChainId(chainConfig.id) ? `${chainConfig.rpc}/jsonrpc` : chainConfig.rpc
 
-                return [chainConfig.id, new StaticJsonRpcProvider(rpc, chainConfig.id)]
-            })
+                    return [chainConfig.id, new StaticJsonRpcProvider(rpc, chainConfig.id)]
+                })
         )
     }
 
@@ -102,11 +105,12 @@ export class Builder {
         const chains = this.config.chains
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
-            const bridge = this.bridge(chain.id)
 
-            if (isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
+            if (isTonChainId(chain.id) || isSolanaChainId(chain.id) || isChangellyNativeChainId(chain.id)) {
                 continue
             }
+
+            const bridge = this.bridge(chain.id)
 
             if (chain.portal !== AddressZero) {
                 const ok = await bridge.isTransmitter(chain.portal)
@@ -130,7 +134,7 @@ export class Builder {
         for (let i = 0; i < chains.length; i++) {
             const chain = chains[i]
 
-            if (isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
+            if (isTonChainId(chain.id) || isSolanaChainId(chain.id) || isChangellyNativeChainId(chain.id)) {
                 continue
             }
             const portal = this.portal(chain.id)
@@ -181,7 +185,12 @@ export class Builder {
         const promises = chains.map(async (chain) => {
             const metaRouterAddressFromConfig = chain.metaRouter.toLowerCase()
 
-            if (isBtcChainId(chain.id) || isTonChainId(chain.id) || isSolanaChainId(chain.id)) {
+            if (
+                isBtcChainId(chain.id) ||
+                isTonChainId(chain.id) ||
+                isSolanaChainId(chain.id) ||
+                isChangellyNativeChainId(chain.id)
+            ) {
                 return
             }
 
@@ -198,7 +207,8 @@ export class Builder {
                 synthesis.address !== AddressZero &&
                 chain.id !== ChainId.ARBITRUM_MAINNET &&
                 chain.id !== ChainId.ZKSYNC_MAINNET &&
-                chain.id !== ChainId.BSC_MAINNET
+                chain.id !== ChainId.BSC_MAINNET &&
+                chain.id !== ChainId.ETH_MAINNET
             ) {
                 synthesisMetaRouter = (await synthesis.callStatic.metaRouter()).toLowerCase()
             }

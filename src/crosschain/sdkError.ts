@@ -67,6 +67,9 @@ export class AmountLessThanFeeError extends LimitError {}
 // advisor
 export class AdvisorError extends SdkError {}
 
+// Changelly
+export class ChangellyError extends SdkError {}
+
 // ChainFlip
 export class ChainFlipError extends SdkError {}
 

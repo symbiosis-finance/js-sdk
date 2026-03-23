@@ -99,15 +99,10 @@
             "coinGeckoId": "bitcoin",
             "id": 2,
             "tokens": [
-                { "index": 0, "tokenId": 118 },
                 { "index": 1, "tokenId": 124 },
-                { "index": 2, "tokenId": 139 },
                 { "index": 3, "tokenId": 175 },
                 { "index": 4, "tokenId": 177 },
-                { "index": 5, "tokenId": 179 },
-                { "index": 6, "tokenId": 141 },
-                { "index": 7, "tokenId": 190 },
-                { "index": 8, "tokenId": 195 }
+                { "index": 7, "tokenId": 190 }
             ]
         },
         {

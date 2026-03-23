@@ -68,8 +68,10 @@ import {
 } from './sdkError'
 import { swapExactIn } from './swapExactIn'
 import { SwappingMiddleware } from './swapping'
+import { ChangellyClient } from './swapExactIn/swapChangelly/changellyClient'
 import type {
     BtcConfig,
+    ChangellyConfig,
     ChainConfig,
     Config,
     CounterParams,
@@ -136,6 +138,8 @@ export class Symbiosis {
     public readonly oneInchConfig: OneInchConfig
     public readonly volumeFeeCollectors: VolumeFeeCollector[]
     public readonly openOceanConfig: OpenOceanConfig
+    public readonly changellyConfig: ChangellyConfig
+    public readonly changelly: ChangellyClient
 
     public readonly fetch: typeof fetch
     public readonly coinGecko: CoinGecko
@@ -292,13 +296,20 @@ export class Symbiosis {
         if (overrideConfig?.openOceanConfig) {
             this.openOceanConfig = { ...this.openOceanConfig, ...overrideConfig.openOceanConfig }
         }
-
+        this.changellyConfig = {
+            apiUrl: 'https://api.changelly.com/v2',
+            privateKey: '', // <PUT_YOUR_PRIVATE_KEY_HERE>
+        }
+        if (overrideConfig?.changellyConfig) {
+            this.changellyConfig = { ...this.changellyConfig, ...overrideConfig.changellyConfig }
+        }
         this.volumeFeeCollectors = VOLUME_FEE_COLLECTORS
         if (overrideConfig?.volumeFeeCollectors) {
             this.volumeFeeCollectors = overrideConfig.volumeFeeCollectors
         }
 
         this.fetch = overrideConfig?.fetch ?? defaultFetch
+        this.changelly = new ChangellyClient(this.changellyConfig, this.fetch)
 
         this.cache = overrideConfig?.cache || new Cache()
         this.configCache = new ConfigCache(overrideConfig?.configCache || configName)

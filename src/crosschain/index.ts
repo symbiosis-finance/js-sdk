@@ -1,4 +1,5 @@
 export * from './cache'
+export { ChangellyClient } from './swapExactIn/swapChangelly/changellyClient'
 export * from './chainUtils'
 export * from './coingecko'
 export * from './config'
@@ -14,7 +15,19 @@ export { CHAIN_FLIP_BTC_TOKENS, CHAIN_FLIP_SOL_TOKENS, FEE_COLLECTOR_ADDRESSES, 
 export * from './swapping'
 export * from './symbiosis'
 export * from './tracing'
-export { AggregatorTrade, AggregatorTradeParams, FILTERABLE_PROVIDERS, IzumiTrade, SymbiosisTradeType } from './trade'
+export {
+    AggregatorTrade,
+    AggregatorTradeParams,
+    buildChangellyTradeTx,
+    createChangellyDeposit,
+    FILTERABLE_PROVIDERS,
+    IzumiTrade,
+    SymbiosisTradeType,
+    isChangellyNativeChainId,
+    isChangellySupportedChainId,
+    isChangellyTradeChainId,
+} from './trade'
+export type { BuildChangellyTradeTxParams, BuildChangellyTradeTxResult, CreateChangellyDepositParams } from './trade'
 export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
 export * from './types'
 export * from './utils'

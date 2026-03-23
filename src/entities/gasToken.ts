@@ -117,4 +117,13 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.MONAD_MAINNET]: GAS(ChainId.MONAD_MAINNET, 'MON', 30495),
     [ChainId.CITREA_MAINNET]: GAS(ChainId.CITREA_MAINNET, 'CBTC', 1), // TODO change iconId
     [ChainId.QUAI_MAINNET]: GAS(ChainId.QUAI_MAINNET, 'QUAI', 22354),
+    [ChainId.XLM_MAINNET]: GAS(ChainId.XLM_MAINNET, 'XLM', 512, 7),
+    [ChainId.XRP_MAINNET]: GAS(ChainId.XRP_MAINNET, 'XRP', 52, 6),
+    [ChainId.XMR_MAINNET]: GAS(ChainId.XMR_MAINNET, 'XMR', 328, 12),
+    [ChainId.ADA_MAINNET]: GAS(ChainId.ADA_MAINNET, 'ADA', 2010, 6),
+    [ChainId.BCH_MAINNET]: GAS(ChainId.BCH_MAINNET, 'BCH', 1831, 8),
+    [ChainId.SUI_MAINNET]: GAS(ChainId.SUI_MAINNET, 'SUI', 20947, 9),
+    [ChainId.CANTON_MAINNET]: GAS(ChainId.CANTON_MAINNET, 'CC', 37263, 10), // blockchainPrecision: 10 per Changelly
+    [ChainId.DOGE_MAINNET]: GAS(ChainId.DOGE_MAINNET, 'DOGE', 74, 8),
+    [ChainId.LTC_MAINNET]: GAS(ChainId.LTC_MAINNET, 'LTC', 2, 8),
 }

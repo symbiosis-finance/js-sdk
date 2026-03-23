@@ -29,6 +29,7 @@ interface ZappingBtcExactInParams {
     transitTokenIn: Token
     transitTokenOut: Token
     partnerAddress?: EvmAddress
+    disabledProviders?: SymbiosisTradeType[]
 }
 
 export class ZappingBtc extends BaseSwapping {
@@ -81,6 +82,7 @@ export class ZappingBtc extends BaseSwapping {
         transitTokenIn,
         transitTokenOut,
         partnerAddress,
+        disabledProviders,
     }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
         if (!syBtc.chainFromId) {
             throw new SdkError('syBtc is not synthetic')
@@ -110,6 +112,7 @@ export class ZappingBtc extends BaseSwapping {
             transitTokenOut,
             partnerAddress,
             depositoryEnabled: false,
+            disabledProviders,
         })
 
         let amountOut = result.tokenAmountOut
