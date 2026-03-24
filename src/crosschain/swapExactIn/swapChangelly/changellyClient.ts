@@ -118,5 +118,4 @@ export class ChangellyClient {
         const result: TransactionResponse[] = await this.request('getTransactions', { id: changellyTxId })
         return result[0]
     }
-
 }

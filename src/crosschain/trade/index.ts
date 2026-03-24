@@ -10,7 +10,12 @@ export {
     createChangellyDeposit,
     getChangellyEstimate,
 } from '../swapExactIn/swapChangelly/changellyTrade'
-export type { BuildChangellyTradeTxParams, BuildChangellyTradeTxResult, ChangellyEstimateResult, CreateChangellyDepositParams } from '../swapExactIn/swapChangelly/changellyTrade'
+export type {
+    BuildChangellyTradeTxParams,
+    BuildChangellyTradeTxResult,
+    ChangellyEstimateResult,
+    CreateChangellyDepositParams,
+} from '../swapExactIn/swapChangelly/changellyTrade'
 export { DedustTrade } from './dedustTrade'
 export { IzumiTrade } from './izumiTrade'
 export { JupiterTrade } from './jupiterTrade'

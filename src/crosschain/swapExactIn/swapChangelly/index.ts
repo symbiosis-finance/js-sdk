@@ -6,11 +6,7 @@ export {
     isChangellySupportedChainId,
     isChangellyTradeChainId,
 } from './constants'
-export {
-    buildChangellyTradeTx,
-    createChangellyDeposit,
-    getChangellyEstimate,
-} from './changellyTrade'
+export { buildChangellyTradeTx, createChangellyDeposit, getChangellyEstimate } from './changellyTrade'
 export type {
     BuildChangellyTradeTxParams,
     BuildChangellyTradeTxResult,

@@ -5,10 +5,7 @@ import { BIPS_BASE } from '../../constants'
 import { ChangellyError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
-import {
-    isChangellyNativeChainId,
-    isChangellyTradeChainId,
-} from './constants'
+import { isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
 import {
     type BuildChangellyTradeTxResult,
     buildChangellyTradeTx,
