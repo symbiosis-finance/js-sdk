@@ -1,6 +1,5 @@
 import type { TransactionRequest } from '@ethersproject/providers'
 
-import type { ChainId } from '../../constants'
 import { Percent } from '../../entities'
 import { isEvmChainId } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
@@ -13,16 +12,18 @@ export function isDepositoryV3SwapSupported(params: SwapExactInParams): boolean 
     const { tokenAmountIn, tokenOut, symbiosis } = params
 
     const srcChainId = tokenAmountIn.token.chainId
-    if (!isEvmChainId(srcChainId)) {
+    const dstChainId = tokenOut.chainId
+
+    if (!isEvmChainId(srcChainId) || !isEvmChainId(dstChainId)) {
         return false
     }
 
     // Must be a cross-chain swap
-    if (srcChainId === tokenOut.chainId) {
+    if (srcChainId === dstChainId) {
         return false
     }
 
-    return !!symbiosis.chainConfig(srcChainId).depositoryV3
+    return !!symbiosis.chainConfig(srcChainId).depositoryV3 && !!symbiosis.chainConfig(dstChainId).depositoryV3
 }
 
 /**
@@ -37,32 +38,38 @@ export function isDepositoryV3SwapSupported(params: SwapExactInParams): boolean 
 export async function depositoryV3Swap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, from, to, symbiosis } = params
 
-    const srcChainId = tokenAmountIn.token.chainId as ChainId
-    const depositoryV3Config = symbiosis.chainConfig(srcChainId).depositoryV3!
+    const srcChainId = tokenAmountIn.token.chainId
+    const dstChainId = tokenOut.chainId
+    const srcDepositoryV3Config = symbiosis.chainConfig(srcChainId).depositoryV3!
+    const dstDepositoryV3Config = symbiosis.chainConfig(dstChainId).depositoryV3!
 
     // Step 1: get a quote from the solver
-    const solver = new SolverService(depositoryV3Config.solverUrl)
+    const solverUrl = symbiosis.config.solver?.url
+    if (!solverUrl) {
+        throw new Error('solver.url is not configured')
+    }
+    const solver = new SolverService(solverUrl)
     const { amountOut, quoteTTL } = await solver.quote({
-        tokenIn: tokenAmountIn.token,
-        amountIn: tokenAmountIn,
+        tokenAmountIn,
         tokenOut,
     })
 
     // Step 2: build deposit() calldata
+    // settlementUnlocker is on the source chain; directUnlocker is on the destination chain
     const callData = buildDepositV3Data({
         tokenAmountIn,
         amountOut,
         from: from as EvmAddress,
         to: to as EvmAddress,
         quoteTTL,
-        directUnlockerAddress: depositoryV3Config.directUnlocker,
-        settlementUnlockerAddress: depositoryV3Config.settlementUnlocker,
+        directUnlockerAddress: dstDepositoryV3Config.directUnlocker,
+        settlementUnlockerAddress: srcDepositoryV3Config.settlementUnlocker,
         srcChainId,
-        dstChainId: tokenOut.chainId,
+        dstChainId,
     })
 
     const transactionRequest: TransactionRequest = {
-        to: depositoryV3Config.depository,
+        to: srcDepositoryV3Config.depository,
         data: callData,
         value: '0x0',
         chainId: srcChainId,
@@ -75,7 +82,7 @@ export async function depositoryV3Swap(params: SwapExactInParams): Promise<SwapE
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOut,
         priceImpact: new Percent('0', BIPS_BASE),
-        approveTo: depositoryV3Config.depository,
+        approveTo: srcDepositoryV3Config.depository,
         routes: [
             {
                 provider: SymbiosisTradeType.SYMBIOSIS,

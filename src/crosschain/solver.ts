@@ -2,8 +2,7 @@ import type { Token } from '../entities'
 import { TokenAmount } from '../entities'
 
 export interface SolverQuoteParams {
-    tokenIn: Token
-    amountIn: TokenAmount
+    tokenAmountIn: TokenAmount
     tokenOut: Token
 }
 
@@ -24,13 +23,13 @@ export class SolverService {
      *   Body: { tokenIn: string, amountIn: string, tokenOut: string, chainIdIn: number, chainIdOut: number }
      *   Response: { amountOut: string, quoteTTL: number }
      */
-    async quote({ amountIn, tokenOut }: SolverQuoteParams): Promise<SolverQuoteResult> {
+    async quote({ tokenAmountIn, tokenOut }: SolverQuoteParams): Promise<SolverQuoteResult> {
         // MOCK IMPLEMENTATION — calls the solver API at this.solverUrl once it's deployed
         void this.solverUrl // will be used in the real implementation
 
         // Scale amountIn to tokenOut decimals and apply a 1% mock fee
-        const decimalsDiff = tokenOut.decimals - amountIn.token.decimals
-        const base = amountIn.toBigInt()
+        const decimalsDiff = tokenOut.decimals - tokenAmountIn.token.decimals
+        const base = tokenAmountIn.toBigInt()
         const scaled = decimalsDiff >= 0 ? base * 10n ** BigInt(decimalsDiff) : base / 10n ** BigInt(-decimalsDiff)
         const amountOut = new TokenAmount(tokenOut, (scaled * 99n) / 100n)
 

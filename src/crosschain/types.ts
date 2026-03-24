@@ -49,8 +49,6 @@ export interface DepositoryV3Config {
     depository: EvmAddress // DepositoryV3 contract on the source chain
     directUnlocker: EvmAddress // DirectUnlocker contract on the destination chain
     settlementUnlocker: EvmAddress // SettlementUnlocker contract on the destination chain
-    dstChainId: ChainId // Destination chain for this depository
-    solverUrl: string // Solver service base URL
 }
 
 // Addresses of Depository contracts
@@ -138,6 +136,9 @@ export type Config = {
     chains: ChainConfig[]
     fallbackReceiver: EvmAddress
     btcConfigs: BtcConfig[]
+    solver?: {
+        url: string // Solver service base URL (intent-based swaps)
+    }
 }
 
 export type OverrideChainConfig = {
