@@ -111,6 +111,7 @@ export const CHANGELLY_TRANSIT_TOKEN_MAP = new Map<string, string>([
 
     // TON
     [`${ChainId.TON_MAINNET}:native`, 'ton'],
+    [`${ChainId.TON_MAINNET}:EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs`, 'usdton'], // USDT
 
     // Chains with native gas token only
     [`${ChainId.BERACHAIN_MAINNET}:native`, 'bera'],
