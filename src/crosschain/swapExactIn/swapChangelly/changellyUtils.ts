@@ -2,14 +2,24 @@ import { Token } from '../../../entities'
 import { ChangellyError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import { isSolanaChainId } from '../../chainUtils/solana'
+import { isTonChainId } from '../../chainUtils/ton'
 import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TRANSIT_TOKEN_MAP } from './constants'
 
+function buildChangellyKey(token: Token): string {
+    if (token.isNative) return `${token.chainId}:native`
+
+    if (isSolanaChainId(token.chainId)) {
+        return `${token.chainId}:${token.solAddress}`
+    }
+    if (isTonChainId(token.chainId)) {
+        return `${token.chainId}:${token.tonAddress}`
+    }
+
+    return `${token.chainId}:${token.address.toLowerCase()}`
+}
+
 export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token): Promise<string> {
-    // For Solana SPL tokens, the mint address is stored in solAddress, not address
-    const address = isSolanaChainId(token.chainId) ? (token.solAddress || token.address) : token.address
-    const key = token.isNative
-        ? `${token.chainId}:native`
-        : `${token.chainId}:${isSolanaChainId(token.chainId) ? address : address.toLowerCase()}`
+    const key = buildChangellyKey(token)
 
     // Fast path: hardcoded map
     const ticker = CHANGELLY_TRANSIT_TOKEN_MAP.get(key)

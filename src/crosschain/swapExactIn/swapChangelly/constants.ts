@@ -178,11 +178,11 @@ export function isChangellyNativeChainId(chainId: ChainId | undefined): boolean 
     return CHANGELLY_NATIVE_CHAIN_IDS.has(chainId)
 }
 
+export function isChangellyTradeChainId(chainId: ChainId): boolean {
+    return CHANGELLY_TRADE_CHAIN_IDS.has(chainId)
+}
+
 export function isChangellySupportedChainId(chainId: ChainId | undefined): boolean {
     if (chainId === undefined) return false
     return CHANGELLY_NATIVE_CHAIN_IDS.has(chainId) || CHANGELLY_TRADE_CHAIN_IDS.has(chainId)
-}
-
-export function isChangellyTradeChainId(chainId: ChainId): boolean {
-    return CHANGELLY_TRADE_CHAIN_IDS.has(chainId)
 }

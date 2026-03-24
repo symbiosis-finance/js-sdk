@@ -124,5 +124,5 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.SUI_MAINNET, 'sui'],
     [ChainId.DOGE_MAINNET, 'dogecoin'],
     [ChainId.LTC_MAINNET, 'litecoin'],
-    [ChainId.CANTON_MAINNET, 'canton'],
+    [ChainId.CANTON_MAINNET, 'canton-network'],
 ])
