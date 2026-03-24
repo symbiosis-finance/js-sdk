@@ -3,6 +3,7 @@ import { ChangellyError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import { isSolanaChainId } from '../../chainUtils/solana'
 import { isTonChainId } from '../../chainUtils/ton'
+import { isTronChainId } from '../../chainUtils/tron'
 import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TRANSIT_TOKEN_MAP } from './constants'
 
 function buildChangellyKey(token: Token): string {
@@ -54,9 +55,10 @@ async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, str
                 if (chainId === undefined) continue
 
                 if (currency.contractAddress) {
-                    const contractKey = isSolanaChainId(chainId)
-                        ? currency.contractAddress
-                        : currency.contractAddress.toLowerCase()
+                    const contractKey =
+                        isSolanaChainId(chainId) || isTonChainId(chainId) || isTronChainId(chainId)
+                            ? currency.contractAddress
+                            : currency.contractAddress.toLowerCase()
                     map.set(`${chainId}:${contractKey}`, currency.ticker)
                 } else {
                     map.set(`${chainId}:native`, currency.ticker)
