@@ -285,7 +285,7 @@ export const config: Config = {
             multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -419,7 +419,7 @@ export const config: Config = {
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -475,7 +475,7 @@ export const config: Config = {
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -801,7 +801,7 @@ export const config: Config = {
             multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -1378,7 +1378,7 @@ export const config: Config = {
             multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -2323,7 +2323,7 @@ export const config: Config = {
             multicallRouter: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
