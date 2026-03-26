@@ -56,7 +56,7 @@ export async function depositoryV3Swap(params: SwapExactInParams): Promise<SwapE
 
     // Step 2: build deposit() calldata
     // settlementUnlocker is on the source chain; directUnlocker is on the destination chain
-    const callData = buildDepositV3Data({
+    const data = buildDepositV3Data({
         tokenAmountIn,
         amountOut,
         from: from as EvmAddress,
@@ -70,7 +70,7 @@ export async function depositoryV3Swap(params: SwapExactInParams): Promise<SwapE
 
     const transactionRequest: TransactionRequest = {
         to: srcDepositoryV3Config.depository,
-        data: callData,
+        data,
         value: '0x0',
         chainId: srcChainId,
     }

@@ -43,7 +43,7 @@ export function buildDepositV3Data({
     ])
 
     const depositParams: DepositoryV3Types.DepositParamsStruct = {
-        token: tokenAmountIn.token.address,
+        token: tokenAmountIn.token.address, // TODO wrap gastokens?
         amount: tokenAmountIn.toBigInt(),
         depositor: from,
         quoteTTL: BigInt(quoteTTL),

@@ -820,7 +820,7 @@ export const config: Config = {
             depositoryV3: {
                 depository: '0x696882C0D89f124345BE96B53dF4d7843609B43b',
                 directUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124',
-                settlementUnlocker: '0x0000000000000000000000000000000000000000',
+                settlementUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124', // TODO use correct settlement unlocker
             },
         },
         {
@@ -1097,7 +1097,7 @@ export const config: Config = {
             depositoryV3: {
                 depository: '0x696882C0D89f124345BE96B53dF4d7843609B43b',
                 directUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124',
-                settlementUnlocker: '0x0000000000000000000000000000000000000000',
+                settlementUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124', // TODO use correct settlement unlocker
             },
         },
         {
