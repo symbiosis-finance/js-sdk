@@ -69,6 +69,7 @@ export class AdvisorError extends SdkError {}
 
 // Changelly
 export class ChangellyError extends SdkError {}
+export class ChangellyTickerNotFoundError extends ChangellyError {}
 
 // ChainFlip
 export class ChainFlipError extends SdkError {}

@@ -1,7 +1,7 @@
 export { ChangellyClient } from './changellyClient'
 export {
     CHANGELLY_NATIVE_DECIMALS,
-    CHANGELLY_TRANSIT_TOKEN_MAP as CHANGELLY_TOKEN_MAP,
+    CHANGELLY_TICKER_MAP as CHANGELLY_TOKEN_MAP,
     isChangellyNativeChainId,
     isChangellySupportedChainId,
     isChangellyTradeChainId,
@@ -16,7 +16,9 @@ export type {
 export {
     changellyDepositSwap,
     changellyTradeSwap,
-    isChangellyDepositSupported,
-    isChangellyTradeSupported,
+    changellyNativeSwap,
+    changellyZappingSwap,
+    isChangellyNativeSupported,
+    isChangellyZappingSupported,
 } from './changellySwap'
 export { resolveChangellyTicker } from './changellyUtils'

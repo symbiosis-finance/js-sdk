@@ -1,12 +1,12 @@
 import { Token } from '../../../entities'
-import { ChangellyError } from '../../sdkError'
+import { ChangellyTickerNotFoundError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import { isSolanaChainId } from '../../chainUtils/solana'
 import { isTonChainId } from '../../chainUtils/ton'
 import { isTronChainId } from '../../chainUtils/tron'
-import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TRANSIT_TOKEN_MAP } from './constants'
+import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TICKER_MAP } from './constants'
 
-function buildChangellyKey(token: Token): string {
+export function buildChangellyKey(token: Token): string {
     if (token.isNative) return `${token.chainId}:native`
 
     if (isSolanaChainId(token.chainId)) {
@@ -23,22 +23,21 @@ export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token)
     const key = buildChangellyKey(token)
 
     // Fast path: hardcoded map
-    const ticker = CHANGELLY_TRANSIT_TOKEN_MAP.get(key)
+    const ticker = CHANGELLY_TICKER_MAP.get(key)
     if (ticker) return ticker
 
-    // Slow path: fetch from Changelly API (will be removed after onchain swap)
+    // Slow path: fetch full currency list from Changelly API (covers tokens not in static map)
     const fullMap = await getFullCurrencyMap(symbiosis)
     const fallbackTicker = fullMap.get(key)
     if (fallbackTicker) return fallbackTicker
 
-    throw new ChangellyError(`Changelly does not support ${token.symbol} on chain ${token.chainId}`)
+    throw new ChangellyTickerNotFoundError(`Changelly does not support ${token.symbol} on chain ${token.chainId}`)
 }
 
 let fullMapPromise: Promise<Map<string, string>> | null = null
 let fullMapTimestamp: number | null = null
 const FULL_MAP_TTL_MS = 60 * 60 * 1000 // 1 hour
 
-// TODO: Remove after onchain swap to transit token
 async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, string>> {
     const isExpired = !fullMapTimestamp || Date.now() - fullMapTimestamp > FULL_MAP_TTL_MS
     if (fullMapPromise && !isExpired) {

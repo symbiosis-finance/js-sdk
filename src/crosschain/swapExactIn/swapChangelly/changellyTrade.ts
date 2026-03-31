@@ -4,20 +4,23 @@ import {
     createAssociatedTokenAccountIdempotentInstruction,
     createTransferInstruction,
     getAssociatedTokenAddressSync,
+    TOKEN_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID,
 } from '@solana/spl-token'
 import { PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js'
 import { Address, beginCell } from '@ton/core'
 import { JettonMaster } from '@ton/ton'
 import TronWeb from 'tronweb'
 
-import { Token, TokenAmount } from '../../../entities'
+import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import { isEvmChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import { isSolanaChainId, getSolanaConnection } from '../../chainUtils/solana'
-import { ChangellyError } from '../../sdkError'
+import { AmountTooHighError, AmountTooLowError, ChangellyError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import type { ChangellyTransactionData, FeeItem, TonTransactionData } from '../../types'
 import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
 import {
+    CHANGELLY_NATIVE_CHAINS,
     CHANGELLY_NATIVE_DECIMALS,
     DEPOSIT_VALIDITY_MS,
     TON_TX_VALIDITY_SECONDS,
@@ -32,6 +35,7 @@ export interface ChangellyEstimateResult {
     rateId: string
     amountTo: string
     tokenAmountOut: TokenAmount
+    tokenInResolved: Token
     tokenOutResolved: Token
     fees: FeeItem[]
     currencyFrom: string
@@ -62,6 +66,7 @@ export async function getChangellyEstimate(
         throw new ChangellyError('This pair is not available')
     }
 
+    const tokenInResolved = resolveInputToken(tokenAmountIn.token, currencyFrom)
     const tokenOutResolved = resolveOutputToken(tokenOut, currencyTo)
     const networkFee = rate.networkFee || '0'
     const decimals = tokenOutResolved.decimals
@@ -75,6 +80,7 @@ export async function getChangellyEstimate(
         rateId: rate.id,
         amountTo: rate.amountTo,
         tokenAmountOut: new TokenAmount(tokenOutResolved, netAmountRaw),
+        tokenInResolved,
         tokenOutResolved,
         fees: buildFees(networkFee, tokenOutResolved),
         currencyFrom,
@@ -229,23 +235,60 @@ function throwPairLimitError(params: PairsParamsResponse, amountFrom: string, sy
     const maxAmount = Number(params.maxAmountFixed)
 
     if (minAmount && amount < minAmount) {
-        throw new ChangellyError(`Minimum amount is ${minAmount} ${symbol}`)
+        throw new AmountTooLowError(`Minimum amount is ${minAmount} ${symbol}`)
     }
     if (maxAmount && amount > maxAmount) {
-        throw new ChangellyError(`Maximum amount is ${maxAmount} ${symbol}`)
+        throw new AmountTooHighError(`Maximum amount is ${maxAmount} ${symbol}`)
     }
 }
 
+// Applies known symbol/name for Changelly-exclusive input tokens (XMR, LTC, etc.)
+// For EVM/Solana/TON tokens the caller already provides proper metadata — return as-is.
+function resolveInputToken(token: Token, currencyFrom: string): Token {
+    const display = CHANGELLY_NATIVE_CHAINS.find((nativeChain) => nativeChain.ticker === currencyFrom.toLowerCase())
+    if (!display) return token
+    if (token.symbol === display.symbol && token.name === display.name) return token
+    return new Token({
+        chainId: token.chainId,
+        address: token.address ?? '',
+        decimals: token.decimals ?? CHANGELLY_NATIVE_DECIMALS[token.chainId] ?? 18,
+        symbol: display.symbol,
+        name: display.name,
+        icons: token.icons ?? GAS_TOKEN[token.chainId]?.icons,
+    })
+}
+
 function resolveOutputToken(tokenOut: Token, currencyTo: string): Token {
-    if (tokenOut.decimals !== undefined && tokenOut.decimals > 0) return tokenOut
+    const display = CHANGELLY_NATIVE_CHAINS.find((nativeChain) => nativeChain.ticker === currencyTo.toLowerCase())
+    const knownName = display?.name
+    const knownSymbol = display?.symbol
+    const icons = tokenOut.icons ?? GAS_TOKEN[tokenOut.chainId]?.icons
+
+    if (tokenOut.decimals !== undefined && tokenOut.decimals > 0) {
+        // Apply known name even when token already has decimals (e.g. frontend-constructed tokens
+        // for Changelly-exclusive chains may have decimals but symbol-only names like 'XMR')
+        if (knownName && tokenOut.name !== knownName) {
+            return new Token({
+                chainId: tokenOut.chainId,
+                address: tokenOut.address ?? '',
+                decimals: tokenOut.decimals,
+                symbol: knownSymbol ?? tokenOut.symbol ?? currencyTo.toUpperCase(),
+                name: knownName,
+                icons,
+            })
+        }
+        return tokenOut
+    }
 
     const decimals = CHANGELLY_NATIVE_DECIMALS[tokenOut.chainId] ?? 18
+    const symbol = knownSymbol ?? currencyTo.toUpperCase()
     return new Token({
         chainId: tokenOut.chainId,
         address: '',
         decimals,
-        symbol: currencyTo.toUpperCase(),
-        name: currencyTo.toUpperCase(),
+        symbol,
+        name: knownName ?? symbol,
+        icons,
     })
 }
 
@@ -283,6 +326,10 @@ function buildEvmTransfer(
 }
 
 function buildTronTransfer(depositAddress: string, token: Token, amount: string, ownerAddress: string): TronTxData {
+    // ownerAddress arrives as EVM hex (converted upstream by tronAddressToEvm).
+    // TronWeb requires base58 for owner_address — convert back.
+    const ownerBase58 = TronWeb.address.fromHex(ownerAddress)
+
     if (token.isNative) {
         return {
             chain_id: token.chainId,
@@ -290,7 +337,7 @@ function buildTronTransfer(depositAddress: string, token: Token, amount: string,
             contract_address: depositAddress,
             fee_limit: TRON_TRANSFER_FEE_LIMIT,
             function_selector: '',
-            owner_address: ownerAddress,
+            owner_address: ownerBase58,
             raw_parameter: '',
         }
     }
@@ -303,7 +350,7 @@ function buildTronTransfer(depositAddress: string, token: Token, amount: string,
         contract_address: TronWeb.address.fromHex(token.address),
         fee_limit: TRON_TRANSFER_FEE_LIMIT,
         function_selector: 'transfer(address,uint256)',
-        owner_address: ownerAddress,
+        owner_address: ownerBase58,
         raw_parameter: `${toParam}${amountParam}`,
     }
 }
@@ -319,10 +366,19 @@ async function buildSolanaTransfer(from: string, depositAddress: string, tokenAm
         instructions.push(SystemProgram.transfer({ fromPubkey, toPubkey, lamports: amount }))
     } else {
         const mint = new PublicKey(tokenAmountIn.token.solAddress)
-        const sourceAta = getAssociatedTokenAddressSync(mint, fromPubkey)
-        const destAta = getAssociatedTokenAddressSync(mint, toPubkey, true)
-        instructions.push(createAssociatedTokenAccountIdempotentInstruction(fromPubkey, destAta, toPubkey, mint))
-        instructions.push(createTransferInstruction(sourceAta, destAta, fromPubkey, amount))
+
+        // Detect token program: SPL Token or Token-2022
+        const mintAccountInfo = await connection.getAccountInfo(mint)
+        const programId = mintAccountInfo?.owner.equals(TOKEN_2022_PROGRAM_ID)
+            ? TOKEN_2022_PROGRAM_ID
+            : TOKEN_PROGRAM_ID
+
+        const sourceAta = getAssociatedTokenAddressSync(mint, fromPubkey, false, programId)
+        const destAta = getAssociatedTokenAddressSync(mint, toPubkey, true, programId)
+        instructions.push(
+            createAssociatedTokenAccountIdempotentInstruction(fromPubkey, destAta, toPubkey, mint, programId)
+        )
+        instructions.push(createTransferInstruction(sourceAta, destAta, fromPubkey, amount, [], programId))
     }
 
     const { blockhash } = await connection.getLatestBlockhash()
@@ -335,7 +391,7 @@ async function buildSolanaTransfer(from: string, depositAddress: string, tokenAm
     return Buffer.from(new VersionedTransaction(message).serialize()).toString('base64')
 }
 
-const TON_FORWARD_AMOUNT = '1' // minimal forward amount for jetton notification
+const TON_FORWARD_AMOUNT = '50000000' // 0.05 TON — covers notification processing on recipient contract
 const TON_JETTON_TRANSFER_AMOUNT = '100000000' // 0.1 TON for gas on jetton transfer
 
 async function buildTonTransfer(

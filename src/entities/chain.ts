@@ -863,7 +863,7 @@ export const chains: Chain[] = [
         id: ChainId.XRP_MAINNET,
         name: 'XRP Ledger',
         disabled: false,
-        explorer: 'https://xrpscan.com',
+        explorer: 'https://blockexplorer.one/xrp/mainnet',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png',
@@ -896,7 +896,7 @@ export const chains: Chain[] = [
         id: ChainId.BCH_MAINNET,
         name: 'Bitcoin Cash',
         disabled: false,
-        explorer: 'https://blockchair.com/bitcoin-cash',
+        explorer: 'https://blockexplorer.one/bitcoin-cash/mainnet',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1831.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1831.png',
@@ -944,6 +944,17 @@ export const chains: Chain[] = [
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2.png',
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.ZCASH_MAINNET,
+        name: 'Zcash',
+        disabled: false,
+        explorer: 'https://blockexplorer.one/zcash/mainnet',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1437.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1437.png',
         },
         evm: false,
     }),

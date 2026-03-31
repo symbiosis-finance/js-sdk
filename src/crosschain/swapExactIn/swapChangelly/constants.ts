@@ -1,4 +1,6 @@
 import { ChainId } from '../../../constants'
+import { Token } from '../../../entities'
+import type { Address } from '../../types'
 
 // --- Transaction building ---
 
@@ -9,7 +11,7 @@ export const TON_TX_VALIDITY_SECONDS = 600 // 10 minutes — how long TON wallet
 // --- Chain sets ---
 
 // Chains only reachable via Changelly (no Symbiosis native routing)
-export const CHANGELLY_NATIVE_CHAIN_IDS = new Set<ChainId>([
+const CHANGELLY_NATIVE_CHAIN_IDS = new Set<ChainId>([
     ChainId.XLM_MAINNET,
     ChainId.XRP_MAINNET,
     ChainId.XMR_MAINNET,
@@ -19,10 +21,11 @@ export const CHANGELLY_NATIVE_CHAIN_IDS = new Set<ChainId>([
     ChainId.CANTON_MAINNET,
     ChainId.DOGE_MAINNET,
     ChainId.LTC_MAINNET,
+    ChainId.ZCASH_MAINNET,
 ])
 
 // All non-native chains supported by Changelly where SDK builds a transfer tx
-export const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
+const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
     ChainId.ETH_MAINNET,
     ChainId.BSC_MAINNET,
     ChainId.TRON_MAINNET,
@@ -49,71 +52,41 @@ export const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
     ChainId.TON_MAINNET,
 ])
 
-// Key: "chainId:native" for gas tokens, "chainId:lowercaseAddress" for stables
-// Only native gas tokens + USDC + USDT per chain (for future on-chain swap -> Changelly flow)
+// --- Changelly ticker maps (used by resolveChangellyTicker for fast-path lookup) ---
 
-export const CHANGELLY_TRANSIT_TOKEN_MAP = new Map<string, string>([
-    // Changelly-native chains (single token per chain)
-    [`${ChainId.XLM_MAINNET}:native`, 'xlm'],
-    [`${ChainId.XRP_MAINNET}:native`, 'xrp'],
-    [`${ChainId.XMR_MAINNET}:native`, 'xmr'],
-    [`${ChainId.ADA_MAINNET}:native`, 'ada'],
-    [`${ChainId.BCH_MAINNET}:native`, 'bch'],
-    [`${ChainId.SUI_MAINNET}:native`, 'sui'],
-    [`${ChainId.CANTON_MAINNET}:native`, 'cc'],
-    [`${ChainId.DOGE_MAINNET}:native`, 'doge'],
-    [`${ChainId.LTC_MAINNET}:native`, 'ltc'],
+// Single source of truth for Changelly-exclusive native chains.
+// No token registry exists for these — all metadata is defined here.
+export const CHANGELLY_NATIVE_CHAINS = [
+    { chainId: ChainId.XLM_MAINNET, ticker: 'xlm', symbol: 'XLM', name: 'Stellar', decimals: 7 },
+    { chainId: ChainId.XRP_MAINNET, ticker: 'xrp', symbol: 'XRP', name: 'XRP', decimals: 6 },
+    { chainId: ChainId.XMR_MAINNET, ticker: 'xmr', symbol: 'XMR', name: 'Monero', decimals: 12 },
+    { chainId: ChainId.ADA_MAINNET, ticker: 'ada', symbol: 'ADA', name: 'Cardano', decimals: 6 },
+    { chainId: ChainId.BCH_MAINNET, ticker: 'bch', symbol: 'BCH', name: 'Bitcoin Cash', decimals: 8 },
+    { chainId: ChainId.SUI_MAINNET, ticker: 'sui', symbol: 'SUI', name: 'Sui', decimals: 9 },
+    { chainId: ChainId.CANTON_MAINNET, ticker: 'cc', symbol: 'CC', name: 'Canton Coin', decimals: 10 },
+    { chainId: ChainId.DOGE_MAINNET, ticker: 'doge', symbol: 'DOGE', name: 'Dogecoin', decimals: 8 },
+    { chainId: ChainId.LTC_MAINNET, ticker: 'ltc', symbol: 'LTC', name: 'Litecoin', decimals: 8 },
+    { chainId: ChainId.ZCASH_MAINNET, ticker: 'zec', symbol: 'ZEC', name: 'Zcash', decimals: 8 },
+] as const
 
-    // Ethereum
+const CHANGELLY_ONLY_NATIVE_TICKERS = new Map<string, string>(
+    CHANGELLY_NATIVE_CHAINS.map(({ chainId, ticker }) => [`${chainId}:native`, ticker])
+)
+
+// Native gas tokens per trade chain: fast-path ticker lookup (avoids API call for common natives).
+const CHANGELLY_GAS_TRADE_TICKERS = new Map<string, string>([
+    [`${ChainId.BTC_MAINNET}:native`, 'btc'],
     [`${ChainId.ETH_MAINNET}:native`, 'eth'],
-    [`${ChainId.ETH_MAINNET}:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48`, 'usdc'],
-    [`${ChainId.ETH_MAINNET}:0xdac17f958d2ee523a2206206994597c13d831ec7`, 'usdt20'],
-
-    // BSC
     [`${ChainId.BSC_MAINNET}:native`, 'bnbbsc'],
-    [`${ChainId.BSC_MAINNET}:0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d`, 'usdcbsc'],
-    [`${ChainId.BSC_MAINNET}:0x55d398326f99059ff775485246999027b3197955`, 'usdtbsc'],
-
-    // TRON
     [`${ChainId.TRON_MAINNET}:native`, 'trx'],
-    [`${ChainId.TRON_MAINNET}:0xa614f803b6fd780986a42c78ec9c7f77e6ded13c`, 'usdtrx'], // TR7NHq... in hex
-
-    // Solana
     [`${ChainId.SOLANA_MAINNET}:native`, 'sol'],
-
-    // Base
     [`${ChainId.BASE_MAINNET}:native`, 'ethbase'],
-    [`${ChainId.BASE_MAINNET}:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913`, 'usdcbase'],
-
-    // Arbitrum
     [`${ChainId.ARBITRUM_MAINNET}:native`, 'etharb'],
-    [`${ChainId.ARBITRUM_MAINNET}:0xaf88d065e77c8cc2239327c5edb3a432268e5831`, 'usdcarb'],
-    [`${ChainId.ARBITRUM_MAINNET}:0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9`, 'usdtarb'],
-
-    // Optimism
     [`${ChainId.OPTIMISM_MAINNET}:native`, 'ethop'],
-    [`${ChainId.OPTIMISM_MAINNET}:0x0b2c639c533813f4aa9d7837caf62653d097ff85`, 'usdcop'],
-    [`${ChainId.OPTIMISM_MAINNET}:0x94b008aa00579c1307b0ef2c499ad98a8ce58e58`, 'usdtop'],
-
-    // Polygon
     [`${ChainId.MATIC_MAINNET}:native`, 'pol'],
-    [`${ChainId.MATIC_MAINNET}:0x3c499c542cef5e3811e1192ce70d8cc03d5c3359`, 'usdcmatic'],
-    [`${ChainId.MATIC_MAINNET}:0xc2132d05d31c914a87c6611c10748aeb04b58e8f`, 'usdtpolygon'],
-
-    // Avalanche C-Chain
     [`${ChainId.AVAX_MAINNET}:native`, 'avaxc'],
-    [`${ChainId.AVAX_MAINNET}:0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e`, 'usdcavac'],
-    [`${ChainId.AVAX_MAINNET}:0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7`, 'usdtavac'],
-
-    // Sonic
     [`${ChainId.SONIC_MAINNET}:native`, 's'],
-    [`${ChainId.SONIC_MAINNET}:0x29219dd400f2bf60e5a23d13be72b486d4038894`, 'usdcsonic'],
-
-    // TON
     [`${ChainId.TON_MAINNET}:native`, 'ton'],
-    [`${ChainId.TON_MAINNET}:EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs`, 'usdton'], // USDT
-
-    // Chains with native gas token only
     [`${ChainId.BERACHAIN_MAINNET}:native`, 'bera'],
     [`${ChainId.CRONOS_MAINNET}:native`, 'cro'],
     [`${ChainId.ZETACHAIN_MAINNET}:native`, 'zeta'],
@@ -122,13 +95,129 @@ export const CHANGELLY_TRANSIT_TOKEN_MAP = new Map<string, string>([
     [`${ChainId.PLASMA_MAINNET}:native`, 'xpl'],
     [`${ChainId.MONAD_MAINNET}:native`, 'mon'],
     [`${ChainId.SEI_EVM_MAINNET}:native`, 'sei'],
+])
 
+// Transit ERC-20 per chain for zapping (DEX swap → Changelly deposit).
+// Most liquid stable, or chain-native ERC-20 for L2s. Address format matches buildChangellyKey.
+const CHANGELLY_TRANSIT_TOKENS: Partial<
+    Record<ChainId, { address: string; ticker: string; decimals: number; symbol: string; name: string }>
+> = {
+    [ChainId.ETH_MAINNET]: {
+        address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+        ticker: 'usdc',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.BSC_MAINNET]: {
+        address: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
+        ticker: 'usdcbsc',
+        decimals: 18,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.TRON_MAINNET]: {
+        address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c', // TR7NHq... in hex
+        ticker: 'usdtrx',
+        decimals: 6,
+        symbol: 'USDT',
+        name: 'Tether USD',
+    },
+    [ChainId.BASE_MAINNET]: {
+        address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+        ticker: 'usdcbase',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.ARBITRUM_MAINNET]: {
+        address: '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
+        ticker: 'usdcarb',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.OPTIMISM_MAINNET]: {
+        address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+        ticker: 'usdcop',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.MATIC_MAINNET]: {
+        address: '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359',
+        ticker: 'usdcmatic',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.AVAX_MAINNET]: {
+        address: '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e',
+        ticker: 'usdcavac',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.SONIC_MAINNET]: {
+        address: '0x29219dd400f2bf60e5a23d13be72b486d4038894',
+        ticker: 'usdcsonic',
+        decimals: 6,
+        symbol: 'USDC',
+        name: 'USD Coin',
+    },
+    [ChainId.TON_MAINNET]: {
+        address: 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs',
+        ticker: 'usdton',
+        decimals: 6,
+        symbol: 'USDT',
+        name: 'Tether USD',
+    },
     // L2 chains — Changelly lists chain-native ERC-20 tokens, not gas ETH
-    [`${ChainId.LINEA_MAINNET}:0x1789e0043623282d5dcc7f213d703c6d8bafbb04`, 'linea'],
-    [`${ChainId.ZKSYNC_MAINNET}:0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e`, 'zksync'],
-    [`${ChainId.MANTA_MAINNET}:0x95cef13441be50d20ca4558cc0a27b601ac544e5`, 'manta'],
-    [`${ChainId.BLAST_MAINNET}:0xb1a5700fa2358173fe465e6ea4ff52e36e88e2ad`, 'blast'],
-    [`${ChainId.TAIKO_MAINNET}:0xa9d23408b9ba935c230493c40c73824df71a0975`, 'taiko'],
+    [ChainId.LINEA_MAINNET]: {
+        address: '0x1789e0043623282d5dcc7f213d703c6d8bafbb04',
+        ticker: 'linea',
+        decimals: 18,
+        symbol: 'LINEA',
+        name: 'Linea',
+    },
+    [ChainId.ZKSYNC_MAINNET]: {
+        address: '0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e',
+        ticker: 'zksync',
+        decimals: 18,
+        symbol: 'ZK',
+        name: 'ZKsync',
+    },
+    [ChainId.MANTA_MAINNET]: {
+        address: '0x95cef13441be50d20ca4558cc0a27b601ac544e5',
+        ticker: 'manta',
+        decimals: 18,
+        symbol: 'MANTA',
+        name: 'Manta',
+    },
+    [ChainId.BLAST_MAINNET]: {
+        address: '0xb1a5700fa2358173fe465e6ea4ff52e36e88e2ad',
+        ticker: 'blast',
+        decimals: 18,
+        symbol: 'BLAST',
+        name: 'Blast',
+    },
+    [ChainId.TAIKO_MAINNET]: {
+        address: '0xa9d23408b9ba935c230493c40c73824df71a0975',
+        ticker: 'taiko',
+        decimals: 18,
+        symbol: 'TAIKO',
+        name: 'Taiko',
+    },
+}
+
+// Fast-path ticker resolution — avoids API call for common tokens.
+export const CHANGELLY_TICKER_MAP = new Map<string, string>([
+    ...CHANGELLY_ONLY_NATIVE_TICKERS,
+    ...CHANGELLY_GAS_TRADE_TICKERS,
+    ...(Object.entries(CHANGELLY_TRANSIT_TOKENS).map(([chainId, t]) => [`${chainId}:${t!.address}`, t!.ticker]) as [
+        string,
+        string,
+    ][]),
 ])
 
 export const CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID: Record<string, ChainId> = {
@@ -157,20 +246,13 @@ export const CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID: Record<string, ChainId> = {
     plasma: ChainId.PLASMA_MAINNET,
     mon: ChainId.MONAD_MAINNET,
     ton: ChainId.TON_MAINNET,
+    zcash: ChainId.ZCASH_MAINNET,
 }
 
-// Native token decimals for Changelly-native chains
-export const CHANGELLY_NATIVE_DECIMALS: Partial<Record<ChainId, number>> = {
-    [ChainId.XLM_MAINNET]: 7,
-    [ChainId.XRP_MAINNET]: 6,
-    [ChainId.XMR_MAINNET]: 12,
-    [ChainId.ADA_MAINNET]: 6,
-    [ChainId.BCH_MAINNET]: 8,
-    [ChainId.SUI_MAINNET]: 9,
-    [ChainId.CANTON_MAINNET]: 10,
-    [ChainId.DOGE_MAINNET]: 8,
-    [ChainId.LTC_MAINNET]: 8,
-}
+// chainId → decimals for resolveOutputToken
+export const CHANGELLY_NATIVE_DECIMALS: Partial<Record<ChainId, number>> = Object.fromEntries(
+    CHANGELLY_NATIVE_CHAINS.map(({ chainId, decimals }) => [chainId, decimals])
+)
 
 // --- Chain detection ---
 
@@ -186,4 +268,24 @@ export function isChangellyTradeChainId(chainId: ChainId): boolean {
 export function isChangellySupportedChainId(chainId: ChainId | undefined): boolean {
     if (chainId === undefined) return false
     return CHANGELLY_NATIVE_CHAIN_IDS.has(chainId) || CHANGELLY_TRADE_CHAIN_IDS.has(chainId)
+}
+
+// --- Transit tokens for on-chain zapping: DEX swap -> Changelly deposit ---
+
+export type ChangellyTransitToken = { token: Token; ticker: string }
+
+export function getChangellyTransitToken(chainId: ChainId): ChangellyTransitToken | undefined {
+    const transit = CHANGELLY_TRANSIT_TOKENS[chainId]
+    if (!transit) return undefined
+
+    return {
+        token: new Token({
+            chainId,
+            address: transit.address as Address,
+            decimals: transit.decimals,
+            symbol: transit.symbol,
+            name: transit.name,
+        }),
+        ticker: transit.ticker,
+    }
 }

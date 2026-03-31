@@ -1,5 +1,6 @@
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
+import { CHANGELLY_NATIVE_CHAINS } from '../swapExactIn/swapChangelly/constants'
 import type { Config } from '../types'
 
 export const config: Config = {
@@ -168,17 +169,7 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
         },
-        ...[
-            ChainId.XLM_MAINNET,
-            ChainId.XRP_MAINNET,
-            ChainId.XMR_MAINNET,
-            ChainId.ADA_MAINNET,
-            ChainId.BCH_MAINNET,
-            ChainId.SUI_MAINNET,
-            ChainId.CANTON_MAINNET,
-            ChainId.DOGE_MAINNET,
-            ChainId.LTC_MAINNET,
-        ].map((id) => ({
+        ...CHANGELLY_NATIVE_CHAINS.map(({ chainId: id }) => ({
             id,
             rpc: '',
             filterBlockOffset: 0,

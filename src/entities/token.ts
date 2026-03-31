@@ -1088,4 +1088,5 @@ export const WETH = {
     [ChainId.CANTON_MAINNET]: new Token({ chainId: ChainId.CANTON_MAINNET, address: '', decimals: 10 }),
     [ChainId.DOGE_MAINNET]: new Token({ chainId: ChainId.DOGE_MAINNET, address: '', decimals: 8 }),
     [ChainId.LTC_MAINNET]: new Token({ chainId: ChainId.LTC_MAINNET, address: '', decimals: 8 }),
+    [ChainId.ZCASH_MAINNET]: new Token({ chainId: ChainId.ZCASH_MAINNET, address: '', decimals: 8 }),
 }

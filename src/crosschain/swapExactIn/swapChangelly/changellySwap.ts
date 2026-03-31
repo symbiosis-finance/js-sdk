@@ -2,7 +2,8 @@ import { AddressZero } from '@ethersproject/constants'
 
 import { Percent } from '../../../entities'
 import { BIPS_BASE } from '../../constants'
-import { ChangellyError } from '../../sdkError'
+import { evmAddressToTron, isTronChainId } from '../../chainUtils'
+import { ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
@@ -13,69 +14,72 @@ import {
     getChangellyEstimate,
     type ChangellyEstimateResult,
 } from './changellyTrade'
+import { changellyZappingSwap as zappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
+
+export { changellyZappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
 
 const ZERO_PRICE_IMPACT = new Percent('0', BIPS_BASE)
-
-// --- Support checks ---
 
 function isChangellyDisabled(params: SwapExactInParams): boolean {
     return !!params.disabledProviders?.includes(SymbiosisTradeType.CHANGELLY)
 }
 
-export function isChangellyDepositSupported(params: SwapExactInParams): boolean {
+/** True when a Changelly-native chain (XMR, XRP, LTC, ADA, BCH, XLM, SUI, DOGE, CC) is on either side. */
+export function isChangellyNativeSupported(params: SwapExactInParams): boolean {
     if (isChangellyDisabled(params)) return false
 
     const fromChainId = params.tokenAmountIn.token.chainId
     const toChainId = params.tokenOut.chainId
 
-    const hasNativeChain = isChangellyNativeChainId(fromChainId) || isChangellyNativeChainId(toChainId)
-    if (!hasNativeChain) return false
-
-    return !isChangellyTradeChainId(fromChainId)
+    return isChangellyNativeChainId(fromChainId) || isChangellyNativeChainId(toChainId)
 }
 
-export function isChangellyTradeSupported(params: SwapExactInParams): boolean {
-    if (isChangellyDisabled(params)) return false
+export async function changellyNativeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    if (!isChangellyTradeChainId(params.tokenAmountIn.token.chainId)) {
+        return changellyDepositSwap(params)
+    }
 
-    const fromChainId = params.tokenAmountIn.token.chainId
-    const toChainId = params.tokenOut.chainId
+    if (!isChangellyZappingSupported(params)) {
+        return changellyTradeSwap(params)
+    }
 
-    if (!isChangellyTradeChainId(fromChainId)) return false
-    if (!isChangellyNativeChainId(toChainId)) return false
-
-    return true
+    try {
+        return await changellyTradeSwap(params)
+    } catch (error) {
+        if (!(error instanceof ChangellyTickerNotFoundError)) throw error
+        return zappingSwap(params)
+    }
 }
-
-// --- Swap functions ---
 
 export async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     if (!params.changellyExecute) {
-        return estimateResult(params, estimate, 'changelly-deposit')
+        return estimateResult(estimate, 'changelly-deposit')
     }
 
     if (!params.refundAddress) {
         throw new ChangellyError('Refund address is required for Changelly deposit')
     }
 
+    const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to
+
     const changellyData = await createChangellyDeposit(symbiosis, {
         currencyFrom: estimate.currencyFrom,
         currencyTo: estimate.currencyTo,
         amountFrom: estimate.amountFrom,
         rateId: estimate.rateId,
-        address: params.to,
+        address: payoutAddress,
         refundAddress: params.refundAddress,
         extraIdTo: params.changellyExtraIdTo,
     })
 
     return {
-        ...baseResult(params, estimate),
+        ...baseResult(estimate),
         kind: 'changelly-deposit',
         transactionType: 'changelly',
         transactionRequest: changellyData,
-        changelly: changellyData,
     }
 }
 
@@ -84,8 +88,12 @@ export async function changellyTradeSwap(params: SwapExactInParams): Promise<Swa
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     if (!params.changellyExecute) {
-        return estimateResult(params, estimate, 'changelly-trade')
+        return estimateResult(estimate, 'changelly-trade')
     }
+
+    const fromChainId = tokenAmountIn.token.chainId
+    const refundFallback = isTronChainId(fromChainId) ? evmAddressToTron(params.from) : params.from
+    const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to
 
     const tradeResult = await buildChangellyTradeTx(symbiosis, {
         currencyFrom: estimate.currencyFrom,
@@ -93,19 +101,19 @@ export async function changellyTradeSwap(params: SwapExactInParams): Promise<Swa
         amountFrom: estimate.amountFrom,
         rateId: estimate.rateId,
         amountExpectedTo: estimate.amountTo,
-        address: params.to,
-        refundAddress: params.refundAddress || params.from,
+        address: payoutAddress,
+        refundAddress: params.refundAddress || refundFallback,
         from: params.from,
         tokenAmountIn,
         extraIdTo: params.changellyExtraIdTo,
     })
 
-    return toTradeResult(params, estimate, tradeResult)
+    return toTradeResult(estimate, tradeResult)
 }
 
 // --- Result builders ---
 
-function baseResult(params: SwapExactInParams, estimate: ChangellyEstimateResult) {
+function baseResult(estimate: ChangellyEstimateResult) {
     return {
         tokenAmountOut: estimate.tokenAmountOut,
         tokenAmountOutMin: estimate.tokenAmountOut,
@@ -114,21 +122,20 @@ function baseResult(params: SwapExactInParams, estimate: ChangellyEstimateResult
         routes: [
             {
                 provider: SymbiosisTradeType.CHANGELLY,
-                tokens: [params.tokenAmountIn.token, estimate.tokenOutResolved],
+                tokens: [estimate.tokenInResolved, estimate.tokenOutResolved],
             },
         ],
         fees: estimate.fees,
-        labels: [],
+        labels: ['partner-swap' as const],
     }
 }
 
 function estimateResult(
-    params: SwapExactInParams,
     estimate: ChangellyEstimateResult,
     kind: 'changelly-deposit' | 'changelly-trade'
 ): SwapExactInResult {
     return {
-        ...baseResult(params, estimate),
+        ...baseResult(estimate),
         kind,
         transactionType: 'changelly',
         transactionRequest: {
@@ -141,13 +148,9 @@ function estimateResult(
     }
 }
 
-function toTradeResult(
-    params: SwapExactInParams,
-    estimate: ChangellyEstimateResult,
-    tradeResult: BuildChangellyTradeTxResult
-): SwapExactInResult {
+function toTradeResult(estimate: ChangellyEstimateResult, tradeResult: BuildChangellyTradeTxResult): SwapExactInResult {
     const base = {
-        ...baseResult(params, estimate),
+        ...baseResult(estimate),
         kind: 'changelly-trade' as const,
         changelly: tradeResult.changelly,
     }

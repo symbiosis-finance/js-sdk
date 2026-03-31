@@ -89,6 +89,14 @@ export function tronAddressToEvm(address: string): EvmAddress {
     }
 }
 
+export function evmAddressToTron(address: string): string {
+    try {
+        return TronWeb.address.fromHex(address.replace(/^0x/, '41'))
+    } catch (e) {
+        return address
+    }
+}
+
 export function isTronChainId(chainId: ChainId): boolean {
     return [ChainId.TRON_MAINNET, ChainId.TRON_TESTNET].includes(chainId)
 }

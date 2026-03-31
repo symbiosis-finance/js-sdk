@@ -23,7 +23,7 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
         disableDstChainRouting,
     })
 
-    const promises = routes.map((route) => tryRoute(symbiosis, route, params))
+    const promises: Promise<SwapExactInResult>[] = routes.map((route) => tryRoute(symbiosis, route, params))
 
     return theBest(promises, selectMode)
 }

@@ -61,6 +61,7 @@ export const COINGECKO_PLATFORMS = new Map([
     [ChainId.DOGE_MAINNET, 'dogecoin'],
     [ChainId.LTC_MAINNET, 'litecoin'],
     [ChainId.CANTON_MAINNET, 'canton-network'],
+    [ChainId.ZCASH_MAINNET, 'zcash'],
 ])
 
 export const COINGECKO_GAS_TOKEN_IDS = new Map([
@@ -125,4 +126,5 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.DOGE_MAINNET, 'dogecoin'],
     [ChainId.LTC_MAINNET, 'litecoin'],
     [ChainId.CANTON_MAINNET, 'canton-network'],
+    [ChainId.ZCASH_MAINNET, 'zcash'],
 ])
