@@ -92,7 +92,7 @@ export class UniV2Trade extends SymbiosisTrade {
             async () => {
                 return UniV2Trade.getPairs(this.router.provider, this.tokenAmountIn.token, this.tokenOut)
             },
-            60 // 1 minute
+            10 // 10 seconds
         )
 
         let trade: Trade
