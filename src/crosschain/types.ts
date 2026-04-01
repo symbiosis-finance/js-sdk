@@ -227,7 +227,7 @@ export type TonTransactionData = {
     messages: {
         address: string
         amount: string
-        payload: string
+        payload?: string
     }[]
 }
 

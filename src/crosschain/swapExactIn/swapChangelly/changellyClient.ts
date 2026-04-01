@@ -118,4 +118,19 @@ export class ChangellyClient {
         const result: TransactionResponse[] = await this.request('getTransactions', { id: changellyTxId })
         return result[0]
     }
+
+    public async getTransactions(params: {
+        id?: string | string[]
+        status?: string | string[]
+        currency?: string | string[]
+        address?: string | string[]
+        payoutAddress?: string | string[]
+        extraId?: string
+        since?: number
+        before?: number
+        limit?: number
+        offset?: number
+    }): Promise<TransactionResponse[]> {
+        return this.request('getTransactions', params)
+    }
 }

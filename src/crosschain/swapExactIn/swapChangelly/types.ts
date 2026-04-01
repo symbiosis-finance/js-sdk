@@ -83,9 +83,11 @@ export interface TransactionResponse {
     currencyFrom: string
     payinAddress: string
     payinExtraId: string
+    payinExtraIdName?: string
     payinHash: string
     payoutAddress: string
     payoutExtraId: string
+    payoutExtraIdName?: string
     payoutHash: string
     payoutHashLink: string
     refundAddress: string
