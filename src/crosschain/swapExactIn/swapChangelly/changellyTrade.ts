@@ -409,7 +409,6 @@ async function buildTonTransfer(
                 {
                     address: depositAddress,
                     amount: tokenAmountIn.raw.toString(),
-                    payload: '',
                 },
             ],
         }
