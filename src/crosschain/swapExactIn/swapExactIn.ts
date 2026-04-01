@@ -1,10 +1,7 @@
 import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
-import {
-    changellyNativeSwap,
-    isChangellyNativeSupported,
-} from './swapChangelly/changellySwap'
+import { changellyNativeSwap, isChangellyNativeSupported } from './swapChangelly/changellySwap'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'

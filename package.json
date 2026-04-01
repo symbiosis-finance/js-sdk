@@ -113,6 +113,9 @@
         "typescript": "^5.9.3",
         "vitest": "^4.0.16"
     },
+    "overrides": {
+        "axios": ">=1.0.0 <=1.13.2"
+    },
     "engines": {
         "node": ">=18"
     }

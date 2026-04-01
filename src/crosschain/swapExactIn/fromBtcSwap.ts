@@ -404,14 +404,15 @@ class FromBtcTrader {
         let trade: SymbiosisTrade
         const dep = await symbiosis.depository(syBtcAmount.token.chainId)
         if (dep) {
-            const prices = await estimatePrices(context, syBtcAmount, dep)
+            const { trade: priceTrade, ...prices } = await estimatePrices(context, syBtcAmount, dep)
             trade = await this.buildBtcDepositCall(dep, {
                 tradeParams: {
                     ...context,
                     tokenAmountIn: syBtcAmount,
                     tokenAmountInMin: syBtcAmountMin,
                 },
-                refundAddress: context.refundAddress as BtcAddress | undefined,
+                refundAddress: context.refundAddress as BtcAddress,
+                baseTrade: priceTrade,
                 depositParams: {
                     to: context.to,
                     extraBranches: [],
@@ -562,7 +563,7 @@ class FromBtcTrader {
     })
     async buildBtcDepositCall(
         dep: DepositoryContext,
-        { refundAddress, depositParams, tradeParams }: SyBtcDepositParams
+        { refundAddress, depositParams, tradeParams, baseTrade }: SyBtcDepositParams
     ): Promise<SymbiosisTrade> {
         // Optional BTC refund.
         if (refundAddress && dep.btcRefundUnlocker && dep.cfg.refundDelay) {
@@ -580,7 +581,7 @@ class FromBtcTrader {
             console.warn('locking btc without refund unlocker')
         }
 
-        return new DepositoryTrade(tradeParams, dep, depositParams).init()
+        return new DepositoryTrade(tradeParams, dep, depositParams, baseTrade).init()
     }
 }
 
@@ -625,16 +626,19 @@ async function makeAggregatorTrade(context: SwapExactInParams, tokenAmountIn: To
     return aggregatorTrade
 }
 
-async function estimatePricesUsingAggregators(context: SwapExactInParams, tokenAmountIn: TokenAmount): Promise<Prices> {
+async function estimatePricesUsingAggregators(
+    context: SwapExactInParams,
+    tokenAmountIn: TokenAmount
+): Promise<Prices & { trade: AggregatorTrade }> {
     const aggregatorTrade = await makeAggregatorTrade(context, tokenAmountIn)
-    return amountsToPrices(aggregatorTrade, tokenAmountIn)
+    return { ...amountsToPrices(aggregatorTrade, tokenAmountIn), trade: aggregatorTrade }
 }
 
 async function estimatePrices(
     context: SwapExactInParams,
     tokenAmountIn: TokenAmount,
     dep: DepositoryContext
-): Promise<Prices> {
+): Promise<Prices & { trade?: AggregatorTrade }> {
     if (dep.cfg.priceEstimation.enabled) {
         try {
             return await estimatePricesUsingCoingecko(
@@ -670,6 +674,7 @@ interface SyBtcDepositParams {
     tradeParams: SymbiosisTradeParams
     refundAddress?: BtcAddress | EmptyAddress
     depositParams: DepositParams
+    baseTrade?: SymbiosisTrade
 }
 
 interface DepositAddressResult {
