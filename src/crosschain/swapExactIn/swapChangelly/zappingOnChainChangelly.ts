@@ -18,7 +18,7 @@ import { getChangellyTransitToken } from './constants'
 import { createChangellyDeposit, getChangellyEstimate } from './changellyTrade'
 
 const erc20Interface = new Interface(['function transfer(address to, uint256 amount)'])
-const ERC20_TRANSFER_AMOUNT_OFFSET = 36 // 4 (selector) + 32 (address param)
+const ERC20_TRANSFER_AMOUNT_OFFSET = 68 // 32 (memory length word) + 4 (selector) + 32 (address param)
 
 export function isChangellyZappingSupported(params: SwapExactInParams): boolean {
     if (params.disabledProviders?.includes(SymbiosisTradeType.CHANGELLY)) return false
