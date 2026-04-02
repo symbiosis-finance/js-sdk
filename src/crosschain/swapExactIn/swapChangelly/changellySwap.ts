@@ -4,15 +4,15 @@ import { Percent } from '../../../entities'
 import { BIPS_BASE } from '../../constants'
 import { evmAddressToTron, isTronChainId } from '../../chainUtils'
 import { ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
-import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
+import { SymbiosisTradeType } from '../../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
 import {
-    type BuildChangellyTradeTxResult,
     buildChangellyTradeTx,
+    type BuildChangellyTradeTxResult,
+    type ChangellyEstimateResult,
     createChangellyDeposit,
     getChangellyEstimate,
-    type ChangellyEstimateResult,
 } from './changellyTrade'
 import { changellyZappingSwap as zappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
 
@@ -47,11 +47,13 @@ export async function changellyNativeSwap(params: SwapExactInParams): Promise<Sw
         try {
             return await changellyTradeSwap(params)
         } catch (error) {
-            if (!(error instanceof ChangellyTickerNotFoundError) || !isChangellyZappingSupported(params)) throw error
-            return zappingSwap(params)
+            if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
+                return zappingSwap(params)
+            }
+            throw error
         }
     }
-    
+
     throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
 }
 
