@@ -34,19 +34,13 @@ export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token)
     throw new ChangellyTickerNotFoundError(`Changelly does not support ${token.symbol} on chain ${token.chainId}`)
 }
 
-let fullMapPromise: Promise<Map<string, string>> | null = null
-let fullMapTimestamp: number | null = null
-const FULL_MAP_TTL_MS = 60 * 60 * 1000 // 1 hour
+const FULL_MAP_TTL_S = 60 * 60 // 1 hour
 
 async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, string>> {
-    const isExpired = !fullMapTimestamp || Date.now() - fullMapTimestamp > FULL_MAP_TTL_MS
-    if (fullMapPromise && !isExpired) {
-        return fullMapPromise
-    }
-    fullMapTimestamp = Date.now()
-    fullMapPromise = symbiosis.changelly
-        .getCurrenciesFull()
-        .then((currencies) => {
+    return symbiosis.cache.get(
+        ['changellyFullCurrencyMap'],
+        async () => {
+            const currencies = await symbiosis.changelly.getCurrenciesFull()
             const map = new Map<string, string>()
             for (const currency of currencies) {
                 if (!currency.enabled || !currency.blockchain) continue
@@ -64,11 +58,7 @@ async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, str
                 }
             }
             return map
-        })
-        .catch((error) => {
-            fullMapPromise = null
-            fullMapTimestamp = null
-            throw error
-        })
-    return fullMapPromise
+        },
+        FULL_MAP_TTL_S
+    )
 }
