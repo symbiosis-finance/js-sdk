@@ -26,10 +26,9 @@ const CHANGELLY_NATIVE_CHAIN_IDS = new Set<ChainId>([
 
 // All non-native chains supported by Changelly where SDK builds a transfer tx
 const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
+    // EVM
     ChainId.ETH_MAINNET,
     ChainId.BSC_MAINNET,
-    ChainId.TRON_MAINNET,
-    ChainId.SOLANA_MAINNET,
     ChainId.BASE_MAINNET,
     ChainId.ARBITRUM_MAINNET,
     ChainId.OPTIMISM_MAINNET,
@@ -49,7 +48,10 @@ const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
     ChainId.KAVA_MAINNET,
     ChainId.PLASMA_MAINNET,
     ChainId.MONAD_MAINNET,
+    // Non EVM
     ChainId.TON_MAINNET,
+    ChainId.TRON_MAINNET,
+    ChainId.SOLANA_MAINNET,
 ])
 
 // --- Changelly ticker maps (used by resolveChangellyTicker for fast-path lookup) ---

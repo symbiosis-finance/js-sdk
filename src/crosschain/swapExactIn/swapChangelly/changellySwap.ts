@@ -35,20 +35,25 @@ export function isChangellyNativeSupported(params: SwapExactInParams): boolean {
 }
 
 export async function changellyNativeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    if (!isChangellyTradeChainId(params.tokenAmountIn.token.chainId)) {
+    const fromChainId = params.tokenAmountIn.token.chainId
+
+    // Source is a Changelly-native chain (XMR, XRP, etc.) — user sends funds manually
+    if (isChangellyNativeChainId(fromChainId)) {
         return changellyDepositSwap(params)
     }
 
-    if (!isChangellyZappingSupported(params)) {
-        return changellyTradeSwap(params)
+    // Source is a trade chain (EVM/Solana/TON/Tron) — SDK builds a transfer tx
+    // If token not on Changelly and zapping is available, fall back to DEX swap → transit → Changelly
+    if (isChangellyTradeChainId(fromChainId)) {
+        try {
+            return await changellyTradeSwap(params)
+        } catch (error) {
+            if (!(error instanceof ChangellyTickerNotFoundError) || !isChangellyZappingSupported(params)) throw error
+            return zappingSwap(params)
+        }
     }
-
-    try {
-        return await changellyTradeSwap(params)
-    } catch (error) {
-        if (!(error instanceof ChangellyTickerNotFoundError)) throw error
-        return zappingSwap(params)
-    }
+    
+    throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
 }
 
 export async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
