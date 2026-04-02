@@ -291,7 +291,7 @@ export class Symbiosis {
             this.oneInchConfig = { ...this.oneInchConfig, ...overrideConfig.oneInchConfig }
         }
         this.openOceanConfig = {
-            apiUrl: 'https://open-api.openocean.finance/v4',
+            apiUrl: 'https://open-api-pro.openocean.finance/v4',
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.openOceanConfig) {
