@@ -43,7 +43,6 @@ export async function changellyNativeSwap(params: SwapExactInParams): Promise<Sw
     }
 
     // Source is a trade chain (EVM/Solana/TON/Tron) — SDK builds a transfer tx
-    // If token not on Changelly and zapping is available, fall back to DEX swap → transit → Changelly
     if (isChangellyTradeChainId(fromChainId)) {
         try {
             return await changellyTradeSwap(params)
