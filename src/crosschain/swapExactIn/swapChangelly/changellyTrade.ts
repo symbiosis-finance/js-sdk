@@ -190,6 +190,13 @@ export async function buildChangellyTradeTx(
     symbiosis: Symbiosis,
     params: BuildChangellyTradeTxParams
 ): Promise<BuildChangellyTradeTxResult> {
+    const { token } = params.tokenAmountIn
+    const chainId = token.chainId
+
+    if (!isTonChainId(chainId) && !isSolanaChainId(chainId) && !isTronChainId(chainId) && !isEvmChainId(chainId)) {
+        throw new ChangellyError(`Unsupported source chain: ${chainId}`)
+    }
+
     const changellyData = await createChangellyDeposit(symbiosis, {
         currencyFrom: params.currencyFrom,
         currencyTo: params.currencyTo,
@@ -201,8 +208,6 @@ export async function buildChangellyTradeTx(
     })
 
     const { depositAddress } = changellyData
-    const { token } = params.tokenAmountIn
-    const chainId = token.chainId
     const amount = params.tokenAmountIn.raw.toString()
 
     if (isTonChainId(chainId)) {
@@ -218,10 +223,6 @@ export async function buildChangellyTradeTx(
     if (isTronChainId(chainId)) {
         const tx = buildTronTransfer(depositAddress, token, amount, params.from)
         return { type: 'tron', tx, changelly: changellyData }
-    }
-
-    if (!isEvmChainId(chainId)) {
-        throw new ChangellyError(`Unsupported source chain: ${chainId}`)
     }
 
     const tx = buildEvmTransfer(depositAddress, token, amount, chainId)

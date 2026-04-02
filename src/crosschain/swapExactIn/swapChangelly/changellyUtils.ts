@@ -1,9 +1,9 @@
 import { Token } from '../../../entities'
 import { ChangellyTickerNotFoundError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
+import { isEvmChainId } from '../../chainUtils/evm'
 import { isSolanaChainId } from '../../chainUtils/solana'
 import { isTonChainId } from '../../chainUtils/ton'
-import { isTronChainId } from '../../chainUtils/tron'
 import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TICKER_MAP } from './constants'
 
 export function buildChangellyKey(token: Token): string {
@@ -16,7 +16,8 @@ export function buildChangellyKey(token: Token): string {
         return `${token.chainId}:${token.tonAddress}`
     }
 
-    return `${token.chainId}:${token.address.toLowerCase()}`
+    const address = isEvmChainId(token.chainId) ? token.address.toLowerCase() : token.address
+    return `${token.chainId}:${address}`
 }
 
 export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token): Promise<string> {
@@ -48,10 +49,9 @@ async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, str
                 if (chainId === undefined) continue
 
                 if (currency.contractAddress) {
-                    const contractKey =
-                        isSolanaChainId(chainId) || isTonChainId(chainId) || isTronChainId(chainId)
-                            ? currency.contractAddress
-                            : currency.contractAddress.toLowerCase()
+                    const contractKey = isEvmChainId(chainId)
+                        ? currency.contractAddress.toLowerCase()
+                        : currency.contractAddress
                     map.set(`${chainId}:${contractKey}`, currency.ticker)
                 } else {
                     map.set(`${chainId}:native`, currency.ticker)
