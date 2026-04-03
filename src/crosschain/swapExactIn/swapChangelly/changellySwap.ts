@@ -62,7 +62,8 @@ export async function changellyDepositSwap(params: SwapExactInParams): Promise<S
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     const fromChainId = tokenAmountIn.token.chainId
-    const refundAddress = params.refundAddress || (isTronChainId(fromChainId) ? evmAddressToTron(params.from) : params.from)
+    const refundAddress =
+        params.refundAddress || (isTronChainId(fromChainId) ? evmAddressToTron(params.from) : params.from)
     const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to
 
     const changellyData = await createChangellyDeposit(symbiosis, {
