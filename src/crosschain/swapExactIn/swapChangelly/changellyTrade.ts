@@ -346,7 +346,7 @@ function buildTronTransfer(depositAddress: string, token: Token, amount: string,
     const amountParam = BigInt(amount).toString(16).padStart(64, '0')
     return {
         chain_id: token.chainId,
-        call_value: 0,
+        call_value: '0',
         contract_address: TronWeb.address.fromHex(token.address),
         fee_limit: TRON_TRANSFER_FEE_LIMIT,
         function_selector: 'transfer(address,uint256)',
