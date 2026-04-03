@@ -117,29 +117,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
     const fees: FeeItem[] = [...swapResult.fees, ...changellyEstimate.fees]
     const priceImpact = swapResult.priceImpact || new Percent('0', BIPS_BASE)
 
-    // 7. Estimate-only mode: return without creating deposit
-    if (!params.changellyExecute) {
-        return {
-            tokenAmountOut: changellyEstimate.tokenAmountOut,
-            tokenAmountOutMin: changellyEstimate.tokenAmountOut,
-            priceImpact,
-            approveTo: approveAddress,
-            routes,
-            fees,
-            labels: ['partner-swap'],
-            kind: 'changelly-trade',
-            transactionType: 'changelly',
-            transactionRequest: {
-                rateId: changellyEstimate.rateId,
-                currencyFrom: changellyEstimate.currencyFrom,
-                currencyTo: changellyEstimate.currencyTo,
-                amountFrom: changellyEstimate.amountFrom,
-                amountExpectedTo: changellyEstimate.amountTo,
-            },
-        }
-    }
-
-    // 8. Create Changelly deposit
+    // 7. Create Changelly deposit
     // params.from / params.to are converted to EVM hex for TRON at swapExactIn entry — convert back for Changelly
     const refundFallback = isTronChainId(chainId) ? evmAddressToTron(params.from) : params.from
     const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to

@@ -212,7 +212,6 @@ export interface SwapExactInParams {
     disableDstChainRouting?: boolean
     depositoryEnabled?: boolean
     disabledProviders?: SymbiosisTradeType[]
-    changellyExecute?: boolean
     changellyExtraIdTo?: string // destination tag (XRP) or memo (XLM) for payout address
 }
 
@@ -249,14 +248,6 @@ export type ChangellyTransactionData = {
     refundExtraId?: string
 }
 
-export type ChangellyEstimateData = {
-    rateId: string
-    currencyFrom: string
-    currencyTo: string
-    amountFrom: string
-    amountExpectedTo: string
-}
-
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -280,7 +271,7 @@ export type SwapExactInTransactionPayload =
       }
     | {
           transactionType: 'changelly'
-          transactionRequest: ChangellyTransactionData | ChangellyEstimateData
+          transactionRequest: ChangellyTransactionData
       }
 
 export type RouteItem = {
