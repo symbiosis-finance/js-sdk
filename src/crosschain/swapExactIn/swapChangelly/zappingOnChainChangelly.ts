@@ -9,7 +9,7 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contrac
 import { AmountLessThanFeeError, ChangellyError, SdkError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade'
 import type { Address, FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
-import { isTronChainId, tronAddressToEvm } from '../../chainUtils/tron'
+import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'

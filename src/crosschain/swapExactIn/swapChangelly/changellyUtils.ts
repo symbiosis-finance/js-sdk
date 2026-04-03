@@ -1,4 +1,4 @@
-import { Token } from '../../../entities'
+import type { Token } from '../../../entities'
 import { ChangellyTickerNotFoundError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import { isSolanaChainId } from '../../chainUtils/solana'
