@@ -179,11 +179,11 @@ export type BuildChangellyTradeTxResult =
     | {
           type: 'evm'
           tx: { chainId: number; to: string; value: string; data: string }
-          changelly: ChangellyTransactionData
+          changellyData: ChangellyTransactionData
       }
-    | { type: 'tron'; tx: TronTxData; changelly: ChangellyTransactionData }
-    | { type: 'solana'; tx: { instructions: string }; changelly: ChangellyTransactionData }
-    | { type: 'ton'; tx: TonTransactionData; changelly: ChangellyTransactionData }
+    | { type: 'tron'; tx: TronTxData; changellyData: ChangellyTransactionData }
+    | { type: 'solana'; tx: { instructions: string }; changellyData: ChangellyTransactionData }
+    | { type: 'ton'; tx: TonTransactionData; changellyData: ChangellyTransactionData }
 
 export async function buildChangellyTradeTx(
     symbiosis: Symbiosis,
@@ -211,21 +211,21 @@ export async function buildChangellyTradeTx(
 
     if (isTonChainId(chainId)) {
         const tx = await buildTonTransfer(symbiosis, depositAddress, params.tokenAmountIn, params.from)
-        return { type: 'ton', tx, changelly: changellyData }
+        return { type: 'ton', tx, changellyData }
     }
 
     if (isSolanaChainId(chainId)) {
         const instructions = await buildSolanaTransfer(params.from, depositAddress, params.tokenAmountIn)
-        return { type: 'solana', tx: { instructions }, changelly: changellyData }
+        return { type: 'solana', tx: { instructions }, changellyData }
     }
 
     if (isTronChainId(chainId)) {
         const tx = buildTronTransfer(depositAddress, token, amount, params.from)
-        return { type: 'tron', tx, changelly: changellyData }
+        return { type: 'tron', tx, changellyData }
     }
 
     const tx = buildEvmTransfer(depositAddress, token, amount, chainId)
-    return { type: 'evm', tx, changelly: changellyData }
+    return { type: 'evm', tx, changellyData }
 }
 
 // --- Helpers ---

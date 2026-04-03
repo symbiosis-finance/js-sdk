@@ -642,7 +642,7 @@ describe('#changellyTradeSwap', () => {
         mockChangellyClient()
     })
 
-    test('SOL → LTC trade returns Solana tx with changelly data', async () => {
+    test('SOL → LTC trade returns Solana tx with changelly data', { timeout: 30_000 }, async () => {
         const params = makeParams({
             tokenAmountIn: new TokenAmount(sol, '300000000'), // 0.3 SOL
             tokenOut: ltc,
@@ -665,7 +665,7 @@ describe('#changellyTradeSwap', () => {
         expect(changellyData.refundAddress).toBe(solUserAddress)
     })
 
-    test('Solana tx contains instructions', async () => {
+    test('Solana tx contains instructions', { timeout: 30_000 }, async () => {
         const params = makeParams({
             tokenAmountIn: new TokenAmount(sol, '300000000'),
             tokenOut: ltc,

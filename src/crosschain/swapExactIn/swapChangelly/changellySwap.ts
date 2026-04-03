@@ -130,7 +130,7 @@ function toTradeResult(estimate: ChangellyEstimateResult, tradeResult: BuildChan
     const base: Omit<SwapExactInResult, 'transactionType' | 'transactionRequest'> = {
         ...baseResult(estimate),
         kind: 'changelly-trade' as const,
-        changellyData: tradeResult.changelly,
+        changellyData: tradeResult.changellyData,
     }
 
     switch (tradeResult.type) {
