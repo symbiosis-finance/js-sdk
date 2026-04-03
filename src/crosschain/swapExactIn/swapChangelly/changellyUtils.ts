@@ -1,8 +1,7 @@
 import type { Token } from '../../../entities'
 import { ChangellyTickerNotFoundError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
-import { isSolanaChainId } from '../../chainUtils/solana'
-import { isTonChainId } from '../../chainUtils/ton'
+import { isSolanaChainId, isTonChainId } from '../../chainUtils'
 import { buildChangellyKeyRaw, CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_FAST_TICKER_MAP } from './constants'
 
 export function buildChangellyKey(token: Token): string {
@@ -25,7 +24,7 @@ export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token)
     const ticker = CHANGELLY_FAST_TICKER_MAP.get(key)
     if (ticker) return ticker
 
-    // Slow path: fetch full currency list from Changelly API (covers tokens not in static map)
+    // Slow path: fetch a full currency list from Changelly API (covers tokens not in a static map)
     const fullMap = await getFullCurrencyMap(symbiosis)
     const fallbackTicker = fullMap.get(key)
     if (fallbackTicker) return fallbackTicker

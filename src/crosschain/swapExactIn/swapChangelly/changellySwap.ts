@@ -15,9 +15,7 @@ import {
     createChangellyDeposit,
     getChangellyEstimate,
 } from './changellyTrade'
-import { changellyZappingSwap as zappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
-
-export { changellyZappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
+import { changellyZappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
 
 const ZERO_PRICE_IMPACT = new Percent('0', BIPS_BASE)
 
@@ -49,7 +47,7 @@ export async function changellyNativeSwap(params: SwapExactInParams): Promise<Sw
             return await changellyTradeSwap(params)
         } catch (error) {
             if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
-                return zappingSwap(params)
+                return changellyZappingSwap(params)
             }
             throw error
         }
@@ -58,12 +56,13 @@ export async function changellyNativeSwap(params: SwapExactInParams): Promise<Sw
     throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
 }
 
-export async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     const fromChainId = tokenAmountIn.token.chainId
-    const refundAddress = params.refundAddress || (isTronChainId(fromChainId) ? TronWeb.address.fromHex(params.from) : params.from)
+    const refundAddress =
+        params.refundAddress || (isTronChainId(fromChainId) ? TronWeb.address.fromHex(params.from) : params.from)
     const payoutAddress = isTronChainId(tokenOut.chainId) ? TronWeb.address.fromHex(params.to) : params.to
 
     const changellyData = await createChangellyDeposit(symbiosis, {
@@ -84,7 +83,7 @@ export async function changellyDepositSwap(params: SwapExactInParams): Promise<S
     }
 }
 
-export async function changellyTradeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+async function changellyTradeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
@@ -128,10 +127,10 @@ function baseResult(estimate: ChangellyEstimateResult) {
 }
 
 function toTradeResult(estimate: ChangellyEstimateResult, tradeResult: BuildChangellyTradeTxResult): SwapExactInResult {
-    const base = {
+    const base: Omit<SwapExactInResult, 'transactionType' | 'transactionRequest'> = {
         ...baseResult(estimate),
         kind: 'changelly-trade' as const,
-        changelly: tradeResult.changelly,
+        changellyData: tradeResult.changelly,
     }
 
     switch (tradeResult.type) {

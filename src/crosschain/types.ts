@@ -313,7 +313,7 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     poolAddress?: string
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
-    changelly?: ChangellyTransactionData
+    changellyData?: ChangellyTransactionData
 }
 
 export interface MultiCallItem {

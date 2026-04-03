@@ -36,7 +36,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const chainId = tokenAmountIn.token.chainId
 
-    // 1. Select transit token (always ERC-20, never native)
+    // 1. Select a transit token (always ERC-20, never native)
     const transit = getChangellyTransitToken(chainId)
     if (!transit) {
         throw new ChangellyError(`No transit tokens for chain ${chainId}`)
@@ -195,7 +195,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
         fees,
         labels: ['partner-swap'],
         kind: 'changelly-trade',
-        changelly: changellyData,
+        changellyData,
         ...preparePayload({
             chainId,
             from: senderForAbi,

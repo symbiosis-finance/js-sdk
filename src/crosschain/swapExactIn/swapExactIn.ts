@@ -19,15 +19,15 @@ export * from './fromBtcSwap'
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut } = params
 
+    if (tokenAmountIn.token.equals(tokenOut)) {
+        throw new Error('Cannot swap same tokens')
+    }
+
     if (isTronChainId(tokenAmountIn.token.chainId)) {
         params.from = tronAddressToEvm(params.from)
     }
     if (isTronChainId(tokenOut.chainId)) {
         params.to = tronAddressToEvm(params.to)
-    }
-
-    if (tokenAmountIn.token.equals(tokenOut)) {
-        throw new Error('Cannot swap same tokens')
     }
 
     if (isChangellyNativeSupported(params)) {

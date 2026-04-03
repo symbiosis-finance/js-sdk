@@ -1,13 +1,13 @@
 import { vi, describe, expect, test, beforeEach } from 'vitest'
 
 import type { SwapExactInParams } from '../../../../src'
-import { ChainId, GAS_TOKEN, Symbiosis, Token, TokenAmount, WETH } from '../../../../src'
-import { SymbiosisTradeType } from '../../../../src/crosschain/trade/symbiosisTrade'
+import { ChainId, GAS_TOKEN, Symbiosis, Token, TokenAmount } from '../../../../src'
+import { SymbiosisTradeType } from '../../../../src'
 import {
     changellyDepositSwap,
     changellyTradeSwap,
     isChangellyNativeSupported,
-} from '../../../../src/crosschain/swapExactIn/swapChangelly/changellySwap'
+} from '../../../../src/crosschain/swapExactIn/swapChangelly'
 import {
     buildChangellyKeyRaw,
     isChangellyNativeChainId,
