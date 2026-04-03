@@ -7,7 +7,7 @@ import {
     changellyDepositSwap,
     changellyTradeSwap,
     isChangellyNativeSupported,
-} from '../../../../src/crosschain/swapExactIn/swapChangelly'
+} from '../../../../src/crosschain/swapExactIn/swapChangelly/changellySwap'
 import {
     buildChangellyKeyRaw,
     isChangellyNativeChainId,
@@ -655,14 +655,14 @@ describe('#changellyTradeSwap', () => {
         expect(result.routes).toHaveLength(1)
         expect(result.routes[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
 
-        // changelly field should contain deposit data
-        const changelly = (result as any).changelly
-        expect(changelly).toBeDefined()
-        expect(changelly.changellyTxId).toBe('4fs0djsqm1cic0j6')
-        expect(changelly.depositAddress).toBe('H2NLNh8tvrSvRXF1ocbuyJr8DNxoEJootD2z2KxFRio8')
-        expect(changelly.currencyFrom).toBe('sol')
-        expect(changelly.currencyTo).toBe('ltc')
-        expect(changelly.refundAddress).toBe(solUserAddress)
+        // changellyData field should contain deposit data
+        const changellyData = (result as any).changellyData
+        expect(changellyData).toBeDefined()
+        expect(changellyData.changellyTxId).toBe('4fs0djsqm1cic0j6')
+        expect(changellyData.depositAddress).toBe('H2NLNh8tvrSvRXF1ocbuyJr8DNxoEJootD2z2KxFRio8')
+        expect(changellyData.currencyFrom).toBe('sol')
+        expect(changellyData.currencyTo).toBe('ltc')
+        expect(changellyData.refundAddress).toBe(solUserAddress)
     })
 
     test('Solana tx contains instructions', async () => {

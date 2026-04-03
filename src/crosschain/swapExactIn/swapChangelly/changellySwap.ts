@@ -56,7 +56,7 @@ export async function changellyNativeSwap(params: SwapExactInParams): Promise<Sw
     throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
 }
 
-async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+export async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
@@ -83,7 +83,7 @@ async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExac
     }
 }
 
-async function changellyTradeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+export async function changellyTradeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
