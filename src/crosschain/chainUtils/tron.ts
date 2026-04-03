@@ -89,7 +89,6 @@ export function tronAddressToEvm(address: string): EvmAddress {
     }
 }
 
-
 export function isTronChainId(chainId: ChainId): boolean {
     return [ChainId.TRON_MAINNET, ChainId.TRON_TESTNET].includes(chainId)
 }
