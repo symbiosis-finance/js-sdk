@@ -9,6 +9,5 @@ export {
     isTronToken,
     prepareTronTransaction,
     tronAddressToEvm,
-    evmAddressToTron,
     type TronTransactionData,
 } from './tron'

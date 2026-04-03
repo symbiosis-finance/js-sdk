@@ -9,7 +9,8 @@ import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contrac
 import { AmountLessThanFeeError, ChangellyError, SdkError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade'
 import type { Address, FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
-import { evmAddressToTron, isTronChainId, tronAddressToEvm } from '../../chainUtils/tron'
+import { isTronChainId, tronAddressToEvm } from '../../chainUtils/tron'
+import TronWeb from 'tronweb'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
 import { preparePayload } from '../preparePayload'
@@ -119,8 +120,8 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
 
     // 7. Create Changelly deposit
     // params.from / params.to are converted to EVM hex for TRON at swapExactIn entry — convert back for Changelly
-    const refundFallback = isTronChainId(chainId) ? evmAddressToTron(params.from) : params.from
-    const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to
+    const refundFallback = isTronChainId(chainId) ? TronWeb.address.fromHex(params.from) : params.from
+    const payoutAddress = isTronChainId(tokenOut.chainId) ? TronWeb.address.fromHex(params.to) : params.to
     const changellyData = await createChangellyDeposit(symbiosis, {
         currencyFrom: changellyEstimate.currencyFrom,
         currencyTo: changellyEstimate.currencyTo,

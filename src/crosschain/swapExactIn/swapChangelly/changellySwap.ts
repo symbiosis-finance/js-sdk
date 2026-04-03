@@ -2,7 +2,8 @@ import { AddressZero } from '@ethersproject/constants'
 
 import { Percent } from '../../../entities'
 import { BIPS_BASE } from '../../constants'
-import { evmAddressToTron, isTronChainId } from '../../chainUtils'
+import { isTronChainId } from '../../chainUtils'
+import TronWeb from 'tronweb'
 import { ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
@@ -62,8 +63,8 @@ export async function changellyDepositSwap(params: SwapExactInParams): Promise<S
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     const fromChainId = tokenAmountIn.token.chainId
-    const refundAddress = params.refundAddress || (isTronChainId(fromChainId) ? evmAddressToTron(params.from) : params.from)
-    const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to
+    const refundAddress = params.refundAddress || (isTronChainId(fromChainId) ? TronWeb.address.fromHex(params.from) : params.from)
+    const payoutAddress = isTronChainId(tokenOut.chainId) ? TronWeb.address.fromHex(params.to) : params.to
 
     const changellyData = await createChangellyDeposit(symbiosis, {
         currencyFrom: estimate.currencyFrom,
@@ -88,8 +89,8 @@ export async function changellyTradeSwap(params: SwapExactInParams): Promise<Swa
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     const fromChainId = tokenAmountIn.token.chainId
-    const refundFallback = isTronChainId(fromChainId) ? evmAddressToTron(params.from) : params.from
-    const payoutAddress = isTronChainId(tokenOut.chainId) ? evmAddressToTron(params.to) : params.to
+    const refundFallback = isTronChainId(fromChainId) ? TronWeb.address.fromHex(params.from) : params.from
+    const payoutAddress = isTronChainId(tokenOut.chainId) ? TronWeb.address.fromHex(params.to) : params.to
 
     const tradeResult = await buildChangellyTradeTx(symbiosis, {
         currencyFrom: estimate.currencyFrom,
