@@ -7,7 +7,7 @@ import type { TokenConstructor } from '../../../entities'
 import { Token } from '../../../entities'
 import ERC20 from '../../abis/ERC20.json' with { type: 'json' }
 import { isBtcChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
-import { isChangellyNativeChainId } from '../../swapExactIn/swapChangelly/constants'
+import { isChangellyNativeChainId } from '../../swapExactIn/swapChangelly'
 import type { Bridge, Fabric, MetaRouter, OmniPool, Portal, Synthesis } from '../../contracts'
 import {
     Bridge__factory,
