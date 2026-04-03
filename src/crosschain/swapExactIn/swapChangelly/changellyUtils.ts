@@ -1,30 +1,28 @@
 import { Token } from '../../../entities'
 import { ChangellyTickerNotFoundError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
-import { isEvmChainId } from '../../chainUtils/evm'
 import { isSolanaChainId } from '../../chainUtils/solana'
 import { isTonChainId } from '../../chainUtils/ton'
-import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TICKER_MAP } from './constants'
+import { buildChangellyKeyRaw, CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_FAST_TICKER_MAP } from './constants'
 
 export function buildChangellyKey(token: Token): string {
-    if (token.isNative) return `${token.chainId}:native`
+    if (token.isNative) return buildChangellyKeyRaw(token.chainId, '', true)
 
     if (isSolanaChainId(token.chainId)) {
-        return `${token.chainId}:${token.solAddress}`
+        return buildChangellyKeyRaw(token.chainId, token.solAddress, false)
     }
     if (isTonChainId(token.chainId)) {
-        return `${token.chainId}:${token.tonAddress}`
+        return buildChangellyKeyRaw(token.chainId, token.tonAddress, false)
     }
 
-    const address = isEvmChainId(token.chainId) ? token.address.toLowerCase() : token.address
-    return `${token.chainId}:${address}`
+    return buildChangellyKeyRaw(token.chainId, token.address, false)
 }
 
 export async function resolveChangellyTicker(symbiosis: Symbiosis, token: Token): Promise<string> {
     const key = buildChangellyKey(token)
 
     // Fast path: hardcoded map
-    const ticker = CHANGELLY_TICKER_MAP.get(key)
+    const ticker = CHANGELLY_FAST_TICKER_MAP.get(key)
     if (ticker) return ticker
 
     // Slow path: fetch full currency list from Changelly API (covers tokens not in static map)
@@ -49,12 +47,9 @@ async function getFullCurrencyMap(symbiosis: Symbiosis): Promise<Map<string, str
                 if (chainId === undefined) continue
 
                 if (currency.contractAddress) {
-                    const contractKey = isEvmChainId(chainId)
-                        ? currency.contractAddress.toLowerCase()
-                        : currency.contractAddress
-                    map.set(`${chainId}:${contractKey}`, currency.ticker)
+                    map.set(buildChangellyKeyRaw(chainId, currency.contractAddress, false), currency.ticker)
                 } else {
-                    map.set(`${chainId}:native`, currency.ticker)
+                    map.set(buildChangellyKeyRaw(chainId, '', true), currency.ticker)
                 }
             }
             return map

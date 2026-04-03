@@ -1,7 +1,6 @@
 export { ChangellyClient } from './changellyClient'
 export {
-    CHANGELLY_NATIVE_DECIMALS,
-    CHANGELLY_TICKER_MAP as CHANGELLY_TOKEN_MAP,
+    CHANGELLY_FAST_TICKER_MAP as CHANGELLY_TOKEN_MAP,
     isChangellyNativeChainId,
     isChangellySupportedChainId,
     isChangellyTradeChainId,

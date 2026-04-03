@@ -2,6 +2,12 @@ import { ChainId } from '../../../constants'
 import { Token } from '../../../entities'
 import type { Address } from '../../types'
 
+export function buildChangellyKeyRaw(chainId: ChainId, address: string, isNative: boolean): string {
+    if (isNative) return `${chainId}:native`
+    const normalized = address.startsWith('0x') ? address.toLowerCase() : address
+    return `${chainId}:${normalized}`
+}
+
 // --- Transaction building ---
 
 export const TRON_TRANSFER_FEE_LIMIT = 50_000_000 // 50 TRX — covers ~131k energy for TRC-20 transfer (e.g. USDT)
@@ -71,33 +77,6 @@ export const CHANGELLY_NATIVE_CHAINS = [
     { chainId: ChainId.ZCASH_MAINNET, ticker: 'zec', symbol: 'ZEC', name: 'Zcash', decimals: 8 },
 ] as const
 
-const CHANGELLY_ONLY_NATIVE_TICKERS = new Map<string, string>(
-    CHANGELLY_NATIVE_CHAINS.map(({ chainId, ticker }) => [`${chainId}:native`, ticker])
-)
-
-// Native gas tokens per trade chain: fast-path ticker lookup (avoids API call for common natives).
-const CHANGELLY_GAS_TRADE_TICKERS = new Map<string, string>([
-    [`${ChainId.BTC_MAINNET}:native`, 'btc'],
-    [`${ChainId.ETH_MAINNET}:native`, 'eth'],
-    [`${ChainId.BSC_MAINNET}:native`, 'bnbbsc'],
-    [`${ChainId.TRON_MAINNET}:native`, 'trx'],
-    [`${ChainId.SOLANA_MAINNET}:native`, 'sol'],
-    [`${ChainId.BASE_MAINNET}:native`, 'ethbase'],
-    [`${ChainId.ARBITRUM_MAINNET}:native`, 'etharb'],
-    [`${ChainId.OPTIMISM_MAINNET}:native`, 'ethop'],
-    [`${ChainId.MATIC_MAINNET}:native`, 'pol'],
-    [`${ChainId.AVAX_MAINNET}:native`, 'avaxc'],
-    [`${ChainId.SONIC_MAINNET}:native`, 's'],
-    [`${ChainId.TON_MAINNET}:native`, 'ton'],
-    [`${ChainId.BERACHAIN_MAINNET}:native`, 'bera'],
-    [`${ChainId.CRONOS_MAINNET}:native`, 'cro'],
-    [`${ChainId.ZETACHAIN_MAINNET}:native`, 'zeta'],
-    [`${ChainId.CORE_MAINNET}:native`, 'core'],
-    [`${ChainId.KAVA_MAINNET}:native`, 'kava'],
-    [`${ChainId.PLASMA_MAINNET}:native`, 'xpl'],
-    [`${ChainId.MONAD_MAINNET}:native`, 'mon'],
-    [`${ChainId.SEI_EVM_MAINNET}:native`, 'sei'],
-])
 
 // Transit ERC-20 per chain for zapping (DEX swap → Changelly deposit).
 // Most liquid stable, or chain-native ERC-20 for L2s. Address format matches buildChangellyKey.
@@ -213,21 +192,40 @@ const CHANGELLY_TRANSIT_TOKENS: Partial<
 }
 
 // Fast-path ticker resolution — avoids API call for common tokens.
-export const CHANGELLY_TICKER_MAP = new Map<string, string>([
-    ...CHANGELLY_ONLY_NATIVE_TICKERS,
-    ...CHANGELLY_GAS_TRADE_TICKERS,
-    ...(Object.entries(CHANGELLY_TRANSIT_TOKENS).map(([chainId, t]) => [`${chainId}:${t!.address}`, t!.ticker]) as [
-        string,
-        string,
-    ][]),
+export const CHANGELLY_FAST_TICKER_MAP = new Map<string, string>([
+    // Changelly-native chains (gas tokens)
+    ...CHANGELLY_NATIVE_CHAINS.map(({ chainId, ticker }) => [buildChangellyKeyRaw(chainId, '', true), ticker] as const),
+    // Trade chain gas tokens
+    [buildChangellyKeyRaw(ChainId.ETH_MAINNET, '', true), 'eth'],
+    [buildChangellyKeyRaw(ChainId.BSC_MAINNET, '', true), 'bnbbsc'],
+    [buildChangellyKeyRaw(ChainId.BASE_MAINNET, '', true), 'ethbase'],
+    [buildChangellyKeyRaw(ChainId.ARBITRUM_MAINNET, '', true), 'etharb'],
+    [buildChangellyKeyRaw(ChainId.OPTIMISM_MAINNET, '', true), 'ethop'],
+    [buildChangellyKeyRaw(ChainId.MATIC_MAINNET, '', true), 'pol'],
+    [buildChangellyKeyRaw(ChainId.AVAX_MAINNET, '', true), 'avaxc'],
+    [buildChangellyKeyRaw(ChainId.SONIC_MAINNET, '', true), 's'],
+    [buildChangellyKeyRaw(ChainId.BERACHAIN_MAINNET, '', true), 'bera'],
+    [buildChangellyKeyRaw(ChainId.CRONOS_MAINNET, '', true), 'cro'],
+    [buildChangellyKeyRaw(ChainId.ZETACHAIN_MAINNET, '', true), 'zeta'],
+    [buildChangellyKeyRaw(ChainId.CORE_MAINNET, '', true), 'core'],
+    [buildChangellyKeyRaw(ChainId.KAVA_MAINNET, '', true), 'kava'],
+    [buildChangellyKeyRaw(ChainId.PLASMA_MAINNET, '', true), 'xpl'],
+    [buildChangellyKeyRaw(ChainId.MONAD_MAINNET, '', true), 'mon'],
+    [buildChangellyKeyRaw(ChainId.SEI_EVM_MAINNET, '', true), 'sei'],
+    [buildChangellyKeyRaw(ChainId.TRON_MAINNET, '', true), 'trx'],
+    [buildChangellyKeyRaw(ChainId.TON_MAINNET, '', true), 'ton'],
+    [buildChangellyKeyRaw(ChainId.SOLANA_MAINNET, '', true), 'sol'],
+    // Transit tokens (ERC-20 / jettons)
+    ...(Object.entries(CHANGELLY_TRANSIT_TOKENS).map(([chainId, token]) => [
+        buildChangellyKeyRaw(Number(chainId) as ChainId, token.address, false),
+        token.ticker,
+    ]) as [string, string][]),
 ])
 
 export const CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID: Record<string, ChainId> = {
+    // EVM
     ethereum: ChainId.ETH_MAINNET,
     binance_smart_chain: ChainId.BSC_MAINNET,
-    tron: ChainId.TRON_MAINNET,
-    solana: ChainId.SOLANA_MAINNET,
-    bitcoin: ChainId.BTC_MAINNET,
     BASE: ChainId.BASE_MAINNET,
     arbitrum: ChainId.ARBITRUM_MAINNET,
     optimism: ChainId.OPTIMISM_MAINNET,
@@ -247,14 +245,24 @@ export const CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID: Record<string, ChainId> = {
     kava: ChainId.KAVA_MAINNET,
     plasma: ChainId.PLASMA_MAINNET,
     mon: ChainId.MONAD_MAINNET,
+    // Non-EVM trade chains
+    tron: ChainId.TRON_MAINNET,
+    solana: ChainId.SOLANA_MAINNET,
     ton: ChainId.TON_MAINNET,
+    bitcoin: ChainId.BTC_MAINNET,
+    // Changelly-native chains
+    litecoin: ChainId.LTC_MAINNET,
+    doge: ChainId.DOGE_MAINNET,
+    monero: ChainId.XMR_MAINNET,
+    ripple: ChainId.XRP_MAINNET,
+    stellar: ChainId.XLM_MAINNET,
+    cardano: ChainId.ADA_MAINNET,
+    bitcoin_cash: ChainId.BCH_MAINNET,
+    sui: ChainId.SUI_MAINNET,
+    cc: ChainId.CANTON_MAINNET,
     zcash: ChainId.ZCASH_MAINNET,
 }
 
-// chainId → decimals for resolveOutputToken
-export const CHANGELLY_NATIVE_DECIMALS: Partial<Record<ChainId, number>> = Object.fromEntries(
-    CHANGELLY_NATIVE_CHAINS.map(({ chainId, decimals }) => [chainId, decimals])
-)
 
 // --- Chain detection ---
 

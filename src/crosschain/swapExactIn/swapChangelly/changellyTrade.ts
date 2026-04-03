@@ -21,7 +21,6 @@ import type { ChangellyTransactionData, FeeItem, TonTransactionData } from '../.
 import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
 import {
     CHANGELLY_NATIVE_CHAINS,
-    CHANGELLY_NATIVE_DECIMALS,
     DEPOSIT_VALIDITY_MS,
     TON_TX_VALIDITY_SECONDS,
     TRON_TRANSFER_FEE_LIMIT,
@@ -252,7 +251,7 @@ function resolveInputToken(token: Token, currencyFrom: string): Token {
     return new Token({
         chainId: token.chainId,
         address: token.address ?? '',
-        decimals: token.decimals ?? CHANGELLY_NATIVE_DECIMALS[token.chainId] ?? 18,
+        decimals: token.decimals ?? CHANGELLY_NATIVE_CHAINS.find((c) => c.chainId === token.chainId)?.decimals ?? 18,
         symbol: display.symbol,
         name: display.name,
         icons: token.icons ?? GAS_TOKEN[token.chainId]?.icons,
@@ -281,7 +280,7 @@ function resolveOutputToken(tokenOut: Token, currencyTo: string): Token {
         return tokenOut
     }
 
-    const decimals = CHANGELLY_NATIVE_DECIMALS[tokenOut.chainId] ?? 18
+    const decimals = CHANGELLY_NATIVE_CHAINS.find((c) => c.chainId === tokenOut.chainId)?.decimals ?? 18
     const symbol = knownSymbol ?? currencyTo.toUpperCase()
     return new Token({
         chainId: tokenOut.chainId,

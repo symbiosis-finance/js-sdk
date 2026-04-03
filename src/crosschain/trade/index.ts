@@ -1,6 +1,5 @@
 export { AggregatorTrade, AggregatorTradeParams } from './aggregatorTrade'
 export {
-    CHANGELLY_NATIVE_DECIMALS,
     isChangellyNativeChainId,
     isChangellySupportedChainId,
     isChangellyTradeChainId,
