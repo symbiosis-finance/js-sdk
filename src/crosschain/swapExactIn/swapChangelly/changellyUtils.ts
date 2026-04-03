@@ -1,9 +1,7 @@
-import { Token } from '../../../entities'
+import type { Token } from '../../../entities'
 import { ChangellyTickerNotFoundError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
-import { isEvmChainId } from '../../chainUtils/evm'
-import { isSolanaChainId } from '../../chainUtils/solana'
-import { isTonChainId } from '../../chainUtils/ton'
+import { isEvmChainId, isSolanaChainId, isTonChainId } from '../../chainUtils'
 import { CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID, CHANGELLY_TICKER_MAP } from './constants'
 
 export function buildChangellyKey(token: Token): string {
