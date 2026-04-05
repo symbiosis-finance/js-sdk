@@ -12,6 +12,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../const
 import { SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
+import { isChangellyNativeChainId } from '../swapExactIn/swapChangelly/constants'
 import { isBtcChainId } from './btc'
 import { isQuaiChainId } from './quai'
 import { isSolanaChainId } from './solana'
@@ -38,7 +39,8 @@ export function isEvmChainId(chainId: ChainId | undefined) {
         !isTronChainId(chainId) &&
         !isTonChainId(chainId) &&
         !isSolanaChainId(chainId) &&
-        !isQuaiChainId(chainId)
+        !isQuaiChainId(chainId) &&
+        !isChangellyNativeChainId(chainId)
     )
 }
 

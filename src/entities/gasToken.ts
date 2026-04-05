@@ -2,10 +2,10 @@ import { ChainId } from '../constants'
 import type { Address } from '../crosschain/types'
 import { Token } from './token'
 
-const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
+const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18, name = symbol) =>
     new Token({
         isNative: true,
-        name: symbol,
+        name,
         symbol,
         address: '',
         chainId,
@@ -117,4 +117,14 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.MONAD_MAINNET]: GAS(ChainId.MONAD_MAINNET, 'MON', 30495),
     [ChainId.CITREA_MAINNET]: GAS(ChainId.CITREA_MAINNET, 'CBTC', 1), // TODO change iconId
     [ChainId.QUAI_MAINNET]: GAS(ChainId.QUAI_MAINNET, 'QUAI', 22354),
+    [ChainId.XLM_MAINNET]: GAS(ChainId.XLM_MAINNET, 'XLM', 512, 7, 'Stellar'),
+    [ChainId.XRP_MAINNET]: GAS(ChainId.XRP_MAINNET, 'XRP', 52, 6, 'XRP'),
+    [ChainId.XMR_MAINNET]: GAS(ChainId.XMR_MAINNET, 'XMR', 328, 12, 'Monero'),
+    [ChainId.ADA_MAINNET]: GAS(ChainId.ADA_MAINNET, 'ADA', 2010, 6, 'Cardano'),
+    [ChainId.BCH_MAINNET]: GAS(ChainId.BCH_MAINNET, 'BCH', 1831, 8, 'Bitcoin Cash'),
+    [ChainId.SUI_MAINNET]: GAS(ChainId.SUI_MAINNET, 'SUI', 20947, 9, 'Sui'),
+    [ChainId.CANTON_MAINNET]: GAS(ChainId.CANTON_MAINNET, 'CC', 37263, 10, 'Canton Coin'),
+    [ChainId.DOGE_MAINNET]: GAS(ChainId.DOGE_MAINNET, 'DOGE', 74, 8, 'Dogecoin'),
+    [ChainId.LTC_MAINNET]: GAS(ChainId.LTC_MAINNET, 'LTC', 2, 8, 'Litecoin'),
+    [ChainId.ZCASH_MAINNET]: GAS(ChainId.ZCASH_MAINNET, 'ZEC', 1437, 8, 'Zcash'),
 }

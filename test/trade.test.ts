@@ -66,7 +66,7 @@ describe('Trade', () => {
 
         test('doesnt throw for zero liquidity pairs', () => {
             expect(
-                Trade.bestTradeExactIn([empty_pair_0_1], new TokenAmount(token0, JSBI.BigInt(100)), token1)
+                Trade.bestTradeExactIn([empty_pair_0_1], new TokenAmount(token0, JSBI.BigInt(100)), token1).trades
             ).toHaveLength(0)
         })
 
@@ -102,7 +102,7 @@ describe('Trade', () => {
                 { maxNumResults: 1 }
             )
 
-            expect(result).toHaveLength(1)
+            expect(result.trades).toHaveLength(1)
         })
 
         test('no path', () => {
@@ -111,7 +111,7 @@ describe('Trade', () => {
                 new TokenAmount(token0, JSBI.BigInt(10)),
                 token2
             )
-            expect(result).toHaveLength(0)
+            expect(result.trades).toHaveLength(0)
         })
     })
 

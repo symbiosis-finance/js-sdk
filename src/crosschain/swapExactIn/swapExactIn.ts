@@ -1,6 +1,7 @@
 import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
+import { changellyNativeSwap, isChangellyNativeSupported } from './swapChangelly'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
@@ -18,6 +19,10 @@ export * from './fromBtcSwap'
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut } = params
 
+    if (tokenAmountIn.token.equals(tokenOut)) {
+        throw new Error('Cannot swap same tokens')
+    }
+
     if (isTronChainId(tokenAmountIn.token.chainId)) {
         params.from = tronAddressToEvm(params.from)
     }
@@ -25,8 +30,8 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         params.to = tronAddressToEvm(params.to)
     }
 
-    if (tokenAmountIn.token.equals(tokenOut)) {
-        throw new Error('Cannot swap same tokens')
+    if (isChangellyNativeSupported(params)) {
+        return changellyNativeSwap(params)
     }
 
     if (isWrapSupported(params)) {
