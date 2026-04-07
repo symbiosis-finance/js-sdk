@@ -52,6 +52,7 @@ export const COINGECKO_PLATFORMS = new Map([
     [ChainId.MONAD_MAINNET, 'monad'],
     [ChainId.CITREA_MAINNET, 'ethereum'], // TODO change to a correct platform
     [ChainId.QUAI_MAINNET, 'quai-network'],
+    [ChainId.TEMPO_MAINNET, 'tempo'],
 ])
 
 export const COINGECKO_GAS_TOKEN_IDS = new Map([
@@ -107,4 +108,5 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.MONAD_MAINNET, 'monad'],
     [ChainId.CITREA_MAINNET, 'bitcoin'], // TODO update if needed
     [ChainId.QUAI_MAINNET, 'quai-network'],
+    [ChainId.TEMPO_MAINNET, ''], // NOTE: no gas token on tempo
 ])

@@ -848,6 +848,16 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
         },
     }),
+    new Chain({
+        id: ChainId.TEMPO_MAINNET,
+        name: 'Tempo',
+        disabled: false,
+        explorer: 'https://explore.tempo.xyz',
+        icons: {
+            small: 'https://assets.coingecko.com/markets/images/22234/small/tempo.png?1773891479',
+            large: 'https://assets.coingecko.com/markets/images/22234/small/tempo.png?1773891479',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {
