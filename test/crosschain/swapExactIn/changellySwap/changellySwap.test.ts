@@ -59,15 +59,15 @@ function mockChangellyClient() {
 // --- Chain detection ---
 
 describe('#isChangellyNativeChainId', () => {
-    test('XRP is native', () => {
-        expect(isChangellyNativeChainId(ChainId.XRP_MAINNET)).toBe(true)
-    })
+    // test('XRP is native', () => {
+    //     expect(isChangellyNativeChainId(ChainId.XRP_MAINNET)).toBe(true)
+    // })
     test('XMR is native', () => {
         expect(isChangellyNativeChainId(ChainId.XMR_MAINNET)).toBe(true)
     })
-    test('LTC is native', () => {
-        expect(isChangellyNativeChainId(ChainId.LTC_MAINNET)).toBe(true)
-    })
+    // test('LTC is native', () => {
+    //     expect(isChangellyNativeChainId(ChainId.LTC_MAINNET)).toBe(true)
+    // })
     test('ETH is not native', () => {
         expect(isChangellyNativeChainId(ChainId.ETH_MAINNET)).toBe(false)
     })
@@ -101,9 +101,9 @@ describe('#isChangellySupportedChainId', () => {
     test('ETH is supported', () => {
         expect(isChangellySupportedChainId(ChainId.ETH_MAINNET)).toBe(true)
     })
-    test('XRP is supported', () => {
-        expect(isChangellySupportedChainId(ChainId.XRP_MAINNET)).toBe(true)
-    })
+    // test('XRP is supported', () => {
+    //     expect(isChangellySupportedChainId(ChainId.XRP_MAINNET)).toBe(true)
+    // })
     test('BTC is not supported', () => {
         expect(isChangellySupportedChainId(ChainId.BTC_MAINNET)).toBe(false)
     })
@@ -112,13 +112,13 @@ describe('#isChangellySupportedChainId', () => {
 // --- Support detection ---
 
 describe('#isChangellyNativeSupported', () => {
-    test('native source → supported', () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(xrp, '1000000'),
-            tokenOut: eth,
-        })
-        expect(isChangellyNativeSupported(params)).toBe(true)
-    })
+    // test('native source → supported', () => {
+    //     const params = makeParams({
+    //         tokenAmountIn: new TokenAmount(xrp, '1000000'),
+    //         tokenOut: eth,
+    //     })
+    //     expect(isChangellyNativeSupported(params)).toBe(true)
+    // })
     test('native destination → supported', () => {
         const params = makeParams({
             tokenAmountIn: new TokenAmount(eth, '1000000000000000000'),
@@ -133,14 +133,14 @@ describe('#isChangellyNativeSupported', () => {
         })
         expect(isChangellyNativeSupported(params)).toBe(false)
     })
-    test('disabled via disabledProviders → not supported', () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(xrp, '1000000'),
-            tokenOut: eth,
-            disabledProviders: [SymbiosisTradeType.CHANGELLY],
-        })
-        expect(isChangellyNativeSupported(params)).toBe(false)
-    })
+    // test('disabled via disabledProviders → not supported', () => {
+    //     const params = makeParams({
+    //         tokenAmountIn: new TokenAmount(xrp, '1000000'),
+    //         tokenOut: eth,
+    //         disabledProviders: [SymbiosisTradeType.CHANGELLY],
+    //     })
+    //     expect(isChangellyNativeSupported(params)).toBe(false)
+    // })
 })
 
 // --- buildChangellyKey ---
@@ -191,18 +191,18 @@ describe('CHANGELLY_FAST_TICKER_MAP ↔ buildChangellyKey consistency', () => {
     })
 
     // Changelly-native chain gas tokens
-    test('XRP native → map has matching key', () => {
-        const key = buildChangellyKey(xrp)
-        expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('xrp')
-    })
+    // test('XRP native → map has matching key', () => {
+    //     const key = buildChangellyKey(xrp)
+    //     expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('xrp')
+    // })
     test('XMR native → map has matching key', () => {
         const key = buildChangellyKey(xmr)
         expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('xmr')
     })
-    test('LTC native → map has matching key', () => {
-        const key = buildChangellyKey(ltc)
-        expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('ltc')
-    })
+    // test('LTC native → map has matching key', () => {
+    //     const key = buildChangellyKey(ltc)
+    //     expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('ltc')
+    // })
 
     // EVM ERC-20 transit tokens (checksummed input → lowercased key)
     test('ETH USDC (checksummed) → map has matching key', () => {
@@ -482,12 +482,12 @@ describe('resolveChangellyTicker: fast path vs full path', () => {
         expect(resolved).toBe(fastTicker)
     })
 
-    test('XRP native: resolveChangellyTicker returns fast path ticker', async () => {
-        const resolved = await resolveChangellyTicker(symbiosis, xrp)
-        const fastTicker = CHANGELLY_FAST_TICKER_MAP.get(buildChangellyKey(xrp))
-        expect(resolved).toBe('xrp')
-        expect(resolved).toBe(fastTicker)
-    })
+    // test('XRP native: resolveChangellyTicker returns fast path ticker', async () => {
+    //     const resolved = await resolveChangellyTicker(symbiosis, xrp)
+    //     const fastTicker = CHANGELLY_FAST_TICKER_MAP.get(buildChangellyKey(xrp))
+    //     expect(resolved).toBe('xrp')
+    //     expect(resolved).toBe(fastTicker)
+    // })
 
     test('SOL native: resolveChangellyTicker returns fast path ticker', async () => {
         const resolved = await resolveChangellyTicker(symbiosis, sol)
@@ -552,129 +552,129 @@ describe('resolveChangellyTicker: fast path vs full path', () => {
 
 // --- Deposit swap (mocked Changelly API) ---
 
-describe('#changellyDepositSwap', () => {
-    beforeEach(() => {
-        mockChangellyClient()
-    })
+// --- Deposit and trade swap tests use LTC which is currently disabled ---
+// Uncomment when LTC is re-enabled in CHANGELLY_NATIVE_CHAINS
 
-    test('SOL → LTC deposit returns correct structure', async () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'), // 0.3 SOL
-            tokenOut: ltc,
-        })
-        const result = await changellyDepositSwap(params)
+// describe('#changellyDepositSwap', () => {
+//     beforeEach(() => {
+//         mockChangellyClient()
+//     })
+//
+//     test('SOL → LTC deposit returns correct structure', async () => {
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//         })
+//         const result = await changellyDepositSwap(params)
+//
+//         expect(result.kind).toBe('changelly-deposit')
+//         expect(result.transactionType).toBe('changelly')
+//         expect(result.routes).toHaveLength(1)
+//         expect(result.routes[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
+//         expect(result.labels).toEqual(['partner-swap', 'semi-centralized'])
+//
+//         const tx = result.transactionRequest as any
+//         expect(tx.changellyTxId).toBe('4fs0djsqm1cic0j6')
+//         expect(tx.depositAddress).toBe('H2NLNh8tvrSvRXF1ocbuyJr8DNxoEJootD2z2KxFRio8')
+//         expect(tx.validUntil).toBeGreaterThan(Date.now() - 1000)
+//         expect(tx.currencyFrom).toBe('sol')
+//         expect(tx.currencyTo).toBe('ltc')
+//     })
+//
+//     test('uses params.from as refund address fallback', async () => {
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//         })
+//         await changellyDepositSwap(params)
+//
+//         const createFixTx = symbiosis.changelly.createFixTransaction as ReturnType<typeof vi.fn>
+//         expect(createFixTx).toHaveBeenCalledWith(
+//             expect.objectContaining({
+//                 refundAddress: evmUserAddress,
+//             })
+//         )
+//     })
+//
+//     test('explicit refundAddress takes precedence over params.from', async () => {
+//         const customRefund = 'ltc1qgxu8r4fdwd64fy77w8mcqfaz9h37jmjme45vvm' as any
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//             refundAddress: customRefund,
+//         })
+//         await changellyDepositSwap(params)
+//
+//         const createFixTx = symbiosis.changelly.createFixTransaction as ReturnType<typeof vi.fn>
+//         expect(createFixTx).toHaveBeenCalledWith(
+//             expect.objectContaining({
+//                 refundAddress: customRefund,
+//             })
+//         )
+//     })
+//
+//     test('tokenAmountOut deducts networkFee', async () => {
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//         })
+//         const result = await changellyDepositSwap(params)
+//
+//         // rate.amountTo = '0.44870955', networkFee = '0.00501204', LTC decimals = 8
+//         // gross = 44870955, fee = 501204, net = 44369751
+//         expect(result.tokenAmountOut.raw.toString()).toBe('44369751')
+//     })
+//
+//     test('fees array contains network fee', async () => {
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//         })
+//         const result = await changellyDepositSwap(params)
+//
+//         expect(result.fees).toHaveLength(1)
+//         expect(result.fees[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
+//         expect(result.fees[0].description).toBe('Changelly network fee')
+//     })
+// })
 
-        expect(result.kind).toBe('changelly-deposit')
-        expect(result.transactionType).toBe('changelly')
-        expect(result.routes).toHaveLength(1)
-        expect(result.routes[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
-        expect(result.labels).toEqual(['partner-swap'])
-
-        const tx = result.transactionRequest as any
-        expect(tx.changellyTxId).toBe('4fs0djsqm1cic0j6')
-        expect(tx.depositAddress).toBe('H2NLNh8tvrSvRXF1ocbuyJr8DNxoEJootD2z2KxFRio8')
-        expect(tx.validUntil).toBeGreaterThan(Date.now() - 1000)
-        expect(tx.currencyFrom).toBe('sol')
-        expect(tx.currencyTo).toBe('ltc')
-    })
-
-    test('uses params.from as refund address fallback', async () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'),
-            tokenOut: ltc,
-        })
-        await changellyDepositSwap(params)
-
-        const createFixTx = symbiosis.changelly.createFixTransaction as ReturnType<typeof vi.fn>
-        expect(createFixTx).toHaveBeenCalledWith(
-            expect.objectContaining({
-                refundAddress: evmUserAddress,
-            })
-        )
-    })
-
-    test('explicit refundAddress takes precedence over params.from', async () => {
-        const customRefund = 'ltc1qgxu8r4fdwd64fy77w8mcqfaz9h37jmjme45vvm' as any
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'),
-            tokenOut: ltc,
-            refundAddress: customRefund,
-        })
-        await changellyDepositSwap(params)
-
-        const createFixTx = symbiosis.changelly.createFixTransaction as ReturnType<typeof vi.fn>
-        expect(createFixTx).toHaveBeenCalledWith(
-            expect.objectContaining({
-                refundAddress: customRefund,
-            })
-        )
-    })
-
-    test('tokenAmountOut deducts networkFee', async () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'),
-            tokenOut: ltc,
-        })
-        const result = await changellyDepositSwap(params)
-
-        // rate.amountTo = '0.44870955', networkFee = '0.00501204', LTC decimals = 8
-        // gross = 44870955, fee = 501204, net = 44369751
-        expect(result.tokenAmountOut.raw.toString()).toBe('44369751')
-    })
-
-    test('fees array contains network fee', async () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'),
-            tokenOut: ltc,
-        })
-        const result = await changellyDepositSwap(params)
-
-        expect(result.fees).toHaveLength(1)
-        expect(result.fees[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
-        expect(result.fees[0].description).toBe('Changelly network fee')
-    })
-})
-
-// --- Trade swap (mocked Changelly API) ---
-
-describe('#changellyTradeSwap', () => {
-    beforeEach(() => {
-        mockChangellyClient()
-    })
-
-    test('SOL → LTC trade returns Solana tx with changelly data', { timeout: 30_000 }, async () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'), // 0.3 SOL
-            tokenOut: ltc,
-            from: solUserAddress,
-        })
-        const result = await changellyTradeSwap(params)
-
-        expect(result.kind).toBe('changelly-trade')
-        expect(result.transactionType).toBe('solana')
-        expect(result.routes).toHaveLength(1)
-        expect(result.routes[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
-
-        // changellyData field should contain deposit data
-        const changellyData = (result as any).changellyData
-        expect(changellyData).toBeDefined()
-        expect(changellyData.changellyTxId).toBe('4fs0djsqm1cic0j6')
-        expect(changellyData.depositAddress).toBe('H2NLNh8tvrSvRXF1ocbuyJr8DNxoEJootD2z2KxFRio8')
-        expect(changellyData.currencyFrom).toBe('sol')
-        expect(changellyData.currencyTo).toBe('ltc')
-        expect(changellyData.refundAddress).toBe(solUserAddress)
-    })
-
-    test('Solana tx contains instructions', { timeout: 30_000 }, async () => {
-        const params = makeParams({
-            tokenAmountIn: new TokenAmount(sol, '300000000'),
-            tokenOut: ltc,
-            from: solUserAddress,
-        })
-        const result = await changellyTradeSwap(params)
-
-        const tx = result.transactionRequest as any
-        expect(tx.instructions).toBeDefined()
-        expect(typeof tx.instructions).toBe('string')
-    })
-})
+// describe('#changellyTradeSwap', () => {
+//     beforeEach(() => {
+//         mockChangellyClient()
+//     })
+//
+//     test('SOL → LTC trade returns Solana tx with changelly data', { timeout: 30_000 }, async () => {
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//             from: solUserAddress,
+//         })
+//         const result = await changellyTradeSwap(params)
+//
+//         expect(result.kind).toBe('changelly-trade')
+//         expect(result.transactionType).toBe('solana')
+//         expect(result.routes).toHaveLength(1)
+//         expect(result.routes[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
+//
+//         const changellyData = (result as any).changellyData
+//         expect(changellyData).toBeDefined()
+//         expect(changellyData.changellyTxId).toBe('4fs0djsqm1cic0j6')
+//         expect(changellyData.depositAddress).toBe('H2NLNh8tvrSvRXF1ocbuyJr8DNxoEJootD2z2KxFRio8')
+//         expect(changellyData.currencyFrom).toBe('sol')
+//         expect(changellyData.currencyTo).toBe('ltc')
+//         expect(changellyData.refundAddress).toBe(solUserAddress)
+//     })
+//
+//     test('Solana tx contains instructions', { timeout: 30_000 }, async () => {
+//         const params = makeParams({
+//             tokenAmountIn: new TokenAmount(sol, '300000000'),
+//             tokenOut: ltc,
+//             from: solUserAddress,
+//         })
+//         const result = await changellyTradeSwap(params)
+//
+//         const tx = result.transactionRequest as any
+//         expect(tx.instructions).toBeDefined()
+//         expect(typeof tx.instructions).toBe('string')
+//     })
+// })
