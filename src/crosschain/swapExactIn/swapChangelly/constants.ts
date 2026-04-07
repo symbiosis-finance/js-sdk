@@ -14,21 +14,6 @@ export const TRON_TRANSFER_FEE_LIMIT = 50_000_000 // 50 TRX — covers ~131k ene
 export const DEPOSIT_VALIDITY_MS = 10 * 60 * 1000 // 10 minutes
 export const TON_TX_VALIDITY_SECONDS = 600 // 10 minutes — how long TON wallet keeps unsigned tx valid
 
-// --- Chain sets ---
-
-// Chains only reachable via Changelly (no Symbiosis native routing)
-const CHANGELLY_NATIVE_CHAIN_IDS = new Set<ChainId>([
-    ChainId.XLM_MAINNET,
-    ChainId.XRP_MAINNET,
-    ChainId.XMR_MAINNET,
-    ChainId.ADA_MAINNET,
-    ChainId.BCH_MAINNET,
-    ChainId.SUI_MAINNET,
-    ChainId.CANTON_MAINNET,
-    ChainId.DOGE_MAINNET,
-    ChainId.LTC_MAINNET,
-    ChainId.ZCASH_MAINNET,
-])
 
 // All non-native chains supported by Changelly where SDK builds a transfer tx
 const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
@@ -65,17 +50,19 @@ const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
 // Single source of truth for Changelly-exclusive native chains.
 // No token registry exists for these — all metadata is defined here.
 export const CHANGELLY_NATIVE_CHAINS = [
-    { chainId: ChainId.XLM_MAINNET, ticker: 'xlm', symbol: 'XLM', name: 'Stellar', decimals: 7 },
-    { chainId: ChainId.XRP_MAINNET, ticker: 'xrp', symbol: 'XRP', name: 'XRP', decimals: 6 },
+    // { chainId: ChainId.XLM_MAINNET, ticker: 'xlm', symbol: 'XLM', name: 'Stellar', decimals: 7 },
+    // { chainId: ChainId.XRP_MAINNET, ticker: 'xrp', symbol: 'XRP', name: 'XRP', decimals: 6 },
+    // { chainId: ChainId.ADA_MAINNET, ticker: 'ada', symbol: 'ADA', name: 'Cardano', decimals: 6 },
+    // { chainId: ChainId.BCH_MAINNET, ticker: 'bch', symbol: 'BCH', name: 'Bitcoin Cash', decimals: 8 },
+    // { chainId: ChainId.SUI_MAINNET, ticker: 'sui', symbol: 'SUI', name: 'Sui', decimals: 9 },
+    // { chainId: ChainId.CANTON_MAINNET, ticker: 'cc', symbol: 'CC', name: 'Canton Coin', decimals: 10 },
+    // { chainId: ChainId.DOGE_MAINNET, ticker: 'doge', symbol: 'DOGE', name: 'Dogecoin', decimals: 8 },
+    // { chainId: ChainId.LTC_MAINNET, ticker: 'ltc', symbol: 'LTC', name: 'Litecoin', decimals: 8 },
     { chainId: ChainId.XMR_MAINNET, ticker: 'xmr', symbol: 'XMR', name: 'Monero', decimals: 12 },
-    { chainId: ChainId.ADA_MAINNET, ticker: 'ada', symbol: 'ADA', name: 'Cardano', decimals: 6 },
-    { chainId: ChainId.BCH_MAINNET, ticker: 'bch', symbol: 'BCH', name: 'Bitcoin Cash', decimals: 8 },
-    { chainId: ChainId.SUI_MAINNET, ticker: 'sui', symbol: 'SUI', name: 'Sui', decimals: 9 },
-    { chainId: ChainId.CANTON_MAINNET, ticker: 'cc', symbol: 'CC', name: 'Canton Coin', decimals: 10 },
-    { chainId: ChainId.DOGE_MAINNET, ticker: 'doge', symbol: 'DOGE', name: 'Dogecoin', decimals: 8 },
-    { chainId: ChainId.LTC_MAINNET, ticker: 'ltc', symbol: 'LTC', name: 'Litecoin', decimals: 8 },
     { chainId: ChainId.ZCASH_MAINNET, ticker: 'zec', symbol: 'ZEC', name: 'Zcash', decimals: 8 },
 ] as const
+
+const CHANGELLY_NATIVE_CHAIN_IDS = new Set<ChainId>(CHANGELLY_NATIVE_CHAINS.map(({ chainId }) => chainId))
 
 // Transit ERC-20 per chain for zapping (DEX swap → Changelly deposit).
 // Most liquid stable, or chain-native ERC-20 for L2s. Address format matches buildChangellyKey.

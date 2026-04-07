@@ -121,7 +121,7 @@ class FromBtcTrader {
         },
     })
     async fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-        const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress, generateBtcDepositAddress } = context
+        const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress, generateDepositAddress } = context
 
         const { btc, symBtc, forwarderUrl } = this.btcConfig
 
@@ -230,7 +230,7 @@ class FromBtcTrader {
 
         let validUntil = ''
         let revealAddress = ''
-        if (generateBtcDepositAddress) {
+        if (generateDepositAddress) {
             const wrapResponse = await wrap({
                 forwarderUrl,
                 portalFee: btcPortalFeeRaw,

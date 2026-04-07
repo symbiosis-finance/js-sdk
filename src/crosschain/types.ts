@@ -207,7 +207,7 @@ export interface SwapExactInParams {
     partnerAddress?: EvmAddress
     refundAddress?: Address
     fallbackReceiver?: EvmAddress
-    generateBtcDepositAddress?: boolean
+    generateDepositAddress?: boolean
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean
     depositoryEnabled?: boolean
@@ -271,7 +271,7 @@ export type SwapExactInTransactionPayload =
       }
     | {
           transactionType: 'changelly'
-          transactionRequest: ChangellyTransactionData
+          transactionRequest: ChangellyTransactionData | undefined
       }
 
 export type RouteItem = {

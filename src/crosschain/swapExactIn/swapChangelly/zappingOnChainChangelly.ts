@@ -193,7 +193,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
         approveTo: approveAddress,
         routes,
         fees,
-        labels: ['partner-swap'],
+        labels: ['partner-swap', 'semi-centralized'],
         kind: 'changelly-trade',
         changellyData,
         ...preparePayload({
