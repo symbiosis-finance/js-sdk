@@ -2,6 +2,7 @@ import { Interface } from '@ethersproject/abi'
 import { parseUnits } from '@ethersproject/units'
 import {
     createAssociatedTokenAccountIdempotentInstruction,
+    createTransferCheckedInstruction,
     createTransferInstruction,
     getAssociatedTokenAddressSync,
     TOKEN_PROGRAM_ID,
@@ -373,12 +374,21 @@ async function buildSolanaTransfer(from: string, depositAddress: string, tokenAm
             ? TOKEN_2022_PROGRAM_ID
             : TOKEN_PROGRAM_ID
 
+        const isToken2022 = programId.equals(TOKEN_2022_PROGRAM_ID)
         const sourceAta = getAssociatedTokenAddressSync(mint, fromPubkey, false, programId)
         const destAta = getAssociatedTokenAddressSync(mint, toPubkey, true, programId)
         instructions.push(
             createAssociatedTokenAccountIdempotentInstruction(fromPubkey, destAta, toPubkey, mint, programId)
         )
-        instructions.push(createTransferInstruction(sourceAta, destAta, fromPubkey, amount, [], programId))
+        if (isToken2022) {
+            instructions.push(
+                createTransferCheckedInstruction(
+                    sourceAta, mint, destAta, fromPubkey, amount, tokenAmountIn.token.decimals, [], programId
+                )
+            )
+        } else {
+            instructions.push(createTransferInstruction(sourceAta, destAta, fromPubkey, amount, [], programId))
+        }
     }
 
     const { blockhash } = await connection.getLatestBlockhash()
