@@ -121,7 +121,7 @@ class FromBtcTrader {
         },
     })
     async fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-        const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress, generateBtcDepositAddress } = context
+        const { tokenAmountIn, tokenOut, symbiosis, to, refundAddress, generateDepositAddress } = context
 
         const { btc, symBtc, forwarderUrl } = this.btcConfig
 
@@ -230,7 +230,7 @@ class FromBtcTrader {
 
         let validUntil = ''
         let revealAddress = ''
-        if (generateBtcDepositAddress) {
+        if (generateDepositAddress) {
             const wrapResponse = await wrap({
                 forwarderUrl,
                 portalFee: btcPortalFeeRaw,
@@ -411,7 +411,7 @@ class FromBtcTrader {
                     tokenAmountIn: syBtcAmount,
                     tokenAmountInMin: syBtcAmountMin,
                 },
-                refundAddress: context.refundAddress,
+                refundAddress: context.refundAddress as BtcAddress,
                 baseTrade: priceTrade,
                 depositParams: {
                     to: context.to,
@@ -473,7 +473,7 @@ class FromBtcTrader {
                         tokenAmountInMin: syBtcAmountMin,
                         slippage: swapExactInResult.tradeA.slippage, // use slippage from tradeA that replaced by depository
                     },
-                    refundAddress: context.refundAddress,
+                    refundAddress: context.refundAddress as BtcAddress | undefined,
                     depositParams: {
                         ...context,
                         tokenAmountIn: syBtcAmount,
