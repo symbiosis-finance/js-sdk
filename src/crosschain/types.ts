@@ -271,7 +271,7 @@ export type SwapExactInTransactionPayload =
       }
     | {
           transactionType: 'changelly'
-          transactionRequest: ChangellyTransactionData | undefined
+          transactionRequest: ChangellyTransactionData
       }
 
 export type RouteItem = {

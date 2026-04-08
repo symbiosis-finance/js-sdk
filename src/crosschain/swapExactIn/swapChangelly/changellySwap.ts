@@ -6,7 +6,7 @@ import { isTronChainId } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade'
-import type { SwapExactInParams, SwapExactInResult } from '../../types'
+import type { ChangellyTransactionData, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
 import {
     buildChangellyTradeTx,
@@ -127,6 +127,17 @@ export async function changellyTradeSwap(params: SwapExactInParams): Promise<Swa
     return toTradeResult(estimate, tradeResult)
 }
 
+const EMPTY_CHANGELLY_TX: ChangellyTransactionData = {
+    changellyTxId: '',
+    depositAddress: '',
+    amountExpectedFrom: '',
+    amountExpectedTo: '',
+    networkFee: '',
+    validUntil: 0,
+    currencyFrom: '',
+    currencyTo: '',
+}
+
 async function changellyEstimateOnly(
     params: SwapExactInParams,
     kind: 'changelly-deposit' | 'changelly-trade'
@@ -138,7 +149,7 @@ async function changellyEstimateOnly(
         ...baseResult(estimate),
         kind,
         transactionType: 'changelly',
-        transactionRequest: undefined,
+        transactionRequest: EMPTY_CHANGELLY_TX,
     }
 }
 
@@ -195,7 +206,7 @@ async function changellyZappingEstimateOnly(params: SwapExactInParams): Promise<
         ...baseResult(estimate),
         kind: 'changelly-trade',
         transactionType: 'changelly',
-        transactionRequest: undefined,
+        transactionRequest: EMPTY_CHANGELLY_TX,
         approveTo: approveAddress,
         routes: [
             ...swapResult.routes,
