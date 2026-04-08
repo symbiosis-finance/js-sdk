@@ -2368,7 +2368,7 @@ export const config: Config = {
         },
         {
             id: ChainId.TEMPO_MAINNET,
-            rpc: 'https://tempo-mainnet.g.alchemy.com/v2/1f4VQ6b_E9dGU2yMiL-c5',
+            rpc: 'https://rpc.tempo.xyz',
             spareRpcs: [],
             filterBlockOffset: 500,
             stables: [

@@ -1079,10 +1079,10 @@ export const WETH = {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
         },
     }),
-    // NOTE: no gastoken on Tempo
+    // NOTE: no gas token on Tempo
     [ChainId.TEMPO_MAINNET]: new Token({
         chainId: ChainId.TEMPO_MAINNET,
         address: '',
-        decimals: 18,
+        decimals: 6,
     }),
 }

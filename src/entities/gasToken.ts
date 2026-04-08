@@ -1,5 +1,5 @@
 import { ChainId } from '../constants'
-import type { Address } from '../crosschain/types'
+import type { Address } from '../crosschain'
 import { Token } from './token'
 
 const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18) =>
@@ -117,5 +117,11 @@ export const GAS_TOKEN: Record<ChainId, Token> = {
     [ChainId.MONAD_MAINNET]: GAS(ChainId.MONAD_MAINNET, 'MON', 30495),
     [ChainId.CITREA_MAINNET]: GAS(ChainId.CITREA_MAINNET, 'CBTC', 1), // TODO change iconId
     [ChainId.QUAI_MAINNET]: GAS(ChainId.QUAI_MAINNET, 'QUAI', 22354),
-    [ChainId.TEMPO_MAINNET]: GAS(ChainId.TEMPO_MAINNET, '-', 0),
+    [ChainId.TEMPO_MAINNET]: TOKEN_AS_GAS(
+        ChainId.TEMPO_MAINNET,
+        '0x20C0000000000000000000000000000000000000',
+        'pathUSD',
+        39734,
+        6
+    ),
 }
