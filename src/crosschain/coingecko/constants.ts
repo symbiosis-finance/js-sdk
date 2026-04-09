@@ -62,6 +62,7 @@ export const COINGECKO_PLATFORMS = new Map([
     [ChainId.LTC_MAINNET, 'litecoin'],
     [ChainId.CANTON_MAINNET, 'canton-network'],
     [ChainId.ZCASH_MAINNET, 'zcash'],
+    [ChainId.TEMPO_MAINNET, 'tempo'],
 ])
 
 export const COINGECKO_GAS_TOKEN_IDS = new Map([
@@ -127,4 +128,5 @@ export const COINGECKO_GAS_TOKEN_IDS = new Map([
     [ChainId.LTC_MAINNET, 'litecoin'],
     [ChainId.CANTON_MAINNET, 'canton-network'],
     [ChainId.ZCASH_MAINNET, 'zcash'],
+    [ChainId.TEMPO_MAINNET, ''], // NOTE: no gas token on tempo
 ])

@@ -86,6 +86,8 @@ export class UniV2TradeError extends TradeError {}
 
 export class UniV3TradeError extends TradeError {}
 
+export class UniV4TradeError extends TradeError {}
+
 export class IzumiTradeError extends TradeError {}
 
 export class OpenOceanTradeError extends TradeError {}

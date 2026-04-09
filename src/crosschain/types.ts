@@ -314,6 +314,7 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
     changellyData?: ChangellyTransactionData
+    permit2Approve?: { to: string; callData: string }
 }
 
 export interface MultiCallItem {

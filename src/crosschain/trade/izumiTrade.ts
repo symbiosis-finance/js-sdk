@@ -425,6 +425,7 @@ export class IzumiTrade extends SymbiosisTrade {
             amountOut,
             amountOutMin,
             routerAddress: swap,
+            approveTo: swap,
             route: tokens,
             callData,
             callDataOffset,

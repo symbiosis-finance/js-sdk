@@ -38,8 +38,18 @@ export async function aggregatorsSwap({
         tokenOut: tokenOut,
     })
 
-    const { amountOut, amountOutMin, callData, priceImpact, route, routerAddress, tradeType, functionSelector } =
-        aggregatorTrade
+    const {
+        amountOut,
+        amountOutMin,
+        callData,
+        priceImpact,
+        route,
+        routerAddress,
+        tradeType,
+        functionSelector,
+        approveTo,
+        permit2Approve,
+    } = aggregatorTrade
 
     const value = tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : '0'
 
@@ -55,7 +65,7 @@ export async function aggregatorsSwap({
     return {
         ...payload,
         kind: 'onchain-swap',
-        approveTo: routerAddress,
+        approveTo,
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOutMin,
         priceImpact,
@@ -67,5 +77,6 @@ export async function aggregatorsSwap({
                 tokens: route,
             },
         ],
+        permit2Approve,
     }
 }

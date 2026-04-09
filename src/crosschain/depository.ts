@@ -194,6 +194,7 @@ export class DepositoryContext {
 
         return {
             routerAddress: this.depository.address as Address,
+            approveTo: this.depository.address as Address,
             callData: lockData,
             callDataOffset: 4 + 32 + 32, // Offset to `amount` field in DepositoryTypes.Deposit
             minReceivedOffset: 0,

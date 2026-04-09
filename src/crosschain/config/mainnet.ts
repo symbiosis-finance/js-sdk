@@ -2382,5 +2382,33 @@ export const config: Config = {
             fabric: '0x005a04B1EB81A8d1591602eb58742DEee478485D',
             multicallRouter: '0x0049ff6C9ACe2BAf67ad0466D82e0A2Dc7E309d1',
         },
+        {
+            id: ChainId.TEMPO_MAINNET,
+            rpc: 'https://rpc.tempo.xyz',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC.e',
+                    address: '0x20c000000000000000000000b9537d11c60e8b50',
+                    chainId: ChainId.TEMPO_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365',
+            metaRouterGateway: '0xa0079829B9F1Edc5DD0DE3eC104f281745C4bD81',
+            bridge: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
+        },
     ],
 }

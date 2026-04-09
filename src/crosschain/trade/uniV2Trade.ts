@@ -132,6 +132,7 @@ export class UniV2Trade extends SymbiosisTrade {
             amountOut: trade.outputAmount,
             amountOutMin,
             routerAddress: this.router.address as Address,
+            approveTo: this.router.address as Address,
             route: trade.route.path,
             callData: data,
             callDataOffset: offset,
