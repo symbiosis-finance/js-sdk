@@ -23,6 +23,7 @@ export enum SymbiosisTradeType {
     DEDUST = 'dedust',
     JUPITER = 'jupiter',
     DEPOSITORY = 'depository',
+    CHANGELLY = 'changelly',
     UNI_V4 = 'uni-v4',
 }
 
@@ -38,6 +39,7 @@ export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
     SymbiosisTradeType.JUPITER,
     SymbiosisTradeType.STONFI,
     SymbiosisTradeType.DEDUST,
+    SymbiosisTradeType.CHANGELLY,
     SymbiosisTradeType.UNI_V4,
 ]
 

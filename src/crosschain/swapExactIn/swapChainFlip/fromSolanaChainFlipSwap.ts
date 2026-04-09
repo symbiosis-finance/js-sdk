@@ -95,12 +95,14 @@ export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promi
 
     const promises: Promise<SwapExactInResult>[] = []
 
+    const jupiterDisabled = context.disabledProviders?.includes(SymbiosisTradeType.JUPITER)
+
     for (const config of CF_CONFIGS) {
         if (tokenAmountIn.token.equals(config.src.token)) {
             // Exact tokenIn match — direct vault swap
             promises.push(directSolanaVaultSwap(context, config))
-        } else {
-            // Different Solana token — pre-swap to config.tokenIn then vault swap
+        } else if (!jupiterDisabled) {
+            // Different Solana token — pre-swap via Jupiter then vault swap
             promises.push(indirectSolanaVaultSwap(context, config))
         }
     }
