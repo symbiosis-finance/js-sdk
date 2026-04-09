@@ -98,6 +98,7 @@ export class RaydiumTrade extends SymbiosisTrade {
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
             routerAddress: '',
+            approveTo: '',
             callData: '',
             callDataOffset: 0,
             minReceivedOffset: 0,

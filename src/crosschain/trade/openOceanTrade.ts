@@ -213,6 +213,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 amountOut,
                 amountOutMin,
                 routerAddress: to,
+                approveTo: to,
                 route: [this.tokenAmountIn.token, this.tokenOut],
                 callData: data,
                 callDataOffset: amountOffset,

@@ -9,13 +9,14 @@ import { IzumiTrade } from './izumiTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import type { SymbiosisTradeType, SymbiosisTradeParams } from './symbiosisTrade'
+import type { SymbiosisTradeType, SymbiosisTradeParams, SymbiosisTradeOutResult } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
+import { UniV4Trade } from './uniV4Trade'
 import { withTracing } from '../tracing'
 
-type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade
+type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade | UniV4Trade
 
 export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -262,6 +263,24 @@ export class AggregatorTrade extends SymbiosisTrade {
 
         if (
             isOtherClient &&
+            UniV4Trade.isSupported(tokenAmountIn.token.chainId) &&
+            UniV4Trade.isAllowed(disabledProviders)
+        ) {
+            const uniV4Trade = new UniV4Trade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin,
+                tokenOut,
+                slippage,
+                deadline,
+                to,
+                from,
+            })
+            trades.push(uniV4Trade.init(), 'UniV4')
+        }
+
+        if (
+            isOtherClient &&
             UniV2Trade.isSupported(symbiosis, tokenAmountIn.token.chainId) &&
             UniV2Trade.isAllowed(disabledProviders)
         ) {
@@ -295,6 +314,16 @@ export class AggregatorTrade extends SymbiosisTrade {
     get routerAddress(): Address {
         this.assertTradeInitialized('routerAddress')
         return this.trade.routerAddress
+    }
+
+    get approveTo(): Address {
+        this.assertTradeInitialized('approveTo')
+        return this.trade.approveTo
+    }
+
+    get permit2Approve(): SymbiosisTradeOutResult['permit2Approve'] | undefined {
+        this.assertTradeInitialized('permit2Approve')
+        return this.trade.permit2Approve
     }
 
     get route(): Token[] {

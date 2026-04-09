@@ -246,6 +246,7 @@ export class UniV3Trade extends SymbiosisTrade {
             amountOut,
             amountOutMin,
             routerAddress,
+            approveTo: routerAddress,
             route: [this.tokenAmountIn.token, this.tokenOut],
             callData,
             callDataOffset: amountOffset,

@@ -23,7 +23,7 @@ import { BIPS_BASE } from '../constants'
 import { DedustTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { FeeItem, TonAddress } from '../types'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
 interface DedustTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -95,13 +95,14 @@ export class DedustTrade extends SymbiosisTrade {
         const amountOutMin = new TokenAmount(this.tokenOut, minAmountOut)
 
         const priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
-
+        const routerAddress = (to.toString() as TonAddress) ?? ''
         this.out = {
             amountOut,
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
-            routerAddress: (to.toString() as TonAddress) ?? '',
+            routerAddress,
+            approveTo: routerAddress,
             callData: body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,

@@ -23,6 +23,7 @@ export enum SymbiosisTradeType {
     DEDUST = 'dedust',
     JUPITER = 'jupiter',
     DEPOSITORY = 'depository',
+    UNI_V4 = 'uni-v4',
 }
 
 export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
@@ -37,6 +38,7 @@ export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
     SymbiosisTradeType.JUPITER,
     SymbiosisTradeType.STONFI,
     SymbiosisTradeType.DEDUST,
+    SymbiosisTradeType.UNI_V4,
 ]
 
 export interface SymbiosisTradeParams {
@@ -61,6 +63,8 @@ export interface SymbiosisTradeOutResult {
     instructions?: string // Needed only for Solana.
     fees?: FeeItem[] // Fees to show in Web APP.
     value?: bigint // Native (gas) token value.
+    approveTo: Address // Address that user should approve for token spending.
+    permit2Approve?: { to: Address; callData: string } // If set, the user should submit this tx before the swap (Permit2 allowance setup).
 }
 
 class OutNotInitializedError extends Error {
@@ -119,6 +123,16 @@ export abstract class SymbiosisTrade {
     get value(): bigint | undefined {
         this.assertOutInitialized('value')
         return this.out.value
+    }
+
+    get approveTo(): Address {
+        this.assertOutInitialized('approveTo')
+        return this.out.approveTo
+    }
+
+    get permit2Approve(): SymbiosisTradeOutResult['permit2Approve'] | undefined {
+        this.assertOutInitialized('permit2Approve')
+        return this.out.permit2Approve
     }
 
     get route(): Token[] {

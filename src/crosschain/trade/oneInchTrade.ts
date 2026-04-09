@@ -177,6 +177,7 @@ export class OneInchTrade extends SymbiosisTrade {
             amountOutMin,
             route: [this.tokenAmountIn.token, this.tokenOut],
             routerAddress: tx.to,
+            approveTo: tx.to,
             callData,
             callDataOffset: amountOffset,
             minReceivedOffset,

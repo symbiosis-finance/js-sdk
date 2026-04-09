@@ -280,6 +280,7 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     poolAddress?: string
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
+    permit2Approve?: { to: string; callData: string }
 }
 
 export interface MultiCallItem {
