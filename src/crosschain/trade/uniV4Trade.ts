@@ -1,9 +1,8 @@
 import { BigNumber, constants, Contract, utils } from 'ethers'
 import JSBI from 'jsbi'
 
-import type { ChainId } from '../../constants'
-import type { Token } from '../../entities'
-import { Percent, TokenAmount } from '../../entities'
+import { ChainId } from '../../constants'
+import { Percent, Token, TokenAmount } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { AggregateSdkError, UniV4TradeError } from '../sdkError'
@@ -70,7 +69,7 @@ interface PoolConfig {
 }
 
 const POOL_CONFIGS: PoolConfig[] = [
-    // { fee: 100, tickSpacing: 1 },
+    { fee: 100, tickSpacing: 1 },
     { fee: 500, tickSpacing: 10 },
     { fee: 3000, tickSpacing: 60 },
     { fee: 10000, tickSpacing: 200 },
@@ -84,27 +83,27 @@ interface Deployment {
 }
 
 const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
-    // [ChainId.TEMPO_MAINNET]: {
-    //     quoter: '0x20e6487c371a2086f841ef453f85378223df4f4e',
-    //     universalRouter: '0x1FEbB76Be10aAf3A1402F04e8E835f2c382F7914',
-    //     permit2: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
-    //     baseTokens: [
-    //         new Token({
-    //             chainId: ChainId.TEMPO_MAINNET,
-    //             address: '0x20C0000000000000000000000000000000000000',
-    //             symbol: 'pathUSD',
-    //             name: 'pathUSD',
-    //             decimals: 6,
-    //         }),
-    //         new Token({
-    //             chainId: ChainId.TEMPO_MAINNET,
-    //             address: '0x20c000000000000000000000b9537d11c60e8b50',
-    //             symbol: 'USDC.e',
-    //             name: 'USDC.e',
-    //             decimals: 6,
-    //         }),
-    //     ],
-    // },
+    [ChainId.TEMPO_MAINNET]: {
+        quoter: '0x20e6487c371a2086f841ef453f85378223df4f4e',
+        universalRouter: '0xa2dc7d0266f0cc50b3eeaf36c9bfcecff1beea91',
+        permit2: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
+        baseTokens: [
+            new Token({
+                chainId: ChainId.TEMPO_MAINNET,
+                address: '0x20C0000000000000000000000000000000000000',
+                symbol: 'pathUSD',
+                name: 'pathUSD',
+                decimals: 6,
+            }),
+            new Token({
+                chainId: ChainId.TEMPO_MAINNET,
+                address: '0x20c000000000000000000000b9537d11c60e8b50',
+                symbol: 'USDC.e',
+                name: 'USDC.e',
+                decimals: 6,
+            }),
+        ],
+    },
 }
 
 interface PoolKey {
@@ -261,24 +260,11 @@ export class UniV4Trade extends SymbiosisTrade {
         amountOutMin: TokenAmount,
         priceImpact: Percent
     ) {
-        const v4SwapData = this.buildV4SwapData(bestQuote, amountInBn, amountOutMinBn)
-
-        const universalRouterInterface = new utils.Interface(UNIVERSAL_ROUTER_ABI)
-        const callData = universalRouterInterface.encodeFunctionData('execute', [
-            utils.hexlify([V4_SWAP]),
-            [v4SwapData],
-            this.deadline,
-        ])
-
-        const callDataNoPrefix = callData.slice(2).toLowerCase()
-
-        const amountInHex = amountInBn.toHexString().slice(2).padStart(64, '0').toLowerCase()
-        const amountInHexPos = callDataNoPrefix.indexOf(amountInHex)
-        const callDataOffset = (amountInHexPos + 64) / 2
-
-        const amountOutMinHex = amountOutMinBn.toHexString().slice(2).padStart(64, '0').toLowerCase()
-        const amountOutMinHexPos = callDataNoPrefix.indexOf(amountOutMinHex, amountInHexPos + 64)
-        const minReceivedOffset = (amountOutMinHexPos + 64) / 2
+        const { callData, callDataOffset, minReceivedOffset } = this.buildUniversalRouterCallData(
+            bestQuote,
+            amountInBn,
+            amountOutMinBn
+        )
 
         const permit2Interface = new utils.Interface(PERMIT2_ABI)
         const permit2ApproveCallData = permit2Interface.encodeFunctionData('approve', [
@@ -338,33 +324,36 @@ export class UniV4Trade extends SymbiosisTrade {
             MAX_UINT160,
             MAX_UINT48,
         ])
+        const permit2AmountOffset = 4 + 32 * 3 // 4 (selector) + 32 (token) + 32 (spender) + 32 (amount) = 100
 
         // Step 1: Universal Router execute
-        const { callData: universalRouterCallData } = this.buildUniversalRouterCallData(
-            bestQuote,
-            amountInBn,
-            amountOutMinBn
-        )
-
-        // Find amountIn offset within the Universal Router calldata (for MulticallRouter patching)
-        const amountInHex = amountInBn.toHexString().slice(2).padStart(64, '0').toLowerCase()
-        const urCallDataLower = universalRouterCallData.slice(2).toLowerCase()
-        const amountInPos = urCallDataLower.indexOf(amountInHex)
-        const universalRouterAmountOffset = amountInPos >= 0 ? amountInPos / 2 : 0
+        const {
+            callData: urCallData,
+            callDataOffset: urCallDataOffset,
+            minReceivedOffset: urMinReceivedOffset,
+        } = this.buildUniversalRouterCallData(bestQuote, amountInBn, amountOutMinBn)
 
         // Build MulticallRouter.multicall calldata
         const multicallRouter = this.symbiosis.multicallRouter(chainId)
         const callData = multicallRouter.interface.encodeFunctionData('multicall', [
             amountInBn.toString(),
-            [permit2CallData, universalRouterCallData],
+            [permit2CallData, urCallData],
             [deployment.permit2, deployment.universalRouter],
             [inputToken, inputToken, outputToken],
-            [0, universalRouterAmountOffset],
+            [permit2AmountOffset, urCallDataOffset],
             this.to,
         ])
 
-        // callDataOffset = first param of multicall (uint256 _amountIn) ends at byte 4 + 32 = 36
+        // callDataOffset = the first param of multicall (uint256 _amountIn) ends at byte 4 + 32 = 36
         const callDataOffset = 4 + 32
+
+        // Calculate minReceivedOffset within the full multicall calldata.
+        // urMinReceivedOffset is the byte offset of amountOutMin END within the UR calldata.
+        // Find where the UR calldata is embedded in the full multicall calldata and add the internal offset.
+        const urCallDataRaw = urCallData.slice(2).toLowerCase()
+        const fullCallDataRaw = callData.slice(2).toLowerCase()
+        const urStartByte = fullCallDataRaw.indexOf(urCallDataRaw) / 2
+        const minReceivedOffset = urStartByte + urMinReceivedOffset
 
         this.out = {
             amountOut,
@@ -374,7 +363,7 @@ export class UniV4Trade extends SymbiosisTrade {
             route: [this.tokenAmountIn.token, this.tokenOut],
             callData,
             callDataOffset,
-            minReceivedOffset: 0,
+            minReceivedOffset,
             priceImpact,
         }
     }
@@ -485,19 +474,21 @@ export class UniV4Trade extends SymbiosisTrade {
         const outputCurrency = quote.zeroForOne ? quote.poolKey.currency1 : quote.poolKey.currency0
 
         const swapParams = utils.defaultAbiCoder.encode(
-            ['tuple(address,address,uint24,int24,address)', 'bool', 'uint128', 'uint128', 'bytes'],
+            ['tuple(tuple(address,address,uint24,int24,address),bool,uint128,uint128,bytes)'],
             [
                 [
-                    quote.poolKey.currency0,
-                    quote.poolKey.currency1,
-                    quote.poolKey.fee,
-                    quote.poolKey.tickSpacing,
-                    quote.poolKey.hooks,
+                    [
+                        quote.poolKey.currency0,
+                        quote.poolKey.currency1,
+                        quote.poolKey.fee,
+                        quote.poolKey.tickSpacing,
+                        quote.poolKey.hooks,
+                    ],
+                    quote.zeroForOne,
+                    amountIn,
+                    amountOutMin,
+                    '0x',
                 ],
-                quote.zeroForOne,
-                amountIn,
-                amountOutMin,
-                '0x',
             ]
         )
 
@@ -530,8 +521,8 @@ export class UniV4Trade extends SymbiosisTrade {
         ]
 
         const swapParams = utils.defaultAbiCoder.encode(
-            ['address', 'tuple(address,uint24,int24,address,bytes)[]', 'uint128', 'uint128'],
-            [currencyIn, pathKeys, amountIn, amountOutMin]
+            ['tuple(address,tuple(address,uint24,int24,address,bytes)[],uint128,uint128)'],
+            [[currencyIn, pathKeys, amountIn, amountOutMin]]
         )
 
         const settleParams = utils.defaultAbiCoder.encode(['address', 'uint256'], [currencyIn, constants.MaxUint256])

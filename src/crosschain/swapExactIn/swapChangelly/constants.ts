@@ -14,7 +14,6 @@ export const TRON_TRANSFER_FEE_LIMIT = 50_000_000 // 50 TRX — covers ~131k ene
 export const DEPOSIT_VALIDITY_MS = 10 * 60 * 1000 // 10 minutes
 export const TON_TX_VALIDITY_SECONDS = 600 // 10 minutes — how long TON wallet keeps unsigned tx valid
 
-
 // All non-native chains supported by Changelly where SDK builds a transfer tx
 const CHANGELLY_TRADE_CHAIN_IDS = new Set<ChainId>([
     // EVM

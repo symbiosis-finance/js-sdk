@@ -383,7 +383,14 @@ async function buildSolanaTransfer(from: string, depositAddress: string, tokenAm
         if (isToken2022) {
             instructions.push(
                 createTransferCheckedInstruction(
-                    sourceAta, mint, destAta, fromPubkey, amount, tokenAmountIn.token.decimals, [], programId
+                    sourceAta,
+                    mint,
+                    destAta,
+                    fromPubkey,
+                    amount,
+                    tokenAmountIn.token.decimals,
+                    [],
+                    programId
                 )
             )
         } else {
