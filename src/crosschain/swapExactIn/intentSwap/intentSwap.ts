@@ -1,15 +1,19 @@
 import type { TransactionRequest } from '@ethersproject/providers'
 
-import { Percent } from '../../entities'
-import { isEvmChainId } from '../chainUtils'
-import { BIPS_BASE } from '../constants'
-import { buildDepositData } from '../intent'
-import { SolverService } from '../solver'
-import { TradeProvider } from '../trade'
-import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
+import { Percent } from '../../../entities'
+import { isEvmChainId } from '../../chainUtils'
+import { BIPS_BASE } from '../../constants'
+import { SolverService } from '../../solver'
+import { TradeProvider } from '../../trade'
+import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../../types'
+import { buildDepositData } from './buildDepositData'
 
 export function isIntentSwapSupported(params: SwapExactInParams): boolean {
-    const { tokenAmountIn, tokenOut, symbiosis } = params
+    const { tokenAmountIn, tokenOut, symbiosis, disabledProviders } = params
+
+    if (disabledProviders?.includes(TradeProvider.INTENT_SOLVER)) {
+        return false
+    }
 
     const srcChainId = tokenAmountIn.token.chainId
     const dstChainId = tokenOut.chainId
@@ -30,10 +34,10 @@ export function isIntentSwapSupported(params: SwapExactInParams): boolean {
  * Intent-based cross-chain swap via DepositorySrc.
  *
  * Flow:
- *  1. Ask the solver for a quote (tokenIn + amount → amountOut on dest chain).
- *  2. Build a DepositorySrc.deposit() transaction that locks tokenIn on the source chain.
+ *  1. Ask the solver for a quote (tokenIn + amount → amountOut on dst chain).
+ *  2. Build a DepositorySrc.deposit() transaction that locks tokenIn on the src chain.
  *  3. Return the transaction to the caller — user signs it to initiate the intent.
- *  4. The solver monitors IntentLocked events and calls fill() on the destination chain.
+ *  4. The solver monitors IntentLocked events and calls fill() on the dst chain.
  */
 export async function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, from, to, symbiosis } = params
@@ -94,7 +98,7 @@ export async function intentSwap(params: SwapExactInParams): Promise<SwapExactIn
             {
                 provider: TradeProvider.INTENT_SOLVER,
                 value: fee,
-                description: 'Solver fee',
+                description: 'Intent solver fee',
             },
         ],
         labels: ['intent'],

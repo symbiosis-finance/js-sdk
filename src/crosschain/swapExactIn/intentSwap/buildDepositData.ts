@@ -1,9 +1,9 @@
-import type { ChainId } from '../constants'
-import type { TokenAmount } from '../entities'
-import { wrappedToken } from '../entities'
-import { DepositorySrc__factory, DirectUnlocker__factory } from './contracts'
-import type { DepositoryTypes } from './contracts/intents/DepositorySrc'
-import type { EvmAddress } from './types'
+import type { ChainId } from '../../../constants'
+import type { TokenAmount } from '../../../entities'
+import { wrappedToken } from '../../../entities'
+import { DepositorySrc__factory, DirectUnlocker__factory } from '../../contracts'
+import type { DepositoryTypes } from '../../contracts/intents/DepositorySrc'
+import type { EvmAddress } from '../../types'
 
 export interface DepositCallParams {
     tokenAmountIn: TokenAmount
@@ -43,7 +43,7 @@ export function buildDepositData({
     ])
 
     const depositParams: DepositoryTypes.DepositParamsStruct = {
-        token: tokenAmountIn.token.address, // TODO wrap gastokens?
+        token: tokenAmountIn.token.address,
         amount: tokenAmountIn.toBigInt(),
         depositor: from,
         quoteTTL: BigInt(quoteTTL),
