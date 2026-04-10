@@ -70,6 +70,7 @@ export class StonfiTrade extends SymbiosisTrade {
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
             routerAddress: txParams.to.toString() as TonAddress,
+            approveTo: txParams.to.toString() as TonAddress,
             callData: txParams.body?.toBoc().toString('base64') ?? '',
             callDataOffset: 0,
             minReceivedOffset: 0,

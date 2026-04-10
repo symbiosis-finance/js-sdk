@@ -1,4 +1,4 @@
-import { AggregateSdkError, NoRouteError, SdkError } from '../sdkError'
+import { AggregateSdkError, LimitError, NoRouteError, SdkError } from '../sdkError'
 import type { SelectMode, SwapExactInResult } from '../types'
 
 export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
@@ -34,7 +34,10 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
     }
 
     if (!result) {
-        throw new AggregateSdkError(errors, `Build route error (tried ${promises.length} routes)`)
+        // Prefer LimitError (amount too low/high) over generic errors — it's more actionable for the user
+        const limitError = errors.find((e) => e instanceof LimitError)
+        const orderedErrors = limitError ? [limitError, ...errors.filter((e) => e !== limitError)] : errors
+        throw new AggregateSdkError(orderedErrors, `Build route error (tried ${promises.length} routes)`)
     }
 
     return result

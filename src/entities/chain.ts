@@ -848,6 +848,126 @@ export const chains: Chain[] = [
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',
         },
     }),
+    new Chain({
+        id: ChainId.XLM_MAINNET,
+        name: 'Stellar',
+        disabled: false,
+        explorer: 'https://stellarchain.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/512.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/512.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.XRP_MAINNET,
+        name: 'XRP Ledger',
+        disabled: false,
+        explorer: 'https://blockexplorer.one/xrp/mainnet',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/52.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.XMR_MAINNET,
+        name: 'Monero',
+        disabled: false,
+        explorer: 'https://www.exploremonero.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/328.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/328.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.ADA_MAINNET,
+        name: 'Cardano',
+        disabled: false,
+        explorer: 'https://cardanoscan.io',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.BCH_MAINNET,
+        name: 'Bitcoin Cash',
+        disabled: false,
+        explorer: 'https://blockexplorer.one/bitcoin-cash/mainnet',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1831.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1831.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.SUI_MAINNET,
+        name: 'Sui',
+        disabled: false,
+        explorer: 'https://suiscan.xyz',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20947.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20947.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.CANTON_MAINNET,
+        name: 'Canton',
+        disabled: false,
+        explorer: 'https://www.cantonscan.com',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/37263.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/37263.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.DOGE_MAINNET,
+        name: 'Dogecoin',
+        disabled: false,
+        explorer: 'https://dogechain.info',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/74.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/74.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.LTC_MAINNET,
+        name: 'Litecoin',
+        disabled: false,
+        explorer: 'https://litecoinspace.org',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.ZCASH_MAINNET,
+        name: 'Zcash',
+        disabled: false,
+        explorer: 'https://blockexplorer.one/zcash/mainnet',
+        icons: {
+            small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1437.png',
+            large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1437.png',
+        },
+        evm: false,
+    }),
+    new Chain({
+        id: ChainId.TEMPO_MAINNET,
+        name: 'Tempo',
+        disabled: false,
+        explorer: 'https://explore.tempo.xyz',
+        icons: {
+            small: 'https://assets.coingecko.com/markets/images/22234/small/tempo.png?1773891479',
+            large: 'https://assets.coingecko.com/markets/images/22234/small/tempo.png?1773891479',
+        },
+    }),
 ]
 
 export const getChainById = (chainId: ChainId | undefined): Chain | undefined => {

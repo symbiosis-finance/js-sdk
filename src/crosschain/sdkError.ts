@@ -67,6 +67,10 @@ export class AmountLessThanFeeError extends LimitError {}
 // advisor
 export class AdvisorError extends SdkError {}
 
+// Changelly
+export class ChangellyError extends SdkError {}
+export class ChangellyTickerNotFoundError extends ChangellyError {}
+
 // ChainFlip
 export class ChainFlipError extends SdkError {}
 
@@ -81,6 +85,8 @@ export class WrapTradeError extends TradeError {}
 export class UniV2TradeError extends TradeError {}
 
 export class UniV3TradeError extends TradeError {}
+
+export class UniV4TradeError extends TradeError {}
 
 export class IzumiTradeError extends TradeError {}
 

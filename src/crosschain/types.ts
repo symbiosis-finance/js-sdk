@@ -163,6 +163,11 @@ export type OpenOceanConfig = {
     apiKeys: string[]
 }
 
+export type ChangellyConfig = {
+    apiUrl: string
+    privateKey: string
+}
+
 export type * from './config/cache/builder'
 
 export type OverrideConfig = {
@@ -173,6 +178,7 @@ export type OverrideConfig = {
     advisor?: AdvisorConfig
     oneInchConfig?: Partial<OneInchConfig>
     openOceanConfig?: Partial<OpenOceanConfig>
+    changellyConfig?: Partial<ChangellyConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
     config?: Config
@@ -210,13 +216,14 @@ export interface SwapExactInParams {
     selectMode?: SelectMode
     tradeAContext?: TradeAContext
     partnerAddress?: EvmAddress
+    refundAddress?: Address
     fallbackReceiver?: EvmAddress
-    refundAddress?: BtcAddress | EmptyAddress
-    generateBtcDepositAddress?: boolean
+    generateDepositAddress?: boolean
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean
     depositoryEnabled?: boolean
     disabledProviders?: SymbiosisTradeType[]
+    changellyExtraIdTo?: string // destination tag (XRP) or memo (XLM) for payout address
 }
 
 export type BtcTransactionData = {
@@ -230,12 +237,26 @@ export type TonTransactionData = {
     messages: {
         address: string
         amount: string
-        payload: string
+        payload?: string
     }[]
 }
 
 export type SolanaTransactionData = {
     instructions: string
+}
+
+export type ChangellyTransactionData = {
+    changellyTxId: string
+    depositAddress: string
+    depositExtraId?: string
+    amountExpectedFrom: string
+    amountExpectedTo: string
+    networkFee: string
+    validUntil: number
+    currencyFrom: string
+    currencyTo: string
+    refundAddress?: string
+    refundExtraId?: string
 }
 
 export type SwapExactInTransactionPayload =
@@ -259,6 +280,10 @@ export type SwapExactInTransactionPayload =
           transactionType: 'solana'
           transactionRequest: SolanaTransactionData
       }
+    | {
+          transactionType: 'changelly'
+          transactionRequest: ChangellyTransactionData
+      }
 
 export type RouteItem = {
     provider: SymbiosisTradeType
@@ -272,7 +297,15 @@ export type FeeItem = {
     description?: string
 }
 
-export type SymbiosisKind = 'onchain-swap' | 'crosschain-swap' | 'wrap' | 'unwrap' | 'bridge' | 'from-btc-swap'
+export type SymbiosisKind =
+    | 'onchain-swap'
+    | 'crosschain-swap'
+    | 'wrap'
+    | 'unwrap'
+    | 'bridge'
+    | 'from-btc-swap'
+    | 'changelly-trade'
+    | 'changelly-deposit'
 
 // Result of swapExactIn() method.
 export type SwapExactInResult = SwapExactInTransactionPayload & {
@@ -291,6 +324,8 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     poolAddress?: string
     tradeA?: SymbiosisTrade
     tradeC?: SymbiosisTrade
+    changellyData?: ChangellyTransactionData
+    permit2Approve?: { to: string; callData: string }
 }
 
 export interface MultiCallItem {

@@ -7,7 +7,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { getSolanaConnection } from '../chainUtils'
 import { RaydiumTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -76,7 +76,9 @@ export class RaydiumTrade extends SymbiosisTrade {
         ).then((res) => res.json())) as ApiSwapV1Out
 
         if (!quoteResponse.success) {
-            throw new RaydiumTradeError('Failed to get quote')
+            throw new RaydiumTradeError(
+                `Failed to get quote: ${(quoteResponse as any).msg ?? JSON.stringify(quoteResponse)}`
+            )
         }
 
         const instructionsResponse = await this.buildInstructions({
@@ -96,6 +98,7 @@ export class RaydiumTrade extends SymbiosisTrade {
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
             routerAddress: '',
+            approveTo: '',
             callData: '',
             callDataOffset: 0,
             minReceivedOffset: 0,

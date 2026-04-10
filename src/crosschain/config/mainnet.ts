@@ -1,5 +1,6 @@
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
+import { CHANGELLY_NATIVE_CHAINS } from '../swapExactIn/swapChangelly/constants'
 import type { Config } from '../types'
 
 export const config: Config = {
@@ -171,6 +172,21 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
         },
+        ...CHANGELLY_NATIVE_CHAINS.map(({ chainId: id }) => ({
+            id,
+            rpc: '',
+            filterBlockOffset: 0,
+            stables: [],
+            router: '0x0000000000000000000000000000000000000000' as const,
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000' as const,
+            metaRouterGateway: '0x0000000000000000000000000000000000000000' as const,
+            bridge: '0x0000000000000000000000000000000000000000' as const,
+            synthesis: '0x0000000000000000000000000000000000000000' as const,
+            portal: '0x0000000000000000000000000000000000000000' as const,
+            fabric: '0x0000000000000000000000000000000000000000' as const,
+            multicallRouter: '0x0000000000000000000000000000000000000000' as const,
+        })),
         {
             id: ChainId.ETH_MAINNET,
             rpc: 'https://ethereum-rpc.publicnode.com',
@@ -288,7 +304,7 @@ export const config: Config = {
             multicallRouter: '0x49d3Fc00f3ACf80FABCb42D7681667B20F60889A',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -422,7 +438,7 @@ export const config: Config = {
             multicallRouter: '0x44b5d0F16Ad55c4e7113310614745e8771b963bB',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -478,7 +494,7 @@ export const config: Config = {
             multicallRouter: '0xDc9a6a26209A450caC415fb78487e907c660cf6a',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -804,7 +820,7 @@ export const config: Config = {
             multicallRouter: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -1391,7 +1407,7 @@ export const config: Config = {
             multicallRouter: '0x01a3c8e513b758ebb011f7afaf6c37616c9c24d9',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -2336,7 +2352,7 @@ export const config: Config = {
             multicallRouter: '0x8a7F930003BedD63A1ebD99C5917FD6aE7E3dedf',
             depository: {
                 priceEstimation: {
-                    enabled: true,
+                    enabled: false,
                     slippageMax: 0.02,
                     slippageNorm: 0.001,
                 },
@@ -2378,6 +2394,34 @@ export const config: Config = {
             portal: '0x003d9F9666853fD4A10351FF5364c602470A7cF6',
             fabric: '0x005a04B1EB81A8d1591602eb58742DEee478485D',
             multicallRouter: '0x0049ff6C9ACe2BAf67ad0466D82e0A2Dc7E309d1',
+        },
+        {
+            id: ChainId.TEMPO_MAINNET,
+            rpc: 'https://rpc.tempo.xyz',
+            spareRpcs: [],
+            filterBlockOffset: 500,
+            stables: [
+                {
+                    name: 'USD Coin',
+                    symbol: 'USDC.e',
+                    address: '0x20c000000000000000000000b9537d11c60e8b50',
+                    chainId: ChainId.TEMPO_MAINNET,
+                    decimals: 6,
+                    icons: {
+                        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+                        small: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+                    },
+                },
+            ],
+            router: '0x0000000000000000000000000000000000000000',
+            dexFee: 0,
+            metaRouter: '0x7057aB3fB2BeE9c18e0cDe4240DE4ff7f159E365',
+            metaRouterGateway: '0xa0079829B9F1Edc5DD0DE3eC104f281745C4bD81',
+            bridge: '0xda8057acB94905eb6025120cB2c38415Fd81BfEB',
+            synthesis: '0x0000000000000000000000000000000000000000',
+            portal: '0x5Aa5f7f84eD0E5db0a4a85C3947eA16B53352FD4',
+            fabric: '0x0000000000000000000000000000000000000000',
+            multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
         },
     ],
 }

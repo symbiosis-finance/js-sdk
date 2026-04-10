@@ -1,5 +1,6 @@
 import { ChainId } from '../../constants'
 import { Token } from '../../entities'
+import { CHANGELLY_NATIVE_CHAINS } from '../swapExactIn/swapChangelly/constants'
 import type { Config } from '../types'
 
 export const config: Config = {
@@ -150,6 +151,21 @@ export const config: Config = {
             fabric: '0x0000000000000000000000000000000000000000',
             multicallRouter: '0x0000000000000000000000000000000000000000',
         },
+        ...CHANGELLY_NATIVE_CHAINS.map(({ chainId: id }) => ({
+            id,
+            rpc: '',
+            filterBlockOffset: 0,
+            stables: [],
+            router: '0x0000000000000000000000000000000000000000' as const,
+            dexFee: 0,
+            metaRouter: '0x0000000000000000000000000000000000000000' as const,
+            metaRouterGateway: '0x0000000000000000000000000000000000000000' as const,
+            bridge: '0x0000000000000000000000000000000000000000' as const,
+            synthesis: '0x0000000000000000000000000000000000000000' as const,
+            portal: '0x0000000000000000000000000000000000000000' as const,
+            fabric: '0x0000000000000000000000000000000000000000' as const,
+            multicallRouter: '0x0000000000000000000000000000000000000000' as const,
+        })),
         {
             id: ChainId.ETH_MAINNET,
             rpc: 'https://ethereum-rpc.publicnode.com',

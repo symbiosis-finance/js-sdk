@@ -56,7 +56,7 @@ const getGasTokenPrice = async (token: Token): Promise<number> => {
     const response = await fetch(url.toString())
 
     if (!response.ok) {
-        console.error('CoinGecko: failed to get gas token price')
+        console.error(`CoinGecko: failed to get gas token price: ${response.status} ${response.statusText}`)
         return 0
     }
 
@@ -103,7 +103,7 @@ const getTokenPrice = async (token: Token, map?: Map<string, Address>): Promise<
     const response = await fetch(url.toString())
 
     if (!response.ok) {
-        console.error('CoinGecko: failed to get token price')
+        console.error(`CoinGecko: failed to get token price: ${response.status} ${response.statusText}`)
         return 0
     }
 

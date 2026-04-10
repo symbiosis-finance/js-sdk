@@ -1,4 +1,20 @@
 export { AggregatorTrade, AggregatorTradeParams } from './aggregatorTrade'
+export {
+    isChangellyNativeChainId,
+    isChangellySupportedChainId,
+    isChangellyTradeChainId,
+} from '../swapExactIn/swapChangelly/constants'
+export {
+    buildChangellyTradeTx,
+    createChangellyDeposit,
+    getChangellyEstimate,
+} from '../swapExactIn/swapChangelly/changellyTrade'
+export type {
+    BuildChangellyTradeTxParams,
+    BuildChangellyTradeTxResult,
+    ChangellyEstimateResult,
+    CreateChangellyDepositParams,
+} from '../swapExactIn/swapChangelly/changellyTrade'
 export { DedustTrade } from './dedustTrade'
 export { IzumiTrade } from './izumiTrade'
 export { JupiterTrade } from './jupiterTrade'
@@ -11,4 +27,5 @@ export { StonfiTrade } from './stonfiTrade'
 export { FILTERABLE_PROVIDERS, SymbiosisTradeType } from './symbiosisTrade'
 export { UniV2Trade } from './uniV2Trade'
 export { UniV3Trade } from './uniV3Trade'
+export { UniV4Trade } from './uniV4Trade'
 export { WrapTrade } from './wrapTrade'

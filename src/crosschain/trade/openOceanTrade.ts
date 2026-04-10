@@ -213,6 +213,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 amountOut,
                 amountOutMin,
                 routerAddress: to,
+                approveTo: to,
                 route: [this.tokenAmountIn.token, this.tokenOut],
                 callData: data,
                 callDataOffset: amountOffset,
@@ -271,7 +272,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 message = text
             }
             throw new OpenOceanTradeError(
-                `Cannot build trade for chain ${this.tokenAmountIn.token.chainId}: ${message}`
+                `Cannot build trade for chain ${this.tokenAmountIn.token.chainId}: ${response.status} ${message}`
             )
         }
         const json = await response.json()
@@ -356,7 +357,8 @@ export class OpenOceanTrade extends SymbiosisTrade {
                     },
                 })
                 if (!response.ok) {
-                    throw new OpenOceanTradeError('Failed to get gas price')
+                    const text = await response.text()
+                    throw new OpenOceanTradeError(`Failed to get gas price: ${response.status} ${text}`)
                 }
                 const json = await response.json()
 

@@ -2,7 +2,6 @@ import { SwappingToTon } from '../swapping'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { theBest } from './utils'
 
-// Symbiosis bridge
 function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
     const { symbiosis, tokenAmountIn, tokenOut, disableSrcChainRouting, disableDstChainRouting } = context
 
@@ -28,10 +27,5 @@ function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInRe
 
 export async function toTonSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { selectMode } = context
-
-    const promises = []
-
-    promises.push(...symbiosisBridgeToTon(context))
-
-    return theBest(promises, selectMode)
+    return theBest(symbiosisBridgeToTon(context), selectMode)
 }

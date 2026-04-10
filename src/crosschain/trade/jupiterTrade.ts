@@ -89,7 +89,8 @@ export class JupiterTrade extends SymbiosisTrade {
         ).then((res) => res.json())) as JupiterQuoteResponse
 
         if (!quoteResponse?.outAmount) {
-            throw new JupiterTradeError('Failed to get quote')
+            const details = JSON.stringify(quoteResponse)
+            throw new JupiterTradeError(`Failed to get quote: ${details}`)
         }
 
         const instructionsResponse = await this.buildInstructions(quoteResponse)
@@ -108,6 +109,7 @@ export class JupiterTrade extends SymbiosisTrade {
             route: [this.tokenAmountIn.token, this.tokenOut],
             priceImpact,
             routerAddress: '',
+            approveTo: '',
             callData: '',
             callDataOffset: 0,
             minReceivedOffset: 0,

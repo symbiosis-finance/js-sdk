@@ -61,6 +61,7 @@ export class OctoPoolTrade extends SymbiosisTrade implements OctoPoolTradeParams
             amountOut,
             amountOutMin,
             routerAddress: this.poolConfig.address,
+            approveTo: this.poolConfig.address,
             route: [this.tokenAmountIn.token, this.tokenOut],
             callData,
             callDataOffset: 100,

@@ -131,39 +131,37 @@ export class Token {
 export function tokenEquals(tokenA: Token, tokenB: Token): boolean {
     return tokenA.equals(tokenB)
 }
+function getFakeWETH(chainId: ChainId): Token {
+    return new Token({
+        chainId,
+        address: '',
+        decimals: 0,
+    })
+}
+export function isFakeWETH(chainId: ChainId): boolean {
+    const weth = WETH[chainId]
+    return getFakeWETH(chainId).equals(weth) && weth.decimals === 0
+}
 
 export const WETH = {
     // >> FAKE
-    [ChainId.TON_MAINNET]: new Token({
-        chainId: ChainId.TON_MAINNET,
-        address: '',
-        decimals: 9,
-    }),
-    [ChainId.TON_TESTNET]: new Token({
-        chainId: ChainId.TON_TESTNET,
-        address: '',
-        decimals: 9,
-    }),
-    [ChainId.BTC_MAINNET]: new Token({
-        chainId: ChainId.BTC_MAINNET,
-        address: '',
-        decimals: 8,
-    }),
-    [ChainId.BTC_MUTINY]: new Token({
-        chainId: ChainId.BTC_MUTINY,
-        address: '',
-        decimals: 8,
-    }),
-    [ChainId.BTC_TESTNET4]: new Token({
-        chainId: ChainId.BTC_TESTNET4,
-        address: '',
-        decimals: 8,
-    }),
-    [ChainId.SOLANA_MAINNET]: new Token({
-        chainId: ChainId.SOLANA_MAINNET,
-        address: '',
-        decimals: 9,
-    }),
+    [ChainId.TON_MAINNET]: getFakeWETH(ChainId.TON_MAINNET),
+    [ChainId.TON_TESTNET]: getFakeWETH(ChainId.TON_TESTNET),
+    [ChainId.BTC_MAINNET]: getFakeWETH(ChainId.BTC_MAINNET),
+    [ChainId.BTC_MUTINY]: getFakeWETH(ChainId.BTC_MUTINY),
+    [ChainId.BTC_TESTNET4]: getFakeWETH(ChainId.BTC_TESTNET4),
+    [ChainId.SOLANA_MAINNET]: getFakeWETH(ChainId.SOLANA_MAINNET),
+    [ChainId.TEMPO_MAINNET]: getFakeWETH(ChainId.TEMPO_MAINNET),
+    [ChainId.XLM_MAINNET]: getFakeWETH(ChainId.XLM_MAINNET),
+    [ChainId.XRP_MAINNET]: getFakeWETH(ChainId.XRP_MAINNET),
+    [ChainId.XMR_MAINNET]: getFakeWETH(ChainId.XMR_MAINNET),
+    [ChainId.ADA_MAINNET]: getFakeWETH(ChainId.ADA_MAINNET),
+    [ChainId.BCH_MAINNET]: getFakeWETH(ChainId.BCH_MAINNET),
+    [ChainId.SUI_MAINNET]: getFakeWETH(ChainId.SUI_MAINNET),
+    [ChainId.CANTON_MAINNET]: getFakeWETH(ChainId.CANTON_MAINNET),
+    [ChainId.DOGE_MAINNET]: getFakeWETH(ChainId.DOGE_MAINNET),
+    [ChainId.LTC_MAINNET]: getFakeWETH(ChainId.LTC_MAINNET),
+    [ChainId.ZCASH_MAINNET]: getFakeWETH(ChainId.ZCASH_MAINNET),
     // << FAKE
     [ChainId.TRON_MAINNET]: new Token({
         chainId: ChainId.TRON_MAINNET,
