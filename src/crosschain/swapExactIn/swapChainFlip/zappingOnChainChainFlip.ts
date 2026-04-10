@@ -9,7 +9,7 @@ import { getMinAmount, isEvmChainId, tronAddressToEvm } from '../../chainUtils'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
-import { SymbiosisTradeType } from '../../trade'
+import { TradeProvider } from '../../trade'
 import type { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
@@ -154,7 +154,7 @@ export async function ZappingOnChainChainFlip(
         labels: ['partner-swap'],
         routes,
         fees,
-        kind: 'crosschain-swap',
+        operationType: 'crosschain-swap',
         transactionType: 'evm',
         transactionRequest: {
             chainId,
@@ -298,24 +298,24 @@ async function getDepositCall({
         offset: 164,
         fees: [
             {
-                provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                provider: TradeProvider.CHAINFLIP_BRIDGE,
                 description: 'ChainFlip fee',
                 value: usdcFeeToken,
             },
             {
-                provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                provider: TradeProvider.CHAINFLIP_BRIDGE,
                 description: 'ChainFlip fee',
                 value: solFeeToken,
             },
             {
-                provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                provider: TradeProvider.CHAINFLIP_BRIDGE,
                 description: 'ChainFlip fee',
                 value: btcFeeToken,
             },
         ],
         routes: [
             {
-                provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                provider: TradeProvider.CHAINFLIP_BRIDGE,
                 tokens: [amountIn.token, dst.token],
             },
         ],

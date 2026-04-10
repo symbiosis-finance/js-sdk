@@ -64,7 +64,7 @@ export async function aggregatorsSwap({
 
     return {
         ...payload,
-        kind: 'onchain-swap',
+        operationType: 'onchain-swap',
         approveTo,
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOutMin,

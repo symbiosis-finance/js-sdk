@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers'
 import { Percent, TokenAmount } from '../../entities'
 import { BIPS_BASE } from '../constants'
 import { OctoPoolFeeCollector__factory } from '../contracts'
-import { SymbiosisTradeType } from '../trade'
+import { TradeProvider } from '../trade'
 import type { MultiCallItem, VolumeFeeCollector } from '../types'
 
 export function getVolumeFeeCall({
@@ -45,7 +45,7 @@ export function getVolumeFeeCall({
         offset: 36,
         fees: [
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 description: 'Volume fee',
                 value: fee,
             },

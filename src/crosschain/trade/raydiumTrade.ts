@@ -7,7 +7,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { getSolanaConnection } from '../chainUtils'
 import { RaydiumTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
     from: string
@@ -50,8 +50,8 @@ export class RaydiumTrade extends SymbiosisTrade {
         this.solanaToPubkey = new PublicKey(params.to)
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.RAYDIUM
+    get tradeType(): TradeProvider {
+        return TradeProvider.RAYDIUM
     }
 
     public async init() {

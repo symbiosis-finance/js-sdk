@@ -19,7 +19,7 @@ import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import { TRON_PORTAL_ABI } from '../tronAbis'
-import { SymbiosisTradeType } from '../trade'
+import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData } from '../types'
 
 export function isBridgeSupported(context: SwapExactInParams): boolean {
@@ -64,14 +64,14 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
     }
     return {
         ...payload,
-        kind: 'bridge',
+        operationType: 'bridge',
         tokenAmountOut: amountOut,
         tokenAmountOutMin: amountOut,
         priceImpact: new Percent('0', BIPS_BASE),
         approveTo,
         fees: [
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 description: 'Bridge fee',
                 value: fee,
             },
@@ -79,7 +79,7 @@ export async function bridge(context: SwapExactInParams): Promise<SwapExactInRes
         labels: [],
         routes: [
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],

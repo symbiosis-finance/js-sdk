@@ -12,7 +12,7 @@ import { getMinAmount, getSolanaConnection } from '../../chainUtils'
 import { BIPS_BASE } from '../../constants'
 import { getTokenPriceUsd } from '../../coingecko/getTokenPriceUsd'
 import { ChainFlipError } from '../../sdkError'
-import { JupiterTrade, SymbiosisTradeType } from '../../trade'
+import { JupiterTrade, TradeProvider } from '../../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { theBest } from '../utils'
 import type { ChainFlipConfig } from './types'
@@ -95,7 +95,7 @@ export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promi
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    const jupiterDisabled = context.disabledProviders?.includes(SymbiosisTradeType.JUPITER)
+    const jupiterDisabled = context.disabledProviders?.includes(TradeProvider.JUPITER)
 
     for (const config of CF_CONFIGS) {
         if (tokenAmountIn.token.equals(config.src.token)) {
@@ -172,7 +172,7 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
     const priceImpact = await calcPriceImpact(tokenAmountIn.token, dst.token, quote.depositAmount, egressAmount)
 
     return {
-        kind: 'crosschain-swap',
+        operationType: 'crosschain-swap',
         tokenAmountOut: new TokenAmount(dst.token, egressAmount),
         tokenAmountOutMin: new TokenAmount(dst.token, egressAmountMin),
         priceImpact,
@@ -181,14 +181,14 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
         transactionType: 'solana',
         transactionRequest: { instructions },
         fees: [
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: usdcFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: solFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: btcFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: usdcFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: solFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: btcFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
         ],
         labels: ['partner-swap'],
-        routes: [{ provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [tokenAmountIn.token, dst.token] }],
+        routes: [{ provider: TradeProvider.CHAINFLIP_BRIDGE, tokens: [tokenAmountIn.token, dst.token] }],
     }
 }
 
@@ -210,7 +210,7 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
 
     await jupiterTrade.init().catch((e) => {
         symbiosis.trackAggregatorError({
-            provider: SymbiosisTradeType.JUPITER,
+            provider: TradeProvider.JUPITER,
             reason: e.message,
             chain_id: String(src.token.chain?.id),
         })
@@ -282,7 +282,7 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
     const priceImpact = jupiterTrade.priceImpact.add(cfPriceImpact)
 
     return {
-        kind: 'crosschain-swap',
+        operationType: 'crosschain-swap',
         tokenAmountOut: new TokenAmount(dst.token, egressAmount),
         tokenAmountOutMin: new TokenAmount(dst.token, egressAmountMin),
         priceImpact,
@@ -291,16 +291,16 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
         transactionType: 'solana',
         transactionRequest: { instructions },
         fees: [
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: usdcFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: solFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: btcFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: usdcFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: solFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: btcFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: ethFeeToken },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, description: 'ChainFlip fee', value: arbEthFeeToken },
         ],
         labels: ['partner-swap'],
         routes: [
-            { provider: SymbiosisTradeType.JUPITER, tokens: [tokenAmountIn.token, src.token] },
-            { provider: SymbiosisTradeType.CHAINFLIP_BRIDGE, tokens: [src.token, dst.token] },
+            { provider: TradeProvider.JUPITER, tokens: [tokenAmountIn.token, src.token] },
+            { provider: TradeProvider.CHAINFLIP_BRIDGE, tokens: [src.token, dst.token] },
         ],
     }
 }

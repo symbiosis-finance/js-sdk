@@ -1,6 +1,5 @@
-import { addSolanaFee, isSolanaChainId } from '../../chainUtils/solana'
-import { JupiterTrade, RaydiumTrade } from '../../trade'
-import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
+import { addSolanaFee, isSolanaChainId } from '../../chainUtils'
+import { JupiterTrade, RaydiumTrade, TradeProvider } from '../../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 
 export function isOnChainSolanaSwapSupported(context: SwapExactInParams): boolean {
@@ -60,7 +59,7 @@ export function onChainSolanaSwap({
         const { instructions, fee } = await addSolanaFee(from, trade.instructions)
 
         return {
-            kind: 'onchain-swap',
+            operationType: 'onchain-swap',
             tokenAmountOut: trade.amountOut,
             tokenAmountOutMin: trade.amountOutMin,
             priceImpact: trade.priceImpact,
@@ -72,7 +71,7 @@ export function onChainSolanaSwap({
             fees: fee
                 ? [
                       {
-                          provider: SymbiosisTradeType.SYMBIOSIS,
+                          provider: TradeProvider.SYMBIOSIS,
                           value: fee,
                           description: 'Symbiosis on-chain fee',
                       },

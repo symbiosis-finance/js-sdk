@@ -9,7 +9,7 @@ import { IzumiTrade } from './izumiTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import type { SymbiosisTradeType, SymbiosisTradeParams, SymbiosisTradeOutResult } from './symbiosisTrade'
+import type { TradeProvider, SymbiosisTradeParams, SymbiosisTradeOutResult } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
@@ -27,7 +27,7 @@ export interface AggregatorTradeParams extends SymbiosisTradeParams {
     preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
     firstTimeoutMs?: number // stop waiting for other quotes after this timeout if at least a single quote is available.
-    disabledProviders?: SymbiosisTradeType[]
+    disabledProviders?: TradeProvider[]
 }
 
 class TradeNotInitializedError extends Error {
@@ -151,7 +151,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         this.preferOneInchUsage = false // params.preferOneInchUsage || false
     }
 
-    get tradeType(): SymbiosisTradeType {
+    get tradeType(): TradeProvider {
         this.assertTradeInitialized('tradeType')
         return this.trade.tradeType
     }

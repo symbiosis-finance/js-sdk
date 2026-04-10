@@ -11,7 +11,7 @@ import { OneInchOracle__factory } from '../contracts'
 import { getMulticall } from '../multicall'
 import { OneInchTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 export type OneInchProtocols = string[]
 
@@ -90,8 +90,8 @@ export class OneInchTrade extends SymbiosisTrade {
         this.protocols = params.protocols || []
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.ONE_INCH
+    get tradeType(): TradeProvider {
+        return TradeProvider.ONE_INCH
     }
 
     public async init() {

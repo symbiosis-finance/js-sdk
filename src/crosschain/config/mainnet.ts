@@ -833,8 +833,9 @@ export const config: Config = {
                 refundDelay: 1800, // 30 mins
                 withdrawDelay: 3600, // 60 mins
             },
-            depositoryV3: {
-                depository: '0x696882C0D89f124345BE96B53dF4d7843609B43b',
+            intentConfig: {
+                depositorySrc: '0xAF93250514Bf7d48f6235Bb73A9Ce463581D8f5A',
+                depositoryDst: '0x2094C939714E093454d60ae99064c59109E9e039',
                 directUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124',
                 settlementUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124', // TODO use correct settlement unlocker
             },
@@ -1110,8 +1111,9 @@ export const config: Config = {
             portal: '0xEE981B2459331AD268cc63CE6167b446AF4161f8',
             fabric: '0x44487a445a7595446309464A82244B4bD4e325D5',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
-            depositoryV3: {
-                depository: '0x696882C0D89f124345BE96B53dF4d7843609B43b',
+            intentConfig: {
+                depositorySrc: '0xAF93250514Bf7d48f6235Bb73A9Ce463581D8f5A',
+                depositoryDst: '0x2094C939714E093454d60ae99064c59109E9e039',
                 directUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124',
                 settlementUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124', // TODO use correct settlement unlocker
             },

@@ -1,5 +1,5 @@
 import { addSolanaFee, isSolanaChainId } from '../chainUtils'
-import { RaydiumTrade, SymbiosisTradeType } from '../trade'
+import { RaydiumTrade, TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isRaydiumSwapSupported(context: SwapExactInParams): boolean {
@@ -28,7 +28,7 @@ export async function raydiumSwap({
 
     await trade.init().catch((e) => {
         symbiosis.trackAggregatorError({
-            provider: SymbiosisTradeType.RAYDIUM,
+            provider: TradeProvider.RAYDIUM,
             reason: e.message,
             chain_id: String(tokenOut.chain?.id),
         })
@@ -38,7 +38,7 @@ export async function raydiumSwap({
     const { instructions, fee } = await addSolanaFee(from, trade.instructions)
 
     return {
-        kind: 'onchain-swap',
+        operationType: 'onchain-swap',
         tokenAmountOut: trade.amountOut,
         tokenAmountOutMin: trade.amountOutMin,
         priceImpact: trade.priceImpact,
@@ -49,7 +49,7 @@ export async function raydiumSwap({
         },
         fees: [
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 value: fee,
                 description: 'Symbiosis on-chain fee',
             },
@@ -57,7 +57,7 @@ export async function raydiumSwap({
         labels: [],
         routes: [
             {
-                provider: SymbiosisTradeType.RAYDIUM,
+                provider: TradeProvider.RAYDIUM,
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],

@@ -7,7 +7,7 @@ import type { MulticallRouter } from '../../contracts'
 import { ChainFlipError } from '../../sdkError'
 import { BaseSwapping } from '../../swapping'
 import type { OneInchProtocols } from '../../trade/oneInchTrade'
-import { SymbiosisTradeType } from '../../trade'
+import { TradeProvider } from '../../trade'
 import type { Address, EvmAddress, OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import type { ChainFlipConfig } from './types'
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
@@ -138,24 +138,24 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
             routes: [
                 ...result.routes,
                 {
-                    provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                    provider: TradeProvider.CHAINFLIP_BRIDGE,
                     tokens: [chainFlipTokenIn, amountOut.token],
                 },
             ],
             fees: [
                 ...result.fees,
                 {
-                    provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                    provider: TradeProvider.CHAINFLIP_BRIDGE,
                     description: 'ChainFlip fee',
                     value: usdcFeeToken,
                 },
                 {
-                    provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                    provider: TradeProvider.CHAINFLIP_BRIDGE,
                     description: 'ChainFlip fee',
                     value: solFeeToken,
                 },
                 {
-                    provider: SymbiosisTradeType.CHAINFLIP_BRIDGE,
+                    provider: TradeProvider.CHAINFLIP_BRIDGE,
                     description: 'ChainFlip fee',
                     value: btcFeeToken,
                 },

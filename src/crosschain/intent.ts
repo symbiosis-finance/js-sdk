@@ -1,11 +1,11 @@
 import type { ChainId } from '../constants'
 import type { TokenAmount } from '../entities'
 import { wrappedToken } from '../entities'
-import { DepositoryV3__factory, DirectUnlocker__factory } from './contracts'
-import type { DepositoryV3Types } from './contracts/v3/DepositoryV3'
+import { DepositorySrc__factory, DirectUnlocker__factory } from './contracts'
+import type { DepositoryTypes } from './contracts/intents/DepositorySrc'
 import type { EvmAddress } from './types'
 
-export interface DepositV3CallParams {
+export interface DepositCallParams {
     tokenAmountIn: TokenAmount
     amountOut: TokenAmount
     from: EvmAddress // depositor — must match msg.sender on-chain
@@ -18,9 +18,9 @@ export interface DepositV3CallParams {
 }
 
 /**
- * Build data for DepositoryV3.deposit(depositParams, fillCondition).
+ * Build data for DepositorySrc.deposit(depositParams, fillCondition).
  */
-export function buildDepositV3Data({
+export function buildDepositData({
     tokenAmountIn,
     amountOut,
     from,
@@ -30,7 +30,7 @@ export function buildDepositV3Data({
     settlementUnlockerAddress,
     srcChainId,
     dstChainId,
-}: DepositV3CallParams): string {
+}: DepositCallParams): string {
     const tokenOut = amountOut.token
 
     const condition = DirectUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
@@ -42,7 +42,7 @@ export function buildDepositV3Data({
         },
     ])
 
-    const depositParams: DepositoryV3Types.DepositParamsStruct = {
+    const depositParams: DepositoryTypes.DepositParamsStruct = {
         token: tokenAmountIn.token.address, // TODO wrap gastokens?
         amount: tokenAmountIn.toBigInt(),
         depositor: from,
@@ -50,11 +50,11 @@ export function buildDepositV3Data({
         srcChainId: BigInt(srcChainId),
     }
 
-    const fillCondition: DepositoryV3Types.FillConditionStruct = {
+    const fillCondition: DepositoryTypes.FillConditionStruct = {
         fillUnlocker: directUnlockerAddress,
         settlementUnlocker: settlementUnlockerAddress,
         condition,
     }
 
-    return DepositoryV3__factory.createInterface().encodeFunctionData('deposit', [depositParams, fillCondition])
+    return DepositorySrc__factory.createInterface().encodeFunctionData('deposit', [depositParams, fillCondition])
 }

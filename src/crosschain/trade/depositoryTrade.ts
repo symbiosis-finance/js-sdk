@@ -1,6 +1,6 @@
 import type { TokenAmount } from '../../entities'
 import type { DepositoryContext, DepositParams } from '../depository'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 export class DepositoryTrade extends SymbiosisTrade {
     constructor(
@@ -17,8 +17,8 @@ export class DepositoryTrade extends SymbiosisTrade {
         return this
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.DEPOSITORY
+    get tradeType(): TradeProvider {
+        return TradeProvider.DEPOSITORY
     }
 
     applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount): void {

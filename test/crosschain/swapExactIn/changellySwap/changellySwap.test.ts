@@ -1,27 +1,22 @@
-import { vi, describe, expect, test, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { SwapExactInParams } from '../../../../src'
 import { ChainId, GAS_TOKEN, Symbiosis, Token, TokenAmount } from '../../../../src'
-import { SymbiosisTradeType } from '../../../../src'
-import {
-    changellyDepositSwap,
-    changellyTradeSwap,
-    isChangellyNativeSupported,
-} from '../../../../src/crosschain/swapExactIn/swapChangelly/changellySwap'
+import { isChangellyNativeSupported } from '../../../../src/crosschain/swapExactIn/swapChangelly/changellySwap'
 import {
     buildChangellyKeyRaw,
-    isChangellyNativeChainId,
-    isChangellyTradeChainId,
-    isChangellySupportedChainId,
-    CHANGELLY_FAST_TICKER_MAP,
     CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID,
+    CHANGELLY_FAST_TICKER_MAP,
     CHANGELLY_NATIVE_CHAINS,
+    isChangellyNativeChainId,
+    isChangellySupportedChainId,
+    isChangellyTradeChainId,
 } from '../../../../src/crosschain/swapExactIn/swapChangelly/constants'
 import {
     buildChangellyKey,
     resolveChangellyTicker,
 } from '../../../../src/crosschain/swapExactIn/swapChangelly/changellyUtils'
-import { mockFixRate, mockFixTx, mockCurrenciesFull } from './changellyMocks'
+import { mockCurrenciesFull, mockFixRate, mockFixTx } from './changellyMocks'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 const evmUserAddress = '0x93F68892E5BFB763B0E9aa101b694dFc708c2ca0'

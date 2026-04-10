@@ -8,7 +8,7 @@ import { BIPS_BASE } from '../constants'
 import { OpenOceanTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address, NonEmptyAddress } from '../types'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 // import { validateCallData } from './validateCallData'
 
@@ -185,8 +185,8 @@ export class OpenOceanTrade extends SymbiosisTrade {
         this.endpoint = `${params.symbiosis.openOceanConfig.apiUrl}/${chainId}`
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.OPEN_OCEAN
+    get tradeType(): TradeProvider {
+        return TradeProvider.OPEN_OCEAN
     }
 
     public async init() {

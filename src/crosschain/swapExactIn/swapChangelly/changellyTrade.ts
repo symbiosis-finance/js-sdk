@@ -19,7 +19,7 @@ import { isSolanaChainId, getSolanaConnection } from '../../chainUtils/solana'
 import { AmountTooHighError, AmountTooLowError, ChangellyError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import type { ChangellyTransactionData, FeeItem, TonTransactionData } from '../../types'
-import { SymbiosisTradeType } from '../../trade/symbiosisTrade'
+import { TradeProvider } from '../../trade/symbiosisTrade'
 import {
     CHANGELLY_NATIVE_CHAINS,
     DEPOSIT_VALIDITY_MS,
@@ -299,7 +299,7 @@ function buildFees(networkFee: string | undefined, tokenOut: Token): FeeItem[] {
 
     return [
         {
-            provider: SymbiosisTradeType.CHANGELLY,
+            provider: TradeProvider.CHANGELLY,
             value: new TokenAmount(tokenOut, parseUnits(fee, tokenOut.decimals).toString()),
             description: 'Changelly network fee',
         },

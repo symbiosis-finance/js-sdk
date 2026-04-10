@@ -65,7 +65,7 @@ describe('#wrap', () => {
     test('EVM response structure', async () => {
         const result = await wrap(evmParams)
         expect(result).toStrictEqual({
-            kind: 'wrap',
+            operationType: 'wrap',
             approveTo: weth.address,
             fees: [],
             labels: [],
@@ -94,7 +94,7 @@ describe('#wrap', () => {
 
         expect(TronWeb.address.fromHex(wtrx.address)).toBe(wtrxNativeAddress)
         expect(result).toStrictEqual({
-            kind: 'wrap',
+            operationType: 'wrap',
             approveTo: wtrxNativeAddress,
             fees: [],
             labels: [],

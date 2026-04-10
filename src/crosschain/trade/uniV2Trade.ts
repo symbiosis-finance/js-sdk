@@ -32,7 +32,7 @@ import {
 import { getMulticall } from '../multicall'
 import { UniV2TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 import { withTracing } from '../tracing'
 
 interface UniV2TradeParams extends SymbiosisTradeParams {
@@ -58,8 +58,8 @@ export class UniV2Trade extends SymbiosisTrade {
         this.deadline = params.deadline
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.UNI_V2
+    get tradeType(): TradeProvider {
+        return TradeProvider.UNI_V2
     }
 
     @withTracing()

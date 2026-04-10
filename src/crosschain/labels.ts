@@ -1,6 +1,6 @@
 import type { Token } from '../entities'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
-import { SymbiosisTradeType } from './trade'
+import { TradeProvider } from './trade'
 
 export type SwapLabel =
     | 'src-chain-swap'
@@ -48,7 +48,7 @@ export function getValueCategory(token: Token): ValueCategory {
 }
 
 function isRealSwap(trade: SymbiosisTrade): boolean {
-    return trade.tradeType !== SymbiosisTradeType.WRAP
+    return trade.tradeType !== TradeProvider.WRAP
 }
 
 export interface LabelsContext {

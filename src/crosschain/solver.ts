@@ -9,6 +9,7 @@ export interface SolverQuoteParams {
 export interface SolverQuoteResult {
     amountOut: TokenAmount
     quoteTTL: number // unix timestamp — the intent must be filled before this time
+    fee: TokenAmount
 }
 
 export class SolverService {
@@ -31,11 +32,13 @@ export class SolverService {
         const decimalsDiff = tokenOut.decimals - tokenAmountIn.token.decimals
         const base = tokenAmountIn.toBigInt()
         const scaled = decimalsDiff >= 0 ? base * 10n ** BigInt(decimalsDiff) : base / 10n ** BigInt(-decimalsDiff)
+        const fee = new TokenAmount(tokenOut, (scaled * 1n) / 100n)
         const amountOut = new TokenAmount(tokenOut, (scaled * 99n) / 100n)
 
         return {
             amountOut,
             quoteTTL: Math.floor(Date.now() / 1000) + 600, // 10-minute TTL
+            fee,
         }
     }
 }
