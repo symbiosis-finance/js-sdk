@@ -1,4 +1,5 @@
-export { AggregatorTrade, AggregatorTradeParams } from './aggregatorTrade'
+export { AggregatorTrade } from './aggregatorTrade'
+export type { AggregatorTradeParams } from './aggregatorTrade'
 export {
     isChangellyNativeChainId,
     isChangellySupportedChainId,
