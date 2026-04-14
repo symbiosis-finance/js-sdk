@@ -445,9 +445,9 @@ export const config: Config = {
                 timedUnlocker: '0x1601724898092218020EaA76584b7449216F31C7',
                 timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
                 withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
-                minAmountDelay: 600, // 10 mins
-                refundDelay: 1800, // 30 mins
-                withdrawDelay: 3600, // 60 mins
+                minAmountDelay: 300, // 5 mins
+                refundDelay: 600, // 10 mins
+                withdrawDelay: 900, // 15 mins
             },
         },
         {
@@ -500,9 +500,9 @@ export const config: Config = {
                 timedUnlocker: '0x325355fd8a19A6AF1728410712DaCB830fA55673',
                 timedSwapUnlocker: '0xADd54888275fbb4E4D194d5E0Fd7C8D04FceA8d3',
                 withdrawUnlocker: '0x593F262190e510A37605E85Ca93406013301245d',
-                minAmountDelay: 600, // 10 mins
-                refundDelay: 1800, // 30 mins
-                withdrawDelay: 3600, // 60 mins
+                minAmountDelay: 300, // 5 mins
+                refundDelay: 600, // 10 mins
+                withdrawDelay: 900, // 15 mins
             },
         },
         {
@@ -826,9 +826,9 @@ export const config: Config = {
                 timedUnlocker: '0x859aF64068f5Dd2c6dcFf7F31c93f42Dbb03DD84',
                 timedSwapUnlocker: '0x710b0D30A43338797B0B5E57aB94d16A665c0085',
                 withdrawUnlocker: '0xA7C1C8FBd51cBc1FbBC33af069624f52AA0bB9C8',
-                minAmountDelay: 600, // 10 mins
-                refundDelay: 1800, // 30 mins
-                withdrawDelay: 3600, // 60 mins
+                minAmountDelay: 300, // 5 mins
+                refundDelay: 600, // 10 mins
+                withdrawDelay: 900, // 15 mins
             },
         },
         {
@@ -1406,9 +1406,9 @@ export const config: Config = {
                 timedUnlocker: '0xEc148F80d699b0eAF65dd5438CdE4b380DeD8a3b',
                 timedSwapUnlocker: '0x6B6B4573Dc625BE635843aB8800becDEc38D1987',
                 withdrawUnlocker: '0xcd108089057dD0e9f841eb9e00fCF5105534341E',
-                minAmountDelay: 600, // 10 mins
-                refundDelay: 1800, // 30 mins
-                withdrawDelay: 3600, // 60 mins
+                minAmountDelay: 300, // 5 mins
+                refundDelay: 600, // 10 mins
+                withdrawDelay: 900, // 15 mins
             },
         },
         {
@@ -2351,9 +2351,9 @@ export const config: Config = {
                 timedUnlocker: '0x314F9213989370921c6b3b13b3E8460a1C8341d0',
                 timedSwapUnlocker: '0x503Ca86bF0be0A9Ec67EA42eaf458b7EB9432F44',
                 withdrawUnlocker: '0x06848b52101352c3568e40DeF2df57e83648b5ad',
-                minAmountDelay: 600, // 10 mins
-                refundDelay: 1800, // 30 mins
-                withdrawDelay: 3600, // 60 mins
+                minAmountDelay: 300, // 5 mins
+                refundDelay: 600, // 10 mins
+                withdrawDelay: 900, // 15 mins
             },
         },
         {
