@@ -1,6 +1,6 @@
 {
     "name": "symbiosis-js-sdk",
-    "version": "3.11.17",
+    "version": "3.11.18",
     "typings": "dist/esm/index.d.ts",
     "files": [
         "dist"
