@@ -794,8 +794,8 @@ export class Symbiosis {
         return waitForBtcEvmTxIssued(this, revealTx, btcConfig)
     }
 
-    public async waitFromTonTxMined(address: string, contractAddress: string) {
-        return waitFromTonTxMined({ symbiosis: this, address, contractAddress })
+    public async waitFromTonTxMined(address: string, contractAddress: string, since?: number) {
+        return waitFromTonTxMined({ symbiosis: this, address, contractAddress, since })
     }
 
     public async waitForChainFlipTxComplete(txHash: string) {
