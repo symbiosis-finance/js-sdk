@@ -1,9 +1,9 @@
 import { isBtcChainId } from '../chainUtils'
 import { SymbiosisTradeType } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
-// import { btcChainFlipSwap } from './swapChainFlip'
+import { btcChainFlipSwap } from './swapChainFlip'
 import { thorChainSwap } from './swapThorChain'
-// import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
+import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { theBest } from './utils'
 
 export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -15,14 +15,14 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
 
     const promises: Promise<SwapExactInResult>[] = []
 
-    // promises.push(burnSyntheticBtc(context))
+    promises.push(burnSyntheticBtc(context))
 
     if (!disabledProviders?.includes(SymbiosisTradeType.THORCHAIN_BRIDGE)) {
         promises.push(thorChainSwap(context))
     }
-    // if (!disabledProviders?.includes(SymbiosisTradeType.CHAINFLIP_BRIDGE)) {
-    //     promises.push(btcChainFlipSwap(context))
-    // }
+    if (!disabledProviders?.includes(SymbiosisTradeType.CHAINFLIP_BRIDGE)) {
+        promises.push(btcChainFlipSwap(context))
+    }
 
     return theBest(promises, selectMode)
 }
