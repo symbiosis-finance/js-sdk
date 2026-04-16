@@ -88,7 +88,15 @@ async function fetchThorPools(cache: Cache): Promise<ThorPool[]> {
                     'x-client-id': 'symbiosis',
                 },
             })
+            if (!response.ok) {
+                throw new ThorChainError(`Thor pools request failed with status ${response.status}`)
+            }
             const data = await response.json()
+            if (!Array.isArray(data)) {
+                throw new ThorChainError(
+                    typeof data?.error === 'string' ? data.error : 'Unexpected THOR pools response'
+                )
+            }
             return data as ThorPool[]
         },
         600 // 10 minutes
@@ -124,13 +132,17 @@ async function fetchThorInboundAddresses(cache: Cache): Promise<ThorInboundAddre
                 },
             })
 
-            const json = await response.json()
-
-            if (json.error) {
-                throw new ThorChainError(json.error)
+            if (!response.ok) {
+                throw new ThorChainError(`Thor inbound addresses request failed with status ${response.status}`)
+            }
+            const data = await response.json()
+            if (!Array.isArray(data)) {
+                throw new ThorChainError(
+                    typeof data?.error === 'string' ? data.error : 'Unexpected THOR inbound addresses response'
+                )
             }
 
-            return json as ThorInboundAddress[]
+            return data as ThorInboundAddress[]
         },
         600 // 10 minutes
     )
