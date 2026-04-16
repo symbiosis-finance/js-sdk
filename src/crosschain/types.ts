@@ -92,6 +92,11 @@ export type AdvisorConfig = {
     url: string
 }
 
+// Solver service base URL (intent-based swaps)
+export type SolverConfig = {
+    url: string
+}
+
 export type OmniPoolConfig = {
     chainId: ChainId
     address: Address
@@ -137,9 +142,7 @@ export type Config = {
     chains: ChainConfig[]
     fallbackReceiver: EvmAddress
     btcConfigs: BtcConfig[]
-    solver?: {
-        url: string // Solver service base URL (intent-based swaps)
-    }
+    solver?: SolverConfig
 }
 
 export type OverrideChainConfig = {
@@ -177,6 +180,7 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     fetch?: typeof fetch
     advisor?: AdvisorConfig
+    solver?: SolverConfig
     oneInchConfig?: Partial<OneInchConfig>
     openOceanConfig?: Partial<OpenOceanConfig>
     changellyConfig?: Partial<ChangellyConfig>

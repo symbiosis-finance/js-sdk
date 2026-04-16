@@ -279,6 +279,9 @@ export class Symbiosis {
             if (overrideConfig?.advisor) {
                 this.config.advisor = overrideConfig.advisor
             }
+            if (overrideConfig?.solver) {
+                this.config.solver = overrideConfig.solver
+            }
             if (overrideConfig?.btcConfigs) {
                 this.config.btcConfigs = overrideConfig.btcConfigs
             }

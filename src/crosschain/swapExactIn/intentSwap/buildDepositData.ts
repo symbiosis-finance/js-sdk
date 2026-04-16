@@ -2,6 +2,7 @@ import type { ChainId } from '../../../constants'
 import type { TokenAmount } from '../../../entities'
 import { wrappedToken } from '../../../entities'
 import { DepositorySrc__factory, DirectUnlocker__factory } from '../../contracts'
+import { calldataWithoutSelector } from '../../utils'
 import type { DepositoryTypes } from '../../contracts/intents/DepositorySrc'
 import type { EvmAddress } from '../../types'
 
@@ -33,14 +34,16 @@ export function buildDepositData({
 }: DepositCallParams): string {
     const tokenOut = amountOut.token
 
-    const condition = DirectUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
-        {
-            recipient: to,
-            dstToken: wrappedToken(tokenOut).address,
-            amount: amountOut.toBigInt(),
-            dstChainId,
-        },
-    ])
+    const condition = calldataWithoutSelector(
+        DirectUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
+            {
+                recipient: to,
+                dstToken: wrappedToken(tokenOut).address,
+                amount: amountOut.toBigInt(),
+                dstChainId,
+            },
+        ])
+    )
 
     const depositParams: DepositoryTypes.DepositParamsStruct = {
         token: tokenAmountIn.token.address,

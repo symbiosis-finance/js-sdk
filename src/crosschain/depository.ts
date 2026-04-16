@@ -20,6 +20,7 @@ import type { DepositoryTypes } from './contracts/IDepository'
 import type { OneOf } from './tracing'
 import type { SymbiosisTradeOutResult } from './trade/symbiosisTrade'
 import type { Address, DepositoryConfig } from './types'
+import { calldataWithoutSelector } from './utils'
 
 interface DepositoryContext_ {
     cfg: DepositoryConfig
@@ -218,10 +219,6 @@ export class DepositoryContext {
             condition: timedWithdrawCondition,
         }
     }
-}
-
-export function calldataWithoutSelector(data: string): string {
-    return '0x' + data.slice(10)
 }
 
 function encodeCondition<
