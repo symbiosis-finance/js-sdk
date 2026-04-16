@@ -91,6 +91,7 @@ export async function zappingOnChainThor(
 
         const swapResult = await onchainSwap({
             ...params,
+            tokenAmountIn: inTokenAmount,
             tokenOut: thorTokenIn,
             from: multicallRouterV2Address,
             to: multicallRouterV2Address,
@@ -211,7 +212,7 @@ export async function zappingOnChainThor(
     const payload = preparePayload({
         functionSelector,
         chainId,
-        from: params.from,
+        from,
         to: feeCollectorAddress,
         value,
         callData,
