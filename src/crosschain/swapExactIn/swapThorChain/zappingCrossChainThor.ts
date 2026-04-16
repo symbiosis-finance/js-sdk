@@ -4,26 +4,12 @@ import { isEvmChainId } from '../../chainUtils'
 import type { MulticallRouter } from '../../contracts'
 import { ThorRouter__factory } from '../../contracts'
 import { ThorChainError } from '../../sdkError'
-import type { OneInchProtocols } from '../../trade/oneInchTrade'
 import { SymbiosisTradeType } from '../../trade'
-import type { Address, EvmAddress, SwapExactInResult } from '../../types'
+import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
 import { BaseSwapping } from '../../swapping'
 
 import type { ThorQuote } from './utils'
 import { BTC, checkThorPool, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
-
-interface ZappingThorExactInParams {
-    tokenAmountIn: TokenAmount
-    thorTokenIn: Token
-    thorTokenOut: string
-    from: Address
-    to: Address
-    slippage: number
-    deadline: number
-    partnerAddress?: EvmAddress
-    fallbackReceiver?: EvmAddress
-    oneInchProtocols?: OneInchProtocols
-}
 
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -45,17 +31,13 @@ export class ZappingThor extends BaseSwapping {
         })
     }
 
-    public async exactIn({
-        tokenAmountIn,
-        thorTokenIn,
-        thorTokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
-        partnerAddress,
-        fallbackReceiver,
-    }: ZappingThorExactInParams): Promise<SwapExactInResult> {
+    public async exactIn(
+        context: SwapExactInParams,
+        thorTokenIn: Token,
+        thorTokenOut: string
+    ): Promise<SwapExactInResult> {
+        const { tokenAmountIn, from, to, slippage, deadline, partnerAddress, fallbackReceiver } = context
+
         validateBitcoinAddress(to)
         this.bitcoinAddress = to
         this.thorTokenIn = thorTokenIn

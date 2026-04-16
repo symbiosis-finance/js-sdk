@@ -4,7 +4,7 @@ import fetch from 'isomorphic-unfetch'
 
 import { ChainId } from '../../../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
-import { getMinAmount, isTronChainId } from '../../chainUtils'
+import { getMinAmount, isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import type { Cache } from '../../cache'
 import { ThorChainError } from '../../sdkError'
 import type { Address, EvmAddress, TronAddress } from '../../types'
@@ -143,6 +143,9 @@ export async function getThorVault(cache: Cache, token: Token): Promise<string> 
     if (!found) {
         throw new ThorChainError('Thor vault not found')
     }
+    if (isTronChainId(token.chainId)) {
+        return tronAddressToEvm(found.address as TronAddress)
+    }
     return found.address
 }
 
@@ -241,16 +244,21 @@ export const BSC_USDC = new Token({
     },
 })
 
-export const TRON_USDT = new Token({
-    name: 'Tether USDt',
-    symbol: 'USDT',
-    address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
-    chainId: ChainId.TRON_MAINNET,
-    decimals: 6,
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-    },
-})
+// export const TRON_USDT = new Token({
+//     name: 'Tether USDt',
+//     symbol: 'USDT',
+//     address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
+//     chainId: ChainId.TRON_MAINNET,
+//     decimals: 6,
+//     icons: {
+//         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+//         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+//     },
+// })
 
-export const THOR_TOKENS_IN = [ETH_USDC, AVAX_USDC, BSC_USDC, TRON_USDT]
+export const THOR_TOKENS_IN = [
+    ETH_USDC,
+    AVAX_USDC,
+    BSC_USDC,
+    // TRON_USDT
+]

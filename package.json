@@ -33,7 +33,7 @@
     "scripts": {
         "build": "rm -fr ./dist && npm run build-esm && npm run build-cjs",
         "build-esm": "rm -fr ./dist/esm && tsc && fix-esm-import-path dist/esm",
-        "build-cjs": "rm -fr ./dist/cjs && tsc -p tsconfig.cjs.json --noCheck && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+        "build-cjs": "tsc -p tsconfig.cjs.json --noCheck && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
         "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",

@@ -5,8 +5,7 @@ import { ZappingThor } from './zappingCrossChainThor'
 import { zappingOnChainThor } from './zappingOnChainThor'
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, partnerAddress, fallbackReceiver } =
-        context
+    const { tokenAmountIn, symbiosis, selectMode } = context
     const thorTokenOut = 'BTC.BTC'
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -28,18 +27,7 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         // Cross-chain zapping: bridge to the connector chain, then deposit to ThorChain
         const crossChainPromises = THOR_TOKENS_IN.map((thorTokenIn) => {
             const zappingThor = new ZappingThor(symbiosis, usdPoolConfig)
-
-            return zappingThor.exactIn({
-                tokenAmountIn,
-                thorTokenIn,
-                thorTokenOut,
-                from,
-                to,
-                slippage,
-                deadline,
-                partnerAddress,
-                fallbackReceiver,
-            })
+            return zappingThor.exactIn(context, thorTokenIn, thorTokenOut)
         })
         promises.push(...crossChainPromises)
     }

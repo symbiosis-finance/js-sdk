@@ -10,21 +10,13 @@ import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade'
-import type { FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import type { FeeItem, MulticallV2Item, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
 
 import type { Symbiosis } from '../../symbiosis'
 import type { ChainFlipConfig } from './types'
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
-
-type MulticallItem = {
-    data: BytesLike
-    to: string
-    path: string
-    offset: number
-    isNative: boolean
-}
 
 export async function ZappingOnChainChainFlip(
     params: SwapExactInParams,
@@ -70,7 +62,7 @@ export async function ZappingOnChainChainFlip(
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
     }
 
-    const multicallItems: MulticallItem[] = []
+    const multicallItems: MulticallV2Item[] = []
     let value = fee.toString()
     let depositAmount = tokenAmountIn
     let depositAmountMin = tokenAmountIn

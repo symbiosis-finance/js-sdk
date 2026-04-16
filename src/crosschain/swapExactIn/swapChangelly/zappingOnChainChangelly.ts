@@ -8,7 +8,7 @@ import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { AmountLessThanFeeError, ChangellyError, SdkError } from '../../sdkError'
 import { SymbiosisTradeType } from '../../trade'
-import type { Address, FeeItem, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
+import type { Address, FeeItem, MulticallV2Item, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
@@ -139,7 +139,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
 
     // 9. Build multicall items
     // Item 1: DEX swap
-    const swapItem: MulticallItem = {
+    const swapItem: MulticallV2Item = {
         data: swapData,
         to: swapTo,
         path: inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
@@ -152,7 +152,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
         depositAddressForAbi,
         transitAmount.raw.toString(),
     ])
-    const transferItem: MulticallItem = {
+    const transferItem: MulticallV2Item = {
         data: transferData,
         to: transitToken.address,
         path: transitToken.address,
@@ -207,10 +207,3 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
     }
 }
 
-type MulticallItem = {
-    data: BytesLike
-    to: string
-    path: string
-    offset: number
-    isNative: boolean
-}
