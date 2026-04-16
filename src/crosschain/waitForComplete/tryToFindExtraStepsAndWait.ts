@@ -145,7 +145,7 @@ export async function findThorChainDeposit(receipt: TransactionReceipt) {
 
 export async function waitForThorChainTx(txHash: string): Promise<string> {
     const txHashCleaned = txHash.startsWith('0x') ? txHash.slice(2) : txHash
-    const thorUrl = new URL(`https://thornode.ninerealms.com/thorchain/tx/${txHashCleaned}`)
+    const thorUrl = new URL(`https://gateway.liquify.com/chain/thorchain_api/thorchain/tx/${txHashCleaned}`)
 
     return longPolling({
         pollingFunction: async () => {
@@ -163,7 +163,7 @@ export async function waitForThorChainTx(txHash: string): Promise<string> {
         successCondition: (btcHash) => !!btcHash,
         error: new TxNotFound(txHash),
         exceedDelay: 3_600_000, // 1 hour
-        pollingInterval: 60_000, // 1 minute
+        pollingInterval: 10_000, // 10 seconds
     })
 }
 

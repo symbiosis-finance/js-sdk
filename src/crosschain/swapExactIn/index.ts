@@ -6,4 +6,4 @@ export {
     CHAIN_FLIP_TOKENS,
 } from './swapChainFlip'
 export * from './swapExactIn'
-export { THOR_TOKENS } from './thorChainSwap'
+export { THOR_TOKENS_IN } from './swapThorChain'

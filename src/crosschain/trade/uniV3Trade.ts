@@ -74,13 +74,13 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         initCodeHash: '0xe3572921be1688dba92df30c6781b8770499ff274d20ae9b325f4242634774fb',
         baseTokens: [WETH[ChainId.HYPERLIQUID_MAINNET]],
     },
-    [ChainId.BERACHAIN_MAINNET]: {
-        factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
-        quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
-        swap02: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
-        initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
-        baseTokens: [WETH[ChainId.BERACHAIN_MAINNET]],
-    },
+    // [ChainId.BERACHAIN_MAINNET]: {
+    //     factory: '0xD84CBf0B02636E7f53dB9E5e45A616E05d710990',
+    //     quoter: '0x644C8D6E501f7C994B74F5ceA96abe65d0BA662B',
+    //     swap02: '0xe301E48F77963D3F7DbD2a4796962Bd7f3867Fb4',
+    //     initCodeHash: '0xd8e2091bc519b509176fc39aeb148cc8444418d3ce260820edc44e806c2c2339',
+    //     baseTokens: [WETH[ChainId.BERACHAIN_MAINNET]],
+    // },
     [ChainId.CITREA_MAINNET]: {
         factory: '0xd809b1285aDd8eeaF1B1566Bf31B2B4C4Bba8e82',
         quoter: '0x428f20dd8926Eabe19653815Ed0BE7D6c36f8425',
