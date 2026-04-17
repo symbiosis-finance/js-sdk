@@ -39,7 +39,7 @@
         "prettier:fix": "prettier --write --ignore-unknown src test",
         "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
         "build-config-cache": "tsx ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
-        "generate-thorchain-api": "swagger-typescript-api generate -p https://gateway.liquify.com/chain/thorchain_api/thorchain/doc/openapi.yaml -o src/api -n thorchain.generated.ts --unwrap-response-data --single-http-client",
+        "generate-thorchain-api": "swagger-typescript-api generate -p https://gateway.liquify.com/chain/thorchain_api/thorchain/doc/openapi.yaml -o src/crosschain/api -n thorchain.generated.ts --unwrap-response-data --single-http-client",
         "test": "vitest test/crosschain",
         "prepare": "npm run build-contracts && npm run build"
     },
