@@ -43,23 +43,25 @@ export async function solanaChainFlipSwap(context: SwapExactInParams): Promise<S
         promises.push(...onChainPromises)
     }
 
-    const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {
-        return pool.coinGeckoId === 'usd-coin'
-    })
-    if (usdPoolConfig) {
-        const crossChainPromises = CF_CONFIGS.map((config) => {
-            const zapping = new ZappingCrossChainChainFlip(context, usdPoolConfig)
-            return zapping.exactIn({
-                tokenAmountIn,
-                config,
-                from,
-                to,
-                slippage,
-                deadline,
-            })
+    if (promises.length === 0) {
+        const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {
+            return pool.coinGeckoId === 'usd-coin'
         })
+        if (usdPoolConfig) {
+            const crossChainPromises = CF_CONFIGS.map((config) => {
+                const zapping = new ZappingCrossChainChainFlip(context, usdPoolConfig)
+                return zapping.exactIn({
+                    tokenAmountIn,
+                    config,
+                    from,
+                    to,
+                    slippage,
+                    deadline,
+                })
+            })
 
-        promises.push(...crossChainPromises)
+            promises.push(...crossChainPromises)
+        }
     }
 
     return theBest(promises, selectMode)
