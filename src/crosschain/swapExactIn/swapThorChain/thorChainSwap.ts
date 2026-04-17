@@ -36,7 +36,7 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         }
     }
     if (promises.length === 0) {
-        throw new ThorChainError('No ChainFlip route found for tokenOut')
+        throw new ThorChainError('No ThorChain route found for tokenOut')
     }
 
     return theBest(promises, selectMode)
