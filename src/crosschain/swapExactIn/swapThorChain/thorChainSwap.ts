@@ -3,7 +3,7 @@ import { theBest } from '../utils'
 import { THOR_TOKENS_IN } from './utils'
 import { ZappingThor } from './zappingCrossChainThor'
 import { zappingOnChainThor } from './zappingOnChainThor'
-import { ChainFlipError } from '../../sdkError'
+import { ThorChainError } from '../../sdkError'
 
 export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, symbiosis, selectMode } = context
@@ -36,7 +36,7 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         }
     }
     if (promises.length === 0) {
-        throw new ChainFlipError('No ChainFlip route found for tokenOut')
+        throw new ThorChainError('No ChainFlip route found for tokenOut')
     }
 
     return theBest(promises, selectMode)
