@@ -54,7 +54,11 @@ function toThorAmount(tokenAmount: TokenAmount): BigNumber {
 }
 
 export async function getThorVault(cache: Cache, token: Token): Promise<string> {
-    const pools = await cache.get(['thorchain', 'pools'], () => thorchainApi.thorchain.pools(), 600)
+    const pools = await cache.get(
+        ['thorchain', 'pools'],
+        () => thorchainApi.thorchain.pools(),
+        600 // 10 minutes
+    )
 
     const thorToken = toThorToken(token)
     const pool = pools.find((i) => i.asset === thorToken)
@@ -68,13 +72,19 @@ export async function getThorVault(cache: Cache, token: Token): Promise<string> 
     const addresses = await cache.get(
         ['thorchain', 'inbound_addresses'],
         () => thorchainApi.thorchain.inboundAddresses(),
-        600
+        600 // 10 minutes
     )
 
     const chain = toThorChain(token.chainId)
     const found = addresses.find((i) => i.chain === chain)
-    if (!found || !found.address) {
+    if (!found) {
         throw new ThorChainError(`Thor vault not found for chain ${chain}`)
+    }
+    if (!found.address) {
+        throw new ThorChainError(`Thor vault address not found for chain ${chain}`)
+    }
+    if (found.halted) {
+        throw new ThorChainError(`Thor vault is halted for chain ${chain}`)
     }
     if (isTronChainId(token.chainId)) {
         return tronAddressToEvm(found.address as TronAddress)
