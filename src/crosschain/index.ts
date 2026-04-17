@@ -17,7 +17,7 @@ export {
     CHAIN_FLIP_TO_SOLANA_TOKENS_IN,
     CHAIN_FLIP_TOKENS,
     FEE_COLLECTOR_ADDRESSES,
-    THOR_TOKENS,
+    THOR_TOKENS_IN,
 } from './swapExactIn'
 export * from './swapping'
 export * from './symbiosis'

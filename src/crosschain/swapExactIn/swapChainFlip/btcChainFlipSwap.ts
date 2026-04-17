@@ -22,13 +22,6 @@ export const CHAIN_FLIP_TO_BTC_TOKENS_IN = CONFIGS.map((i) => i.src.token)
 export async function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
 
-    const poolConfig = symbiosis.config.omniPools.find((pool) => {
-        return pool.coinGeckoId === 'usd-coin'
-    })
-    if (!poolConfig) {
-        throw new ChainFlipError('No USD pool found')
-    }
-
     const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
     if (!CF_CONFIGS.length) {
         throw new ChainFlipError('No config found for tokenOut')
@@ -41,19 +34,26 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
         promises.push(...onChainPromises)
     }
 
-    const crossChainPromises = CF_CONFIGS.map((config) => {
-        const zapping = new ZappingCrossChainChainFlip(context, poolConfig)
-        return zapping.exactIn({
-            tokenAmountIn,
-            config,
-            from,
-            to,
-            slippage,
-            deadline,
+    if (promises.length === 0) {
+        const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {
+            return pool.coinGeckoId === 'usd-coin'
         })
-    })
+        if (usdPoolConfig) {
+            const crossChainPromises = CF_CONFIGS.map((config) => {
+                const zapping = new ZappingCrossChainChainFlip(context, usdPoolConfig)
+                return zapping.exactIn({
+                    tokenAmountIn,
+                    config,
+                    from,
+                    to,
+                    slippage,
+                    deadline,
+                })
+            })
 
-    promises.push(...crossChainPromises)
+            promises.push(...crossChainPromises)
+        }
+    }
 
     return theBest(promises, selectMode)
 }

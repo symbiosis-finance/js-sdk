@@ -317,6 +317,14 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     permit2Approve?: { to: string; callData: string }
 }
 
+export type MulticallV2Item = {
+    data: BytesLike
+    to: string
+    path: string
+    offset: number
+    isNative: boolean
+}
+
 export interface MultiCallItem {
     to: string
     data: BytesLike
