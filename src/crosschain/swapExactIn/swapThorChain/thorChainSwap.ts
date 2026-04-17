@@ -21,18 +21,20 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
         promises.push(...onChainPromises)
     }
 
-    const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {
-        return pool.coinGeckoId === 'usd-coin'
-    })
-    if (usdPoolConfig) {
-        // Cross-chain zapping: bridge to the connector chain, then deposit to ThorChain
-        const crossChainPromises = THOR_TOKENS_IN.map((thorTokenIn) => {
-            const zappingThor = new ZappingThor(symbiosis, usdPoolConfig)
-            return zappingThor.exactIn(context, thorTokenIn, thorTokenOut)
+    // DO NOT add cross-chain routes if there are on-chain ones
+    if (promises.length === 0) {
+        const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {
+            return pool.coinGeckoId === 'usd-coin'
         })
-        promises.push(...crossChainPromises)
+        if (usdPoolConfig) {
+            // Cross-chain zapping: bridge to the connector chain, then deposit to ThorChain
+            const crossChainPromises = THOR_TOKENS_IN.map((thorTokenIn) => {
+                const zappingThor = new ZappingThor(symbiosis, usdPoolConfig)
+                return zappingThor.exactIn(context, thorTokenIn, thorTokenOut)
+            })
+            promises.push(...crossChainPromises)
+        }
     }
-
     if (promises.length === 0) {
         throw new ChainFlipError('No ChainFlip route found for tokenOut')
     }

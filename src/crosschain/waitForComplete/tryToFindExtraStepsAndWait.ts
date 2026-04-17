@@ -5,6 +5,7 @@ import type { TransactionReceipt } from '@ethersproject/providers'
 import type { BigNumber } from 'ethers'
 
 import type { ChainId } from '../../constants'
+import { thorchainApi } from '../api/thorchain'
 import { Synthesis__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import type { BtcConfig } from '../types'
@@ -12,16 +13,6 @@ import { TxNotFound } from './constants'
 import { fetchData, longPolling } from './utils'
 import { waitForDepositUnlocked } from './waitForDepositUnlocked'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
-
-interface ThorStatusResponse {
-    observed_tx: {
-        tx: {
-            id: string
-        }
-        out_hashes?: string[]
-        status?: string
-    }
-}
 
 type ExtraStep = 'thorChain' | 'burnRequestBtc' | 'burnRequestTon' | 'swapEthToTon' | 'chainFlip' | 'depository'
 
@@ -145,13 +136,12 @@ export async function findThorChainDeposit(receipt: TransactionReceipt) {
 
 export async function waitForThorChainTx(txHash: string): Promise<string> {
     const txHashCleaned = txHash.startsWith('0x') ? txHash.slice(2) : txHash
-    const thorUrl = new URL(`https://gateway.liquify.com/chain/thorchain_api/thorchain/tx/${txHashCleaned}`)
 
     return longPolling({
         pollingFunction: async () => {
-            const result: ThorStatusResponse = await fetchData(thorUrl)
+            const result = await thorchainApi.thorchain.tx(txHashCleaned)
 
-            const { status, out_hashes } = result.observed_tx
+            const { status, out_hashes } = result.observed_tx ?? {}
             if (status === 'done' && out_hashes && out_hashes.length > 0) {
                 return out_hashes.find((outHash) => {
                     return outHash !== '0000000000000000000000000000000000000000000000000000000000000000'

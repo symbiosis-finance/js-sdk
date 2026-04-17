@@ -23,7 +23,7 @@ import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
 import { preparePayload } from '../preparePayload'
 
-import { BTC, checkThorPool, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
+import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
 
 export async function zappingOnChainThor(
     params: SwapExactInParams,
@@ -45,8 +45,6 @@ export async function zappingOnChainThor(
     if (!isEvmChainId(chainId)) {
         evmTo = params.fallbackReceiver ?? symbiosis.config.fallbackReceiver
     }
-
-    await checkThorPool(symbiosis.cache, thorTokenIn)
 
     const thorVault = await getThorVault(symbiosis.cache, thorTokenIn)
 
@@ -83,6 +81,14 @@ export async function zappingOnChainThor(
     let multicallRouterV2Address: EvmAddress | undefined
 
     const swapCallRequired = !tokenAmountIn.token.equals(thorTokenIn)
+    const minSlippage = 20 // 0.2%
+    if (swapCallRequired && params.slippage < minSlippage) {
+        throw new ThorChainError('Slippage cannot be less than 0.2% for on-chain ThorChain swap with pre-swap')
+    }
+    const minOnChainSlippage = 10 // 0.1%
+    const onChainSlippage = swapCallRequired ? Math.max(Math.floor(params.slippage * 0.4), minOnChainSlippage) : 0
+    const thorSlippage = swapCallRequired ? params.slippage - onChainSlippage : params.slippage
+
     if (swapCallRequired) {
         multicallRouterV2Address = MULTICALL_ROUTER_V2[chainId]
         if (!multicallRouterV2Address) {
@@ -91,6 +97,7 @@ export async function zappingOnChainThor(
 
         const swapResult = await onchainSwap({
             ...params,
+            slippage: onChainSlippage,
             tokenAmountIn: inTokenAmount,
             tokenOut: thorTokenIn,
             from: multicallRouterV2Address,
@@ -139,6 +146,7 @@ export async function zappingOnChainThor(
         evmTo,
         bitcoinAddress: to,
         amount: depositAmount,
+        slippage: thorSlippage,
     })
 
     fees.push({
@@ -219,8 +227,8 @@ export async function zappingOnChainThor(
     })
 
     return {
-        tokenAmountOut: thorQuote.amountOut,
-        tokenAmountOutMin: thorQuote.amountOutMin,
+        tokenAmountOut: new TokenAmount(BTC, thorQuote.expected_amount_out),
+        tokenAmountOutMin: new TokenAmount(BTC, thorQuote.amount_out_min),
         priceImpact,
         amountInUsd: depositAmount,
         approveTo: approveAddress,

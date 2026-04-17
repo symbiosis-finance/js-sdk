@@ -8,8 +8,8 @@ import { SymbiosisTradeType } from '../../trade'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
 import { BaseSwapping } from '../../swapping'
 
-import type { ThorQuote } from './utils'
-import { BTC, checkThorPool, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
+import type { ThorQuoteSwapResponse } from './utils'
+import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
 
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
@@ -18,8 +18,9 @@ export class ZappingThor extends BaseSwapping {
     protected thorTokenIn!: Token
     protected thorTokenOut!: string
     protected thorVault!: string
-    protected thorQuote!: ThorQuote
+    protected thorQuote!: ThorQuoteSwapResponse
     protected evmTo!: Address
+    protected thorSlippage!: number
 
     protected async doPostTransitAction() {
         this.thorQuote = await getThorQuote({
@@ -28,6 +29,7 @@ export class ZappingThor extends BaseSwapping {
             evmTo: this.evmTo,
             bitcoinAddress: this.bitcoinAddress,
             amount: this.transit.amountOut,
+            slippage: this.thorSlippage,
         })
     }
 
@@ -43,13 +45,18 @@ export class ZappingThor extends BaseSwapping {
         this.thorTokenIn = thorTokenIn
         this.thorTokenOut = thorTokenOut
 
+        const minSlippage = 20 // 0.2%
+        if (slippage < minSlippage) {
+            throw new ThorChainError('Slippage cannot be less than 0.2% for cross-chain ThorChain swap')
+        }
+        const minCrossChainSlippage = 10 // 0.1%
+        const crossChainSlippage = Math.max(Math.floor(slippage / 2), minCrossChainSlippage)
+        this.thorSlippage = slippage - crossChainSlippage
+
         this.evmTo = from
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
             this.evmTo = fallbackReceiver ?? this.symbiosis.config.fallbackReceiver
         }
-
-        // check if there is "Available" ThorChain pool at the moment
-        await checkThorPool(this.symbiosis.cache, thorTokenIn)
 
         this.multicallRouter = this.symbiosis.multicallRouter(thorTokenIn.chainId)
         this.thorVault = await getThorVault(this.symbiosis.cache, thorTokenIn)
@@ -65,7 +72,7 @@ export class ZappingThor extends BaseSwapping {
             tokenOut: thorTokenIn,
             from,
             to: this.evmTo,
-            slippage,
+            slippage: crossChainSlippage,
             deadline,
             transitTokenIn,
             transitTokenOut,
@@ -75,8 +82,8 @@ export class ZappingThor extends BaseSwapping {
 
         return {
             ...result,
-            tokenAmountOut: this.thorQuote.amountOut,
-            tokenAmountOutMin: this.thorQuote.amountOutMin,
+            tokenAmountOut: new TokenAmount(BTC, this.thorQuote.expected_amount_out),
+            tokenAmountOutMin: new TokenAmount(BTC, this.thorQuote.amount_out_min),
             labels: [...result.labels, 'partner-swap' as const],
             routes: [
                 ...result.routes,

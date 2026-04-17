@@ -1,51 +1,26 @@
 import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
 import { BigNumber } from 'ethers'
-import fetch from 'isomorphic-unfetch'
 
 import { ChainId } from '../../../constants'
-import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
-import { getMinAmount, isTronChainId, tronAddressToEvm } from '../../chainUtils'
+import type { TokenAmount } from '../../../entities'
+import { GAS_TOKEN, Token } from '../../../entities'
+import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import type { Cache } from '../../cache'
 import { ThorChainError } from '../../sdkError'
 import type { Address, EvmAddress, TronAddress } from '../../types'
 import TronWeb from 'tronweb'
+import type { BaseQuoteResponse, QuoteFees, QuoteSwapResponse } from '../../api/thorchain'
+import { thorchainApi } from '../../api/thorchain'
+
+export type ThorQuoteSwapResponse = BaseQuoteResponse &
+    QuoteSwapResponse & {
+        fees: QuoteFees
+        router: string
+        memo: string
+        amount_out_min: string
+    }
 
 export const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
-
-// https://gateway.liquify.com/chain/thorchain_api/thorchain/doc
-const thorApiUrl = 'https://gateway.liquify.com/chain/thorchain_api/thorchain'
-
-export type ThorQuote = {
-    memo: string
-    amountOut: TokenAmount
-    amountOutMin: TokenAmount
-    router: Address
-    expiry: string
-    fees: {
-        asset: string
-        total: string
-    }
-}
-
-type ThorPool = {
-    asset: string
-    status: 'Available' | 'Staged'
-    pending_inbound_asset: string
-    pending_inbound_rune: string
-    balance_asset: string
-    balance_rune: string
-    pool_units: string
-    LP_units: string
-    synth_units: string
-    synth_supply: string
-    savers_depth: string
-    savers_units: string
-    synth_mint_paused: false
-    synth_supply_remaining: string
-    loan_collateral: string
-    loan_cr: string
-    derived_depth_bps: string
-}
 
 const THOR_CHAIN_MAP: Partial<Record<ChainId, string>> = {
     [ChainId.AVAX_MAINNET]: 'AVAX',
@@ -62,7 +37,6 @@ function toThorChain(chainId: ChainId): string {
     return chain
 }
 
-// the source asset amount in 1e8 decimals
 function toThorToken(token: Token): string {
     const chain = toThorChain(token.chainId)
     let tokenAddress: EvmAddress | TronAddress = token.address as EvmAddress
@@ -72,88 +46,35 @@ function toThorToken(token: Token): string {
     return `${chain}.${token.symbol}-${tokenAddress.toUpperCase()}`
 }
 
+// the source asset amount in 1e8 decimals
 function toThorAmount(tokenAmount: TokenAmount): BigNumber {
     const tokenDecimals = BigNumber.from(10).pow(tokenAmount.token.decimals)
     const thorDecimals = BigNumber.from(10).pow(8)
     return BigNumber.from(tokenAmount.raw.toString()).mul(thorDecimals).div(tokenDecimals)
 }
 
-async function fetchThorPools(cache: Cache): Promise<ThorPool[]> {
-    return cache.get(
-        ['thorchain', 'pools'],
-        async () => {
-            const url = new URL(`${thorApiUrl}/pools`)
-            const response = await fetch(url.toString(), {
-                headers: {
-                    'x-client-id': 'symbiosis',
-                },
-            })
-            if (!response.ok) {
-                throw new ThorChainError(`Thor pools request failed with status ${response.status}`)
-            }
-            const data = await response.json()
-            if (!Array.isArray(data)) {
-                throw new ThorChainError(
-                    typeof data?.error === 'string' ? data.error : 'Unexpected THOR pools response'
-                )
-            }
-            return data as ThorPool[]
-        },
-        600 // 10 minutes
-    )
-}
-
-export async function checkThorPool(cache: Cache, token: Token): Promise<ThorPool> {
-    const pools = await fetchThorPools(cache)
-
-    const found = pools.find((i) => i.asset === toThorToken(token))
-    if (!found) {
-        throw new ThorChainError('Thor pool not found')
-    }
-    if (found.status !== 'Available') {
-        throw new ThorChainError('Thor pool is not available')
-    }
-    return found
-}
-
-type ThorInboundAddress = {
-    chain: string
-    address: string
-}
-
-async function fetchThorInboundAddresses(cache: Cache): Promise<ThorInboundAddress[]> {
-    return cache.get(
-        ['thorchain', 'inbound_addresses'],
-        async () => {
-            const url = new URL(`${thorApiUrl}/inbound_addresses`)
-            const response = await fetch(url.toString(), {
-                headers: {
-                    'x-client-id': 'symbiosis',
-                },
-            })
-
-            if (!response.ok) {
-                throw new ThorChainError(`Thor inbound addresses request failed with status ${response.status}`)
-            }
-            const data = await response.json()
-            if (!Array.isArray(data)) {
-                throw new ThorChainError(
-                    typeof data?.error === 'string' ? data.error : 'Unexpected THOR inbound addresses response'
-                )
-            }
-
-            return data as ThorInboundAddress[]
-        },
-        600 // 10 minutes
-    )
-}
-
 export async function getThorVault(cache: Cache, token: Token): Promise<string> {
-    const addresses = await fetchThorInboundAddresses(cache)
+    const pools = await cache.get(['thorchain', 'pools'], () => thorchainApi.thorchain.pools(), 600)
 
-    const found = addresses.find((i) => i.chain === toThorChain(token.chainId))
-    if (!found) {
-        throw new ThorChainError('Thor vault not found')
+    const thorToken = toThorToken(token)
+    const pool = pools.find((i) => i.asset === thorToken)
+    if (!pool) {
+        throw new ThorChainError(`Thor pool not found for ${thorToken}`)
+    }
+    if (pool.status !== 'Available') {
+        throw new ThorChainError(`Thor pool ${thorToken} is not available (status: ${pool.status})`)
+    }
+
+    const addresses = await cache.get(
+        ['thorchain', 'inbound_addresses'],
+        () => thorchainApi.thorchain.inboundAddresses(),
+        600
+    )
+
+    const chain = toThorChain(token.chainId)
+    const found = addresses.find((i) => i.chain === chain)
+    if (!found || !found.address) {
+        throw new ThorChainError(`Thor vault not found for chain ${chain}`)
     }
     if (isTronChainId(token.chainId)) {
         return tronAddressToEvm(found.address as TronAddress)
@@ -167,45 +88,48 @@ export async function getThorQuote(params: {
     evmTo: Address
     bitcoinAddress: string
     amount: TokenAmount
-}): Promise<ThorQuote> {
-    const { thorTokenIn, thorTokenOut, evmTo, bitcoinAddress, amount } = params
+    slippage: number
+}): Promise<ThorQuoteSwapResponse> {
+    const { thorTokenIn, thorTokenOut, evmTo, bitcoinAddress, amount, slippage } = params
 
-    const url = new URL(`${thorApiUrl}/quote/swap`)
-
-    url.searchParams.set('from_asset', toThorToken(thorTokenIn))
-    url.searchParams.set('to_asset', thorTokenOut)
-    url.searchParams.set('refund_address', evmTo)
-    url.searchParams.set('amount', toThorAmount(amount).toString())
-    url.searchParams.set('destination', bitcoinAddress)
-    url.searchParams.set('streaming_interval', '1')
-    url.searchParams.set('streaming_quantity', '0')
-    url.searchParams.set('affiliate', 'symbiosis')
-    url.searchParams.set('affiliate_bps', '20')
-
-    const response = await fetch(url.toString(), {
-        headers: {
-            'x-client-id': 'symbiosis',
-        },
-    })
-
-    const json = await response.json()
-
-    if (json.error) {
-        throw new ThorChainError(json.error)
+    let response
+    try {
+        response = (await thorchainApi.thorchain.quoteswap({
+            from_asset: toThorToken(thorTokenIn),
+            to_asset: thorTokenOut,
+            refund_address: evmTo,
+            amount: toThorAmount(amount).toNumber(),
+            destination: bitcoinAddress,
+            streaming_interval: 1,
+            streaming_quantity: 0,
+            affiliate: 'symbiosis',
+            affiliate_bps: 20,
+            liquidity_tolerance_bps: slippage,
+        })) as ThorQuoteSwapResponse
+    } catch (error) {
+        throw new ThorChainError('THORChain /quote/swap: call error', error)
     }
-    const { memo, expected_amount_out: amountOut, router, expiry, fees } = json
 
-    const defaultSlippage = 100 // 1%
-    const amountOutMin = getMinAmount(defaultSlippage, amountOut)
-    const patchedMemo = memo.replace('0/1/0', `${amountOutMin.toString()}/1/0`)
+    const { memo, router, fees } = response
+
+    if (!memo) {
+        throw new ThorChainError('THORChain /quote/swap: missing memo in response')
+    }
+    if (!router) {
+        throw new ThorChainError('THORChain /quote/swap: missing router in response')
+    }
+    if (!fees) {
+        throw new ThorChainError('THORChain /quote/swap: missing fees in response')
+    }
+
+    const limitMatch = memo.match(/(\d+)\/1\/0/)
+    if (!limitMatch) {
+        throw new ThorChainError(`THORChain /quote/swap: failed to parse limit from memo: ${memo}`)
+    }
 
     return {
-        memo: patchedMemo,
-        amountOut: new TokenAmount(BTC, amountOut),
-        amountOutMin: new TokenAmount(BTC, amountOutMin),
-        router,
-        expiry,
-        fees,
+        ...response,
+        amount_out_min: limitMatch[1],
     }
 }
 
