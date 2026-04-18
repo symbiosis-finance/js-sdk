@@ -301,7 +301,7 @@ export class UniV3Trade extends SymbiosisTrade {
 
         for (let i = 0; i < quoterResults.length; i++) {
             const [success, returnData] = quoterResults[i]
-            if (!success) {
+            if (!success || returnData.length <= 2) {
                 errors.push(new UniV3TradeError(`Quote failed for route ${i}`))
                 continue
             }
