@@ -17,6 +17,7 @@ export type {
     CreateChangellyDepositParams,
 } from '../swapExactIn/swapChangelly/changellyTrade'
 export { DedustTrade } from './dedustTrade'
+export { KyberSwapTrade } from './kyberSwapTrade'
 export { IzumiTrade } from './izumiTrade'
 export { JupiterTrade } from './jupiterTrade'
 export { OctoPoolTrade } from './octoPoolTrade'
