@@ -78,7 +78,7 @@ export class KyberSwapTrade extends SymbiosisTrade {
         const buildResult = await this.buildRoute(routeSummary)
 
         const callData = buildResult.data
-        const { amountOffset, minReceivedOffset } = this.getOffsets(callData)
+        const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
         const amountOut = new TokenAmount(this.tokenOut, buildResult.amountOut)
         const amountOutMinRaw = getMinAmount(this.slippage, buildResult.amountOut)
@@ -128,6 +128,7 @@ export class KyberSwapTrade extends SymbiosisTrade {
                     tokenOut: toTokenAddress,
                     amountIn: this.tokenAmountIn.raw.toString(),
                     gasInclude: true,
+                    onlyScalableSources: true,
                     origin: this.origin,
                 })
 
@@ -181,7 +182,7 @@ export class KyberSwapTrade extends SymbiosisTrade {
      *   [9] flags
      *  [10] offset to permit
      */
-    private getOffsets(callData: string): { amountOffset: number; minReceivedOffset: number } {
+    static getOffsets(callData: string): { amountOffset: number; minReceivedOffset: number } {
         const sigHash = callData.slice(2, 10)
 
         if (sigHash === SWAP_SELECTOR || sigHash === SWAP_GENERIC_SELECTOR) {

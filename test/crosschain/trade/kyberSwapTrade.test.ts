@@ -2,8 +2,8 @@ import { BigNumber, ethers } from 'ethers'
 import { describe, expect, test } from 'vitest'
 
 import { ChainId, Token, TokenAmount } from '../../../src'
-import { SymbiosisTrade } from '../../../src/crosschain/trade/symbiosisTrade'
 import { KyberSwapTrade } from '../../../src/crosschain/trade/kyberSwapTrade'
+import { SymbiosisTrade } from '../../../src/crosschain/trade/symbiosisTrade'
 
 describe('KyberSwapTrade', () => {
     describe('isAvailable', () => {
@@ -82,7 +82,7 @@ describe('KyberSwapTrade', () => {
 
         test('with empty arrays', () => {
             const callData = encodeSwap()
-            const { amountOffset, minReceivedOffset } = getOffsetsViaReflection(callData)
+            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
@@ -93,7 +93,7 @@ describe('KyberSwapTrade', () => {
                 ['0x5555555555555555555555555555555555555555', '0x6666666666666666666666666666666666666666'],
                 [BigNumber.from('50000'), BigNumber.from('60000')]
             )
-            const { amountOffset, minReceivedOffset } = getOffsetsViaReflection(callData)
+            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
@@ -101,7 +101,7 @@ describe('KyberSwapTrade', () => {
 
         test('patching preserves correct values', () => {
             const callData = encodeSwap()
-            const { amountOffset, minReceivedOffset } = getOffsetsViaReflection(callData)
+            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
             const newAmount = BigNumber.from('999999999')
             const patched = SymbiosisTrade.patchCallData(callData, amountOffset, newAmount)
@@ -142,22 +142,20 @@ describe('KyberSwapTrade', () => {
 
         test('with empty arrays', () => {
             const callData = encodeSwapSimple()
-            const { amountOffset, minReceivedOffset } = getOffsetsViaReflection(callData)
+            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
 
         test('with non-empty srcReceivers/srcAmounts', () => {
-            const callData = encodeSwapSimple(
-                ['0x8888888888888888888888888888888888888888'],
-                [BigNumber.from('99999')]
-            )
-            const { amountOffset, minReceivedOffset } = getOffsetsViaReflection(callData)
+            const callData = encodeSwapSimple(['0x8888888888888888888888888888888888888888'], [BigNumber.from('99999')])
+            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
+
     })
 
     describe('offset calculation for swapGeneric', () => {
@@ -191,46 +189,10 @@ describe('KyberSwapTrade', () => {
                     clientData: '0x',
                 },
             ])
-            const { amountOffset, minReceivedOffset } = getOffsetsViaReflection(callData)
+            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
     })
 })
-
-/**
- * Uses the same offset logic as KyberSwapTrade.getOffsets (which is private),
- * reimplemented here for testing.
- */
-function getOffsetsViaReflection(callData: string): { amountOffset: number; minReceivedOffset: number } {
-    const sigHash = callData.slice(2, 10)
-
-    const SWAP = 'e21fd0e9'
-    const SWAP_GENERIC = '59e50fed'
-    const SWAP_SIMPLE = '8af033fb'
-
-    if (sigHash === SWAP || sigHash === SWAP_GENERIC) {
-        const tupleStart = 4 + 32
-        const descOffsetSlot = tupleStart + 3 * 32
-        const descOffset = parseInt(callData.slice(2 + descOffsetSlot * 2, 2 + (descOffsetSlot + 32) * 2), 16)
-        const descStart = tupleStart + descOffset
-        return {
-            amountOffset: descStart + 8 * 32,
-            minReceivedOffset: descStart + 9 * 32,
-        }
-    }
-
-    if (sigHash === SWAP_SIMPLE) {
-        const paramsStart = 4
-        const descOffsetSlot = paramsStart + 32
-        const descOffset = parseInt(callData.slice(2 + descOffsetSlot * 2, 2 + (descOffsetSlot + 32) * 2), 16)
-        const descStart = paramsStart + descOffset
-        return {
-            amountOffset: descStart + 8 * 32,
-            minReceivedOffset: descStart + 9 * 32,
-        }
-    }
-
-    throw new Error(`Unknown selector: ${sigHash}`)
-}
