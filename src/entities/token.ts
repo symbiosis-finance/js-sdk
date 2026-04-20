@@ -20,6 +20,7 @@ export type TokenConstructor = {
     icons?: Icons
     userToken?: boolean
     deprecated?: boolean
+    origin?: string
     attributes?: {
         solana?: string
         ton?: string
