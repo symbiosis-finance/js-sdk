@@ -128,7 +128,7 @@ export class KyberSwapTrade extends SymbiosisTrade {
                     tokenOut: toTokenAddress,
                     amountIn: this.tokenAmountIn.raw.toString(),
                     gasInclude: true,
-                    onlyScalableSources: true,
+                    onlySinglePath: true,
                     origin: this.origin,
                 })
 
@@ -163,53 +163,57 @@ export class KyberSwapTrade extends SymbiosisTrade {
     }
 
     /**
-     * Dynamically computes offsets for amount and minReturnAmount in KyberSwap router calldata.
-     *
-     * KyberSwap uses SwapDescriptionV2 with dynamic-length arrays, so offsets to `amount`
-     * and `minReturnAmount` depend on the actual calldata content. We parse ABI encoding
-     * to locate them.
+     * Dynamically computes offsets for srcAmounts[0] and minReturnAmount in KyberSwap router calldata.
      *
      * SwapDescriptionV2 head layout (each field is 32 bytes):
      *   [0] srcToken
      *   [1] dstToken
-     *   [2] offset to srcReceivers
-     *   [3] offset to srcAmounts
+     *   [2] offset to srcReceivers (relative to descStart)
+     *   [3] offset to srcAmounts (relative to descStart)
      *   [4] offset to feeReceivers
      *   [5] offset to feeAmounts
      *   [6] dstReceiver
-     *   [7] amount          <- callDataOffset
+     *   [7] amount
      *   [8] minReturnAmount <- minReceivedOffset
      *   [9] flags
      *  [10] offset to permit
+     *
+     * callDataOffset points to srcAmounts[0] instead of desc.amount.
+     * On-chain, MetaRouter patches srcAmounts[0] with actual balance.
+     * desc.amount stays at original (higher) value, satisfying require(total <= desc.amount).
+     * This requires onlySinglePath=true so srcAmounts always has exactly 1 element.
      */
     static getOffsets(callData: string): { amountOffset: number; minReceivedOffset: number } {
         const sigHash = callData.slice(2, 10)
 
+        let descStart: number
         if (sigHash === SWAP_SELECTOR || sigHash === SWAP_GENERIC_SELECTOR) {
             const tupleStart = 4 + 32
             const descOffsetSlot = tupleStart + 3 * 32
             const descOffset = parseInt(callData.slice(2 + descOffsetSlot * 2, 2 + (descOffsetSlot + 32) * 2), 16)
-            const descStart = tupleStart + descOffset
-
-            return {
-                amountOffset: descStart + 8 * 32,
-                minReceivedOffset: descStart + 9 * 32,
-            }
-        }
-
-        if (sigHash === SWAP_SIMPLE_MODE_SELECTOR) {
+            descStart = tupleStart + descOffset
+        } else if (sigHash === SWAP_SIMPLE_MODE_SELECTOR) {
             const paramsStart = 4
             const descOffsetSlot = paramsStart + 32
             const descOffset = parseInt(callData.slice(2 + descOffsetSlot * 2, 2 + (descOffsetSlot + 32) * 2), 16)
-            const descStart = paramsStart + descOffset
-
-            return {
-                amountOffset: descStart + 8 * 32,
-                minReceivedOffset: descStart + 9 * 32,
-            }
+            descStart = paramsStart + descOffset
+        } else {
+            throw new KyberSwapTradeError(`Unknown KyberSwap swap method: 0x${sigHash}`)
         }
 
-        throw new KyberSwapTradeError(`Unknown KyberSwap swap method: 0x${sigHash}`)
+        // Read srcAmounts offset from desc head slot [3] (relative to descStart)
+        const srcAmountsOffsetSlot = descStart + 3 * 32
+        const srcAmountsOffset = parseInt(
+            callData.slice(2 + srcAmountsOffsetSlot * 2, 2 + (srcAmountsOffsetSlot + 32) * 2),
+            16
+        )
+        // srcAmounts[0] is at: descStart + srcAmountsOffset + 32 (skip length) + 32 (end of first element)
+        const amountOffset = descStart + srcAmountsOffset + 2 * 32
+
+        return {
+            amountOffset,
+            minReceivedOffset: descStart + 9 * 32,
+        }
     }
 
     private calcPriceImpact(amountInUsd: string, amountOutUsd: string): Percent {

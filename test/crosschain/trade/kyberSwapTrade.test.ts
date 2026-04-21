@@ -49,6 +49,7 @@ describe('KyberSwapTrade', () => {
 
     describe('offset calculation for swap(SwapExecutionParams)', () => {
         const AMOUNT = BigNumber.from('123456789')
+        const SRC_AMOUNT = BigNumber.from('123456789')
         const MIN_RETURN = BigNumber.from('100000000')
 
         const swapAbi = [
@@ -56,7 +57,10 @@ describe('KyberSwapTrade', () => {
         ]
         const iface = new ethers.utils.Interface(swapAbi)
 
-        function encodeSwap(srcReceivers: string[] = [], srcAmounts: BigNumber[] = []) {
+        function encodeSwap(
+            srcReceivers: string[] = ['0x5555555555555555555555555555555555555555'],
+            srcAmounts: BigNumber[] = [SRC_AMOUNT]
+        ) {
             return iface.encodeFunctionData('swap', [
                 {
                     callTarget: '0x1111111111111111111111111111111111111111',
@@ -80,26 +84,26 @@ describe('KyberSwapTrade', () => {
             ])
         }
 
-        test('with empty arrays', () => {
+        test('amountOffset points to srcAmounts[0]', () => {
             const callData = encodeSwap()
             const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
-            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
+            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(SRC_AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
 
-        test('with non-empty srcReceivers/srcAmounts', () => {
+        test('amountOffset reads srcAmounts[0], not desc.amount', () => {
+            const differentSrcAmount = BigNumber.from('99999')
             const callData = encodeSwap(
-                ['0x5555555555555555555555555555555555555555', '0x6666666666666666666666666666666666666666'],
-                [BigNumber.from('50000'), BigNumber.from('60000')]
+                ['0x5555555555555555555555555555555555555555'],
+                [differentSrcAmount]
             )
-            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
+            const { amountOffset } = KyberSwapTrade.getOffsets(callData)
 
-            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
-            expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
+            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(differentSrcAmount)
         })
 
-        test('patching preserves correct values', () => {
+        test('patching srcAmounts[0] preserves other values', () => {
             const callData = encodeSwap()
             const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
@@ -112,6 +116,7 @@ describe('KyberSwapTrade', () => {
 
     describe('offset calculation for swapSimpleMode', () => {
         const AMOUNT = BigNumber.from('555555555')
+        const SRC_AMOUNT = BigNumber.from('555555555')
         const MIN_RETURN = BigNumber.from('444444444')
 
         const swapSimpleAbi = [
@@ -119,7 +124,10 @@ describe('KyberSwapTrade', () => {
         ]
         const iface = new ethers.utils.Interface(swapSimpleAbi)
 
-        function encodeSwapSimple(srcReceivers: string[] = [], srcAmounts: BigNumber[] = []) {
+        function encodeSwapSimple(
+            srcReceivers: string[] = ['0x8888888888888888888888888888888888888888'],
+            srcAmounts: BigNumber[] = [SRC_AMOUNT]
+        ) {
             return iface.encodeFunctionData('swapSimpleMode', [
                 '0x7777777777777777777777777777777777777777',
                 {
@@ -140,25 +148,29 @@ describe('KyberSwapTrade', () => {
             ])
         }
 
-        test('with empty arrays', () => {
+        test('amountOffset points to srcAmounts[0]', () => {
             const callData = encodeSwapSimple()
             const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
-            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
+            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(SRC_AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
 
-        test('with non-empty srcReceivers/srcAmounts', () => {
-            const callData = encodeSwapSimple(['0x8888888888888888888888888888888888888888'], [BigNumber.from('99999')])
-            const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
+        test('amountOffset reads srcAmounts[0], not desc.amount', () => {
+            const differentSrcAmount = BigNumber.from('99999')
+            const callData = encodeSwapSimple(
+                ['0x8888888888888888888888888888888888888888'],
+                [differentSrcAmount]
+            )
+            const { amountOffset } = KyberSwapTrade.getOffsets(callData)
 
-            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
-            expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
+            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(differentSrcAmount)
         })
     })
 
     describe('offset calculation for swapGeneric', () => {
         const AMOUNT = BigNumber.from('777777777')
+        const SRC_AMOUNT = BigNumber.from('777777777')
         const MIN_RETURN = BigNumber.from('666666666')
 
         const swapGenericAbi = [
@@ -175,8 +187,8 @@ describe('KyberSwapTrade', () => {
                     desc: {
                         srcToken: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
                         dstToken: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-                        srcReceivers: [],
-                        srcAmounts: [],
+                        srcReceivers: ['0x5555555555555555555555555555555555555555'],
+                        srcAmounts: [SRC_AMOUNT],
                         feeReceivers: [],
                         feeAmounts: [],
                         dstReceiver: '0x4444444444444444444444444444444444444444',
@@ -190,7 +202,7 @@ describe('KyberSwapTrade', () => {
             ])
             const { amountOffset, minReceivedOffset } = KyberSwapTrade.getOffsets(callData)
 
-            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
+            expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(SRC_AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
     })
