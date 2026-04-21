@@ -116,14 +116,21 @@ export class KyberSwapTrade extends SymbiosisTrade {
         return this.symbiosis.cache.get(
             ['kyberSwapRoute', chainId.toString(), tokenIn, tokenOut, amountIn, this.origin?.toLowerCase() ?? ''],
             async () => {
-                const result = await kyberSwapApi.chain.getRoute(this.chain.slug, {
-                    tokenIn,
-                    tokenOut,
-                    amountIn,
-                    gasInclude: true,
-                    onlySinglePath: true,
-                    origin: this.origin,
-                })
+                let result: GetRouteSuccess
+                try {
+                    result = await kyberSwapApi.chain.getRoute(this.chain.slug, {
+                        tokenIn,
+                        tokenOut,
+                        amountIn,
+                        gasInclude: true,
+                        onlySinglePath: true,
+                        origin: this.origin,
+                    })
+                } catch (e) {
+                    throw new KyberSwapTradeError(
+                        `Cannot get route for chain ${chainId}: ${e instanceof Error ? e.message : String(e)}`
+                    )
+                }
 
                 if (result.code !== 0) {
                     throw new KyberSwapTradeError(
@@ -138,13 +145,20 @@ export class KyberSwapTrade extends SymbiosisTrade {
     }
 
     private async buildRoute(routeSummary: RouteSummary): Promise<BuildRouteData> {
-        const result = await kyberSwapApi.chain.postRouteEncoded(this.chain.slug, {
-            routeSummary: routeSummary as unknown as BuildRoutePostBody['routeSummary'],
-            sender: this.from,
-            recipient: this.to,
-            origin: this.origin,
-            slippageTolerance: this.slippage,
-        })
+        let result: BuildRouteSuccess
+        try {
+            result = await kyberSwapApi.chain.postRouteEncoded(this.chain.slug, {
+                routeSummary: routeSummary as unknown as BuildRoutePostBody['routeSummary'],
+                sender: this.from,
+                recipient: this.to,
+                origin: this.origin,
+                slippageTolerance: this.slippage,
+            })
+        } catch (e) {
+            throw new KyberSwapTradeError(
+                `Cannot build route for chain ${this.tokenAmountIn.token.chainId}: ${e instanceof Error ? e.message : String(e)}`
+            )
+        }
 
         if (result.code !== 0) {
             throw new KyberSwapTradeError(
