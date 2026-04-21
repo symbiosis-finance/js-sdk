@@ -15,9 +15,18 @@ import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { UniV4Trade } from './uniV4Trade'
+import { ZeroXTrade } from './zeroXTrade'
 import { withTracing } from '../tracing'
 
-type Trade = OneInchTrade | OpenOceanTrade | KyberSwapTrade | IzumiTrade | UniV2Trade | UniV3Trade | UniV4Trade
+type Trade =
+    | OneInchTrade
+    | OpenOceanTrade
+    | KyberSwapTrade
+    | ZeroXTrade
+    | IzumiTrade
+    | UniV2Trade
+    | UniV3Trade
+    | UniV4Trade
 
 export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -90,8 +99,9 @@ class Trades {
             const oneInch = this.trades.find((trade) => trade.constructor.name === OneInchTrade.name)
             const openOcean = this.trades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
             const kyberSwap = this.trades.find((trade) => trade.constructor.name === KyberSwapTrade.name)
+            const zeroX = this.trades.find((trade) => trade.constructor.name === ZeroXTrade.name)
 
-            if (oneInch || openOcean || kyberSwap) {
+            if (oneInch || openOcean || kyberSwap || zeroX) {
                 this.resolve(this.selectTheBestTrade())
             }
         }
@@ -200,6 +210,9 @@ export class AggregatorTrade extends SymbiosisTrade {
         const isKyberSwapAvailable =
             KyberSwapTrade.isAvailable(tokenAmountIn.token.chainId) && KyberSwapTrade.isAllowed(disabledProviders)
 
+        const isZeroXAvailable =
+            ZeroXTrade.isAvailable(tokenAmountIn.token.chainId) && ZeroXTrade.isAllowed(disabledProviders)
+
         if (this.preferOneInchUsage && isOneInchAvailable) {
             isOpenOceanAvailable = false
         }
@@ -244,6 +257,20 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
             })
             trades.push(kyberSwapTrade.init(), 'KyberSwap')
+        }
+
+        if (isZeroXAvailable) {
+            const zeroXTrade = new ZeroXTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin,
+                tokenOut,
+                from,
+                origin,
+                to,
+                slippage,
+            })
+            trades.push(zeroXTrade.init(), '0x')
         }
 
         if (

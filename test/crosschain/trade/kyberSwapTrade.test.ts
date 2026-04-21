@@ -155,7 +155,6 @@ describe('KyberSwapTrade', () => {
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(AMOUNT)
             expect(SymbiosisTrade.getAmountFromCallData(callData, minReceivedOffset)).toEqual(MIN_RETURN)
         })
-
     })
 
     describe('offset calculation for swapGeneric', () => {

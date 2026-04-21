@@ -104,6 +104,8 @@ export class JupiterTradeError extends TradeError {}
 
 export class KyberSwapTradeError extends TradeError {}
 
+export class ZeroXTradeError extends TradeError {}
+
 enum SwapAggregatorErrorCategory {
     RateLimit = 'rate_limit',
     SwapAggregatorError = 'swap_aggregator_error',
