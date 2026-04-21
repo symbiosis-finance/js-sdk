@@ -155,7 +155,6 @@ export abstract class BaseSwapping {
         if (depositoryEnabled !== undefined) {
             this.depositoryEnabled = depositoryEnabled
         }
-        this.depositoryEnabled = false
         this.depository = await this.symbiosis.depository(this.transitTokenOut.chainId)
 
         this.from = tronAddressToEvm(from)
