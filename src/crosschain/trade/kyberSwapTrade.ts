@@ -102,29 +102,24 @@ export class KyberSwapTrade extends SymbiosisTrade {
     private async getRoute(): Promise<{ routeSummary: RouteSummary; routerAddress: string }> {
         const chainId = this.tokenAmountIn.token.chainId
 
+        let tokenIn = this.tokenAmountIn.token.address
+        if (this.tokenAmountIn.token.isNative) {
+            tokenIn = NATIVE_TOKEN_ADDRESS
+        }
+
+        let tokenOut = this.tokenOut.address
+        if (this.tokenOut.isNative) {
+            tokenOut = NATIVE_TOKEN_ADDRESS
+        }
+        const amountIn = this.tokenAmountIn.raw.toString()
+
         return this.symbiosis.cache.get(
-            [
-                'kyberSwapRoute',
-                chainId.toString(),
-                this.tokenAmountIn.token.address,
-                this.tokenOut.address,
-                this.tokenAmountIn.raw.toString(),
-            ],
+            ['kyberSwapRoute', chainId.toString(), tokenIn, tokenOut, amountIn, this.origin?.toLowerCase() ?? ''],
             async () => {
-                let fromTokenAddress = this.tokenAmountIn.token.address
-                if (this.tokenAmountIn.token.isNative) {
-                    fromTokenAddress = NATIVE_TOKEN_ADDRESS
-                }
-
-                let toTokenAddress = this.tokenOut.address
-                if (this.tokenOut.isNative) {
-                    toTokenAddress = NATIVE_TOKEN_ADDRESS
-                }
-
                 const result = await kyberSwapApi.chain.getRoute(this.chain.slug, {
-                    tokenIn: fromTokenAddress,
-                    tokenOut: toTokenAddress,
-                    amountIn: this.tokenAmountIn.raw.toString(),
+                    tokenIn,
+                    tokenOut,
+                    amountIn,
                     gasInclude: true,
                     onlySinglePath: true,
                     origin: this.origin,
@@ -138,7 +133,7 @@ export class KyberSwapTrade extends SymbiosisTrade {
 
                 return result.data
             },
-            5
+            5 // seconds
         )
     }
 
