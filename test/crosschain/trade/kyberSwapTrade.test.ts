@@ -94,10 +94,7 @@ describe('KyberSwapTrade', () => {
 
         test('amountOffset reads srcAmounts[0], not desc.amount', () => {
             const differentSrcAmount = BigNumber.from('99999')
-            const callData = encodeSwap(
-                ['0x5555555555555555555555555555555555555555'],
-                [differentSrcAmount]
-            )
+            const callData = encodeSwap(['0x5555555555555555555555555555555555555555'], [differentSrcAmount])
             const { amountOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(differentSrcAmount)
@@ -158,10 +155,7 @@ describe('KyberSwapTrade', () => {
 
         test('amountOffset reads srcAmounts[0], not desc.amount', () => {
             const differentSrcAmount = BigNumber.from('99999')
-            const callData = encodeSwapSimple(
-                ['0x8888888888888888888888888888888888888888'],
-                [differentSrcAmount]
-            )
+            const callData = encodeSwapSimple(['0x8888888888888888888888888888888888888888'], [differentSrcAmount])
             const { amountOffset } = KyberSwapTrade.getOffsets(callData)
 
             expect(SymbiosisTrade.getAmountFromCallData(callData, amountOffset)).toEqual(differentSrcAmount)
