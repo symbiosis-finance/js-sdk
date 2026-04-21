@@ -6,17 +6,27 @@ import { AggregateSdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address, FeeItem } from '../types'
 import { IzumiTrade } from './izumiTrade'
+import { KyberSwapTrade } from './kyberSwapTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import type { SymbiosisTradeType, SymbiosisTradeParams, SymbiosisTradeOutResult } from './symbiosisTrade'
+import type { SymbiosisTradeOutResult, SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
 import { UniV4Trade } from './uniV4Trade'
+import { ZeroXTrade } from './zeroXTrade'
 import { withTracing } from '../tracing'
 
-type Trade = OneInchTrade | OpenOceanTrade | IzumiTrade | UniV2Trade | UniV3Trade | UniV4Trade
+type Trade =
+    | OneInchTrade
+    | OpenOceanTrade
+    | KyberSwapTrade
+    | ZeroXTrade
+    | IzumiTrade
+    | UniV2Trade
+    | UniV3Trade
+    | UniV4Trade
 
 export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -88,8 +98,10 @@ class Trades {
         } else if (diff >= (this.firstTimeoutMs || 200)) {
             const oneInch = this.trades.find((trade) => trade.constructor.name === OneInchTrade.name)
             const openOcean = this.trades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
+            const kyberSwap = this.trades.find((trade) => trade.constructor.name === KyberSwapTrade.name)
+            const zeroX = this.trades.find((trade) => trade.constructor.name === ZeroXTrade.name)
 
-            if (oneInch || openOcean) {
+            if (oneInch || openOcean || kyberSwap || zeroX) {
                 this.resolve(this.selectTheBestTrade())
             }
         }
@@ -195,6 +207,12 @@ export class AggregatorTrade extends SymbiosisTrade {
             !isOneInchClient &&
             OpenOceanTrade.isAllowed(disabledProviders)
 
+        const isKyberSwapAvailable =
+            KyberSwapTrade.isAvailable(tokenAmountIn.token.chainId) && KyberSwapTrade.isAllowed(disabledProviders)
+
+        const isZeroXAvailable =
+            ZeroXTrade.isAvailable(tokenAmountIn.token.chainId) && ZeroXTrade.isAllowed(disabledProviders)
+
         if (this.preferOneInchUsage && isOneInchAvailable) {
             isOpenOceanAvailable = false
         }
@@ -225,6 +243,34 @@ export class AggregatorTrade extends SymbiosisTrade {
             })
 
             trades.push(openOceanTrade.init(), 'OpenOcean')
+        }
+
+        if (isKyberSwapAvailable) {
+            const kyberSwapTrade = new KyberSwapTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin,
+                tokenOut,
+                from,
+                origin,
+                to,
+                slippage,
+            })
+            trades.push(kyberSwapTrade.init(), 'KyberSwap')
+        }
+
+        if (isZeroXAvailable) {
+            const zeroXTrade = new ZeroXTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin,
+                tokenOut,
+                from,
+                origin,
+                to,
+                slippage,
+            })
+            trades.push(zeroXTrade.init(), '0x')
         }
 
         if (

@@ -142,12 +142,7 @@ export type FeeConfig = {
 
 export type SelectMode = 'fastest' | 'best_return'
 
-export type OneInchConfig = {
-    apiUrl: string
-    apiKeys: string[]
-}
-
-export type OpenOceanConfig = {
+export type ApiConfig = {
     apiUrl: string
     apiKeys: string[]
 }
@@ -165,8 +160,9 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     fetch?: typeof fetch
     advisor?: AdvisorConfig
-    oneInchConfig?: Partial<OneInchConfig>
-    openOceanConfig?: Partial<OpenOceanConfig>
+    oneInchConfig?: Partial<ApiConfig>
+    openOceanConfig?: Partial<ApiConfig>
+    zeroXConfig?: Partial<ApiConfig>
     changellyConfig?: Partial<ChangellyConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache

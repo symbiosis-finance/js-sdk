@@ -25,6 +25,8 @@ export enum SymbiosisTradeType {
     DEPOSITORY = 'depository',
     CHANGELLY = 'changelly',
     UNI_V4 = 'uni-v4',
+    KYBER_SWAP = 'kyber-swap',
+    ZERO_X = '0x',
 }
 
 export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
@@ -41,6 +43,8 @@ export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
     SymbiosisTradeType.DEDUST,
     SymbiosisTradeType.CHANGELLY,
     SymbiosisTradeType.UNI_V4,
+    SymbiosisTradeType.KYBER_SWAP,
+    SymbiosisTradeType.ZERO_X,
 ]
 
 export interface SymbiosisTradeParams {
