@@ -1,7 +1,10 @@
 import { BigNumber } from 'ethers'
 
+import JSBI from 'jsbi'
+
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, TokenAmount } from '../../entities'
+import { CoinGecko } from '../coingecko/coingecko'
 import { BIPS_BASE } from '../constants'
 import { ZeroXTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
@@ -99,6 +102,7 @@ export class ZeroXTrade extends SymbiosisTrade {
 
         const amountOut = new TokenAmount(this.tokenOut, quote.buyAmount)
         const amountOutMin = new TokenAmount(this.tokenOut, quote.minBuyAmount)
+        const priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
 
         this.out = {
             amountOut,
@@ -109,7 +113,7 @@ export class ZeroXTrade extends SymbiosisTrade {
             callData,
             callDataOffset: amountOffset,
             minReceivedOffset,
-            priceImpact: new Percent('0', BIPS_BASE),
+            priceImpact,
         }
 
         return this
@@ -147,6 +151,22 @@ export class ZeroXTrade extends SymbiosisTrade {
         }
 
         return (await response.json()) as ZeroXQuoteResponse
+    }
+
+    private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
+        const coinGecko = this.symbiosis.coinGecko
+        try {
+            const [tokenInPrice, tokenOutPrice] = await Promise.all([
+                coinGecko.getTokenPriceCached(tokenAmountIn.token),
+                coinGecko.getTokenPriceCached(tokenAmountOut.token),
+            ])
+            const inUsd = CoinGecko.getTokenAmountUsd(tokenAmountIn, tokenInPrice)
+            const outUsd = CoinGecko.getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
+            const impact = -(1 - outUsd / inUsd)
+            return new Percent(parseInt(`${impact * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
+        } catch {
+            return new Percent('0', BIPS_BASE)
+        }
     }
 
     /**

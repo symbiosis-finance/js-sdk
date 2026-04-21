@@ -41,7 +41,7 @@ describe('ZeroXTrade', () => {
             to: '0x1111111111111111111111111111111111111111',
             from: '0x2222222222222222222222222222222222222222',
             slippage: 100,
-            symbiosis: {} as any,
+            symbiosis: { zeroXConfig: { apiUrl: '', apiKeys: ['test'] } } as any,
         })
 
         test('returns 0x', () => {
