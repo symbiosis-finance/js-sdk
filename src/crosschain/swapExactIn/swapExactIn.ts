@@ -15,7 +15,7 @@ import { isWrapSupported, wrap } from './wrap'
 
 export * from './fromBtcSwap'
 
-// Universal stateless function that allows swap tokens on same chain or crosschain
+// Universal stateless function that allows swap tokens on the same chain or crosschain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut } = params
 
@@ -28,6 +28,9 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
     }
     if (isTronChainId(tokenOut.chainId)) {
         params.to = tronAddressToEvm(params.to)
+    }
+    if (!params.origin) {
+        params.origin = params.from
     }
 
     if (isChangellyNativeSupported(params)) {
