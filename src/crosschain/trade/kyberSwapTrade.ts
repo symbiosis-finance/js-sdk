@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 
-import { ChainId } from '../../constants'
+import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, TokenAmount } from '../../entities'
 import type { BuildRoutePostBody, BuildRouteSuccess, GetRouteSuccess } from '../api/kyberswap'
 import { kyberSwapApi } from '../api/kyberswap'
@@ -10,8 +10,6 @@ import { KyberSwapTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
 import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
-
-const KYBER_SWAP_NATIVE_TOKEN = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 
 interface KyberSwapTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -115,12 +113,12 @@ export class KyberSwapTrade extends SymbiosisTrade {
             async () => {
                 let fromTokenAddress = this.tokenAmountIn.token.address
                 if (this.tokenAmountIn.token.isNative) {
-                    fromTokenAddress = KYBER_SWAP_NATIVE_TOKEN
+                    fromTokenAddress = NATIVE_TOKEN_ADDRESS
                 }
 
                 let toTokenAddress = this.tokenOut.address
                 if (this.tokenOut.isNative) {
-                    toTokenAddress = KYBER_SWAP_NATIVE_TOKEN
+                    toTokenAddress = NATIVE_TOKEN_ADDRESS
                 }
 
                 const result = await kyberSwapApi.chain.getRoute(this.chain.slug, {
