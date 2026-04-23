@@ -1,8 +1,8 @@
 import { isBtcChainId } from '../chainUtils'
-import { TradeProvider } from '../trade/symbiosisTrade'
+import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { btcChainFlipSwap } from './swapChainFlip'
-import { thorChainSwap } from './thorChainSwap'
+import { thorChainSwap } from './swapThorChain'
 import { burnSyntheticBtc } from './toBtc/burnSyntheticBtc'
 import { theBest } from './utils'
 

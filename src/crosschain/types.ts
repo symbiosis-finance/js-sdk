@@ -157,12 +157,7 @@ export type FeeConfig = {
 
 export type SelectMode = 'fastest' | 'best_return'
 
-export type OneInchConfig = {
-    apiUrl: string
-    apiKeys: string[]
-}
-
-export type OpenOceanConfig = {
+export type ApiConfig = {
     apiUrl: string
     apiKeys: string[]
 }
@@ -181,8 +176,9 @@ export type OverrideConfig = {
     fetch?: typeof fetch
     advisor?: AdvisorConfig
     solver?: SolverConfig
-    oneInchConfig?: Partial<OneInchConfig>
-    openOceanConfig?: Partial<OpenOceanConfig>
+    oneInchConfig?: Partial<ApiConfig>
+    openOceanConfig?: Partial<ApiConfig>
+    zeroXConfig?: Partial<ApiConfig>
     changellyConfig?: Partial<ChangellyConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
@@ -332,6 +328,14 @@ export type SwapExactInResult = SwapExactInTransactionPayload & {
     tradeC?: SymbiosisTrade
     changellyData?: ChangellyTransactionData
     permit2Approve?: { to: string; callData: string }
+}
+
+export type MulticallV2Item = {
+    data: BytesLike
+    to: string
+    path: string
+    offset: number
+    isNative: boolean
 }
 
 export interface MultiCallItem {

@@ -25,6 +25,8 @@ export enum TradeProvider {
     DEPOSITORY = 'depository',
     CHANGELLY = 'changelly',
     UNI_V4 = 'uni-v4',
+    KYBER_SWAP = 'kyber-swap',
+    ZERO_X = '0x',
     INTENT_SOLVER = 'intent-solver',
 }
 
@@ -42,6 +44,8 @@ export const FILTERABLE_PROVIDERS: TradeProvider[] = [
     TradeProvider.DEDUST,
     TradeProvider.CHANGELLY,
     TradeProvider.UNI_V4,
+    TradeProvider.KYBER_SWAP,
+    TradeProvider.ZERO_X,
     TradeProvider.INTENT_SOLVER,
 ]
 

@@ -1,4 +1,5 @@
-export { AggregatorTrade, AggregatorTradeParams } from './aggregatorTrade'
+export { AggregatorTrade } from './aggregatorTrade'
+export type { AggregatorTradeParams } from './aggregatorTrade'
 export {
     isChangellyNativeChainId,
     isChangellySupportedChainId,
@@ -16,6 +17,7 @@ export type {
     CreateChangellyDepositParams,
 } from '../swapExactIn/swapChangelly/changellyTrade'
 export { DedustTrade } from './dedustTrade'
+export { KyberSwapTrade } from './kyberSwapTrade'
 export { IzumiTrade } from './izumiTrade'
 export { JupiterTrade } from './jupiterTrade'
 export { OctoPoolTrade } from './octoPoolTrade'
@@ -29,3 +31,4 @@ export { UniV2Trade } from './uniV2Trade'
 export { UniV3Trade } from './uniV3Trade'
 export { UniV4Trade } from './uniV4Trade'
 export { WrapTrade } from './wrapTrade'
+export { ZeroXTrade } from './zeroXTrade'

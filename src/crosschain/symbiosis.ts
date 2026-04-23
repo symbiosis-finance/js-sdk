@@ -79,8 +79,7 @@ import type {
     FeeConfig,
     MetricParams,
     OmniPoolConfig,
-    OneInchConfig,
-    OpenOceanConfig,
+    ApiConfig,
     OverrideConfig,
     PriceImpactMetricParams,
     SwapExactInParams,
@@ -136,9 +135,10 @@ export class Symbiosis {
 
     public feesConfig?: FeeConfig[]
 
-    public readonly oneInchConfig: OneInchConfig
     public readonly volumeFeeCollectors: VolumeFeeCollector[]
-    public readonly openOceanConfig: OpenOceanConfig
+    public readonly oneInchConfig: ApiConfig
+    public readonly openOceanConfig: ApiConfig
+    public readonly zeroXConfig: ApiConfig
     private readonly changellyConfig: ChangellyConfig
     public readonly changelly: ChangellyClient
 
@@ -299,6 +299,13 @@ export class Symbiosis {
         }
         if (overrideConfig?.openOceanConfig) {
             this.openOceanConfig = { ...this.openOceanConfig, ...overrideConfig.openOceanConfig }
+        }
+        this.zeroXConfig = {
+            apiUrl: 'https://api.0x.org',
+            apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
+        }
+        if (overrideConfig?.zeroXConfig) {
+            this.zeroXConfig = { ...this.zeroXConfig, ...overrideConfig.zeroXConfig }
         }
         this.changellyConfig = {
             apiUrl: 'https://api.changelly.com/v2',
@@ -797,8 +804,8 @@ export class Symbiosis {
         return waitForBtcEvmTxIssued(this, revealTx, btcConfig)
     }
 
-    public async waitFromTonTxMined(address: string, contractAddress: string) {
-        return waitFromTonTxMined({ symbiosis: this, address, contractAddress })
+    public async waitFromTonTxMined(address: string, contractAddress: string, since?: number) {
+        return waitFromTonTxMined({ symbiosis: this, address, contractAddress, since })
     }
 
     public async waitForChainFlipTxComplete(txHash: string) {

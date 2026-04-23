@@ -110,7 +110,6 @@ export async function feeCollectorSwap(params: SwapExactInParams): Promise<SwapE
     const result = await onchainSwap({
         ...params,
         tokenAmountIn: inTokenAmount,
-        origin: params.from,
         from: feeCollectorAddress,
     })
 

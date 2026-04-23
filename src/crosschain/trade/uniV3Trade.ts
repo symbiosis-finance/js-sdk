@@ -1,7 +1,28 @@
-import type { Currency } from '@uniswap/sdk-core'
-import { CurrencyAmount, Percent as PercentUni, TradeType, validateAndParseAddress } from '@uniswap/sdk-core'
-import type { MethodParameters, Pool, SwapOptions } from '@uniswap/v3-sdk'
-import { encodeRouteToPath, FeeAmount, Multicall, Payments, Route, SelfPermit, toHex, Trade } from '@uniswap/v3-sdk'
+import type { Currency, Ether } from '@uniswap/sdk-core'
+import {
+    CurrencyAmount,
+    NativeCurrency,
+    Percent as PercentUni,
+    Token as TokenUni,
+    TradeType,
+    validateAndParseAddress,
+} from '@uniswap/sdk-core'
+import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json' with { type: 'json' }
+import type { MethodParameters, SwapOptions } from '@uniswap/v3-sdk'
+import {
+    computePoolAddress,
+    encodeRouteToPath,
+    FeeAmount,
+    Multicall,
+    Payments,
+    Pool,
+    Route,
+    SelfPermit,
+    SwapQuoter,
+    toHex,
+    Trade,
+} from '@uniswap/v3-sdk'
+import { ethers } from 'ethers'
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 
@@ -9,15 +30,13 @@ import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount, WETH } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
-import { UniV3Factory__factory, UniV3Quoter__factory, UniV3Router02__factory } from '../contracts'
+import { UniV3Router02__factory } from '../contracts'
 import type { IV3SwapRouter } from '../contracts/UniV3Router02'
+import { getMulticall } from '../multicall'
 import { AggregateSdkError, UniV3TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
-import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
-import { getOutputQuote } from './uniV3TradeImpl/getOutputQuote'
-import { getPool } from './uniV3TradeImpl/pool'
-import { toUniCurrency, toUniCurrencyAmount } from './uniV3TradeImpl/toUniTypes'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 interface Deployment {
     factory: Address
@@ -86,7 +105,16 @@ const DEPLOYMENT_ADDRESSES: Partial<Record<ChainId, Deployment>> = {
         quoter: '0x428f20dd8926Eabe19653815Ed0BE7D6c36f8425',
         swap02: '0x565eD3D57fe40f78A46f348C220121AE093c3cF8',
         initCodeHash: '0x851d77a45b8b9a205fb9f44cb829cceba85282714d2603d601840640628a3da7',
-        baseTokens: [WETH[ChainId.CITREA_MAINNET]],
+        baseTokens: [
+            WETH[ChainId.CITREA_MAINNET],
+            new Token({
+                name: 'Symbiosis BTC',
+                symbol: 'syBTC',
+                address: '0x384157027B1CDEAc4e26e3709667BB28735379Bb',
+                chainId: ChainId.CITREA_MAINNET,
+                decimals: 8,
+            }),
+        ],
     },
     // oku.trade
     [ChainId.TELOS_MAINNET]: {
@@ -135,81 +163,155 @@ export class UniV3Trade extends SymbiosisTrade {
         const currencyIn = toUniCurrency(this.tokenAmountIn.token)
         const currencyOut = toUniCurrency(this.tokenOut)
 
-        const factoryContract = UniV3Factory__factory.connect(factory, provider)
-        const quoterContract = UniV3Quoter__factory.connect(quoter, provider)
+        // Step 1: compute all candidate pool addresses
+        interface PoolCandidate {
+            address: string
+            tokenA: typeof currencyIn.wrapped
+            tokenB: typeof currencyOut.wrapped
+            fee: FeeAmount
+        }
+        interface MultiHopInfo {
+            pool1Index: number
+            pool2Index: number
+        }
 
-        const routePromises = POSSIBLE_FEES.map(async (fee) => {
-            const pool = await getPool(factoryContract, currencyIn.wrapped, currencyOut.wrapped, fee, initCodeHash)
-            return new Route([pool], currencyIn, currencyOut)
-        })
+        const candidates: PoolCandidate[] = []
+        const multiHops: MultiHopInfo[] = []
 
-        const extraRoutePromises = baseTokens
-            .map((baseToken) => {
-                const baseCurrency = toUniCurrency(baseToken).wrapped
-                if (baseCurrency.equals(currencyIn.wrapped) || baseCurrency.equals(currencyOut.wrapped)) {
-                    return
-                }
+        const directCount = POSSIBLE_FEES.length
+        for (const fee of POSSIBLE_FEES) {
+            candidates.push({
+                address: computePoolAddress({
+                    factoryAddress: factory,
+                    tokenA: currencyIn.wrapped,
+                    tokenB: currencyOut.wrapped,
+                    fee,
+                    initCodeHashManualOverride: initCodeHash,
+                }),
+                tokenA: currencyIn.wrapped,
+                tokenB: currencyOut.wrapped,
+                fee,
+            })
+        }
 
-                return POSSIBLE_FEES.map(async (baseFee) => {
-                    const results = await Promise.allSettled([
-                        getPool(factoryContract, currencyIn.wrapped, baseCurrency, baseFee, initCodeHash),
-                        getPool(factoryContract, baseCurrency, currencyOut.wrapped, baseFee, initCodeHash),
-                    ])
-                    const extraPools = results
-                        .map((result) => {
-                            if (result.status === 'rejected') {
-                                return
-                            }
-                            return result.value
-                        })
-                        .filter(Boolean) as Pool[]
-                    if (extraPools.length < 2) {
-                        return
-                    }
-                    return new Route(extraPools, currencyIn, currencyOut)
+        for (const baseToken of baseTokens) {
+            const baseCurrency = toUniCurrency(baseToken).wrapped
+            if (baseCurrency.equals(currencyIn.wrapped) || baseCurrency.equals(currencyOut.wrapped)) {
+                continue
+            }
+            for (const fee of POSSIBLE_FEES) {
+                const pool1Index = candidates.length
+                candidates.push({
+                    address: computePoolAddress({
+                        factoryAddress: factory,
+                        tokenA: currencyIn.wrapped,
+                        tokenB: baseCurrency,
+                        fee,
+                        initCodeHashManualOverride: initCodeHash,
+                    }),
+                    tokenA: currencyIn.wrapped,
+                    tokenB: baseCurrency,
+                    fee,
                 })
-            })
-            .flat()
-
-        const routesResults = await Promise.allSettled([...routePromises, ...extraRoutePromises])
-        const routes = routesResults
-            .map((result) => {
-                if (result.status === 'rejected') {
-                    return
-                }
-                return result.value
-            })
-            .filter(Boolean) as Route<Currency, Currency>[]
-
-        const quotaResults = await Promise.allSettled(
-            routes.map(async (route) => {
-                const quota = await getOutputQuote(quoterContract, toUniCurrencyAmount(this.tokenAmountIn), route)
-                return {
-                    route,
-                    amountOut: JSBI.BigInt(quota.toString()),
-                }
-            })
-        )
-
-        let bestRoute: Route<Currency, Currency> | undefined = undefined
-        let bestAmountOut: JSBI | undefined = undefined
-        const errors: UniV3TradeError[] = []
-        for (const result of quotaResults) {
-            if (result.status === 'rejected') {
-                errors.push(new UniV3TradeError(JSON.stringify(result.reason?.toString())))
-                continue
-            }
-
-            if (!result.value) {
-                continue
-            }
-
-            const { amountOut, route } = result.value
-            if (!bestAmountOut || JSBI.greaterThan(amountOut, bestAmountOut)) {
-                bestAmountOut = amountOut
-                bestRoute = route
+                const pool2Index = candidates.length
+                candidates.push({
+                    address: computePoolAddress({
+                        factoryAddress: factory,
+                        tokenA: baseCurrency,
+                        tokenB: currencyOut.wrapped,
+                        fee,
+                        initCodeHashManualOverride: initCodeHash,
+                    }),
+                    tokenA: baseCurrency,
+                    tokenB: currencyOut.wrapped,
+                    fee,
+                })
+                multiHops.push({ pool1Index, pool2Index })
             }
         }
+
+        // Step 2: batch fetch liquidity + slot0 for all pools via multicall
+        const multicall = await getMulticall(provider)
+        const poolIface = new ethers.utils.Interface(IUniswapV3PoolABI.abi)
+
+        const poolCalls = candidates.flatMap((c) => [
+            { target: c.address, callData: poolIface.encodeFunctionData('liquidity') },
+            { target: c.address, callData: poolIface.encodeFunctionData('slot0') },
+        ])
+        const poolResults = await multicall.callStatic.tryAggregate(false, poolCalls)
+
+        // Step 3: build Pool objects from results
+        const pools: (Pool | undefined)[] = candidates.map((candidate, i) => {
+            const liquidityResult = poolResults[i * 2]
+            const slot0Result = poolResults[i * 2 + 1]
+
+            if (
+                !liquidityResult.success ||
+                !slot0Result.success ||
+                liquidityResult.returnData.length <= 2 ||
+                slot0Result.returnData.length <= 2
+            )
+                return undefined
+
+            const [liquidity] = poolIface.decodeFunctionResult('liquidity', liquidityResult.returnData)
+            const slot0 = poolIface.decodeFunctionResult('slot0', slot0Result.returnData)
+
+            if (liquidity.isZero()) return undefined
+
+            const [sorted0, sorted1] = candidate.tokenA.sortsBefore(candidate.tokenB)
+                ? [candidate.tokenA, candidate.tokenB]
+                : [candidate.tokenB, candidate.tokenA]
+
+            return new Pool(sorted0, sorted1, candidate.fee, slot0[0].toString(), liquidity.toString(), slot0[1])
+        })
+
+        // Step 4: build routes
+        const routes: Route<Currency, Currency>[] = []
+
+        for (let i = 0; i < directCount; i++) {
+            const pool = pools[i]
+            if (pool) routes.push(new Route([pool], currencyIn, currencyOut))
+        }
+        for (const { pool1Index, pool2Index } of multiHops) {
+            const pool1 = pools[pool1Index]
+            const pool2 = pools[pool2Index]
+            if (pool1 && pool2) routes.push(new Route([pool1, pool2], currencyIn, currencyOut))
+        }
+
+        if (routes.length === 0) {
+            throw new UniV3TradeError('No pools found')
+        }
+
+        // Step 5: batch quoter calls via multicall
+        const quoterCalls = routes.map((route) => {
+            const { calldata } = SwapQuoter.quoteCallParameters(
+                route,
+                toUniCurrencyAmount(this.tokenAmountIn),
+                TradeType.EXACT_INPUT,
+                { useQuoterV2: true }
+            )
+            return { target: quoter, callData: calldata }
+        })
+        const quoterResults = await multicall.callStatic.tryAggregate(false, quoterCalls)
+
+        // Step 6: pick the best route
+        let bestRoute: Route<Currency, Currency> | undefined
+        let bestAmountOut: JSBI | undefined
+        const errors: UniV3TradeError[] = []
+
+        for (let i = 0; i < quoterResults.length; i++) {
+            const [success, returnData] = quoterResults[i]
+            if (!success || returnData.length <= 2) {
+                errors.push(new UniV3TradeError(`Quote failed for route ${i}`))
+                continue
+            }
+            const amountOut = JSBI.BigInt(ethers.utils.defaultAbiCoder.decode(['uint256'], returnData)[0].toString())
+            if (!bestAmountOut || JSBI.greaterThan(amountOut, bestAmountOut)) {
+                bestAmountOut = amountOut
+                bestRoute = routes[i]
+            }
+        }
+
         if (!bestAmountOut || !bestRoute) {
             throw new AggregateSdkError(errors, 'UniV3Route not found')
         }
@@ -460,5 +562,43 @@ export class UniV3Trade extends SymbiosisTrade {
             calldata: Multicall.encodeMulticall(calldatas),
             value: toHex(totalValue.quotient),
         }
+    }
+}
+
+function toUniToken(token: Token): TokenUni {
+    return new TokenUni(token.chainId, token.address, token.decimals)
+}
+
+function toUniCurrency(token: Token): Currency {
+    if (token.isNative) {
+        return GasToken.onChain(token.chainId)
+    }
+    return toUniToken(token)
+}
+
+function toUniCurrencyAmount(tokenAmount: TokenAmount): CurrencyAmount<Currency> {
+    const currency = toUniCurrency(tokenAmount.token)
+    return CurrencyAmount.fromRawAmount(currency, tokenAmount.raw.toString())
+}
+
+class GasToken extends NativeCurrency {
+    protected constructor(chainId: number) {
+        super(chainId, 18, 'GAS', 'GAS')
+    }
+
+    public get wrapped(): TokenUni {
+        const weth9 = WETH[this.chainId as ChainId]
+        invariant(!!weth9, 'WRAPPED')
+        return toUniToken(weth9)
+    }
+
+    private static _cache: { [chainId: number]: Ether } = {}
+
+    public static onChain(chainId: number): GasToken {
+        return this._cache[chainId] ?? (this._cache[chainId] = new GasToken(chainId))
+    }
+
+    public equals(other: Currency): boolean {
+        return other.isNative && other.chainId === this.chainId
     }
 }

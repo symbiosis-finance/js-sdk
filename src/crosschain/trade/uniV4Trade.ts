@@ -1,10 +1,11 @@
-import { BigNumber, constants, Contract, utils } from 'ethers'
+import { BigNumber, constants, utils } from 'ethers'
 import JSBI from 'jsbi'
 
 import { ChainId } from '../../constants'
 import { Percent, Token, TokenAmount } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
+import { getMulticall } from '../multicall'
 import { AggregateSdkError, UniV4TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
@@ -180,40 +181,131 @@ export class UniV4Trade extends SymbiosisTrade {
         }
 
         const provider = this.symbiosis.getProvider(chainId)
-        const quoterContract = new Contract(deployment.quoter, QUOTER_ABI, provider)
+        const multicall = await getMulticall(provider)
+        const quoterIface = new utils.Interface(QUOTER_ABI)
 
-        // Try direct single-hop routes with all pool configs
-        const directQuotePromises = POOL_CONFIGS.map((config) =>
-            this.quoteSingleHop(quoterContract, this.tokenAmountIn.token, this.tokenOut, config)
-        )
+        const tokenIn = this.tokenAmountIn.token
+        const tokenOut = this.tokenOut
+        const amountInRaw = this.tokenAmountIn.raw.toString()
 
-        // Try multi-hop routes via base tokens
-        const multiHopQuotePromises = deployment.baseTokens.flatMap((baseToken) => {
+        // Step 1: build direct quote calls + first-hop calls
+        const directKeys = POOL_CONFIGS.map((config) => UniV4Trade.buildPoolKey(tokenIn, tokenOut, config))
+
+        interface FirstHopInfo {
+            baseToken: Token
+            config: PoolConfig
+            poolKey: PoolKey
+            zeroForOne: boolean
+        }
+        const firstHops: FirstHopInfo[] = []
+        for (const baseToken of deployment.baseTokens) {
             if (
-                baseToken.address.toLowerCase() === this.tokenAmountIn.token.address.toLowerCase() ||
-                baseToken.address.toLowerCase() === this.tokenOut.address.toLowerCase()
+                baseToken.address.toLowerCase() === tokenIn.address.toLowerCase() ||
+                baseToken.address.toLowerCase() === tokenOut.address.toLowerCase()
             ) {
-                return []
+                continue
             }
-            return POOL_CONFIGS.map((config) =>
-                this.quoteMultiHop(quoterContract, this.tokenAmountIn.token, baseToken, this.tokenOut, config)
-            )
+            for (const config of POOL_CONFIGS) {
+                const { poolKey, zeroForOne } = UniV4Trade.buildPoolKey(tokenIn, baseToken, config)
+                firstHops.push({ baseToken, config, poolKey, zeroForOne })
+            }
+        }
+
+        const encodeQuote = (poolKey: PoolKey, zeroForOne: boolean, exactAmount: string) => ({
+            target: deployment.quoter,
+            callData: quoterIface.encodeFunctionData('quoteExactInputSingle', [
+                { poolKey, zeroForOne, exactAmount, hookData: '0x' },
+            ]),
         })
 
-        const allResults = await Promise.allSettled([...directQuotePromises, ...multiHopQuotePromises])
+        const directCalls = directKeys.map(({ poolKey, zeroForOne }) => encodeQuote(poolKey, zeroForOne, amountInRaw))
+        const firstHopCalls = firstHops.map(({ poolKey, zeroForOne }) => encodeQuote(poolKey, zeroForOne, amountInRaw))
+
+        // Multicall 1: direct quotes + first hops
+        const results1 = await multicall.callStatic.tryAggregate(false, [...directCalls, ...firstHopCalls])
 
         let bestQuote: QuoteResult | undefined
         const errors: UniV4TradeError[] = []
 
-        for (const result of allResults) {
-            if (result.status === 'rejected') {
-                errors.push(new UniV4TradeError(String(result.reason)))
+        // Process direct results
+        for (let i = 0; i < directCalls.length; i++) {
+            const [success, returnData] = results1[i]
+            if (!success || returnData.length <= 2) {
+                errors.push(new UniV4TradeError(`Direct quote failed for fee=${POOL_CONFIGS[i].fee}`))
                 continue
             }
-            if (!result.value) continue
 
-            if (!bestQuote || JSBI.greaterThan(result.value.amountOut, bestQuote.amountOut)) {
-                bestQuote = result.value
+            const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', returnData)
+            if (decoded.amountOut.isZero()) {
+                errors.push(new UniV4TradeError(`Zero output for fee=${POOL_CONFIGS[i].fee}`))
+                continue
+            }
+
+            const amtOut = JSBI.BigInt(decoded.amountOut.toString())
+            const { poolKey, zeroForOne } = directKeys[i]
+            const quote: SingleHopQuote = { kind: 'single', poolKey, zeroForOne, amountOut: amtOut }
+            if (!bestQuote || JSBI.greaterThan(amtOut, bestQuote.amountOut)) {
+                bestQuote = quote
+            }
+        }
+
+        // Build second-hop calls from successful first hops
+        interface PendingSecondHop {
+            info: FirstHopInfo
+            hop2PoolKey: PoolKey
+            hop2ZeroForOne: boolean
+        }
+        const pendingSecondHops: PendingSecondHop[] = []
+        const secondHopCalls: { target: string; callData: string }[] = []
+
+        const offset = directCalls.length
+        for (let i = 0; i < firstHopCalls.length; i++) {
+            const [success, returnData] = results1[offset + i]
+            if (!success || returnData.length <= 2) {
+                errors.push(new UniV4TradeError(`Multi-hop first quote failed`))
+                continue
+            }
+
+            const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', returnData)
+            if (decoded.amountOut.isZero()) {
+                errors.push(new UniV4TradeError(`Multi-hop first quote zero output`))
+                continue
+            }
+
+            const info = firstHops[i]
+            const { poolKey, zeroForOne } = UniV4Trade.buildPoolKey(info.baseToken, tokenOut, info.config)
+            pendingSecondHops.push({ info, hop2PoolKey: poolKey, hop2ZeroForOne: zeroForOne })
+            secondHopCalls.push(encodeQuote(poolKey, zeroForOne, decoded.amountOut.toString()))
+        }
+
+        // Multicall 2: second hops
+        if (secondHopCalls.length > 0) {
+            const results2 = await multicall.callStatic.tryAggregate(false, secondHopCalls)
+
+            for (let i = 0; i < results2.length; i++) {
+                const [success, returnData] = results2[i]
+                if (!success || returnData.length <= 2) {
+                    errors.push(new UniV4TradeError(`Multi-hop second quote failed`))
+                    continue
+                }
+
+                const decoded = quoterIface.decodeFunctionResult('quoteExactInputSingle', returnData)
+                if (decoded.amountOut.isZero()) {
+                    errors.push(new UniV4TradeError(`Multi-hop second quote zero output`))
+                    continue
+                }
+
+                const amtOut = JSBI.BigInt(decoded.amountOut.toString())
+                const { info, hop2PoolKey, hop2ZeroForOne } = pendingSecondHops[i]
+                const quote: MultiHopQuote = {
+                    kind: 'multi',
+                    hop1: { poolKey: info.poolKey, zeroForOne: info.zeroForOne },
+                    hop2: { poolKey: hop2PoolKey, zeroForOne: hop2ZeroForOne },
+                    amountOut: amtOut,
+                }
+                if (!bestQuote || JSBI.greaterThan(amtOut, bestQuote.amountOut)) {
+                    bestQuote = quote
+                }
             }
         }
 
@@ -365,72 +457,6 @@ export class UniV4Trade extends SymbiosisTrade {
             callDataOffset,
             minReceivedOffset,
             priceImpact,
-        }
-    }
-
-    private async quoteSingleHop(
-        quoterContract: Contract,
-        tokenIn: Token,
-        tokenOut: Token,
-        poolConfig: PoolConfig
-    ): Promise<QuoteResult> {
-        const { poolKey, zeroForOne } = UniV4Trade.buildPoolKey(tokenIn, tokenOut, poolConfig)
-
-        const result = await quoterContract.callStatic.quoteExactInputSingle({
-            poolKey,
-            zeroForOne,
-            exactAmount: this.tokenAmountIn.raw.toString(),
-            hookData: '0x',
-        })
-
-        const amountOut = JSBI.BigInt(result.amountOut.toString())
-        if (JSBI.equal(amountOut, JSBI.BigInt(0))) {
-            throw new UniV4TradeError('Zero output')
-        }
-
-        return { kind: 'single', poolKey, zeroForOne, amountOut }
-    }
-
-    private async quoteMultiHop(
-        quoterContract: Contract,
-        tokenIn: Token,
-        baseToken: Token,
-        tokenOut: Token,
-        poolConfig: PoolConfig
-    ): Promise<QuoteResult> {
-        // First hop: tokenIn -> baseToken
-        const hop1 = UniV4Trade.buildPoolKey(tokenIn, baseToken, poolConfig)
-        const result1 = await quoterContract.callStatic.quoteExactInputSingle({
-            poolKey: hop1.poolKey,
-            zeroForOne: hop1.zeroForOne,
-            exactAmount: this.tokenAmountIn.raw.toString(),
-            hookData: '0x',
-        })
-
-        const midAmount = result1.amountOut
-        if (midAmount.isZero()) {
-            throw new UniV4TradeError('Zero mid output')
-        }
-
-        // Second hop: baseToken -> tokenOut
-        const hop2 = UniV4Trade.buildPoolKey(baseToken, tokenOut, poolConfig)
-        const result2 = await quoterContract.callStatic.quoteExactInputSingle({
-            poolKey: hop2.poolKey,
-            zeroForOne: hop2.zeroForOne,
-            exactAmount: midAmount,
-            hookData: '0x',
-        })
-
-        const amountOut = JSBI.BigInt(result2.amountOut.toString())
-        if (JSBI.equal(amountOut, JSBI.BigInt(0))) {
-            throw new UniV4TradeError('Zero output')
-        }
-
-        return {
-            kind: 'multi',
-            hop1: { poolKey: hop1.poolKey, zeroForOne: hop1.zeroForOne },
-            hop2: { poolKey: hop2.poolKey, zeroForOne: hop2.zeroForOne },
-            amountOut,
         }
     }
 

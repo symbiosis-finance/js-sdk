@@ -17,16 +17,18 @@ export interface WaitFromTonTxMinedParams {
     symbiosis: Symbiosis
     address: string
     contractAddress: string
+    since?: number
 }
 
 export async function waitFromTonTxMined({
     symbiosis,
     address,
     contractAddress,
+    since,
 }: WaitFromTonTxMinedParams): Promise<Transaction | undefined> {
     const client = await symbiosis.getTonClient()
 
-    const now = Math.floor(Date.now() / 1000)
+    const now = since ?? Math.floor(Date.now() / 1000)
 
     return await longPolling<Transaction | undefined>({
         pollingFunction: async () => {
