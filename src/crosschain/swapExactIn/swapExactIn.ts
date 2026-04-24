@@ -3,6 +3,7 @@ import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
 import { changellyNativeSwap, isChangellyNativeSupported } from './swapChangelly'
 import { crosschainSwap } from './crosschainSwap'
+import { intentSwap, isIntentSwapSupported } from './intentSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
 import { isOnchainSwapSupported, onchainSwap } from './onchainSwap'
@@ -55,6 +56,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
 
     if (isBridgeSupported(params)) {
         return bridge(params)
+    }
+
+    if (isIntentSwapSupported(params)) {
+        return intentSwap(params)
     }
 
     // flow FROM

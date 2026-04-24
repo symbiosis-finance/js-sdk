@@ -1,5 +1,5 @@
 import { isTonChainId } from '../chainUtils'
-import { DedustTrade, SymbiosisTradeType } from '../trade'
+import { DedustTrade, TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isDedustSwapSupported(context: SwapExactInParams): boolean {
@@ -17,7 +17,7 @@ export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactIn
 
     await trade.init().catch((e) => {
         symbiosis.trackAggregatorError({
-            provider: SymbiosisTradeType.DEDUST,
+            provider: TradeProvider.DEDUST,
             reason: e.message,
             chain_id: String(tokenOut.chain?.id),
         })
@@ -25,7 +25,7 @@ export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactIn
     })
 
     return {
-        kind: 'onchain-swap',
+        operationType: 'onchain-swap',
         tokenAmountOut: trade.amountOut,
         tokenAmountOutMin: trade.amountOutMin,
         priceImpact: trade.priceImpact,
@@ -45,7 +45,7 @@ export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactIn
         labels: [],
         routes: [
             {
-                provider: SymbiosisTradeType.DEDUST,
+                provider: TradeProvider.DEDUST,
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],

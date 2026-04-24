@@ -9,7 +9,7 @@ import { isEvmChainId } from '../../chainUtils'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory, ThorRouter__factory } from '../../contracts'
 import { AmountLessThanFeeError, SdkError, ThorChainError } from '../../sdkError'
-import { SymbiosisTradeType } from '../../trade'
+import { TradeProvider } from '../../trade'
 import type {
     Address,
     EvmAddress,
@@ -150,12 +150,12 @@ export async function zappingOnChainThor(
     })
 
     fees.push({
-        provider: SymbiosisTradeType.THORCHAIN_BRIDGE,
+        provider: TradeProvider.THORCHAIN_BRIDGE,
         description: 'THORChain fee',
         value: new TokenAmount(BTC, thorQuote.fees.total),
     })
     routes.push({
-        provider: SymbiosisTradeType.THORCHAIN_BRIDGE,
+        provider: TradeProvider.THORCHAIN_BRIDGE,
         tokens: [thorTokenIn, BTC],
     })
 
@@ -235,7 +235,7 @@ export async function zappingOnChainThor(
         labels: ['partner-swap'],
         routes,
         fees,
-        kind: 'crosschain-swap',
+        operationType: 'crosschain-swap',
         ...payload,
     }
 }

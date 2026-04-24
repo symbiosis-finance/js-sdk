@@ -7,7 +7,7 @@ import { Percent, TokenAmount } from '../../../entities'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { AmountLessThanFeeError, ChangellyError, SdkError } from '../../sdkError'
-import { SymbiosisTradeType } from '../../trade'
+import { TradeProvider } from '../../trade'
 import type { Address, FeeItem, MulticallV2Item, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import TronWeb from 'tronweb'
@@ -22,7 +22,7 @@ const erc20Interface = new Interface(['function transfer(address to, uint256 amo
 const ERC20_TRANSFER_AMOUNT_OFFSET = 68 // 32 (memory length word) + 4 (selector) + 32 (address param)
 
 export function isChangellyZappingSupported(params: SwapExactInParams): boolean {
-    if (params.disabledProviders?.includes(SymbiosisTradeType.CHANGELLY)) return false
+    if (params.disabledProviders?.includes(TradeProvider.CHANGELLY)) return false
 
     const fromChainId = params.tokenAmountIn.token.chainId
 
@@ -111,7 +111,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
     const routes: RouteItem[] = [
         ...swapResult.routes,
         {
-            provider: SymbiosisTradeType.CHANGELLY,
+            provider: TradeProvider.CHANGELLY,
             tokens: [transitToken, changellyEstimate.tokenOutResolved],
         },
     ]
@@ -194,7 +194,7 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
         routes,
         fees,
         labels: ['partner-swap', 'semi-centralized'],
-        kind: 'changelly-trade',
+        operationType: 'changelly-trade',
         changellyData,
         ...preparePayload({
             chainId,

@@ -4,7 +4,7 @@ import { isEvmChainId } from '../../chainUtils'
 import type { MulticallRouter } from '../../contracts'
 import { ThorRouter__factory } from '../../contracts'
 import { ThorChainError } from '../../sdkError'
-import { SymbiosisTradeType } from '../../trade'
+import { TradeProvider } from '../../trade'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
 import { BaseSwapping } from '../../swapping'
 
@@ -88,14 +88,14 @@ export class ZappingThor extends BaseSwapping {
             routes: [
                 ...result.routes,
                 {
-                    provider: SymbiosisTradeType.THORCHAIN_BRIDGE,
+                    provider: TradeProvider.THORCHAIN_BRIDGE,
                     tokens: [thorTokenIn, BTC],
                 },
             ],
             fees: [
                 ...result.fees,
                 {
-                    provider: SymbiosisTradeType.THORCHAIN_BRIDGE,
+                    provider: TradeProvider.THORCHAIN_BRIDGE,
                     description: 'THORChain fee',
                     value: new TokenAmount(BTC, this.thorQuote.fees.total),
                 },

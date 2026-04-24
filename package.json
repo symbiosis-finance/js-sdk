@@ -37,7 +37,7 @@
         "start": "tsc-watch --onSuccess 'fix-esm-import-path dist'",
         "prettier": "prettier --check --ignore-unknown src",
         "prettier:fix": "prettier --write --ignore-unknown src test",
-        "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/*.json' && npm run prettier:fix",
+        "build-contracts": "typechain --discriminate-types --target ethers-v5 --out-dir src/crosschain/contracts './src/crosschain/abis/**/*.json' && npm run prettier:fix",
         "build-config-cache": "tsx ./src/crosschain/config/cache/cmd/build.ts && prettier --write --ignore-unknown src/crosschain/config/cache",
         "generate-thorchain-api": "swagger-typescript-api generate -p https://gateway.liquify.com/chain/thorchain_api/thorchain/doc/openapi.yaml -o src/crosschain/api -n thorchain.generated.ts --unwrap-response-data --single-http-client",
         "generate-kyberswap-api": "swagger-typescript-api generate -p https://1368568567-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2Fw1XgQJc40kVeGUIxgI7c%2Fuploads%2FL2BxVZ5JNF7qdTTiC4FP%2FKyberSwapAggregator_EVMAPIs_v2.12.1.yaml?alt=media&token=d7c11be5-427d-48d6-9631-77e442a8cc7a -o src/crosschain/api -n kyberswap.generated.ts --unwrap-response-data --single-http-client",

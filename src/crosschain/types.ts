@@ -9,7 +9,7 @@ import type { ConfigCacheData } from './config/cache/builder'
 import type { PartnerFeeCollector } from './contracts'
 import type { Symbiosis } from './symbiosis'
 import type { SwapLabel } from './labels'
-import type { SymbiosisTradeType } from './trade'
+import type { TradeProvider } from './trade'
 import type { OneInchProtocols } from './trade/oneInchTrade'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
 
@@ -42,6 +42,14 @@ export type PriceEstimationConfig = {
     enabled: boolean
     slippageMax: number // Maximum slippage - used for tokenAmountOutMin calculation and delayed solving.
     slippageNorm: number // Normal slippage - used for tokenAmountOut calculation and immetiate solving.
+}
+
+// Addresses of Intent contracts (intent-based swap protocol)
+export interface IntentConfig {
+    depositorySrc: EvmAddress // Depository contract on the src chain
+    depositoryDst: EvmAddress // Depository contract on the dst chain
+    directUnlocker: EvmAddress // DirectUnlocker contract on the dst chain
+    bridge: EvmAddress
 }
 
 // Addresses of Depository contracts
@@ -77,9 +85,15 @@ export type ChainConfig = {
     tonPortal?: string
     partnerFeeCollector?: string
     depository?: DepositoryConfig
+    intentConfig?: IntentConfig
 }
 
 export type AdvisorConfig = {
+    url: string
+}
+
+// Solver service base URL (intent-based swaps)
+export type SolverConfig = {
     url: string
 }
 
@@ -128,6 +142,7 @@ export type Config = {
     chains: ChainConfig[]
     fallbackReceiver: EvmAddress
     btcConfigs: BtcConfig[]
+    solver?: SolverConfig
 }
 
 export type OverrideChainConfig = {
@@ -160,6 +175,7 @@ export type OverrideConfig = {
     limits?: SwapLimit[]
     fetch?: typeof fetch
     advisor?: AdvisorConfig
+    solver?: SolverConfig
     oneInchConfig?: Partial<ApiConfig>
     openOceanConfig?: Partial<ApiConfig>
     zeroXConfig?: Partial<ApiConfig>
@@ -207,7 +223,7 @@ export interface SwapExactInParams {
     disableSrcChainRouting?: boolean
     disableDstChainRouting?: boolean
     depositoryEnabled?: boolean
-    disabledProviders?: SymbiosisTradeType[]
+    disabledProviders?: TradeProvider[]
     changellyExtraIdTo?: string // destination tag (XRP) or memo (XLM) for payout address
 }
 
@@ -271,18 +287,18 @@ export type SwapExactInTransactionPayload =
       }
 
 export type RouteItem = {
-    provider: SymbiosisTradeType
+    provider: TradeProvider
     tokens: Token[]
 }
 
 export type FeeItem = {
-    provider: SymbiosisTradeType
+    provider: TradeProvider
     value: TokenAmount
     save?: TokenAmount
     description?: string
 }
 
-export type SymbiosisKind =
+export type OperationType =
     | 'onchain-swap'
     | 'crosschain-swap'
     | 'wrap'
@@ -291,10 +307,11 @@ export type SymbiosisKind =
     | 'from-btc-swap'
     | 'changelly-trade'
     | 'changelly-deposit'
+    | 'intent-swap'
 
 // Result of swapExactIn() method.
 export type SwapExactInResult = SwapExactInTransactionPayload & {
-    kind: SymbiosisKind
+    operationType: OperationType
     tokenAmountOut: TokenAmount
     tokenAmountOutMin: TokenAmount
     priceImpact: Percent

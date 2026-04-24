@@ -29,7 +29,7 @@ export {
     createChangellyDeposit,
     FILTERABLE_PROVIDERS,
     IzumiTrade,
-    SymbiosisTradeType,
+    TradeProvider,
     isChangellyNativeChainId,
     isChangellySupportedChainId,
     isChangellyTradeChainId,

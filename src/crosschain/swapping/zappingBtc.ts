@@ -12,7 +12,7 @@ import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../sdkError'
 import type { OneInchProtocols } from '../trade/oneInchTrade'
-import { SymbiosisTradeType } from '../trade'
+import { TradeProvider } from '../trade'
 import type { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../types'
 import { BaseSwapping } from './baseSwapping'
 
@@ -30,7 +30,7 @@ interface ZappingBtcExactInParams {
     transitTokenOut: Token
     partnerAddress?: EvmAddress
     fallbackReceiver?: EvmAddress
-    disabledProviders?: SymbiosisTradeType[]
+    disabledProviders?: TradeProvider[]
 }
 
 export class ZappingBtc extends BaseSwapping {
@@ -155,7 +155,7 @@ export class ZappingBtc extends BaseSwapping {
         const fees = [
             ...result.fees,
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 description: 'BTC fee',
                 value: this.minBtcFee,
             } as FeeItem,
@@ -163,7 +163,7 @@ export class ZappingBtc extends BaseSwapping {
 
         if (partnerFee) {
             fees.push({
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 description: 'Partner fee',
                 value: partnerFee,
             } as FeeItem)
@@ -171,7 +171,7 @@ export class ZappingBtc extends BaseSwapping {
 
         if (volumeFee) {
             fees.push({
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 description: 'Volume fee',
                 value: volumeFee,
             } as FeeItem)
@@ -185,7 +185,7 @@ export class ZappingBtc extends BaseSwapping {
             routes: [
                 ...result.routes,
                 {
-                    provider: SymbiosisTradeType.SYMBIOSIS,
+                    provider: TradeProvider.SYMBIOSIS,
                     tokens: [syBtc, btc],
                 },
             ],

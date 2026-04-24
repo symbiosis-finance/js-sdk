@@ -36,7 +36,7 @@ import { getMulticall } from '../multicall'
 import { AggregateSdkError, UniV3TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
-import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 interface Deployment {
     factory: Address
@@ -145,8 +145,8 @@ export class UniV3Trade extends SymbiosisTrade {
         this.deadline = params.deadline
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.UNI_V3
+    get tradeType(): TradeProvider {
+        return TradeProvider.UNI_V3
     }
 
     public async init() {

@@ -9,7 +9,7 @@ import { BIPS_BASE } from '../constants'
 import { KyberSwapTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
-import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 interface KyberSwapTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -67,8 +67,8 @@ export class KyberSwapTrade extends SymbiosisTrade {
         this.origin = params.origin
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.KYBER_SWAP
+    get tradeType(): TradeProvider {
+        return TradeProvider.KYBER_SWAP
     }
 
     public async init() {

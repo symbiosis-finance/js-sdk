@@ -1,4 +1,4 @@
-import { OctoPoolTrade, SymbiosisTradeType } from '../trade'
+import { OctoPoolTrade, TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isOctoPoolSwapSupported(context: SwapExactInParams): boolean {
@@ -45,7 +45,7 @@ export async function octoPoolSwap({
     await trade.init()
 
     return {
-        kind: 'onchain-swap',
+        operationType: 'onchain-swap',
         tokenAmountOut: trade.amountOut,
         tokenAmountOutMin: trade.amountOutMin,
         approveTo: trade.routerAddress,
@@ -60,7 +60,7 @@ export async function octoPoolSwap({
         labels: ['octopool-swap'],
         routes: [
             {
-                provider: SymbiosisTradeType.OCTOPOOL,
+                provider: TradeProvider.OCTOPOOL,
                 tokens: [tokenAmountIn.token, tokenOut],
             },
         ],

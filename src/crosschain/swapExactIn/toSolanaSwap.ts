@@ -1,5 +1,5 @@
 import { isSolanaChainId } from '../chainUtils'
-import { SymbiosisTradeType } from '../trade/symbiosisTrade'
+import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { solanaChainFlipSwap } from './swapChainFlip'
 import { theBest } from './utils'
@@ -12,7 +12,7 @@ export async function toSolanaSwap(context: SwapExactInParams): Promise<SwapExac
     const { selectMode, disabledProviders } = context
 
     const promises: Promise<SwapExactInResult>[] = []
-    if (!disabledProviders?.includes(SymbiosisTradeType.CHAINFLIP_BRIDGE)) {
+    if (!disabledProviders?.includes(TradeProvider.CHAINFLIP_BRIDGE)) {
         promises.push(solanaChainFlipSwap(context))
     }
 

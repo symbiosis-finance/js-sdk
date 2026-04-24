@@ -32,3 +32,7 @@ export function formatTokenName(token: Token) {
     const chainName = (token.chainFrom || token.chain)!.name
     return `${token.symbol}:${chainName}:${token.address.toLowerCase()}`
 }
+
+export function calldataWithoutSelector(data: string): string {
+    return '0x' + data.slice(10)
+}

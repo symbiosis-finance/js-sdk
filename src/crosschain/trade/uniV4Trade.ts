@@ -9,7 +9,7 @@ import { getMulticall } from '../multicall'
 import { AggregateSdkError, UniV4TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
-import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 // V4 Quoter ABI (only the functions we need)
 const QUOTER_ABI = [
@@ -153,8 +153,8 @@ export class UniV4Trade extends SymbiosisTrade {
         this.from = params.from
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.UNI_V4
+    get tradeType(): TradeProvider {
+        return TradeProvider.UNI_V4
     }
 
     /**

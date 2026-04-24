@@ -1,5 +1,5 @@
 import { isBtcChainId } from '../chainUtils'
-import { SymbiosisTradeType } from '../trade'
+import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { btcChainFlipSwap } from './swapChainFlip'
 import { thorChainSwap } from './swapThorChain'
@@ -17,10 +17,10 @@ export async function toBtcSwap(context: SwapExactInParams): Promise<SwapExactIn
 
     promises.push(burnSyntheticBtc(context))
 
-    if (!disabledProviders?.includes(SymbiosisTradeType.THORCHAIN_BRIDGE)) {
+    if (!disabledProviders?.includes(TradeProvider.THORCHAIN_BRIDGE)) {
         promises.push(thorChainSwap(context))
     }
-    if (!disabledProviders?.includes(SymbiosisTradeType.CHAINFLIP_BRIDGE)) {
+    if (!disabledProviders?.includes(TradeProvider.CHAINFLIP_BRIDGE)) {
         promises.push(btcChainFlipSwap(context))
     }
 

@@ -7,7 +7,7 @@ import type { Address, FeeItem } from '../types'
 import { BIPS_BASE } from '../constants'
 import { getValueCategory } from '../labels'
 
-export enum SymbiosisTradeType {
+export enum TradeProvider {
     UNI_V2 = 'uni-v2',
     UNI_V3 = 'uni-v3',
     ONE_INCH = '1inch',
@@ -27,24 +27,26 @@ export enum SymbiosisTradeType {
     UNI_V4 = 'uni-v4',
     KYBER_SWAP = 'kyber-swap',
     ZERO_X = '0x',
+    INTENT_SOLVER = 'intent-solver',
 }
 
-export const FILTERABLE_PROVIDERS: SymbiosisTradeType[] = [
-    SymbiosisTradeType.ONE_INCH,
-    SymbiosisTradeType.OPEN_OCEAN,
-    SymbiosisTradeType.UNI_V2,
-    SymbiosisTradeType.UNI_V3,
-    SymbiosisTradeType.IZUMI,
-    SymbiosisTradeType.THORCHAIN_BRIDGE,
-    SymbiosisTradeType.CHAINFLIP_BRIDGE,
-    SymbiosisTradeType.RAYDIUM,
-    SymbiosisTradeType.JUPITER,
-    SymbiosisTradeType.STONFI,
-    SymbiosisTradeType.DEDUST,
-    SymbiosisTradeType.CHANGELLY,
-    SymbiosisTradeType.UNI_V4,
-    SymbiosisTradeType.KYBER_SWAP,
-    SymbiosisTradeType.ZERO_X,
+export const FILTERABLE_PROVIDERS: TradeProvider[] = [
+    TradeProvider.ONE_INCH,
+    TradeProvider.OPEN_OCEAN,
+    TradeProvider.UNI_V2,
+    TradeProvider.UNI_V3,
+    TradeProvider.IZUMI,
+    TradeProvider.THORCHAIN_BRIDGE,
+    TradeProvider.CHAINFLIP_BRIDGE,
+    TradeProvider.RAYDIUM,
+    TradeProvider.JUPITER,
+    TradeProvider.STONFI,
+    TradeProvider.DEDUST,
+    TradeProvider.CHANGELLY,
+    TradeProvider.UNI_V4,
+    TradeProvider.KYBER_SWAP,
+    TradeProvider.ZERO_X,
+    TradeProvider.INTENT_SOLVER,
 ]
 
 export interface SymbiosisTradeParams {
@@ -85,7 +87,7 @@ export interface SymbiosisTrade extends SymbiosisTradeParams {}
 // Base class for all trades.
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export abstract class SymbiosisTrade {
-    static isAllowed(disabledProviders?: SymbiosisTradeType[]): boolean {
+    static isAllowed(disabledProviders?: TradeProvider[]): boolean {
         return !disabledProviders?.includes(this.prototype.tradeType)
     }
 
@@ -99,7 +101,7 @@ export abstract class SymbiosisTrade {
         this.to = params.to
     }
 
-    get tradeType(): SymbiosisTradeType {
+    get tradeType(): TradeProvider {
         throw new TradeError('Implement me')
     }
 

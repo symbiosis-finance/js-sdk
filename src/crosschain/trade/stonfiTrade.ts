@@ -11,7 +11,7 @@ import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { StonFiTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { TonAddress } from '../types'
-import { type SymbiosisTradeParams, SymbiosisTrade, SymbiosisTradeType } from './symbiosisTrade'
+import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -38,8 +38,8 @@ export class StonfiTrade extends SymbiosisTrade {
         this.stonClient = new StonApiClient()
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.STONFI
+    get tradeType(): TradeProvider {
+        return TradeProvider.STONFI
     }
 
     public async init() {
@@ -77,7 +77,7 @@ export class StonfiTrade extends SymbiosisTrade {
             value: txParams.value,
             fees: [
                 {
-                    provider: SymbiosisTradeType.STONFI,
+                    provider: TradeProvider.STONFI,
                     description: 'Stonfi fee',
                     value: new TokenAmount(this.tokenOut, quote.feeUnits),
                 },

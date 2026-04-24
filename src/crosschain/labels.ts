@@ -1,6 +1,6 @@
 import type { Token } from '../entities'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
-import { SymbiosisTradeType } from './trade/symbiosisTrade'
+import { TradeProvider } from './trade'
 
 export type SwapLabel =
     | 'src-chain-swap'
@@ -9,6 +9,7 @@ export type SwapLabel =
     | 'mixed-value-tokens'
     | 'partner-swap'
     | 'semi-centralized'
+    | 'intent'
 
 type ValueCategory = 'stable-usd' | 'btc' | 'eth' | 'other'
 
@@ -47,7 +48,7 @@ export function getValueCategory(token: Token): ValueCategory {
 }
 
 function isRealSwap(trade: SymbiosisTrade): boolean {
-    return trade.tradeType !== SymbiosisTradeType.WRAP
+    return trade.tradeType !== TradeProvider.WRAP
 }
 
 export interface LabelsContext {

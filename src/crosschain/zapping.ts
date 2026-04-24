@@ -22,7 +22,7 @@ import type { MulticallRouter, OmniPool, OmniPoolOracle } from './contracts'
 import { OmniLiquidity } from './omniLiquidity'
 import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from './sdkError'
 import type { Symbiosis } from './symbiosis'
-import { AggregatorTrade, SymbiosisTradeType, WrapTrade } from './trade'
+import { AggregatorTrade, TradeProvider, WrapTrade } from './trade'
 import { TRON_METAROUTER_ABI } from './tronAbis'
 import type {
     Address,
@@ -148,7 +148,7 @@ export class Zapping {
             })
         }
         routes.push({
-            provider: SymbiosisTradeType.SYMBIOSIS,
+            provider: TradeProvider.SYMBIOSIS,
             tokens: [this.getPortalTokenAmountIn().token, this.omniLiquidity.tokenAmountIn.token],
         })
 
@@ -156,13 +156,13 @@ export class Zapping {
             ...payload,
             fees: [
                 {
-                    provider: SymbiosisTradeType.SYMBIOSIS,
+                    provider: TradeProvider.SYMBIOSIS,
                     value: fee,
                 },
             ],
             labels: computeCrosschainLabels({ tradeA: this.tradeA }),
             routes,
-            kind: 'crosschain-swap',
+            operationType: 'crosschain-swap',
             approveTo: this.symbiosis.chainConfig(tokenAmountIn.token.chainId).metaRouterGateway,
             priceImpact: this.calculatePriceImpact(),
             amountInUsd: this.getSynthAmount(fee),

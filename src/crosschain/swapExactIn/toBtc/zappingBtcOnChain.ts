@@ -13,7 +13,7 @@ import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
-import { SymbiosisTradeType } from '../../trade'
+import { TradeProvider } from '../../trade'
 import type { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
@@ -135,7 +135,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
     ])
 
     return {
-        kind: 'crosschain-swap',
+        operationType: 'crosschain-swap',
         tokenAmountOut: burnCall.amountOut,
         tokenAmountOutMin: burnCall.amountOutMin,
         priceImpact,
@@ -234,14 +234,14 @@ async function getBurnCall({
         offset: 68,
         fees: [
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 description: 'Burn fee',
                 value: fee,
             },
         ],
         routes: [
             {
-                provider: SymbiosisTradeType.SYMBIOSIS,
+                provider: TradeProvider.SYMBIOSIS,
                 tokens: [amountIn.token, tokenOut],
             },
         ],

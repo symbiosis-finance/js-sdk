@@ -4,12 +4,12 @@ import JSBI from 'jsbi'
 
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, TokenAmount } from '../../entities'
-import { CoinGecko } from '../coingecko/coingecko'
+import { CoinGecko } from '../coingecko'
 import { BIPS_BASE } from '../constants'
 import { ZeroXTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
-import { SymbiosisTrade, type SymbiosisTradeParams, SymbiosisTradeType } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 import { AddressZero } from '@ethersproject/constants'
 
 // AllowanceHolder.exec(address operator, address token, uint256 amount, address target, bytes data)
@@ -85,8 +85,8 @@ export class ZeroXTrade extends SymbiosisTrade {
         this.apiKey = this.symbiosis.zeroXConfig.apiKeys[0]
     }
 
-    get tradeType(): SymbiosisTradeType {
-        return SymbiosisTradeType.ZERO_X
+    get tradeType(): TradeProvider {
+        return TradeProvider.ZERO_X
     }
 
     public async init() {

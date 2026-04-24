@@ -79,6 +79,9 @@ export const config: Config = {
         default: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
     },
     fallbackReceiver: '0xd99ac0681b904991169a4f398B9043781ADbe0C3',
+    solver: {
+        url: 'https://solver.symbiosis.finance',
+    },
     btcConfigs: [
         {
             btc: new Token({
@@ -867,6 +870,12 @@ export const config: Config = {
                 refundDelay: 600, // 10 mins
                 withdrawDelay: 900, // 15 mins
             },
+            intentConfig: {
+                depositorySrc: '0x3CdA05cDEf2150b04167FbA14de6faB57dFf221b',
+                depositoryDst: '0x7C249864F48920BA3bfc821552fbaF20c8F4724e',
+                directUnlocker: '0x03113fB4Ac9e577C70b8d6AC6f2209b82f4037AC',
+                bridge: '0x46811ac92B684e3a398e21C2D08030456F98Ae58',
+            },
         },
         {
             id: ChainId.OPTIMISM_MAINNET,
@@ -1156,6 +1165,12 @@ export const config: Config = {
             portal: '0xEE981B2459331AD268cc63CE6167b446AF4161f8',
             fabric: '0x44487a445a7595446309464A82244B4bD4e325D5',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
+            intentConfig: {
+                depositorySrc: '0x3CdA05cDEf2150b04167FbA14de6faB57dFf221b',
+                depositoryDst: '0x7C249864F48920BA3bfc821552fbaF20c8F4724e',
+                directUnlocker: '0x03113fB4Ac9e577C70b8d6AC6f2209b82f4037AC',
+                bridge: '0x46811ac92B684e3a398e21C2D08030456F98Ae58',
+            },
         },
         {
             id: ChainId.TRON_MAINNET,
