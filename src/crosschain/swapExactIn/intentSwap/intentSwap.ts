@@ -1,12 +1,14 @@
 import type { TransactionRequest } from '@ethersproject/providers'
 
-import { Percent } from '../../../entities'
+import { Percent, wrappedToken } from '../../../entities'
 import { isEvmChainId } from '../../chainUtils'
 import { BIPS_BASE } from '../../constants'
 import { SolverService } from '../../solver'
 import { TradeProvider } from '../../trade'
 import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../../types'
 import { buildDepositData } from './buildDepositData'
+import { calldataWithoutSelector } from '../../utils'
+import { DirectUnlocker__factory } from '../../contracts'
 
 export function isIntentSwapSupported(params: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis, disabledProviders } = params
@@ -59,18 +61,24 @@ export async function intentSwap(params: SwapExactInParams): Promise<SwapExactIn
     })
 
     // Step 2: build deposit() calldata
-    // directUnlocker is on the dst chain
-    // settlementUnlocker is on the src chain
+    const fillUnlockerCondition = calldataWithoutSelector(
+        DirectUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
+            {
+                recipient: to,
+                dstToken: wrappedToken(tokenOut).address,
+                amount: amountOut.toBigInt(),
+                dstChainId,
+            },
+        ])
+    )
     const data = buildDepositData({
         tokenAmountIn,
-        amountOut,
         from: from as EvmAddress,
-        to: to as EvmAddress,
         quoteTTL,
-        directUnlockerAddress: dstIntentConfig.directUnlocker,
-        settlementUnlockerAddress: srcIntentConfig.settlementUnlocker,
+        fillUnlockerAddress: dstIntentConfig.directUnlocker,
+        fillUnlockerCondition,
+        settlementUnlockerAddress: srcIntentConfig.directUnlocker,
         srcChainId,
-        dstChainId,
     })
 
     const transactionRequest: TransactionRequest = {

@@ -871,10 +871,10 @@ export const config: Config = {
                 withdrawDelay: 900, // 15 mins
             },
             intentConfig: {
-                depositorySrc: '0xAF93250514Bf7d48f6235Bb73A9Ce463581D8f5A',
-                depositoryDst: '0x2094C939714E093454d60ae99064c59109E9e039',
-                directUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124',
-                settlementUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124', // TODO use correct settlement unlocker
+                depositorySrc: '0x3CdA05cDEf2150b04167FbA14de6faB57dFf221b',
+                depositoryDst: '0x7C249864F48920BA3bfc821552fbaF20c8F4724e',
+                directUnlocker: '0x03113fB4Ac9e577C70b8d6AC6f2209b82f4037AC',
+                bridge: '0x46811ac92B684e3a398e21C2D08030456F98Ae58',
             },
         },
         {
@@ -1166,10 +1166,10 @@ export const config: Config = {
             fabric: '0x44487a445a7595446309464A82244B4bD4e325D5',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             intentConfig: {
-                depositorySrc: '0xAF93250514Bf7d48f6235Bb73A9Ce463581D8f5A',
-                depositoryDst: '0x2094C939714E093454d60ae99064c59109E9e039',
-                directUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124',
-                settlementUnlocker: '0x38F854220e77E29d1dbeaEdE3d41b1f271326124', // TODO use correct settlement unlocker
+                depositorySrc: '0x3CdA05cDEf2150b04167FbA14de6faB57dFf221b',
+                depositoryDst: '0x7C249864F48920BA3bfc821552fbaF20c8F4724e',
+                directUnlocker: '0x03113fB4Ac9e577C70b8d6AC6f2209b82f4037AC',
+                bridge: '0x46811ac92B684e3a398e21C2D08030456F98Ae58',
             },
         },
         {
