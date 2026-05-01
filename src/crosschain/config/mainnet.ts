@@ -470,6 +470,13 @@ export const config: Config = {
                 refundDelay: 600, // 10 mins
                 withdrawDelay: 900, // 15 mins
             },
+            intentConfig: {
+                depositorySrc: '0x695EeaeCE7ce4502850B1F6B4f14b97DBA02E840',
+                depositoryDst: '0x4Ac560A3A8FaDd1662CF9439bb1114AbAa3BE547',
+                directUnlocker: '0xBF6FBa492d87B874ef095e4a3E6BfBFbD2177cc9',
+                deadlineUnlocker: '0x23bCedAD6cA2F7F3C46C11cf7eE13cf5C2eD51Cb',
+                bridge: '0x85700Ed7C30625eD28613d75e85C58EF0056263F',
+            },
         },
         {
             id: ChainId.AVAX_MAINNET,
@@ -871,10 +878,11 @@ export const config: Config = {
                 withdrawDelay: 900, // 15 mins
             },
             intentConfig: {
-                depositorySrc: '0x3CdA05cDEf2150b04167FbA14de6faB57dFf221b',
-                depositoryDst: '0x7C249864F48920BA3bfc821552fbaF20c8F4724e',
-                directUnlocker: '0x03113fB4Ac9e577C70b8d6AC6f2209b82f4037AC',
-                bridge: '0x46811ac92B684e3a398e21C2D08030456F98Ae58',
+                depositorySrc: '0x695EeaeCE7ce4502850B1F6B4f14b97DBA02E840',
+                depositoryDst: '0x4Ac560A3A8FaDd1662CF9439bb1114AbAa3BE547',
+                directUnlocker: '0xBF6FBa492d87B874ef095e4a3E6BfBFbD2177cc9',
+                deadlineUnlocker: '0x23bCedAD6cA2F7F3C46C11cf7eE13cf5C2eD51Cb',
+                bridge: '0x85700Ed7C30625eD28613d75e85C58EF0056263F',
             },
         },
         {
@@ -1166,10 +1174,11 @@ export const config: Config = {
             fabric: '0x44487a445a7595446309464A82244B4bD4e325D5',
             multicallRouter: '0x01A3c8E513B758EBB011F7AFaf6C37616c9C24d9',
             intentConfig: {
-                depositorySrc: '0x3CdA05cDEf2150b04167FbA14de6faB57dFf221b',
-                depositoryDst: '0x7C249864F48920BA3bfc821552fbaF20c8F4724e',
-                directUnlocker: '0x03113fB4Ac9e577C70b8d6AC6f2209b82f4037AC',
-                bridge: '0x46811ac92B684e3a398e21C2D08030456F98Ae58',
+                depositorySrc: '0x695EeaeCE7ce4502850B1F6B4f14b97DBA02E840',
+                depositoryDst: '0x4Ac560A3A8FaDd1662CF9439bb1114AbAa3BE547',
+                directUnlocker: '0xBF6FBa492d87B874ef095e4a3E6BfBFbD2177cc9',
+                deadlineUnlocker: '0x23bCedAD6cA2F7F3C46C11cf7eE13cf5C2eD51Cb',
+                bridge: '0x85700Ed7C30625eD28613d75e85C58EF0056263F',
             },
         },
         {

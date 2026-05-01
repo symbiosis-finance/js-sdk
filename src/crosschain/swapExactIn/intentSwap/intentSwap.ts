@@ -8,7 +8,7 @@ import { TradeProvider } from '../../trade'
 import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../../types'
 import { buildDepositData } from './buildDepositData'
 import { calldataWithoutSelector } from '../../utils'
-import { DirectUnlocker__factory } from '../../contracts'
+import { DeadlineUnlocker__factory } from '../../contracts'
 
 export function isIntentSwapSupported(params: SwapExactInParams): boolean {
     const { tokenAmountIn, tokenOut, symbiosis, disabledProviders } = params
@@ -42,7 +42,7 @@ export function isIntentSwapSupported(params: SwapExactInParams): boolean {
  *  4. The solver monitors IntentLocked events and calls fill() on the dst chain.
  */
 export async function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, from, to, symbiosis } = params
+    const { tokenAmountIn, tokenOut, from, to, symbiosis, deadline } = params
 
     const srcChainId = tokenAmountIn.token.chainId
     const dstChainId = tokenOut.chainId
@@ -62,12 +62,14 @@ export async function intentSwap(params: SwapExactInParams): Promise<SwapExactIn
 
     // Step 2: build deposit() calldata
     const fillUnlockerCondition = calldataWithoutSelector(
-        DirectUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
+        DeadlineUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
             {
                 recipient: to,
+                depositor: from,
                 dstToken: wrappedToken(tokenOut).address,
                 amount: amountOut.toBigInt(),
                 dstChainId,
+                deadline,
             },
         ])
     )
@@ -75,9 +77,9 @@ export async function intentSwap(params: SwapExactInParams): Promise<SwapExactIn
         tokenAmountIn,
         from: from as EvmAddress,
         quoteTTL,
-        fillUnlockerAddress: dstIntentConfig.directUnlocker,
+        fillUnlockerAddress: dstIntentConfig.deadlineUnlocker,
         fillUnlockerCondition,
-        settlementUnlockerAddress: srcIntentConfig.directUnlocker,
+        settlementUnlockerAddress: srcIntentConfig.deadlineUnlocker,
         srcChainId,
     })
 

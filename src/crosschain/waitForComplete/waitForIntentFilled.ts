@@ -2,7 +2,7 @@ import type { Log } from '@ethersproject/providers'
 
 import type { ChainId } from '../../constants'
 import { getLogWithTimeout } from '../chainUtils'
-import { DepositorySrc__factory, DepositoryDst__factory, DirectUnlocker__factory } from '../contracts'
+import { DepositorySrc__factory, DepositoryDst__factory, DeadlineUnlocker__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
@@ -12,7 +12,6 @@ export async function waitForIntentFilled(
     chainId: ChainId,
     txHash: string
 ): Promise<Log | undefined> {
-    debugger
     const intentConfig = symbiosis.chainConfig(chainId).intentConfig
     if (!intentConfig) {
         return
@@ -37,9 +36,10 @@ export async function waitForIntentFilled(
 
     const { intentId, fillCondition } = data.args
 
-    const directUnlockerInterface = DirectUnlocker__factory.createInterface()
-    const conditionInputs = directUnlockerInterface.getFunction('encodeCondition').inputs
-    const [condition] = directUnlockerInterface._abiCoder.decode(conditionInputs, fillCondition.condition)
+    // TODO add unlockers resolving DirectUnlocker/DeadlineUnlocker
+    const deadlineUnlockerInterface = DeadlineUnlocker__factory.createInterface()
+    const conditionInputs = deadlineUnlockerInterface.getFunction('encodeCondition').inputs
+    const [condition] = deadlineUnlockerInterface._abiCoder.decode(conditionInputs, fillCondition.condition)
 
     const dstChainId = condition.dstChainId.toNumber() as ChainId
 

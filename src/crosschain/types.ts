@@ -49,6 +49,7 @@ export interface IntentConfig {
     depositorySrc: EvmAddress // Depository contract on the src chain
     depositoryDst: EvmAddress // Depository contract on the dst chain
     directUnlocker: EvmAddress // DirectUnlocker contract on the dst chain
+    deadlineUnlocker: EvmAddress // DeadlineUnlocker contract on the src chain
     bridge: EvmAddress
 }
 
