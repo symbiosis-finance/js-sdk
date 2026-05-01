@@ -618,6 +618,7 @@ async function makeAggregatorTrade(context: SwapExactInParams, tokenAmountIn: To
         tokenAmountIn: tokenAmountIn,
         tokenAmountInMin: tokenAmountIn,
         from: context.to, // there is no from address, set user's address
+        origin: context.to, // there is no from address, set user's address
         clientId: context.symbiosis.clientId,
         preferOneInchUsage: isUseOneInchOnly(context),
         disabledProviders: context.disabledProviders,
