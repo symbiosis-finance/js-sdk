@@ -192,6 +192,7 @@ export const config: Config = {
             rpc: 'https://ethereum-rpc.publicnode.com',
             spareRpcs: ['https://rpc.ankr.com/eth', 'https://eth.llamarpc.com', 'https://eth-pokt.nodies.app'],
             filterBlockOffset: 1000,
+            partnerFeeCollector: '0xb4291b5f2ed122d306afef72a2b0127613ab1eef',
             stables: [
                 {
                     name: 'USD Coin',
@@ -1410,8 +1411,9 @@ export const config: Config = {
         {
             id: ChainId.RSK_MAINNET,
             rpc: 'https://public-node.rsk.co',
-            spareRpcs: ['https://go.getblock.io/a4cf9dc5a3e347aaa1bb46315f2b874d', 'https://mycrypto.rsk.co'],
+            spareRpcs: ['https://rootstock.drpc.org', 'https://mycrypto.rsk.co'],
             filterBlockOffset: 1000,
+            partnerFeeCollector: '0xbbA322c98601b707cFfb98092010e0b95d538bB7',
             stables: [
                 {
                     name: 'USD₮0',
@@ -2446,6 +2448,7 @@ export const config: Config = {
             rpc: 'https://rpc.mainnet.citrea.xyz',
             spareRpcs: [],
             filterBlockOffset: 500,
+            partnerFeeCollector: '0xca506793A420E901BbCa8066be5661E3C52c84c2',
             stables: [
                 {
                     name: 'Symbiosis BTC',
