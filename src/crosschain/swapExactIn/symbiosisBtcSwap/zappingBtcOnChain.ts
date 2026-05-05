@@ -17,6 +17,7 @@ import { TradeProvider } from '../../trade'
 import type { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
+import { theBest } from '../utils'
 
 export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
@@ -155,7 +156,7 @@ export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token)
 
 async function getSwapCall(params: SwapExactInParams): Promise<MultiCallItem> {
     // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap(params)
+    const result = await theBest(onchainSwap(params))
 
     let value: string
     let data: BytesLike

@@ -19,8 +19,8 @@ import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { withSpan, withTracing } from '../tracing'
-import { AggregatorTrade } from '../trade'
+import { flatten, withSpan, withTracing } from '../tracing'
+import { AggregatorTrade, TradeProvider } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { SymbiosisTrade, SymbiosisTradeParams } from '../trade/symbiosisTrade'
 import type {
@@ -36,9 +36,8 @@ import type {
     SwapExactInParams,
     SwapExactInResult,
 } from '../types'
-import { TradeProvider } from '../trade'
-import { computeOnchainDstLabels } from '../labels'
 import type { SwapLabel } from '../labels'
+import { computeOnchainDstLabels } from '../labels'
 import { calldataWithoutSelector, isUseOneInchOnly } from '../utils'
 import { crossChainSwap } from './crossChainSwap'
 import { theBest } from './utils'
@@ -55,40 +54,34 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
     return true
 }
 
-export async function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, selectMode, symbiosis } = context
+export function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, tokenOut, symbiosis } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         throw new SdkError(`tokenAmountIn is not BTC token`)
     }
 
-    return await withSpan(
-        'fromBtcSwap',
-        { tokenAmountIn: tokenAmountIn.toString(), tokenOut: tokenOut.toString() },
-        async () => {
-            const promises: Promise<SwapExactInResult>[] = []
+    const promises: Promise<SwapExactInResult>[] = []
 
-            const allConfigs = symbiosis.config.btcConfigs
-            // prefer to use destination chain syBTC to avoid cross-chain routing
-            const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
-            const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
-            configs.forEach((btcConfig: BtcConfig) => {
-                promises.push(
-                    (async () => {
-                        try {
-                            const btcTrade = new FromBtcTrader(btcConfig)
-                            return await btcTrade.fromBtcSwap(context)
-                        } catch (err) {
-                            console.log(err)
-                            throw err
-                        }
-                    })()
-                )
-            })
+    const allConfigs = symbiosis.config.btcConfigs
+    // prefer to use destination chain syBTC to avoid cross-chain routing
+    const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
+    const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
+    configs.forEach((btcConfig: BtcConfig) => {
+        promises.push(
+            (async () => {
+                try {
+                    const btcTrade = new FromBtcTrader(btcConfig)
+                    return await btcTrade.fromBtcSwap(context)
+                } catch (err) {
+                    console.log(err)
+                    throw err
+                }
+            })()
+        )
+    })
 
-            return theBest(promises, selectMode)
-        }
-    )
+    return promises
 }
 
 type SwapResult = {
@@ -451,7 +444,7 @@ class FromBtcTrader {
     ): Promise<SwapResult> {
         const { to, symbiosis } = context
 
-        const swapExactInResult = await crossChainSwap({
+        const swapExactInResult = await theBestCrossChainSwap({
             ...context,
             tokenAmountIn: syBtcAmount,
             tokenAmountInMin: syBtcAmountMin,
@@ -583,6 +576,20 @@ class FromBtcTrader {
 
         return new DepositoryTrade(tradeParams, dep, depositParams, baseTrade).init()
     }
+}
+
+async function theBestCrossChainSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    // @ts-expect-error it actually shouldn't be too deep.
+    const attrs = flatten(params)
+    return await withSpan(
+        'theBestCrossChainSwap',
+        attrs,
+        () => theBest(crossChainSwap(params)),
+        (res) => ({
+            tokenAmountOut: res.tokenAmountOut.toString(),
+            tokenAmountOutMin: res.tokenAmountOutMin.toString(),
+        })
+    )
 }
 
 function decodeMetaRoute(calldata: BytesLike): MetaRouteStructs.MetaRouteTransactionStruct {

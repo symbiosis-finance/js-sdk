@@ -1,18 +1,9 @@
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBest } from '../utils'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 import { ZappingBtcCrossChain } from './zappingBtcCrossChain'
 
-export async function symbiosisBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const {
-        tokenAmountIn,
-        symbiosis,
-        to,
-        selectMode,
-        disableSrcChainRouting,
-        disableDstChainRouting,
-        disabledProviders,
-    } = context
+export function symbiosisBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, symbiosis, to, disableSrcChainRouting, disableDstChainRouting, disabledProviders } = context
 
     const promises: Promise<SwapExactInResult>[] = []
 
@@ -64,5 +55,5 @@ export async function symbiosisBtcSwap(context: SwapExactInParams): Promise<Swap
             })
     })
 
-    return theBest(promises, selectMode)
+    return promises
 }

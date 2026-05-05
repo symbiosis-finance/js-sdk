@@ -1,13 +1,13 @@
 import { AddressZero } from '@ethersproject/constants'
 
 import { Percent, TokenAmount } from '../../../entities'
-import { BIPS_BASE } from '../../constants'
+import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { isTronChainId } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
-import type { ChangellyTransactionData, SwapExactInParams, SwapExactInResult } from '../../types'
-import { isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
+import type { Address, ChangellyTransactionData, SwapExactInParams, SwapExactInResult } from '../../types'
+import { getChangellyTransitToken, isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
 import {
     buildChangellyTradeTx,
     type BuildChangellyTradeTxResult,
@@ -15,13 +15,11 @@ import {
     createChangellyDeposit,
     getChangellyEstimate,
 } from './changellyTrade'
-import { getChangellyTransitToken } from './constants'
 import { changellyZappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
 import { onchainSwap } from '../onchainSwap'
-import { MULTICALL_ROUTER_V2 } from '../../constants'
+import { theBest } from '../utils'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { FeeCollector__factory } from '../../contracts'
-import type { Address } from '../../types'
 
 const ZERO_PRICE_IMPACT = new Percent('0', BIPS_BASE)
 
@@ -191,13 +189,15 @@ async function changellyZappingEstimateOnly(params: SwapExactInParams): Promise<
     }
 
     // Estimate onchain swap: input → transit token (use multicall router as from/to like real zapping)
-    const swapResult = await onchainSwap({
-        ...params,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: transit.token,
-        from: multicallRouterAddress as Address,
-        to: multicallRouterAddress as Address,
-    })
+    const swapResult = await theBest(
+        onchainSwap({
+            ...params,
+            tokenAmountIn: inTokenAmount,
+            tokenOut: transit.token,
+            from: multicallRouterAddress as Address,
+            to: multicallRouterAddress as Address,
+        })
+    )
 
     // Estimate Changelly: transit → destination
     const estimate = await getChangellyEstimate(symbiosis, swapResult.tokenAmountOut, tokenOut)

@@ -1,19 +1,15 @@
-import { AggregateSdkError, LimitError, NoRouteError, SdkError } from '../sdkError'
-import type { SelectMode, SwapExactInResult } from '../types'
+import type { SdkError } from '../sdkError'
+import { AggregateSdkError, NoRouteError } from '../sdkError'
+import type { SwapExactInResult } from '../types'
 
-export async function theBest(promises: Promise<SwapExactInResult>[], mode?: SelectMode) {
+export async function theBest(promises: Promise<SwapExactInResult>[]): Promise<SwapExactInResult> {
     if (promises.length === 0) {
         throw new NoRouteError('No promises provided')
     }
 
-    if (mode === 'fastest') {
-        return Promise.any(promises)
-    }
-
-    // best_return mode
     const results = await Promise.allSettled(promises)
 
-    let result: SwapExactInResult | undefined
+    let bestResult: SwapExactInResult | undefined
     const errors: SdkError[] = []
     for (const item of results) {
         if (item.status !== 'fulfilled') {
@@ -23,22 +19,16 @@ export async function theBest(promises: Promise<SwapExactInResult>[], mode?: Sel
 
         const { value } = item
 
-        if (result && result.tokenAmountOut.greaterThan(value.tokenAmountOut)) {
-            errors.push(
-                new SdkError(`tokenAmountOut is not enough (${result.tokenAmountOut} <= ${value.tokenAmountOut})`)
-            )
+        if (bestResult && bestResult.tokenAmountOut.greaterThan(value.tokenAmountOut)) {
             continue
         }
 
-        result = value
+        bestResult = value
     }
 
-    if (!result) {
-        // Prefer LimitError (amount too low/high) over generic errors — it's more actionable for the user
-        const limitError = errors.find((e) => e instanceof LimitError)
-        const orderedErrors = limitError ? [limitError, ...errors.filter((e) => e !== limitError)] : errors
-        throw new AggregateSdkError(orderedErrors, `Build route error (tried ${promises.length} routes)`)
+    if (!bestResult) {
+        throw new AggregateSdkError(errors, `theBest: all routes failed. tried ${promises.length} ones.`)
     }
 
-    return result
+    return bestResult
 }

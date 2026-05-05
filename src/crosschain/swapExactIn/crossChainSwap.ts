@@ -1,9 +1,8 @@
-import type { Token } from '../../../entities'
-import { wrappedToken } from '../../../entities'
-import type { Symbiosis } from '../../symbiosis'
-import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBest } from '../utils'
-import { Swapping } from '../swapping'
+import type { Token } from '../../entities'
+import { wrappedToken } from '../../entities'
+import type { Symbiosis } from '../symbiosis'
+import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../types'
+import { Swapping } from './swapping'
 
 export interface Route {
     poolConfig: OmniPoolConfig
@@ -13,8 +12,8 @@ export interface Route {
 }
 
 // Swapping wrapper what select the best pool for swapping
-export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut, selectMode, disableSrcChainRouting, disableDstChainRouting } = params
+export function crossChainSwap(params: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { symbiosis, tokenAmountIn, tokenOut, disableSrcChainRouting, disableDstChainRouting } = params
 
     const routes = getRoutes({
         symbiosis,
@@ -24,9 +23,7 @@ export async function bestPoolSwapping(params: SwapExactInParams): Promise<SwapE
         disableDstChainRouting,
     })
 
-    const promises = routes.map((route) => tryRoute(symbiosis, route, params))
-
-    return theBest(promises, selectMode)
+    return routes.map((route) => tryRoute(symbiosis, route, params))
 }
 
 function tryRoute(symbiosis: Symbiosis, route: Route, params: SwapExactInParams): Promise<SwapExactInResult> {

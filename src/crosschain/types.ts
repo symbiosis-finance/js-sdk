@@ -156,8 +156,6 @@ export type FeeConfig = {
     value: string
 }
 
-export type SelectMode = 'fastest' | 'best_return'
-
 export type ApiConfig = {
     apiUrl: string
     apiKeys: string[]
@@ -187,12 +185,6 @@ export type OverrideConfig = {
     configCache?: ConfigCacheData
 }
 
-export interface MiddlewareCall {
-    address: Address
-    data: string
-    offset: number
-}
-
 export interface RevertableAddress {
     chainId: ChainId
     address: string
@@ -213,9 +205,7 @@ export interface SwapExactInParams {
     transitTokenIn?: Token
     transitTokenOut?: Token
     oneInchProtocols?: OneInchProtocols
-    middlewareCall?: MiddlewareCall // Destination for funds instead of `to`. Deprecated.
     revertableAddresses?: RevertableAddress[]
-    selectMode?: SelectMode
     tradeAContext?: TradeAContext
     partnerAddress?: EvmAddress
     refundAddress?: Address

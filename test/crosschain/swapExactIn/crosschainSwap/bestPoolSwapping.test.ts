@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest'
 
 import { ChainId, GAS_TOKEN, Symbiosis, Token, WETH } from '../../../../src'
-import type { Route } from '../../../../src/crosschain/swapExactIn/crossChainSwap/bestPoolSwapping'
-import { getRoutes } from '../../../../src/crosschain/swapExactIn/crossChainSwap/bestPoolSwapping'
+import type { Route } from '../../../../src/crosschain/swapExactIn/crossChainSwap'
+import { getRoutes } from '../../../../src/crosschain/swapExactIn/crossChainSwap'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 

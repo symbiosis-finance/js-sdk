@@ -21,6 +21,7 @@ import type {
 } from '../../types'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
+import { theBest } from '../utils'
 import { preparePayload } from '../preparePayload'
 
 import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
@@ -95,14 +96,16 @@ export async function zappingOnChainThor(
             throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
         }
 
-        const swapResult = await onchainSwap({
-            ...params,
-            slippage: onChainSlippage,
-            tokenAmountIn: inTokenAmount,
-            tokenOut: thorTokenIn,
-            from: multicallRouterV2Address,
-            to: multicallRouterV2Address,
-        })
+        const swapResult = await theBest(
+            onchainSwap({
+                ...params,
+                slippage: onChainSlippage,
+                tokenAmountIn: inTokenAmount,
+                tokenOut: thorTokenIn,
+                from: multicallRouterV2Address,
+                to: multicallRouterV2Address,
+            })
+        )
 
         let swapData: BytesLike
         let swapTo: string

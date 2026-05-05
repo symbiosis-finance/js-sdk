@@ -440,7 +440,7 @@ export class Symbiosis {
         return chains.filter((chain) => ids.includes(chain.id))
     }
 
-    public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+    public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult>[] {
         return swapExactIn({ symbiosis: this, ...params })
     }
 

@@ -13,6 +13,7 @@ import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
+import { theBest } from '../utils'
 import { preparePayload } from '../preparePayload'
 
 import { getChangellyTransitToken } from './constants'
@@ -75,13 +76,15 @@ export async function changellyZappingSwap(params: SwapExactInParams): Promise<S
     }
 
     // 4. On-chain swap: input token → transit token
-    const swapResult = await onchainSwap({
-        ...params,
-        tokenAmountIn: inTokenAmount,
-        tokenOut: transitToken,
-        from: multicallRouterAddress as Address,
-        to: multicallRouterAddress as Address,
-    })
+    const swapResult = await theBest(
+        onchainSwap({
+            ...params,
+            tokenAmountIn: inTokenAmount,
+            tokenOut: transitToken,
+            from: multicallRouterAddress as Address,
+            to: multicallRouterAddress as Address,
+        })
+    )
 
     if (swapResult.transactionType !== 'evm' && swapResult.transactionType !== 'tron') {
         throw new ChangellyError(`Unsupported swap transaction type: ${swapResult.transactionType}`)

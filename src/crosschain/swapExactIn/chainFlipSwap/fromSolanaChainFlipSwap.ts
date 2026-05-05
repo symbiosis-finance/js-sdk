@@ -14,7 +14,6 @@ import { getTokenPriceUsd } from '../../coingecko/getTokenPriceUsd'
 import { ChainFlipError } from '../../sdkError'
 import { JupiterTrade, TradeProvider } from '../../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBest } from '../utils'
 import type { ChainFlipConfig } from './types'
 import {
     ARB_USDC,
@@ -85,12 +84,12 @@ const CONFIGS: ChainFlipConfig[] = [
 
 export const CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT = CONFIGS.map((c) => c.dst.token)
 
-export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, selectMode } = context
+export function fromSolanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, tokenOut } = context
 
     const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
     if (!CF_CONFIGS.length) {
-        throw new ChainFlipError('No ChainFlip config found for tokenOut')
+        return []
     }
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -107,11 +106,7 @@ export async function fromSolanaChainFlipSwap(context: SwapExactInParams): Promi
         }
     }
 
-    if (promises.length === 0) {
-        throw new ChainFlipError('No compatible routes found for fromSolanaChainFlipSwap')
-    }
-
-    return theBest(promises, selectMode)
+    return promises
 }
 
 // ─── Direct vault swap (tokenIn is already SOL or SOL_USDC) ─────────────────

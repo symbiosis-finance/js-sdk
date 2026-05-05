@@ -13,6 +13,7 @@ import { TradeProvider } from '../../trade'
 import type { FeeItem, MulticallV2Item, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
+import { theBest } from '../utils'
 
 import type { Symbiosis } from '../../symbiosis'
 import type { ChainFlipConfig } from './types'
@@ -173,7 +174,7 @@ type SwapCall = Call & SwapExactInResult
 
 async function getSwapCall(params: SwapExactInParams): Promise<SwapCall> {
     // Get onchain swap transaction what will be executed by fee collector
-    const result = await onchainSwap(params)
+    const result = await theBest(onchainSwap(params))
 
     let value: string
     let data: BytesLike

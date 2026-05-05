@@ -1,6 +1,4 @@
-import { ChainFlipError } from '../../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBest } from '../utils'
 import type { ChainFlipConfig } from './types'
 import { CF_ARB_USDC, CF_BTC_BTC, CF_ETH_USDC } from './utils'
 import { ZappingCrossChainChainFlip } from './zappingCrossChainChainFlip'
@@ -19,12 +17,12 @@ const CONFIGS: ChainFlipConfig[] = [
 
 export const CHAIN_FLIP_TO_BTC_TOKENS_IN = CONFIGS.map((i) => i.src.token)
 
-export async function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, selectMode, tokenOut } = context
+export function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, from, to, symbiosis, slippage, deadline, tokenOut } = context
 
     const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
     if (!CF_CONFIGS.length) {
-        throw new ChainFlipError('No config found for tokenOut')
+        return []
     }
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -55,5 +53,5 @@ export async function btcChainFlipSwap(context: SwapExactInParams): Promise<Swap
         }
     }
 
-    return theBest(promises, selectMode)
+    return promises
 }

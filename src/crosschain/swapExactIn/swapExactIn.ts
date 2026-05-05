@@ -17,7 +17,7 @@ import { isWrapSupported, wrap } from './wrap'
 export * from './fromBtcSwap'
 
 // Universal stateless function that allows swap tokens on the same chain or cross-chain
-export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
+export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult>[] {
     const { tokenAmountIn, tokenOut } = params
 
     if (tokenAmountIn.token.equals(tokenOut)) {
@@ -35,15 +35,15 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
     }
 
     if (isChangellyNativeSupported(params)) {
-        return changellyNativeSwap(params)
+        return [changellyNativeSwap(params)]
     }
 
     if (isWrapSupported(params)) {
-        return wrap(params)
+        return [wrap(params)]
     }
 
     if (isUnwrapSupported(params)) {
-        return unwrap(params)
+        return [unwrap(params)]
     }
 
     if (isOnchainSwapSupported(params)) {
@@ -55,12 +55,18 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
     }
 
     if (isBridgeSupported(params)) {
-        return bridge(params)
+        return [bridge(params)]
     }
 
     if (isIntentSwapSupported(params)) {
-        return intentSwap(params)
+        return [intentSwap(params)]
     }
+
+    return collectRoutes(params)
+}
+
+function collectRoutes(params: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenOut } = params
 
     // FROM flow
     if (isFromBtcSwapSupported(params)) {

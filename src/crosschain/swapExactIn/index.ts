@@ -6,4 +6,5 @@ export {
     CHAIN_FLIP_TOKENS,
 } from './chainFlipSwap'
 export * from './swapExactIn'
+export { theBest } from './utils'
 export { THOR_TOKENS_IN } from './thorChainSwap'

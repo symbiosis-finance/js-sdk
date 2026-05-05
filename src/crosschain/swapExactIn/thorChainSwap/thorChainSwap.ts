@@ -1,12 +1,10 @@
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
-import { theBest } from '../utils'
 import { THOR_TOKENS_IN } from './utils'
 import { ZappingThor } from './zappingCrossChainThor'
 import { zappingOnChainThor } from './zappingOnChainThor'
-import { ThorChainError } from '../../sdkError'
 
-export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, symbiosis, selectMode } = context
+export function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
+    const { tokenAmountIn, symbiosis } = context
     const thorTokenOut = 'BTC.BTC'
 
     const promises: Promise<SwapExactInResult>[] = []
@@ -35,9 +33,5 @@ export async function thorChainSwap(context: SwapExactInParams): Promise<SwapExa
             promises.push(...crossChainPromises)
         }
     }
-    if (promises.length === 0) {
-        throw new ThorChainError('No ThorChain route found for tokenOut')
-    }
-
-    return theBest(promises, selectMode)
+    return promises
 }
