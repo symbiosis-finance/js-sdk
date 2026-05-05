@@ -40,7 +40,7 @@ import { TradeProvider } from '../trade'
 import { computeOnchainDstLabels } from '../labels'
 import type { SwapLabel } from '../labels'
 import { calldataWithoutSelector, isUseOneInchOnly } from '../utils'
-import { crosschainSwap } from './crosschainSwap'
+import { crossChainSwap } from './crossChainSwap'
 import { theBest } from './utils'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
@@ -451,7 +451,7 @@ class FromBtcTrader {
     ): Promise<SwapResult> {
         const { to, symbiosis } = context
 
-        const swapExactInResult = await crosschainSwap({
+        const swapExactInResult = await crossChainSwap({
             ...context,
             tokenAmountIn: syBtcAmount,
             tokenAmountInMin: syBtcAmountMin,

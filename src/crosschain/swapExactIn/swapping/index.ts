@@ -1,5 +1,4 @@
 export { BaseSwapping } from './baseSwapping'
 export { Swapping } from './swapping'
-export { SwappingMiddleware } from './swappingMiddleware'
 export { SwappingToTon } from './swappingToTon'
-export { ZappingBtc } from './zappingBtc'
+export { ZappingBtcCrossChain } from '../symbiosisBtcSwap/zappingBtcCrossChain'

@@ -2,7 +2,7 @@ import type {
     CreateFixTransactionResponse,
     CurrencyFullResponse,
     FixRateForAmountResponse,
-} from '../../../../src/crosschain/swapExactIn/swapChangelly/types'
+} from '../../../../src/crosschain/swapExactIn/changellySwap/types'
 
 // Based on real SOL → LTC Changelly API response
 export const mockFixRate: FixRateForAmountResponse = {

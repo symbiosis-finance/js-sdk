@@ -1,6 +1,6 @@
 import type { Token } from '../entities'
 import type { SymbiosisTrade } from './trade/symbiosisTrade'
-import { TradeProvider } from './trade'
+import { TradeProvider } from './trade/symbiosisTrade'
 
 export type SwapLabel =
     | 'src-chain-swap'

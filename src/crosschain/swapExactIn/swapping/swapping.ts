@@ -1,4 +1,4 @@
-import type { SwapExactInParams, SwapExactInResult } from '../types'
+import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { BaseSwapping } from './baseSwapping'
 
 export class Swapping extends BaseSwapping {

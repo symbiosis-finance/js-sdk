@@ -2,10 +2,10 @@ import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import type { TransactionRequest } from '@ethersproject/providers'
 import JSBI from 'jsbi'
 
-import { ChainId } from '../../constants'
-import type { Token } from '../../entities'
-import { Percent, Profiler, TokenAmount, wrappedToken } from '../../entities'
-import type { DetailedSlippage, TronTransactionData } from '../chainUtils'
+import { ChainId } from '../../../constants'
+import type { Token } from '../../../entities'
+import { Percent, Profiler, TokenAmount, wrappedToken } from '../../../entities'
+import type { DetailedSlippage, TronTransactionData } from '../../chainUtils'
 import {
     buildMetaSynthesize,
     getExternalId,
@@ -19,23 +19,23 @@ import {
     prepareTronTransaction,
     splitSlippage,
     tronAddressToEvm,
-} from '../chainUtils'
-import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
-import type { Synthesis } from '../contracts'
-import { Portal__factory, Synthesis__factory } from '../contracts'
-import type { DepositoryContext, DepositParams } from '../depository'
-import { amountsToPrices } from '../depository'
-import { SdkError } from '../sdkError'
-import type { Symbiosis } from '../symbiosis'
-import { withTracing } from '../tracing'
-import { computeCrosschainLabels } from '../labels'
-import { AggregatorTrade, WrapTrade } from '../trade'
-import { DepositoryTrade } from '../trade/depositoryTrade'
-import type { OneInchProtocols } from '../trade/oneInchTrade'
-import type { SymbiosisTrade } from '../trade/symbiosisTrade'
-import { TradeProvider } from '../trade/symbiosisTrade'
-import { Transit } from '../transit'
-import { TRON_METAROUTER_ABI } from '../tronAbis'
+} from '../../chainUtils'
+import { BIPS_BASE, CROSS_CHAIN_ID } from '../../constants'
+import type { Synthesis } from '../../contracts'
+import { Portal__factory, Synthesis__factory } from '../../contracts'
+import type { DepositoryContext, DepositParams } from '../../depository'
+import { amountsToPrices } from '../../depository'
+import { SdkError } from '../../sdkError'
+import type { Symbiosis } from '../../symbiosis'
+import { withTracing } from '../../tracing'
+import { computeCrosschainLabels } from '../../labels'
+import { AggregatorTrade, WrapTrade } from '../../trade'
+import { DepositoryTrade } from '../../trade/depositoryTrade'
+import type { OneInchProtocols } from '../../trade/oneInchTrade'
+import type { SymbiosisTrade } from '../../trade/symbiosisTrade'
+import { TradeProvider } from '../../trade/symbiosisTrade'
+import { Transit } from '../../transit'
+import { TRON_METAROUTER_ABI } from '../../tronAbis'
 import type {
     Address,
     EvmAddress,
@@ -47,8 +47,8 @@ import type {
     SwapExactInTransactionPayload,
     TonTransactionData,
     TradeAContext,
-} from '../types'
-import { isUseOneInchOnly } from '../utils'
+} from '../../types'
+import { isUseOneInchOnly } from '../../utils'
 
 type MetaRouteParams = {
     amount: string

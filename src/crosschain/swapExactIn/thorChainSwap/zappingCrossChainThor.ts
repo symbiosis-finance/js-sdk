@@ -6,7 +6,7 @@ import { ThorRouter__factory } from '../../contracts'
 import { ThorChainError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
-import { BaseSwapping } from '../../swapping'
+import { BaseSwapping } from '../swapping'
 
 import type { ThorQuoteSwapResponse } from './utils'
 import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'

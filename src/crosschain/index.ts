@@ -1,5 +1,5 @@
 export * from './cache'
-export { ChangellyClient } from './swapExactIn/swapChangelly/changellyClient'
+export { ChangellyClient } from './swapExactIn/changellySwap/changellyClient'
 export * from './chainUtils'
 export * from './coingecko'
 export * from './config'
@@ -19,7 +19,7 @@ export {
     FEE_COLLECTOR_ADDRESSES,
     THOR_TOKENS_IN,
 } from './swapExactIn'
-export * from './swapping'
+export * from './swapExactIn/swapping'
 export * from './symbiosis'
 export * from './tracing'
 export {
@@ -39,4 +39,4 @@ export { TRON_PORTAL_ABI, TRON_TRC20_ABI } from './tronAbis'
 export * from './types'
 export * from './utils'
 export * from './waitForComplete'
-export * from './zapping'
+export * from './swapExactIn/zapping'

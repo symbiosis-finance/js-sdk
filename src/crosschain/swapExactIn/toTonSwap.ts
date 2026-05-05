@@ -1,4 +1,4 @@
-import { SwappingToTon } from '../swapping'
+import { SwappingToTon } from './swapping'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { theBest } from './utils'
 

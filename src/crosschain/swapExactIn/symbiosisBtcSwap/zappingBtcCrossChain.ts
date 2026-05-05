@@ -2,19 +2,19 @@ import ecc from '@bitcoinerlab/secp256k1'
 import { initEccLib } from 'bitcoinjs-lib'
 import type { BytesLike } from 'ethers'
 
-import { ChainId } from '../../constants'
-import type { Token } from '../../entities'
-import { GAS_TOKEN, TokenAmount } from '../../entities'
-import { isEvmChainId } from '../chainUtils'
-import { getPkScript, getThreshold, getToBtcFee } from '../chainUtils/btc'
-import type { MulticallRouter, Synthesis } from '../contracts'
-import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
-import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
-import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../sdkError'
-import type { OneInchProtocols } from '../trade/oneInchTrade'
-import { TradeProvider } from '../trade'
-import type { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../types'
-import { BaseSwapping } from './baseSwapping'
+import { ChainId } from '../../../constants'
+import type { Token } from '../../../entities'
+import { GAS_TOKEN, TokenAmount } from '../../../entities'
+import { isEvmChainId } from '../../chainUtils'
+import { getPkScript, getThreshold, getToBtcFee } from '../../chainUtils/btc'
+import type { MulticallRouter, Synthesis } from '../../contracts'
+import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
+import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
+import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../../sdkError'
+import type { OneInchProtocols } from '../../trade/oneInchTrade'
+import { TradeProvider } from '../../trade'
+import type { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../../types'
+import { BaseSwapping } from '../swapping/baseSwapping'
 
 initEccLib(ecc)
 
@@ -33,7 +33,7 @@ interface ZappingBtcExactInParams {
     disabledProviders?: TradeProvider[]
 }
 
-export class ZappingBtc extends BaseSwapping {
+export class ZappingBtcCrossChain extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
     protected bitcoinAddress!: Buffer
 

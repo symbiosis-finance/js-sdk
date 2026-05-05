@@ -1,12 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Address } from '@ton/core'
 
-import type { Token, TokenAmount } from '../../entities'
-import { CROSS_CHAIN_ID } from '../constants'
+import type { Token, TokenAmount } from '../../../entities'
+import { CROSS_CHAIN_ID } from '../../constants'
 import { BaseSwapping } from './baseSwapping'
 
-import { tonAdvisorMock } from '../chainUtils'
-import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { tonAdvisorMock } from '../../chainUtils'
+import type { SwapExactInParams, SwapExactInResult } from '../../types'
 
 export class SwappingToTon extends BaseSwapping {
     protected userAddress!: string

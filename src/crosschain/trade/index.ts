@@ -4,18 +4,18 @@ export {
     isChangellyNativeChainId,
     isChangellySupportedChainId,
     isChangellyTradeChainId,
-} from '../swapExactIn/swapChangelly/constants'
+} from '../swapExactIn/changellySwap/constants'
 export {
     buildChangellyTradeTx,
     createChangellyDeposit,
     getChangellyEstimate,
-} from '../swapExactIn/swapChangelly/changellyTrade'
+} from '../swapExactIn/changellySwap/changellyTrade'
 export type {
     BuildChangellyTradeTxParams,
     BuildChangellyTradeTxResult,
     ChangellyEstimateResult,
     CreateChangellyDepositParams,
-} from '../swapExactIn/swapChangelly/changellyTrade'
+} from '../swapExactIn/changellySwap/changellyTrade'
 export { DedustTrade } from './dedustTrade'
 export { KyberSwapTrade } from './kyberSwapTrade'
 export { IzumiTrade } from './izumiTrade'

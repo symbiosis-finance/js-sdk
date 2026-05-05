@@ -1,8 +1,8 @@
 import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
-import { changellyNativeSwap, isChangellyNativeSupported } from './swapChangelly'
-import { crosschainSwap } from './crosschainSwap'
+import { changellyNativeSwap, isChangellyNativeSupported } from './changellySwap'
+import { crossChainSwap } from './crossChainSwap'
 import { intentSwap, isIntentSwapSupported } from './intentSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
@@ -16,7 +16,7 @@ import { isWrapSupported, wrap } from './wrap'
 
 export * from './fromBtcSwap'
 
-// Universal stateless function that allows swap tokens on the same chain or crosschain
+// Universal stateless function that allows swap tokens on the same chain or cross-chain
 export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut } = params
 
@@ -62,7 +62,7 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return intentSwap(params)
     }
 
-    // flow FROM
+    // FROM flow
     if (isFromBtcSwapSupported(params)) {
         return fromBtcSwap(params)
     }
@@ -71,7 +71,7 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return fromSolanaSwap(params)
     }
 
-    // flow TO
+    // TO flow
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
     }
@@ -84,5 +84,5 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         return toTonSwap(params)
     }
 
-    return crosschainSwap(params)
+    return crossChainSwap(params)
 }

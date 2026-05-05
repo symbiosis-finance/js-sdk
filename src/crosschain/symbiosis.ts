@@ -67,19 +67,18 @@ import {
     SdkError,
 } from './sdkError'
 import { swapExactIn } from './swapExactIn'
-import { SwappingMiddleware } from './swapping'
-import { ChangellyClient } from './swapExactIn/swapChangelly/changellyClient'
+import { ChangellyClient } from './swapExactIn/changellySwap/changellyClient'
 import type {
+    ApiConfig,
     BtcConfig,
-    ChangellyConfig,
     ChainConfig,
+    ChangellyConfig,
     Config,
     CounterParams,
     EvmAddress,
     FeeConfig,
     MetricParams,
     OmniPoolConfig,
-    ApiConfig,
     OverrideConfig,
     PriceImpactMetricParams,
     SwapExactInParams,
@@ -96,7 +95,7 @@ import {
     waitFromTonTxMined,
 } from './waitForComplete'
 import type { WaitForCompleteParams } from './waitForComplete/waitForComplete'
-import { Zapping } from './zapping'
+import { Zapping } from './swapExactIn/zapping'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
 
@@ -443,10 +442,6 @@ export class Symbiosis {
 
     public swapExactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         return swapExactIn({ symbiosis: this, ...params })
-    }
-
-    public newSwapping(omniPoolConfig: OmniPoolConfig) {
-        return new SwappingMiddleware(this, omniPoolConfig)
     }
 
     public newRevertPending(request: PendingRequest) {

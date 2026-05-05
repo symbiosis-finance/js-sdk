@@ -1,7 +1,7 @@
 import { isSolanaChainId } from '../chainUtils'
 import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
-import { fromSolanaChainFlipSwap } from './swapChainFlip'
+import { fromSolanaChainFlipSwap } from './chainFlipSwap'
 import { theBest } from './utils'
 
 export function isFromSolanaSwapSupported(context: SwapExactInParams): boolean {

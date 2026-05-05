@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { SwapExactInParams } from '../../../../src'
 import { ChainId, GAS_TOKEN, Symbiosis, Token, TokenAmount } from '../../../../src'
-import { isChangellyNativeSupported } from '../../../../src/crosschain/swapExactIn/swapChangelly/changellySwap'
+import { isChangellyNativeSupported } from '../../../../src/crosschain/swapExactIn/changellySwap/changellySwap'
 import {
     buildChangellyKeyRaw,
     CHANGELLY_BLOCKCHAIN_TO_CHAIN_ID,
@@ -11,11 +11,11 @@ import {
     isChangellyNativeChainId,
     isChangellySupportedChainId,
     isChangellyTradeChainId,
-} from '../../../../src/crosschain/swapExactIn/swapChangelly/constants'
+} from '../../../../src/crosschain/swapExactIn/changellySwap/constants'
 import {
     buildChangellyKey,
     resolveChangellyTicker,
-} from '../../../../src/crosschain/swapExactIn/swapChangelly/changellyUtils'
+} from '../../../../src/crosschain/swapExactIn/changellySwap/changellyUtils'
 import { mockCurrenciesFull, mockFixRate, mockFixTx } from './changellyMocks'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
