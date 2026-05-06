@@ -14,144 +14,147 @@ import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import { TradeProvider } from '../../trade'
+import { withSpan } from '../../tracing'
 import type { MultiCallItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { ZERO_FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
 import { theBest } from '../utils'
 
-export async function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
+export function zappingBtcOnChain(params: SwapExactInParams, syBtc: Token): Promise<SwapExactInResult> {
+    return withSpan('zappingBtcOnChain', {}, async () => {
+        const { symbiosis, tokenAmountIn, tokenOut, to, from, partnerAddress } = params
 
-    const bitcoinAddress = getPkScript(to, tokenOut.chainId)
+        const bitcoinAddress = getPkScript(to, tokenOut.chainId)
 
-    const chainId = tokenAmountIn.token.chainId
+        const chainId = tokenAmountIn.token.chainId
 
-    const feeCollectorAddress = ZERO_FEE_COLLECTOR_ADDRESSES[chainId]
-    if (!feeCollectorAddress) {
-        throw new SdkError(`Fee collector not found for chain ${chainId}`)
-    }
-    const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
-    if (!multicallRouterAddress) {
-        throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
-    }
-
-    const provider = symbiosis.getProvider(chainId)
-    const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
-    const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
-
-    const [fee, approveTo] = await symbiosis.cache.get(
-        ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
-        () => {
-            return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
-        },
-        60 * 60 // 1 hour
-    )
-
-    let inTokenAmount = tokenAmountIn
-    if (inTokenAmount.token.isNative) {
-        const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
-        if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
-            throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
+        const feeCollectorAddress = ZERO_FEE_COLLECTOR_ADDRESSES[chainId]
+        if (!feeCollectorAddress) {
+            throw new SdkError(`Fee collector not found for chain ${chainId}`)
+        }
+        const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
+        if (!multicallRouterAddress) {
+            throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
         }
 
-        inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
-    }
+        const provider = symbiosis.getProvider(chainId)
+        const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
+        const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const calls: MultiCallItem[] = []
-    let value = fee.toString()
-    let amountIn = tokenAmountIn
-    let amountInMin = tokenAmountIn
-    let priceImpact = new Percent('0', BIPS_BASE)
-    if (!tokenAmountIn.token.equals(syBtc)) {
-        const swapCall = await getSwapCall({
-            ...params,
-            tokenOut: syBtc,
-            from: multicallRouterAddress,
-            to: multicallRouterAddress,
-        })
-        calls.push(swapCall)
-        amountIn = swapCall.amountOut
-        amountInMin = swapCall.amountOutMin
-        priceImpact = swapCall.priceImpact
+        const [fee, approveTo] = await symbiosis.cache.get(
+            ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
+            () => {
+                return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
+            },
+            60 * 60 // 1 hour
+        )
 
-        if (swapCall.amountIn.token.isNative) {
-            /**
-             * To maintain consistency with any potential fees charged by the aggregator,
-             * we calculate the total value by adding the fee to the value obtained from the aggregator.
-             */
-            value = BigNumber.from(swapCall.value).add(fee).toString()
+        let inTokenAmount = tokenAmountIn
+        if (inTokenAmount.token.isNative) {
+            const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
+            if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
+                throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
+            }
+
+            inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
         }
-    }
 
-    const partnerFeeCall = await getPartnerFeeCall({
-        symbiosis,
-        amountIn,
-        amountInMin,
-        partnerAddress,
-    })
-    if (partnerFeeCall) {
-        calls.push(partnerFeeCall)
-        amountIn = partnerFeeCall.amountOut
-        amountInMin = partnerFeeCall.amountOutMin
-    }
-    const volumeFeeCollector = symbiosis.getVolumeFeeCollector(amountIn.token.chainId, [ChainId.BTC_MAINNET])
-    if (volumeFeeCollector) {
-        const volumeFeeCall = getVolumeFeeCall({
-            feeCollector: volumeFeeCollector,
+        const calls: MultiCallItem[] = []
+        let value = fee.toString()
+        let amountIn = tokenAmountIn
+        let amountInMin = tokenAmountIn
+        let priceImpact = new Percent('0', BIPS_BASE)
+        if (!tokenAmountIn.token.equals(syBtc)) {
+            const swapCall = await getSwapCall({
+                ...params,
+                tokenOut: syBtc,
+                from: multicallRouterAddress,
+                to: multicallRouterAddress,
+            })
+            calls.push(swapCall)
+            amountIn = swapCall.amountOut
+            amountInMin = swapCall.amountOutMin
+            priceImpact = swapCall.priceImpact
+
+            if (swapCall.amountIn.token.isNative) {
+                /**
+                 * To maintain consistency with any potential fees charged by the aggregator,
+                 * we calculate the total value by adding the fee to the value obtained from the aggregator.
+                 */
+                value = BigNumber.from(swapCall.value).add(fee).toString()
+            }
+        }
+
+        const partnerFeeCall = await getPartnerFeeCall({
+            symbiosis,
             amountIn,
             amountInMin,
+            partnerAddress,
         })
-        calls.push(volumeFeeCall)
-        amountIn = volumeFeeCall.amountOut
-        amountInMin = volumeFeeCall.amountOutMin
-    }
+        if (partnerFeeCall) {
+            calls.push(partnerFeeCall)
+            amountIn = partnerFeeCall.amountOut
+            amountInMin = partnerFeeCall.amountOutMin
+        }
+        const volumeFeeCollector = symbiosis.getVolumeFeeCollector(amountIn.token.chainId, [ChainId.BTC_MAINNET])
+        if (volumeFeeCollector) {
+            const volumeFeeCall = getVolumeFeeCall({
+                feeCollector: volumeFeeCollector,
+                amountIn,
+                amountInMin,
+            })
+            calls.push(volumeFeeCall)
+            amountIn = volumeFeeCall.amountOut
+            amountInMin = volumeFeeCall.amountOutMin
+        }
 
-    const burnCall = await getBurnCall({
-        symbiosis,
-        amountIn,
-        amountInMin,
-        tokenOut,
-        bitcoinAddress,
+        const burnCall = await getBurnCall({
+            symbiosis,
+            amountIn,
+            amountInMin,
+            tokenOut,
+            bitcoinAddress,
+        })
+        calls.push(burnCall)
+
+        await symbiosis.checkDustLimit(burnCall.amountOutMin)
+
+        const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
+            inTokenAmount.raw.toString(),
+            [...calls.map((i) => i.data)],
+            [...calls.map((i) => i.to)],
+            [...calls.map((i) => (i.amountIn.token.isNative ? AddressZero : i.amountIn.token.address))],
+            [...calls.map((i) => i.offset)],
+            [...calls.map((i) => i.amountIn.token.isNative)],
+            from,
+        ])
+
+        const data = feeCollector.interface.encodeFunctionData('onswap', [
+            inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
+            inTokenAmount.raw.toString(),
+            multicallRouter.address,
+            multicallRouter.address, // inTokenAmount.token.isNative ? AddressZero : result.approveTo,
+            multicallCalldata,
+        ])
+
+        return {
+            operationType: 'crosschain-swap',
+            tokenAmountOut: burnCall.amountOut,
+            tokenAmountOutMin: burnCall.amountOutMin,
+            priceImpact,
+            approveTo,
+            labels: [],
+            routes: calls.map((i) => i.routes).flat(),
+            fees: calls.map((i) => i.fees).flat(),
+            transactionType: 'evm',
+            transactionRequest: {
+                chainId,
+                to: feeCollectorAddress,
+                data,
+                value,
+            },
+        }
     })
-    calls.push(burnCall)
-
-    await symbiosis.checkDustLimit(burnCall.amountOutMin)
-
-    const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
-        inTokenAmount.raw.toString(),
-        [...calls.map((i) => i.data)],
-        [...calls.map((i) => i.to)],
-        [...calls.map((i) => (i.amountIn.token.isNative ? AddressZero : i.amountIn.token.address))],
-        [...calls.map((i) => i.offset)],
-        [...calls.map((i) => i.amountIn.token.isNative)],
-        from,
-    ])
-
-    const data = feeCollector.interface.encodeFunctionData('onswap', [
-        inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
-        inTokenAmount.raw.toString(),
-        multicallRouter.address,
-        multicallRouter.address, // inTokenAmount.token.isNative ? AddressZero : result.approveTo,
-        multicallCalldata,
-    ])
-
-    return {
-        operationType: 'crosschain-swap',
-        tokenAmountOut: burnCall.amountOut,
-        tokenAmountOutMin: burnCall.amountOutMin,
-        priceImpact,
-        approveTo,
-        labels: [],
-        routes: calls.map((i) => i.routes).flat(),
-        fees: calls.map((i) => i.fees).flat(),
-        transactionType: 'evm',
-        transactionRequest: {
-            chainId,
-            to: feeCollectorAddress,
-            data,
-            value,
-        },
-    }
 }
 
 async function getSwapCall(params: SwapExactInParams): Promise<MultiCallItem> {

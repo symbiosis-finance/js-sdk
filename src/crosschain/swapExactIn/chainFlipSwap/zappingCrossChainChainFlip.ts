@@ -8,6 +8,7 @@ import { ChainFlipError } from '../../sdkError'
 import { BaseSwapping } from '../swapping'
 import type { OneInchProtocols } from '../../trade/oneInchTrade'
 import { TradeProvider } from '../../trade'
+import { withTracing } from '../../tracing'
 import type { Address, EvmAddress, OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../../types'
 import type { ChainFlipConfig } from './types'
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
@@ -90,6 +91,7 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         }
     }
 
+    @withTracing()
     public async exactIn({
         tokenAmountIn,
         config,

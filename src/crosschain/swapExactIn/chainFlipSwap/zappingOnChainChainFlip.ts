@@ -10,6 +10,7 @@ import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory } from '../../contracts'
 import { AmountLessThanFeeError, ChainFlipError, SdkError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
+import { withSpan } from '../../tracing'
 import type { FeeItem, MulticallV2Item, RouteItem, SwapExactInParams, SwapExactInResult } from '../../types'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
@@ -19,143 +20,145 @@ import type { Symbiosis } from '../../symbiosis'
 import type { ChainFlipConfig } from './types'
 import { ChainFlipBrokerAccount, ChainFlipBrokerFeeBps, checkMinAmount, getChainFlipFee } from './utils'
 
-export async function ZappingOnChainChainFlip(
+export function ZappingOnChainChainFlip(
     params: SwapExactInParams,
     config: ChainFlipConfig
 ): Promise<SwapExactInResult> {
-    const { symbiosis, to, from, tokenAmountIn } = params
+    return withSpan('ZappingOnChainChainFlip', {}, async () => {
+        const { symbiosis, to, from, tokenAmountIn } = params
 
-    const chainId = params.tokenAmountIn.token.chainId
+        const chainId = params.tokenAmountIn.token.chainId
 
-    let evmTo = from
-    if (!isEvmChainId(chainId)) {
-        evmTo = params.fallbackReceiver ?? symbiosis.config.fallbackReceiver
-    }
-
-    const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
-    if (!feeCollectorAddress) {
-        throw new SdkError(`Fee collector not found for chain ${chainId}`)
-    }
-    const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
-    if (!multicallRouterAddress) {
-        throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
-    }
-
-    const provider = symbiosis.getProvider(chainId)
-    const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
-    const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
-
-    const [fee, approveAddress] = await symbiosis.cache.get(
-        ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
-        () => {
-            return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
-        },
-        60 * 60 // 1 hour
-    )
-
-    let inTokenAmount = params.tokenAmountIn
-    if (inTokenAmount.token.isNative) {
-        const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
-        if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
-            throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
+        let evmTo = from
+        if (!isEvmChainId(chainId)) {
+            evmTo = params.fallbackReceiver ?? symbiosis.config.fallbackReceiver
         }
 
-        inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
-    }
+        const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
+        if (!feeCollectorAddress) {
+            throw new SdkError(`Fee collector not found for chain ${chainId}`)
+        }
+        const multicallRouterAddress = MULTICALL_ROUTER_V2[chainId]
+        if (!multicallRouterAddress) {
+            throw new SdkError(`MulticallRouterV2 not found for chain ${chainId}`)
+        }
 
-    const multicallItems: MulticallV2Item[] = []
-    let value = fee.toString()
-    let depositAmount = tokenAmountIn
-    let depositAmountMin = tokenAmountIn
-    let priceImpact = new Percent('0', BIPS_BASE)
+        const provider = symbiosis.getProvider(chainId)
+        const multicallRouter = MulticallRouterV2__factory.connect(multicallRouterAddress, provider)
+        const feeCollector = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const fees: FeeItem[] = []
-    const routes: RouteItem[] = []
-    let swapCall: SwapCall | undefined = undefined
-    const swapCallRequired = !tokenAmountIn.token.equals(config.src.token)
-    if (swapCallRequired) {
-        swapCall = await getSwapCall({
-            ...params,
-            tokenOut: config.src.token,
-            from: multicallRouterAddress,
-            to: multicallRouterAddress,
+        const [fee, approveAddress] = await symbiosis.cache.get(
+            ['feeCollector.fee', 'feeCollector.onchainGateway', chainId.toString()],
+            () => {
+                return Promise.all([feeCollector.callStatic.fee(), feeCollector.callStatic.onchainGateway()])
+            },
+            60 * 60 // 1 hour
+        )
+
+        let inTokenAmount = params.tokenAmountIn
+        if (inTokenAmount.token.isNative) {
+            const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
+            if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
+                throw new AmountLessThanFeeError(`Min amount: ${feeTokenAmount.toSignificant()}`)
+            }
+
+            inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
+        }
+
+        const multicallItems: MulticallV2Item[] = []
+        let value = fee.toString()
+        let depositAmount = tokenAmountIn
+        let depositAmountMin = tokenAmountIn
+        let priceImpact = new Percent('0', BIPS_BASE)
+
+        const fees: FeeItem[] = []
+        const routes: RouteItem[] = []
+        let swapCall: SwapCall | undefined = undefined
+        const swapCallRequired = !tokenAmountIn.token.equals(config.src.token)
+        if (swapCallRequired) {
+            swapCall = await getSwapCall({
+                ...params,
+                tokenOut: config.src.token,
+                from: multicallRouterAddress,
+                to: multicallRouterAddress,
+            })
+
+            if (swapCall.amountIn.token.isNative) {
+                /**
+                 * To maintain consistency with any potential fees charged by the aggregator,
+                 * we calculate the total value by adding the fee to the value obtained from the aggregator.
+                 */
+                value = BigNumber.from(swapCall.value).add(fee).toString()
+            }
+            fees.push(...swapCall.fees)
+            routes.push(...swapCall.routes)
+            priceImpact = swapCall.priceImpact
+            depositAmount = swapCall.amountOut
+            depositAmountMin = swapCall.amountOutMin
+            multicallItems.push({
+                data: swapCall.data,
+                to: swapCall.to,
+                path: swapCall.amountIn.token.isNative ? AddressZero : swapCall.amountIn.token.address,
+                offset: swapCall.offset,
+                isNative: swapCall.amountIn.token.isNative,
+            })
+        }
+
+        const depositCall = await getDepositCall({
+            symbiosis,
+            amountIn: depositAmount,
+            amountInMin: depositAmountMin,
+            config,
+            receiverAddress: to,
+            refundAddress: evmTo,
         })
-
-        if (swapCall.amountIn.token.isNative) {
-            /**
-             * To maintain consistency with any potential fees charged by the aggregator,
-             * we calculate the total value by adding the fee to the value obtained from the aggregator.
-             */
-            value = BigNumber.from(swapCall.value).add(fee).toString()
-        }
-        fees.push(...swapCall.fees)
-        routes.push(...swapCall.routes)
-        priceImpact = swapCall.priceImpact
-        depositAmount = swapCall.amountOut
-        depositAmountMin = swapCall.amountOutMin
+        fees.push(...depositCall.fees)
+        routes.push(...depositCall.routes)
         multicallItems.push({
-            data: swapCall.data,
-            to: swapCall.to,
-            path: swapCall.amountIn.token.isNative ? AddressZero : swapCall.amountIn.token.address,
-            offset: swapCall.offset,
-            isNative: swapCall.amountIn.token.isNative,
+            data: depositCall.data,
+            to: depositCall.to,
+            path: depositCall.amountIn.token.address,
+            offset: depositCall.offset,
+            isNative: depositCall.amountIn.token.isNative,
         })
-    }
 
-    const depositCall = await getDepositCall({
-        symbiosis,
-        amountIn: depositAmount,
-        amountInMin: depositAmountMin,
-        config,
-        receiverAddress: to,
-        refundAddress: evmTo,
+        const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
+            inTokenAmount.raw.toString(),
+            multicallItems.map((i) => i.data),
+            multicallItems.map((i) => i.to),
+            multicallItems.map((i) => i.path),
+            multicallItems.map((i) => i.offset),
+            multicallItems.map((i) => i.isNative),
+            evmTo,
+        ])
+
+        const data = feeCollector.interface.encodeFunctionData('onswap', [
+            inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
+            inTokenAmount.raw.toString(),
+            multicallRouter.address,
+            multicallRouter.address,
+            multicallCalldata,
+        ])
+
+        return {
+            tokenAmountOut: depositCall.amountOut,
+            tokenAmountOutMin: depositCall.amountOutMin,
+            priceImpact: priceImpact,
+            amountInUsd: depositAmount,
+            approveTo: approveAddress,
+            labels: ['partner-swap'],
+            routes,
+            fees,
+            operationType: 'crosschain-swap',
+            transactionType: 'evm',
+            transactionRequest: {
+                chainId,
+                to: feeCollectorAddress,
+                data,
+                value,
+            },
+        }
     })
-    fees.push(...depositCall.fees)
-    routes.push(...depositCall.routes)
-    multicallItems.push({
-        data: depositCall.data,
-        to: depositCall.to,
-        path: depositCall.amountIn.token.address,
-        offset: depositCall.offset,
-        isNative: depositCall.amountIn.token.isNative,
-    })
-
-    const multicallCalldata = multicallRouter.interface.encodeFunctionData('multicall', [
-        inTokenAmount.raw.toString(),
-        multicallItems.map((i) => i.data),
-        multicallItems.map((i) => i.to),
-        multicallItems.map((i) => i.path),
-        multicallItems.map((i) => i.offset),
-        multicallItems.map((i) => i.isNative),
-        evmTo,
-    ])
-
-    const data = feeCollector.interface.encodeFunctionData('onswap', [
-        inTokenAmount.token.isNative ? AddressZero : inTokenAmount.token.address,
-        inTokenAmount.raw.toString(),
-        multicallRouter.address,
-        multicallRouter.address,
-        multicallCalldata,
-    ])
-
-    return {
-        tokenAmountOut: depositCall.amountOut,
-        tokenAmountOutMin: depositCall.amountOutMin,
-        priceImpact: priceImpact,
-        amountInUsd: depositAmount,
-        approveTo: approveAddress,
-        labels: ['partner-swap'],
-        routes,
-        fees,
-        operationType: 'crosschain-swap',
-        transactionType: 'evm',
-        transactionRequest: {
-            chainId,
-            to: feeCollectorAddress,
-            data,
-            value,
-        },
-    }
 }
 
 type Call = {

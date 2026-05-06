@@ -1,4 +1,5 @@
 import { OctoPoolTrade, TradeProvider } from '../trade'
+import { withSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isOctoPoolSwapSupported(context: SwapExactInParams): boolean {
@@ -17,52 +18,49 @@ export function isOctoPoolSwapSupported(context: SwapExactInParams): boolean {
     return tokenInPool.id === tokenOutPool.id
 }
 
-export async function octoPoolSwap({
-    symbiosis,
-    tokenAmountIn,
-    tokenOut,
-    to,
-    slippage,
-    deadline,
-}: SwapExactInParams): Promise<SwapExactInResult> {
-    const tokenInPool = symbiosis.getOmniPoolByToken(tokenAmountIn.token)
-    const tokenOutPool = symbiosis.getOmniPoolByToken(tokenOut)
-    if (!tokenInPool || !tokenOutPool) {
-        throw new Error('Incorrect tokens for octoPoolSwap')
-    }
+export function octoPoolSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('octoPoolSwap', {}, async () => {
+        const { symbiosis, tokenAmountIn, tokenOut, to, slippage, deadline } = params
 
-    const trade = new OctoPoolTrade({
-        symbiosis,
-        tokenAmountIn,
-        tokenAmountInMin: tokenAmountIn,
-        tokenOut,
-        poolConfig: tokenInPool,
-        to,
-        slippage,
-        deadline,
-    })
+        const tokenInPool = symbiosis.getOmniPoolByToken(tokenAmountIn.token)
+        const tokenOutPool = symbiosis.getOmniPoolByToken(tokenOut)
+        if (!tokenInPool || !tokenOutPool) {
+            throw new Error('Incorrect tokens for octoPoolSwap')
+        }
 
-    await trade.init()
+        const trade = new OctoPoolTrade({
+            symbiosis,
+            tokenAmountIn,
+            tokenAmountInMin: tokenAmountIn,
+            tokenOut,
+            poolConfig: tokenInPool,
+            to,
+            slippage,
+            deadline,
+        })
 
-    return {
-        operationType: 'onchain-swap',
-        tokenAmountOut: trade.amountOut,
-        tokenAmountOutMin: trade.amountOutMin,
-        approveTo: trade.routerAddress,
-        priceImpact: trade.priceImpact,
-        transactionType: 'evm',
-        transactionRequest: {
-            to: trade.routerAddress,
-            data: trade.callData,
-            value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
-        },
-        fees: [],
-        labels: ['octopool-swap'],
-        routes: [
-            {
-                provider: TradeProvider.OCTOPOOL,
-                tokens: [tokenAmountIn.token, tokenOut],
+        await trade.init()
+
+        return {
+            operationType: 'onchain-swap',
+            tokenAmountOut: trade.amountOut,
+            tokenAmountOutMin: trade.amountOutMin,
+            approveTo: trade.routerAddress,
+            priceImpact: trade.priceImpact,
+            transactionType: 'evm',
+            transactionRequest: {
+                to: trade.routerAddress,
+                data: trade.callData,
+                value: tokenAmountIn.token.isNative ? tokenAmountIn.raw.toString() : undefined,
             },
-        ],
-    }
+            fees: [],
+            labels: ['octopool-swap'],
+            routes: [
+                {
+                    provider: TradeProvider.OCTOPOOL,
+                    tokens: [tokenAmountIn.token, tokenOut],
+                },
+            ],
+        }
+    })
 }

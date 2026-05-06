@@ -6,11 +6,13 @@ import { CROSS_CHAIN_ID } from '../../constants'
 import { BaseSwapping } from './baseSwapping'
 
 import { tonAdvisorMock } from '../../chainUtils'
+import { withTracing } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 
 export class SwappingToTon extends BaseSwapping {
     protected userAddress!: string
 
+    @withTracing()
     public async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         this.userAddress = params.to
 

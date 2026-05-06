@@ -13,6 +13,7 @@ import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, AmountTooLowError, SdkError } from '../../sdkError'
 import type { OneInchProtocols } from '../../trade/oneInchTrade'
 import { TradeProvider } from '../../trade'
+import { withTracing } from '../../tracing'
 import type { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../../types'
 import { BaseSwapping } from '../swapping/baseSwapping'
 
@@ -73,6 +74,7 @@ export class ZappingBtcCrossChain extends BaseSwapping {
         }
     }
 
+    @withTracing()
     public async exactIn({
         tokenAmountIn,
         syBtc,

@@ -5,6 +5,7 @@ import type { MulticallRouter } from '../../contracts'
 import { ThorRouter__factory } from '../../contracts'
 import { ThorChainError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
+import { withTracing } from '../../tracing'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
 import { BaseSwapping } from '../swapping'
 
@@ -33,6 +34,7 @@ export class ZappingThor extends BaseSwapping {
         })
     }
 
+    @withTracing()
     public async exactIn(
         context: SwapExactInParams,
         thorTokenIn: Token,

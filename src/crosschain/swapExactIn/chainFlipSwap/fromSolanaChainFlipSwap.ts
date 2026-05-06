@@ -13,6 +13,7 @@ import { BIPS_BASE } from '../../constants'
 import { getTokenPriceUsd } from '../../coingecko/getTokenPriceUsd'
 import { ChainFlipError } from '../../sdkError'
 import { JupiterTrade, TradeProvider } from '../../trade'
+import { withSyncSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import type { ChainFlipConfig } from './types'
 import {
@@ -85,28 +86,30 @@ const CONFIGS: ChainFlipConfig[] = [
 export const CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT = CONFIGS.map((c) => c.dst.token)
 
 export function fromSolanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { tokenAmountIn, tokenOut } = context
+    return withSyncSpan('fromSolanaChainFlipSwap', {}, () => {
+        const { tokenAmountIn, tokenOut } = context
 
-    const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
-    if (!CF_CONFIGS.length) {
-        return []
-    }
-
-    const promises: Promise<SwapExactInResult>[] = []
-
-    const jupiterDisabled = context.disabledProviders?.includes(TradeProvider.JUPITER)
-
-    for (const config of CF_CONFIGS) {
-        if (tokenAmountIn.token.equals(config.src.token)) {
-            // Exact tokenIn match — direct vault swap
-            promises.push(directSolanaVaultSwap(context, config))
-        } else if (!jupiterDisabled) {
-            // Different Solana token — pre-swap via Jupiter then vault swap
-            promises.push(indirectSolanaVaultSwap(context, config))
+        const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
+        if (!CF_CONFIGS.length) {
+            return []
         }
-    }
 
-    return promises
+        const promises: Promise<SwapExactInResult>[] = []
+
+        const jupiterDisabled = context.disabledProviders?.includes(TradeProvider.JUPITER)
+
+        for (const config of CF_CONFIGS) {
+            if (tokenAmountIn.token.equals(config.src.token)) {
+                // Exact tokenIn match — direct vault swap
+                promises.push(directSolanaVaultSwap(context, config))
+            } else if (!jupiterDisabled) {
+                // Different Solana token — pre-swap via Jupiter then vault swap
+                promises.push(indirectSolanaVaultSwap(context, config))
+            }
+        }
+
+        return promises
+    })
 }
 
 // ─── Direct vault swap (tokenIn is already SOL or SOL_USDC) ─────────────────

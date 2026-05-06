@@ -1,5 +1,6 @@
 import { isTonChainId } from '../chainUtils'
 import { DedustTrade, TradeProvider } from '../trade'
+import { withSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 export function isDedustSwapSupported(context: SwapExactInParams): boolean {
@@ -8,46 +9,48 @@ export function isDedustSwapSupported(context: SwapExactInParams): boolean {
     return isTonChainId(tokenAmountIn.token.chainId) && isTonChainId(tokenOut.chainId)
 }
 
-export async function dedustSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, symbiosis } = params
-    const trade = new DedustTrade({
-        ...params,
-        tokenAmountInMin: tokenAmountIn,
-    })
-
-    await trade.init().catch((e) => {
-        symbiosis.trackAggregatorError({
-            provider: TradeProvider.DEDUST,
-            reason: e.message,
-            chain_id: String(tokenOut.chain?.id),
+export function dedustSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('dedustSwap', {}, async () => {
+        const { tokenAmountIn, tokenOut, symbiosis } = params
+        const trade = new DedustTrade({
+            ...params,
+            tokenAmountInMin: tokenAmountIn,
         })
-        throw e
-    })
 
-    return {
-        operationType: 'onchain-swap',
-        tokenAmountOut: trade.amountOut,
-        tokenAmountOutMin: trade.amountOutMin,
-        priceImpact: trade.priceImpact,
-        transactionType: 'ton',
-        approveTo: '0x0000000000000000000000000000000000000000',
-        transactionRequest: {
-            validUntil: trade.deadline,
-            messages: [
+        await trade.init().catch((e) => {
+            symbiosis.trackAggregatorError({
+                provider: TradeProvider.DEDUST,
+                reason: e.message,
+                chain_id: String(tokenOut.chain?.id),
+            })
+            throw e
+        })
+
+        return {
+            operationType: 'onchain-swap',
+            tokenAmountOut: trade.amountOut,
+            tokenAmountOutMin: trade.amountOutMin,
+            priceImpact: trade.priceImpact,
+            transactionType: 'ton',
+            approveTo: '0x0000000000000000000000000000000000000000',
+            transactionRequest: {
+                validUntil: trade.deadline,
+                messages: [
+                    {
+                        address: trade.routerAddress,
+                        amount: trade.value?.toString() ?? '0',
+                        payload: trade.callData,
+                    },
+                ],
+            },
+            fees: trade.fees ?? [],
+            labels: [],
+            routes: [
                 {
-                    address: trade.routerAddress,
-                    amount: trade.value?.toString() ?? '0',
-                    payload: trade.callData,
+                    provider: TradeProvider.DEDUST,
+                    tokens: [tokenAmountIn.token, tokenOut],
                 },
             ],
-        },
-        fees: trade.fees ?? [],
-        labels: [],
-        routes: [
-            {
-                provider: TradeProvider.DEDUST,
-                tokens: [tokenAmountIn.token, tokenOut],
-            },
-        ],
-    }
+        }
+    })
 }

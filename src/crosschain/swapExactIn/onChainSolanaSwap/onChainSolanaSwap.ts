@@ -1,5 +1,6 @@
 import { addSolanaFee, isSolanaChainId } from '../../chainUtils'
 import { JupiterTrade, RaydiumTrade, TradeProvider } from '../../trade'
+import { withSyncSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 
 export function isOnChainSolanaSwapSupported(context: SwapExactInParams): boolean {
@@ -17,73 +18,75 @@ export function onChainSolanaSwap({
     slippage,
     disabledProviders,
 }: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const tradeInstances: (RaydiumTrade | JupiterTrade)[] = []
+    return withSyncSpan('onChainSolanaSwap', {}, () => {
+        const tradeInstances: (RaydiumTrade | JupiterTrade)[] = []
 
-    if (RaydiumTrade.isAllowed(disabledProviders)) {
-        tradeInstances.push(
-            new RaydiumTrade({
-                symbiosis,
-                tokenAmountIn,
-                tokenAmountInMin: tokenAmountIn,
-                tokenOut,
-                from,
-                to,
-                slippage,
+        if (RaydiumTrade.isAllowed(disabledProviders)) {
+            tradeInstances.push(
+                new RaydiumTrade({
+                    symbiosis,
+                    tokenAmountIn,
+                    tokenAmountInMin: tokenAmountIn,
+                    tokenOut,
+                    from,
+                    to,
+                    slippage,
+                })
+            )
+        }
+
+        if (JupiterTrade.isAllowed(disabledProviders)) {
+            tradeInstances.push(
+                new JupiterTrade({
+                    symbiosis,
+                    tokenAmountIn,
+                    tokenAmountInMin: tokenAmountIn,
+                    tokenOut,
+                    to,
+                    slippage,
+                })
+            )
+        }
+
+        return tradeInstances.map(async (instance) => {
+            const trade = await instance.init().catch((e) => {
+                symbiosis.trackAggregatorError({
+                    provider: instance.tradeType,
+                    reason: e.message,
+                    chain_id: String(tokenOut.chain?.id),
+                })
+                throw e
             })
-        )
-    }
 
-    if (JupiterTrade.isAllowed(disabledProviders)) {
-        tradeInstances.push(
-            new JupiterTrade({
-                symbiosis,
-                tokenAmountIn,
-                tokenAmountInMin: tokenAmountIn,
-                tokenOut,
-                to,
-                slippage,
-            })
-        )
-    }
+            const { instructions, fee } = await addSolanaFee(from, trade.instructions)
 
-    return tradeInstances.map(async (instance) => {
-        const trade = await instance.init().catch((e) => {
-            symbiosis.trackAggregatorError({
-                provider: instance.tradeType,
-                reason: e.message,
-                chain_id: String(tokenOut.chain?.id),
-            })
-            throw e
-        })
-
-        const { instructions, fee } = await addSolanaFee(from, trade.instructions)
-
-        return {
-            operationType: 'onchain-swap',
-            tokenAmountOut: trade.amountOut,
-            tokenAmountOutMin: trade.amountOutMin,
-            priceImpact: trade.priceImpact,
-            transactionType: 'solana',
-            approveTo: '0x0000000000000000000000000000000000000000',
-            transactionRequest: {
-                instructions,
-            },
-            fees: fee
-                ? [
-                      {
-                          provider: TradeProvider.SYMBIOSIS,
-                          value: fee,
-                          description: 'Symbiosis on-chain fee',
-                      },
-                  ]
-                : [],
-            labels: [],
-            routes: [
-                {
-                    provider: trade.tradeType,
-                    tokens: [tokenAmountIn.token, tokenOut],
+            return {
+                operationType: 'onchain-swap',
+                tokenAmountOut: trade.amountOut,
+                tokenAmountOutMin: trade.amountOutMin,
+                priceImpact: trade.priceImpact,
+                transactionType: 'solana',
+                approveTo: '0x0000000000000000000000000000000000000000',
+                transactionRequest: {
+                    instructions,
                 },
-            ],
-        } as SwapExactInResult
+                fees: fee
+                    ? [
+                          {
+                              provider: TradeProvider.SYMBIOSIS,
+                              value: fee,
+                              description: 'Symbiosis on-chain fee',
+                          },
+                      ]
+                    : [],
+                labels: [],
+                routes: [
+                    {
+                        provider: trade.tradeType,
+                        tokens: [tokenAmountIn.token, tokenOut],
+                    },
+                ],
+            } as SwapExactInResult
+        })
     })
 }

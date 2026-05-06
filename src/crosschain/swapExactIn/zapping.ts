@@ -23,6 +23,7 @@ import { OmniLiquidity } from '../omniLiquidity'
 import { AmountLessThanFeeError, NoRepresentationFoundError, SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { AggregatorTrade, TradeProvider, WrapTrade } from '../trade'
+import { withTracing } from '../tracing'
 import { TRON_METAROUTER_ABI } from '../tronAbis'
 import type {
     Address,
@@ -70,6 +71,7 @@ export class Zapping {
         this.multicallRouter = this.symbiosis.multicallRouter(omniPoolConfig.chainId)
     }
 
+    @withTracing()
     public async exactIn({
         tokenAmountIn,
         from,
