@@ -19,7 +19,7 @@ import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { flatten, withSpan, withSyncSpan, withTracing } from '../tracing'
+import { flatten, withPromisesSpan, withSpan, withTracing } from '../tracing'
 import { AggregatorTrade, TradeProvider } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { SymbiosisTrade, SymbiosisTradeParams } from '../trade/symbiosisTrade'
@@ -55,7 +55,7 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('fromBtcSwap', {}, () => {
+    return withPromisesSpan('fromBtcSwap', {}, () => {
         const { tokenAmountIn, tokenOut, symbiosis } = context
 
         if (!isBtcChainId(tokenAmountIn.token.chainId)) {

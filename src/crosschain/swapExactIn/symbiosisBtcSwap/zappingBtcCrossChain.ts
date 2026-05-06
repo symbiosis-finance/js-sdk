@@ -74,7 +74,35 @@ export class ZappingBtcCrossChain extends BaseSwapping {
         }
     }
 
-    @withTracing()
+    @withTracing({
+        onCall: function ({
+            tokenAmountIn,
+            syBtc,
+            from,
+            to,
+            slippage,
+            deadline,
+            transitTokenIn,
+            transitTokenOut,
+            partnerAddress,
+            fallbackReceiver,
+            disabledProviders,
+        }) {
+            return {
+                tokenAmountIn: tokenAmountIn.toString(),
+                syBtc: syBtc.toString(),
+                from,
+                to,
+                slippage,
+                deadline,
+                transitTokenIn: transitTokenIn.toString(),
+                transitTokenOut: transitTokenOut.toString(),
+                partnerAddress,
+                fallbackReceiver,
+                disabledProviders: disabledProviders?.map(String),
+            }
+        },
+    })
     public async exactIn({
         tokenAmountIn,
         syBtc,

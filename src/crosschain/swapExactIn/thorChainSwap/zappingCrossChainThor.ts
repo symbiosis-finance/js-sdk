@@ -34,7 +34,22 @@ export class ZappingThor extends BaseSwapping {
         })
     }
 
-    @withTracing()
+    @withTracing({
+        onCall: function (context, thorTokenIn, thorTokenOut) {
+            return {
+                tokenAmountIn: context.tokenAmountIn.toString(),
+                tokenOut: context.tokenOut.toString(),
+                from: context.from,
+                to: context.to,
+                slippage: context.slippage,
+                deadline: context.deadline,
+                thorTokenIn: thorTokenIn.toString(),
+                thorTokenOut,
+                partnerAddress: context.partnerAddress,
+                fallbackReceiver: context.fallbackReceiver,
+            }
+        },
+    })
     public async exactIn(
         context: SwapExactInParams,
         thorTokenIn: Token,

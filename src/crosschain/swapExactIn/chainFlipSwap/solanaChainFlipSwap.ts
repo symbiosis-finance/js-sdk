@@ -1,4 +1,4 @@
-import { withSyncSpan } from '../../tracing'
+import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import type { ChainFlipConfig } from './types'
 import { CF_ARB_USDC, CF_ETH_USDC, CF_SOL_SOL, CF_SOL_USDC } from './utils'
@@ -27,7 +27,7 @@ const CONFIGS: ChainFlipConfig[] = [
 export const CHAIN_FLIP_TO_SOLANA_TOKENS_IN = CONFIGS.map((i) => i.src.token)
 
 export function solanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('solanaChainFlipSwap', {}, () => {
+    return withPromisesSpan('solanaChainFlipSwap', {}, () => {
         const { tokenAmountIn, from, to, symbiosis, slippage, deadline, tokenOut } = context
 
         const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
@@ -37,11 +37,8 @@ export function solanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExa
 
         const promises: Promise<SwapExactInResult>[] = []
 
-        if (CF_CONFIGS.some((config) => config.src.token.chainId === tokenAmountIn.token.chainId)) {
-            const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
-
-            promises.push(...onChainPromises)
-        }
+        const onChainConfigs = CF_CONFIGS.filter((config) => config.src.token.chainId === tokenAmountIn.token.chainId)
+        promises.push(...onChainConfigs.map((config) => ZappingOnChainChainFlip(context, config)))
 
         if (promises.length === 0) {
             const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {

@@ -1,11 +1,11 @@
-import { withSyncSpan } from '../../tracing'
+import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { THOR_TOKENS_IN } from './utils'
 import { ZappingThor } from './zappingCrossChainThor'
 import { zappingOnChainThor } from './zappingOnChainThor'
 
 export function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('thorChainSwap', {}, () => {
+    return withPromisesSpan('thorChainSwap', {}, () => {
         const { tokenAmountIn, symbiosis } = context
         const thorTokenOut = 'BTC.BTC'
 

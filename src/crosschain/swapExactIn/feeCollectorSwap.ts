@@ -9,7 +9,7 @@ import { FeeCollector__factory } from '../contracts'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import { TradeProvider } from '../trade'
 import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
-import { withSyncSpan } from '../tracing'
+import { withPromisesSpan } from '../tracing'
 import { onchainSwap } from './onchainSwap'
 import { preparePayload } from './preparePayload'
 
@@ -81,7 +81,7 @@ export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean 
 }
 
 export function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('feeCollectorSwap', {}, () => {
+    return withPromisesSpan('feeCollectorSwap', {}, () => {
         const { symbiosis } = params
 
         const chainId = params.tokenAmountIn.token.chainId

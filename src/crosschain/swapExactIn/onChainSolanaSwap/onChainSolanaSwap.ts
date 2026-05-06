@@ -1,6 +1,6 @@
 import { addSolanaFee, isSolanaChainId } from '../../chainUtils'
 import { JupiterTrade, RaydiumTrade, TradeProvider } from '../../trade'
-import { withSyncSpan } from '../../tracing'
+import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 
 export function isOnChainSolanaSwapSupported(context: SwapExactInParams): boolean {
@@ -18,7 +18,7 @@ export function onChainSolanaSwap({
     slippage,
     disabledProviders,
 }: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('onChainSolanaSwap', {}, () => {
+    return withPromisesSpan('onChainSolanaSwap', {}, () => {
         const tradeInstances: (RaydiumTrade | JupiterTrade)[] = []
 
         if (RaydiumTrade.isAllowed(disabledProviders)) {

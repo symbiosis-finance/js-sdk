@@ -1,7 +1,7 @@
 import type { Token } from '../../entities'
 import { wrappedToken } from '../../entities'
 import type { Symbiosis } from '../symbiosis'
-import { withSyncSpan } from '../tracing'
+import { withPromisesSpan } from '../tracing'
 import type { OmniPoolConfig, SwapExactInParams, SwapExactInResult } from '../types'
 import { Swapping } from './swapping'
 
@@ -14,7 +14,7 @@ export interface Route {
 
 // Swapping wrapper what select the best pool for swapping
 export function crossChainSwap(params: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('crossChainSwap', {}, () => {
+    return withPromisesSpan('crossChainSwap', {}, () => {
         const { symbiosis, tokenAmountIn, tokenOut, disableSrcChainRouting, disableDstChainRouting } = params
 
         const routes = getRoutes({

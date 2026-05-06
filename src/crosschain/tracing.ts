@@ -47,6 +47,30 @@ export function withSyncSpan<R>(
     })
 }
 
+export function withPromisesSpan<R>(
+    name: string,
+    attributes: Attributes,
+    fn: (span: Span) => Promise<R>[]
+): Promise<R>[] {
+    const tracer = trace.getTracer('symbiosis-sdk')
+    return tracer.startActiveSpan(name, { attributes }, (span: Span) => {
+        try {
+            const promises = fn(span)
+            Promise.allSettled(promises).then((results) => {
+                const hasSuccess = results.some((r) => r.status === 'fulfilled')
+                span.setStatus({ code: hasSuccess ? SpanStatusCode.OK : SpanStatusCode.ERROR })
+                span.end()
+            })
+            return promises
+        } catch (err) {
+            span.setStatus({ code: SpanStatusCode.ERROR })
+            if (err instanceof Error) span.recordException(err)
+            span.end()
+            throw err
+        }
+    })
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function wrapToSpan<F extends (...args: any) => any>(
     spanName: string,

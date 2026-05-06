@@ -1,4 +1,4 @@
-import { withSyncSpan } from '../../tracing'
+import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import type { ChainFlipConfig } from './types'
 import { CF_ARB_USDC, CF_BTC_BTC, CF_ETH_USDC } from './utils'
@@ -19,7 +19,7 @@ const CONFIGS: ChainFlipConfig[] = [
 export const CHAIN_FLIP_TO_BTC_TOKENS_IN = CONFIGS.map((i) => i.src.token)
 
 export function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('btcChainFlipSwap', {}, () => {
+    return withPromisesSpan('btcChainFlipSwap', {}, () => {
         const { tokenAmountIn, from, to, symbiosis, slippage, deadline, tokenOut } = context
 
         const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))
@@ -29,10 +29,8 @@ export function btcChainFlipSwap(context: SwapExactInParams): Promise<SwapExactI
 
         const promises: Promise<SwapExactInResult>[] = []
 
-        if (CF_CONFIGS.some((config) => config.src.token.chainId === tokenAmountIn.token.chainId)) {
-            const onChainPromises = CF_CONFIGS.map((config) => ZappingOnChainChainFlip(context, config))
-            promises.push(...onChainPromises)
-        }
+        const onChainConfigs = CF_CONFIGS.filter((config) => config.src.token.chainId === tokenAmountIn.token.chainId)
+        promises.push(...onChainConfigs.map((config) => ZappingOnChainChainFlip(context, config)))
 
         if (promises.length === 0) {
             const usdPoolConfig = symbiosis.config.omniPools.find((pool) => {

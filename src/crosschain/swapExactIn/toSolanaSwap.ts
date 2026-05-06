@@ -1,6 +1,6 @@
 import { isSolanaChainId } from '../chainUtils'
 import { TradeProvider } from '../trade'
-import { withSyncSpan } from '../tracing'
+import { withPromisesSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { solanaChainFlipSwap } from './chainFlipSwap'
 
@@ -9,7 +9,7 @@ export function isToSolanaSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export function toSolanaSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('toSolanaSwap', {}, () => {
+    return withPromisesSpan('toSolanaSwap', {}, () => {
         const { disabledProviders } = context
 
         const promises: Promise<SwapExactInResult>[] = []

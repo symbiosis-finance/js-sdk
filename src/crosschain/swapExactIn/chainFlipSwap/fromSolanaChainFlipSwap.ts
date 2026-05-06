@@ -13,7 +13,7 @@ import { BIPS_BASE } from '../../constants'
 import { getTokenPriceUsd } from '../../coingecko/getTokenPriceUsd'
 import { ChainFlipError } from '../../sdkError'
 import { JupiterTrade, TradeProvider } from '../../trade'
-import { withSyncSpan } from '../../tracing'
+import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import type { ChainFlipConfig } from './types'
 import {
@@ -86,7 +86,7 @@ const CONFIGS: ChainFlipConfig[] = [
 export const CHAIN_FLIP_FROM_SOLANA_TOKENS_OUT = CONFIGS.map((c) => c.dst.token)
 
 export function fromSolanaChainFlipSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('fromSolanaChainFlipSwap', {}, () => {
+    return withPromisesSpan('fromSolanaChainFlipSwap', {}, () => {
         const { tokenAmountIn, tokenOut } = context
 
         const CF_CONFIGS = CONFIGS.filter((config) => config.dst.token.equals(tokenOut))

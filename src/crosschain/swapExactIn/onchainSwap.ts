@@ -1,5 +1,5 @@
 import { DedustTrade, StonfiTrade } from '../trade'
-import { withSyncSpan } from '../tracing'
+import { withPromisesSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { aggregatorsSwap } from './aggregatorsSwap'
 import { dedustSwap, isDedustSwapSupported } from './dedustSwap'
@@ -14,7 +14,7 @@ export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
 }
 
 export function onchainSwap(params: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return withSyncSpan('onchainSwap', {}, () => {
+    return withPromisesSpan('onchainSwap', {}, () => {
         const { disabledProviders } = params
 
         const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
