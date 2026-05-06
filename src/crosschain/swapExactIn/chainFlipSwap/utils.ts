@@ -3,7 +3,7 @@ import type { Quote, SwapSDK } from '@chainflip/sdk/swap'
 import { ChainId } from '../../../constants'
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import type { Cache } from '../../cache'
-import { ChainFlipError } from '../../sdkError'
+import { AmountTooHighError, AmountTooLowError } from '../../sdkError'
 import type { ChainFlipToken } from './types'
 import { ChainFlipAssetId, ChainFlipChainId } from './types'
 import { SOL_USDC } from '../../chainUtils'
@@ -136,12 +136,12 @@ export async function checkMinAmount(cache: Cache, chainFlipSdk: SwapSDK, amount
     }
 
     if (minThreshold && amountIn.lessThan(minThreshold)) {
-        throw new ChainFlipError(
+        throw new AmountTooLowError(
             `Amount should be greater than ${minThreshold.toSignificant()} ${minThreshold.token.symbol}`
         )
     }
     if (maxThreshold && amountIn.greaterThan(maxThreshold)) {
-        throw new ChainFlipError(
+        throw new AmountTooHighError(
             `Amount should be less than ${maxThreshold.toSignificant()} ${maxThreshold.token.symbol}`
         )
     }

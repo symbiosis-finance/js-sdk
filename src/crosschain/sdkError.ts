@@ -46,23 +46,28 @@ export class SdkError extends Error {
     }
 }
 
+// input
+export class InputError extends SdkError {}
+
+export class LimitError extends InputError {}
+export class AmountTooLowError extends LimitError {}
+export class AmountTooHighError extends LimitError {}
+export class AmountLessThanFeeError extends LimitError {}
+
+export class SlippageError extends InputError {}
+export class SlippageTooLowError extends SlippageError {}
+export class SlippageTooHighError extends SlippageError {}
+
+export class PriceImpactTooHighError extends InputError {}
+
+export class UnsupportedPairError extends InputError {}
+export class InvalidAddressError extends InputError {}
+
 // routing
 export class RoutingError extends SdkError {}
-
-export class NoRouteError extends SdkError {}
-
+export class NoRouteError extends RoutingError {}
 export class NoTransitTokenError extends RoutingError {}
-
 export class NoRepresentationFoundError extends RoutingError {}
-
-// limits
-export class LimitError extends SdkError {}
-
-export class AmountTooLowError extends LimitError {}
-
-export class AmountTooHighError extends LimitError {}
-
-export class AmountLessThanFeeError extends LimitError {}
 
 // advisor
 export class AdvisorError extends SdkError {}

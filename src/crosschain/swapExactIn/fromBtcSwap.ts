@@ -17,7 +17,7 @@ import type { DepositoryContext, DepositParams, Prices } from '../depository'
 import { amountsToPrices, covertHumanPriceToWad } from '../depository'
 import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
-import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import { AmountLessThanFeeError, InvalidAddressError, SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { flatten, withPromisesSpan, withSpan, withTracing } from '../tracing'
 import { AggregatorTrade, TradeProvider } from '../trade'
@@ -129,11 +129,11 @@ class FromBtcTrader {
         }
 
         if (!isAddress(to)) {
-            throw new SdkError(`Incorrect destination address was provided`)
+            throw new InvalidAddressError(`Incorrect destination address was provided`)
         }
 
         if (refundAddress && !validateBitcoinAddress(refundAddress)) {
-            throw new SdkError(`Incorrect refund address was provided`)
+            throw new InvalidAddressError(`Incorrect refund address was provided`)
         }
 
         const btcAmountRaw = tokenAmountIn.raw.toString()

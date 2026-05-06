@@ -3,7 +3,7 @@ import { TokenAmount } from '../../../entities'
 import { isEvmChainId } from '../../chainUtils'
 import type { MulticallRouter } from '../../contracts'
 import { ThorRouter__factory } from '../../contracts'
-import { ThorChainError } from '../../sdkError'
+import { SlippageTooLowError, ThorChainError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
 import { withTracing } from '../../tracing'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
@@ -64,7 +64,7 @@ export class ZappingThor extends BaseSwapping {
 
         const minSlippage = 20 // 0.2%
         if (slippage < minSlippage) {
-            throw new ThorChainError('Slippage cannot be less than 0.2% for cross-chain ThorChain swap')
+            throw new SlippageTooLowError('Slippage cannot be less than 0.2% for cross-chain ThorChain swap')
         }
         const minCrossChainSlippage = 10 // 0.1%
         const crossChainSlippage = Math.max(Math.floor(slippage / 2), minCrossChainSlippage)

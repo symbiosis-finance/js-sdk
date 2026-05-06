@@ -4,7 +4,7 @@ import { Percent, TokenAmount } from '../../../entities'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { isTronChainId } from '../../chainUtils'
 import TronWeb from 'tronweb'
-import { ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
+import { AmountLessThanFeeError, ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
 import type { Address, ChangellyTransactionData, SwapExactInParams, SwapExactInResult } from '../../types'
 import { getChangellyTransitToken, isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
@@ -186,7 +186,7 @@ async function changellyZappingEstimateOnly(params: SwapExactInParams): Promise<
     if (inTokenAmount.token.isNative) {
         const feeTokenAmount = new TokenAmount(inTokenAmount.token, fee.toString())
         if (inTokenAmount.lessThan(feeTokenAmount) || inTokenAmount.equalTo(feeTokenAmount)) {
-            throw new ChangellyError(`Amount too low to cover fee: min ${feeTokenAmount.toSignificant()}`)
+            throw new AmountLessThanFeeError(`Amount too low to cover fee: min ${feeTokenAmount.toSignificant()}`)
         }
         inTokenAmount = inTokenAmount.subtract(feeTokenAmount)
     }

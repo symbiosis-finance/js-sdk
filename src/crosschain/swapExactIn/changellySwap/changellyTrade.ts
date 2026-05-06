@@ -5,8 +5,8 @@ import {
     createTransferCheckedInstruction,
     createTransferInstruction,
     getAssociatedTokenAddressSync,
-    TOKEN_PROGRAM_ID,
     TOKEN_2022_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
 import { PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js'
 import { Address, beginCell } from '@ton/core'
@@ -15,8 +15,14 @@ import TronWeb from 'tronweb'
 
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
 import { isEvmChainId, isTonChainId, isTronChainId } from '../../chainUtils'
-import { isSolanaChainId, getSolanaConnection } from '../../chainUtils/solana'
-import { AmountTooHighError, AmountTooLowError, ChangellyError } from '../../sdkError'
+import { getSolanaConnection, isSolanaChainId } from '../../chainUtils/solana'
+import {
+    AmountTooHighError,
+    AmountTooLowError,
+    ChangellyError,
+    InvalidAddressError,
+    UnsupportedPairError,
+} from '../../sdkError'
 import type { Symbiosis } from '../../symbiosis'
 import type { ChangellyTransactionData, FeeItem, TonTransactionData } from '../../types'
 import { TradeProvider } from '../../trade/symbiosisTrade'
@@ -63,7 +69,7 @@ export async function getChangellyEstimate(
             throwPairLimitError(pairParams, amountFrom, tokenSymbol)
         }
 
-        throw new ChangellyError('This pair is not available')
+        throw new UnsupportedPairError('This pair is not available')
     }
 
     const tokenInResolved = resolveInputToken(tokenAmountIn.token, currencyFrom)
@@ -112,10 +118,10 @@ export async function createChangellyDeposit(
         symbiosis.changelly.validateAddress(currencyFrom, refundAddress),
     ])
     if (!isPayoutValid) {
-        throw new ChangellyError(`Invalid payout address "${address}" for ${currencyTo}`)
+        throw new InvalidAddressError(`Invalid payout address "${address}" for ${currencyTo}`)
     }
     if (!isRefundValid) {
-        throw new ChangellyError(`Invalid refund address "${refundAddress}" for ${currencyFrom}`)
+        throw new InvalidAddressError(`Invalid refund address "${refundAddress}" for ${currencyFrom}`)
     }
 
     const txResult = await symbiosis.changelly.createFixTransaction({

@@ -6,7 +6,7 @@ import type { TokenAmount } from '../../../entities'
 import { GAS_TOKEN, Token } from '../../../entities'
 import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import type { Cache } from '../../cache'
-import { ThorChainError } from '../../sdkError'
+import { InvalidAddressError, ThorChainError } from '../../sdkError'
 import type { Address, EvmAddress, TronAddress } from '../../types'
 import TronWeb from 'tronweb'
 import type { BaseQuoteResponse, QuoteFees, QuoteSwapResponse } from '../../api/thorchain'
@@ -146,11 +146,11 @@ export async function getThorQuote(params: {
 export function validateBitcoinAddress(address: string): void {
     const isAddressValid = validate(address)
     if (!isAddressValid) {
-        throw new ThorChainError('Bitcoin address is not valid')
+        throw new InvalidAddressError('Bitcoin address is not valid')
     }
     const addressInfo = getAddressInfo(address)
     if (addressInfo.type === AddressType.p2tr) {
-        throw new ThorChainError(`ThorChain doesn't support taproot addresses`)
+        throw new InvalidAddressError(`Taproot addresses are not supported`)
     }
 }
 

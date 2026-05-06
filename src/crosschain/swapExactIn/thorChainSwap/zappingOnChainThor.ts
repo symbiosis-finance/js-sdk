@@ -8,7 +8,7 @@ import { getFunctionSelector, tronAddressToEvm } from '../../chainUtils/tron'
 import { isEvmChainId } from '../../chainUtils'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
 import { FeeCollector__factory, MulticallRouterV2__factory, ThorRouter__factory } from '../../contracts'
-import { AmountLessThanFeeError, SdkError, ThorChainError } from '../../sdkError'
+import { AmountLessThanFeeError, SdkError, SlippageTooLowError, ThorChainError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
 import { withSpan } from '../../tracing'
 import type {
@@ -86,7 +86,7 @@ export function zappingOnChainThor(
         const swapCallRequired = !tokenAmountIn.token.equals(thorTokenIn)
         const minSlippage = 20 // 0.2%
         if (swapCallRequired && params.slippage < minSlippage) {
-            throw new ThorChainError('Slippage cannot be less than 0.2% for on-chain ThorChain swap with pre-swap')
+            throw new SlippageTooLowError('Slippage cannot be less than 0.2% for on-chain ThorChain swap with pre-swap')
         }
         const minOnChainSlippage = 10 // 0.1%
         const onChainSlippage = swapCallRequired ? Math.max(Math.floor(params.slippage * 0.4), minOnChainSlippage) : 0

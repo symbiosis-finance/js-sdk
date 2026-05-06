@@ -1,4 +1,5 @@
 import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
+import { UnsupportedPairError } from '../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
 import { changellyNativeSwap, isChangellyNativeSupported } from './changellySwap'
@@ -21,7 +22,7 @@ export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResul
     const { tokenAmountIn, tokenOut } = params
 
     if (tokenAmountIn.token.equals(tokenOut)) {
-        throw new Error('Cannot swap same tokens')
+        throw new UnsupportedPairError('Cannot swap same tokens')
     }
 
     if (isTronChainId(tokenAmountIn.token.chainId)) {

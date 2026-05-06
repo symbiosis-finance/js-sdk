@@ -9,7 +9,7 @@ import { ONE } from '../../constants'
 import type { Token, Trade } from '../../entities'
 import { Fraction, Percent, TokenAmount, wrappedToken } from '../../entities'
 import { BASES_TO_CHECK_TRADES_AGAINST, BIPS_BASE, CUSTOM_BASES } from '../constants'
-import { SdkError } from '../sdkError'
+import { SdkError, SlippageTooLowError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
 import { isChangellyNativeChainId } from '../swapExactIn/changellySwap/constants'
@@ -288,7 +288,7 @@ export interface DetailedSlippage {
 export function splitSlippage(totalSlippage: number, hasTradeA: boolean, hasTradeC: boolean): DetailedSlippage {
     const minSlippage = 10 // 0.1%
     if (totalSlippage < minSlippage) {
-        throw new SdkError(`Slippage cannot be less than ${(minSlippage / 100).toString()}%`)
+        throw new SlippageTooLowError(`Slippage cannot be less than ${(minSlippage / 100).toString()}%`)
     }
 
     let extraSwapsCount = 0

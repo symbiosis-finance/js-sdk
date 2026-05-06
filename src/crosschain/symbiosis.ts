@@ -666,13 +666,13 @@ export class Symbiosis {
     public transitToken(chainId: ChainId, omniPoolConfig: OmniPoolConfig): Token {
         const pool = this.configCache.getOmniPoolByConfig(omniPoolConfig)
         if (!pool) {
-            throw new SdkError(`Cannot find omniPool ${pool}`)
+            throw new NoTransitTokenError(`Cannot find omniPool ${pool}`)
         }
         const tokens = this.configCache.tokens().filter((token) => {
             return token.chainId === chainId && !token.deprecated && !token.isSynthetic
         })
         if (tokens.length === 0) {
-            throw new SdkError(`Cannot find token for chain ${chainId}`)
+            throw new NoTransitTokenError(`Cannot find token for chain ${chainId}`)
         }
 
         // if the token is from the manager chain (token's chainIs equals to pool chainId)
