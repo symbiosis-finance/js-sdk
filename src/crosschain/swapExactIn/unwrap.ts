@@ -25,48 +25,46 @@ export function isUnwrapSupported(params: SwapExactInParams): boolean {
 }
 
 export function unwrap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    return withSpan('unwrap', {}, () => unwrapInternal(params))
-}
+    return withSpan('unwrap', {}, async () => {
+        const { tokenAmountIn, tokenOut, from } = params
+        const wethInterface = Weth__factory.createInterface()
 
-async function unwrapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut, from } = params
-    const wethInterface = Weth__factory.createInterface()
+        const amountOut = new TokenAmount(tokenOut, tokenAmountIn.raw)
 
-    const amountOut = new TokenAmount(tokenOut, tokenAmountIn.raw)
+        const callData = wethInterface.encodeFunctionData('withdraw', [tokenAmountIn.raw.toString()])
 
-    const callData = wethInterface.encodeFunctionData('withdraw', [tokenAmountIn.raw.toString()])
+        const functionSelector = getFunctionSelector(wethInterface.getFunction('withdraw'))
 
-    const functionSelector = getFunctionSelector(wethInterface.getFunction('withdraw'))
+        const payload = preparePayload({
+            functionSelector,
+            chainId: tokenAmountIn.token.chainId,
+            from,
+            to: tokenAmountIn.token.address,
+            callData,
+        })
 
-    const payload = preparePayload({
-        functionSelector,
-        chainId: tokenAmountIn.token.chainId,
-        from,
-        to: tokenAmountIn.token.address,
-        callData,
+        let approveTo = AddressZero
+        if (payload.transactionType === 'tron') {
+            approveTo = payload.transactionRequest.contract_address
+        } else if (payload.transactionType === 'evm') {
+            approveTo = payload.transactionRequest.to as string
+        }
+
+        return {
+            ...payload,
+            operationType: 'unwrap',
+            tokenAmountOut: amountOut,
+            tokenAmountOutMin: amountOut,
+            priceImpact: new Percent('0', BIPS_BASE),
+            approveTo,
+            fees: [],
+            labels: [],
+            routes: [
+                {
+                    provider: TradeProvider.WRAP,
+                    tokens: [params.tokenAmountIn.token, params.tokenOut],
+                },
+            ],
+        }
     })
-
-    let approveTo = AddressZero
-    if (payload.transactionType === 'tron') {
-        approveTo = payload.transactionRequest.contract_address
-    } else if (payload.transactionType === 'evm') {
-        approveTo = payload.transactionRequest.to as string
-    }
-
-    return {
-        ...payload,
-        operationType: 'unwrap',
-        tokenAmountOut: amountOut,
-        tokenAmountOutMin: amountOut,
-        priceImpact: new Percent('0', BIPS_BASE),
-        approveTo,
-        fees: [],
-        labels: [],
-        routes: [
-            {
-                provider: TradeProvider.WRAP,
-                tokens: [params.tokenAmountIn.token, params.tokenOut],
-            },
-        ],
-    }
 }

@@ -1,4 +1,5 @@
 import { SwappingToTon } from './swapping'
+import { withSyncSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 
 function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInResult>[] {
@@ -25,5 +26,5 @@ function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInRe
 }
 
 export function toTonSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    return symbiosisBridgeToTon(context)
+    return withSyncSpan('toTonSwap', {}, () => symbiosisBridgeToTon(context))
 }

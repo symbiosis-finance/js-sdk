@@ -49,46 +49,44 @@ export function isBridgeSupported(context: SwapExactInParams): boolean {
 type Direction = 'mint' | 'burn'
 
 export function bridge(context: SwapExactInParams): Promise<SwapExactInResult> {
-    return withSpan('bridge', {}, () => bridgeInternal(context))
-}
+    return withSpan('bridge', {}, async () => {
+        const { tokenAmountIn, tokenOut } = context
 
-async function bridgeInternal(context: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn, tokenOut } = context
+        const direction = getDirection(context)
+        const revertableAddress = getRevertableAddress(context)
+        const fee = await getFee(context, direction)
+        const amountOut = getAmountOut(context, fee)
+        const payload = await getTransactionPayload(context, fee, revertableAddress, direction)
 
-    const direction = getDirection(context)
-    const revertableAddress = getRevertableAddress(context)
-    const fee = await getFee(context, direction)
-    const amountOut = getAmountOut(context, fee)
-    const payload = await getTransactionPayload(context, fee, revertableAddress, direction)
-
-    let approveTo = ''
-    if (payload.transactionType === 'tron') {
-        approveTo = payload.transactionRequest.contract_address
-    } else if (payload.transactionType === 'evm') {
-        approveTo = payload.transactionRequest.to as string
-    }
-    return {
-        ...payload,
-        operationType: 'bridge',
-        tokenAmountOut: amountOut,
-        tokenAmountOutMin: amountOut,
-        priceImpact: new Percent('0', BIPS_BASE),
-        approveTo,
-        fees: [
-            {
-                provider: TradeProvider.SYMBIOSIS,
-                description: 'Bridge fee',
-                value: fee,
-            },
-        ],
-        labels: [],
-        routes: [
-            {
-                provider: TradeProvider.SYMBIOSIS,
-                tokens: [tokenAmountIn.token, tokenOut],
-            },
-        ],
-    }
+        let approveTo = ''
+        if (payload.transactionType === 'tron') {
+            approveTo = payload.transactionRequest.contract_address
+        } else if (payload.transactionType === 'evm') {
+            approveTo = payload.transactionRequest.to as string
+        }
+        return {
+            ...payload,
+            operationType: 'bridge',
+            tokenAmountOut: amountOut,
+            tokenAmountOutMin: amountOut,
+            priceImpact: new Percent('0', BIPS_BASE),
+            approveTo,
+            fees: [
+                {
+                    provider: TradeProvider.SYMBIOSIS,
+                    description: 'Bridge fee',
+                    value: fee,
+                },
+            ],
+            labels: [],
+            routes: [
+                {
+                    provider: TradeProvider.SYMBIOSIS,
+                    tokens: [tokenAmountIn.token, tokenOut],
+                },
+            ],
+        }
+    })
 }
 
 function getDirection(context: SwapExactInParams): Direction {

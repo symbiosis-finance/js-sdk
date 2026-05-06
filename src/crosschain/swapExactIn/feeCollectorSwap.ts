@@ -9,6 +9,7 @@ import { FeeCollector__factory } from '../contracts'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import { TradeProvider } from '../trade'
 import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../types'
+import { withSyncSpan } from '../tracing'
 import { onchainSwap } from './onchainSwap'
 import { preparePayload } from './preparePayload'
 
@@ -80,28 +81,30 @@ export function isFeeCollectorSwapSupported(params: SwapExactInParams): boolean 
 }
 
 export function feeCollectorSwap(params: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { symbiosis } = params
+    return withSyncSpan('feeCollectorSwap', {}, () => {
+        const { symbiosis } = params
 
-    const chainId = params.tokenAmountIn.token.chainId
+        const chainId = params.tokenAmountIn.token.chainId
 
-    const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
-    if (!feeCollectorAddress) {
-        throw new SdkError(`Fee collector not found for chain ${chainId}`)
-    }
+        const feeCollectorAddress = FEE_COLLECTOR_ADDRESSES[chainId]
+        if (!feeCollectorAddress) {
+            throw new SdkError(`Fee collector not found for chain ${chainId}`)
+        }
 
-    const provider = symbiosis.getProvider(chainId)
-    const contract = FeeCollector__factory.connect(feeCollectorAddress, provider)
+        const provider = symbiosis.getProvider(chainId)
+        const contract = FeeCollector__factory.connect(feeCollectorAddress, provider)
 
-    const feeDataPromise = Promise.all([contract.callStatic.fee(), contract.callStatic.onchainGateway()])
+        const feeDataPromise = Promise.all([contract.callStatic.fee(), contract.callStatic.onchainGateway()])
 
-    const swapPromises = onchainSwap({
-        ...params,
-        from: feeCollectorAddress,
+        const swapPromises = onchainSwap({
+            ...params,
+            from: feeCollectorAddress,
+        })
+
+        return swapPromises.map((swapPromise) =>
+            wrapWithFeeCollector(swapPromise, feeDataPromise, params, chainId, feeCollectorAddress, contract)
+        )
     })
-
-    return swapPromises.map((swapPromise) =>
-        wrapWithFeeCollector(swapPromise, feeDataPromise, params, chainId, feeCollectorAddress, contract)
-    )
 }
 
 async function wrapWithFeeCollector(

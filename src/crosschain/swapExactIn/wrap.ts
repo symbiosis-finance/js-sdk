@@ -25,57 +25,55 @@ export function isWrapSupported(params: SwapExactInParams): boolean {
 }
 
 export function wrap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    return withSpan('wrap', {}, () => wrapInternal(params))
-}
+    return withSpan('wrap', {}, async () => {
+        const { tokenAmountIn } = params
 
-async function wrapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { tokenAmountIn } = params
+        const { chainId } = tokenAmountIn.token
 
-    const { chainId } = tokenAmountIn.token
+        const weth = WETH[chainId]
 
-    const weth = WETH[chainId]
+        if (!weth) {
+            throw new Error(`Wrap token not found for chain ${chainId}`)
+        }
 
-    if (!weth) {
-        throw new Error(`Wrap token not found for chain ${chainId}`)
-    }
+        const wethInterface = Weth__factory.createInterface()
 
-    const wethInterface = Weth__factory.createInterface()
+        const amountOut = new TokenAmount(weth, tokenAmountIn.raw)
 
-    const amountOut = new TokenAmount(weth, tokenAmountIn.raw)
+        const callData = wethInterface.encodeFunctionData('deposit')
 
-    const callData = wethInterface.encodeFunctionData('deposit')
+        const functionSelector = getFunctionSelector(wethInterface.getFunction('deposit'))
 
-    const functionSelector = getFunctionSelector(wethInterface.getFunction('deposit'))
+        const payload = preparePayload({
+            functionSelector,
+            chainId,
+            from: params.from,
+            to: weth.address,
+            value: tokenAmountIn.raw.toString(),
+            callData,
+        })
 
-    const payload = preparePayload({
-        functionSelector,
-        chainId,
-        from: params.from,
-        to: weth.address,
-        value: tokenAmountIn.raw.toString(),
-        callData,
+        let approveTo: string = AddressZero
+        if (payload.transactionType === 'tron') {
+            approveTo = payload.transactionRequest.contract_address
+        } else if (payload.transactionType === 'evm') {
+            approveTo = payload.transactionRequest.to as string
+        }
+        return {
+            ...payload,
+            operationType: 'wrap',
+            tokenAmountOut: amountOut,
+            tokenAmountOutMin: amountOut,
+            priceImpact: new Percent('0', BIPS_BASE),
+            approveTo,
+            fees: [],
+            labels: [],
+            routes: [
+                {
+                    provider: TradeProvider.WRAP,
+                    tokens: [tokenAmountIn.token, weth],
+                },
+            ],
+        }
     })
-
-    let approveTo: string = AddressZero
-    if (payload.transactionType === 'tron') {
-        approveTo = payload.transactionRequest.contract_address
-    } else if (payload.transactionType === 'evm') {
-        approveTo = payload.transactionRequest.to as string
-    }
-    return {
-        ...payload,
-        operationType: 'wrap',
-        tokenAmountOut: amountOut,
-        tokenAmountOutMin: amountOut,
-        priceImpact: new Percent('0', BIPS_BASE),
-        approveTo,
-        fees: [],
-        labels: [],
-        routes: [
-            {
-                provider: TradeProvider.WRAP,
-                tokens: [tokenAmountIn.token, weth],
-            },
-        ],
-    }
 }

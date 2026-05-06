@@ -39,44 +39,42 @@ export function isChangellyNativeSupported(params: SwapExactInParams): boolean {
 }
 
 export function changellyNativeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    return withSpan('changellyNativeSwap', {}, () => changellyNativeSwapInternal(params))
-}
+    return withSpan('changellyNativeSwap', {}, async () => {
+        const fromChainId = params.tokenAmountIn.token.chainId
+        const execute = !!params.generateDepositAddress
 
-async function changellyNativeSwapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const fromChainId = params.tokenAmountIn.token.chainId
-    const execute = !!params.generateDepositAddress
-
-    // Source is a Changelly-native chain (XMR, XRP, etc.) — user sends funds manually
-    if (isChangellyNativeChainId(fromChainId)) {
-        if (execute) {
-            return changellyDepositSwap(params)
+        // Source is a Changelly-native chain (XMR, XRP, etc.) — user sends funds manually
+        if (isChangellyNativeChainId(fromChainId)) {
+            if (execute) {
+                return changellyDepositSwap(params)
+            }
+            return changellyEstimateOnly(params, 'changelly-deposit')
         }
-        return changellyEstimateOnly(params, 'changelly-deposit')
-    }
 
-    // Source is a trade chain (EVM/Solana/TON/Tron) — SDK builds a transfer tx
-    if (isChangellyTradeChainId(fromChainId)) {
-        if (execute) {
+        // Source is a trade chain (EVM/Solana/TON/Tron) — SDK builds a transfer tx
+        if (isChangellyTradeChainId(fromChainId)) {
+            if (execute) {
+                try {
+                    return await changellyTradeSwap(params)
+                } catch (error) {
+                    if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
+                        return changellyZappingSwap(params)
+                    }
+                    throw error
+                }
+            }
             try {
-                return await changellyTradeSwap(params)
+                return await changellyEstimateOnly(params, 'changelly-trade')
             } catch (error) {
                 if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
-                    return changellyZappingSwap(params)
+                    return changellyZappingEstimateOnly(params)
                 }
                 throw error
             }
         }
-        try {
-            return await changellyEstimateOnly(params, 'changelly-trade')
-        } catch (error) {
-            if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
-                return changellyZappingEstimateOnly(params)
-            }
-            throw error
-        }
-    }
 
-    throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
+        throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
+    })
 }
 
 export async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {

@@ -1,4 +1,5 @@
 import { DedustTrade, StonfiTrade } from '../trade'
+import { withSyncSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { aggregatorsSwap } from './aggregatorsSwap'
 import { dedustSwap, isDedustSwapSupported } from './dedustSwap'
@@ -13,25 +14,27 @@ export function isOnchainSwapSupported(params: SwapExactInParams): boolean {
 }
 
 export function onchainSwap(params: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { disabledProviders } = params
+    return withSyncSpan('onchainSwap', {}, () => {
+        const { disabledProviders } = params
 
-    const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
+        const promises: Promise<SwapExactInResult>[] = [aggregatorsSwap(params)]
 
-    if (isOctoPoolSwapSupported(params)) {
-        promises.push(octoPoolSwap(params))
-    }
+        if (isOctoPoolSwapSupported(params)) {
+            promises.push(octoPoolSwap(params))
+        }
 
-    if (isOnChainSolanaSwapSupported(params)) {
-        promises.push(...onChainSolanaSwap(params))
-    }
+        if (isOnChainSolanaSwapSupported(params)) {
+            promises.push(...onChainSolanaSwap(params))
+        }
 
-    if (isStonfiSwapSupported(params) && StonfiTrade.isAllowed(disabledProviders)) {
-        promises.push(stonfiSwap(params))
-    }
+        if (isStonfiSwapSupported(params) && StonfiTrade.isAllowed(disabledProviders)) {
+            promises.push(stonfiSwap(params))
+        }
 
-    if (isDedustSwapSupported(params) && DedustTrade.isAllowed(disabledProviders)) {
-        promises.push(dedustSwap(params))
-    }
+        if (isDedustSwapSupported(params) && DedustTrade.isAllowed(disabledProviders)) {
+            promises.push(dedustSwap(params))
+        }
 
-    return promises
+        return promises
+    })
 }
