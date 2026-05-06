@@ -59,15 +59,15 @@ function mockChangellyClient() {
 // --- Chain detection ---
 
 describe('#isChangellyNativeChainId', () => {
-    // test('XRP is native', () => {
-    //     expect(isChangellyNativeChainId(ChainId.XRP_MAINNET)).toBe(true)
-    // })
+    test('XRP is native', () => {
+        expect(isChangellyNativeChainId(ChainId.XRP_MAINNET)).toBe(true)
+    })
     test('XMR is native', () => {
         expect(isChangellyNativeChainId(ChainId.XMR_MAINNET)).toBe(true)
     })
-    // test('LTC is native', () => {
-    //     expect(isChangellyNativeChainId(ChainId.LTC_MAINNET)).toBe(true)
-    // })
+    test('LTC is native', () => {
+        expect(isChangellyNativeChainId(ChainId.LTC_MAINNET)).toBe(true)
+    })
     test('ETH is not native', () => {
         expect(isChangellyNativeChainId(ChainId.ETH_MAINNET)).toBe(false)
     })
@@ -101,9 +101,9 @@ describe('#isChangellySupportedChainId', () => {
     test('ETH is supported', () => {
         expect(isChangellySupportedChainId(ChainId.ETH_MAINNET)).toBe(true)
     })
-    // test('XRP is supported', () => {
-    //     expect(isChangellySupportedChainId(ChainId.XRP_MAINNET)).toBe(true)
-    // })
+    test('XRP is supported', () => {
+        expect(isChangellySupportedChainId(ChainId.XRP_MAINNET)).toBe(true)
+    })
     test('BTC is not supported', () => {
         expect(isChangellySupportedChainId(ChainId.BTC_MAINNET)).toBe(false)
     })
@@ -112,13 +112,13 @@ describe('#isChangellySupportedChainId', () => {
 // --- Support detection ---
 
 describe('#isChangellyNativeSupported', () => {
-    // test('native source → supported', () => {
-    //     const params = makeParams({
-    //         tokenAmountIn: new TokenAmount(xrp, '1000000'),
-    //         tokenOut: eth,
-    //     })
-    //     expect(isChangellyNativeSupported(params)).toBe(true)
-    // })
+    test('native source → supported', () => {
+        const params = makeParams({
+            tokenAmountIn: new TokenAmount(xrp, '1000000'),
+            tokenOut: eth,
+        })
+        expect(isChangellyNativeSupported(params)).toBe(true)
+    })
     test('native destination → supported', () => {
         const params = makeParams({
             tokenAmountIn: new TokenAmount(eth, '1000000000000000000'),
@@ -133,14 +133,14 @@ describe('#isChangellyNativeSupported', () => {
         })
         expect(isChangellyNativeSupported(params)).toBe(false)
     })
-    // test('disabled via disabledProviders → not supported', () => {
-    //     const params = makeParams({
-    //         tokenAmountIn: new TokenAmount(xrp, '1000000'),
-    //         tokenOut: eth,
-    //         disabledProviders: [SymbiosisTradeType.CHANGELLY],
-    //     })
-    //     expect(isChangellyNativeSupported(params)).toBe(false)
-    // })
+    test('disabled via disabledProviders → not supported', () => {
+        const params = makeParams({
+            tokenAmountIn: new TokenAmount(xrp, '1000000'),
+            tokenOut: eth,
+            disabledProviders: [SymbiosisTradeType.CHANGELLY],
+        })
+        expect(isChangellyNativeSupported(params)).toBe(false)
+    })
 })
 
 // --- buildChangellyKey ---
@@ -191,18 +191,18 @@ describe('CHANGELLY_FAST_TICKER_MAP ↔ buildChangellyKey consistency', () => {
     })
 
     // Changelly-native chain gas tokens
-    // test('XRP native → map has matching key', () => {
-    //     const key = buildChangellyKey(xrp)
-    //     expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('xrp')
-    // })
+    test('XRP native → map has matching key', () => {
+        const key = buildChangellyKey(xrp)
+        expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('xrp')
+    })
     test('XMR native → map has matching key', () => {
         const key = buildChangellyKey(xmr)
         expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('xmr')
     })
-    // test('LTC native → map has matching key', () => {
-    //     const key = buildChangellyKey(ltc)
-    //     expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('ltc')
-    // })
+    test('LTC native → map has matching key', () => {
+        const key = buildChangellyKey(ltc)
+        expect(CHANGELLY_FAST_TICKER_MAP.get(key)).toBe('ltc')
+    })
 
     // EVM ERC-20 transit tokens (checksummed input → lowercased key)
     test('ETH USDC (checksummed) → map has matching key', () => {
@@ -482,12 +482,12 @@ describe('resolveChangellyTicker: fast path vs full path', () => {
         expect(resolved).toBe(fastTicker)
     })
 
-    // test('XRP native: resolveChangellyTicker returns fast path ticker', async () => {
-    //     const resolved = await resolveChangellyTicker(symbiosis, xrp)
-    //     const fastTicker = CHANGELLY_FAST_TICKER_MAP.get(buildChangellyKey(xrp))
-    //     expect(resolved).toBe('xrp')
-    //     expect(resolved).toBe(fastTicker)
-    // })
+    test('XRP native: resolveChangellyTicker returns fast path ticker', async () => {
+        const resolved = await resolveChangellyTicker(symbiosis, xrp)
+        const fastTicker = CHANGELLY_FAST_TICKER_MAP.get(buildChangellyKey(xrp))
+        expect(resolved).toBe('xrp')
+        expect(resolved).toBe(fastTicker)
+    })
 
     test('SOL native: resolveChangellyTicker returns fast path ticker', async () => {
         const resolved = await resolveChangellyTicker(symbiosis, sol)

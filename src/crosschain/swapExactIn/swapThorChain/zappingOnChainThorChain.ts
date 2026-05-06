@@ -23,14 +23,18 @@ import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { onchainSwap } from '../onchainSwap'
 import { preparePayload } from '../preparePayload'
 
-import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
+import { getThorQuote, getThorVault } from './utils'
+import { validateThorDestinationAddress } from './thorChainAddressValidation'
+import type { ThorChainDestination } from './types'
 
-export async function zappingOnChainThor(
+export async function ZappingOnChainThorChain(
     params: SwapExactInParams,
     thorTokenIn: Token,
-    thorTokenOut: string
+    destination: ThorChainDestination
 ): Promise<SwapExactInResult> {
     const { symbiosis, to, from, tokenAmountIn } = params
+    const { thorAsset: thorTokenOut, token: destinationToken } = destination
+    const destinationChainId = destinationToken.chainId
 
     const chainId = tokenAmountIn.token.chainId
 
@@ -39,7 +43,7 @@ export async function zappingOnChainThor(
         throw new SdkError(`Fee collector not found for chain ${chainId}`)
     }
 
-    validateBitcoinAddress(to)
+    validateThorDestinationAddress(destinationChainId, to)
 
     let evmTo: Address = from
     if (!isEvmChainId(chainId)) {
@@ -144,7 +148,7 @@ export async function zappingOnChainThor(
         thorTokenIn,
         thorTokenOut,
         evmTo,
-        bitcoinAddress: to,
+        destinationAddress: to,
         amount: depositAmount,
         slippage: thorSlippage,
     })
@@ -152,11 +156,11 @@ export async function zappingOnChainThor(
     fees.push({
         provider: SymbiosisTradeType.THORCHAIN_BRIDGE,
         description: 'THORChain fee',
-        value: new TokenAmount(BTC, thorQuote.fees.total),
+        value: new TokenAmount(destinationToken, thorQuote.fees.total),
     })
     routes.push({
         provider: SymbiosisTradeType.THORCHAIN_BRIDGE,
-        tokens: [thorTokenIn, BTC],
+        tokens: [thorTokenIn, destinationToken],
     })
 
     // Step 3: build calldata
@@ -227,8 +231,8 @@ export async function zappingOnChainThor(
     })
 
     return {
-        tokenAmountOut: new TokenAmount(BTC, thorQuote.expected_amount_out),
-        tokenAmountOutMin: new TokenAmount(BTC, thorQuote.amount_out_min),
+        tokenAmountOut: new TokenAmount(destinationToken, thorQuote.expected_amount_out),
+        tokenAmountOutMin: new TokenAmount(destinationToken, thorQuote.amount_out_min),
         priceImpact,
         amountInUsd: depositAmount,
         approveTo: approveAddress,

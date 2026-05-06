@@ -1,7 +1,6 @@
 import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
-import { changellyNativeSwap, isChangellyNativeSupported } from './swapChangelly'
 import { crosschainSwap } from './crosschainSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
 import { fromBtcSwap, isFromBtcSwapSupported } from './fromBtcSwap'
@@ -12,6 +11,8 @@ import { fromSolanaSwap, isFromSolanaSwapSupported } from './fromSolanaSwap'
 import { toTonSwap } from './toTonSwap'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
+import { fromNativeChainSwap, isFromNativeChainSwapSupported } from './fromNativeChainSwap'
+import { isToNativeChainSwapSupported, toNativeChainSwap } from './toNativeChainSwap'
 
 export * from './fromBtcSwap'
 
@@ -33,8 +34,8 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
         params.origin = params.from
     }
 
-    if (isChangellyNativeSupported(params)) {
-        return changellyNativeSwap(params)
+    if (isFromNativeChainSwapSupported(params)) {
+        return fromNativeChainSwap(params)
     }
 
     if (isWrapSupported(params)) {
@@ -69,6 +70,10 @@ export async function swapExactIn(params: SwapExactInParams): Promise<SwapExactI
     // flow TO
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
+    }
+
+    if (isToNativeChainSwapSupported(params)) {
+        return toNativeChainSwap(params)
     }
 
     if (isToSolanaSwapSupported(params)) {

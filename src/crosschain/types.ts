@@ -217,6 +217,16 @@ export type BtcTransactionData = {
     tokenAmountOut: TokenAmount
 }
 
+export type ThorChainTransactionData = {
+    inboundAddress: string
+    memo: string
+    expectedAmountOut: string // raw base units of the destination token (decimals applied)
+    expiry?: number // unix seconds; absent if THORChain did not return one
+    router?: string // EVM router for ERC-20 inbounds; undefined for native L1 (BTC/LTC/BCH/XRP/DOGE)
+    dustThreshold?: string // raw base units of source chain; maps to dust_threshold
+    recommendedMinAmountIn?: string // raw base units of source chain; maps to recommended_min_amount_in
+}
+
 export type TonTransactionData = {
     validUntil: number
     messages: {
@@ -269,6 +279,10 @@ export type SwapExactInTransactionPayload =
           transactionType: 'changelly'
           transactionRequest: ChangellyTransactionData
       }
+    | {
+          transactionType: 'thorchain'
+          transactionRequest: ThorChainTransactionData
+      }
 
 export type RouteItem = {
     provider: SymbiosisTradeType
@@ -291,6 +305,7 @@ export type SymbiosisKind =
     | 'from-btc-swap'
     | 'changelly-trade'
     | 'changelly-deposit'
+    | 'thorchain-deposit'
 
 // Result of swapExactIn() method.
 export type SwapExactInResult = SwapExactInTransactionPayload & {
