@@ -7,6 +7,7 @@ import { kyberSwapApi } from '../api/kyberswap'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { KyberSwapTradeError } from '../sdkError'
+import { withTracing } from '../tracing'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
 import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
@@ -71,6 +72,7 @@ export class KyberSwapTrade extends SymbiosisTrade {
         return TradeProvider.KYBER_SWAP
     }
 
+    @withTracing()
     public async init() {
         const { routeSummary } = await this.getRoute()
         const buildResult = await this.buildRoute(routeSummary)
@@ -118,14 +120,18 @@ export class KyberSwapTrade extends SymbiosisTrade {
             async () => {
                 let result: GetRouteSuccess
                 try {
-                    result = await kyberSwapApi.chain.getRoute(this.chain.slug, {
-                        tokenIn,
-                        tokenOut,
-                        amountIn,
-                        gasInclude: true,
-                        onlySinglePath: true,
-                        origin: this.origin,
-                    })
+                    result = await kyberSwapApi.chain.getRoute(
+                        this.chain.slug,
+                        {
+                            tokenIn,
+                            tokenOut,
+                            amountIn,
+                            gasInclude: true,
+                            onlySinglePath: true,
+                            origin: this.origin,
+                        },
+                        { signal: this.signal }
+                    )
                 } catch (e) {
                     throw new KyberSwapTradeError(
                         `Cannot get route for chain ${chainId}: ${e instanceof Error ? e.message : String(e)}`
@@ -147,13 +153,17 @@ export class KyberSwapTrade extends SymbiosisTrade {
     private async buildRoute(routeSummary: RouteSummary): Promise<BuildRouteData> {
         let result: BuildRouteSuccess
         try {
-            result = await kyberSwapApi.chain.postRouteEncoded(this.chain.slug, {
-                routeSummary: routeSummary as unknown as BuildRoutePostBody['routeSummary'],
-                sender: this.from,
-                recipient: this.to,
-                origin: this.origin,
-                slippageTolerance: this.slippage,
-            })
+            result = await kyberSwapApi.chain.postRouteEncoded(
+                this.chain.slug,
+                {
+                    routeSummary: routeSummary as unknown as BuildRoutePostBody['routeSummary'],
+                    sender: this.from,
+                    recipient: this.to,
+                    origin: this.origin,
+                    slippageTolerance: this.slippage,
+                },
+                { signal: this.signal }
+            )
         } catch (e) {
             throw new KyberSwapTradeError(
                 `Cannot build route for chain ${this.tokenAmountIn.token.chainId}: ${e instanceof Error ? e.message : String(e)}`

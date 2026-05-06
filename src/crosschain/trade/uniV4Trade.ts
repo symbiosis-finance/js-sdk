@@ -9,6 +9,7 @@ import { getMulticall } from '../multicall'
 import { AggregateSdkError, UniV4TradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
+import { withTracing } from '../tracing'
 import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 // V4 Quoter ABI (only the functions we need)
@@ -173,6 +174,7 @@ export class UniV4Trade extends SymbiosisTrade {
         }
     }
 
+    @withTracing()
     public async init() {
         const chainId = this.tokenAmountIn.token.chainId
         const deployment = DEPLOYMENT_ADDRESSES[chainId]

@@ -20,6 +20,7 @@ import { onchainSwap } from '../onchainSwap'
 import { theBest } from '../utils'
 import { FEE_COLLECTOR_ADDRESSES } from '../feeCollectorSwap'
 import { FeeCollector__factory } from '../../contracts'
+import { withSpan } from '../../tracing'
 
 const ZERO_PRICE_IMPACT = new Percent('0', BIPS_BASE)
 
@@ -37,7 +38,11 @@ export function isChangellyNativeSupported(params: SwapExactInParams): boolean {
     return isChangellyNativeChainId(fromChainId) || isChangellyNativeChainId(toChainId)
 }
 
-export async function changellyNativeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+export function changellyNativeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('changellyNativeSwap', {}, () => changellyNativeSwapInternal(params))
+}
+
+async function changellyNativeSwapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
     const fromChainId = params.tokenAmountIn.token.chainId
     const execute = !!params.generateDepositAddress
 

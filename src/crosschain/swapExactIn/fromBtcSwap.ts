@@ -19,7 +19,7 @@ import { getPartnerFeeCall } from '../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../feeCall/getVolumeFeeCall'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { flatten, withSpan, withTracing } from '../tracing'
+import { flatten, withSpan, withSyncSpan, withTracing } from '../tracing'
 import { AggregatorTrade, TradeProvider } from '../trade'
 import { DepositoryTrade } from '../trade/depositoryTrade'
 import type { SymbiosisTrade, SymbiosisTradeParams } from '../trade/symbiosisTrade'
@@ -55,33 +55,30 @@ export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
 }
 
 export function fromBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { tokenAmountIn, tokenOut, symbiosis } = context
+    return withSyncSpan('fromBtcSwap', {}, () => {
+        const { tokenAmountIn, tokenOut, symbiosis } = context
 
-    if (!isBtcChainId(tokenAmountIn.token.chainId)) {
-        throw new SdkError(`tokenAmountIn is not BTC token`)
-    }
+        if (!isBtcChainId(tokenAmountIn.token.chainId)) {
+            throw new SdkError(`tokenAmountIn is not BTC token`)
+        }
 
-    const promises: Promise<SwapExactInResult>[] = []
+        const promises: Promise<SwapExactInResult>[] = []
 
-    const allConfigs = symbiosis.config.btcConfigs
-    // prefer to use destination chain syBTC to avoid cross-chain routing
-    const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
-    const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
-    configs.forEach((btcConfig: BtcConfig) => {
-        promises.push(
-            (async () => {
-                try {
+        const allConfigs = symbiosis.config.btcConfigs
+        // prefer to use destination chain syBTC to avoid cross-chain routing
+        const chainOutConfigs = allConfigs.filter((i) => i.symBtc.chainId === tokenOut.chainId)
+        const configs = chainOutConfigs.length > 0 ? chainOutConfigs : allConfigs
+        configs.forEach((btcConfig: BtcConfig) => {
+            promises.push(
+                (async () => {
                     const btcTrade = new FromBtcTrader(btcConfig)
-                    return await btcTrade.fromBtcSwap(context)
-                } catch (err) {
-                    console.log(err)
-                    throw err
-                }
-            })()
-        )
-    })
+                    return btcTrade.fromBtcSwap(context)
+                })()
+            )
+        })
 
-    return promises
+        return promises
+    })
 }
 
 type SwapResult = {

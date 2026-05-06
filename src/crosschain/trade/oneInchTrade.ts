@@ -4,6 +4,7 @@ import JSBI from 'jsbi'
 
 import type { Address } from '..'
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
+import { withTracing } from '../tracing'
 import { Percent, TokenAmount, wrappedToken } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
@@ -11,7 +12,7 @@ import { OneInchOracle__factory } from '../contracts'
 import { getMulticall } from '../multicall'
 import { OneInchTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
-import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
+import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 export type OneInchProtocols = string[]
 
@@ -94,6 +95,7 @@ export class OneInchTrade extends SymbiosisTrade {
         return TradeProvider.ONE_INCH
     }
 
+    @withTracing()
     public async init() {
         let fromTokenAddress = this.tokenAmountIn.token.address
         if (this.tokenAmountIn.token.isNative) {
@@ -140,7 +142,8 @@ export class OneInchTrade extends SymbiosisTrade {
             json = (await OneInchTrade.request(
                 this.symbiosis,
                 `${this.tokenAmountIn.token.chainId}/swap`,
-                searchParams
+                searchParams,
+                this.signal
             )) as typeof json
         } catch (error) {
             let errorText = 'Unknown error'
@@ -186,7 +189,12 @@ export class OneInchTrade extends SymbiosisTrade {
         return this
     }
 
-    private static async request(symbiosis: Symbiosis, method: string, urlParams?: URLSearchParams) {
+    private static async request(
+        symbiosis: Symbiosis,
+        method: string,
+        urlParams?: URLSearchParams,
+        signal?: AbortSignal
+    ) {
         const requestUrl = new URL(method, symbiosis.oneInchConfig.apiUrl)
 
         if (urlParams) {
@@ -197,6 +205,7 @@ export class OneInchTrade extends SymbiosisTrade {
         const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
         const response = await fetch(requestUrl.toString(), {
             headers: { Authorization: `Bearer ${apiKey}` },
+            signal,
         })
 
         if (!response.ok) {

@@ -7,6 +7,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { getSolanaConnection } from '../chainUtils'
 import { RaydiumTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
+import { withTracing } from '../tracing'
 import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 
 interface RaydiumTradeParams extends SymbiosisTradeParams {
@@ -54,6 +55,7 @@ export class RaydiumTrade extends SymbiosisTrade {
         return TradeProvider.RAYDIUM
     }
 
+    @withTracing()
     public async init() {
         const txVersion = 'V0' // could be 'LEGACY' or 'V0'
 

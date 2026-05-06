@@ -3,6 +3,7 @@ import type { TransactionRequest } from '@ethersproject/providers'
 import { Percent, wrappedToken } from '../../../entities'
 import { isEvmChainId } from '../../chainUtils'
 import { BIPS_BASE } from '../../constants'
+import { withSpan } from '../../tracing'
 import { SolverService } from '../../solver'
 import { TradeProvider } from '../../trade'
 import type { EvmAddress, SwapExactInParams, SwapExactInResult } from '../../types'
@@ -41,7 +42,11 @@ export function isIntentSwapSupported(params: SwapExactInParams): boolean {
  *  3. Return the transaction to the caller — user signs it to initiate the intent.
  *  4. The solver monitors IntentLocked events and calls fill() on the dst chain.
  */
-export async function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+export function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('intentSwap', {}, () => intentSwapInternal(params))
+}
+
+async function intentSwapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, from, to, symbiosis, deadline } = params
 
     const srcChainId = tokenAmountIn.token.chainId

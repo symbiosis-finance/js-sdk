@@ -8,6 +8,7 @@ import { Percent, Token, TokenAmount, wrappedToken } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { IzumiFactory__factory, IzumiPool__factory, IzumiQuoter__factory, IzumiSwap__factory } from '../contracts'
+import { withTracing } from '../tracing'
 import type { Multicall2 } from '../contracts/Multicall'
 import { getMulticall } from '../multicall'
 import { IzumiTradeError } from '../sdkError'
@@ -273,6 +274,7 @@ export class IzumiTrade extends SymbiosisTrade {
         return TradeProvider.IZUMI
     }
 
+    @withTracing()
     public async init() {
         const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
 

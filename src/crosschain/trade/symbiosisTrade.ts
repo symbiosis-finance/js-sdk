@@ -55,6 +55,7 @@ export interface SymbiosisTradeParams {
     tokenOut: Token
     to: Address
     slippage: number
+    signal?: AbortSignal
 }
 
 export interface SymbiosisTradeOutResult {
@@ -99,6 +100,7 @@ export abstract class SymbiosisTrade {
         this.tokenOut = params.tokenOut
         this.slippage = SymbiosisTrade.getFlexSlippage(params.tokenAmountIn, params.tokenAmountInMin, params.slippage)
         this.to = params.to
+        this.signal = params.signal
     }
 
     get tradeType(): TradeProvider {

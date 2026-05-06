@@ -5,6 +5,7 @@ import { calculatePriceImpact, getMinAmount } from '../chainUtils'
 import { OmniPool__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import type { OmniPoolConfig } from '../types'
+import { withTracing } from '../tracing'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 interface OctoPoolTradeParams extends SymbiosisTradeParams {
@@ -29,6 +30,7 @@ export class OctoPoolTrade extends SymbiosisTrade implements OctoPoolTradeParams
         return TradeProvider.OCTOPOOL
     }
 
+    @withTracing()
     public async init() {
         const indexIn = this.symbiosis.getOmniPoolTokenIndex(this.poolConfig, this.tokenAmountIn.token)
         const indexOut = this.symbiosis.getOmniPoolTokenIndex(this.poolConfig, this.tokenOut)

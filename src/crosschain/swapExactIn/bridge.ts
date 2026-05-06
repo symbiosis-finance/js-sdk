@@ -18,6 +18,7 @@ import {
 import { BIPS_BASE, CROSS_CHAIN_ID } from '../constants'
 import { Portal__factory, Synthesis__factory } from '../contracts'
 import { AmountLessThanFeeError, SdkError } from '../sdkError'
+import { withSpan } from '../tracing'
 import { TRON_PORTAL_ABI } from '../tronAbis'
 import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult, SwapExactInTransactionPayload, TonTransactionData } from '../types'
@@ -47,7 +48,11 @@ export function isBridgeSupported(context: SwapExactInParams): boolean {
 
 type Direction = 'mint' | 'burn'
 
-export async function bridge(context: SwapExactInParams): Promise<SwapExactInResult> {
+export function bridge(context: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('bridge', {}, () => bridgeInternal(context))
+}
+
+async function bridgeInternal(context: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut } = context
 
     const direction = getDirection(context)

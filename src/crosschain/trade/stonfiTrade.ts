@@ -11,6 +11,7 @@ import { TON_REFERRAL_ADDRESS, TON_STONFI_PROXY_ADDRESS } from '../chainUtils'
 import { StonFiTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { TonAddress } from '../types'
+import { withTracing } from '../tracing'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 interface StonfiTradeParams extends SymbiosisTradeParams {
@@ -42,6 +43,7 @@ export class StonfiTrade extends SymbiosisTrade {
         return TradeProvider.STONFI
     }
 
+    @withTracing()
     public async init() {
         this.tonClient = await this.symbiosis.getTonClient()
         const quote = await this.stonClient.simulateSwap({

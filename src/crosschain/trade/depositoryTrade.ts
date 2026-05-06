@@ -1,5 +1,6 @@
 import type { TokenAmount } from '../../entities'
 import type { DepositoryContext, DepositParams } from '../depository'
+import { withTracing } from '../tracing'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 export class DepositoryTrade extends SymbiosisTrade {
@@ -12,6 +13,7 @@ export class DepositoryTrade extends SymbiosisTrade {
         super(params)
     }
 
+    @withTracing()
     async init(): Promise<this> {
         this.buildDepositCall(this.depositParams)
         return this

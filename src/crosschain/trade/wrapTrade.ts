@@ -6,6 +6,7 @@ import { BIPS_BASE } from '../constants'
 import { Unwrapper__factory, Weth__factory } from '../contracts'
 import { WrapTradeError } from '../sdkError'
 import type { EvmAddress } from '../types'
+import { withTracing } from '../tracing'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
 const UNWRAP_ADDRESSES: Partial<Record<ChainId, EvmAddress>> = {
@@ -67,6 +68,7 @@ export class WrapTrade extends SymbiosisTrade {
         return TradeProvider.WRAP
     }
 
+    @withTracing()
     public async init() {
         const route = [this.tokenAmountIn.token, this.tokenOut]
         const priceImpact = new Percent('0', BIPS_BASE)

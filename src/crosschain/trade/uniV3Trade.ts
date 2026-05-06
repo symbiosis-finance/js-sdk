@@ -34,6 +34,7 @@ import { UniV3Router02__factory } from '../contracts'
 import type { IV3SwapRouter } from '../contracts/UniV3Router02'
 import { getMulticall } from '../multicall'
 import { AggregateSdkError, UniV3TradeError } from '../sdkError'
+import { withTracing } from '../tracing'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
 import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
@@ -149,6 +150,7 @@ export class UniV3Trade extends SymbiosisTrade {
         return TradeProvider.UNI_V3
     }
 
+    @withTracing()
     public async init() {
         const chainId = this.tokenAmountIn.token.chainId
 

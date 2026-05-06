@@ -54,6 +54,8 @@ class Trades {
     prom: Promise<Trade>
     resolve!: (trade: Trade) => void
     reject!: (err: Error) => void
+    readonly abortController = new AbortController()
+    private settled = false
 
     constructor(
         private firstTimeoutMs: number | undefined,
@@ -63,6 +65,10 @@ class Trades {
             this.resolve = resolve
             this.reject = reject
         })
+    }
+
+    get signal(): AbortSignal {
+        return this.abortController.signal
     }
 
     push(trade: Promise<Trade>, provider: string) {
@@ -86,13 +92,17 @@ class Trades {
     }
 
     check() {
+        if (this.settled) return
+
         const diff = Date.now() - this.startTime
         const allTradesFinished = this.trades.length + this.errors.length === this.tradesCount
 
         if (allTradesFinished) {
+            this.settled = true
             if (this.trades.length === 0) {
                 this.reject(new AggregateSdkError(this.errors, `AggregatorTrade: all trades failed`))
             } else {
+                this.abortController.abort()
                 this.resolve(this.selectTheBestTrade())
             }
         } else if (diff >= (this.firstTimeoutMs || 200)) {
@@ -102,6 +112,8 @@ class Trades {
             const zeroX = this.trades.find((trade) => trade.constructor.name === ZeroXTrade.name)
 
             if (oneInch || openOcean || kyberSwap || zeroX) {
+                this.settled = true
+                this.abortController.abort()
                 this.resolve(this.selectTheBestTrade())
             }
         }
@@ -191,6 +203,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 chain_id: String(tokenOut.chain?.id),
             })
         })
+        const signal = trades.signal
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)
         const isOneInchClient = clientId === '1inch'
@@ -228,6 +241,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 to,
                 slippage,
                 protocols: oneInchProtocols,
+                signal,
             })
             trades.push(oneInchTrade.init(), '1inch')
         }
@@ -240,6 +254,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 tokenAmountInMin,
                 tokenOut,
                 slippage,
+                signal,
             })
 
             trades.push(openOceanTrade.init(), 'OpenOcean')
@@ -255,6 +270,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 origin,
                 to,
                 slippage,
+                signal,
             })
             trades.push(kyberSwapTrade.init(), 'KyberSwap')
         }
@@ -269,6 +285,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 origin,
                 to,
                 slippage,
+                signal,
             })
             trades.push(zeroXTrade.init(), '0x')
         }
@@ -286,6 +303,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 deadline,
                 to,
+                signal,
             })
             trades.push(izumiTrade.init(), 'Izumi')
         }
@@ -303,6 +321,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 deadline,
                 to,
+                signal,
             })
             trades.push(uniV3Trade.init(), 'UniV3')
         }
@@ -321,6 +340,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 to,
                 from,
+                signal,
             })
             trades.push(uniV4Trade.init(), 'UniV4')
         }
@@ -338,6 +358,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 to,
                 slippage,
                 deadline,
+                signal,
             })
             trades.push(uniV2Trade.init(), 'UniV2')
         }

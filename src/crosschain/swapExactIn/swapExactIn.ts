@@ -62,12 +62,6 @@ export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResul
         return [intentSwap(params)]
     }
 
-    return collectRoutes(params)
-}
-
-function collectRoutes(params: SwapExactInParams): Promise<SwapExactInResult>[] {
-    const { tokenOut } = params
-
     // FROM flow
     if (isFromBtcSwapSupported(params)) {
         return fromBtcSwap(params)

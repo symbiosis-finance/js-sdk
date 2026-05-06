@@ -20,6 +20,7 @@ import { GAS_TOKEN, Percent, TokenAmount } from '../../entities'
 import { TON_REFERRAL_ADDRESS } from '../chainUtils'
 import { CoinGecko } from '../coingecko'
 import { BIPS_BASE } from '../constants'
+import { withTracing } from '../tracing'
 import { DedustTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { FeeItem, TonAddress } from '../types'
@@ -85,6 +86,7 @@ export class DedustTrade extends SymbiosisTrade {
         return TradeProvider.DEDUST
     }
 
+    @withTracing()
     public async init() {
         const { expectedAmountOut, minAmountOut, to, body, value, fees } = await this.buildCalldata(
             this.tokenAmountIn,

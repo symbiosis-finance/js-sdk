@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 
 import { Percent, TokenAmount } from '../../entities'
 import { JupiterTradeError } from '../sdkError'
+import { withTracing } from '../tracing'
 import type { Symbiosis } from '../symbiosis'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
 
@@ -75,6 +76,7 @@ export class JupiterTrade extends SymbiosisTrade {
         return TradeProvider.JUPITER
     }
 
+    @withTracing()
     public async init() {
         const inputMint = this.tokenAmountIn.token.isNative
             ? NATIVE_MINT.toBase58()

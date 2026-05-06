@@ -6,6 +6,7 @@ import { BIPS_BASE } from '../constants'
 import { Weth__factory } from '../contracts'
 import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { withSpan } from '../tracing'
 import { preparePayload } from './preparePayload'
 
 export function isUnwrapSupported(params: SwapExactInParams): boolean {
@@ -23,7 +24,11 @@ export function isUnwrapSupported(params: SwapExactInParams): boolean {
     return chainIdIn === chainIdOut && tokenOut.isNative && weth && weth.equals(tokenAmountIn.token)
 }
 
-export async function unwrap(params: SwapExactInParams): Promise<SwapExactInResult> {
+export function unwrap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('unwrap', {}, () => unwrapInternal(params))
+}
+
+async function unwrapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn, tokenOut, from } = params
     const wethInterface = Weth__factory.createInterface()
 

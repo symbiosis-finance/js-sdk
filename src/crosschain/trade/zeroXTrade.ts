@@ -7,6 +7,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { CoinGecko } from '../coingecko'
 import { BIPS_BASE } from '../constants'
 import { ZeroXTradeError } from '../sdkError'
+import { withTracing } from '../tracing'
 import type { Symbiosis } from '../symbiosis'
 import type { Address } from '../types'
 import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
@@ -89,6 +90,7 @@ export class ZeroXTrade extends SymbiosisTrade {
         return TradeProvider.ZERO_X
     }
 
+    @withTracing()
     public async init() {
         const quote = await this.getQuote()
 
@@ -143,6 +145,7 @@ export class ZeroXTrade extends SymbiosisTrade {
                 '0x-api-key': this.apiKey,
                 '0x-version': 'v2',
             },
+            signal: this.signal,
         })
 
         if (!response.ok) {

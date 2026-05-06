@@ -6,6 +6,7 @@ import { Percent, TokenAmount } from '../../entities'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { OpenOceanTradeError } from '../sdkError'
+import { withTracing } from '../tracing'
 import type { Symbiosis } from '../symbiosis'
 import type { Address, NonEmptyAddress } from '../types'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
@@ -189,6 +190,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
         return TradeProvider.OPEN_OCEAN
     }
 
+    @withTracing()
     public async init() {
         const response = await this.request()
 
@@ -261,6 +263,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 apikey: apiKey,
                 'Content-Type': 'application/json',
             },
+            signal: this.signal,
         })
 
         if (!response.ok) {
@@ -355,6 +358,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                         apiKey,
                         'Content-Type': 'application/json',
                     },
+                    signal: this.signal,
                 })
                 if (!response.ok) {
                     const text = await response.text()

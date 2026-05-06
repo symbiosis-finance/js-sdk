@@ -6,6 +6,7 @@ import { BIPS_BASE } from '../constants'
 import { Weth__factory } from '../contracts'
 import { TradeProvider } from '../trade'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { withSpan } from '../tracing'
 import { preparePayload } from './preparePayload'
 
 export function isWrapSupported(params: SwapExactInParams): boolean {
@@ -23,7 +24,11 @@ export function isWrapSupported(params: SwapExactInParams): boolean {
     return chainIdIn === chainIdOut && tokenAmountIn.token.isNative && weth && weth.equals(tokenOut)
 }
 
-export async function wrap(params: SwapExactInParams): Promise<SwapExactInResult> {
+export function wrap(params: SwapExactInParams): Promise<SwapExactInResult> {
+    return withSpan('wrap', {}, () => wrapInternal(params))
+}
+
+async function wrapInternal(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { tokenAmountIn } = params
 
     const { chainId } = tokenAmountIn.token
