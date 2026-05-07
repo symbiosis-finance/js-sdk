@@ -39,6 +39,7 @@ type ZappingExactInParams = {
     to: string
     slippage: number
     deadline: number
+    signature?: string | null
 }
 
 export class Zapping {
@@ -55,6 +56,7 @@ export class Zapping {
 
     private synthToken!: Token
     private transitTokenIn!: Token
+    private signature?: string | null
 
     private omniLiquidity!: OmniLiquidity
     private readonly pool!: OmniPool
@@ -76,6 +78,7 @@ export class Zapping {
         to,
         slippage,
         deadline,
+        signature,
     }: ZappingExactInParams): Promise<SwapExactInResult> {
         this.tokenAmountIn = tokenAmountIn
         this.from = tronAddressToEvm(from)
@@ -83,6 +86,7 @@ export class Zapping {
 
         this.slippage = slippage
         this.deadline = deadline
+        this.signature = signature
 
         if (isTronToken(this.tokenAmountIn.token)) {
             this.revertableAddress = this.symbiosis.getRevertableAddress(this.omniPoolConfig.chainId)
@@ -439,6 +443,7 @@ export class Zapping {
             calldata,
             chainIdFrom: this.tokenAmountIn.token.chainId,
             chainIdTo: chainIdOut,
+            signature: this.signature,
         })
 
         return new TokenAmount(this.synthToken, fee)
