@@ -11,6 +11,7 @@ import testnet from './testnet.json' with { type: 'json' }
 
 export class ConfigCache {
     private readonly data: ConfigCacheData
+    private _tokens?: Token[]
 
     public constructor(configName: ConfigName | ConfigCacheData) {
         if (configName === 'mainnet') {
@@ -29,9 +30,12 @@ export class ConfigCache {
     }
 
     public tokens(): Token[] {
-        return this.data.tokens.map((attributes) => {
-            return new Token(attributes)
-        })
+        if (!this._tokens) {
+            this._tokens = this.data.tokens.map((attributes) => {
+                return new Token(attributes)
+            })
+        }
+        return [...this._tokens]
     }
 
     public getRepresentation(token: Token, chainId: ChainId): Token | undefined {
