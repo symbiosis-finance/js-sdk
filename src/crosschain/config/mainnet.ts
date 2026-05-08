@@ -1845,8 +1845,8 @@ export const config: Config = {
         },
         {
             id: ChainId.BSQUARED_MAINNET,
-            rpc: 'https://b2-mainnet.alt.technology',
-            spareRpcs: ['https://rpc.bsquared.network'],
+            rpc: 'https://rpc.bsquared.network',
+            spareRpcs: ['https://b2-mainnet.alt.technology', 'https://mainnet.b2-rpc.com'],
             filterBlockOffset: 1000,
             stables: [
                 {
