@@ -216,6 +216,12 @@ export interface SwapExactInParams {
     depositoryEnabled?: boolean
     disabledProviders?: TradeProvider[]
     changellyExtraIdTo?: string // destination tag (XRP) or memo (XLM) for payout address
+    // EIP-712 signature for VotingEscrow gas discount.
+    // undefined = fall back to legacy Symbiosis.setSignature() field; null = explicitly no signature.
+    signature?: string | null
+    // Per-call swap amount limits override.
+    // undefined = fall back to legacy Symbiosis instance config.limits; null = no limits.
+    limits?: SwapLimit[] | null
 }
 
 export type BtcTransactionData = {

@@ -121,7 +121,7 @@ async function getFee(context: SwapExactInParams, direction: Direction): Promise
 }
 
 async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
-    const { symbiosis, tokenAmountIn, tokenOut, to } = context
+    const { symbiosis, tokenAmountIn, tokenOut, to, signature } = context
 
     const chainIdIn = tokenAmountIn.token.chainId
     const chainIdOut = tokenOut.chainId
@@ -159,13 +159,14 @@ async function getMintFee(context: SwapExactInParams): Promise<TokenAmount> {
         calldata,
         chainIdFrom: tokenAmountIn.token.chainId,
         chainIdTo: tokenOut.chainId,
+        signature,
     })
 
     return new TokenAmount(tokenOut, fee)
 }
 
 async function getBurnFee(context: SwapExactInParams): Promise<TokenAmount> {
-    const { symbiosis, tokenAmountIn, tokenOut, to } = context
+    const { symbiosis, tokenAmountIn, tokenOut, to, signature } = context
     const chainIdIn = tokenAmountIn.token.chainId
     const chainIdOut = tokenOut.chainId
 
@@ -204,6 +205,7 @@ async function getBurnFee(context: SwapExactInParams): Promise<TokenAmount> {
         calldata,
         chainIdFrom: chainIdIn,
         chainIdTo: chainIdOut,
+        signature,
     })
 
     return new TokenAmount(tokenOut, fee)

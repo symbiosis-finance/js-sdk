@@ -45,6 +45,7 @@ import type {
     SwapExactInParams,
     SwapExactInResult,
     SwapExactInTransactionPayload,
+    SwapLimit,
     TonTransactionData,
     TradeAContext,
 } from '../../types'
@@ -93,6 +94,9 @@ export abstract class BaseSwapping {
     protected depositoryEnabled: boolean
     protected depository: DepositoryContext | null
 
+    protected signature?: string | null
+    protected limits?: SwapLimit[] | null
+
     private profiler: Profiler
 
     public constructor(symbiosis: Symbiosis, omniPoolConfig: OmniPoolConfig) {
@@ -136,6 +140,8 @@ export abstract class BaseSwapping {
         partnerAddress,
         depositoryEnabled,
         disabledProviders,
+        signature,
+        limits,
     }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
@@ -143,6 +149,8 @@ export abstract class BaseSwapping {
         this.partnerAddress = partnerAddress
         this.oneInchProtocols = oneInchProtocols
         this.disabledProviders = disabledProviders
+        this.signature = signature
+        this.limits = limits
         this.tokenAmountIn = tokenAmountIn
         this.tokenAmountInMin = tokenAmountInMin || tokenAmountIn
         this.tokenOut = tokenOut
@@ -586,7 +594,7 @@ export abstract class BaseSwapping {
     }
 
     protected buildTransit(amountIn: TokenAmount, amountInMin: TokenAmount): Transit {
-        this.symbiosis.validateLimits(amountIn)
+        this.symbiosis.validateLimits(amountIn, this.limits)
 
         return new Transit({
             symbiosis: this.symbiosis,
@@ -855,6 +863,7 @@ export abstract class BaseSwapping {
             calldata,
             chainIdFrom,
             chainIdTo,
+            signature: this.signature,
         })
 
         return {
@@ -871,6 +880,7 @@ export abstract class BaseSwapping {
             calldata,
             chainIdFrom: this.omniPoolConfig.chainId,
             chainIdTo: this.tokenOut.chainId,
+            signature: this.signature,
         })
         return {
             fee: new TokenAmount(feeToken, fee),

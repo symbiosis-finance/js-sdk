@@ -83,6 +83,7 @@ import type {
     PriceImpactMetricParams,
     SwapExactInParams,
     SwapExactInResult,
+    SwapLimit,
     VolumeFeeCollector,
 } from './types'
 import { formatTokenName, getAmountBucket } from './utils'
@@ -159,6 +160,7 @@ export class Symbiosis {
         this.counter = counter
     }
 
+    /** @deprecated Pass `signature` via SwapExactInParams instead. Mutating shared state is unsafe in pooled instances. */
     public setSignature(signature: string | undefined) {
         this.signature = signature
     }
@@ -566,11 +568,14 @@ export class Symbiosis {
         receiveSide,
         chainIdFrom,
         chainIdTo,
+        signature,
     }: {
         calldata: string
         receiveSide: string
         chainIdFrom: ChainId
         chainIdTo: ChainId
+        // undefined = legacy fallback to this.signature; null = explicitly no signature
+        signature?: string | null
     }): Promise<{ price: JSBI; save: JSBI }> {
         const params = {
             chain_id_from: chainIdFrom,
@@ -578,7 +583,7 @@ export class Symbiosis {
             receive_side: receiveSide,
             call_data: calldata,
             client_id: utils.parseBytes32String(this.clientId),
-            signature: this.signature,
+            signature: signature !== undefined ? (signature ?? undefined) : this.signature,
         }
 
         const response = await this.fetch(`${this.config.advisor.url}/v1/swap/price`, {
@@ -875,9 +880,11 @@ export class Symbiosis {
         return this.config.revertableAddress.default
     }
 
-    validateLimits(amount: TokenAmount): void {
+    validateLimits(amount: TokenAmount, limits?: SwapLimit[] | null): void {
         const { token } = amount
-        const limit = this.config.limits.find((limit) => {
+        // tri-state: undefined = legacy this.config.limits; null = no limits.
+        const effective = limits !== undefined ? (limits ?? []) : this.config.limits
+        const limit = effective.find((limit) => {
             return limit.address.toLowerCase() === token.address.toLowerCase() && limit.chainId === token.chainId
         })
         if (!limit) {

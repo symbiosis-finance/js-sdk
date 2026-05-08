@@ -219,7 +219,7 @@ export function flatten<T extends object>(obj: T, prefix = ''): Flattened<T> {
         let newValues
         if (Array.isArray(value)) {
             newValues = { [newKey]: value.map((v) => convertScalar(v)) }
-        } else if (typeof value === 'object' && value.constructor.name === 'object') {
+        } else if (typeof value === 'object' && value !== null && value.constructor.name === 'object') {
             // Recursive call for nested objects
             // @ts-expect-error recursion could be too deep
             newValues = flatten(value, newKey)

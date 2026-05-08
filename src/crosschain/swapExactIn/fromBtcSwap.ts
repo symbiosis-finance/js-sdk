@@ -43,13 +43,13 @@ import { crossChainSwap } from './crossChainSwap'
 import { theBest } from './utils'
 
 export function isFromBtcSwapSupported(context: SwapExactInParams): boolean {
-    const { tokenAmountIn, symbiosis } = context
+    const { tokenAmountIn, symbiosis, limits } = context
 
     if (!isBtcChainId(tokenAmountIn.token.chainId)) {
         return false
     }
 
-    symbiosis.validateLimits(tokenAmountIn)
+    symbiosis.validateLimits(tokenAmountIn, limits)
 
     return true
 }
