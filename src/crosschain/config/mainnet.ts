@@ -324,9 +324,9 @@ export const config: Config = {
                 timedUnlocker: '0xEc148F80d699b0eAF65dd5438CdE4b380DeD8a3b',
                 timedSwapUnlocker: '0x6B6B4573Dc625BE635843aB8800becDEc38D1987',
                 withdrawUnlocker: '0xcd108089057dD0e9f841eb9e00fCF5105534341E',
-                minAmountDelay: 600, // 10 mins
-                refundDelay: 1800, // 30 mins
-                withdrawDelay: 3600, // 60 mins
+                minAmountDelay: 300, // 5 mins
+                refundDelay: 600, // 10 mins
+                withdrawDelay: 900, // 15 mins
             },
         },
         {
