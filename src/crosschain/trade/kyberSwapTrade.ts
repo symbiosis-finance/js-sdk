@@ -47,7 +47,6 @@ type BuildRouteData = BuildRouteSuccess['data']
 
 export class KyberSwapTrade extends SymbiosisTrade {
     private readonly chain: KyberSwapChain
-    private readonly symbiosis: Symbiosis
     private readonly from: string
     private readonly origin?: Address
 
@@ -57,7 +56,6 @@ export class KyberSwapTrade extends SymbiosisTrade {
 
     public constructor(params: KyberSwapTradeParams) {
         super(params)
-        this.symbiosis = params.symbiosis
         const chainId = this.tokenAmountIn.token.chainId
         const chain = KYBER_SWAP_NETWORKS[chainId]
         if (!chain) {
@@ -115,39 +113,31 @@ export class KyberSwapTrade extends SymbiosisTrade {
         }
         const amountIn = this.tokenAmountIn.raw.toString()
 
-        return this.symbiosis.cache.get(
-            ['kyberSwapRoute', chainId.toString(), tokenIn, tokenOut, amountIn, this.origin?.toLowerCase() ?? ''],
-            async () => {
-                let result: GetRouteSuccess
-                try {
-                    result = await kyberSwapApi.chain.getRoute(
-                        this.chain.slug,
-                        {
-                            tokenIn,
-                            tokenOut,
-                            amountIn,
-                            gasInclude: true,
-                            onlySinglePath: true,
-                            origin: this.origin,
-                        },
-                        { signal: this.signal }
-                    )
-                } catch (e) {
-                    throw new KyberSwapTradeError(
-                        `Cannot get route for chain ${chainId}: ${e instanceof Error ? e.message : String(e)}`
-                    )
-                }
+        let result: GetRouteSuccess
+        try {
+            result = await kyberSwapApi.chain.getRoute(
+                this.chain.slug,
+                {
+                    tokenIn,
+                    tokenOut,
+                    amountIn,
+                    gasInclude: true,
+                    onlySinglePath: true,
+                    origin: this.origin,
+                },
+                { signal: this.signal }
+            )
+        } catch (e) {
+            throw new KyberSwapTradeError(
+                `Cannot get route for chain ${chainId}: ${e instanceof Error ? e.message : String(e)}`
+            )
+        }
 
-                if (result.code !== 0) {
-                    throw new KyberSwapTradeError(
-                        `Cannot get route for chain ${chainId}: ${result.message ?? result.code}`
-                    )
-                }
+        if (result.code !== 0) {
+            throw new KyberSwapTradeError(`Cannot get route for chain ${chainId}: ${result.message ?? result.code}`)
+        }
 
-                return result.data
-            },
-            5 // seconds
-        )
+        return result.data
     }
 
     private async buildRoute(routeSummary: RouteSummary): Promise<BuildRouteData> {
