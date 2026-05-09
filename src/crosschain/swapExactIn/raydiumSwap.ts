@@ -25,7 +25,7 @@ export function raydiumSwap(params: SwapExactInParams): Promise<SwapExactInResul
         await trade.init().catch((e) => {
             symbiosis.trackAggregatorError({
                 provider: TradeProvider.RAYDIUM,
-                reason: e.message,
+                error: e,
                 chain_id: String(tokenOut.chain?.id),
             })
             throw e

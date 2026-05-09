@@ -364,7 +364,7 @@ export type MetricParams = {
 
 export type CounterParams = {
     provider: string
-    reason: string
+    error: Error
     chain_id: string
 }
 

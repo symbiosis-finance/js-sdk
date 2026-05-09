@@ -20,7 +20,7 @@ export function dedustSwap(params: SwapExactInParams): Promise<SwapExactInResult
         await trade.init().catch((e) => {
             symbiosis.trackAggregatorError({
                 provider: TradeProvider.DEDUST,
-                reason: e.message,
+                error: e,
                 chain_id: String(tokenOut.chain?.id),
             })
             throw e

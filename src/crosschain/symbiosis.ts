@@ -358,14 +358,18 @@ export class Symbiosis {
             })
     }
 
-    public trackAggregatorError({ provider, reason, chain_id }: CounterParams) {
+    public trackAggregatorError({ provider, error, chain_id }: CounterParams) {
         if (!this.counter) {
+            return
+        }
+
+        if (error.name === 'AbortError') {
             return
         }
 
         const partner_id = utils.parseBytes32String(this.clientId)
 
-        const cleanReason = aggregatorErrorToText(reason)
+        const cleanReason = aggregatorErrorToText(error.message)
         this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
     }
 

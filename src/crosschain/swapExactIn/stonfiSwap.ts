@@ -27,7 +27,7 @@ export function stonfiSwap(params: SwapExactInParams): Promise<SwapExactInResult
         await trade.init().catch((e) => {
             symbiosis.trackAggregatorError({
                 provider: TradeProvider.STONFI,
-                reason: e.message,
+                error: e,
                 chain_id: String(tokenOut.chain?.id),
             })
             throw e

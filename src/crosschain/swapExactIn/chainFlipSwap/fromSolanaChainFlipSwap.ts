@@ -209,7 +209,7 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
     await jupiterTrade.init().catch((e) => {
         symbiosis.trackAggregatorError({
             provider: TradeProvider.JUPITER,
-            reason: e.message,
+            error: e,
             chain_id: String(src.token.chain?.id),
         })
         throw e

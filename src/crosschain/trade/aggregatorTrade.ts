@@ -199,7 +199,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         const trades = new Trades(this.firstTimeoutMs, (provider: string, e: Error) => {
             symbiosis.trackAggregatorError({
                 provider,
-                reason: e.message,
+                error: e,
                 chain_id: String(tokenOut.chain?.id),
             })
         })
