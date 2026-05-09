@@ -2,7 +2,13 @@ import BigNumber from 'bignumber.js'
 
 import { ChainId, NATIVE_TOKEN_ADDRESS } from '../../constants'
 import { Percent, TokenAmount } from '../../entities'
-import type { BuildRoutePostBody, BuildRouteSuccess, GetRouteSuccess } from '../api/kyberswap'
+import type {
+    BuildRoutePostBody,
+    BuildRouteSuccess,
+    Error as KyberSwapError,
+    GetRouteSuccess,
+    HttpResponse,
+} from '../api/kyberswap'
 import { kyberSwapApi } from '../api/kyberswap'
 import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
@@ -113,9 +119,8 @@ export class KyberSwapTrade extends SymbiosisTrade {
         }
         const amountIn = this.tokenAmountIn.raw.toString()
 
-        let result: GetRouteSuccess
-        try {
-            result = await kyberSwapApi.chain.getRoute(
+        const result = await kyberSwapApi.chain
+            .getRoute(
                 this.chain.slug,
                 {
                     tokenIn,
@@ -127,23 +132,20 @@ export class KyberSwapTrade extends SymbiosisTrade {
                 },
                 { signal: this.signal }
             )
-        } catch (e) {
-            throw new KyberSwapTradeError(
-                `Cannot get route for chain ${chainId}: ${e instanceof Error ? e.message : String(e)}`
-            )
-        }
-
-        if (result.code !== 0) {
-            throw new KyberSwapTradeError(`Cannot get route for chain ${chainId}: ${result.message ?? result.code}`)
-        }
+            .catch((e) => {
+                if (e instanceof Error && e.name === 'AbortError') throw e
+                const { error } = e as HttpResponse<unknown, KyberSwapError>
+                throw new KyberSwapTradeError(
+                    `Cannot get route for chain ${chainId}: ${KyberSwapTrade.formatKyberSwapError(error)}`
+                )
+            })
 
         return result.data
     }
 
     private async buildRoute(routeSummary: RouteSummary): Promise<BuildRouteData> {
-        let result: BuildRouteSuccess
-        try {
-            result = await kyberSwapApi.chain.postRouteEncoded(
+        const result = await kyberSwapApi.chain
+            .postRouteEncoded(
                 this.chain.slug,
                 {
                     routeSummary: routeSummary as unknown as BuildRoutePostBody['routeSummary'],
@@ -154,17 +156,13 @@ export class KyberSwapTrade extends SymbiosisTrade {
                 },
                 { signal: this.signal }
             )
-        } catch (e) {
-            throw new KyberSwapTradeError(
-                `Cannot build route for chain ${this.tokenAmountIn.token.chainId}: ${e instanceof Error ? e.message : String(e)}`
-            )
-        }
-
-        if (result.code !== 0) {
-            throw new KyberSwapTradeError(
-                `Cannot build route for chain ${this.tokenAmountIn.token.chainId}: ${result.message ?? result.code}`
-            )
-        }
+            .catch((e) => {
+                if (e instanceof Error && e.name === 'AbortError') throw e
+                const { error } = e as HttpResponse<unknown, KyberSwapError>
+                throw new KyberSwapTradeError(
+                    `Cannot build route for chain ${this.tokenAmountIn.token.chainId}: ${KyberSwapTrade.formatKyberSwapError(error)}`
+                )
+            })
 
         return result.data
     }
@@ -221,6 +219,13 @@ export class KyberSwapTrade extends SymbiosisTrade {
             amountOffset,
             minReceivedOffset: descStart + 9 * 32,
         }
+    }
+
+    private static formatKyberSwapError(error: KyberSwapError): string {
+        if (error.details) {
+            return `${error.message}, ${JSON.stringify(error.details)}`
+        }
+        return error.message
     }
 
     private calcPriceImpact(amountInUsd: string, amountOutUsd: string): Percent {
