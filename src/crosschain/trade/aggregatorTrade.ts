@@ -28,6 +28,14 @@ type Trade =
     | UniV3Trade
     | UniV4Trade
 
+function isAbortError(error: unknown): boolean {
+    if (!(error instanceof Error)) {
+        return false
+    }
+
+    return error.name === 'AbortError'
+}
+
 export interface AggregatorTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
     from: string
@@ -76,6 +84,9 @@ class Trades {
         withTimeout(trade, provider)
             .then(this.success.bind(this))
             .catch((err) => {
+                if (this.settled && isAbortError(err)) {
+                    return
+                }
                 this.onError(provider, err)
                 this.fail(err)
             })
