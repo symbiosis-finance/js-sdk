@@ -74,13 +74,14 @@ import type {
     ChainConfig,
     ChangellyConfig,
     Config,
-    CounterParams,
+    AggregatorErrorCounterParams,
     EvmAddress,
     FeeConfig,
+    Logger,
     MetricParams,
     OmniPoolConfig,
     OverrideConfig,
-    PriceImpactMetricParams,
+    PriceImpactCounterParams,
     SwapExactInParams,
     SwapExactInResult,
     SwapLimit,
@@ -129,9 +130,9 @@ export class Symbiosis {
     public clientId: string
 
     private signature: string | undefined
-    public sdkDurationMetric?: Histogram<string>
-    public priceImpactSwapMetric?: Counter<string>
-    public counter?: Counter<string>
+    public sdkDurationHistogram?: Histogram<string>
+    public priceImpactSwapCounter?: Counter<string>
+    public aggregatorErrorCounter?: Counter<string>
 
     public feesConfig?: FeeConfig[]
 
@@ -144,20 +145,20 @@ export class Symbiosis {
 
     public readonly fetch: typeof fetch
     public readonly coinGecko: CoinGecko
+    public readonly logger?: Logger
 
     public setMetrics({
-        symbiosisSdkDuration,
+        sdkDuration,
         priceImpactSwap,
+        aggregatorError,
     }: {
-        symbiosisSdkDuration: Histogram<string>
+        sdkDuration: Histogram<string>
         priceImpactSwap: Counter<string>
+        aggregatorError: Counter<string>
     }) {
-        this.sdkDurationMetric = symbiosisSdkDuration
-        this.priceImpactSwapMetric = priceImpactSwap
-    }
-
-    public setErrorCounter(counter: Counter<string>) {
-        this.counter = counter
+        this.sdkDurationHistogram = sdkDuration
+        this.priceImpactSwapCounter = priceImpactSwap
+        this.aggregatorErrorCounter = aggregatorError
     }
 
     /** @deprecated Pass `signature` via SwapExactInParams instead. Mutating shared state is unsafe in pooled instances. */
@@ -340,14 +341,15 @@ export class Symbiosis {
             })
         )
         this.coinGecko = new CoinGecko(this.config.coinGecko?.url, this.config.advisor.url, this.cache)
+        this.logger = overrideConfig?.logger
     }
 
     public createMetricTimer() {
-        if (!this.sdkDurationMetric) {
+        if (!this.sdkDurationHistogram) {
             return
         }
 
-        const endTimer = this.sdkDurationMetric.startTimer()
+        const endTimer = this.sdkDurationHistogram.startTimer()
 
         return ({ tokenIn, tokenOut, operation, kind }: MetricParams) =>
             endTimer({
@@ -358,23 +360,19 @@ export class Symbiosis {
             })
     }
 
-    public trackAggregatorError({ provider, error, chain_id }: CounterParams) {
-        if (!this.counter) {
-            return
-        }
-
-        if (error.name === 'AbortError') {
+    public countAggregatorError({ provider, reason, chain_id }: AggregatorErrorCounterParams) {
+        if (!this.aggregatorErrorCounter) {
             return
         }
 
         const partner_id = utils.parseBytes32String(this.clientId)
 
-        const cleanReason = aggregatorErrorToText(error.message)
-        this.counter.inc({ provider, reason: cleanReason, chain_id, partner_id })
+        const cleanReason = aggregatorErrorToText(reason)
+        this.aggregatorErrorCounter.inc({ provider, reason: cleanReason, chain_id, partner_id })
     }
 
-    public trackPriceImpactSwap({ poolConfig, tokenAmountFrom, tokenTo, priceImpact }: PriceImpactMetricParams) {
-        if (!this.priceImpactSwapMetric) {
+    public countPriceImpactSwap({ poolConfig, tokenAmountFrom, tokenTo, priceImpact }: PriceImpactCounterParams) {
+        if (!this.priceImpactSwapCounter) {
             return
         }
         const priceImpactN = Number(priceImpact.toSignificant(2))
@@ -386,7 +384,7 @@ export class Symbiosis {
 
         const amountBucket = getAmountBucket(Number(tokenAmountFrom.toSignificant(4)))
 
-        this.priceImpactSwapMetric.inc({
+        this.priceImpactSwapCounter.inc({
             pool: poolConfig.coinGeckoId,
             token_from: formatTokenName(tokenAmountFrom.token),
             token_to: formatTokenName(tokenTo),

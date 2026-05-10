@@ -2,7 +2,7 @@ import { utils } from 'ethers'
 import invariant from 'tiny-invariant'
 
 import type { Percent, Token, TokenAmount } from '../../entities'
-import { AggregateSdkError } from '../sdkError'
+import { AggregateSdkError, AggregatorTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address, FeeItem } from '../types'
 import { IzumiTrade } from './izumiTrade'
@@ -93,6 +93,12 @@ class Trades {
 
     check() {
         if (this.settled) return
+
+        if (this.tradesCount === 0) {
+            this.settled = true
+            this.reject(new AggregatorTradeError(`AggregatorTrade: no trades given`))
+            return
+        }
 
         const diff = Date.now() - this.startTime
         const allTradesFinished = this.trades.length + this.errors.length === this.tradesCount
@@ -197,9 +203,13 @@ export class AggregatorTrade extends SymbiosisTrade {
         } = this.params
 
         const trades = new Trades(this.firstTimeoutMs, (provider: string, e: Error) => {
-            symbiosis.trackAggregatorError({
+            if (e.name === 'AbortError') {
+                return
+            }
+            symbiosis.logger?.error(`AggregatorTrade: ${provider} failed`, e.message)
+            symbiosis.countAggregatorError({
                 provider,
-                error: e,
+                reason: e.message,
                 chain_id: String(tokenOut.chain?.id),
             })
         })

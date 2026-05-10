@@ -225,6 +225,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
 
             return this
         } catch (e: unknown) {
+            if (e instanceof Error && e.name === 'AbortError') throw e
             if (e instanceof Error) {
                 throw new OpenOceanTradeError(e.message, response)
             }

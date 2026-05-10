@@ -176,6 +176,8 @@ export class UniV4Trade extends SymbiosisTrade {
 
     @withTracing()
     public async init() {
+        this.signal?.throwIfAborted()
+
         const chainId = this.tokenAmountIn.token.chainId
         const deployment = DEPLOYMENT_ADDRESSES[chainId]
         if (!deployment) {
@@ -183,6 +185,7 @@ export class UniV4Trade extends SymbiosisTrade {
         }
 
         const provider = this.symbiosis.getProvider(chainId)
+        this.signal?.throwIfAborted()
         const multicall = await getMulticall(provider)
         const quoterIface = new utils.Interface(QUOTER_ABI)
 
@@ -224,6 +227,7 @@ export class UniV4Trade extends SymbiosisTrade {
         const firstHopCalls = firstHops.map(({ poolKey, zeroForOne }) => encodeQuote(poolKey, zeroForOne, amountInRaw))
 
         // Multicall 1: direct quotes + first hops
+        this.signal?.throwIfAborted()
         const results1 = await multicall.callStatic.tryAggregate(false, [...directCalls, ...firstHopCalls])
 
         let bestQuote: QuoteResult | undefined
@@ -279,6 +283,8 @@ export class UniV4Trade extends SymbiosisTrade {
             pendingSecondHops.push({ info, hop2PoolKey: poolKey, hop2ZeroForOne: zeroForOne })
             secondHopCalls.push(encodeQuote(poolKey, zeroForOne, decoded.amountOut.toString()))
         }
+
+        this.signal?.throwIfAborted()
 
         // Multicall 2: second hops
         if (secondHopCalls.length > 0) {

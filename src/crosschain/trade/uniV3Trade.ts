@@ -152,6 +152,8 @@ export class UniV3Trade extends SymbiosisTrade {
 
     @withTracing()
     public async init() {
+        this.signal?.throwIfAborted()
+
         const chainId = this.tokenAmountIn.token.chainId
 
         const addresses = DEPLOYMENT_ADDRESSES[chainId]
@@ -233,6 +235,7 @@ export class UniV3Trade extends SymbiosisTrade {
         }
 
         // Step 2: batch fetch liquidity + slot0 for all pools via multicall
+        this.signal?.throwIfAborted()
         const multicall = await getMulticall(provider)
         const poolIface = new ethers.utils.Interface(IUniswapV3PoolABI.abi)
 
@@ -240,6 +243,7 @@ export class UniV3Trade extends SymbiosisTrade {
             { target: c.address, callData: poolIface.encodeFunctionData('liquidity') },
             { target: c.address, callData: poolIface.encodeFunctionData('slot0') },
         ])
+        this.signal?.throwIfAborted()
         const poolResults = await multicall.callStatic.tryAggregate(false, poolCalls)
 
         // Step 3: build Pool objects from results
@@ -283,6 +287,8 @@ export class UniV3Trade extends SymbiosisTrade {
         if (routes.length === 0) {
             throw new UniV3TradeError('No pools found')
         }
+
+        this.signal?.throwIfAborted()
 
         // Step 5: batch quoter calls via multicall
         const quoterCalls = routes.map((route) => {

@@ -146,6 +146,8 @@ export class OneInchTrade extends SymbiosisTrade {
                 this.signal
             )) as typeof json
         } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') throw error
+
             let errorText = 'Unknown error'
 
             if (error instanceof Error) {
@@ -238,6 +240,7 @@ export class OneInchTrade extends SymbiosisTrade {
                 return acc
             }, [])
         } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') throw error
             throw new OneInchTradeError(`Cannot get swap on chain ${chainId}`, error)
         }
     }

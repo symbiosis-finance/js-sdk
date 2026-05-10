@@ -276,6 +276,8 @@ export class IzumiTrade extends SymbiosisTrade {
 
     @withTracing()
     public async init() {
+        this.signal?.throwIfAborted()
+
         const addresses = IZUMI_ADDRESSES[this.tokenAmountIn.token.chainId]
 
         if (!addresses) {
@@ -314,6 +316,7 @@ export class IzumiTrade extends SymbiosisTrade {
 
         const provider = this.symbiosis.getProvider(this.tokenAmountIn.token.chainId)
 
+        this.signal?.throwIfAborted()
         const multicall = await getMulticall(provider)
 
         const quoterInterface = IzumiQuoter__factory.createInterface()
@@ -328,6 +331,7 @@ export class IzumiTrade extends SymbiosisTrade {
 
         let results: Multicall2.ResultStructOutput[] = []
         for (let i = 0; i < chunks; i++) {
+            this.signal?.throwIfAborted()
             const from = i * maxChunkLength
             let to = (i + 1) * maxChunkLength
             if (to > calls.length) {
@@ -358,6 +362,7 @@ export class IzumiTrade extends SymbiosisTrade {
         }
 
         const { path, tokens } = bestRoute
+        this.signal?.throwIfAborted()
         const pointsBefore = await this.getCurrentPoolPoints(bestRoute)
         const initDecimalPriceEndByStart = getPriceDecimalEndByStart(bestRoute, pointsBefore)
         const initDecimalPriceEndByStartTrimmed = new BNJS(initDecimalPriceEndByStart.toFixed(4))
@@ -446,6 +451,7 @@ export class IzumiTrade extends SymbiosisTrade {
 
         const provider = this.symbiosis.getProvider(this.tokenAmountIn.token.chainId)
 
+        this.signal?.throwIfAborted()
         const multicall = await getMulticall(provider)
 
         const factoryInterface = IzumiFactory__factory.createInterface()
@@ -465,6 +471,7 @@ export class IzumiTrade extends SymbiosisTrade {
             })
         }
 
+        this.signal?.throwIfAborted()
         const getPoolAddressesResults = await multicall.callStatic.tryAggregate(false, getPoolAddressesCalls)
         const poolsAddresses: string[] = getPoolAddressesResults.map(
             ([, returnData]) => factoryInterface.decodeFunctionResult('pool', returnData)[0]
@@ -472,6 +479,7 @@ export class IzumiTrade extends SymbiosisTrade {
 
         const poolInterface = IzumiPool__factory.createInterface()
 
+        this.signal?.throwIfAborted()
         const statesResults = await multicall.callStatic.tryAggregate(
             false,
             poolsAddresses.map((poolAddress) => ({

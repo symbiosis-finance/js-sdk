@@ -50,9 +50,9 @@ export function onChainSolanaSwap({
 
         return tradeInstances.map(async (instance) => {
             const trade = await instance.init().catch((e) => {
-                symbiosis.trackAggregatorError({
+                symbiosis.countAggregatorError({
                     provider: instance.tradeType,
-                    error: e,
+                    reason: e.message,
                     chain_id: String(tokenOut.chain?.id),
                 })
                 throw e

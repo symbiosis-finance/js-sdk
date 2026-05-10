@@ -64,6 +64,8 @@ export class UniV2Trade extends SymbiosisTrade {
 
     @withTracing()
     public async init() {
+        this.signal?.throwIfAborted()
+
         const { chainId } = this.tokenAmountIn.token
 
         let router: UniV2Router = this.uniV2Router(chainId)
@@ -94,6 +96,8 @@ export class UniV2Trade extends SymbiosisTrade {
             },
             10 // 10 seconds
         )
+
+        this.signal?.throwIfAborted()
 
         let trade: Trade
         try {

@@ -52,7 +52,7 @@ export class OctoPoolTrade extends SymbiosisTrade implements OctoPoolTradeParams
         const amountOutMin = new TokenAmount(this.tokenOut, quoteMin.toString())
         const priceImpact = calculatePriceImpact(this.tokenAmountIn, amountOut)
 
-        this.symbiosis.trackPriceImpactSwap({
+        this.symbiosis.countPriceImpactSwap({
             poolConfig: this.poolConfig,
             tokenAmountFrom: this.tokenAmountIn,
             tokenTo: this.tokenOut,

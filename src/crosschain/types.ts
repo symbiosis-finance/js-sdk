@@ -168,6 +168,13 @@ export type ChangellyConfig = {
 
 export type * from './config/cache/builder'
 
+export interface Logger {
+    error(message: string, ...args: unknown[]): void
+    warn(message: string, ...args: unknown[]): void
+    info(message: string, ...args: unknown[]): void
+    debug(message: string, ...args: unknown[]): void
+}
+
 export type OverrideConfig = {
     btcConfigs?: BtcConfig[]
     chains?: OverrideChainConfig[]
@@ -183,6 +190,7 @@ export type OverrideConfig = {
     cache?: Cache
     config?: Config
     configCache?: ConfigCacheData
+    logger?: Logger
 }
 
 export interface RevertableAddress {
@@ -362,13 +370,13 @@ export type MetricParams = {
     tokenOut?: Token
 }
 
-export type CounterParams = {
+export type AggregatorErrorCounterParams = {
     provider: string
-    error: Error
+    reason: string
     chain_id: string
 }
 
-export type PriceImpactMetricParams = {
+export type PriceImpactCounterParams = {
     poolConfig: OmniPoolConfig
     tokenAmountFrom: TokenAmount
     tokenTo: Token

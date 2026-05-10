@@ -140,13 +140,19 @@ export class ZeroXTrade extends SymbiosisTrade {
             url.searchParams.set('txOrigin', this.origin)
         }
 
-        const response = await this.symbiosis.fetch(url.toString(), {
-            headers: {
-                '0x-api-key': this.apiKey,
-                '0x-version': 'v2',
-            },
-            signal: this.signal,
-        })
+        let response: Response
+        try {
+            response = await this.symbiosis.fetch(url.toString(), {
+                headers: {
+                    '0x-api-key': this.apiKey,
+                    '0x-version': 'v2',
+                },
+                signal: this.signal,
+            })
+        } catch (e) {
+            if (e instanceof Error && e.name === 'AbortError') throw e
+            throw new ZeroXTradeError(`Cannot get quote for chain ${chainId}: ${e instanceof Error ? e.message : e}`)
+        }
 
         if (!response.ok) {
             const text = await response.text()
