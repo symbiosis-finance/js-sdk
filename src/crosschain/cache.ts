@@ -14,6 +14,22 @@ export class Cache {
 
     constructor(public maxSize?: number) {}
 
+    get size(): number {
+        return this.data.size
+    }
+
+    prune(): number {
+        const now = Math.floor(Date.now() / 1000)
+        let pruned = 0
+        for (const [key, entry] of this.data) {
+            if (entry.expiresAt <= now) {
+                this.data.delete(key)
+                pruned++
+            }
+        }
+        return pruned
+    }
+
     async get<T>(
         key: string[],
         func: () => Promise<NotVoid<T>>,
@@ -31,12 +47,16 @@ export class Cache {
             }
             span.setAttribute('miss', true)
             const set = (result?: T, exception?: unknown) => {
-                if (this.maxSize === undefined || this.data.size < this.maxSize)
+                if (this.maxSize !== undefined && this.data.size >= this.maxSize) {
+                    this.prune()
+                }
+                if (this.maxSize === undefined || this.data.size < this.maxSize) {
                     this.data.set(stringKey, {
                         result: result,
                         exception: exception,
                         expiresAt: now + ttl,
                     })
+                }
             }
 
             try {
