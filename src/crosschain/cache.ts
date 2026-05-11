@@ -11,8 +11,14 @@ type NotVoid<T> = void extends T ? never : T
 
 export class Cache {
     private data = new Map<string, CacheItem>()
-
-    constructor(public maxSize?: number) {}
+    constructor(
+        public maxSize?: number,
+        pruneIntervalSeconds?: number
+    ) {
+        if (pruneIntervalSeconds !== undefined && pruneIntervalSeconds > 0) {
+            setInterval(() => this.prune(), pruneIntervalSeconds * 1000)
+        }
+    }
 
     get size(): number {
         return this.data.size

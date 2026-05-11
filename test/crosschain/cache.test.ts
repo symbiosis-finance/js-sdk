@@ -135,6 +135,31 @@ describe('Cache', () => {
         })
     })
 
+    describe('auto prune', () => {
+        test('prunes expired entries on interval', async () => {
+            const cache = new Cache(undefined, 10)
+
+            await cache.get(['short'], () => Promise.resolve(1), 5)
+            await cache.get(['long'], () => Promise.resolve(2), 60)
+            expect(cache.size).toBe(2)
+
+            vi.advanceTimersByTime(11_000)
+
+            expect(cache.size).toBe(1)
+        })
+
+        test('does not start timer when interval is not provided', async () => {
+            const cache = new Cache()
+
+            await cache.get(['short'], () => Promise.resolve(1), 5)
+            vi.advanceTimersByTime(60_000)
+
+            // expired entry still present since no auto-prune
+            expect(cache.size).toBe(1)
+        })
+
+    })
+
     describe('prune', () => {
         test('removes expired entries and returns count', async () => {
             const cache = new Cache()
