@@ -11,7 +11,7 @@ import type { Counter, Histogram } from 'prom-client'
 import type { TransactionInfo } from 'tronweb'
 import TronWeb from 'tronweb'
 
-import { ChainId } from '../constants'
+import type { ChainId } from '../constants'
 import type { Chain } from '../entities'
 import { chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { delay } from '../utils'

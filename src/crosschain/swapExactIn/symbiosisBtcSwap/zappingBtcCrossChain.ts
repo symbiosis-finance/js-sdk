@@ -5,8 +5,7 @@ import type { BytesLike } from 'ethers'
 import { ChainId } from '../../../constants'
 import type { Token } from '../../../entities'
 import { GAS_TOKEN, TokenAmount } from '../../../entities'
-import { isEvmChainId } from '../../chainUtils'
-import { getPkScript, getThreshold, getToBtcFee } from '../../chainUtils/btc'
+import { getPkScript, getThreshold, getToBtcFee, isEvmChainId } from '../../chainUtils'
 import type { MulticallRouter, Synthesis } from '../../contracts'
 import { getPartnerFeeCall } from '../../feeCall/getPartnerFeeCall'
 import { getVolumeFeeCall } from '../../feeCall/getVolumeFeeCall'
@@ -15,7 +14,7 @@ import type { OneInchProtocols } from '../../trade/oneInchTrade'
 import { TradeProvider } from '../../trade'
 import { withTracing } from '../../tracing'
 import type { Address, EvmAddress, FeeItem, MultiCallItem, SwapExactInResult } from '../../types'
-import { BaseSwapping } from '../swapping/baseSwapping'
+import { BaseSwapping } from '../swapping'
 
 initEccLib(ecc)
 
@@ -61,7 +60,7 @@ export class ZappingBtcCrossChain extends BaseSwapping {
             symbiosis: this.symbiosis,
             amountIn: amount,
             amountInMin: amountMin,
-            partnerAddress: undefined, // do not charge partnerFee twice
+            partnerAddress: this.partnerAddress,
         })
 
         const volumeFeeCollector = this.symbiosis.getVolumeFeeCollector(amount.token.chainId, [ChainId.BTC_MAINNET])
