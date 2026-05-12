@@ -110,15 +110,8 @@ const defaultFetch: typeof fetch = (url, init) => {
     return isomorphicFetch(url as string, init)
 }
 
-const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = [
-    // BNB chain
-    {
-        chainId: ChainId.BSC_MAINNET,
-        address: '0x3743c756b64ECd0770f1d4f47696A73d2A46dcbe',
-        feeRate: '2000000000000000', // 0.2%
-        eligibleChains: [ChainId.BTC_MAINNET],
-    },
-]
+// overridden by api config
+const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = []
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>

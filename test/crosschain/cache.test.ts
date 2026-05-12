@@ -157,7 +157,6 @@ describe('Cache', () => {
             // expired entry still present since no auto-prune
             expect(cache.size).toBe(1)
         })
-
     })
 
     describe('prune', () => {
