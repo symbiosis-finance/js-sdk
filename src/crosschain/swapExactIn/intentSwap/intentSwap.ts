@@ -12,7 +12,7 @@ import { calldataWithoutSelector } from '../../utils'
 import { DeadlineUnlocker__factory } from '../../contracts'
 
 export function isIntentSwapSupported(params: SwapExactInParams): boolean {
-    const { tokenAmountIn, tokenOut, disabledProviders } = params
+    const { tokenAmountIn, tokenOut, disabledProviders, symbiosis } = params
 
     if (disabledProviders?.includes(TradeProvider.INTENT_SOLVER)) {
         return false
@@ -30,9 +30,7 @@ export function isIntentSwapSupported(params: SwapExactInParams): boolean {
         return false
     }
 
-    return false // Temporary
-
-    // return !!symbiosis.chainConfig(srcChainId).intentConfig && !!symbiosis.chainConfig(dstChainId).intentConfig
+    return !!symbiosis.chainConfig(srcChainId).intentConfig && !!symbiosis.chainConfig(dstChainId).intentConfig
 }
 
 /**
