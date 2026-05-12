@@ -613,6 +613,7 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    deprecated: true,
                     name: 'Tether USDt',
                     symbol: 'USDt',
                     address: '0x919C1c267BC06a7039e03fcc2eF738525769109c',
@@ -1344,6 +1345,7 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    deprecated: true,
                     name: 'Tether USD',
                     symbol: 'USDT',
                     address: '0xdef886c55a79830c47108eeb9c37e78a49684e41',
@@ -1568,6 +1570,7 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    deprecated: true,
                     name: 'Wrapped ETH',
                     symbol: 'WETH',
                     address: '0x8280a4e7D5B3B658ec4580d3Bc30f5e50454F169',
@@ -1597,6 +1600,7 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
+                    deprecated: true,
                     name: 'Core Wrapped BTC Token',
                     symbol: 'coreBTC',
                     address: '0x8034aB88C3512246Bf7894f57C834DdDBd1De01F',
