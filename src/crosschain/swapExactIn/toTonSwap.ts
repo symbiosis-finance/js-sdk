@@ -17,7 +17,7 @@ function symbiosisBridgeToTon(context: SwapExactInParams): Promise<SwapExactInRe
         })
         const poolPromises = combinations.map(({ transitTokenIn, transitTokenOut }) => {
             const swappingToTon = new SwappingToTon(symbiosis, poolConfig)
-            return swappingToTon.exactIn({ ...context, transitTokenIn, transitTokenOut })
+            return swappingToTon.exactIn(context, transitTokenIn, transitTokenOut)
         })
         promises.push(...poolPromises)
     })

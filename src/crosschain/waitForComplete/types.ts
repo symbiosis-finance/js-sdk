@@ -1,5 +1,6 @@
 import type { ChainId } from '../../constants'
 import type { BtcConfig } from '../types'
+import type { TradeProvider } from '../trade'
 
 export type BridgeRequestType =
     | 'SynthesizeRequest'
@@ -18,4 +19,10 @@ export interface BridgeTxInfo {
 export interface BtcDepositAcceptedResult {
     commitTx: string
     btcConfig: BtcConfig
+}
+
+export interface ExtraStepResult {
+    provider: TradeProvider
+    txHash: string
+    chainId: ChainId
 }

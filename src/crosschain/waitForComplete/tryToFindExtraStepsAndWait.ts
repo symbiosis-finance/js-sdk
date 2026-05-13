@@ -1,250 +1,54 @@
-import type { SwapStatusResponseV2 } from '@chainflip/sdk/swap'
-import { SwapSDK } from '@chainflip/sdk/swap'
-import type { LogDescription } from '@ethersproject/abi'
-import type { TransactionReceipt } from '@ethersproject/providers'
-import type { BigNumber } from 'ethers'
-
 import type { ChainId } from '../../constants'
-import { thorchainApi } from '../api/thorchain'
-import { Synthesis__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
-import type { BtcConfig } from '../types'
 import { TxNotFound } from './constants'
-import { fetchData, longPolling } from './utils'
 import { waitForDepositUnlocked } from './waitForDepositUnlocked'
-import { waitForIntentFilled } from './waitForIntentFilled'
+import { waitForIntentSolved } from './waitForIntentSolved'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
-
-type ExtraStep =
-    | 'thorChain'
-    | 'burnRequestBtc'
-    | 'burnRequestTon'
-    | 'swapEthToTon'
-    | 'chainFlip'
-    | 'depository'
-    | 'intent'
+import type { ExtraStepResult } from './types'
+import { waitForChainFlipSwap } from './waitForChainFlipSwap'
+import { waitForThorChainTx } from './waitForThorChainSwap'
+import { waitUnwrapBtcTxComplete } from './waitUnwrapBtcTxComplete'
 
 export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
     chainId: ChainId,
     txHash: string
-): Promise<{ extraStep?: ExtraStep; outHash: string }> {
+): Promise<ExtraStepResult | null> {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
         throw new TxNotFound(txHash)
     }
 
-    const isThorChainDeposit = await findThorChainDeposit(receipt)
-    if (isThorChainDeposit) {
-        const outHash = await waitForThorChainTx(txHash)
-        return {
-            extraStep: 'thorChain',
-            outHash,
-        }
+    const thorChainSwap = await waitForThorChainTx(receipt)
+    if (thorChainSwap) {
+        return thorChainSwap
     }
 
-    const burnRequestBtc = await findBurnRequestBtc(receipt)
+    const burnRequestBtc = await waitUnwrapBtcTxComplete(symbiosis, receipt)
     if (burnRequestBtc) {
-        const { burnSerial, rtoken } = burnRequestBtc
-        const btc = symbiosis.tokens().find((t) => t.address.toLowerCase() === rtoken.toLowerCase())
-        if (!btc) {
-            throw new Error('BTC token not found')
-        }
-        const btcConfig = symbiosis.getBtcConfig(btc)
-        const outHash = await waitUnwrapBtcTxComplete(btcConfig, burnSerial)
-
-        return {
-            extraStep: 'burnRequestBtc',
-            outHash,
-        }
+        return burnRequestBtc
     }
 
-    const burnRequestTon = await findBurnRequestTON(receipt)
-    if (burnRequestTon) {
-        const { internalId, chainId } = burnRequestTon
-
-        const outHash = await waitForTonTxComplete(symbiosis, internalId, +chainId)
-        return {
-            extraStep: 'burnRequestTon',
-            outHash,
-        }
+    const toTonSwap = await waitForTonTxComplete(symbiosis, receipt)
+    if (toTonSwap) {
+        return toTonSwap
     }
-    const chainFlipSwap = await findChainFlipSwap(receipt)
+
+    const chainFlipSwap = await waitForChainFlipSwap(receipt)
     if (chainFlipSwap) {
-        const outHash = await waitForChainFlipSwap(receipt.transactionHash)
-        return {
-            extraStep: 'chainFlip',
-            outHash,
-        }
+        return chainFlipSwap
     }
 
-    const depositUnlocked = await waitForDepositUnlocked(symbiosis, chainId, txHash)
+    const depositUnlocked = await waitForDepositUnlocked(symbiosis, chainId, receipt)
     if (depositUnlocked) {
-        return {
-            extraStep: 'depository',
-            outHash: depositUnlocked.transactionHash,
-        }
+        return depositUnlocked
     }
 
-    const intentUnlocked = await waitForIntentFilled(symbiosis, chainId, txHash)
-    if (intentUnlocked) {
-        return {
-            extraStep: 'intent',
-            outHash: intentUnlocked.transactionHash,
-        }
+    const intentSolved = await waitForIntentSolved(symbiosis, chainId, receipt)
+    if (intentSolved) {
+        return intentSolved
     }
 
-    return {
-        outHash: txHash,
-    }
-}
-
-export async function findChainFlipSwap(receipt: TransactionReceipt) {
-    const swapTokenTopic0 = '0x834b524d9f8ccbd31b00b671c896697b96eb4398c0f56e9386a21f5df61e3ce3'
-    const log = receipt.logs.find((log) => {
-        if (log.topics.length === 0) {
-            return false
-        }
-        return log.topics[0] === swapTokenTopic0
-    })
-
-    return !!log
-}
-
-export async function waitForChainFlipSwap(txHash: string): Promise<string> {
-    const chainFlipSdk = new SwapSDK({
-        network: 'mainnet',
-    })
-    const response = await longPolling({
-        pollingFunction: async (): Promise<SwapStatusResponseV2> => {
-            return chainFlipSdk.getStatusV2({ id: txHash })
-        },
-        successCondition: (response) => {
-            return response.state === 'COMPLETED' || response.state === 'SENT'
-        },
-        error: new TxNotFound(txHash),
-        exceedDelay: 3_600_000, // 1 hour
-        pollingInterval: 10 * 1000, // 10 seconds
-    })
-
-    if (response.state !== 'COMPLETED' && response.state !== 'SENT') {
-        throw new TxNotFound(txHash)
-    }
-    if (!response.swapEgress?.txRef) {
-        throw new TxNotFound(txHash)
-    }
-
-    return response.swapEgress.txRef
-}
-
-export async function findThorChainDeposit(receipt: TransactionReceipt) {
-    const thorChainDepositTopic0 = '0xef519b7eb82aaf6ac376a6df2d793843ebfd593de5f1a0601d3cc6ab49ebb395'
-    const log = receipt.logs.find((log) => {
-        if (log.topics.length === 0) {
-            return false
-        }
-        return log.topics[0] === thorChainDepositTopic0
-    })
-
-    return !!log
-}
-
-export async function waitForThorChainTx(txHash: string): Promise<string> {
-    const txHashCleaned = txHash.startsWith('0x') ? txHash.slice(2) : txHash
-
-    return longPolling({
-        pollingFunction: async () => {
-            const result = await thorchainApi.thorchain.tx(txHashCleaned)
-
-            const { status, out_hashes } = result.observed_tx ?? {}
-            if (status === 'done' && out_hashes && out_hashes.length > 0) {
-                return out_hashes.find((outHash) => {
-                    return outHash !== '0000000000000000000000000000000000000000000000000000000000000000'
-                })
-            }
-
-            return
-        },
-        successCondition: (btcHash) => !!btcHash,
-        error: new TxNotFound(txHash),
-        exceedDelay: 3_600_000, // 1 hour
-        pollingInterval: 10_000, // 10 seconds
-    })
-}
-
-async function findBurnRequestBtc(receipt: TransactionReceipt): Promise<
-    | {
-          burnSerial: BigNumber
-          rtoken: string
-      }
-    | undefined
-> {
-    const synthesisInterface = Synthesis__factory.createInterface()
-    const topic0 = synthesisInterface.getEventTopic('BurnRequestBTC')
-    const log = receipt.logs.find((log) => {
-        if (log.topics.length === 0) {
-            return false
-        }
-        return log.topics[0] === topic0
-    })
-    if (!log) {
-        return
-    }
-    const data: LogDescription = synthesisInterface.parseLog(log)
-
-    const { burnSerial, rtoken } = data.args
-
-    return { burnSerial, rtoken }
-}
-
-async function findBurnRequestTON(receipt: TransactionReceipt): Promise<
-    | {
-          internalId: string
-          chainId: string
-      }
-    | undefined
-> {
-    const synthesisInterface = Synthesis__factory.createInterface()
-    const burnRequestTonTopic = synthesisInterface.getEventTopic('BurnRequestTON')
-    const log = receipt.logs.find((log) => {
-        if (log.topics.length === 0) {
-            return false
-        }
-        return log.topics[0] === burnRequestTonTopic
-    })
-
-    if (!log) {
-        return
-    }
-    const data: LogDescription = synthesisInterface.parseLog(log)
-
-    const { id, chainID } = data.args
-
-    return { internalId: id, chainId: chainID.toString() }
-}
-
-interface UnwrapSerialBTCResponse {
-    serial: number
-    to: string
-    tx: string
-    value: number
-    outputIdx: string
-}
-
-async function waitUnwrapBtcTxComplete(btcConfig: BtcConfig, burnSerialBtc: BigNumber): Promise<string> {
-    const { forwarderUrl } = btcConfig
-    const unwrapInfoUrl = new URL(`${forwarderUrl}/unwrap?serial=${burnSerialBtc.toString()}`)
-
-    const result = await longPolling<UnwrapSerialBTCResponse>({
-        pollingFunction: async (): Promise<UnwrapSerialBTCResponse> => {
-            return fetchData(unwrapInfoUrl)
-        },
-        successCondition: (result) => !!result.outputIdx,
-        error: new TxNotFound(burnSerialBtc.toString()),
-        exceedDelay: 3_600_000, // 1 hour
-        pollingInterval: 10_000, // 10 seconds
-    })
-
-    return result.tx
+    return null
 }

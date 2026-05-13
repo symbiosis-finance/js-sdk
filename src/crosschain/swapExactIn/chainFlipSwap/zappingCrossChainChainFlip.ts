@@ -112,18 +112,20 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
             this.evmTo = this.fallbackReceiver
         }
-        const result = await this.doExactIn({
-            tokenAmountIn,
-            tokenOut: chainFlipTokenIn,
-            from,
-            to: this.evmTo,
-            slippage,
-            deadline,
+        const result = await this.doExactIn(
+            {
+                tokenAmountIn,
+                tokenOut: chainFlipTokenIn,
+                from,
+                to: this.evmTo,
+                slippage,
+                deadline,
+                partnerAddress: this.partnerAddress,
+                depositoryEnabled: false,
+            },
             transitTokenIn,
-            transitTokenOut,
-            partnerAddress: this.partnerAddress,
-            depositoryEnabled: false,
-        })
+            transitTokenOut
+        )
 
         const { egressAmount, recommendedSlippageTolerancePercent } = this.chainFlipQuote
         const egressAmountMin = getMinAmount(recommendedSlippageTolerancePercent * 100, egressAmount)

@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest'
 
-import { ChainId, GAS_TOKEN, Symbiosis, Token, WETH } from '../../../../src'
-import type { Route } from '../../../../src/crosschain/swapExactIn/crossChainSwap'
-import { getRoutes } from '../../../../src/crosschain/swapExactIn/crossChainSwap'
+import { ChainId, GAS_TOKEN, Symbiosis, Token, WETH } from '../../../src'
+import type { Route } from '../../../src/crosschain/swapExactIn/crossChainSwap'
+import { getRoutes } from '../../../src/crosschain/swapExactIn/crossChainSwap'
 
 const symbiosis = new Symbiosis('mainnet', 'test')
 
@@ -52,6 +52,18 @@ const BNB_BNB = GAS_TOKEN[ChainId.BSC_MAINNET]
 const BNB_ETH = new Token({
     name: 'ETH',
     address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
+    chainId: ChainId.BSC_MAINNET,
+    decimals: 18,
+})
+const BNB_USDT = new Token({
+    name: 'USDT',
+    address: '0x55d398326f99059ff775485246999027b3197955',
+    chainId: ChainId.BSC_MAINNET,
+    decimals: 18,
+})
+const BNB_USDC = new Token({
+    name: 'USDC',
+    address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
     chainId: ChainId.BSC_MAINNET,
     decimals: 18,
 })
@@ -132,7 +144,7 @@ describe('#getRoutes', () => {
             shouldGoViaEth(result, ChainId.ETH_MAINNET, ChainId.ARBITRUM_MAINNET)
         })
 
-        test('Ethereum.USDC -> Arbitrum.ETH', () => {
+        test('Ethereum.USDC -> Arbitrum.WETH', () => {
             const results = getRoutes({
                 symbiosis,
                 tokenIn: Ethereum_USDC,
@@ -241,6 +253,57 @@ describe('#getRoutes', () => {
             expect(result.optimal).toEqual(true)
             shouldGoViaEth(result, ChainId.ARBITRUM_MAINNET, ChainId.BLAST_MAINNET)
         })
+        test('BNB.USDT -> Ethereum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Ethereum_ETH,
+            })
+            expect(results.length).not.toEqual(0)
+            const result = results[0]
+            expect(result.optimal).toEqual(true)
+            expect(result.poolConfig.coinGeckoId).toEqual('weth')
+
+            expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.BSC_MAINNET)
+            expect(result.transitTokenIn.address).toStrictEqual(BNB_ETH.address)
+
+            expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.ETH_MAINNET)
+            expect(result.transitTokenOut.address).toStrictEqual(Ethereum_WETH.address)
+        })
+        test('Ethereum.USDT -> BNB.USDT', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: Ethereum_USDT,
+                tokenOut: BNB_USDT,
+            })
+            expect(results.length).not.toEqual(0)
+            const result = results[0]
+            expect(result.optimal).toEqual(false)
+            expect(result.poolConfig.coinGeckoId).toEqual('usd-coin')
+
+            expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.ETH_MAINNET)
+            expect(result.transitTokenIn.address).toStrictEqual(Ethereum_USDC.address)
+
+            expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.BSC_MAINNET)
+            expect(result.transitTokenOut.address).toStrictEqual(BNB_USDC.address)
+        })
+        test('BNB.USDT -> Arbitrum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Arbitrum_ETH,
+            })
+            expect(results.length).not.toEqual(0)
+            const result = results[0]
+            expect(result.optimal).toEqual(true)
+            expect(result.poolConfig.coinGeckoId).toEqual('weth')
+
+            expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.BSC_MAINNET)
+            expect(result.transitTokenIn.address).toStrictEqual(BNB_ETH.address)
+
+            expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.ARBITRUM_MAINNET)
+            expect(result.transitTokenOut.address).toStrictEqual(Arbitrum_WETH.address)
+        })
     })
 
     describe('Source chain routing disabled', () => {
@@ -281,7 +344,7 @@ describe('#getRoutes', () => {
             expect(results.length).toEqual(0)
         })
 
-        test('Ethereum.USDC -> Arbitrum.ETH', () => {
+        test('Ethereum.USDC -> Arbitrum.WETH', () => {
             const results = getRoutes({
                 symbiosis,
                 tokenIn: Ethereum_USDC,
@@ -372,6 +435,33 @@ describe('#getRoutes', () => {
             })
             expect(results.length).toEqual(0)
         })
+        test('BNB.USDT -> Ethereum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Ethereum_ETH,
+                disableSrcChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
+        test('Ethereum.USDT -> BNB.USDT', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: Ethereum_USDT,
+                tokenOut: BNB_USDT,
+                disableSrcChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
+        test('BNB.USDT -> Arbitrum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Arbitrum_ETH,
+                disableSrcChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
     })
 
     describe('Destination chain routing disabled', () => {
@@ -415,7 +505,7 @@ describe('#getRoutes', () => {
             shouldGoViaEth(result, ChainId.ETH_MAINNET, ChainId.ARBITRUM_MAINNET)
         })
 
-        test('Ethereum.USDC -> Arbitrum.ETH', () => {
+        test('Ethereum.USDC -> Arbitrum.WETH', () => {
             const results = getRoutes({
                 symbiosis,
                 tokenIn: Ethereum_USDC,
@@ -504,6 +594,51 @@ describe('#getRoutes', () => {
             expect(result.optimal).toEqual(true)
             shouldGoViaEth(result, ChainId.ARBITRUM_MAINNET, ChainId.BLAST_MAINNET)
         })
+        test('BNB.USDT -> Ethereum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Ethereum_ETH,
+                disableDstChainRouting,
+            })
+            expect(results.length).not.toEqual(0)
+            const result = results[0]
+            expect(result.optimal).toEqual(true)
+            expect(result.poolConfig.coinGeckoId).toEqual('weth')
+
+            expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.BSC_MAINNET)
+            expect(result.transitTokenIn.address).toStrictEqual(BNB_ETH.address)
+
+            expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.ETH_MAINNET)
+            expect(result.transitTokenOut.address).toStrictEqual(Ethereum_WETH.address)
+        })
+        test('Ethereum.USDT -> BNB.USDT', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: Ethereum_USDT,
+                tokenOut: BNB_USDT,
+                disableDstChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
+        test('BNB.USDT -> Arbitrum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Arbitrum_ETH,
+                disableDstChainRouting,
+            })
+            expect(results.length).not.toEqual(0)
+            const result = results[0]
+            expect(result.optimal).toEqual(true)
+            expect(result.poolConfig.coinGeckoId).toEqual('weth')
+
+            expect(result.transitTokenIn.chainId).toStrictEqual(ChainId.BSC_MAINNET)
+            expect(result.transitTokenIn.address).toStrictEqual(BNB_ETH.address)
+
+            expect(result.transitTokenOut.chainId).toStrictEqual(ChainId.ARBITRUM_MAINNET)
+            expect(result.transitTokenOut.address).toStrictEqual(Arbitrum_WETH.address)
+        })
     })
 
     describe('Routing disabled', () => {
@@ -549,7 +684,7 @@ describe('#getRoutes', () => {
             expect(results.length).toEqual(0)
         })
 
-        test('Ethereum.USDC -> Arbitrum.ETH', () => {
+        test('Ethereum.USDC -> Arbitrum.WETH', () => {
             const results = getRoutes({
                 symbiosis,
                 tokenIn: Ethereum_USDC,
@@ -625,6 +760,36 @@ describe('#getRoutes', () => {
                 symbiosis,
                 tokenIn: Arbitrum_USDT,
                 tokenOut: Blast_ETH,
+                disableSrcChainRouting,
+                disableDstChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
+        test('BNB.USDT -> Ethereum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Ethereum_ETH,
+                disableSrcChainRouting,
+                disableDstChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
+        test('Ethereum.USDT -> BNB.USDT', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: Ethereum_USDT,
+                tokenOut: BNB_USDT,
+                disableSrcChainRouting,
+                disableDstChainRouting,
+            })
+            expect(results.length).toEqual(0)
+        })
+        test('BNB.USDT -> Arbitrum.ETH', () => {
+            const results = getRoutes({
+                symbiosis,
+                tokenIn: BNB_USDT,
+                tokenOut: Arbitrum_ETH,
                 disableSrcChainRouting,
                 disableDstChainRouting,
             })

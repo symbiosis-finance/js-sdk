@@ -13,14 +13,22 @@ export class SwappingToTon extends BaseSwapping {
     protected userAddress!: string
 
     @withTracing()
-    public async exactIn(params: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+    public async exactIn(
+        params: Omit<SwapExactInParams, 'symbiosis'>,
+        transitTokenIn?: Token,
+        transitTokenOut?: Token
+    ): Promise<SwapExactInResult> {
         this.userAddress = params.to
 
-        return this.doExactIn({
-            ...params,
-            to: params.from,
-            depositoryEnabled: false,
-        })
+        return this.doExactIn(
+            {
+                ...params,
+                to: params.from,
+                depositoryEnabled: false,
+            },
+            transitTokenIn,
+            transitTokenOut
+        )
     }
 
     // TODO: remove when advisor is ready

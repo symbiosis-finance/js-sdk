@@ -36,8 +36,8 @@ export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitF
     }
 
     if (!aBridgeInfo) {
-        const { outHash, extraStep } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
-        if (!extraStep) {
+        const { outHash, provider } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
+        if (!provider) {
             throw new Error(`Transaction ${txId} is not a bridge request`)
         }
 
@@ -48,7 +48,7 @@ export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitF
 
     const bBridgeInfo = await getTxBridgeInfo(symbiosis, aBridgeInfo.externalChainId, bTxId)
 
-    // if b-chain is final destination
+    // if b-chain is the final destination
     if (!bBridgeInfo) {
         const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
         return outHash
