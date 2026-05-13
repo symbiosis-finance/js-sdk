@@ -7,4 +7,10 @@ export {
 } from './chainFlipSwap'
 export * from './swapExactIn'
 export { theBest } from './utils'
-export { THOR_TOKENS_IN } from './thorChainSwap'
+export {
+    isThorChainAnyDestChainId,
+    isThorChainL1DestChainId,
+    THORCHAIN_DESTINATIONS,
+    THORCHAIN_L1_CHAIN_IDS,
+    THORCHAIN_TOKENS_IN,
+} from './thorChainSwap'

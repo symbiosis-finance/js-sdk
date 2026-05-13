@@ -17,7 +17,11 @@ export {
     CHAIN_FLIP_TO_SOLANA_TOKENS_IN,
     CHAIN_FLIP_TOKENS,
     FEE_COLLECTOR_ADDRESSES,
-    THOR_TOKENS_IN,
+    isThorChainAnyDestChainId,
+    isThorChainL1DestChainId,
+    THORCHAIN_DESTINATIONS,
+    THORCHAIN_L1_CHAIN_IDS,
+    THORCHAIN_TOKENS_IN,
 } from './swapExactIn'
 export * from './swapExactIn/swapping'
 export * from './symbiosis'

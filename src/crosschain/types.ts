@@ -265,6 +265,8 @@ export type ChangellyTransactionData = {
     refundExtraId?: string
 }
 
+export type DepositTransactionRequest = { provider: 'changelly' } & ChangellyTransactionData
+
 export type SwapExactInTransactionPayload =
     | {
           transactionType: 'evm'
@@ -287,8 +289,8 @@ export type SwapExactInTransactionPayload =
           transactionRequest: SolanaTransactionData
       }
     | {
-          transactionType: 'changelly'
-          transactionRequest: ChangellyTransactionData
+          transactionType: 'deposit'
+          transactionRequest: DepositTransactionRequest
       }
 
 export type RouteItem = {
@@ -311,7 +313,7 @@ export type OperationType =
     | 'bridge'
     | 'from-btc-swap'
     | 'changelly-trade'
-    | 'changelly-deposit'
+    | 'deposit'
     | 'intent-swap'
 
 // Result of swapExactIn() method.

@@ -1,15 +1,14 @@
-import { AddressType, getAddressInfo, validate } from 'bitcoin-address-validation'
 import { BigNumber } from 'ethers'
 
 import { ChainId } from '../../../constants'
 import type { TokenAmount } from '../../../entities'
-import { GAS_TOKEN, Token } from '../../../entities'
+import { Token } from '../../../entities'
 import { isTronChainId, tronAddressToEvm } from '../../chainUtils'
 import type { Cache } from '../../cache'
-import { InvalidAddressError, ThorChainError } from '../../sdkError'
+import { ThorChainError } from '../../sdkError'
 import type { Address, EvmAddress, TronAddress } from '../../types'
 import TronWeb from 'tronweb'
-import type { BaseQuoteResponse, QuoteFees, QuoteSwapResponse } from '../../api/thorchain'
+import type { BaseQuoteResponse, Pool, QuoteFees, QuoteSwapResponse } from '../../api/thorchain'
 import { thorchainApi } from '../../api/thorchain'
 
 export type ThorQuoteSwapResponse = BaseQuoteResponse &
@@ -19,8 +18,6 @@ export type ThorQuoteSwapResponse = BaseQuoteResponse &
         memo: string
         amount_out_min: string
     }
-
-export const BTC = GAS_TOKEN[ChainId.BTC_MAINNET]
 
 const THOR_CHAIN_MAP: Partial<Record<ChainId, string>> = {
     [ChainId.AVAX_MAINNET]: 'AVAX',
@@ -47,27 +44,49 @@ function toThorToken(token: Token): string {
 }
 
 // the source asset amount in 1e8 decimals
-function toThorAmount(tokenAmount: TokenAmount): BigNumber {
+export function toThorAmount(tokenAmount: TokenAmount): BigNumber {
     const tokenDecimals = BigNumber.from(10).pow(tokenAmount.token.decimals)
     const thorDecimals = BigNumber.from(10).pow(8)
     return BigNumber.from(tokenAmount.raw.toString()).mul(thorDecimals).div(tokenDecimals)
 }
 
-export async function getThorVault(cache: Cache, token: Token): Promise<string> {
+// Convert a 1e8 THORChain amount string to the destination token's decimal raw representation.
+export function fromThorAmount(thorRaw: string, dstDecimals: number): string {
+    const THOR_DECIMALS = 8
+    if (dstDecimals === THOR_DECIMALS) return thorRaw
+    if (dstDecimals > THOR_DECIMALS) {
+        return BigNumber.from(thorRaw)
+            .mul(BigNumber.from(10).pow(dstDecimals - THOR_DECIMALS))
+            .toString()
+    }
+    return BigNumber.from(thorRaw)
+        .div(BigNumber.from(10).pow(THOR_DECIMALS - dstDecimals))
+        .toString()
+}
+
+// Returns a tradable pool. Both `status === 'Available'` AND `!trading_halted` required (DOGE-style halts pass `status` alone).
+export async function getThorPool(cache: Cache, asset: string): Promise<Pool> {
     const pools = await cache.get(
         ['thorchain', 'pools'],
         () => thorchainApi.thorchain.pools(),
         600 // 10 minutes
     )
-
-    const thorToken = toThorToken(token)
-    const pool = pools.find((i) => i.asset === thorToken)
+    const pool = pools.find((i) => i.asset === asset)
     if (!pool) {
-        throw new ThorChainError(`Thor pool not found for ${thorToken}`)
+        throw new ThorChainError(`Thor pool not found for ${asset}`)
     }
     if (pool.status !== 'Available') {
-        throw new ThorChainError(`Thor pool ${thorToken} is not available (status: ${pool.status})`)
+        throw new ThorChainError(`Thor pool ${asset} is not available (status: ${pool.status})`)
     }
+    if (pool.trading_halted) {
+        throw new ThorChainError(`Thor pool ${asset} has trading halted`)
+    }
+    return pool
+}
+
+export async function getThorVault(cache: Cache, token: Token): Promise<string> {
+    const thorToken = toThorToken(token)
+    await getThorPool(cache, thorToken)
 
     const addresses = await cache.get(
         ['thorchain', 'inbound_addresses'],
@@ -142,69 +161,3 @@ export async function getThorQuote(params: {
         amount_out_min: limitMatch[1],
     }
 }
-
-export function validateBitcoinAddress(address: string): void {
-    const isAddressValid = validate(address)
-    if (!isAddressValid) {
-        throw new InvalidAddressError('Bitcoin address is not valid')
-    }
-    const addressInfo = getAddressInfo(address)
-    if (addressInfo.type === AddressType.p2tr) {
-        throw new InvalidAddressError(`Taproot addresses are not supported`)
-    }
-}
-
-export const ETH_USDC = new Token({
-    address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    chainId: ChainId.ETH_MAINNET,
-    decimals: 6,
-    name: 'USDC',
-    symbol: 'USDC',
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
-
-export const AVAX_USDC = new Token({
-    address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
-    chainId: ChainId.AVAX_MAINNET,
-    decimals: 6,
-    name: 'USDC',
-    symbol: 'USDC',
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
-
-export const BSC_USDC = new Token({
-    name: 'USD Coin',
-    address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
-    symbol: 'USDC',
-    decimals: 18,
-    chainId: ChainId.BSC_MAINNET,
-    icons: {
-        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    },
-})
-
-// export const TRON_USDT = new Token({
-//     name: 'Tether USDt',
-//     symbol: 'USDT',
-//     address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
-//     chainId: ChainId.TRON_MAINNET,
-//     decimals: 6,
-//     icons: {
-//         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-//         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-//     },
-// })
-
-export const THOR_TOKENS_IN = [
-    ETH_USDC,
-    AVAX_USDC,
-    BSC_USDC,
-    // TRON_USDT
-]

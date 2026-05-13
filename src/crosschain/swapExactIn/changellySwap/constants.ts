@@ -1,6 +1,7 @@
 import { ChainId } from '../../../constants'
 import type { TokenConstructor } from '../../../entities'
 import { Token } from '../../../entities'
+import type { ChangellyTransactionData } from '../../types'
 
 export function buildChangellyKeyRaw(chainId: ChainId, address: string, isNative: boolean): string {
     if (isNative) return `${chainId}:native`
@@ -274,6 +275,18 @@ export function isChangellyTradeChainId(chainId: ChainId): boolean {
 export function isChangellySupportedChainId(chainId: ChainId | undefined): boolean {
     if (chainId === undefined) return false
     return CHANGELLY_NATIVE_CHAIN_IDS.has(chainId) || CHANGELLY_TRADE_CHAIN_IDS.has(chainId)
+}
+
+// Sentinel value for estimate-only results where no real deposit transaction has been created yet.
+export const EMPTY_CHANGELLY_TX: ChangellyTransactionData = {
+    changellyTxId: '',
+    depositAddress: '',
+    amountExpectedFrom: '',
+    amountExpectedTo: '',
+    networkFee: '',
+    validUntil: 0,
+    currencyFrom: '',
+    currencyTo: '',
 }
 
 // --- Transit tokens for on-chain zapping: DEX swap -> Changelly deposit ---

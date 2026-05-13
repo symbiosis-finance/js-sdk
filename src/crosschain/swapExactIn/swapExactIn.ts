@@ -3,6 +3,7 @@ import { UnsupportedPairError } from '../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
 import { changellyNativeSwap, isChangellyNativeSupported } from './changellySwap'
+import { isThorChainL1DestChainId, thorChainSwap } from './thorChainSwap'
 import { crossChainSwap } from './crossChainSwap'
 import { intentSwap, isIntentSwapSupported } from './intentSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
@@ -75,6 +76,11 @@ export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResul
     // TO flow
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
+    }
+
+    // Thorchain L1 exclude BTC (toBtcSwap)
+    if (isThorChainL1DestChainId(tokenOut.chainId)) {
+        return thorChainSwap(params)
     }
 
     if (isToSolanaSwapSupported(params)) {
