@@ -17,11 +17,12 @@ export {
     CHAIN_FLIP_TO_SOLANA_TOKENS_IN,
     CHAIN_FLIP_TOKENS,
     FEE_COLLECTOR_ADDRESSES,
-    isThorChainAnyDestChainId,
     isThorChainL1DestChainId,
-    THORCHAIN_DESTINATIONS,
-    THORCHAIN_L1_CHAIN_IDS,
-    THORCHAIN_TOKENS_IN,
+    isThorChainSupportedChainId,
+    THORCHAIN_EVM_CONNECTORS,
+    THORCHAIN_L1_DESTINATIONS,
+    THORCHAIN_L1_DEST_CHAIN_IDS,
+    THORCHAIN_TOKENS_EVM_TRANSIT,
 } from './swapExactIn'
 export * from './swapExactIn/swapping'
 export * from './symbiosis'

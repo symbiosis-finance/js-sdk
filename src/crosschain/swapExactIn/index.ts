@@ -8,9 +8,10 @@ export {
 export * from './swapExactIn'
 export { theBest } from './utils'
 export {
-    isThorChainAnyDestChainId,
     isThorChainL1DestChainId,
-    THORCHAIN_DESTINATIONS,
-    THORCHAIN_L1_CHAIN_IDS,
-    THORCHAIN_TOKENS_IN,
+    isThorChainSupportedChainId,
+    THORCHAIN_L1_DESTINATIONS,
+    THORCHAIN_EVM_CONNECTORS,
+    THORCHAIN_L1_DEST_CHAIN_IDS,
+    THORCHAIN_TOKENS_EVM_TRANSIT,
 } from './thorChainSwap'

@@ -277,7 +277,6 @@ export function isChangellySupportedChainId(chainId: ChainId | undefined): boole
     return CHANGELLY_NATIVE_CHAIN_IDS.has(chainId) || CHANGELLY_TRADE_CHAIN_IDS.has(chainId)
 }
 
-// Sentinel value for estimate-only results where no real deposit transaction has been created yet.
 export const EMPTY_CHANGELLY_TX: ChangellyTransactionData = {
     changellyTxId: '',
     depositAddress: '',

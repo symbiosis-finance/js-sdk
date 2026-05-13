@@ -1,6 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 
-import { Percent, TokenAmount } from '../../entities'
+import { Percent } from '../../entities'
+import type { TokenAmount } from '../../entities'
 import { BIPS_BASE } from '../constants'
 import type { SwapLabel } from '../labels'
 import type { DepositTransactionRequest, FeeItem, RouteItem, SwapExactInResult } from '../types'

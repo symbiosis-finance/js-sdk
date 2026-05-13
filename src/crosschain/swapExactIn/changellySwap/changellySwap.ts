@@ -95,7 +95,6 @@ async function changellyTradeEstimateOnly(params: SwapExactInParams): Promise<Sw
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
-    // Estimate-only placeholder — consumers read tokenAmountOut/routes/fees, never sign transactionRequest.
     return {
         ...baseResult(estimate),
         operationType: 'changelly-trade',
@@ -158,7 +157,6 @@ async function changellyZappingEstimateOnly(params: SwapExactInParams): Promise<
     return {
         ...baseResult(estimate),
         operationType: 'changelly-trade',
-        // Zapping is always EVM-driven (onchainSwap → multicall router → Changelly deposit address)
         transactionType: 'evm',
         transactionRequest: {},
         approveTo: approveAddress,
