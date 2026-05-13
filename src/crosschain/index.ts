@@ -19,9 +19,6 @@ export {
     FEE_COLLECTOR_ADDRESSES,
     isThorChainL1DestChainId,
     isThorChainSupportedChainId,
-    THORCHAIN_EVM_CONNECTORS,
-    THORCHAIN_L1_DESTINATIONS,
-    THORCHAIN_L1_DEST_CHAIN_IDS,
     THORCHAIN_TOKENS_EVM_TRANSIT,
 } from './swapExactIn'
 export * from './swapExactIn/swapping'

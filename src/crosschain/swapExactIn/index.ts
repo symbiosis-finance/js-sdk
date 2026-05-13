@@ -10,8 +10,5 @@ export { theBest } from './utils'
 export {
     isThorChainL1DestChainId,
     isThorChainSupportedChainId,
-    THORCHAIN_L1_DESTINATIONS,
-    THORCHAIN_EVM_CONNECTORS,
-    THORCHAIN_L1_DEST_CHAIN_IDS,
     THORCHAIN_TOKENS_EVM_TRANSIT,
 } from './thorChainSwap'
