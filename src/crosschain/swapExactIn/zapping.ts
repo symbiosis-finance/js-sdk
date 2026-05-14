@@ -331,6 +331,7 @@ export class Zapping {
             symbiosis: this.symbiosis,
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
+            timeoutMs: 200,
         })
     }
 

@@ -1,6 +1,4 @@
 import { utils } from 'ethers'
-import invariant from 'tiny-invariant'
-
 import type { Percent, Token, TokenAmount } from '../../entities'
 import { AggregateSdkError, AggregatorTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
@@ -10,7 +8,7 @@ import { KyberSwapTrade } from './kyberSwapTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
-import type { TradeProvider, SymbiosisTradeParams, SymbiosisTradeOutResult } from './symbiosisTrade'
+import type { SymbiosisTradeOutResult, SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
 import { SymbiosisTrade } from './symbiosisTrade'
 import { UniV2Trade } from './uniV2Trade'
 import { UniV3Trade } from './uniV3Trade'
@@ -34,9 +32,8 @@ export interface AggregatorTradeParams extends SymbiosisTradeParams {
     origin?: Address
     clientId: string
     deadline: number // epoch
-    preferOneInchUsage?: boolean
     oneInchProtocols?: OneInchProtocols
-    firstTimeoutMs?: number // stop waiting for other quotes after this timeout if at least a single quote is available.
+    timeoutMs?: number // stop waiting for other quotes after this timeout if at least a single quote is available.
     disabledProviders?: TradeProvider[]
 }
 
@@ -46,109 +43,86 @@ class TradeNotInitializedError extends Error {
     }
 }
 
-class Trades {
-    trades: Trade[] = []
-    errors: Error[] = []
-    tradesCount: number = 0
-    startTime: number = Date.now()
-    prom: Promise<Trade>
-    resolve!: (trade: Trade) => void
-    reject!: (err: Error) => void
-    readonly abortController = new AbortController()
-    private settled = false
+interface TradeEntry {
+    promise: Promise<Trade>
+    label: string
+    priority: boolean
+}
 
-    constructor(
-        private firstTimeoutMs: number | undefined,
-        private onError: (provider: string, err: Error) => void
-    ) {
-        this.prom = new Promise((resolve, reject) => {
-            this.resolve = resolve
-            this.reject = reject
-        })
+interface SelectBestTradeOptions {
+    timeoutMs?: number
+    abortController?: AbortController
+    onError?: (label: string, error: Error) => void
+}
+
+function selectBestTrade(entries: TradeEntry[], options: SelectBestTradeOptions): Promise<Trade> {
+    if (entries.length === 0) {
+        return Promise.reject(new AggregatorTradeError('AggregatorTrade: no trades given'))
     }
 
-    get signal(): AbortSignal {
-        return this.abortController.signal
-    }
+    return new Promise<Trade>((resolve, reject) => {
+        const results: Trade[] = []
+        const errors: Error[] = []
+        let settled = 0
+        let resolved = false
+        let timedOut = false
+        let hasPriorityResult = false
 
-    push(trade: Promise<Trade>, provider: string) {
-        this.tradesCount++
-        withTimeout(trade, provider)
-            .then(this.success.bind(this))
-            .catch((err) => {
-                this.onError(provider, err)
-                this.fail(err)
-            })
-    }
-
-    success(trade: Trade) {
-        this.trades.push(trade)
-        this.check()
-    }
-
-    fail(error: Error) {
-        this.errors.push(error)
-        this.check()
-    }
-
-    check() {
-        if (this.settled) return
-
-        if (this.tradesCount === 0) {
-            this.settled = true
-            this.reject(new AggregatorTradeError(`AggregatorTrade: no trades given`))
-            return
-        }
-
-        const diff = Date.now() - this.startTime
-        const allTradesFinished = this.trades.length + this.errors.length === this.tradesCount
-
-        if (allTradesFinished) {
-            this.settled = true
-            if (this.trades.length === 0) {
-                this.reject(new AggregateSdkError(this.errors, `AggregatorTrade: all trades failed`))
+        const finish = () => {
+            if (resolved) return
+            resolved = true
+            options?.abortController?.abort()
+            if (results.length > 0) {
+                resolve(bestByAmountOut(results))
             } else {
-                this.abortController.abort()
-                this.resolve(this.selectTheBestTrade())
-            }
-        } else if (diff >= (this.firstTimeoutMs || 200)) {
-            const oneInch = this.trades.find((trade) => trade.constructor.name === OneInchTrade.name)
-            const openOcean = this.trades.find((trade) => trade.constructor.name === OpenOceanTrade.name)
-            const kyberSwap = this.trades.find((trade) => trade.constructor.name === KyberSwapTrade.name)
-            const zeroX = this.trades.find((trade) => trade.constructor.name === ZeroXTrade.name)
-
-            if (oneInch || openOcean || kyberSwap || zeroX) {
-                this.settled = true
-                this.abortController.abort()
-                this.resolve(this.selectTheBestTrade())
+                reject(new AggregateSdkError(errors, 'AggregatorTrade: all trades failed'))
             }
         }
-    }
 
-    private selectTheBestTrade(): Trade {
-        invariant(this.trades.length >= 1)
-        let bestTrade!: Trade
-        for (const trade of this.trades) {
-            if (!bestTrade) {
-                bestTrade = trade
-                continue
+        const tryResolve = () => {
+            if (resolved) return
+
+            if (settled === entries.length) {
+                finish()
+                return
             }
 
-            if (trade.amountOut.greaterThan(bestTrade.amountOut)) {
-                bestTrade = trade
+            if (timedOut && hasPriorityResult) {
+                finish()
             }
         }
-        return bestTrade
-    }
 
-    async wait(): Promise<Trade> {
-        const intervalId = setInterval(() => this.check(), 50)
-        try {
-            return await this.prom
-        } finally {
-            clearInterval(intervalId)
+        if (options.timeoutMs !== undefined) {
+            setTimeout(() => {
+                timedOut = true
+                tryResolve()
+            }, options.timeoutMs)
         }
+
+        for (const { promise, label, priority } of entries) {
+            withTimeout(promise, label).then(
+                (trade) => {
+                    results.push(trade)
+                    if (priority) hasPriorityResult = true
+                    settled++
+                    tryResolve()
+                },
+                (error) => {
+                    options?.onError?.(label, error)
+                    errors.push(error)
+                    settled++
+                    tryResolve()
+                }
+            )
+        }
+    })
+}
+
+function bestByAmountOut(trades: Trade[]): Trade {
+    if (trades.length === 0) {
+        throw new AggregatorTradeError('AggregatorTrade: no trades to compare')
     }
+    return trades.reduce((best, trade) => (trade.amountOut.greaterThan(best.amountOut) ? trade : best))
 }
 
 function withTimeout<T>(promise: Promise<T>, name: string, timeout: number = 30_000 /* 30 seconds */): Promise<T> {
@@ -177,8 +151,6 @@ export class AggregatorTrade extends SymbiosisTrade {
 
     constructor(private params: AggregatorTradeParams) {
         super(params)
-        // 1inch quota is exceeded too quickly to we allowed to use OO as well
-        this.preferOneInchUsage = false // params.preferOneInchUsage || false
     }
 
     get tradeType(): TradeProvider {
@@ -202,19 +174,6 @@ export class AggregatorTrade extends SymbiosisTrade {
             disabledProviders,
         } = this.params
 
-        const trades = new Trades(this.firstTimeoutMs, (provider: string, e: Error) => {
-            if (e.name === 'AbortError') {
-                return
-            }
-            symbiosis.logger?.error(`AggregatorTrade: ${provider} failed`, e.message)
-            symbiosis.countAggregatorError({
-                provider,
-                reason: e.message,
-                chain_id: String(tokenOut.chain?.id),
-            })
-        })
-        const signal = trades.signal
-
         const clientId = utils.parseBytes32String(symbiosis.clientId)
         const isOneInchClient = clientId === '1inch'
         const isOpenOceanClient = clientId === 'openocean'
@@ -222,23 +181,29 @@ export class AggregatorTrade extends SymbiosisTrade {
 
         const isOneInchAvailable =
             OneInchTrade.isAvailable(tokenAmountIn.token.chainId) &&
-            !isOpenOceanClient &&
-            OneInchTrade.isAllowed(disabledProviders)
+            OneInchTrade.isAllowed(disabledProviders) &&
+            !isOpenOceanClient
 
-        let isOpenOceanAvailable =
+        const isOpenOceanAvailable =
             OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) &&
-            !isOneInchClient &&
-            OpenOceanTrade.isAllowed(disabledProviders)
+            OpenOceanTrade.isAllowed(disabledProviders) &&
+            !isOneInchClient
 
         const isKyberSwapAvailable =
-            KyberSwapTrade.isAvailable(tokenAmountIn.token.chainId) && KyberSwapTrade.isAllowed(disabledProviders)
+            KyberSwapTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            KyberSwapTrade.isAllowed(disabledProviders) &&
+            !isOneInchClient &&
+            !isOpenOceanClient
 
         const isZeroXAvailable =
-            ZeroXTrade.isAvailable(tokenAmountIn.token.chainId) && ZeroXTrade.isAllowed(disabledProviders)
+            ZeroXTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            ZeroXTrade.isAllowed(disabledProviders) &&
+            !isOneInchClient &&
+            !isOpenOceanClient
 
-        if (this.preferOneInchUsage && isOneInchAvailable) {
-            isOpenOceanAvailable = false
-        }
+        const abortController = new AbortController()
+        const signal = abortController.signal
+        const entries: TradeEntry[] = []
 
         if (isOneInchAvailable) {
             const oneInchTrade = new OneInchTrade({
@@ -253,7 +218,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 protocols: oneInchProtocols,
                 signal,
             })
-            trades.push(oneInchTrade.init(), '1inch')
+            entries.push({ promise: oneInchTrade.init(), label: '1inch', priority: true })
         }
 
         if (isOpenOceanAvailable) {
@@ -266,8 +231,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 signal,
             })
-
-            trades.push(openOceanTrade.init(), 'OpenOcean')
+            entries.push({ promise: openOceanTrade.init(), label: 'OpenOcean', priority: true })
         }
 
         if (isKyberSwapAvailable) {
@@ -282,7 +246,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 signal,
             })
-            trades.push(kyberSwapTrade.init(), 'KyberSwap')
+            entries.push({ promise: kyberSwapTrade.init(), label: 'KyberSwap', priority: true })
         }
 
         if (isZeroXAvailable) {
@@ -297,7 +261,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 signal,
             })
-            trades.push(zeroXTrade.init(), '0x')
+            entries.push({ promise: zeroXTrade.init(), label: '0x', priority: true })
         }
 
         if (
@@ -315,7 +279,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 to,
                 signal,
             })
-            trades.push(izumiTrade.init(), 'Izumi')
+            entries.push({ promise: izumiTrade.init(), label: 'Izumi', priority: false })
         }
 
         if (
@@ -333,7 +297,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 to,
                 signal,
             })
-            trades.push(uniV3Trade.init(), 'UniV3')
+            entries.push({ promise: uniV3Trade.init(), label: 'UniV3', priority: false })
         }
 
         if (
@@ -352,7 +316,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 from,
                 signal,
             })
-            trades.push(uniV4Trade.init(), 'UniV4')
+            entries.push({ promise: uniV4Trade.init(), label: 'UniV4', priority: false })
         }
 
         if (
@@ -370,10 +334,22 @@ export class AggregatorTrade extends SymbiosisTrade {
                 deadline,
                 signal,
             })
-            trades.push(uniV2Trade.init(), 'UniV2')
+            entries.push({ promise: uniV2Trade.init(), label: 'UniV2', priority: false })
         }
 
-        this.trade = await trades.wait()
+        this.trade = await selectBestTrade(entries, {
+            timeoutMs: this.timeoutMs,
+            abortController,
+            onError: (label, e) => {
+                if (e.name === 'AbortError') return
+                symbiosis.logger?.error(`AggregatorTrade: ${label} failed`, e.message)
+                symbiosis.countAggregatorError({
+                    provider: label,
+                    reason: e.message,
+                    chain_id: String(tokenOut.chain?.id),
+                })
+            },
+        })
 
         return this
     }
