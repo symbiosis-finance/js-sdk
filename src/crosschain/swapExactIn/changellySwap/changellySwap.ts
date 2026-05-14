@@ -1,12 +1,25 @@
 import { AddressZero } from '@ethersproject/constants'
 
+import { ChainId } from '../../../constants'
 import { Percent, TokenAmount } from '../../../entities'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
-import { isTronChainId } from '../../chainUtils'
+import {
+    isSolanaChainId,
+    isTonChainId,
+    isTronChainId,
+    type TronTransactionData,
+} from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { AmountLessThanFeeError, ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
-import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
+import type {
+    Address,
+    SolanaTransactionData,
+    SwapExactInParams,
+    SwapExactInResult,
+    SwapExactInTransactionPayload,
+    TonTransactionData,
+} from '../../types'
 import { getChangellyTransitToken, isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
 import {
     buildChangellyTradeTx,
@@ -98,8 +111,7 @@ async function changellyTradeEstimateOnly(params: SwapExactInParams): Promise<Sw
     return {
         ...baseResult(estimate),
         operationType: 'changelly-trade',
-        transactionType: 'evm',
-        transactionRequest: {},
+        ...buildEstimateOnlyTx(tokenAmountIn.token.chainId),
     }
 }
 
@@ -157,8 +169,7 @@ async function changellyZappingEstimateOnly(params: SwapExactInParams): Promise<
     return {
         ...baseResult(estimate),
         operationType: 'changelly-trade',
-        transactionType: 'evm',
-        transactionRequest: {},
+        ...buildEstimateOnlyTx(chainId),
         approveTo: approveAddress,
         routes: [
             ...swapResult.routes,
@@ -206,5 +217,37 @@ function toTradeResult(estimate: ChangellyEstimateResult, tradeResult: BuildChan
             return { ...base, transactionType: 'solana', transactionRequest: tradeResult.tx }
         case 'evm':
             return { ...base, transactionType: 'evm', transactionRequest: tradeResult.tx }
+    }
+}
+
+function buildEstimateOnlyTx(fromChainId: ChainId): SwapExactInTransactionPayload {
+    if (isTronChainId(fromChainId)) {
+        const stub: TronTransactionData = {
+            chain_id: fromChainId,
+            call_value: 0,
+            contract_address: '',
+            fee_limit: 0,
+            function_selector: '',
+            owner_address: '',
+            raw_parameter: '',
+        }
+        return { transactionType: 'tron', transactionRequest: stub }
+    }
+    if (isTonChainId(fromChainId)) {
+        const stub: TonTransactionData = { validUntil: 0, messages: [] }
+        return { transactionType: 'ton', transactionRequest: stub }
+    }
+    if (isSolanaChainId(fromChainId)) {
+        const stub: SolanaTransactionData = { instructions: '' }
+        return { transactionType: 'solana', transactionRequest: stub }
+    }
+    return {
+        transactionType: 'evm',
+        transactionRequest: {
+            chainId: fromChainId,
+            to: AddressZero,
+            data: '0x',
+            value: '0',
+        },
     }
 }
