@@ -49,7 +49,6 @@ import type {
     TonTransactionData,
     TradeAContext,
 } from '../../types'
-import { isUseOneInchOnly } from '../../utils'
 
 type MetaRouteParams = {
     amount: string
@@ -578,7 +577,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this),
+            timeoutMs: 200,
             disabledProviders: this.disabledProviders,
         })
 
@@ -640,7 +639,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this),
+            timeoutMs: 200,
             disabledProviders: this.disabledProviders,
         }).init()
 
