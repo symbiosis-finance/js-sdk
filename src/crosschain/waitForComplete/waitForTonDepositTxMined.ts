@@ -93,7 +93,7 @@ function findBurnRequestTON(receipt: TransactionReceipt): { internalId: string; 
 
     const { id, chainID } = data.args
 
-    return { internalId: id, chainId: chainID.toString() }
+    return { internalId: id, chainId: chainID.toNumber() }
 }
 
 export async function waitForTonTxComplete(

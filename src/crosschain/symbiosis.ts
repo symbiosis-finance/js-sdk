@@ -97,6 +97,7 @@ import {
     waitFromTonTxMined,
 } from './waitForComplete'
 import type { WaitForCompleteParams } from './waitForComplete/waitForComplete'
+import type { WaitForCompleteResult } from './waitForComplete/types'
 import { Zapping } from './swapExactIn/zapping'
 
 export type ConfigName = 'dev' | 'testnet' | 'mainnet' | 'beta'
@@ -765,7 +766,7 @@ export class Symbiosis {
         chainId,
         txId,
         txTon,
-    }: Omit<WaitForCompleteParams, 'symbiosis'>): Promise<string | undefined> {
+    }: Omit<WaitForCompleteParams, 'symbiosis'>): Promise<WaitForCompleteResult> {
         return waitForComplete({ symbiosis: this, chainId, txId, txTon })
     }
 

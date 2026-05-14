@@ -1,4 +1,5 @@
 import type { TransactionReceipt } from '@ethersproject/providers'
+import type { BigNumber } from 'ethers'
 import { Synthesis__factory } from '../contracts'
 import type { LogDescription } from '@ethersproject/abi'
 import type { Symbiosis } from '../symbiosis'

@@ -9,7 +9,7 @@ import type { Symbiosis } from '../symbiosis'
 import { TxNotFound } from './constants'
 import { getTxTonBridgeInfo } from './getTxTonBridgeInfo'
 import { tryToFindExtraStepsAndWait } from './tryToFindExtraStepsAndWait'
-import type { BridgeRequestType, BridgeTxInfo } from './types'
+import type { BridgeRequestType, BridgeTxInfo, WaitForCompleteResult } from './types'
 
 export interface WaitForCompleteParams {
     symbiosis: Symbiosis
@@ -25,23 +25,27 @@ export interface WaitForCompleteParams {
  * @param txTon - optional, TON tx on bridge
  * @returns Transaction hash from portal contract in bitcoin network to user's wallet
  */
-export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitForCompleteParams): Promise<string> {
+export async function waitForComplete({
+    symbiosis,
+    chainId,
+    txId,
+    txTon,
+}: WaitForCompleteParams): Promise<WaitForCompleteResult> {
     const txIdWithPrefix = txId.startsWith('0x') ? txId : `0x${txId}`
 
     let aBridgeInfo
     if (isTonChainId(chainId) && txTon) {
         aBridgeInfo = getTxTonBridgeInfo(txTon)
     } else {
-        aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix) // first part of the bridge on EVM chain
+        aBridgeInfo = await getTxBridgeInfo(symbiosis, chainId, txIdWithPrefix) // first part of the bridge on an EVM chain
     }
 
     if (!aBridgeInfo) {
-        const { outHash, provider } = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
-        if (!provider) {
-            throw new Error(`Transaction ${txId} is not a bridge request`)
+        const result = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
+        if (result) {
+            return { txHash: result.txHash, chainId: result.chainId }
         }
-
-        return outHash
+        throw new Error(`Transaction ${txId} is not a bridge request`)
     }
 
     const bTxId = await waitOtherSideTx(symbiosis, aBridgeInfo)
@@ -50,14 +54,20 @@ export async function waitForComplete({ symbiosis, chainId, txId, txTon }: WaitF
 
     // if b-chain is the final destination
     if (!bBridgeInfo) {
-        const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
-        return outHash
+        const result = await tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
+        if (result) {
+            return { txHash: result.txHash, chainId: result.chainId }
+        }
+        return { txHash: bTxId, chainId: aBridgeInfo.externalChainId }
     }
 
     const cTxId = await waitOtherSideTx(symbiosis, bBridgeInfo)
 
-    const { outHash } = await tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
-    return outHash
+    const result = await tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
+    if (result) {
+        return { txHash: result.txHash, chainId: result.chainId }
+    }
+    return { txHash: cTxId, chainId: bBridgeInfo.externalChainId }
 }
 
 async function getTxBridgeInfo(symbiosis: Symbiosis, chainId: ChainId, txId: string): Promise<BridgeTxInfo | null> {

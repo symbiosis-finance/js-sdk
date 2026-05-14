@@ -1,4 +1,4 @@
-export { BridgeTxInfo, BtcDepositAcceptedResult } from './types'
+export { BridgeTxInfo, BtcDepositAcceptedResult, WaitForCompleteResult } from './types'
 export { waitForBtcCommitTxMined } from './waitForBtcCommitTxMined'
 export { waitForBtcDepositAccepted } from './waitForBtcDepositAccepted'
 export { waitForBtcEvmTxIssued } from './waitForBtcEvmTxIssued'

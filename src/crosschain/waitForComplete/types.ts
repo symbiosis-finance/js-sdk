@@ -26,3 +26,8 @@ export interface ExtraStepResult {
     txHash: string
     chainId: ChainId
 }
+
+export interface WaitForCompleteResult {
+    txHash: string
+    chainId: ChainId
+}
