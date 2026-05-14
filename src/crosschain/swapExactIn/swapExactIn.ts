@@ -2,8 +2,14 @@ import { isTonChainId, isTronChainId, tronAddressToEvm } from '../chainUtils'
 import { UnsupportedPairError } from '../sdkError'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
 import { bridge, isBridgeSupported } from './bridge'
-import { changellyNativeSwap, isChangellyNativeSupported } from './changellySwap'
-import { isThorChainL1DestChainId, thorChainSwap } from './thorChainSwap'
+import { fromXmrSwap, isFromXmrSupported } from './fromXmrSwap'
+import { fromZcashSwap, isFromZcashSupported } from './fromZcashSwap'
+import { isToBchSupported, toBchSwap } from './toBchSwap'
+import { isToDogeSupported, toDogeSwap } from './toDogeSwap'
+import { isToLtcSupported, toLtcSwap } from './toLtcSwap'
+import { isToXmrSupported, toXmrSwap } from './toXmrSwap'
+import { isToXrpSupported, toXrpSwap } from './toXrpSwap'
+import { isToZcashSupported, toZcashSwap } from './toZcashSwap'
 import { crossChainSwap } from './crossChainSwap'
 import { intentSwap, isIntentSwapSupported } from './intentSwap'
 import { feeCollectorSwap, isFeeCollectorSwapSupported } from './feeCollectorSwap'
@@ -34,10 +40,6 @@ export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResul
     }
     if (!params.origin) {
         params.origin = params.from
-    }
-
-    if (isChangellyNativeSupported(params)) {
-        return [changellyNativeSwap(params)]
     }
 
     if (isWrapSupported(params)) {
@@ -73,14 +75,41 @@ export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResul
         return fromSolanaSwap(params)
     }
 
+    if (isFromXmrSupported(params)) {
+        return fromXmrSwap(params)
+    }
+
+    if (isFromZcashSupported(params)) {
+        return fromZcashSwap(params)
+    }
+
     // TO flow
     if (isToBtcSwapSupported(params)) {
         return toBtcSwap(params)
     }
 
-    // Thorchain L1 exclude BTC (toBtcSwap)
-    if (isThorChainL1DestChainId(tokenOut.chainId)) {
-        return thorChainSwap(params)
+    if (isToXmrSupported(params)) {
+        return toXmrSwap(params)
+    }
+
+    if (isToZcashSupported(params)) {
+        return toZcashSwap(params)
+    }
+
+    if (isToLtcSupported(params)) {
+        return toLtcSwap(params)
+    }
+
+    if (isToBchSupported(params)) {
+        return toBchSwap(params)
+    }
+
+    if (isToXrpSupported(params)) {
+        return toXrpSwap(params)
+    }
+
+    if (isToDogeSupported(params)) {
+        return toDogeSwap(params)
     }
 
     if (isToSolanaSwapSupported(params)) {

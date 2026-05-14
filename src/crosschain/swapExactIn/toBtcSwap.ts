@@ -1,7 +1,9 @@
+import { ChainId } from '../../constants'
 import { isBtcChainId } from '../chainUtils'
 import { TradeProvider } from '../trade'
 import { withPromisesSpan } from '../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../types'
+import { validateDepositAddress } from './addressValidation'
 import { btcChainFlipSwap } from './chainFlipSwap'
 import { thorChainSwap } from './thorChainSwap'
 import { symbiosisBtcSwap } from './symbiosisBtcSwap/symbiosisBtcSwap'
@@ -13,6 +15,7 @@ export function isToBtcSwapSupported(context: SwapExactInParams): boolean {
 export function toBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
     return withPromisesSpan('toBtcSwap', {}, () => {
         const { disabledProviders } = context
+        validateDepositAddress(ChainId.BTC_MAINNET, context.to)
 
         const promises: Promise<SwapExactInResult>[] = [...symbiosisBtcSwap(context)]
 
