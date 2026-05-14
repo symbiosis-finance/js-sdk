@@ -142,9 +142,6 @@ function withTimeout<T>(promise: Promise<T>, name: string, timeout: number = 30_
     })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging,@typescript-eslint/no-empty-object-type
-export interface AggregatorTrade extends AggregatorTradeParams {}
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class AggregatorTrade extends SymbiosisTrade {
     // The best found trade. It is always set after waiting for init().
     protected trade!: Trade
@@ -172,6 +169,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             tokenOut,
             oneInchProtocols,
             disabledProviders,
+            timeoutMs,
         } = this.params
 
         const clientId = utils.parseBytes32String(symbiosis.clientId)
@@ -338,7 +336,7 @@ export class AggregatorTrade extends SymbiosisTrade {
         }
 
         this.trade = await selectBestTrade(entries, {
-            timeoutMs: this.timeoutMs,
+            timeoutMs,
             abortController,
             onError: (label, e) => {
                 if (e.name === 'AbortError') return
