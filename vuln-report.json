@@ -1,0 +1,341 @@
+{
+  "scan_date": "2026-05-14",
+  "pre_patch_count": 26,
+  "post_patch_count": 5,
+  "resolved_count": 21,
+  "changes": [],
+  "remaining": [
+    {
+      "name": "@openzeppelin/contracts",
+      "version": "3.4.2-solc-0.7",
+      "vuln_ids": [
+        "GHSA-7grf-83vw-6f5x",
+        "GHSA-88g8-f5mf-f5rj",
+        "GHSA-9c22-pwxw-p6hx",
+        "GHSA-fg47-3c2x-m2wr",
+        "GHSA-mx2q-35m2-x2rh"
+      ]
+    },
+    {
+      "name": "axios",
+      "version": "1.13.2",
+      "vuln_ids": [
+        "GHSA-3p68-rc4w-qgx5",
+        "GHSA-3w6x-2g7m-8v23",
+        "GHSA-43fc-jf86-j433",
+        "GHSA-445q-vr5w-6q77",
+        "GHSA-5c9x-8gcm-mpgx",
+        "GHSA-62hf-57xw-28j9",
+        "GHSA-6chq-wfr3-2hj9",
+        "GHSA-fvcv-3m26-pcqx",
+        "GHSA-m7pr-hjqh-92cm",
+        "GHSA-pf86-5x62-jrwf",
+        "GHSA-pmwg-cvhr-8vh7",
+        "GHSA-q8qp-cvcw-x6jj",
+        "GHSA-vf2m-468p-8v99",
+        "GHSA-w9j2-pvgh-6h63",
+        "GHSA-xhjh-pmcv-23jw",
+        "GHSA-xx6v-rp6x-q39c"
+      ]
+    },
+    {
+      "name": "bigint-buffer",
+      "version": "1.1.5",
+      "vuln_ids": [
+        "GHSA-3gc7-fjrx-p6mg"
+      ]
+    },
+    {
+      "name": "elliptic",
+      "version": "6.6.1",
+      "vuln_ids": [
+        "GHSA-848j-6mx2-7j84"
+      ]
+    },
+    {
+      "name": "lodash",
+      "version": "4.17.23",
+      "vuln_ids": [
+        "GHSA-f23m-r3pf-42rh",
+        "GHSA-r5fr-rjxr-66jc"
+      ]
+    }
+  ],
+  "escalations": [
+    {
+      "package": "brace-expansion",
+      "installed_version": "1.1.12",
+      "severity": "MODERATE",
+      "advisory_ids": [
+        "GHSA-f886-m6hf-6m8v"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.brace-expansion = \"2.0.3\""
+    },
+    {
+      "package": "minimatch",
+      "installed_version": "3.1.2",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-23c5-xmqv-rm74",
+        "GHSA-3ppc-4f35-3m26",
+        "GHSA-7r86-cg39-jmmj"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.minimatch = \"9.0.7\""
+    },
+    {
+      "package": "@openzeppelin/contracts",
+      "installed_version": "3.4.2-solc-0.7",
+      "severity": "CRITICAL",
+      "advisory_ids": [
+        "GHSA-fg47-3c2x-m2wr",
+        "GHSA-7grf-83vw-6f5x",
+        "GHSA-9c22-pwxw-p6hx",
+        "GHSA-88g8-f5mf-f5rj",
+        "GHSA-mx2q-35m2-x2rh"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.@openzeppelin/contracts = \"?\""
+    },
+    {
+      "package": "ajv",
+      "installed_version": "6.12.6",
+      "severity": "MODERATE",
+      "advisory_ids": [
+        "GHSA-2g4f-4pwh-qvx6"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.ajv = \"6.14.0\""
+    },
+    {
+      "package": "picomatch",
+      "installed_version": "2.3.1",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-c2c7-rcm5-vvqj",
+        "GHSA-3v7f-55p6-f55p"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.picomatch = \"4.0.4\""
+    },
+    {
+      "package": "axios",
+      "installed_version": "1.13.2",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-3p68-rc4w-qgx5",
+        "GHSA-5c9x-8gcm-mpgx",
+        "GHSA-m7pr-hjqh-92cm",
+        "GHSA-3w6x-2g7m-8v23",
+        "GHSA-xhjh-pmcv-23jw",
+        "GHSA-xx6v-rp6x-q39c",
+        "GHSA-fvcv-3m26-pcqx",
+        "GHSA-q8qp-cvcw-x6jj",
+        "GHSA-62hf-57xw-28j9",
+        "GHSA-w9j2-pvgh-6h63",
+        "GHSA-vf2m-468p-8v99",
+        "GHSA-445q-vr5w-6q77",
+        "GHSA-pmwg-cvhr-8vh7",
+        "GHSA-pf86-5x62-jrwf",
+        "GHSA-43fc-jf86-j433",
+        "GHSA-6chq-wfr3-2hj9"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.axios = \"1.15.2\""
+    },
+    {
+      "package": "bigint-buffer",
+      "installed_version": "1.1.5",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-3gc7-fjrx-p6mg"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.bigint-buffer = \"?\""
+    },
+    {
+      "package": "cookie",
+      "installed_version": "0.4.2",
+      "severity": "LOW",
+      "advisory_ids": [
+        "GHSA-pxg6-pf52-xh8x"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.cookie = \"0.7.0\""
+    },
+    {
+      "package": "diff",
+      "installed_version": "5.2.0",
+      "severity": "LOW",
+      "advisory_ids": [
+        "GHSA-73rr-hh4g-fpgx"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.diff = \"5.2.2\""
+    },
+    {
+      "package": "elliptic",
+      "installed_version": "6.6.1",
+      "severity": "LOW",
+      "advisory_ids": [
+        "GHSA-848j-6mx2-7j84"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.elliptic = \"?\""
+    },
+    {
+      "package": "bn.js",
+      "installed_version": "4.12.2",
+      "severity": "MODERATE",
+      "advisory_ids": [
+        "GHSA-378v-28hj-76wf"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.bn.js = \"4.12.3\""
+    },
+    {
+      "package": "fast-uri",
+      "installed_version": "3.1.0",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-q3j6-qgpj-74h6",
+        "GHSA-v39h-62p7-jpjc"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.fast-uri = \"3.1.2\""
+    },
+    {
+      "package": "flatted",
+      "installed_version": "3.3.3",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-rf6f-7fwh-wjgh",
+        "GHSA-25h7-pfq9-p65f"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.flatted = \"3.4.2\""
+    },
+    {
+      "package": "follow-redirects",
+      "installed_version": "1.15.11",
+      "severity": "MODERATE",
+      "advisory_ids": [
+        "GHSA-r4q5-vmmm-2653"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.follow-redirects = \"1.16.0\""
+    },
+    {
+      "package": "immutable",
+      "installed_version": "4.3.7",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-wf6x-7x77-mvgw"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.immutable = \"4.3.8\""
+    },
+    {
+      "package": "lodash",
+      "installed_version": "4.17.21",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-r5fr-rjxr-66jc",
+        "GHSA-f23m-r3pf-42rh",
+        "GHSA-xxjr-mmjv-4gpg"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.lodash = \"4.18.0\""
+    },
+    {
+      "package": "postcss",
+      "installed_version": "8.5.6",
+      "severity": "MODERATE",
+      "advisory_ids": [
+        "GHSA-qx2v-qp2m-jg93"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.postcss = \"8.5.10\""
+    },
+    {
+      "package": "rollup",
+      "installed_version": "4.55.1",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-mw96-cpmx-2vgc"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.rollup = \"4.59.0\""
+    },
+    {
+      "package": "serialize-javascript",
+      "installed_version": "6.0.2",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-5c6j-r48x-rmvq",
+        "GHSA-qj8w-gfj5-8c6v"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.serialize-javascript = \"7.0.5\""
+    },
+    {
+      "package": "tmp",
+      "installed_version": "0.0.33",
+      "severity": "LOW",
+      "advisory_ids": [
+        "GHSA-52f5-9888-hmc6"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.tmp = \"0.2.4\""
+    },
+    {
+      "package": "undici",
+      "installed_version": "5.29.0",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-g9mf-h72j-4rw9",
+        "GHSA-v9p9-hfj2-hcw8",
+        "GHSA-2mjp-6q6p-2qxm",
+        "GHSA-vrm6-8vpv-qv8q",
+        "GHSA-4992-7rv2-5pvq"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.undici = \"6.24.0\""
+    },
+    {
+      "package": "vite",
+      "installed_version": "7.3.1",
+      "severity": "HIGH",
+      "advisory_ids": [
+        "GHSA-4w7w-66w2-5vf9",
+        "GHSA-v2wj-q39q-566r",
+        "GHSA-p9ff-h696-f583"
+      ],
+      "dep_path": "unknown",
+      "why_no_fix": "Could not trace to a direct manifest ancestor",
+      "override_recipe": "overrides.vite = \"7.3.2\""
+    }
+  ]
+}
