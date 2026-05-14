@@ -7,6 +7,7 @@ export {
 } from './chainFlipSwap'
 export * from './swapExactIn'
 export { theBest } from './utils'
+export { isValidDepositAddress } from './addressValidation'
 export {
     isThorChainL1DestChainId,
     THORCHAIN_TOKENS_EVM_TRANSIT,

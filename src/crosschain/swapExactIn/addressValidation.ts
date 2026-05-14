@@ -27,8 +27,21 @@ const DEPOSIT_ADDRESS_VALIDATORS: Partial<Record<ChainId, (address: string) => b
         /^t[13][1-9A-HJ-NP-Za-km-z]{33}$|^zs1[a-z0-9]{76}$|^zc[1-9A-HJ-NP-Za-km-z]{93}$/
     ),
 
-    // Monero: 95 chars starting with 4 or 8 (standard) — integrated addresses are 106 chars
-    [ChainId.XMR_MAINNET]: matchesPattern(/^[48][1-9A-HJ-NP-Za-km-z]{94}$/),
+    // Monero mainnet: 95 chars (standard) or 106 chars (integrated, +11 trailing).
+    // Prefix [48][0-9AB] reflects the network-byte encoding for primary/subaddress on mainnet.
+    [ChainId.XMR_MAINNET]: matchesPattern(/^[48][0-9AB][1-9A-HJ-NP-Za-km-z]{93}(?:[1-9A-HJ-NP-Za-km-z]{11})?$/),
+
+    // Stellar: 56 chars starting with G (public key)
+    [ChainId.XLM_MAINNET]: matchesPattern(/^G[A-Z2-7]{55}$/),
+
+    // Cardano: Shelley addr1 (bech32), Byron Ae2 (base58)
+    [ChainId.ADA_MAINNET]: matchesPattern(/^addr1[a-z0-9]{50,110}$|^Ae2[1-9A-HJ-NP-Za-km-z]{50,120}$/),
+
+    // SUI: 66 chars hex with 0x prefix
+    [ChainId.SUI_MAINNET]: matchesPattern(/^0x[a-fA-F0-9]{64}$/),
+
+    // Canton (CC): participant::hex format (e.g. name-1::1220abcd...)
+    [ChainId.CANTON_MAINNET]: matchesPattern(/^.+::[a-fA-F0-9]{40,}$/),
 }
 
 function matchesPattern(pattern: RegExp): (address: string) => boolean {

@@ -18,6 +18,7 @@ export {
     CHAIN_FLIP_TOKENS,
     FEE_COLLECTOR_ADDRESSES,
     isThorChainL1DestChainId,
+    isValidDepositAddress,
     THORCHAIN_TOKENS_EVM_TRANSIT,
 } from './swapExactIn'
 export * from './swapExactIn/swapping'
