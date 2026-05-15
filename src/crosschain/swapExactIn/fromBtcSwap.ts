@@ -336,7 +336,7 @@ class FromBtcTrader {
             fees.push(...(onChain.fees || []))
             routes.push({ provider: onChain.tradeType, tokens: onChain.route })
             tokenAmountOut = onChain.amountOut
-            tokenAmountOutMin = onChain.amountOut
+            tokenAmountOutMin = onChain.amountOutMin
             priceImpact = onChain.priceImpact
         } else {
             // Onchain case with syBTC target.
