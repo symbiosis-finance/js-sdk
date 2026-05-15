@@ -4,16 +4,16 @@ import { TxNotFound } from './constants'
 import { waitForDepositUnlocked } from './waitForDepositUnlocked'
 import { waitForIntentSolved } from './waitForIntentSolved'
 import { waitForTonTxComplete } from './waitForTonDepositTxMined'
-import type { ExtraStepResult } from './types'
+import type { WaitForCompleteResult } from './types'
 import { waitForChainFlipSwap } from './waitForChainFlipSwap'
 import { waitForThorChainTx } from './waitForThorChainSwap'
-import { waitUnwrapBtcTxComplete } from './waitUnwrapBtcTxComplete'
+import { waitForUnwrapBtcTxComplete } from './waitForUnwrapBtcTxComplete'
 
 export async function tryToFindExtraStepsAndWait(
     symbiosis: Symbiosis,
     chainId: ChainId,
     txHash: string
-): Promise<ExtraStepResult | null> {
+): Promise<WaitForCompleteResult | null> {
     const provider = symbiosis.getProvider(chainId)
     const receipt = await provider.getTransactionReceipt(txHash)
     if (!receipt) {
@@ -25,7 +25,7 @@ export async function tryToFindExtraStepsAndWait(
         return thorChainSwap
     }
 
-    const burnRequestBtc = await waitUnwrapBtcTxComplete(symbiosis, receipt)
+    const burnRequestBtc = await waitForUnwrapBtcTxComplete(symbiosis, receipt)
     if (burnRequestBtc) {
         return burnRequestBtc
     }

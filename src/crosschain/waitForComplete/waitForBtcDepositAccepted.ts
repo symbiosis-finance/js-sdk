@@ -33,7 +33,7 @@ interface BtcAddressResponse {
     transactions: TransactionBtcInfo[]
 }
 
-export class WaitWrapBtcTxToCompleteError extends Error {
+class WaitWrapBtcTxToCompleteError extends Error {
     constructor(message: string) {
         super(message)
         this.name = 'WaitWrapBtcTxToCompleteError'

@@ -3,8 +3,7 @@ import type { TransactionReceipt } from '@ethersproject/providers'
 import type { ChainId } from '../../constants'
 import { getLogWithTimeout } from '../chainUtils'
 import type { Symbiosis } from '../symbiosis'
-import type { ExtraStepResult } from './types'
-import { TradeProvider } from '../trade'
+import type { WaitForCompleteResult } from './types'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
 
@@ -12,7 +11,7 @@ export async function waitForDepositUnlocked(
     symbiosis: Symbiosis,
     chainId: ChainId,
     receipt: TransactionReceipt
-): Promise<ExtraStepResult | undefined> {
+): Promise<WaitForCompleteResult | undefined> {
     const d = await symbiosis.depository(chainId)
     if (!d?.depository) {
         return
@@ -41,7 +40,6 @@ export async function waitForDepositUnlocked(
     })
 
     return {
-        provider: TradeProvider.DEPOSITORY,
         txHash: unlockedLog.transactionHash,
         chainId,
     }

@@ -43,7 +43,7 @@ export async function waitForComplete({
     if (!aBridgeInfo) {
         const result = await tryToFindExtraStepsAndWait(symbiosis, chainId, txId)
         if (result) {
-            return { txHash: result.txHash, chainId: result.chainId }
+            return result
         }
         throw new Error(`Transaction ${txId} is not a bridge request`)
     }
@@ -56,7 +56,7 @@ export async function waitForComplete({
     if (!bBridgeInfo) {
         const result = await tryToFindExtraStepsAndWait(symbiosis, aBridgeInfo.externalChainId, bTxId)
         if (result) {
-            return { txHash: result.txHash, chainId: result.chainId }
+            return result
         }
         return { txHash: bTxId, chainId: aBridgeInfo.externalChainId }
     }
@@ -65,7 +65,7 @@ export async function waitForComplete({
 
     const result = await tryToFindExtraStepsAndWait(symbiosis, bBridgeInfo.externalChainId, cTxId)
     if (result) {
-        return { txHash: result.txHash, chainId: result.chainId }
+        return result
     }
     return { txHash: cTxId, chainId: bBridgeInfo.externalChainId }
 }

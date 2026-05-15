@@ -8,10 +8,9 @@ import type { ChainId } from '../../constants'
 import type { Symbiosis } from '../symbiosis'
 import { longPolling } from './utils'
 import type { TransactionReceipt } from '@ethersproject/providers'
-import type { ExtraStepResult } from './types'
+import type { WaitForCompleteResult } from './types'
 import { Synthesis__factory } from '../contracts'
 import type { LogDescription } from '@ethersproject/abi'
-import { TradeProvider } from '../trade'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -99,7 +98,7 @@ function findBurnRequestTON(receipt: TransactionReceipt): { internalId: string; 
 export async function waitForTonTxComplete(
     symbiosis: Symbiosis,
     receipt: TransactionReceipt
-): Promise<ExtraStepResult | undefined> {
+): Promise<WaitForCompleteResult | undefined> {
     const burnRequestTon = findBurnRequestTON(receipt)
     if (!burnRequestTon) {
         return
@@ -166,7 +165,6 @@ export async function waitForTonTxComplete(
     })
 
     return {
-        provider: TradeProvider.SYMBIOSIS,
         txHash: txRaw.tx.hash().toString('hex'),
         chainId: tonChainId,
     }

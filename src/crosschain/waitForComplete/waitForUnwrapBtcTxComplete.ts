@@ -3,11 +3,10 @@ import type { BigNumber } from 'ethers'
 import { Synthesis__factory } from '../contracts'
 import type { LogDescription } from '@ethersproject/abi'
 import type { Symbiosis } from '../symbiosis'
-import type { ExtraStepResult } from './types'
+import type { WaitForCompleteResult } from './types'
 import { fetchData, longPolling } from './utils'
 import { TxNotFound } from './constants'
 import { ChainId } from '../../constants'
-import { TradeProvider } from '../trade'
 
 function findBurnRequestBtc(receipt: TransactionReceipt): { burnSerial: BigNumber; rtoken: string } | undefined {
     const synthesisInterface = Synthesis__factory.createInterface()
@@ -36,10 +35,10 @@ interface UnwrapSerialBTCResponse {
     outputIdx: string
 }
 
-export async function waitUnwrapBtcTxComplete(
+export async function waitForUnwrapBtcTxComplete(
     symbiosis: Symbiosis,
     receipt: TransactionReceipt
-): Promise<ExtraStepResult | undefined> {
+): Promise<WaitForCompleteResult | undefined> {
     const burnRequestBtc = findBurnRequestBtc(receipt)
     if (!burnRequestBtc) {
         return
@@ -65,7 +64,6 @@ export async function waitUnwrapBtcTxComplete(
     })
 
     return {
-        provider: TradeProvider.SYMBIOSIS,
         txHash: result.tx,
         chainId: ChainId.BTC_MAINNET,
     }

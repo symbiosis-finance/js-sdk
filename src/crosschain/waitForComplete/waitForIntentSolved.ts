@@ -3,8 +3,7 @@ import { getLogWithTimeout } from '../chainUtils'
 import { DeadlineUnlocker__factory, DepositoryDst__factory, DepositorySrc__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import { SdkError } from '../sdkError'
-import type { ExtraStepResult } from './types'
-import { TradeProvider } from '../trade'
+import type { WaitForCompleteResult } from './types'
 import type { TransactionReceipt } from '@ethersproject/providers'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
@@ -13,7 +12,7 @@ export async function waitForIntentSolved(
     symbiosis: Symbiosis,
     chainId: ChainId,
     receipt: TransactionReceipt
-): Promise<ExtraStepResult | undefined> {
+): Promise<WaitForCompleteResult | undefined> {
     const intentConfig = symbiosis.chainConfig(chainId).intentConfig
     if (!intentConfig) {
         return
@@ -66,7 +65,6 @@ export async function waitForIntentSolved(
         case 0: {
             // normal fill
             return {
-                provider: TradeProvider.INTENT_SOLVER,
                 txHash: filledLog.transactionHash,
                 chainId: dstChainId,
             }
@@ -81,7 +79,6 @@ export async function waitForIntentSolved(
             })
 
             return {
-                provider: TradeProvider.INTENT_SOLVER,
                 txHash: unlockedLog.transactionHash,
                 chainId,
             }

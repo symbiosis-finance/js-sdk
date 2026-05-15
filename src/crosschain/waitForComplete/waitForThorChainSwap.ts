@@ -1,9 +1,8 @@
 import type { TransactionReceipt } from '@ethersproject/providers'
 import { longPolling } from './utils'
-import type { ExtraStepResult } from './types'
+import type { WaitForCompleteResult } from './types'
 import { TxNotFound } from './constants'
 import { thorchainApi } from '../api/thorchain'
-import { TradeProvider } from '../trade'
 import { ChainId } from '../../constants'
 
 function findThorChainDeposit(receipt: TransactionReceipt) {
@@ -18,7 +17,7 @@ function findThorChainDeposit(receipt: TransactionReceipt) {
     return !!log
 }
 
-export async function waitForThorChainTx(receipt: TransactionReceipt): Promise<ExtraStepResult | undefined> {
+export async function waitForThorChainTx(receipt: TransactionReceipt): Promise<WaitForCompleteResult | undefined> {
     if (!findThorChainDeposit(receipt)) {
         return
     }
@@ -46,7 +45,6 @@ export async function waitForThorChainTx(receipt: TransactionReceipt): Promise<E
     })
 
     return {
-        provider: TradeProvider.THORCHAIN_BRIDGE,
         txHash: outHash,
         chainId: ChainId.BTC_MAINNET, // TODO fixme
     }

@@ -2,7 +2,7 @@ export { BridgeTxInfo, BtcDepositAcceptedResult, WaitForCompleteResult } from '.
 export { waitForBtcCommitTxMined } from './waitForBtcCommitTxMined'
 export { waitForBtcDepositAccepted } from './waitForBtcDepositAccepted'
 export { waitForBtcEvmTxIssued } from './waitForBtcEvmTxIssued'
-export { waitForChainFlipTxComplete } from './waitForChainFlipTxComplete'
+export { waitForChainFlipSwap, waitForChainFlipTxComplete } from './waitForChainFlipSwap'
 export { waitForComplete } from './waitForComplete'
 export { waitForDepositUnlocked } from './waitForDepositUnlocked'
 export { waitForIntentSolved } from './waitForIntentSolved'

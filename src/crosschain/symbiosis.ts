@@ -805,7 +805,7 @@ export class Symbiosis {
     }
 
     public async waitForChainFlipTxComplete(txHash: string) {
-        return waitForChainFlipTxComplete({ txHash })
+        return waitForChainFlipTxComplete(txHash)
     }
 
     public async findTransitTokenSent(chainId: ChainId, transactionHash: string): Promise<TokenAmount | undefined> {

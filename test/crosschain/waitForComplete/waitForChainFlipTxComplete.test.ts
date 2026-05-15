@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { SwapSDK } from '@chainflip/sdk/swap'
 
-import { waitForChainFlipTxComplete } from '../../../src/crosschain/waitForComplete/waitForChainFlipTxComplete'
+import { ChainId, waitForChainFlipTxComplete } from '../../../src'
 
 const TX_HASH = '4xSMnCo3n9xKfHhFpnVXJpekPWS6c6uCzTz3stnXWBmBFdtmJnCTwGXCBqHxrdW9XnMAqWMQFvHE7LFM6mLNLT8'
 const DEST_TX_REF = '2aGCM7vrQdjHXemUdd12kwRjpXpb4wS5jktbP92R6c22xb9sLsnCfnVPxwQ1pjEsunWj7NJe74AFasSTsM4CCh1d'
 
 const POLLING_INTERVAL_MS = 10_000
-const TIMEOUT_MS = 20 * 60 * 1000
+const TIMEOUT_MS = 3_600_000 // 1 hour, matches exceedDelay in waitForChainFlipTxComplete
 
 // Minimal shape required by the type: everything not under test is left out
 function makeStatus(overrides: object) {
@@ -59,10 +59,13 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                 })
             )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
             await vi.runAllTimersAsync()
 
-            await expect(promise).resolves.toBe(DEST_TX_REF)
+            await expect(promise).resolves.toEqual({
+                txHash: DEST_TX_REF,
+                chainId: ChainId.BTC_MAINNET,
+            })
         })
 
         test('resolves with swapEgress.txRef when state is FAILED but egress was sent', async () => {
@@ -73,10 +76,13 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                 })
             )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
             await vi.runAllTimersAsync()
 
-            await expect(promise).resolves.toBe(DEST_TX_REF)
+            await expect(promise).resolves.toEqual({
+                txHash: DEST_TX_REF,
+                chainId: ChainId.BTC_MAINNET,
+            })
         })
 
         test('resolves after polling through intermediate states', async () => {
@@ -93,10 +99,13 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                     })
                 )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
             await vi.runAllTimersAsync()
 
-            await expect(promise).resolves.toBe(DEST_TX_REF)
+            await expect(promise).resolves.toEqual({
+                txHash: DEST_TX_REF,
+                chainId: ChainId.BTC_MAINNET,
+            })
             expect(mockGetStatusV2).toHaveBeenCalledTimes(6)
         })
 
@@ -108,7 +117,7 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                 })
             )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
             await vi.runAllTimersAsync()
             await promise
 
@@ -117,7 +126,7 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
     })
 
     describe('refund / abort', () => {
-        test('throws when COMPLETED but swapEgress is absent (refund case)', async () => {
+        test('resolves with refund tx when swapEgress is absent but refundEgress has txRef', async () => {
             mockGetStatusV2.mockResolvedValue(
                 makeStatus({
                     state: 'COMPLETED',
@@ -137,25 +146,16 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                 })
             )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
+            await vi.runAllTimersAsync()
 
-            await expect(promise).rejects.toThrow('MinPriceViolation')
-            await expect(promise).rejects.toMatchObject({ name: 'WaitForChainFlipTxCompleteError' })
+            await expect(promise).resolves.toEqual({
+                txHash: '0xrefundtx',
+                chainId: ChainId.SOLANA_MAINNET,
+            })
         })
 
-        test('throws when COMPLETED with no swapEgress and no abortedReason (generic refund)', async () => {
-            mockGetStatusV2.mockResolvedValue(
-                makeStatus({
-                    state: 'COMPLETED',
-                    swapEgress: undefined,
-                    refundEgress: { txRef: '0xrefundtx', amount: '12976943178' },
-                })
-            )
-
-            await expect(waitForChainFlipTxComplete({ txHash: TX_HASH })).rejects.toThrow('swap was refunded')
-        })
-
-        test('throws when FAILED with no swapEgress (refund egress failure)', async () => {
+        test('throws when FAILED with no swapEgress and no refund txRef', async () => {
             mockGetStatusV2.mockResolvedValue(
                 makeStatus({
                     state: 'FAILED',
@@ -168,10 +168,10 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                 })
             )
 
-            await expect(waitForChainFlipTxComplete({ txHash: TX_HASH })).rejects.toThrow('BelowMinimumDeposit')
+            await expect(waitForChainFlipTxComplete(TX_HASH)).rejects.toThrow('ChainFlip swap failed')
         })
 
-        test('falls back to "swap was refunded" when all reason fields are absent', async () => {
+        test('throws when no swapEgress and no refundEgress', async () => {
             mockGetStatusV2.mockResolvedValue(
                 makeStatus({
                     state: 'COMPLETED',
@@ -180,7 +180,7 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                 })
             )
 
-            await expect(waitForChainFlipTxComplete({ txHash: TX_HASH })).rejects.toThrow('swap was refunded')
+            await expect(waitForChainFlipTxComplete(TX_HASH)).rejects.toThrow('ChainFlip swap failed')
         })
     })
 
@@ -196,10 +196,13 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                     })
                 )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
             await vi.runAllTimersAsync()
 
-            await expect(promise).resolves.toBe(DEST_TX_REF)
+            await expect(promise).resolves.toEqual({
+                txHash: DEST_TX_REF,
+                chainId: ChainId.BTC_MAINNET,
+            })
             expect(mockGetStatusV2).toHaveBeenCalledTimes(3)
         })
 
@@ -215,7 +218,7 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
                     })
                 )
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
 
             // First call is immediate — flush microtasks only
             await Promise.resolve()
@@ -227,18 +230,21 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
 
             // Advance another interval — resolves
             await vi.advanceTimersByTimeAsync(POLLING_INTERVAL_MS)
-            await expect(promise).resolves.toBe(DEST_TX_REF)
+            await expect(promise).resolves.toEqual({
+                txHash: DEST_TX_REF,
+                chainId: ChainId.BTC_MAINNET,
+            })
         })
 
         test('throws timeout error when swap never completes', async () => {
             mockGetStatusV2.mockResolvedValue(makeStatus({ state: 'SWAPPING' }))
 
-            const promise = waitForChainFlipTxComplete({ txHash: TX_HASH })
+            const promise = waitForChainFlipTxComplete(TX_HASH)
 
             // Attach handlers before advancing timers to avoid unhandled rejection
             await Promise.all([
                 expect(promise).rejects.toThrow(`ChainFlip swap tracking timed out for tx: ${TX_HASH}`),
-                expect(promise).rejects.toMatchObject({ name: 'WaitForChainFlipTxCompleteError' }),
+                expect(promise).rejects.toMatchObject({ name: 'WaitForChainFlipError' }),
                 vi.advanceTimersByTimeAsync(TIMEOUT_MS + POLLING_INTERVAL_MS),
             ])
         })
@@ -247,26 +253,29 @@ describe('MOCK: waitForChainFlipTxComplete', () => {
 
 describe('REAL: waitForChainFlipTxComplete', () => {
     test('success Bitcoin', async () => {
-        const result = await waitForChainFlipTxComplete({
-            txHash: '0xf4b7495273d38a6877d5246cef3e928fea0d63af373424744834b4c095745f09',
-        })
+        const result = await waitForChainFlipTxComplete(
+            '0xf4b7495273d38a6877d5246cef3e928fea0d63af373424744834b4c095745f09'
+        )
 
-        expect(result).toBe('6998d61be596aaf1228c74cc5bfb7c760574c5c083f355e6f385510b541893ae')
+        expect(result.txHash).toBe('6998d61be596aaf1228c74cc5bfb7c760574c5c083f355e6f385510b541893ae')
     }, 30_000)
 
     test('success Solana', async () => {
-        const result = await waitForChainFlipTxComplete({
-            txHash: '0x228dde864e813b34b845ffca36efa341d823bbadb81bef309d8fc4b9c9dcc42b',
-        })
+        const result = await waitForChainFlipTxComplete(
+            '0x228dde864e813b34b845ffca36efa341d823bbadb81bef309d8fc4b9c9dcc42b'
+        )
 
-        expect(result).toBe('3Tn4hR2MdWoBKePpGkP2hW16i8tUQLsww3x8RuXhd3G33v5uA3roEzLa1VEq39P6W6BoT215C1EwJTDK2kZcvKtw')
+        expect(result.txHash).toBe(
+            '3Tn4hR2MdWoBKePpGkP2hW16i8tUQLsww3x8RuXhd3G33v5uA3roEzLa1VEq39P6W6BoT215C1EwJTDK2kZcvKtw'
+        )
     }, 30_000)
 
-    test('refund', async () => {
-        const promise = waitForChainFlipTxComplete({
-            txHash: '0xa0b2e0885016d38c8765dfc22607dd623fac1be5fdeda38a20080c7a157cdbaa',
-        })
+    test('refund returns refund tx', async () => {
+        const result = await waitForChainFlipTxComplete(
+            '0xa0b2e0885016d38c8765dfc22607dd623fac1be5fdeda38a20080c7a157cdbaa'
+        )
 
-        await expect(promise).rejects.toThrowError('ChainFlip swap did not complete: MinPriceViolation')
+        expect(result.txHash).toBeDefined()
+        expect(result.chainId).toBeDefined()
     }, 30_000)
 })
