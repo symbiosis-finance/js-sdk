@@ -340,7 +340,7 @@ export class AggregatorTrade extends SymbiosisTrade {
             abortController,
             onError: (label, e) => {
                 if (e.name === 'AbortError') return
-                symbiosis.logger?.error(`AggregatorTrade: ${label} failed`, e.message)
+                symbiosis.logger?.error(`AggregatorTrade.onError ${label} failed: ${e.message}`)
                 symbiosis.countAggregatorError({
                     provider: label,
                     reason: e.message,
