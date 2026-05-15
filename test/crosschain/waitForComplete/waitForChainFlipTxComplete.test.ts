@@ -275,7 +275,7 @@ describe('REAL: waitForChainFlipTxComplete', () => {
             '0xa0b2e0885016d38c8765dfc22607dd623fac1be5fdeda38a20080c7a157cdbaa'
         )
 
-        expect(result.txHash).toBeDefined()
-        expect(result.chainId).toBeDefined()
+        expect(result.txHash).toBe('0x784b0ccf759a68f67cbbd07586d63ec3b276eac77da90c882c8beafc449e046c')
+        expect(result.chainId).toBe(ChainId.ARBITRUM_MAINNET)
     }, 30_000)
 })
