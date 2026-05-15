@@ -124,7 +124,9 @@ const {
     }
 })
 
-vi.mock('../../../src/crosschain/chainUtils', () => ({
+vi.mock('../../../src/crosschain/chainUtils', async (importOriginal) => ({
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+    ...(await importOriginal<typeof import('../../../src/crosschain/chainUtils')>()),
     getLogWithTimeout: (...args: unknown[]) => mockGetLogWithTimeout(...args),
 }))
 
