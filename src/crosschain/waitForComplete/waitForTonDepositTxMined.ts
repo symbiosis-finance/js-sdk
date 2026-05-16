@@ -7,6 +7,10 @@ import type { Maybe } from '@ton/ton/dist/utils/maybe'
 import type { ChainId } from '../../constants'
 import type { Symbiosis } from '../symbiosis'
 import { longPolling } from './utils'
+import type { TransactionReceipt } from '@ethersproject/providers'
+import type { WaitForCompleteResult } from './types'
+import { Synthesis__factory } from '../contracts'
+import type { LogDescription } from '@ethersproject/abi'
 
 // The event is defined by its opcode, i.e. first 32 bits of the body
 const BURN_COMPLETED_OPCODE = 0x62e558c2
@@ -71,18 +75,47 @@ class WaitForTonTxCompleteError extends Error {
     }
 }
 
-export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: string, chainId: ChainId) {
-    const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === chainId)
+function findBurnRequestTON(receipt: TransactionReceipt): { internalId: string; chainId: ChainId } | undefined {
+    const synthesisInterface = Synthesis__factory.createInterface()
+    const burnRequestTonTopic = synthesisInterface.getEventTopic('BurnRequestTON')
+    const log = receipt.logs.find((log) => {
+        if (log.topics.length === 0) {
+            return false
+        }
+        return log.topics[0] === burnRequestTonTopic
+    })
+
+    if (!log) {
+        return
+    }
+    const data: LogDescription = synthesisInterface.parseLog(log)
+
+    const { id, chainID } = data.args
+
+    return { internalId: id, chainId: chainID.toNumber() }
+}
+
+export async function waitForTonTxComplete(
+    symbiosis: Symbiosis,
+    receipt: TransactionReceipt
+): Promise<WaitForCompleteResult | undefined> {
+    const burnRequestTon = findBurnRequestTON(receipt)
+    if (!burnRequestTon) {
+        return
+    }
+    const { internalId, chainId: tonChainId } = burnRequestTon
+
+    const tonChainConfig = symbiosis.config.chains.find((chain) => chain.id === tonChainId)
     if (!tonChainConfig) {
         throw new Error('Ton chain config not found')
     }
 
     const tonPortal = tonChainConfig.tonPortal
     if (!tonPortal) {
-        throw new Error(`Ton portal not found for chain ${chainId}`)
+        throw new Error(`Ton portal not found for chain ${tonChainId}`)
     }
 
-    const externalId = _getExternalIdTon({ internalId, receiveSide: AddressZero, chainId })
+    const externalId = _getExternalIdTon({ internalId, receiveSide: AddressZero, chainId: tonChainId })
 
     const client = await symbiosis.getTonClient()
 
@@ -131,5 +164,8 @@ export async function waitForTonTxComplete(symbiosis: Symbiosis, internalId: str
         error: new WaitForTonTxCompleteError('Ton transaction not found on TON chain'),
     })
 
-    return txRaw.tx.hash().toString('hex')
+    return {
+        txHash: txRaw.tx.hash().toString('hex'),
+        chainId: tonChainId,
+    }
 }

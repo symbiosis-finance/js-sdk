@@ -1,26 +1,25 @@
-import type { Log } from '@ethersproject/providers'
-
 import type { ChainId } from '../../constants'
 import { getLogWithTimeout } from '../chainUtils'
-import { DepositorySrc__factory, DepositoryDst__factory, DeadlineUnlocker__factory } from '../contracts'
+import { DeadlineUnlocker__factory, DepositoryDst__factory, DepositorySrc__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
+import { SdkError } from '../sdkError'
+import type { WaitForCompleteResult } from './types'
+import type { TransactionReceipt } from '@ethersproject/providers'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
 
-export async function waitForIntentFilled(
+export async function waitForIntentSolved(
     symbiosis: Symbiosis,
     chainId: ChainId,
-    txHash: string
-): Promise<Log | undefined> {
+    receipt: TransactionReceipt
+): Promise<WaitForCompleteResult | undefined> {
     const intentConfig = symbiosis.chainConfig(chainId).intentConfig
     if (!intentConfig) {
         return
     }
 
-    const provider = symbiosis.getProvider(chainId)
-    const receipt = await provider.getTransactionReceipt(txHash)
-
-    const depositorySrc = DepositorySrc__factory.connect(intentConfig.depositorySrc, provider)
+    const srcProvider = symbiosis.getProvider(chainId)
+    const depositorySrc = DepositorySrc__factory.connect(intentConfig.depositorySrc, srcProvider)
 
     const topic0 = depositorySrc.interface.getEventTopic('IntentLocked')
     const log = receipt.logs.find((log) => {
@@ -51,10 +50,41 @@ export async function waitForIntentFilled(
     const dstProvider = symbiosis.getProvider(dstChainId)
     const depositoryDst = DepositoryDst__factory.connect(dstIntentConfig.depositoryDst, dstProvider)
 
-    return getLogWithTimeout({
+    const filledLog = await getLogWithTimeout({
         symbiosis,
         chainId: dstChainId,
         filter: depositoryDst.filters.IntentFilled(intentId),
         exceedDelay: timeout,
     })
+
+    const filledEvent = depositoryDst.interface.parseLog(filledLog)
+    const solutionInputs = deadlineUnlockerInterface.getFunction('encodeSolution').inputs
+    const [solution] = deadlineUnlockerInterface._abiCoder.decode(solutionInputs, filledEvent.args.solution)
+    const branch = solution.branch.toNumber()
+
+    switch (branch) {
+        case 0: {
+            // normal fill
+            return {
+                txHash: filledLog.transactionHash,
+                chainId: dstChainId,
+            }
+        }
+        case 1: {
+            // refund
+            const unlockedLog = await getLogWithTimeout({
+                symbiosis,
+                chainId,
+                filter: depositorySrc.filters.IntentUnlocked(intentId),
+                exceedDelay: timeout,
+            })
+
+            return {
+                txHash: unlockedLog.transactionHash,
+                chainId,
+            }
+        }
+        default:
+            throw new SdkError('Unknown solution branch')
+    }
 }

@@ -1677,7 +1677,7 @@ export const config: Config = {
                     },
                 },
                 {
-                    // deprecated: true,
+                    deprecated: true,
                     name: 'USD Coin via Noble',
                     symbol: 'USDC.n',
                     address: '0x3894085Ef7Ff0f0aeDf52E2A2704928d1Ec074F1',

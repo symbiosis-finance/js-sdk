@@ -1,14 +1,4 @@
-import { ChainId } from '../constants'
-import type { Token, TokenAmount } from '../entities'
-
-interface TokensInAndOut {
-    tokenAmountIn: TokenAmount
-    tokenOut: Token
-}
-
-export function isUseOneInchOnly(context: TokensInAndOut): boolean {
-    return [context.tokenAmountIn.token.chainId, context.tokenOut.chainId].some((i) => i === ChainId.TRON_MAINNET)
-}
+import type { Token } from '../entities'
 
 export function getAmountBucket(amount: number): number {
     const amountBuckets = [

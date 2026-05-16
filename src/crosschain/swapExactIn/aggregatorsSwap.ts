@@ -30,6 +30,7 @@ export function aggregatorsSwap(params: SwapExactInParams): Promise<SwapExactInR
             tokenOut,
             deadline,
             oneInchProtocols,
+            timeoutMs: 200,
             disabledProviders,
         })
 

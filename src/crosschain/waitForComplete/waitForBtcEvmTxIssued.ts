@@ -3,6 +3,7 @@ import { SymBtc__factory } from '../contracts'
 import type { Symbiosis } from '../symbiosis'
 import type { BtcConfig } from '../types'
 import { waitForDepositUnlocked } from './waitForDepositUnlocked'
+import type { WaitForCompleteResult } from './types'
 
 const timeout = 1000 * 60 * 60 * 2 // 2h
 
@@ -10,7 +11,7 @@ export async function waitForBtcEvmTxIssued(
     symbiosis: Symbiosis,
     revealTx: string,
     btcConfig: BtcConfig
-): Promise<string> {
+): Promise<WaitForCompleteResult> {
     const { symBtc } = btcConfig
 
     const { chainId } = symBtc
@@ -27,10 +28,14 @@ export async function waitForBtcEvmTxIssued(
 
     const log = await getLogWithTimeout({ symbiosis, chainId, filter, exceedDelay: timeout })
 
-    const depositUnlocked = await waitForDepositUnlocked(symbiosis, chainId, log.transactionHash)
+    const receipt = await provider.getTransactionReceipt(log.transactionHash)
+    const depositUnlocked = await waitForDepositUnlocked(symbiosis, chainId, receipt)
     if (depositUnlocked) {
-        return depositUnlocked.transactionHash
+        return depositUnlocked
     }
 
-    return log.transactionHash
+    return {
+        txHash: log.transactionHash,
+        chainId,
+    }
 }

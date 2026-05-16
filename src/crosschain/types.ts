@@ -210,8 +210,6 @@ export interface SwapExactInParams {
     to: Address
     slippage: number
     deadline: number
-    transitTokenIn?: Token
-    transitTokenOut?: Token
     oneInchProtocols?: OneInchProtocols
     revertableAddresses?: RevertableAddress[]
     tradeAContext?: TradeAContext

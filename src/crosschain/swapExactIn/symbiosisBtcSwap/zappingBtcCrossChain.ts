@@ -26,8 +26,6 @@ interface ZappingBtcExactInParams {
     slippage: number
     deadline: number
     oneInchProtocols?: OneInchProtocols
-    transitTokenIn: Token
-    transitTokenOut: Token
     partnerAddress?: EvmAddress
     fallbackReceiver?: EvmAddress
     disabledProviders?: TradeProvider[]
@@ -74,19 +72,11 @@ export class ZappingBtcCrossChain extends BaseSwapping {
     }
 
     @withTracing({
-        onCall: function ({
-            tokenAmountIn,
-            syBtc,
-            from,
-            to,
-            slippage,
-            deadline,
+        onCall: function (
+            { tokenAmountIn, syBtc, from, to, slippage, deadline, partnerAddress, fallbackReceiver, disabledProviders },
             transitTokenIn,
-            transitTokenOut,
-            partnerAddress,
-            fallbackReceiver,
-            disabledProviders,
-        }) {
+            transitTokenOut
+        ) {
             return {
                 tokenAmountIn: tokenAmountIn.toString(),
                 syBtc: syBtc.toString(),
@@ -94,27 +84,29 @@ export class ZappingBtcCrossChain extends BaseSwapping {
                 to,
                 slippage,
                 deadline,
-                transitTokenIn: transitTokenIn.toString(),
-                transitTokenOut: transitTokenOut.toString(),
+                transitTokenIn: transitTokenIn?.toString(),
+                transitTokenOut: transitTokenOut?.toString(),
                 partnerAddress,
                 fallbackReceiver,
                 disabledProviders: disabledProviders?.map(String),
             }
         },
     })
-    public async exactIn({
-        tokenAmountIn,
-        syBtc,
-        from,
-        to,
-        slippage,
-        deadline,
-        transitTokenIn,
-        transitTokenOut,
-        partnerAddress,
-        fallbackReceiver,
-        disabledProviders,
-    }: ZappingBtcExactInParams): Promise<SwapExactInResult> {
+    public async exactIn(
+        {
+            tokenAmountIn,
+            syBtc,
+            from,
+            to,
+            slippage,
+            deadline,
+            partnerAddress,
+            fallbackReceiver,
+            disabledProviders,
+        }: ZappingBtcExactInParams,
+        transitTokenIn?: Token,
+        transitTokenOut?: Token
+    ): Promise<SwapExactInResult> {
         if (!syBtc.chainFromId) {
             throw new SdkError('syBtc is not synthetic')
         }
@@ -132,19 +124,21 @@ export class ZappingBtcCrossChain extends BaseSwapping {
         if (!isEvmChainId(tokenAmountIn.token.chainId)) {
             this.evmTo = fallbackReceiver ?? this.symbiosis.config.fallbackReceiver
         }
-        const result = await this.doExactIn({
-            tokenAmountIn,
-            tokenOut: syBtc,
-            from,
-            to: this.evmTo,
-            slippage,
-            deadline,
+        const result = await this.doExactIn(
+            {
+                tokenAmountIn,
+                tokenOut: syBtc,
+                from,
+                to: this.evmTo,
+                slippage,
+                deadline,
+                partnerAddress,
+                depositoryEnabled: false,
+                disabledProviders,
+            },
             transitTokenIn,
-            transitTokenOut,
-            partnerAddress,
-            depositoryEnabled: false,
-            disabledProviders,
-        })
+            transitTokenOut
+        )
 
         let amountOut = result.tokenAmountOut
         let amountOutMin = result.tokenAmountOutMin

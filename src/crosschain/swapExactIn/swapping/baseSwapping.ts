@@ -49,7 +49,6 @@ import type {
     TonTransactionData,
     TradeAContext,
 } from '../../types'
-import { isUseOneInchOnly } from '../../utils'
 
 type MetaRouteParams = {
     amount: string
@@ -108,15 +107,15 @@ export abstract class BaseSwapping {
     }
 
     @withTracing({
-        onCall: function (params) {
+        onCall: function (params, transitTokenIn, transitTokenOut) {
             return {
                 tokenAmountIn: params.tokenAmountIn.toString(),
                 tokenOut: params.tokenOut.toString(),
                 to: params.to,
                 slippage: params.slippage,
                 deadline: params.deadline,
-                transitTokenIn: params.transitTokenIn?.toString(),
-                transitTokenOut: params.transitTokenOut?.toString(),
+                transitTokenIn: transitTokenIn?.toString(),
+                transitTokenOut: transitTokenOut?.toString(),
                 partnerAddress: params.partnerAddress,
                 'omniPool.chainId': this.omniPoolConfig.chainId,
                 'omniPool.address': this.omniPoolConfig.address,
@@ -124,25 +123,27 @@ export abstract class BaseSwapping {
         },
         onReturn: (ret) => ({ priceImpact: ret.priceImpact.toFixed() }),
     })
-    async doExactIn({
-        tokenAmountIn,
-        tokenAmountInMin,
-        tokenOut,
-        from,
-        to,
-        slippage,
-        deadline,
-        oneInchProtocols,
-        transitTokenIn,
-        transitTokenOut,
-        revertableAddresses,
-        tradeAContext,
-        partnerAddress,
-        depositoryEnabled,
-        disabledProviders,
-        signature,
-        limits,
-    }: Omit<SwapExactInParams, 'symbiosis'>): Promise<SwapExactInResult> {
+    async doExactIn(
+        {
+            tokenAmountIn,
+            tokenAmountInMin,
+            tokenOut,
+            from,
+            to,
+            slippage,
+            deadline,
+            oneInchProtocols,
+            revertableAddresses,
+            tradeAContext,
+            partnerAddress,
+            depositoryEnabled,
+            disabledProviders,
+            signature,
+            limits,
+        }: Omit<SwapExactInParams, 'symbiosis'>,
+        transitTokenIn?: Token,
+        transitTokenOut?: Token
+    ): Promise<SwapExactInResult> {
         const routes: RouteItem[] = []
         const routeType: string[] = []
 
@@ -578,7 +579,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this),
+            timeoutMs: 200,
             disabledProviders: this.disabledProviders,
         })
 
@@ -640,7 +641,7 @@ export abstract class BaseSwapping {
             clientId: this.symbiosis.clientId,
             deadline: this.deadline,
             oneInchProtocols: this.oneInchProtocols,
-            preferOneInchUsage: isUseOneInchOnly(this),
+            timeoutMs: 200,
             disabledProviders: this.disabledProviders,
         }).init()
 

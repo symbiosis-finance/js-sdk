@@ -96,22 +96,24 @@ export class ZappingThor extends BaseSwapping {
             throw new ThorChainError('Same transit token. Prefer on-chain swap')
         }
 
-        const result = await this.doExactIn({
-            tokenAmountIn,
-            tokenOut: thorTokenIn,
-            from,
-            to: this.evmTo,
-            slippage: crossChainSlippage,
-            deadline,
+        const result = await this.doExactIn(
+            {
+                tokenAmountIn,
+                tokenOut: thorTokenIn,
+                from,
+                to: this.evmTo,
+                slippage: crossChainSlippage,
+                deadline,
+                partnerAddress,
+                depositoryEnabled: false,
+                disabledProviders,
+                oneInchProtocols,
+                signature,
+                limits,
+            },
             transitTokenIn,
-            transitTokenOut,
-            partnerAddress,
-            depositoryEnabled: false,
-            disabledProviders,
-            oneInchProtocols,
-            signature,
-            limits,
-        })
+            transitTokenOut
+        )
 
         return {
             ...result,

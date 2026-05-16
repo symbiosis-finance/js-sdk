@@ -32,11 +32,7 @@ export function crossChainSwap(params: SwapExactInParams): Promise<SwapExactInRe
 function tryRoute(symbiosis: Symbiosis, route: Route, params: SwapExactInParams): Promise<SwapExactInResult> {
     const { transitTokenIn, transitTokenOut, poolConfig } = route
     const swapping = new Swapping(symbiosis, poolConfig)
-    return swapping.exactIn({
-        ...params,
-        transitTokenIn,
-        transitTokenOut,
-    })
+    return swapping.exactIn(params, transitTokenIn, transitTokenOut)
 }
 
 export function getRoutes({

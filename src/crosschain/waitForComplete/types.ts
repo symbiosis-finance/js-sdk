@@ -19,3 +19,8 @@ export interface BtcDepositAcceptedResult {
     commitTx: string
     btcConfig: BtcConfig
 }
+
+export interface WaitForCompleteResult {
+    txHash: string
+    chainId: ChainId
+}

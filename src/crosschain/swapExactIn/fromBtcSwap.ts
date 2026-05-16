@@ -38,7 +38,7 @@ import type {
 } from '../types'
 import type { SwapLabel } from '../labels'
 import { computeOnchainDstLabels } from '../labels'
-import { calldataWithoutSelector, isUseOneInchOnly } from '../utils'
+import { calldataWithoutSelector } from '../utils'
 import { crossChainSwap } from './crossChainSwap'
 import { theBest } from './utils'
 
@@ -336,7 +336,7 @@ class FromBtcTrader {
             fees.push(...(onChain.fees || []))
             routes.push({ provider: onChain.tradeType, tokens: onChain.route })
             tokenAmountOut = onChain.amountOut
-            tokenAmountOutMin = onChain.amountOut
+            tokenAmountOutMin = onChain.amountOutMin
             priceImpact = onChain.priceImpact
         } else {
             // Onchain case with syBTC target.
@@ -624,7 +624,7 @@ async function makeAggregatorTrade(context: SwapExactInParams, tokenAmountIn: To
         from: context.to, // there is no from address, set user's address
         origin: context.to, // there is no from address, set user's address
         clientId: context.symbiosis.clientId,
-        preferOneInchUsage: isUseOneInchOnly(context),
+        timeoutMs: 200,
         disabledProviders: context.disabledProviders,
     })
     await aggregatorTrade.init()

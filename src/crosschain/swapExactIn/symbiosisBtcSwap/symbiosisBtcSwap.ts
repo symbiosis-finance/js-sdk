@@ -34,19 +34,21 @@ export function symbiosisBtcSwap(context: SwapExactInParams): Promise<SwapExactI
                         const zappingBtc = new ZappingBtcCrossChain(symbiosis, poolConfig)
                         const { from, slippage, deadline, partnerAddress, fallbackReceiver } = context
 
-                        const promise = zappingBtc.exactIn({
-                            tokenAmountIn,
-                            syBtc,
-                            from,
-                            to,
-                            slippage,
-                            deadline,
+                        const promise = zappingBtc.exactIn(
+                            {
+                                tokenAmountIn,
+                                syBtc,
+                                from,
+                                to,
+                                slippage,
+                                deadline,
+                                partnerAddress,
+                                fallbackReceiver,
+                                disabledProviders,
+                            },
                             transitTokenIn,
-                            transitTokenOut,
-                            partnerAddress,
-                            fallbackReceiver,
-                            disabledProviders,
-                        })
+                            transitTokenOut
+                        )
                         promises.push(promise)
                     })
                 })
