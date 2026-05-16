@@ -1,2 +1,5 @@
 export { thorChainSwap } from './thorChainSwap'
-export { THOR_TOKENS_IN } from './utils'
+export {
+    isThorChainL1DestChainId,
+    THORCHAIN_TOKENS_EVM_TRANSIT,
+} from './constants'

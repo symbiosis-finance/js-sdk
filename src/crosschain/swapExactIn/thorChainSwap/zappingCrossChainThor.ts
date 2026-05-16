@@ -9,15 +9,16 @@ import { withTracing } from '../../tracing'
 import type { Address, SwapExactInParams, SwapExactInResult } from '../../types'
 import { BaseSwapping } from '../swapping'
 
+import type { ThorChainDestination } from './types'
 import type { ThorQuoteSwapResponse } from './utils'
-import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
+import { fromThorAmount, getThorQuote, getThorVault } from './utils'
 
 export class ZappingThor extends BaseSwapping {
     protected multicallRouter!: MulticallRouter
-    protected bitcoinAddress!: string
+    protected destinationAddress!: string
 
     protected thorTokenIn!: Token
-    protected thorTokenOut!: string
+    protected destination!: ThorChainDestination
     protected thorVault!: string
     protected thorQuote!: ThorQuoteSwapResponse
     protected evmTo!: Address
@@ -26,16 +27,16 @@ export class ZappingThor extends BaseSwapping {
     protected async doPostTransitAction() {
         this.thorQuote = await getThorQuote({
             thorTokenIn: this.thorTokenIn,
-            thorTokenOut: this.thorTokenOut,
+            thorTokenOut: this.destination.thorAsset,
             evmTo: this.evmTo,
-            bitcoinAddress: this.bitcoinAddress,
+            bitcoinAddress: this.destinationAddress,
             amount: this.transit.amountOut,
             slippage: this.thorSlippage,
         })
     }
 
     @withTracing({
-        onCall: function (context, thorTokenIn, thorTokenOut) {
+        onCall: function (context, thorTokenIn, destination) {
             return {
                 tokenAmountIn: context.tokenAmountIn.toString(),
                 tokenOut: context.tokenOut.toString(),
@@ -44,7 +45,7 @@ export class ZappingThor extends BaseSwapping {
                 slippage: context.slippage,
                 deadline: context.deadline,
                 thorTokenIn: thorTokenIn.toString(),
-                thorTokenOut,
+                destination: `${destination.token.symbol}->${destination.thorAsset}`,
                 partnerAddress: context.partnerAddress,
                 fallbackReceiver: context.fallbackReceiver,
             }
@@ -53,14 +54,25 @@ export class ZappingThor extends BaseSwapping {
     public async exactIn(
         context: SwapExactInParams,
         thorTokenIn: Token,
-        thorTokenOut: string
+        destination: ThorChainDestination
     ): Promise<SwapExactInResult> {
-        const { tokenAmountIn, from, to, slippage, deadline, partnerAddress, fallbackReceiver } = context
+        const {
+            tokenAmountIn,
+            from,
+            to,
+            slippage,
+            deadline,
+            partnerAddress,
+            fallbackReceiver,
+            disabledProviders,
+            oneInchProtocols,
+            signature,
+            limits,
+        } = context
 
-        validateBitcoinAddress(to)
-        this.bitcoinAddress = to
+        this.destinationAddress = to
         this.thorTokenIn = thorTokenIn
-        this.thorTokenOut = thorTokenOut
+        this.destination = destination
 
         const minSlippage = 20 // 0.2%
         if (slippage < minSlippage) {
@@ -94,6 +106,10 @@ export class ZappingThor extends BaseSwapping {
                 deadline,
                 partnerAddress,
                 depositoryEnabled: false,
+                disabledProviders,
+                oneInchProtocols,
+                signature,
+                limits,
             },
             transitTokenIn,
             transitTokenOut
@@ -101,14 +117,20 @@ export class ZappingThor extends BaseSwapping {
 
         return {
             ...result,
-            tokenAmountOut: new TokenAmount(BTC, this.thorQuote.expected_amount_out),
-            tokenAmountOutMin: new TokenAmount(BTC, this.thorQuote.amount_out_min),
+            tokenAmountOut: new TokenAmount(
+                destination.token,
+                fromThorAmount(this.thorQuote.expected_amount_out, destination.token.decimals)
+            ),
+            tokenAmountOutMin: new TokenAmount(
+                destination.token,
+                fromThorAmount(this.thorQuote.amount_out_min, destination.token.decimals)
+            ),
             labels: [...result.labels, 'partner-swap' as const],
             routes: [
                 ...result.routes,
                 {
                     provider: TradeProvider.THORCHAIN_BRIDGE,
-                    tokens: [thorTokenIn, BTC],
+                    tokens: [thorTokenIn, destination.token],
                 },
             ],
             fees: [
@@ -116,7 +138,10 @@ export class ZappingThor extends BaseSwapping {
                 {
                     provider: TradeProvider.THORCHAIN_BRIDGE,
                     description: 'THORChain fee',
-                    value: new TokenAmount(BTC, this.thorQuote.fees.total),
+                    value: new TokenAmount(
+                        destination.token,
+                        fromThorAmount(this.thorQuote.fees.total, destination.token.decimals)
+                    ),
                 },
             ],
         }

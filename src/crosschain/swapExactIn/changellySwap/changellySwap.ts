@@ -1,20 +1,28 @@
 import { AddressZero } from '@ethersproject/constants'
 
+import type { ChainId } from '../../../constants'
 import { Percent, TokenAmount } from '../../../entities'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
-import { isTronChainId } from '../../chainUtils'
+import { isSolanaChainId, isTonChainId, isTronChainId, type TronTransactionData } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { AmountLessThanFeeError, ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
-import type { Address, ChangellyTransactionData, SwapExactInParams, SwapExactInResult } from '../../types'
+import type {
+    Address,
+    SolanaTransactionData,
+    SwapExactInParams,
+    SwapExactInResult,
+    SwapExactInTransactionPayload,
+    TonTransactionData,
+} from '../../types'
 import { getChangellyTransitToken, isChangellyNativeChainId, isChangellyTradeChainId } from './constants'
 import {
     buildChangellyTradeTx,
     type BuildChangellyTradeTxResult,
     type ChangellyEstimateResult,
-    createChangellyDeposit,
     getChangellyEstimate,
 } from './changellyTrade'
+import { changellyDepositSwap, isChangellyDepositSupported } from './changellyDeposit'
 import { changellyZappingSwap, isChangellyZappingSupported } from './zappingOnChainChangelly'
 import { onchainSwap } from '../onchainSwap'
 import { theBest } from '../utils'
@@ -38,70 +46,33 @@ export function isChangellyNativeSupported(params: SwapExactInParams): boolean {
     return isChangellyNativeChainId(fromChainId) || isChangellyNativeChainId(toChainId)
 }
 
+// Routes Changelly traffic:
+//   - source is Changelly-native (XMR, ZEC, …) → manual deposit flow
+//   - source is a trade chain (EVM/Solana/TON/Tron) → SDK builds a transfer tx
 export function changellyNativeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
     return withSpan('changellyNativeSwap', {}, async () => {
-        const fromChainId = params.tokenAmountIn.token.chainId
-        const execute = !!params.generateDepositAddress
-
-        // Source is a Changelly-native chain (XMR, XRP, etc.) — user sends funds manually
-        if (isChangellyNativeChainId(fromChainId)) {
-            if (execute) {
-                return changellyDepositSwap(params)
-            }
-            return changellyEstimateOnly(params, 'changelly-deposit')
+        // Source is Changelly-native (XMR, ZEC) — manual deposit flow
+        if (isChangellyDepositSupported(params)) {
+            return changellyDepositSwap(params)
         }
 
         // Source is a trade chain (EVM/Solana/TON/Tron) — SDK builds a transfer tx
-        if (isChangellyTradeChainId(fromChainId)) {
-            if (execute) {
-                try {
-                    return await changellyTradeSwap(params)
-                } catch (error) {
-                    if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
-                        return changellyZappingSwap(params)
-                    }
-                    throw error
-                }
-            }
+        if (isChangellyTradeChainId(params.tokenAmountIn.token.chainId)) {
+            const execute = !!params.generateDepositAddress
+            const primary = execute ? changellyTradeSwap : changellyTradeEstimateOnly
+            const fallback = execute ? changellyZappingSwap : changellyZappingEstimateOnly
             try {
-                return await changellyEstimateOnly(params, 'changelly-trade')
+                return await primary(params)
             } catch (error) {
                 if (error instanceof ChangellyTickerNotFoundError && isChangellyZappingSupported(params)) {
-                    return changellyZappingEstimateOnly(params)
+                    return fallback(params)
                 }
                 throw error
             }
         }
 
-        throw new ChangellyError(`Unsupported source chain for Changelly: ${fromChainId}`)
+        throw new ChangellyError(`Unsupported source chain for Changelly: ${params.tokenAmountIn.token.chainId}`)
     })
-}
-
-export async function changellyDepositSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
-    const { symbiosis, tokenAmountIn, tokenOut } = params
-    const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
-
-    const fromChainId = tokenAmountIn.token.chainId
-    const refundAddress =
-        params.refundAddress || (isTronChainId(fromChainId) ? TronWeb.address.fromHex(params.from) : params.from)
-    const payoutAddress = isTronChainId(tokenOut.chainId) ? TronWeb.address.fromHex(params.to) : params.to
-
-    const changellyData = await createChangellyDeposit(symbiosis, {
-        currencyFrom: estimate.currencyFrom,
-        currencyTo: estimate.currencyTo,
-        amountFrom: estimate.amountFrom,
-        rateId: estimate.rateId,
-        address: payoutAddress,
-        refundAddress,
-        extraIdTo: params.changellyExtraIdTo,
-    })
-
-    return {
-        ...baseResult(estimate),
-        operationType: 'changelly-deposit',
-        transactionType: 'changelly',
-        transactionRequest: changellyData,
-    }
 }
 
 export async function changellyTradeSwap(params: SwapExactInParams): Promise<SwapExactInResult> {
@@ -128,29 +99,14 @@ export async function changellyTradeSwap(params: SwapExactInParams): Promise<Swa
     return toTradeResult(estimate, tradeResult)
 }
 
-const EMPTY_CHANGELLY_TX: ChangellyTransactionData = {
-    changellyTxId: '',
-    depositAddress: '',
-    amountExpectedFrom: '',
-    amountExpectedTo: '',
-    networkFee: '',
-    validUntil: 0,
-    currencyFrom: '',
-    currencyTo: '',
-}
-
-async function changellyEstimateOnly(
-    params: SwapExactInParams,
-    operationType: 'changelly-deposit' | 'changelly-trade'
-): Promise<SwapExactInResult> {
+async function changellyTradeEstimateOnly(params: SwapExactInParams): Promise<SwapExactInResult> {
     const { symbiosis, tokenAmountIn, tokenOut } = params
     const estimate = await getChangellyEstimate(symbiosis, tokenAmountIn, tokenOut)
 
     return {
         ...baseResult(estimate),
-        operationType,
-        transactionType: 'changelly',
-        transactionRequest: EMPTY_CHANGELLY_TX,
+        operationType: 'changelly-trade',
+        ...buildEstimateOnlyTx(tokenAmountIn.token.chainId),
     }
 }
 
@@ -208,8 +164,7 @@ async function changellyZappingEstimateOnly(params: SwapExactInParams): Promise<
     return {
         ...baseResult(estimate),
         operationType: 'changelly-trade',
-        transactionType: 'changelly',
-        transactionRequest: EMPTY_CHANGELLY_TX,
+        ...buildEstimateOnlyTx(chainId),
         approveTo: approveAddress,
         routes: [
             ...swapResult.routes,
@@ -257,5 +212,37 @@ function toTradeResult(estimate: ChangellyEstimateResult, tradeResult: BuildChan
             return { ...base, transactionType: 'solana', transactionRequest: tradeResult.tx }
         case 'evm':
             return { ...base, transactionType: 'evm', transactionRequest: tradeResult.tx }
+    }
+}
+
+function buildEstimateOnlyTx(fromChainId: ChainId): SwapExactInTransactionPayload {
+    if (isTronChainId(fromChainId)) {
+        const stub: TronTransactionData = {
+            chain_id: fromChainId,
+            call_value: 0,
+            contract_address: '',
+            fee_limit: 0,
+            function_selector: '',
+            owner_address: '',
+            raw_parameter: '',
+        }
+        return { transactionType: 'tron', transactionRequest: stub }
+    }
+    if (isTonChainId(fromChainId)) {
+        const stub: TonTransactionData = { validUntil: 0, messages: [] }
+        return { transactionType: 'ton', transactionRequest: stub }
+    }
+    if (isSolanaChainId(fromChainId)) {
+        const stub: SolanaTransactionData = { instructions: '' }
+        return { transactionType: 'solana', transactionRequest: stub }
+    }
+    return {
+        transactionType: 'evm',
+        transactionRequest: {
+            chainId: fromChainId,
+            to: AddressZero,
+            data: '0x',
+            value: '0',
+        },
     }
 }
