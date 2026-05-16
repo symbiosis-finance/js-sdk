@@ -1,14 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 
-import { ChainId } from '../../../constants'
+import type { ChainId } from '../../../constants'
 import { Percent, TokenAmount } from '../../../entities'
 import { BIPS_BASE, MULTICALL_ROUTER_V2 } from '../../constants'
-import {
-    isSolanaChainId,
-    isTonChainId,
-    isTronChainId,
-    type TronTransactionData,
-} from '../../chainUtils'
+import { isSolanaChainId, isTonChainId, isTronChainId, type TronTransactionData } from '../../chainUtils'
 import TronWeb from 'tronweb'
 import { AmountLessThanFeeError, ChangellyError, ChangellyTickerNotFoundError } from '../../sdkError'
 import { TradeProvider } from '../../trade'
