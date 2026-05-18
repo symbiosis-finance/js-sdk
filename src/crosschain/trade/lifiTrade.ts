@@ -122,12 +122,6 @@ export class LifiTrade extends SymbiosisTrade {
                 throw new LifiTradeError(`Cannot get LiFi quote for chain ${chainId}: ${msg}`)
             })
 
-        if ((quote.includedSteps?.length ?? 0) > 1) {
-            throw new LifiTradeError(
-                `LiFi returned multi-step route (${quote.includedSteps?.length} steps) for chain ${chainId}`
-            )
-        }
-
         const tx = quote.transactionRequest
         const estimate = quote.estimate
         if (!tx || !estimate) {
