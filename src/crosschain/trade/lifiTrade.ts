@@ -86,9 +86,7 @@ export class LifiTrade extends SymbiosisTrade {
 
         const chainId = this.tokenAmountIn.token.chainId
 
-        const fromToken = this.tokenAmountIn.token.isNative
-            ? NATIVE_TOKEN_ADDRESS
-            : this.tokenAmountIn.token.address
+        const fromToken = this.tokenAmountIn.token.isNative ? NATIVE_TOKEN_ADDRESS : this.tokenAmountIn.token.address
         const toToken = this.tokenOut.isNative ? NATIVE_TOKEN_ADDRESS : this.tokenOut.address
 
         const quote = await lifiApi.v1
@@ -103,15 +101,32 @@ export class LifiTrade extends SymbiosisTrade {
                     toAddress: this.to,
                     slippage: this.slippage / Number(BIPS_BASE.toString()),
                     integrator: 'symbiosis',
+                    skipSimulation: true,
                 },
                 { headers: { 'x-lifi-api-key': apiKey }, signal: this.signal }
             )
             .catch((e) => {
                 if (e instanceof Error && e.name === 'AbortError') throw e
-                throw new LifiTradeError(
-                    `Cannot get LiFi quote for chain ${chainId}: ${LifiTrade.formatLifiError(e)}`
-                )
+                const err = e as {
+                    error?: {
+                        message?: string
+                        errors?: Array<{ tool?: string; code?: string; message?: string }>
+                    }
+                    message?: string
+                }
+                const baseMsg = err?.error?.message ?? err?.message ?? JSON.stringify(e)
+                const toolErrors = err?.error?.errors
+                    ?.map((t) => `${t.tool ?? '?'}: ${t.code ?? '?'}`)
+                    .join(', ')
+                const msg = toolErrors ? `${baseMsg} [${toolErrors}]` : baseMsg
+                throw new LifiTradeError(`Cannot get LiFi quote for chain ${chainId}: ${msg}`)
             })
+
+        if ((quote.includedSteps?.length ?? 0) > 1) {
+            throw new LifiTradeError(
+                `LiFi returned multi-step route (${quote.includedSteps?.length} steps) for chain ${chainId}`
+            )
+        }
 
         const tx = quote.transactionRequest
         const estimate = quote.estimate
@@ -131,6 +146,15 @@ export class LifiTrade extends SymbiosisTrade {
 
         const priceImpact = this.calcPriceImpact(estimate.fromAmountUSD, estimate.toAmountUSD)
 
+        const callDataOffset = LifiTrade.findValueOffset(tx.data, estimate.fromAmount)
+        if (callDataOffset === 0) {
+            throw new LifiTradeError(`LiFi calldata: fromAmount slot not found for chain ${chainId}`)
+        }
+        const minReceivedOffset = LifiTrade.findValueOffset(tx.data, estimate.toAmountMin)
+        if (minReceivedOffset === 0) {
+            throw new LifiTradeError(`LiFi calldata: toAmountMin slot not found for chain ${chainId}`)
+        }
+
         this.out = {
             amountOut,
             amountOutMin,
@@ -138,8 +162,8 @@ export class LifiTrade extends SymbiosisTrade {
             approveTo: estimate.approvalAddress as Address,
             route: [this.tokenAmountIn.token, this.tokenOut],
             callData: tx.data,
-            callDataOffset: 0,
-            minReceivedOffset: 0,
+            callDataOffset,
+            minReceivedOffset,
             priceImpact,
             value: this.tokenAmountIn.token.isNative && tx.value ? BigInt(tx.value) : undefined,
         }
@@ -147,13 +171,19 @@ export class LifiTrade extends SymbiosisTrade {
         return this
     }
 
-    private static formatLifiError(error: unknown): string {
-        if (error instanceof Error) return error.message
-        if (typeof error === 'object' && error !== null) {
-            const maybe = error as { error?: { message?: string }; message?: string }
-            return maybe.error?.message ?? maybe.message ?? JSON.stringify(error)
+    static findValueOffset(callData: string, value: string): number {
+        const bn = new BigNumber(value)
+        if (bn.isZero()) {
+            return 0
         }
-        return String(error)
+        const hex = bn.toString(16).padStart(64, '0').toLowerCase()
+        const data = callData.toLowerCase()
+        const hexPrefix = data.startsWith('0x') ? 2 : 0
+        const pos = data.indexOf(hex, hexPrefix)
+        if (pos === -1) {
+            return 0
+        }
+        return (pos + 64 - hexPrefix) / 2
     }
 
     private calcPriceImpact(amountInUsd: string | undefined, amountOutUsd: string | undefined): Percent {
