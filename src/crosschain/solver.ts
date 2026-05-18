@@ -1,5 +1,6 @@
 import type { Token } from '../entities'
 import { TokenAmount } from '../entities'
+import { NATIVE_TOKEN_ADDRESS } from '../constants'
 
 export interface SolverQuoteParams {
     tokenAmountIn: TokenAmount
@@ -19,9 +20,9 @@ export class SolverService {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                tokenIn: tokenAmountIn.token.address,
+                tokenIn: tokenAmountIn.token.isNative ? NATIVE_TOKEN_ADDRESS : tokenAmountIn.token.address,
                 amountIn: tokenAmountIn.toBigInt().toString(),
-                tokenOut: tokenOut.address,
+                tokenOut: tokenOut.isNative ? NATIVE_TOKEN_ADDRESS : tokenOut.address,
                 srcChainId: tokenAmountIn.token.chainId,
                 dstChainId: tokenOut.chainId,
             }),
