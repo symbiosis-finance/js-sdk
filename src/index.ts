@@ -11,6 +11,7 @@ export {
     Rounding,
     TradeType,
     ZERO,
+    NATIVE_TOKEN_ADDRESS,
 } from './constants'
 export type { Icons } from './constants'
 

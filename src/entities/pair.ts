@@ -57,16 +57,18 @@ export class Pair {
         const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
         const chainId = tokens[0].chainId
+        const address0 = tokens[0].address as NonEmptyAddress
+        const address1 = tokens[1].address as NonEmptyAddress
 
         let types: string[] = ['address', 'address']
-        let params: (string | boolean)[] = [tokens[0].address, tokens[1].address]
+        let params: (string | boolean)[] = [address0, address1]
 
         if (chainId === ChainId.KAVA_MAINNET) {
             types = [...types, 'bool']
             params = [...params, false]
         }
 
-        if (PAIR_ADDRESS_CACHE.get(tokens[0].address).get(tokens[1].address) === undefined) {
+        if (PAIR_ADDRESS_CACHE.get(address0).get(address1) === undefined) {
             let getCreate2Address = getEvmCreate2Address as (
                 from: EvmAddress,
                 salt: BytesLike,
@@ -79,8 +81,8 @@ export class Pair {
                 getCreate2Address = getZkCreate2Address
             }
 
-            PAIR_ADDRESS_CACHE.get(tokens[0].address).set(
-                tokens[1].address,
+            PAIR_ADDRESS_CACHE.get(address0).set(
+                address1,
                 getCreate2Address(
                     FACTORY_ADDRESS[chainId],
                     keccak256(['bytes'], [pack(types, params)]),
@@ -89,7 +91,7 @@ export class Pair {
             )
         }
 
-        return PAIR_ADDRESS_CACHE.get(tokens[0].address).get(tokens[1].address) as EvmAddress
+        return PAIR_ADDRESS_CACHE.get(address0).get(address1) as EvmAddress
     }
 
     public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount) {

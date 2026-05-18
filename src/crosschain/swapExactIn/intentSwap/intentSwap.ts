@@ -1,6 +1,8 @@
+import { AddressZero } from '@ethersproject/constants'
 import type { TransactionRequest } from '@ethersproject/providers'
 
-import { Percent, wrappedToken } from '../../../entities'
+import { Percent } from '../../../entities'
+import { NATIVE_TOKEN_ADDRESS } from '../../../constants'
 import { isEvmChainId } from '../../chainUtils'
 import { BIPS_BASE } from '../../constants'
 import { withSpan } from '../../tracing'
@@ -63,12 +65,13 @@ export function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult
         })
 
         // Step 2: build deposit() calldata
+        const dstToken = tokenOut.isNative ? NATIVE_TOKEN_ADDRESS : tokenOut.address
         const fillUnlockerCondition = calldataWithoutSelector(
             DeadlineUnlocker__factory.createInterface().encodeFunctionData('encodeCondition', [
                 {
                     recipient: to,
                     depositor: from,
-                    dstToken: wrappedToken(tokenOut).address,
+                    dstToken,
                     amount: amountOut.toBigInt(),
                     dstChainId,
                     deadline,
@@ -85,10 +88,11 @@ export function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult
             srcChainId,
         })
 
+        const isNativeSrc = tokenAmountIn.token.isNative
         const transactionRequest: TransactionRequest = {
             to: srcIntentConfig.depositorySrc,
             data,
-            value: '0x0',
+            value: isNativeSrc ? tokenAmountIn.raw.toString() : '0x0',
             chainId: srcChainId,
         }
 
@@ -99,7 +103,7 @@ export function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult
             tokenAmountOut: amountOut,
             tokenAmountOutMin: amountOut,
             priceImpact: new Percent('0', BIPS_BASE),
-            approveTo: srcIntentConfig.depositorySrc,
+            approveTo: isNativeSrc ? AddressZero : srcIntentConfig.depositorySrc,
             routes: [
                 {
                     provider: TradeProvider.INTENT_SOLVER,

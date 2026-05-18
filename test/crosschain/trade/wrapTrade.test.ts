@@ -5,7 +5,7 @@ import { WrapTrade } from '../../../src/crosschain/trade'
 
 describe('WrapTrade', () => {
     describe('WRAP', () => {
-        const eth = new Token({ chainId: 1, address: '', decimals: 18, isNative: true })
+        const eth = new Token({ chainId: 1, address: '', decimals: 18 })
         const tokenAmountIn = new TokenAmount(eth, '100')
         const tokenAmountInMin = new TokenAmount(eth, '90')
         const tokenOut = wrappedToken(eth)
@@ -106,7 +106,7 @@ describe('WrapTrade', () => {
     })
 
     describe('UNWRAP', () => {
-        const tokenOut = new Token({ chainId: 1, address: '', decimals: 18, isNative: true })
+        const tokenOut = new Token({ chainId: 1, address: '', decimals: 18 })
         const weth = wrappedToken(tokenOut)
         const tokenAmountIn = new TokenAmount(weth, '100')
         const tokenAmountInMin = new TokenAmount(weth, '90')

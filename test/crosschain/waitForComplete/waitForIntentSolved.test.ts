@@ -244,7 +244,7 @@ describe('waitForIntentSolved', () => {
             })
             mockDeadlineUnlockerInterface._abiCoder.decode
                 .mockReturnValueOnce([{ dstChainId: BigNumber.from(DST_CHAIN_ID) }])
-                .mockReturnValueOnce([{ branch: 0 }])
+                .mockReturnValueOnce([{ branch: BigNumber.from(0) }])
             mockGetLogWithTimeout.mockResolvedValueOnce(INTENT_FILLED_LOG)
 
             const result = await waitForIntentSolved(symbiosis, SRC_CHAIN_ID, RECEIPT as any)
@@ -262,7 +262,7 @@ describe('waitForIntentSolved', () => {
             })
             mockDeadlineUnlockerInterface._abiCoder.decode
                 .mockReturnValueOnce([{ dstChainId: BigNumber.from(DST_CHAIN_ID) }])
-                .mockReturnValueOnce([{ branch: 0 }])
+                .mockReturnValueOnce([{ branch: BigNumber.from(0) }])
             mockGetLogWithTimeout.mockResolvedValueOnce(INTENT_FILLED_LOG)
 
             await waitForIntentSolved(symbiosis, SRC_CHAIN_ID, RECEIPT as any)
@@ -284,7 +284,7 @@ describe('waitForIntentSolved', () => {
             })
             mockDeadlineUnlockerInterface._abiCoder.decode
                 .mockReturnValueOnce([{ dstChainId: BigNumber.from(DST_CHAIN_ID) }])
-                .mockReturnValueOnce([{ branch: 1 }])
+                .mockReturnValueOnce([{ branch: BigNumber.from(1) }])
             mockGetLogWithTimeout.mockResolvedValueOnce(INTENT_FILLED_LOG).mockResolvedValueOnce(INTENT_UNLOCKED_LOG)
 
             const result = await waitForIntentSolved(symbiosis, SRC_CHAIN_ID, RECEIPT as any)
@@ -302,7 +302,7 @@ describe('waitForIntentSolved', () => {
             })
             mockDeadlineUnlockerInterface._abiCoder.decode
                 .mockReturnValueOnce([{ dstChainId: BigNumber.from(DST_CHAIN_ID) }])
-                .mockReturnValueOnce([{ branch: 1 }])
+                .mockReturnValueOnce([{ branch: BigNumber.from(1) }])
             mockGetLogWithTimeout.mockResolvedValueOnce(INTENT_FILLED_LOG).mockResolvedValueOnce(INTENT_UNLOCKED_LOG)
 
             await waitForIntentSolved(symbiosis, SRC_CHAIN_ID, RECEIPT as any)
@@ -325,7 +325,7 @@ describe('waitForIntentSolved', () => {
             })
             mockDeadlineUnlockerInterface._abiCoder.decode
                 .mockReturnValueOnce([{ dstChainId: BigNumber.from(DST_CHAIN_ID) }])
-                .mockReturnValueOnce([{ branch: 99 }])
+                .mockReturnValueOnce([{ branch: BigNumber.from(99) }])
             mockGetLogWithTimeout.mockResolvedValueOnce(INTENT_FILLED_LOG)
 
             await expect(waitForIntentSolved(symbiosis, SRC_CHAIN_ID, RECEIPT as any)).rejects.toThrow(
