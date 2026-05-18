@@ -79,7 +79,7 @@ export class LifiTrade extends SymbiosisTrade {
     @withTracing()
     public async init() {
         const apiKeys = this.symbiosis.lifiConfig.apiKeys
-        if (apiKeys.length === 0) {
+        if (!apiKeys?.length) {
             throw new LifiTradeError('Missing LiFi API key')
         }
         const apiKey = apiKeys[Math.floor(Math.random() * apiKeys.length)]
@@ -153,6 +153,11 @@ export class LifiTrade extends SymbiosisTrade {
         const minReceivedOffset = LifiTrade.findValueOffset(tx.data, estimate.toAmountMin)
         if (minReceivedOffset === 0) {
             throw new LifiTradeError(`LiFi calldata: toAmountMin slot not found for chain ${chainId}`)
+        }
+        if (callDataOffset === minReceivedOffset) {
+            throw new LifiTradeError(
+                `LiFi calldata: fromAmount and toAmountMin land on the same slot for chain ${chainId}`
+            )
         }
 
         this.out = {

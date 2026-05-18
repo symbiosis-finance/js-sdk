@@ -77,6 +77,7 @@ import type {
     AggregatorErrorCounterParams,
     EvmAddress,
     FeeConfig,
+    LifiApiConfig,
     Logger,
     MetricParams,
     OmniPoolConfig,
@@ -134,7 +135,7 @@ export class Symbiosis {
     public readonly oneInchConfig: ApiConfig
     public readonly openOceanConfig: ApiConfig
     public readonly zeroXConfig: ApiConfig
-    public readonly lifiConfig: ApiConfig
+    public readonly lifiConfig: LifiApiConfig
     private readonly changellyConfig: ChangellyConfig
     public readonly changelly: ChangellyClient
 
@@ -305,7 +306,6 @@ export class Symbiosis {
             this.zeroXConfig = { ...this.zeroXConfig, ...overrideConfig.zeroXConfig }
         }
         this.lifiConfig = {
-            apiUrl: 'https://li.quest',
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.lifiConfig) {
