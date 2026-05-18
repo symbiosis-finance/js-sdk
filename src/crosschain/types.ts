@@ -185,6 +185,7 @@ export type OverrideConfig = {
     oneInchConfig?: Partial<ApiConfig>
     openOceanConfig?: Partial<ApiConfig>
     zeroXConfig?: Partial<ApiConfig>
+    lifiConfig?: Partial<ApiConfig>
     changellyConfig?: Partial<ChangellyConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
