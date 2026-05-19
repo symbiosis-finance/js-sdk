@@ -28,6 +28,7 @@ export enum TradeProvider {
     KYBER_SWAP = 'kyber-swap',
     ZERO_X = '0x',
     INTENT_SOLVER = 'intent-solver',
+    LIFI = 'lifi',
 }
 
 export const FILTERABLE_PROVIDERS: TradeProvider[] = [
@@ -47,6 +48,7 @@ export const FILTERABLE_PROVIDERS: TradeProvider[] = [
     TradeProvider.KYBER_SWAP,
     TradeProvider.ZERO_X,
     TradeProvider.INTENT_SOLVER,
+    TradeProvider.LIFI,
 ]
 
 export interface SymbiosisTradeParams {

@@ -111,6 +111,8 @@ export class KyberSwapTradeError extends TradeError {}
 
 export class ZeroXTradeError extends TradeError {}
 
+export class LifiTradeError extends TradeError {}
+
 export class AggregatorTradeError extends TradeError {}
 
 enum SwapAggregatorErrorCategory {
