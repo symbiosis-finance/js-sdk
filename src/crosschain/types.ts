@@ -161,10 +161,6 @@ export type ApiConfig = {
     apiKeys: string[]
 }
 
-export type LifiApiConfig = {
-    apiKeys: string[]
-}
-
 export type ChangellyConfig = {
     apiUrl: string
     privateKey: string
@@ -189,7 +185,7 @@ export type OverrideConfig = {
     oneInchConfig?: Partial<ApiConfig>
     openOceanConfig?: Partial<ApiConfig>
     zeroXConfig?: Partial<ApiConfig>
-    lifiConfig?: Partial<LifiApiConfig>
+    flyConfig?: Partial<ApiConfig>
     changellyConfig?: Partial<ChangellyConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache

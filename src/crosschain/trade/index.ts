@@ -18,7 +18,7 @@ export type {
 } from '../swapExactIn/changellySwap/changellyTrade'
 export { DedustTrade } from './dedustTrade'
 export { KyberSwapTrade } from './kyberSwapTrade'
-export { LifiTrade } from './lifiTrade'
+export { FlyTrade } from './flyTrade'
 export { IzumiTrade } from './izumiTrade'
 export { JupiterTrade } from './jupiterTrade'
 export { OctoPoolTrade } from './octoPoolTrade'

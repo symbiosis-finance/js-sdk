@@ -5,7 +5,7 @@ import type { Symbiosis } from '../symbiosis'
 import type { Address, FeeItem } from '../types'
 import { IzumiTrade } from './izumiTrade'
 import { KyberSwapTrade } from './kyberSwapTrade'
-import { LifiTrade } from './lifiTrade'
+import { FlyTrade } from './flyTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
@@ -22,7 +22,7 @@ type Trade =
     | OpenOceanTrade
     | KyberSwapTrade
     | ZeroXTrade
-    | LifiTrade
+    | FlyTrade
     | IzumiTrade
     | UniV2Trade
     | UniV3Trade
@@ -177,38 +177,33 @@ export class AggregatorTrade extends SymbiosisTrade {
         const clientId = utils.parseBytes32String(symbiosis.clientId)
         const isOneInchClient = clientId === '1inch'
         const isOpenOceanClient = clientId === 'openocean'
-        const isLifiClient = clientId === 'lifi'
-        const isOtherClient = !isOneInchClient && !isOpenOceanClient && !isLifiClient
+        const isOtherClient = !isOneInchClient && !isOpenOceanClient
 
         const isOneInchAvailable =
             OneInchTrade.isAvailable(tokenAmountIn.token.chainId) &&
             OneInchTrade.isAllowed(disabledProviders) &&
-            !isOpenOceanClient &&
-            !isLifiClient
+            !isOpenOceanClient
 
         const isOpenOceanAvailable =
             OpenOceanTrade.isAvailable(tokenAmountIn.token.chainId) &&
             OpenOceanTrade.isAllowed(disabledProviders) &&
-            !isOneInchClient &&
-            !isLifiClient
+            !isOneInchClient
 
         const isKyberSwapAvailable =
             KyberSwapTrade.isAvailable(tokenAmountIn.token.chainId) &&
             KyberSwapTrade.isAllowed(disabledProviders) &&
             !isOneInchClient &&
-            !isOpenOceanClient &&
-            !isLifiClient
+            !isOpenOceanClient
 
         const isZeroXAvailable =
             ZeroXTrade.isAvailable(tokenAmountIn.token.chainId) &&
             ZeroXTrade.isAllowed(disabledProviders) &&
             !isOneInchClient &&
-            !isOpenOceanClient &&
-            !isLifiClient
+            !isOpenOceanClient
 
-        const isLifiAvailable =
-            LifiTrade.isAvailable(tokenAmountIn.token.chainId) &&
-            LifiTrade.isAllowed(disabledProviders) &&
+        const isFlyAvailable =
+            FlyTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            FlyTrade.isAllowed(disabledProviders) &&
             !isOneInchClient &&
             !isOpenOceanClient
 
@@ -275,8 +270,8 @@ export class AggregatorTrade extends SymbiosisTrade {
             entries.push({ promise: zeroXTrade.init(), label: '0x', priority: true })
         }
 
-        if (isLifiAvailable) {
-            const lifiTrade = new LifiTrade({
+        if (isFlyAvailable) {
+            const flyTrade = new FlyTrade({
                 symbiosis,
                 tokenAmountIn,
                 tokenAmountInMin,
@@ -286,7 +281,7 @@ export class AggregatorTrade extends SymbiosisTrade {
                 slippage,
                 signal,
             })
-            entries.push({ promise: lifiTrade.init(), label: 'LiFi', priority: true })
+            entries.push({ promise: flyTrade.init(), label: 'Fly', priority: true })
         }
 
         if (
