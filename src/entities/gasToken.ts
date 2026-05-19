@@ -4,7 +4,6 @@ import { Token } from './token'
 
 const GAS = (chainId: ChainId, symbol: string, iconId: number, decimals = 18, name = symbol) =>
     new Token({
-        isNative: true,
         name,
         symbol,
         address: '',

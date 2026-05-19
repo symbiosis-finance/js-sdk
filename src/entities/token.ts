@@ -15,7 +15,6 @@ export type TokenConstructor = {
     address: Address
     decimals: number
     chainId: ChainId
-    isNative?: boolean
     chainFromId?: ChainId
     icons?: Icons
     userToken?: boolean
@@ -36,10 +35,9 @@ export class Token {
     public readonly symbol?: string
     public readonly name?: string
     public readonly chainId: ChainId
-    public readonly address: NonEmptyAddress
+    public readonly address: Address
     public readonly icons?: Icons
     public readonly chainFromId?: ChainId
-    public readonly isNative: boolean
     public readonly userToken?: boolean
     public readonly deprecated: boolean
     public readonly attributes?: {
@@ -58,7 +56,6 @@ export class Token {
         this.symbol = params.symbol
         this.name = params.name
         this.chainId = params.chainId
-        this.isNative = !!params.isNative
         this.icons = params.icons
         this.chainFromId = params.chainFromId
         this.userToken = params.userToken
@@ -75,6 +72,10 @@ export class Token {
 
     public toString(): string {
         return `${this.symbol || this.name || this.address}@${this.chainId}`
+    }
+
+    public get isNative(): boolean {
+        return this.address === '' && !this.attributes?.ton && !this.attributes?.solana
     }
 
     /**
@@ -169,7 +170,6 @@ export const WETH = {
         address: '0x891CDB91D149F23B1A45D9C5CA78A88D0CB44C18',
         decimals: 6,
         symbol: 'WTRX',
-        isNative: false,
         name: 'Wrapped TRX',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
@@ -181,7 +181,6 @@ export const WETH = {
         address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
@@ -193,7 +192,6 @@ export const WETH = {
         address: '0xc778417e063141139fce010982780140aa0cd5ab',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
@@ -205,7 +203,6 @@ export const WETH = {
         address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
@@ -217,7 +214,6 @@ export const WETH = {
         address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
         decimals: 18,
         symbol: 'WBNB',
-        isNative: false,
         name: 'Wrapped BNB',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
@@ -229,7 +225,6 @@ export const WETH = {
         address: '0xae13d989dac2f0debff460ac112a837c89baa7cd',
         decimals: 18,
         symbol: 'WBNB',
-        isNative: false,
         name: 'Wrapped BNB',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
@@ -241,7 +236,6 @@ export const WETH = {
         address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
         decimals: 18,
         symbol: 'WMATIC',
-        isNative: false,
         name: 'Wrapped MATIC',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png',
@@ -253,7 +247,6 @@ export const WETH = {
         address: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
         decimals: 18,
         symbol: 'WMATIC',
-        isNative: false,
         name: 'Wrapped MATIC',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png',
@@ -266,7 +259,6 @@ export const WETH = {
         address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
         decimals: 18,
         symbol: 'WAVAX',
-        isNative: false,
         name: 'Wrapped AVAX',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9462.png',
@@ -278,7 +270,6 @@ export const WETH = {
         address: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
         decimals: 18,
         symbol: 'WAVAX',
-        isNative: false,
         name: 'Wrapped AVAX',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9462.png',
@@ -290,7 +281,6 @@ export const WETH = {
         address: '0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f',
         decimals: 18,
         symbol: 'WHT',
-        isNative: false,
         name: 'Wrapped HT',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8524.png',
@@ -302,7 +292,6 @@ export const WETH = {
         address: '0x7aF326B6351C8A9b8fb8CD205CBe11d4Ac5FA836',
         decimals: 18,
         symbol: 'WHT',
-        isNative: false,
         name: 'Wrapped HT',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8524.png',
@@ -314,7 +303,6 @@ export const WETH = {
         address: '0x8F8526dbfd6E38E3D8307702cA8469Bae6C56C15',
         decimals: 18,
         symbol: 'WOKT',
-        isNative: false,
         name: 'Wrapped OKT',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11132.png',
@@ -326,7 +314,6 @@ export const WETH = {
         address: '0x2219845942d28716c0F7C605765fABDcA1a7d9E0',
         decimals: 18,
         symbol: 'WOKT',
-        isNative: false,
         name: 'Wrapped OKT',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11132.png',
@@ -338,7 +325,6 @@ export const WETH = {
         address: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
@@ -350,7 +336,6 @@ export const WETH = {
         address: '0x26c319B7B2cF823365414d082698C8ac90cbBA63',
         decimals: 18,
         symbol: 'WBOBA',
-        isNative: false,
         name: 'Wrapped BOBA',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14556.png',
@@ -362,7 +347,6 @@ export const WETH = {
         address: '0x0000000000000000000000000000000000000000',
         decimals: 18,
         symbol: 'WTVT',
-        isNative: false,
         name: 'Wrapped TVT',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
@@ -374,7 +358,6 @@ export const WETH = {
         address: '0xd8db4fb1fEf63045A443202d506Bcf30ef404160',
         decimals: 18,
         symbol: 'WSIS',
-        isNative: false,
         name: 'Wrapped SIS',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/15084.png',
@@ -386,7 +369,6 @@ export const WETH = {
         address: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png',
@@ -398,7 +380,6 @@ export const WETH = {
         address: '0xAE83571000aF4499798d1e3b0fA0070EB3A3E3F9',
         decimals: 18,
         symbol: 'WADA',
-        isNative: false,
         name: 'Wrapped ADA',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
@@ -411,7 +392,6 @@ export const WETH = {
         address: '0x01bbbb9c97fc43e3393e860fc8bbead47b6960db',
         decimals: 18,
         symbol: 'WTADA',
-        isNative: false,
         name: 'Wrapped TADA',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19369.png',
@@ -423,7 +403,6 @@ export const WETH = {
         address: '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
@@ -435,7 +414,6 @@ export const WETH = {
         address: '0x1b6A3d5B5DCdF7a37CFE35CeBC0C4bD28eA7e946',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
@@ -447,7 +425,6 @@ export const WETH = {
         address: '0xD102cE6A4dB07D247fcc28F366A623Df0938CA9E',
         decimals: 18,
         symbol: 'WTLOS',
-        isNative: false,
         name: 'Wrapped TLOS',
         icons: {
             large: 'https://raw.githubusercontent.com/telosnetwork/token-list/main/logos/wtlos.png',
@@ -459,7 +436,6 @@ export const WETH = {
         address: '0xaE85Bf723A9e74d6c663dd226996AC1b8d075AA9',
         decimals: 18,
         symbol: 'WTLOS',
-        isNative: false,
         name: 'Wrapped TLOS',
         icons: {
             large: 'https://raw.githubusercontent.com/telosnetwork/token-list/main/logos/wtlos.png',
@@ -471,7 +447,6 @@ export const WETH = {
         address: '0xb6204c4b6b2545cF23F5EC0Bf8AEB8cB56E13C15',
         decimals: 18,
         symbol: 'WSHM',
-        isNative: false,
         name: 'Wrapped SHM',
         icons: {
             large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22353.png',
@@ -483,7 +458,6 @@ export const WETH = {
         address: '0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b',
         decimals: 18,
         symbol: 'WKAVA',
-        isNative: false,
         name: 'Wrapped KAVA',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4846.png',
@@ -495,7 +469,6 @@ export const WETH = {
         address: '0x5300000000000000000000000000000000000004',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -507,7 +480,6 @@ export const WETH = {
         address: '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -519,7 +491,6 @@ export const WETH = {
         address: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -531,7 +502,6 @@ export const WETH = {
         address: '0x722e8bdd2ce80a4422e880164f2079488e115365',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -543,7 +513,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -555,7 +524,6 @@ export const WETH = {
         address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
         decimals: 18,
         symbol: 'WZETA',
-        isNative: false,
         name: 'Wrapped ZETA',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21259.png',
@@ -567,7 +535,6 @@ export const WETH = {
         address: '0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -579,7 +546,6 @@ export const WETH = {
         address: '0xf060b2655346cf3f825c3300177dff8a2acd89aa',
         decimals: 6,
         symbol: 'WTRX',
-        isNative: false,
         name: 'Wrapped TRX',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png',
@@ -591,7 +557,6 @@ export const WETH = {
         address: '0x2C1b868d6596a18e32E61B901E4060C872647b6C',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -603,7 +568,6 @@ export const WETH = {
         address: '0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -615,7 +579,6 @@ export const WETH = {
         address: '0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8',
         decimals: 18,
         symbol: 'WMNT',
-        isNative: false,
         name: 'Wrapped MNT',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
@@ -627,7 +590,6 @@ export const WETH = {
         address: '0x8734110e5e1dcF439c7F549db740E546fea82d66',
         decimals: 18,
         symbol: 'WBIT',
-        isNative: false,
         name: 'Wrapped BIT',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/27075.png',
@@ -639,7 +601,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -651,7 +612,6 @@ export const WETH = {
         address: '0x5300000000000000000000000000000000000004',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -663,7 +623,6 @@ export const WETH = {
         address: '0x0Dc808adcE2099A9F62AA87D9670745AbA741746',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -675,7 +634,6 @@ export const WETH = {
         address: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
         decimals: 18,
         symbol: 'WMETIS',
-        isNative: false,
         name: 'Wrapped METIS',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9640.png',
@@ -687,7 +645,6 @@ export const WETH = {
         address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
         decimals: 18,
         symbol: 'WOKB',
-        isNative: false,
         name: 'Wrapped OKB',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
@@ -699,7 +656,6 @@ export const WETH = {
         address: '0x4084aB20f8ffcA76C19AAF854Fb5fe9DE6217fBB',
         decimals: 18,
         symbol: 'WFTN',
-        isNative: false,
         name: 'Wrapped FTN',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22615.png',
@@ -711,7 +667,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -723,7 +678,6 @@ export const WETH = {
         address: '0x542fda317318ebf1d3deaf76e0b632741a7e677d',
         decimals: 18,
         symbol: 'WRBTC',
-        isNative: false,
         name: 'Wrapped BTC',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3626.png',
@@ -735,7 +689,6 @@ export const WETH = {
         address: '0x4300000000000000000000000000000000000004',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -747,7 +700,6 @@ export const WETH = {
         address: '0xF6D226f9Dc15d9bB51182815b320D3fBE324e1bA',
         decimals: 18,
         symbol: 'WBTC',
-        isNative: false,
         name: 'Wrapped BTC',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
@@ -759,7 +711,6 @@ export const WETH = {
         address: '0x8280a4e7D5B3B658ec4580d3Bc30f5e50454F169',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -771,7 +722,6 @@ export const WETH = {
         address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -783,7 +733,6 @@ export const WETH = {
         address: '0x191E94fa59739e188dcE837F7f6978d84727AD01',
         decimals: 18,
         symbol: 'WCORE',
-        isNative: false,
         name: 'Wrapped CORE',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23254.png',
@@ -795,7 +744,6 @@ export const WETH = {
         address: '0xA51894664A773981C6C112C43ce576f315d5b1B6',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -807,7 +755,6 @@ export const WETH = {
         address: '0xE30feDd158A2e3b13e9badaeABaFc5516e95e8C7',
         decimals: 18,
         symbol: 'WSEI',
-        isNative: false,
         name: 'Wrapped SEI',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/23149.png',
@@ -819,7 +766,6 @@ export const WETH = {
         address: '0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf',
         decimals: 18,
         symbol: 'WZETA',
-        isNative: false,
         name: 'Wrapped ZETA',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29464.png',
@@ -831,7 +777,6 @@ export const WETH = {
         address: '0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23',
         decimals: 18,
         symbol: 'WCRO',
-        isNative: false,
         name: 'Wrapped CRO',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/14532.png',
@@ -843,7 +788,6 @@ export const WETH = {
         address: '0xFc00000000000000000000000000000000000002',
         decimals: 18,
         symbol: 'WFRAX',
-        isNative: false,
         name: 'Wrapped FRAX',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6952.png',
@@ -855,7 +799,6 @@ export const WETH = {
         address: '0xBB859E225ac8Fb6BE1C7e38D87b767e95Fef0EbD',
         decimals: 18,
         symbol: 'wG',
-        isNative: false,
         name: 'Wrapped G',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32120.png',
@@ -867,7 +810,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WBTC',
-        isNative: false,
         name: 'Wrapped BTC',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
@@ -879,7 +821,6 @@ export const WETH = {
         address: '0xC1bF55EE54E16229d9b369a5502Bfe5fC9F20b6d',
         decimals: 18,
         symbol: 'wzkCRO',
-        isNative: false,
         name: 'Wrapped zkCRO',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/33873.png',
@@ -891,7 +832,6 @@ export const WETH = {
         address: '0x5300000000000000000000000000000000000011',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -903,7 +843,6 @@ export const WETH = {
         address: '0xbC10000000000000000000000000000000000000',
         decimals: 18,
         symbol: 'WGBTC',
-        isNative: false,
         name: 'Wrapped Goat BTC',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
@@ -915,7 +854,6 @@ export const WETH = {
         address: '0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38',
         decimals: 18,
         symbol: 'WS',
-        isNative: false,
         name: 'Wrapped Sonic',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32684.png',
@@ -927,7 +865,6 @@ export const WETH = {
         address: '0x3439153EB7AF838Ad19d56E1571FBD09333C2809',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -939,7 +876,6 @@ export const WETH = {
         address: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
         decimals: 18,
         symbol: 'WXDAI',
-        isNative: false,
         name: 'Wrapped xDAI',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/9021.png',
@@ -951,7 +887,6 @@ export const WETH = {
         address: '0x6969696969696969696969696969696969696969',
         decimals: 18,
         symbol: 'WBERA',
-        isNative: false,
         name: 'Wrapped BERA',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35608.png',
@@ -963,7 +898,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -975,7 +909,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -987,7 +920,6 @@ export const WETH = {
         address: '0x4200000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WBNB',
-        isNative: false,
         name: 'Wrapped BNB',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7192.png',
@@ -999,7 +931,6 @@ export const WETH = {
         address: '0x5555555555555555555555555555555555555555',
         decimals: 18,
         symbol: 'WHYPE',
-        isNative: false,
         name: 'Wrapped HYPE',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35881.png',
@@ -1011,7 +942,6 @@ export const WETH = {
         address: '0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62',
         decimals: 18,
         symbol: 'WETH',
-        isNative: false,
         name: 'Wrapped ETH',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
@@ -1023,7 +953,6 @@ export const WETH = {
         address: '0x48b62137edfa95a428d35c09e44256a739f6b557',
         decimals: 18,
         symbol: 'WAPE',
-        isNative: false,
         name: 'Wrapped APE',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18876.png',
@@ -1035,7 +964,6 @@ export const WETH = {
         address: '0x6100E367285b01F48D07953803A2d8dCA5D19873',
         decimals: 18,
         symbol: 'WXPL',
-        isNative: false,
         name: 'Wrapped XPL',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png',
@@ -1047,7 +975,6 @@ export const WETH = {
         address: '0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A',
         decimals: 18,
         symbol: 'WMON',
-        isNative: false,
         name: 'Wrapped MON',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png',
@@ -1059,7 +986,6 @@ export const WETH = {
         address: '0x3100000000000000000000000000000000000006',
         decimals: 18,
         symbol: 'WCBTC',
-        isNative: false,
         name: 'Wrapped CBTC',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png', // TODO change icon
@@ -1071,7 +997,6 @@ export const WETH = {
         address: '0x006C3e2AaAE5DB1bCd11A1a097cE572312EADdBB',
         decimals: 18,
         symbol: 'WQUAI',
-        isNative: false,
         name: 'Wrapped QUAI',
         icons: {
             small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22354.png',

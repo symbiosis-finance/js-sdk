@@ -60,9 +60,8 @@ export async function waitForIntentSolved(
     const filledEvent = depositoryDst.interface.parseLog(filledLog)
     const solutionInputs = deadlineUnlockerInterface.getFunction('encodeSolution').inputs
     const [solution] = deadlineUnlockerInterface._abiCoder.decode(solutionInputs, filledEvent.args.solution)
-    const branch = solution.branch.toNumber()
 
-    switch (branch) {
+    switch (solution.branch) {
         case 0: {
             // normal fill
             return {

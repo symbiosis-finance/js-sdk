@@ -1,4 +1,4 @@
-import type { ChainId } from '../../../constants'
+import { type ChainId, NATIVE_TOKEN_ADDRESS } from '../../../constants'
 import type { TokenAmount } from '../../../entities'
 import { DepositorySrc__factory } from '../../contracts'
 import type { DepositoryTypes } from '../../contracts/intents/DepositorySrc'
@@ -27,7 +27,7 @@ export function buildDepositData({
     srcChainId,
 }: DepositCallParams): string {
     const depositParams: DepositoryTypes.DepositParamsStruct = {
-        token: tokenAmountIn.token.address,
+        token: tokenAmountIn.token.isNative ? NATIVE_TOKEN_ADDRESS : tokenAmountIn.token.address,
         amount: tokenAmountIn.toBigInt(),
         depositor: from,
         quoteTTL: BigInt(quoteTTL),

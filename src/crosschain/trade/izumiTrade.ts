@@ -129,7 +129,6 @@ const IZUMI_ADDRESSES: Partial<Record<ChainId, IzumiAddresses>> = {
                 address: '0x67A1f4A939b477A6b7c5BF94D97E45dE87E608eF',
                 decimals: 18,
                 symbol: 'WOKB',
-                isNative: false,
                 name: 'Wrapped OKB',
                 icons: {
                     small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png',
