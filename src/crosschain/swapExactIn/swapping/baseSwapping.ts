@@ -285,7 +285,7 @@ export abstract class BaseSwapping {
 
         await this.transit.applyFees(fee1, fee2)
         if (this.tradeC) {
-            this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
+            await this.tradeC.applyAmountIn(this.transit.amountOut, this.transit.amountOutMin)
         }
         this.profiler.tick('PATCHING')
 
