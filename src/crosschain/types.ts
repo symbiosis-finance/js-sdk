@@ -112,6 +112,7 @@ export type OmniPoolConfig = {
         | 'symbiosis-finance'
         | 'apecoin'
         | 'evaa-protocol'
+        | 'dropee'
 }
 
 export type SwapLimit = {
