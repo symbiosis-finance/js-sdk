@@ -305,7 +305,7 @@ export class Symbiosis {
             this.zeroXConfig = { ...this.zeroXConfig, ...overrideConfig.zeroXConfig }
         }
         this.flyConfig = {
-            apiUrl: 'https://api.fly.trade',
+            apiUrl: 'https://api.magpiefi.xyz',
             apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
         }
         if (overrideConfig?.flyConfig) {

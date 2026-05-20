@@ -96,6 +96,17 @@ export class FlyTrade extends SymbiosisTrade {
 
     @withTracing()
     public async init() {
+        await this.fetchQuote(this.tokenAmountIn.raw.toString())
+        return this
+    }
+
+    public async applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
+        this.tokenAmountIn = newAmountIn
+        this.tokenAmountInMin = newAmountInMin
+        await this.fetchQuote(newAmountIn.raw.toString())
+    }
+
+    private async fetchQuote(sellAmount: string) {
         const apiKeys = this.symbiosis.flyConfig.apiKeys
         if (!apiKeys?.length) {
             throw new FlyTradeError('Missing Fly API key')
@@ -107,7 +118,6 @@ export class FlyTrade extends SymbiosisTrade {
 
         const fromToken = this.tokenAmountIn.token.isNative ? FLY_NATIVE_TOKEN : this.tokenAmountIn.token.address
         const toToken = this.tokenOut.isNative ? FLY_NATIVE_TOKEN : this.tokenOut.address
-        const sellAmount = this.tokenAmountIn.raw.toString()
         const slippageDecimal = this.slippage / Number(BIPS_BASE.toString())
 
         const url = new URL(`${this.symbiosis.flyConfig.apiUrl}/aggregator/quote/transaction`)
@@ -124,7 +134,7 @@ export class FlyTrade extends SymbiosisTrade {
         try {
             response = await this.symbiosis.fetch(url.toString(), {
                 headers: { apikey: apiKey },
-                signal: this.signal,
+                // signal: this.signal,
             })
         } catch (e) {
             if (e instanceof Error && e.name === 'AbortError') throw e
@@ -157,13 +167,10 @@ export class FlyTrade extends SymbiosisTrade {
             route: [this.tokenAmountIn.token, this.tokenOut],
             callData: transaction.data,
             callDataOffset,
-            // amountOutMin is in the packed section of calldata, not in a 32-byte ABI slot
             minReceivedOffset: 0,
             priceImpact,
             value: this.tokenAmountIn.token.isNative && transaction.value ? BigInt(transaction.value) : undefined,
         }
-
-        return this
     }
 
     private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
