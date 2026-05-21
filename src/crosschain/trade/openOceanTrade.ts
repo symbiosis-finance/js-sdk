@@ -296,6 +296,12 @@ export class OpenOceanTrade extends SymbiosisTrade {
     private getOffsets(callData: string) {
         const methods = [
             {
+                // simpleSwap
+                sigHash: '0a9704d5',
+                amountOffset: 260,
+                minReceivedOffset: 292,
+            },
+            {
                 // swap
                 sigHash: '90411a32',
                 amountOffset: 260,
