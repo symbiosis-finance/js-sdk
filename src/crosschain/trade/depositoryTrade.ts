@@ -20,7 +20,7 @@ export class DepositoryTrade extends SymbiosisTrade {
     }
 
     get tradeType(): TradeProvider {
-        return TradeProvider.DEPOSITORY
+        return this.baseTrade?.tradeType || TradeProvider.DEPOSITORY
     }
 
     applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount): void {

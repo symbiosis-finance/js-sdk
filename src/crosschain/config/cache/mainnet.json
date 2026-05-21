@@ -1109,7 +1109,7 @@
                 "large": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
-            "deprecated": false,
+            "deprecated": true,
             "id": 70
         },
         {
@@ -2750,7 +2750,7 @@
                 "small": "https://s2.coinmarketcap.com/static/img/coins/128x128/1027.png"
             },
             "chainFromId": 810180,
-            "deprecated": false,
+            "deprecated": true,
             "id": 185,
             "originalId": 70
         },

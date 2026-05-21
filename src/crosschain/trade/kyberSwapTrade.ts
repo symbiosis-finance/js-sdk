@@ -235,11 +235,11 @@ export class KyberSwapTrade extends SymbiosisTrade {
         if (inUsd.isZero() || inUsd.isNaN() || outUsd.isNaN()) {
             return zeroPercent
         }
-        const impact = inUsd.minus(outUsd).div(inUsd)
-        if (!impact.isFinite() || impact.isNegative()) {
+        const impact = outUsd.minus(inUsd).div(inUsd)
+        if (!impact.isFinite()) {
             return zeroPercent
         }
         const bps = impact.multipliedBy(10000).integerValue().toNumber()
-        return new Percent(bps.toString(), BIPS_BASE)
+        return new Percent(BigInt(bps), BIPS_BASE)
     }
 }

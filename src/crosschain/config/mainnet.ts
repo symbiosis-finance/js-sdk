@@ -1590,7 +1590,7 @@ export const config: Config = {
             filterBlockOffset: 1000,
             stables: [
                 {
-                    // deprecated: true,
+                    deprecated: true,
                     name: 'Wrapped ETH',
                     symbol: 'WETH',
                     address: '0x8280a4e7D5B3B658ec4580d3Bc30f5e50454F169',
