@@ -1,0 +1,5476 @@
+[
+  {
+    "ecosystem": "npm",
+    "package": "@adraffy/ens-normalize",
+    "installed_version": "1.10.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@adraffy/ens-normalize"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@apidevtools/json-schema-ref-parser",
+    "installed_version": "14.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/json-schema-ref-parser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@apidevtools/openapi-schemas",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/openapi-schemas"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@apidevtools/swagger-methods",
+    "installed_version": "3.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/swagger-methods"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@apidevtools/swagger-parser",
+    "installed_version": "12.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/swagger-parser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ajv",
+    "installed_version": "8.20.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/swagger-parser/node_modules/ajv"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ajv-draft-04",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/swagger-parser/node_modules/ajv-draft-04"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json-schema-traverse",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@apidevtools/swagger-parser/node_modules/json-schema-traverse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@babel/runtime",
+    "installed_version": "7.28.4",
+    "is_direct": false,
+    "dep_path": "node_modules/@babel/runtime"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@biomejs/js-api",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@biomejs/js-api"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@biomejs/wasm-nodejs",
+    "installed_version": "2.4.13",
+    "is_direct": false,
+    "dep_path": "node_modules/@biomejs/wasm-nodejs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@bitcoinerlab/secp256k1",
+    "installed_version": "1.2.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@bitcoinerlab/secp256k1"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/bitcoin",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/utils",
+    "installed_version": "2.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/@chainflip/utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/hashes",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/@chainflip/utils/node_modules/@noble/hashes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "base-x",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/base-x"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bech32",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/bech32"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bip174",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/bip174"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bitcoinjs-lib",
+    "installed_version": "7.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/bitcoinjs-lib"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bs58",
+    "installed_version": "6.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/bs58"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bs58check",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/bs58check"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "varuint-bitcoin",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/varuint-bitcoin"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "uint8array-tools",
+    "installed_version": "0.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/bitcoin/node_modules/varuint-bitcoin/node_modules/uint8array-tools"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/rpc",
+    "installed_version": "2.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/rpc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/scale",
+    "installed_version": "1.11.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/scale"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/utils",
+    "installed_version": "0.8.22",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/scale/node_modules/@chainflip/utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/sdk",
+    "installed_version": "2.1.1",
+    "is_direct": true,
+    "dep_path": "node_modules/@chainflip/sdk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/curves",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/@noble/curves"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/hashes",
+    "installed_version": "1.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/@noble/hashes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/node",
+    "installed_version": "22.7.5",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/@types/node"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "aes-js",
+    "installed_version": "4.0.0-beta.5",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/aes-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ethers",
+    "installed_version": "6.16.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/ethers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tslib",
+    "installed_version": "2.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/tslib"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "undici-types",
+    "installed_version": "6.19.8",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/undici-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ws",
+    "installed_version": "8.17.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/sdk/node_modules/ws"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/solana",
+    "installed_version": "2.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/solana"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@chainflip/utils",
+    "installed_version": "2.1.4",
+    "is_direct": false,
+    "dep_path": "node_modules/@chainflip/utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@coral-xyz/anchor",
+    "installed_version": "0.32.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@coral-xyz/anchor"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@coral-xyz/anchor-errors",
+    "installed_version": "0.31.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@coral-xyz/anchor-errors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@coral-xyz/borsh",
+    "installed_version": "0.31.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@coral-xyz/borsh"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@date-fns/utc",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@date-fns/utc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@dedust/sdk",
+    "installed_version": "0.8.7",
+    "is_direct": true,
+    "dep_path": "node_modules/@dedust/sdk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/aix-ppc64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/aix-ppc64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/android-arm",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/android-arm"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/android-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/android-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/android-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/android-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/darwin-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/darwin-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/darwin-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/darwin-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/freebsd-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/freebsd-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/freebsd-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/freebsd-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-arm",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-arm"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-ia32",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-ia32"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-loong64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-loong64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-mips64el",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-mips64el"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-ppc64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-ppc64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-riscv64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-riscv64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-s390x",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-s390x"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/linux-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/linux-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/netbsd-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/netbsd-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/netbsd-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/netbsd-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/openbsd-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/openbsd-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/openbsd-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/openbsd-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/openharmony-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/openharmony-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/sunos-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/sunos-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/win32-arm64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/win32-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/win32-ia32",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/win32-ia32"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@esbuild/win32-x64",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@esbuild/win32-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint-community/eslint-utils",
+    "installed_version": "4.9.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint-community/eslint-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint-community/regexpp",
+    "installed_version": "4.12.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint-community/regexpp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/config-array",
+    "installed_version": "0.21.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/config-array"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "brace-expansion",
+    "installed_version": "1.1.12",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/config-array/node_modules/brace-expansion"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "minimatch",
+    "installed_version": "3.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/config-array/node_modules/minimatch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/config-helpers",
+    "installed_version": "0.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/config-helpers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/core",
+    "installed_version": "0.17.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/eslintrc",
+    "installed_version": "3.3.3",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/eslintrc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ignore",
+    "installed_version": "5.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/eslintrc/node_modules/ignore"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/js",
+    "installed_version": "9.39.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/object-schema",
+    "installed_version": "2.1.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/object-schema"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@eslint/plugin-kit",
+    "installed_version": "0.4.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@eslint/plugin-kit"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethereumjs/rlp",
+    "installed_version": "5.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/rlp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethereumjs/util",
+    "installed_version": "9.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/util"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/curves",
+    "installed_version": "1.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/util/node_modules/@noble/curves"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/hashes",
+    "installed_version": "1.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/util/node_modules/@noble/hashes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@scure/bip32",
+    "installed_version": "1.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/util/node_modules/@scure/bip32"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@scure/bip39",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/util/node_modules/@scure/bip39"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ethereum-cryptography",
+    "installed_version": "2.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethereumjs/util/node_modules/ethereum-cryptography"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/abi",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/abi"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/abstract-provider",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/abstract-provider"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/abstract-signer",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/abstract-signer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/address",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/address"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/base64",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/base64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/basex",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/basex"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/bignumber",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/bignumber"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/bytes",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/bytes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/constants",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/constants"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/contracts",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/contracts"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/hash",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/hash"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/hdnode",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/hdnode"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/json-wallets",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/json-wallets"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/keccak256",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/keccak256"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/logger",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/logger"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/networks",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/networks"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/pbkdf2",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/pbkdf2"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/properties",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/properties"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/providers",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/providers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/random",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/random"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/rlp",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/rlp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/sha2",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/sha2"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/signing-key",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/signing-key"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/solidity",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/solidity"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/strings",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/strings"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/transactions",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/transactions"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/units",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ethersproject/units"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/wallet",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/wallet"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/web",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/web"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/wordlists",
+    "installed_version": "5.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ethersproject/wordlists"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@exodus/schemasafe",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@exodus/schemasafe"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@fastify/busboy",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@fastify/busboy"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@humanfs/core",
+    "installed_version": "0.19.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@humanfs/core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@humanfs/node",
+    "installed_version": "0.16.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@humanfs/node"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@humanwhocodes/module-importer",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@humanwhocodes/module-importer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@humanwhocodes/retry",
+    "installed_version": "0.4.3",
+    "is_direct": false,
+    "dep_path": "node_modules/@humanwhocodes/retry"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@jridgewell/sourcemap-codec",
+    "installed_version": "1.5.5",
+    "is_direct": false,
+    "dep_path": "node_modules/@jridgewell/sourcemap-codec"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@mswjs/interceptors",
+    "installed_version": "0.39.8",
+    "is_direct": false,
+    "dep_path": "node_modules/@mswjs/interceptors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/curves",
+    "installed_version": "1.9.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@noble/curves"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/hashes",
+    "installed_version": "1.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@noble/hashes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/secp256k1",
+    "installed_version": "1.7.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@noble/secp256k1"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-darwin-arm64",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-darwin-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-darwin-x64",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-darwin-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-linux-arm64-gnu",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-linux-arm64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-linux-arm64-musl",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-linux-arm64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-linux-x64-gnu",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-linux-x64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-linux-x64-musl",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-linux-x64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/edr-win32-x64-msvc",
+    "installed_version": "0.12.0-next.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/edr-win32-x64-msvc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@nomicfoundation/solidity-analyzer",
+    "installed_version": "0.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@nomicfoundation/solidity-analyzer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@open-draft/deferred-promise",
+    "installed_version": "2.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@open-draft/deferred-promise"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@open-draft/logger",
+    "installed_version": "0.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@open-draft/logger"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@open-draft/until",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@open-draft/until"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@opentelemetry/api",
+    "installed_version": "1.9.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@opentelemetry/api"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@openzeppelin/contracts",
+    "installed_version": "3.4.2-solc-0.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@openzeppelin/contracts"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@orbs-network/ton-access",
+    "installed_version": "2.3.3",
+    "is_direct": true,
+    "dep_path": "node_modules/@orbs-network/ton-access"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@pkgr/core",
+    "installed_version": "0.2.9",
+    "is_direct": false,
+    "dep_path": "node_modules/@pkgr/core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@raydium-io/raydium-sdk-v2",
+    "installed_version": "0.1.106-alpha",
+    "is_direct": true,
+    "dep_path": "node_modules/@raydium-io/raydium-sdk-v2"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "big.js",
+    "installed_version": "6.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@raydium-io/raydium-sdk-v2/node_modules/big.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-android-arm-eabi",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-android-arm-eabi"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-android-arm64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-android-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-darwin-arm64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-darwin-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-darwin-x64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-darwin-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-freebsd-arm64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-freebsd-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-freebsd-x64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-freebsd-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-arm-gnueabihf",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-arm-gnueabihf"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-arm-musleabihf",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-arm-musleabihf"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-arm64-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-arm64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-arm64-musl",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-arm64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-loong64-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-loong64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-loong64-musl",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-loong64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-ppc64-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-ppc64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-ppc64-musl",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-ppc64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-riscv64-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-riscv64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-riscv64-musl",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-riscv64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-s390x-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-s390x-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-x64-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-x64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-linux-x64-musl",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-linux-x64-musl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-openbsd-x64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-openbsd-x64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-openharmony-arm64",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-openharmony-arm64"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-win32-arm64-msvc",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-win32-arm64-msvc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-win32-ia32-msvc",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-win32-ia32-msvc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-win32-x64-gnu",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-win32-x64-gnu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@rollup/rollup-win32-x64-msvc",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@rollup/rollup-win32-x64-msvc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@scure/base",
+    "installed_version": "1.1.9",
+    "is_direct": false,
+    "dep_path": "node_modules/@scure/base"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@scure/bip32",
+    "installed_version": "1.1.5",
+    "is_direct": false,
+    "dep_path": "node_modules/@scure/bip32"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/hashes",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@scure/bip32/node_modules/@noble/hashes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@scure/bip39",
+    "installed_version": "1.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@scure/bip39"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/core",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/hub",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/hub"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/minimal",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/minimal"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/node",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/node"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/tracing",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/tracing"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/types",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@sentry/utils",
+    "installed_version": "5.30.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@sentry/utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/addresses",
+    "installed_version": "2.3.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@solana/addresses"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/assertions",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/assertions"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/buffer-layout",
+    "installed_version": "4.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/buffer-layout"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/buffer-layout-utils",
+    "installed_version": "0.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/buffer-layout-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-core",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-data-structures",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-data-structures"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-core",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-data-structures/node_modules/@solana/codecs-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-numbers",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-data-structures/node_modules/@solana/codecs-numbers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/errors",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-data-structures/node_modules/@solana/errors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "commander",
+    "installed_version": "12.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-data-structures/node_modules/commander"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-numbers",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-numbers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-strings",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs-strings"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/codecs-strings",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/codecs/node_modules/@solana/codecs-strings"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/errors",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/errors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/nominal-types",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/nominal-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/options",
+    "installed_version": "2.0.0-rc.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/options"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/spl-token",
+    "installed_version": "0.4.14",
+    "is_direct": true,
+    "dep_path": "node_modules/@solana/spl-token"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/spl-token-group",
+    "installed_version": "0.0.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/spl-token-group"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/spl-token-metadata",
+    "installed_version": "0.1.6",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/spl-token-metadata"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@solana/web3.js",
+    "installed_version": "1.98.4",
+    "is_direct": true,
+    "dep_path": "node_modules/@solana/web3.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "superstruct",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@solana/web3.js/node_modules/superstruct"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@standard-schema/spec",
+    "installed_version": "1.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@standard-schema/spec"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ston-fi/api",
+    "installed_version": "0.29.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ston-fi/api"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ston-fi/sdk",
+    "installed_version": "2.7.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ston-fi/sdk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@swc/helpers",
+    "installed_version": "0.5.18",
+    "is_direct": false,
+    "dep_path": "node_modules/@swc/helpers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tslib",
+    "installed_version": "2.8.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@swc/helpers/node_modules/tslib"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ton/core",
+    "installed_version": "0.59.1",
+    "is_direct": true,
+    "dep_path": "node_modules/@ton/core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ton/crypto",
+    "installed_version": "3.3.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ton/crypto"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ton/crypto-primitives",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@ton/crypto-primitives"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ton/ton",
+    "installed_version": "15.1.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@ton/ton"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@tonconnect/isomorphic-eventsource",
+    "installed_version": "0.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@tonconnect/isomorphic-eventsource"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@tonconnect/isomorphic-fetch",
+    "installed_version": "0.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/@tonconnect/isomorphic-fetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@tonconnect/protocol",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@tonconnect/protocol"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@tonconnect/sdk",
+    "installed_version": "3.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@tonconnect/sdk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@tronweb3/google-protobuf",
+    "installed_version": "3.21.4",
+    "is_direct": false,
+    "dep_path": "node_modules/@tronweb3/google-protobuf"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ts-rest/core",
+    "installed_version": "3.52.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@ts-rest/core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typechain/ethers-v5",
+    "installed_version": "11.1.2",
+    "is_direct": true,
+    "dep_path": "node_modules/@typechain/ethers-v5"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/big.js",
+    "installed_version": "4.0.5",
+    "is_direct": true,
+    "dep_path": "node_modules/@types/big.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/bs58",
+    "installed_version": "4.0.4",
+    "is_direct": true,
+    "dep_path": "node_modules/@types/bs58"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/chai",
+    "installed_version": "5.2.3",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/chai"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/connect",
+    "installed_version": "3.4.38",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/connect"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/crypto-js",
+    "installed_version": "4.2.2",
+    "is_direct": true,
+    "dep_path": "node_modules/@types/crypto-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/deep-eql",
+    "installed_version": "4.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/deep-eql"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/estree",
+    "installed_version": "1.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/estree"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/jest",
+    "installed_version": "27.5.2",
+    "is_direct": true,
+    "dep_path": "node_modules/@types/jest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/json-schema",
+    "installed_version": "7.0.15",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/json-schema"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/lodash",
+    "installed_version": "4.17.21",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/lodash"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/lodash.flatmap",
+    "installed_version": "4.5.9",
+    "is_direct": true,
+    "dep_path": "node_modules/@types/lodash.flatmap"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/node",
+    "installed_version": "25.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/node"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/prettier",
+    "installed_version": "2.7.3",
+    "is_direct": true,
+    "dep_path": "node_modules/@types/prettier"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/swagger-schema-official",
+    "installed_version": "2.0.25",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/swagger-schema-official"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/trusted-types",
+    "installed_version": "2.0.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/trusted-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/uuid",
+    "installed_version": "8.3.4",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/uuid"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/ws",
+    "installed_version": "7.4.7",
+    "is_direct": false,
+    "dep_path": "node_modules/@types/ws"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/eslint-plugin",
+    "installed_version": "8.52.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@typescript-eslint/eslint-plugin"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/parser",
+    "installed_version": "8.52.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@typescript-eslint/parser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/project-service",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/project-service"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/scope-manager",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/scope-manager"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/tsconfig-utils",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/tsconfig-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/type-utils",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/type-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/types",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/typescript-estree",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/typescript-estree"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/utils",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@typescript-eslint/visitor-keys",
+    "installed_version": "8.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/visitor-keys"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eslint-visitor-keys",
+    "installed_version": "4.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@typescript-eslint/visitor-keys/node_modules/eslint-visitor-keys"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/lib",
+    "installed_version": "4.0.1-alpha",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/lib"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/sdk-core",
+    "installed_version": "3.1.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@uniswap/sdk-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/swap-router-contracts",
+    "installed_version": "1.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/swap-router-contracts"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/v2-core",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v2-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/v3-core",
+    "installed_version": "1.0.1",
+    "is_direct": true,
+    "dep_path": "node_modules/@uniswap/v3-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/v3-periphery",
+    "installed_version": "1.4.4",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v3-periphery"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/v3-sdk",
+    "installed_version": "3.27.0",
+    "is_direct": true,
+    "dep_path": "node_modules/@uniswap/v3-sdk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/keccak256",
+    "installed_version": "5.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v3-sdk/node_modules/@ethersproject/keccak256"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@ethersproject/strings",
+    "installed_version": "5.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v3-sdk/node_modules/@ethersproject/strings"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/sdk-core",
+    "installed_version": "7.10.1",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v3-sdk/node_modules/@uniswap/sdk-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/v3-staker",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v3-staker"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@uniswap/v3-core",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/@uniswap/v3-staker/node_modules/@uniswap/v3-core"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/expect",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/expect"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/mocker",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/mocker"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/pretty-format",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/pretty-format"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/runner",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/runner"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/snapshot",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/snapshot"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/spy",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/spy"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@vitest/utils",
+    "installed_version": "4.0.16",
+    "is_direct": false,
+    "dep_path": "node_modules/@vitest/utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "abort-controller",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/abort-controller"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "acorn",
+    "installed_version": "8.15.0",
+    "is_direct": false,
+    "dep_path": "node_modules/acorn"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "acorn-jsx",
+    "installed_version": "5.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/acorn-jsx"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "adm-zip",
+    "installed_version": "0.4.16",
+    "is_direct": false,
+    "dep_path": "node_modules/adm-zip"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "aes-js",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/aes-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "agent-base",
+    "installed_version": "6.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/agent-base"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "agentkeepalive",
+    "installed_version": "4.6.0",
+    "is_direct": false,
+    "dep_path": "node_modules/agentkeepalive"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "aggregate-error",
+    "installed_version": "3.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/aggregate-error"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ajv",
+    "installed_version": "6.12.6",
+    "is_direct": false,
+    "dep_path": "node_modules/ajv"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-align",
+    "installed_version": "3.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/ansi-align"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-colors",
+    "installed_version": "4.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/ansi-colors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-escapes",
+    "installed_version": "4.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/ansi-escapes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-fest",
+    "installed_version": "0.21.3",
+    "is_direct": false,
+    "dep_path": "node_modules/ansi-escapes/node_modules/type-fest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-regex",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/ansi-regex"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-styles",
+    "installed_version": "5.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/ansi-styles"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "anymatch",
+    "installed_version": "3.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/anymatch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "picomatch",
+    "installed_version": "2.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/anymatch/node_modules/picomatch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "argparse",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/argparse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "array-back",
+    "installed_version": "3.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/array-back"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "assertion-error",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/assertion-error"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "asynckit",
+    "installed_version": "0.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/asynckit"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "atomic-sleep",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/atomic-sleep"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "axios",
+    "installed_version": "1.13.2",
+    "is_direct": false,
+    "dep_path": "node_modules/axios"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "babel-plugin-transform-jsbi-to-bigint",
+    "installed_version": "1.4.2",
+    "is_direct": true,
+    "dep_path": "node_modules/babel-plugin-transform-jsbi-to-bigint"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "balanced-match",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/balanced-match"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "base-x",
+    "installed_version": "3.0.11",
+    "is_direct": false,
+    "dep_path": "node_modules/base-x"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "base58-js",
+    "installed_version": "1.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/base58-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "base64-js",
+    "installed_version": "1.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/base64-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "base64-sol",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/base64-sol"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bech32",
+    "installed_version": "1.1.4",
+    "is_direct": false,
+    "dep_path": "node_modules/bech32"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "big.js",
+    "installed_version": "5.2.2",
+    "is_direct": true,
+    "dep_path": "node_modules/big.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bigint-buffer",
+    "installed_version": "1.1.5",
+    "is_direct": false,
+    "dep_path": "node_modules/bigint-buffer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bignumber.js",
+    "installed_version": "9.3.1",
+    "is_direct": true,
+    "dep_path": "node_modules/bignumber.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "binary-extensions",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/binary-extensions"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bindings",
+    "installed_version": "1.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/bindings"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bintrees",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/bintrees"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bip174",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/bip174"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bitcoin-address-validation",
+    "installed_version": "2.2.3",
+    "is_direct": true,
+    "dep_path": "node_modules/bitcoin-address-validation"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bitcoinjs-lib",
+    "installed_version": "6.1.7",
+    "is_direct": true,
+    "dep_path": "node_modules/bitcoinjs-lib"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bn.js",
+    "installed_version": "5.2.3",
+    "is_direct": false,
+    "dep_path": "node_modules/bn.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "borsh",
+    "installed_version": "0.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/borsh"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "boxen",
+    "installed_version": "5.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/boxen"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-styles",
+    "installed_version": "4.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/boxen/node_modules/ansi-styles"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chalk",
+    "installed_version": "4.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/boxen/node_modules/chalk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "supports-color",
+    "installed_version": "7.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/boxen/node_modules/supports-color"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-fest",
+    "installed_version": "0.20.2",
+    "is_direct": false,
+    "dep_path": "node_modules/boxen/node_modules/type-fest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "brace-expansion",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/brace-expansion"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "braces",
+    "installed_version": "3.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/braces"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "brorand",
+    "installed_version": "1.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/brorand"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "browser-stdout",
+    "installed_version": "1.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/browser-stdout"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bs58",
+    "installed_version": "4.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/bs58"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bs58check",
+    "installed_version": "3.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/bs58check"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "base-x",
+    "installed_version": "4.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/bs58check/node_modules/base-x"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bs58",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/bs58check/node_modules/bs58"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "buffer",
+    "installed_version": "6.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/buffer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "buffer-from",
+    "installed_version": "1.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/buffer-from"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "buffer-layout",
+    "installed_version": "1.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/buffer-layout"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bufferutil",
+    "installed_version": "4.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/bufferutil"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bytes",
+    "installed_version": "3.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/bytes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "c12",
+    "installed_version": "3.3.4",
+    "is_direct": false,
+    "dep_path": "node_modules/c12"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chokidar",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/c12/node_modules/chokidar"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dotenv",
+    "installed_version": "17.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/c12/node_modules/dotenv"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "readdirp",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/c12/node_modules/readdirp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "call-bind-apply-helpers",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/call-bind-apply-helpers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "call-me-maybe",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/call-me-maybe"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "callsites",
+    "installed_version": "3.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/callsites"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "camelcase",
+    "installed_version": "6.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/camelcase"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "camelcase-keys",
+    "installed_version": "9.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/camelcase-keys"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "camelcase",
+    "installed_version": "8.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/camelcase-keys/node_modules/camelcase"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chai",
+    "installed_version": "6.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/chai"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chalk",
+    "installed_version": "5.6.2",
+    "is_direct": false,
+    "dep_path": "node_modules/chalk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chokidar",
+    "installed_version": "4.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/chokidar"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ci-info",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/ci-info"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "citty",
+    "installed_version": "0.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/citty"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "class-variance-authority",
+    "installed_version": "0.7.1",
+    "is_direct": false,
+    "dep_path": "node_modules/class-variance-authority"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "clean-stack",
+    "installed_version": "2.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/clean-stack"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "cli-boxes",
+    "installed_version": "2.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/cli-boxes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "cliui",
+    "installed_version": "7.0.4",
+    "is_direct": false,
+    "dep_path": "node_modules/cliui"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "clsx",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/clsx"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "color-convert",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/color-convert"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "color-name",
+    "installed_version": "1.1.4",
+    "is_direct": false,
+    "dep_path": "node_modules/color-name"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "colorette",
+    "installed_version": "2.0.20",
+    "is_direct": false,
+    "dep_path": "node_modules/colorette"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "combined-stream",
+    "installed_version": "1.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/combined-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "command-exists",
+    "installed_version": "1.2.9",
+    "is_direct": false,
+    "dep_path": "node_modules/command-exists"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "command-line-args",
+    "installed_version": "5.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-args"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "command-line-usage",
+    "installed_version": "6.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ansi-styles",
+    "installed_version": "3.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/ansi-styles"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "array-back",
+    "installed_version": "4.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/array-back"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chalk",
+    "installed_version": "2.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/chalk"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "color-convert",
+    "installed_version": "1.9.3",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/color-convert"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "color-name",
+    "installed_version": "1.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/color-name"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "escape-string-regexp",
+    "installed_version": "1.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/escape-string-regexp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "has-flag",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/has-flag"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "supports-color",
+    "installed_version": "5.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/supports-color"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "typical",
+    "installed_version": "5.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/command-line-usage/node_modules/typical"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "commander",
+    "installed_version": "14.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/commander"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "concat-map",
+    "installed_version": "0.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/concat-map"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "confbox",
+    "installed_version": "0.2.4",
+    "is_direct": false,
+    "dep_path": "node_modules/confbox"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "consola",
+    "installed_version": "3.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/consola"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "cookie",
+    "installed_version": "0.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/cookie"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "cross-fetch",
+    "installed_version": "3.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/cross-fetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "cross-spawn",
+    "installed_version": "7.0.6",
+    "is_direct": false,
+    "dep_path": "node_modules/cross-spawn"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "crypto-js",
+    "installed_version": "4.2.0",
+    "is_direct": true,
+    "dep_path": "node_modules/crypto-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dataloader",
+    "installed_version": "2.2.3",
+    "is_direct": false,
+    "dep_path": "node_modules/dataloader"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "date-fns",
+    "installed_version": "4.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/date-fns"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dateformat",
+    "installed_version": "4.6.3",
+    "is_direct": false,
+    "dep_path": "node_modules/dateformat"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dayjs",
+    "installed_version": "1.11.20",
+    "is_direct": false,
+    "dep_path": "node_modules/dayjs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "debug",
+    "installed_version": "4.4.3",
+    "is_direct": false,
+    "dep_path": "node_modules/debug"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "decamelize",
+    "installed_version": "6.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/decamelize"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "decamelize-keys",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/decamelize-keys"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "map-obj",
+    "installed_version": "4.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/decamelize-keys/node_modules/map-obj"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-fest",
+    "installed_version": "3.13.1",
+    "is_direct": false,
+    "dep_path": "node_modules/decamelize-keys/node_modules/type-fest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "decimal.js-light",
+    "installed_version": "2.5.1",
+    "is_direct": true,
+    "dep_path": "node_modules/decimal.js-light"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "deep-extend",
+    "installed_version": "0.6.0",
+    "is_direct": false,
+    "dep_path": "node_modules/deep-extend"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "deep-is",
+    "installed_version": "0.1.4",
+    "is_direct": false,
+    "dep_path": "node_modules/deep-is"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "defu",
+    "installed_version": "6.1.7",
+    "is_direct": false,
+    "dep_path": "node_modules/defu"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "delay",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/delay"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "delayed-stream",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/delayed-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "depd",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/depd"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "destr",
+    "installed_version": "2.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/destr"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "diff",
+    "installed_version": "5.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/diff"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "diff-sequences",
+    "installed_version": "27.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/diff-sequences"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dompurify",
+    "installed_version": "3.4.2",
+    "is_direct": false,
+    "dep_path": "node_modules/dompurify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dotenv",
+    "installed_version": "14.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/dotenv"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "dunder-proto",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/dunder-proto"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "duplexer",
+    "installed_version": "0.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/duplexer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "elliptic",
+    "installed_version": "6.6.1",
+    "is_direct": false,
+    "dep_path": "node_modules/elliptic"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "bn.js",
+    "installed_version": "4.12.2",
+    "is_direct": false,
+    "dep_path": "node_modules/elliptic/node_modules/bn.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "emoji-regex",
+    "installed_version": "8.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/emoji-regex"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "end-of-stream",
+    "installed_version": "1.4.5",
+    "is_direct": false,
+    "dep_path": "node_modules/end-of-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "enquirer",
+    "installed_version": "2.4.1",
+    "is_direct": false,
+    "dep_path": "node_modules/enquirer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "env-paths",
+    "installed_version": "2.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/env-paths"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es-define-property",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/es-define-property"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es-errors",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/es-errors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es-module-lexer",
+    "installed_version": "1.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/es-module-lexer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es-object-atoms",
+    "installed_version": "1.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/es-object-atoms"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es-set-tostringtag",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/es-set-tostringtag"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es-toolkit",
+    "installed_version": "1.46.1",
+    "is_direct": false,
+    "dep_path": "node_modules/es-toolkit"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es6-promise",
+    "installed_version": "4.2.8",
+    "is_direct": false,
+    "dep_path": "node_modules/es6-promise"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es6-promisify",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/es6-promisify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "esbuild",
+    "installed_version": "0.27.2",
+    "is_direct": false,
+    "dep_path": "node_modules/esbuild"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "escalade",
+    "installed_version": "3.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/escalade"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "escape-string-regexp",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/escape-string-regexp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eslint",
+    "installed_version": "9.39.2",
+    "is_direct": true,
+    "dep_path": "node_modules/eslint"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eslint-config-prettier",
+    "installed_version": "10.1.8",
+    "is_direct": true,
+    "dep_path": "node_modules/eslint-config-prettier"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eslint-plugin-prettier",
+    "installed_version": "5.5.4",
+    "is_direct": true,
+    "dep_path": "node_modules/eslint-plugin-prettier"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eslint-scope",
+    "installed_version": "8.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/eslint-scope"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eslint-visitor-keys",
+    "installed_version": "3.4.3",
+    "is_direct": false,
+    "dep_path": "node_modules/eslint-visitor-keys"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "espree",
+    "installed_version": "10.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/espree"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "esquery",
+    "installed_version": "1.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/esquery"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "esrecurse",
+    "installed_version": "4.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/esrecurse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "estraverse",
+    "installed_version": "5.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/estraverse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "estree-walker",
+    "installed_version": "3.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/estree-walker"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "esutils",
+    "installed_version": "2.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/esutils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eta",
+    "installed_version": "3.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/eta"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ethereum-cryptography",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/ethereum-cryptography"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ethers",
+    "installed_version": "5.8.0",
+    "is_direct": true,
+    "dep_path": "node_modules/ethers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "event-stream",
+    "installed_version": "3.3.4",
+    "is_direct": false,
+    "dep_path": "node_modules/event-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "event-target-shim",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/event-target-shim"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eventemitter3",
+    "installed_version": "4.0.7",
+    "is_direct": false,
+    "dep_path": "node_modules/eventemitter3"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "events",
+    "installed_version": "3.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/events"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eventsource",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/eventsource"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "expect-type",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/expect-type"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "exsolve",
+    "installed_version": "1.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/exsolve"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eyes",
+    "installed_version": "0.1.8",
+    "is_direct": false,
+    "dep_path": "node_modules/eyes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-copy",
+    "installed_version": "2.1.7",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-copy"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-deep-equal",
+    "installed_version": "3.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-deep-equal"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-diff",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-diff"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-json-stable-stringify",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-json-stable-stringify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-levenshtein",
+    "installed_version": "2.0.6",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-levenshtein"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-redact",
+    "installed_version": "3.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-redact"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-safe-stringify",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-safe-stringify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-stable-stringify",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-stable-stringify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fast-uri",
+    "installed_version": "3.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fast-uri"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fastestsmallesttextencoderdecoder",
+    "installed_version": "1.0.22",
+    "is_direct": false,
+    "dep_path": "node_modules/fastestsmallesttextencoderdecoder"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fdir",
+    "installed_version": "6.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fdir"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "file-entry-cache",
+    "installed_version": "8.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/file-entry-cache"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "file-uri-to-path",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/file-uri-to-path"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fill-range",
+    "installed_version": "7.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/fill-range"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "find-replace",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/find-replace"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "find-up",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/find-up"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fix-esm-import-path",
+    "installed_version": "1.10.3",
+    "is_direct": true,
+    "dep_path": "node_modules/fix-esm-import-path"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "flat",
+    "installed_version": "5.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/flat"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "flat-cache",
+    "installed_version": "4.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/flat-cache"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "flatted",
+    "installed_version": "3.3.3",
+    "is_direct": false,
+    "dep_path": "node_modules/flatted"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "follow-redirects",
+    "installed_version": "1.15.11",
+    "is_direct": false,
+    "dep_path": "node_modules/follow-redirects"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "form-data",
+    "installed_version": "4.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/form-data"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fp-ts",
+    "installed_version": "1.19.3",
+    "is_direct": false,
+    "dep_path": "node_modules/fp-ts"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "from",
+    "installed_version": "0.1.7",
+    "is_direct": false,
+    "dep_path": "node_modules/from"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fs-extra",
+    "installed_version": "7.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/fs-extra"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jsonfile",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fs-extra/node_modules/jsonfile"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fs.realpath",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/fs.realpath"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "fsevents",
+    "installed_version": "2.3.3",
+    "is_direct": false,
+    "dep_path": "node_modules/fsevents"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "function-bind",
+    "installed_version": "1.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/function-bind"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "get-caller-file",
+    "installed_version": "2.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/get-caller-file"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "get-intrinsic",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/get-intrinsic"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "get-proto",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/get-proto"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "get-tsconfig",
+    "installed_version": "4.13.0",
+    "is_direct": false,
+    "dep_path": "node_modules/get-tsconfig"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "giget",
+    "installed_version": "3.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/giget"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "glob",
+    "installed_version": "8.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/glob"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "glob-parent",
+    "installed_version": "6.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/glob-parent"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "minimatch",
+    "installed_version": "5.1.6",
+    "is_direct": false,
+    "dep_path": "node_modules/glob/node_modules/minimatch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "globals",
+    "installed_version": "14.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/globals"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "gopd",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/gopd"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "graceful-fs",
+    "installed_version": "4.2.11",
+    "is_direct": false,
+    "dep_path": "node_modules/graceful-fs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "hardhat",
+    "installed_version": "2.28.2",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "hardhat-watcher",
+    "installed_version": "2.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat-watcher"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "chokidar",
+    "installed_version": "3.6.0",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat-watcher/node_modules/chokidar"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "glob-parent",
+    "installed_version": "5.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat-watcher/node_modules/glob-parent"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "readdirp",
+    "installed_version": "3.6.0",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat-watcher/node_modules/readdirp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "semver",
+    "installed_version": "6.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat/node_modules/semver"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ws",
+    "installed_version": "7.5.10",
+    "is_direct": false,
+    "dep_path": "node_modules/hardhat/node_modules/ws"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "has-flag",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/has-flag"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "has-symbols",
+    "installed_version": "1.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/has-symbols"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "has-tostringtag",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/has-tostringtag"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "hash.js",
+    "installed_version": "1.1.7",
+    "is_direct": false,
+    "dep_path": "node_modules/hash.js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "hasown",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/hasown"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "he",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/he"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "help-me",
+    "installed_version": "4.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/help-me"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "hmac-drbg",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/hmac-drbg"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "http-errors",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/http-errors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "http2-client",
+    "installed_version": "1.3.5",
+    "is_direct": false,
+    "dep_path": "node_modules/http2-client"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "https-proxy-agent",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/https-proxy-agent"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "humanize-ms",
+    "installed_version": "1.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/humanize-ms"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "iconv-lite",
+    "installed_version": "0.4.24",
+    "is_direct": false,
+    "dep_path": "node_modules/iconv-lite"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ieee754",
+    "installed_version": "1.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/ieee754"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ignore",
+    "installed_version": "7.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/ignore"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "immutable",
+    "installed_version": "4.3.7",
+    "is_direct": false,
+    "dep_path": "node_modules/immutable"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "import-fresh",
+    "installed_version": "3.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/import-fresh"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "imurmurhash",
+    "installed_version": "0.1.4",
+    "is_direct": false,
+    "dep_path": "node_modules/imurmurhash"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "indent-string",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/indent-string"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "inflight",
+    "installed_version": "1.0.6",
+    "is_direct": false,
+    "dep_path": "node_modules/inflight"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "inherits",
+    "installed_version": "2.0.4",
+    "is_direct": false,
+    "dep_path": "node_modules/inherits"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "injectpromise",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/injectpromise"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "io-ts",
+    "installed_version": "1.10.4",
+    "is_direct": false,
+    "dep_path": "node_modules/io-ts"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-binary-path",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/is-binary-path"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-extglob",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/is-extglob"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-fullwidth-code-point",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/is-fullwidth-code-point"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-glob",
+    "installed_version": "4.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/is-glob"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-node-process",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/is-node-process"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-number",
+    "installed_version": "7.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/is-number"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-plain-obj",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/is-plain-obj"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "is-unicode-supported",
+    "installed_version": "0.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/is-unicode-supported"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "isexe",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/isexe"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "isomorphic-fetch",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/isomorphic-fetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "isomorphic-unfetch",
+    "installed_version": "3.1.0",
+    "is_direct": true,
+    "dep_path": "node_modules/isomorphic-unfetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "isomorphic-ws",
+    "installed_version": "4.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/isomorphic-ws"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jayson",
+    "installed_version": "4.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/jayson"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/node",
+    "installed_version": "12.20.55",
+    "is_direct": false,
+    "dep_path": "node_modules/jayson/node_modules/@types/node"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "commander",
+    "installed_version": "2.20.3",
+    "is_direct": false,
+    "dep_path": "node_modules/jayson/node_modules/commander"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jest-diff",
+    "installed_version": "27.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/jest-diff"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jest-get-type",
+    "installed_version": "27.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/jest-get-type"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jest-matcher-utils",
+    "installed_version": "27.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/jest-matcher-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jiti",
+    "installed_version": "2.6.1",
+    "is_direct": false,
+    "dep_path": "node_modules/jiti"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "joycon",
+    "installed_version": "3.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/joycon"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "js-sha3",
+    "installed_version": "0.8.0",
+    "is_direct": false,
+    "dep_path": "node_modules/js-sha3"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "js-yaml",
+    "installed_version": "4.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/js-yaml"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jsbi",
+    "installed_version": "3.2.5",
+    "is_direct": true,
+    "dep_path": "node_modules/jsbi"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json-buffer",
+    "installed_version": "3.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/json-buffer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json-schema-traverse",
+    "installed_version": "0.4.1",
+    "is_direct": false,
+    "dep_path": "node_modules/json-schema-traverse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json-stable-stringify-without-jsonify",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/json-stable-stringify-without-jsonify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json-stream-stringify",
+    "installed_version": "3.1.6",
+    "is_direct": false,
+    "dep_path": "node_modules/json-stream-stringify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json-stringify-safe",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/json-stringify-safe"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "json5",
+    "installed_version": "2.2.3",
+    "is_direct": false,
+    "dep_path": "node_modules/json5"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jsonfile",
+    "installed_version": "6.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/jsonfile"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "universalify",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/jsonfile/node_modules/universalify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "jssha",
+    "installed_version": "3.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/jssha"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "keccak",
+    "installed_version": "3.0.4",
+    "is_direct": false,
+    "dep_path": "node_modules/keccak"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "keyv",
+    "installed_version": "4.5.4",
+    "is_direct": false,
+    "dep_path": "node_modules/keyv"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "levn",
+    "installed_version": "0.4.1",
+    "is_direct": false,
+    "dep_path": "node_modules/levn"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "locate-path",
+    "installed_version": "6.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/locate-path"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "lodash",
+    "installed_version": "4.17.21",
+    "is_direct": false,
+    "dep_path": "node_modules/lodash"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "lodash.camelcase",
+    "installed_version": "4.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/lodash.camelcase"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "lodash.flatmap",
+    "installed_version": "4.5.0",
+    "is_direct": true,
+    "dep_path": "node_modules/lodash.flatmap"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "lodash.merge",
+    "installed_version": "4.6.2",
+    "is_direct": false,
+    "dep_path": "node_modules/lodash.merge"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "log-symbols",
+    "installed_version": "4.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/log-symbols"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "lru_map",
+    "installed_version": "0.3.3",
+    "is_direct": false,
+    "dep_path": "node_modules/lru_map"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "magic-string",
+    "installed_version": "0.30.21",
+    "is_direct": false,
+    "dep_path": "node_modules/magic-string"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "map-obj",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/map-obj"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "map-stream",
+    "installed_version": "0.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/map-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "math-intrinsics",
+    "installed_version": "1.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/math-intrinsics"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "memorystream",
+    "installed_version": "0.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/memorystream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "micro-eth-signer",
+    "installed_version": "0.14.0",
+    "is_direct": false,
+    "dep_path": "node_modules/micro-eth-signer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/curves",
+    "installed_version": "1.8.2",
+    "is_direct": false,
+    "dep_path": "node_modules/micro-eth-signer/node_modules/@noble/curves"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@noble/hashes",
+    "installed_version": "1.7.2",
+    "is_direct": false,
+    "dep_path": "node_modules/micro-eth-signer/node_modules/@noble/hashes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "micro-packed",
+    "installed_version": "0.7.3",
+    "is_direct": false,
+    "dep_path": "node_modules/micro-packed"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@scure/base",
+    "installed_version": "1.2.6",
+    "is_direct": false,
+    "dep_path": "node_modules/micro-packed/node_modules/@scure/base"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "mime-db",
+    "installed_version": "1.52.0",
+    "is_direct": false,
+    "dep_path": "node_modules/mime-db"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "mime-types",
+    "installed_version": "2.1.35",
+    "is_direct": false,
+    "dep_path": "node_modules/mime-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "minimalistic-assert",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/minimalistic-assert"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "minimalistic-crypto-utils",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/minimalistic-crypto-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "minimatch",
+    "installed_version": "9.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/minimatch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "minimist",
+    "installed_version": "1.2.8",
+    "is_direct": false,
+    "dep_path": "node_modules/minimist"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "mkdirp",
+    "installed_version": "1.0.4",
+    "is_direct": false,
+    "dep_path": "node_modules/mkdirp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "mnemonist",
+    "installed_version": "0.38.5",
+    "is_direct": false,
+    "dep_path": "node_modules/mnemonist"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "mocha",
+    "installed_version": "10.8.2",
+    "is_direct": false,
+    "dep_path": "node_modules/mocha"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ms",
+    "installed_version": "2.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/ms"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "nanoid",
+    "installed_version": "3.3.11",
+    "is_direct": false,
+    "dep_path": "node_modules/nanoid"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "natural-compare",
+    "installed_version": "1.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/natural-compare"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "nock",
+    "installed_version": "14.0.10",
+    "is_direct": true,
+    "dep_path": "node_modules/nock"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-addon-api",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/node-addon-api"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-cleanup",
+    "installed_version": "2.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/node-cleanup"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-fetch",
+    "installed_version": "2.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/node-fetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-fetch-h2",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/node-fetch-h2"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-fetch-native",
+    "installed_version": "1.6.7",
+    "is_direct": false,
+    "dep_path": "node_modules/node-fetch-native"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-gyp-build",
+    "installed_version": "4.8.4",
+    "is_direct": false,
+    "dep_path": "node_modules/node-gyp-build"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "node-readfiles",
+    "installed_version": "0.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/node-readfiles"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "es6-promise",
+    "installed_version": "3.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/node-readfiles/node_modules/es6-promise"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "normalize-path",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/normalize-path"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "oas-kit-common",
+    "installed_version": "1.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-kit-common"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "oas-linter",
+    "installed_version": "3.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-linter"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yaml",
+    "installed_version": "1.10.3",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-linter/node_modules/yaml"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "oas-resolver",
+    "installed_version": "2.5.6",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-resolver"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "cliui",
+    "installed_version": "8.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-resolver/node_modules/cliui"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yargs",
+    "installed_version": "17.7.2",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-resolver/node_modules/yargs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yargs-parser",
+    "installed_version": "21.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-resolver/node_modules/yargs-parser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "oas-schema-walker",
+    "installed_version": "1.1.5",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-schema-walker"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "oas-validator",
+    "installed_version": "5.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/oas-validator"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "obliterator",
+    "installed_version": "2.0.5",
+    "is_direct": false,
+    "dep_path": "node_modules/obliterator"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "obug",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/obug"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ofetch",
+    "installed_version": "1.4.1",
+    "is_direct": false,
+    "dep_path": "node_modules/ofetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ohash",
+    "installed_version": "2.0.11",
+    "is_direct": false,
+    "dep_path": "node_modules/ohash"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "on-exit-leak-free",
+    "installed_version": "2.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/on-exit-leak-free"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "once",
+    "installed_version": "1.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/once"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "openapi-types",
+    "installed_version": "12.1.3",
+    "is_direct": false,
+    "dep_path": "node_modules/openapi-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "optionator",
+    "installed_version": "0.9.4",
+    "is_direct": false,
+    "dep_path": "node_modules/optionator"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "os-tmpdir",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/os-tmpdir"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "outvariant",
+    "installed_version": "1.4.3",
+    "is_direct": false,
+    "dep_path": "node_modules/outvariant"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "p-limit",
+    "installed_version": "3.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/p-limit"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "p-locate",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/p-locate"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "p-map",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/p-map"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pako",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/pako"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "parent-module",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/parent-module"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "path-exists",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/path-exists"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "path-is-absolute",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/path-is-absolute"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "path-key",
+    "installed_version": "3.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/path-key"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "path-parse",
+    "installed_version": "1.0.7",
+    "is_direct": false,
+    "dep_path": "node_modules/path-parse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pathe",
+    "installed_version": "2.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/pathe"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pause-stream",
+    "installed_version": "0.0.11",
+    "is_direct": false,
+    "dep_path": "node_modules/pause-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "perfect-debounce",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/perfect-debounce"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "picocolors",
+    "installed_version": "1.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/picocolors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "picomatch",
+    "installed_version": "4.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/picomatch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pino",
+    "installed_version": "8.21.0",
+    "is_direct": true,
+    "dep_path": "node_modules/pino"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pino-abstract-transport",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/pino-abstract-transport"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "readable-stream",
+    "installed_version": "4.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/pino-abstract-transport/node_modules/readable-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pino-pretty",
+    "installed_version": "8.1.0",
+    "is_direct": true,
+    "dep_path": "node_modules/pino-pretty"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "on-exit-leak-free",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/pino-pretty/node_modules/on-exit-leak-free"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pino-std-serializers",
+    "installed_version": "6.2.2",
+    "is_direct": false,
+    "dep_path": "node_modules/pino-std-serializers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pkg-types",
+    "installed_version": "2.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/pkg-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "postcss",
+    "installed_version": "8.5.6",
+    "is_direct": false,
+    "dep_path": "node_modules/postcss"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "prelude-ls",
+    "installed_version": "1.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/prelude-ls"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "prettier",
+    "installed_version": "3.7.4",
+    "is_direct": true,
+    "dep_path": "node_modules/prettier"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "prettier-linter-helpers",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/prettier-linter-helpers"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "prettier-plugin-organize-imports",
+    "installed_version": "4.3.0",
+    "is_direct": true,
+    "dep_path": "node_modules/prettier-plugin-organize-imports"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pretty-format",
+    "installed_version": "27.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/pretty-format"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "process",
+    "installed_version": "0.11.10",
+    "is_direct": false,
+    "dep_path": "node_modules/process"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "process-warning",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/process-warning"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "prom-client",
+    "installed_version": "15.1.3",
+    "is_direct": true,
+    "dep_path": "node_modules/prom-client"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "propagate",
+    "installed_version": "2.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/propagate"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "proxy-from-env",
+    "installed_version": "1.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/proxy-from-env"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ps-tree",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/ps-tree"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "pump",
+    "installed_version": "3.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/pump"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "punycode",
+    "installed_version": "2.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/punycode"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "querystring-es3",
+    "installed_version": "0.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/querystring-es3"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "quick-format-unescaped",
+    "installed_version": "4.0.4",
+    "is_direct": false,
+    "dep_path": "node_modules/quick-format-unescaped"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "quick-lru",
+    "installed_version": "6.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/quick-lru"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "randombytes",
+    "installed_version": "2.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/randombytes"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "raw-body",
+    "installed_version": "2.5.3",
+    "is_direct": false,
+    "dep_path": "node_modules/raw-body"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "rc9",
+    "installed_version": "3.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/rc9"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "react-is",
+    "installed_version": "17.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/react-is"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "readable-stream",
+    "installed_version": "3.6.2",
+    "is_direct": false,
+    "dep_path": "node_modules/readable-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "readdirp",
+    "installed_version": "4.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/readdirp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "real-require",
+    "installed_version": "0.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/real-require"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "reduce-flatten",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/reduce-flatten"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "reftools",
+    "installed_version": "1.1.9",
+    "is_direct": false,
+    "dep_path": "node_modules/reftools"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "require-directory",
+    "installed_version": "2.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/require-directory"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "require-from-string",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/require-from-string"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "resolve",
+    "installed_version": "1.17.0",
+    "is_direct": false,
+    "dep_path": "node_modules/resolve"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "resolve-from",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/resolve-from"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "resolve-pkg-maps",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/resolve-pkg-maps"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "rollup",
+    "installed_version": "4.55.1",
+    "is_direct": false,
+    "dep_path": "node_modules/rollup"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "rpc-websockets",
+    "installed_version": "9.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/rpc-websockets"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "@types/ws",
+    "installed_version": "8.18.1",
+    "is_direct": false,
+    "dep_path": "node_modules/rpc-websockets/node_modules/@types/ws"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eventemitter3",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/rpc-websockets/node_modules/eventemitter3"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "safe-buffer",
+    "installed_version": "5.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/safe-buffer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "safe-stable-stringify",
+    "installed_version": "2.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/safe-stable-stringify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "safer-buffer",
+    "installed_version": "2.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/safer-buffer"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "scale-ts",
+    "installed_version": "1.6.1",
+    "is_direct": false,
+    "dep_path": "node_modules/scale-ts"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "scrypt-js",
+    "installed_version": "3.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/scrypt-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "secure-json-parse",
+    "installed_version": "2.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/secure-json-parse"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "semver",
+    "installed_version": "7.7.3",
+    "is_direct": false,
+    "dep_path": "node_modules/semver"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "serialize-javascript",
+    "installed_version": "6.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/serialize-javascript"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "setprototypeof",
+    "installed_version": "1.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/setprototypeof"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "sha256-uint8array",
+    "installed_version": "0.10.7",
+    "is_direct": false,
+    "dep_path": "node_modules/sha256-uint8array"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "shebang-command",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/shebang-command"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "shebang-regex",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/shebang-regex"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "should",
+    "installed_version": "13.2.3",
+    "is_direct": false,
+    "dep_path": "node_modules/should"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "should-equal",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/should-equal"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "should-format",
+    "installed_version": "3.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/should-format"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "should-type",
+    "installed_version": "1.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/should-type"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "should-type-adaptors",
+    "installed_version": "1.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/should-type-adaptors"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "should-util",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/should-util"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "siginfo",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/siginfo"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "solc",
+    "installed_version": "0.8.26",
+    "is_direct": false,
+    "dep_path": "node_modules/solc"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "commander",
+    "installed_version": "8.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/solc/node_modules/commander"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "semver",
+    "installed_version": "5.7.2",
+    "is_direct": false,
+    "dep_path": "node_modules/solc/node_modules/semver"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "sonic-boom",
+    "installed_version": "3.8.1",
+    "is_direct": false,
+    "dep_path": "node_modules/sonic-boom"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "source-map",
+    "installed_version": "0.6.1",
+    "is_direct": false,
+    "dep_path": "node_modules/source-map"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "source-map-js",
+    "installed_version": "1.2.1",
+    "is_direct": false,
+    "dep_path": "node_modules/source-map-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "source-map-support",
+    "installed_version": "0.5.21",
+    "is_direct": false,
+    "dep_path": "node_modules/source-map-support"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "split",
+    "installed_version": "0.3.3",
+    "is_direct": false,
+    "dep_path": "node_modules/split"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "split2",
+    "installed_version": "4.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/split2"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "stackback",
+    "installed_version": "0.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/stackback"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "stacktrace-parser",
+    "installed_version": "0.1.11",
+    "is_direct": false,
+    "dep_path": "node_modules/stacktrace-parser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-fest",
+    "installed_version": "0.7.1",
+    "is_direct": false,
+    "dep_path": "node_modules/stacktrace-parser/node_modules/type-fest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "statuses",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/statuses"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "std-env",
+    "installed_version": "3.10.0",
+    "is_direct": false,
+    "dep_path": "node_modules/std-env"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "stream-chain",
+    "installed_version": "2.2.5",
+    "is_direct": false,
+    "dep_path": "node_modules/stream-chain"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "stream-combiner",
+    "installed_version": "0.0.4",
+    "is_direct": false,
+    "dep_path": "node_modules/stream-combiner"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "stream-json",
+    "installed_version": "1.9.1",
+    "is_direct": false,
+    "dep_path": "node_modules/stream-json"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "strict-event-emitter",
+    "installed_version": "0.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/strict-event-emitter"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "string_decoder",
+    "installed_version": "1.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/string_decoder"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "string-argv",
+    "installed_version": "0.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/string-argv"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "string-format",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/string-format"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "string-width",
+    "installed_version": "4.2.3",
+    "is_direct": false,
+    "dep_path": "node_modules/string-width"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "strip-ansi",
+    "installed_version": "6.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/strip-ansi"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "strip-bom",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/strip-bom"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "strip-json-comments",
+    "installed_version": "3.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/strip-json-comments"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "superstruct",
+    "installed_version": "0.15.5",
+    "is_direct": false,
+    "dep_path": "node_modules/superstruct"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "supports-color",
+    "installed_version": "8.1.1",
+    "is_direct": false,
+    "dep_path": "node_modules/supports-color"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "swagger-schema-official",
+    "installed_version": "2.0.0-bab6bed",
+    "is_direct": false,
+    "dep_path": "node_modules/swagger-schema-official"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "swagger-typescript-api",
+    "installed_version": "13.7.2",
+    "is_direct": true,
+    "dep_path": "node_modules/swagger-typescript-api"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "nanoid",
+    "installed_version": "5.1.11",
+    "is_direct": false,
+    "dep_path": "node_modules/swagger-typescript-api/node_modules/nanoid"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-fest",
+    "installed_version": "5.6.0",
+    "is_direct": false,
+    "dep_path": "node_modules/swagger-typescript-api/node_modules/type-fest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "typescript",
+    "installed_version": "6.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/swagger-typescript-api/node_modules/typescript"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "swagger2openapi",
+    "installed_version": "7.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/swagger2openapi"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "symbol.inspect",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/symbol.inspect"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "synckit",
+    "installed_version": "0.11.11",
+    "is_direct": false,
+    "dep_path": "node_modules/synckit"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "table-layout",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/table-layout"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tagged-tag",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/tagged-tag"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tailwind-merge",
+    "installed_version": "3.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/tailwind-merge"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tdigest",
+    "installed_version": "0.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/tdigest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "teslabot",
+    "installed_version": "1.5.0",
+    "is_direct": false,
+    "dep_path": "node_modules/teslabot"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "text-encoding-utf-8",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/text-encoding-utf-8"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "thread-stream",
+    "installed_version": "2.7.0",
+    "is_direct": false,
+    "dep_path": "node_modules/thread-stream"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "through",
+    "installed_version": "2.3.8",
+    "is_direct": false,
+    "dep_path": "node_modules/through"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tiny-invariant",
+    "installed_version": "1.3.3",
+    "is_direct": true,
+    "dep_path": "node_modules/tiny-invariant"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tiny-warning",
+    "installed_version": "1.0.3",
+    "is_direct": true,
+    "dep_path": "node_modules/tiny-warning"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tinybench",
+    "installed_version": "2.9.0",
+    "is_direct": false,
+    "dep_path": "node_modules/tinybench"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tinyglobby",
+    "installed_version": "0.2.15",
+    "is_direct": false,
+    "dep_path": "node_modules/tinyglobby"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tinyrainbow",
+    "installed_version": "3.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/tinyrainbow"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tmp",
+    "installed_version": "0.0.33",
+    "is_direct": false,
+    "dep_path": "node_modules/tmp"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "to-regex-range",
+    "installed_version": "5.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/to-regex-range"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "toformat",
+    "installed_version": "2.0.0",
+    "is_direct": true,
+    "dep_path": "node_modules/toformat"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "toidentifier",
+    "installed_version": "1.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/toidentifier"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "toml",
+    "installed_version": "3.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/toml"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tr46",
+    "installed_version": "0.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/tr46"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tronweb",
+    "installed_version": "5.3.4",
+    "is_direct": true,
+    "dep_path": "node_modules/tronweb"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "eventemitter3",
+    "installed_version": "3.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/tronweb/node_modules/eventemitter3"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ts-api-utils",
+    "installed_version": "2.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/ts-api-utils"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ts-command-line-args",
+    "installed_version": "2.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/ts-command-line-args"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ts-essentials",
+    "installed_version": "7.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/ts-essentials"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tsc-watch",
+    "installed_version": "7.2.0",
+    "is_direct": true,
+    "dep_path": "node_modules/tsc-watch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tsconfig-paths",
+    "installed_version": "4.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/tsconfig-paths"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tslib",
+    "installed_version": "1.14.1",
+    "is_direct": false,
+    "dep_path": "node_modules/tslib"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tsort",
+    "installed_version": "0.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/tsort"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tsx",
+    "installed_version": "4.21.0",
+    "is_direct": true,
+    "dep_path": "node_modules/tsx"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tweetnacl",
+    "installed_version": "1.0.3",
+    "is_direct": false,
+    "dep_path": "node_modules/tweetnacl"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tweetnacl-util",
+    "installed_version": "0.15.1",
+    "is_direct": false,
+    "dep_path": "node_modules/tweetnacl-util"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-check",
+    "installed_version": "0.4.0",
+    "is_direct": false,
+    "dep_path": "node_modules/type-check"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "type-fest",
+    "installed_version": "4.41.0",
+    "is_direct": false,
+    "dep_path": "node_modules/type-fest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "typechain",
+    "installed_version": "8.3.2",
+    "is_direct": true,
+    "dep_path": "node_modules/typechain"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "glob",
+    "installed_version": "7.1.7",
+    "is_direct": false,
+    "dep_path": "node_modules/typechain/node_modules/glob"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "prettier",
+    "installed_version": "2.8.8",
+    "is_direct": false,
+    "dep_path": "node_modules/typechain/node_modules/prettier"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "typeforce",
+    "installed_version": "1.18.0",
+    "is_direct": false,
+    "dep_path": "node_modules/typeforce"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "typescript",
+    "installed_version": "5.9.3",
+    "is_direct": true,
+    "dep_path": "node_modules/typescript"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "typical",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/typical"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ufo",
+    "installed_version": "1.6.2",
+    "is_direct": false,
+    "dep_path": "node_modules/ufo"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "uint8array-tools",
+    "installed_version": "0.0.9",
+    "is_direct": false,
+    "dep_path": "node_modules/uint8array-tools"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "undici",
+    "installed_version": "5.29.0",
+    "is_direct": false,
+    "dep_path": "node_modules/undici"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "undici-types",
+    "installed_version": "7.16.0",
+    "is_direct": false,
+    "dep_path": "node_modules/undici-types"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "unfetch",
+    "installed_version": "4.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/unfetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "universalify",
+    "installed_version": "0.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/universalify"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "unpipe",
+    "installed_version": "1.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/unpipe"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "uri-js",
+    "installed_version": "4.4.1",
+    "is_direct": false,
+    "dep_path": "node_modules/uri-js"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "utf-8-validate",
+    "installed_version": "5.0.10",
+    "is_direct": false,
+    "dep_path": "node_modules/utf-8-validate"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "util-deprecate",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/util-deprecate"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "uuid",
+    "installed_version": "8.3.2",
+    "is_direct": false,
+    "dep_path": "node_modules/uuid"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "valibot",
+    "installed_version": "1.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/valibot"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "validator",
+    "installed_version": "13.15.26",
+    "is_direct": false,
+    "dep_path": "node_modules/validator"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "varuint-bitcoin",
+    "installed_version": "1.1.2",
+    "is_direct": false,
+    "dep_path": "node_modules/varuint-bitcoin"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "vite",
+    "installed_version": "7.3.1",
+    "is_direct": false,
+    "dep_path": "node_modules/vite"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "vitest",
+    "installed_version": "4.0.16",
+    "is_direct": true,
+    "dep_path": "node_modules/vitest"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "tinyexec",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/vitest/node_modules/tinyexec"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "webidl-conversions",
+    "installed_version": "3.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/webidl-conversions"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "whatwg-fetch",
+    "installed_version": "3.6.20",
+    "is_direct": false,
+    "dep_path": "node_modules/whatwg-fetch"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "whatwg-url",
+    "installed_version": "5.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/whatwg-url"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "which",
+    "installed_version": "2.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/which"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "why-is-node-running",
+    "installed_version": "2.3.0",
+    "is_direct": false,
+    "dep_path": "node_modules/why-is-node-running"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "widest-line",
+    "installed_version": "3.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/widest-line"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "word-wrap",
+    "installed_version": "1.2.5",
+    "is_direct": false,
+    "dep_path": "node_modules/word-wrap"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "wordwrapjs",
+    "installed_version": "4.0.1",
+    "is_direct": false,
+    "dep_path": "node_modules/wordwrapjs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "workerpool",
+    "installed_version": "6.5.1",
+    "is_direct": false,
+    "dep_path": "node_modules/workerpool"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "wrap-ansi",
+    "installed_version": "7.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/wrap-ansi"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "wrappy",
+    "installed_version": "1.0.2",
+    "is_direct": false,
+    "dep_path": "node_modules/wrappy"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "ws",
+    "installed_version": "8.18.0",
+    "is_direct": false,
+    "dep_path": "node_modules/ws"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "y18n",
+    "installed_version": "5.0.8",
+    "is_direct": false,
+    "dep_path": "node_modules/y18n"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yaml",
+    "installed_version": "2.8.4",
+    "is_direct": false,
+    "dep_path": "node_modules/yaml"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yargs",
+    "installed_version": "16.2.0",
+    "is_direct": false,
+    "dep_path": "node_modules/yargs"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yargs-parser",
+    "installed_version": "20.2.9",
+    "is_direct": false,
+    "dep_path": "node_modules/yargs-parser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yargs-unparser",
+    "installed_version": "2.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/yargs-unparser"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "decamelize",
+    "installed_version": "4.0.0",
+    "is_direct": false,
+    "dep_path": "node_modules/yargs-unparser/node_modules/decamelize"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yocto-queue",
+    "installed_version": "0.1.0",
+    "is_direct": false,
+    "dep_path": "node_modules/yocto-queue"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "yummies",
+    "installed_version": "7.19.2",
+    "is_direct": false,
+    "dep_path": "node_modules/yummies"
+  },
+  {
+    "ecosystem": "npm",
+    "package": "zod",
+    "installed_version": "3.25.76",
+    "is_direct": false,
+    "dep_path": "node_modules/zod"
+  }
+]
