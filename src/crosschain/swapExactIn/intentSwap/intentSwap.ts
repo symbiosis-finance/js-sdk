@@ -86,6 +86,7 @@ export function intentSwap(params: SwapExactInParams): Promise<SwapExactInResult
             fillUnlockerCondition,
             settlementUnlockerAddress: srcIntentConfig.deadlineUnlocker,
             srcChainId,
+            clientId: symbiosis.clientId,
         })
 
         const isNativeSrc = tokenAmountIn.token.isNative

@@ -12,6 +12,7 @@ export interface DepositCallParams {
     fillUnlockerCondition: string
     settlementUnlockerAddress: EvmAddress
     srcChainId: ChainId
+    clientId: string
 }
 
 /**
@@ -25,6 +26,7 @@ export function buildDepositData({
     fillUnlockerCondition,
     settlementUnlockerAddress,
     srcChainId,
+    clientId,
 }: DepositCallParams): string {
     const depositParams: DepositoryTypes.DepositParamsStruct = {
         token: tokenAmountIn.token.isNative ? NATIVE_TOKEN_ADDRESS : tokenAmountIn.token.address,
@@ -40,5 +42,9 @@ export function buildDepositData({
         condition: fillUnlockerCondition,
     }
 
-    return DepositorySrc__factory.createInterface().encodeFunctionData('deposit', [depositParams, fillCondition])
+    return DepositorySrc__factory.createInterface().encodeFunctionData('deposit', [
+        depositParams,
+        fillCondition,
+        clientId,
+    ])
 }
