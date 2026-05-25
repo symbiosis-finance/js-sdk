@@ -562,8 +562,8 @@ describe('resolveChangellyTicker: fast path vs full path', () => {
 //         })
 //         const result = await changellyDepositSwap(params)
 //
-//         expect(result.kind).toBe('changelly-deposit')
-//         expect(result.transactionType).toBe('changelly')
+//         expect(result.kind).toBe('deposit')
+//         expect(result.transactionType).toBe('deposit')
 //         expect(result.routes).toHaveLength(1)
 //         expect(result.routes[0].provider).toBe(SymbiosisTradeType.CHANGELLY)
 //         expect(result.labels).toEqual(['partner-swap', 'semi-centralized'])

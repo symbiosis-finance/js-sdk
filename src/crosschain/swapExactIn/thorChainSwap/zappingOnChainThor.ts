@@ -25,12 +25,13 @@ import { onchainSwap } from '../onchainSwap'
 import { theBest } from '../utils'
 import { preparePayload } from '../preparePayload'
 
-import { BTC, getThorQuote, getThorVault, validateBitcoinAddress } from './utils'
+import type { ThorChainDestination } from './types'
+import { fromThorAmount, getThorQuote, getThorVault } from './utils'
 
 export function zappingOnChainThor(
     params: SwapExactInParams,
     thorTokenIn: Token,
-    thorTokenOut: string
+    destination: ThorChainDestination
 ): Promise<SwapExactInResult> {
     return withSpan('zappingOnChainThor', {}, async () => {
         const { symbiosis, to, from, tokenAmountIn } = params
@@ -41,8 +42,6 @@ export function zappingOnChainThor(
         if (!feeCollectorAddress) {
             throw new SdkError(`Fee collector not found for chain ${chainId}`)
         }
-
-        validateBitcoinAddress(to)
 
         let evmTo: Address = from
         if (!isEvmChainId(chainId)) {
@@ -147,7 +146,7 @@ export function zappingOnChainThor(
         // Step 2: get ThorChain quote
         const thorQuote = await getThorQuote({
             thorTokenIn,
-            thorTokenOut,
+            thorTokenOut: destination.thorAsset,
             evmTo,
             bitcoinAddress: to,
             amount: depositAmount,
@@ -157,11 +156,11 @@ export function zappingOnChainThor(
         fees.push({
             provider: TradeProvider.THORCHAIN_BRIDGE,
             description: 'THORChain fee',
-            value: new TokenAmount(BTC, thorQuote.fees.total),
+            value: new TokenAmount(destination.token, fromThorAmount(thorQuote.fees.total, destination.token.decimals)),
         })
         routes.push({
             provider: TradeProvider.THORCHAIN_BRIDGE,
-            tokens: [thorTokenIn, BTC],
+            tokens: [thorTokenIn, destination.token],
         })
 
         // Step 3: build calldata
@@ -232,8 +231,14 @@ export function zappingOnChainThor(
         })
 
         return {
-            tokenAmountOut: new TokenAmount(BTC, thorQuote.expected_amount_out),
-            tokenAmountOutMin: new TokenAmount(BTC, thorQuote.amount_out_min),
+            tokenAmountOut: new TokenAmount(
+                destination.token,
+                fromThorAmount(thorQuote.expected_amount_out, destination.token.decimals)
+            ),
+            tokenAmountOutMin: new TokenAmount(
+                destination.token,
+                fromThorAmount(thorQuote.amount_out_min, destination.token.decimals)
+            ),
             priceImpact,
             amountInUsd: depositAmount,
             approveTo: approveAddress,

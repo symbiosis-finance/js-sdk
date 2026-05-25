@@ -13,6 +13,7 @@ import { SdkError, SlippageTooLowError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { Field } from '../types'
 import { isChangellyNativeChainId } from '../swapExactIn/changellySwap/constants'
+import { isThorChainL1DestChainId } from '../swapExactIn/thorChainSwap/constants'
 import { isBtcChainId } from './btc'
 import { isQuaiChainId } from './quai'
 import { isSolanaChainId } from './solana'
@@ -40,7 +41,8 @@ export function isEvmChainId(chainId: ChainId | undefined) {
         !isTonChainId(chainId) &&
         !isSolanaChainId(chainId) &&
         !isQuaiChainId(chainId) &&
-        !isChangellyNativeChainId(chainId)
+        !isChangellyNativeChainId(chainId) &&
+        !isThorChainL1DestChainId(chainId)
     )
 }
 
