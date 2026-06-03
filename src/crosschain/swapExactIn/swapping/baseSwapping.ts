@@ -102,7 +102,7 @@ export abstract class BaseSwapping {
         this.omniPoolConfig = omniPoolConfig
         this.symbiosis = symbiosis
         this.profiler = new Profiler()
-        this.depositoryEnabled = true
+        this.depositoryEnabled = false
         this.depository = null
     }
 
