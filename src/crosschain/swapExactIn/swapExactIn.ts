@@ -14,6 +14,7 @@ import { fromSolanaSwap, isFromSolanaSwapSupported } from './fromSolanaSwap'
 import { toTonSwap } from './toTonSwap'
 import { isUnwrapSupported, unwrap } from './unwrap'
 import { isWrapSupported, wrap } from './wrap'
+import { ChainId } from '../../constants'
 
 export * from './fromBtcSwap'
 
@@ -85,5 +86,7 @@ export function swapExactIn(params: SwapExactInParams): Promise<SwapExactInResul
         return toTonSwap(params)
     }
 
-    return crossChainSwap(params)
+    // disable depository for Ethereum chain
+    const depositoryEnabled = tokenOut.chainId !== ChainId.ETH_MAINNET
+    return crossChainSwap({ ...params, depositoryEnabled })
 }

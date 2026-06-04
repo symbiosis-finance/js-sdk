@@ -35,7 +35,6 @@ export async function waitForIntentSolved(
 
     const { intentId, fillCondition } = data.args
 
-    // TODO add unlockers resolving DirectUnlocker/DeadlineUnlocker
     const deadlineUnlockerInterface = DeadlineUnlocker__factory.createInterface()
     const conditionInputs = deadlineUnlockerInterface.getFunction('encodeCondition').inputs
     const [condition] = deadlineUnlockerInterface._abiCoder.decode(conditionInputs, fillCondition.condition)

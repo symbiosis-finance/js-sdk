@@ -448,6 +448,7 @@ class FromBtcTrader {
             from: to, // to be able to revert a tx
             tradeAContext: 'multicallRouter',
             partnerAddress: undefined, // don't need to call partner fee twice
+            depositoryEnabled: true,
         })
 
         const tx = decodeMetaRoute((swapExactInResult.transactionRequest as TransactionRequest).data!)
