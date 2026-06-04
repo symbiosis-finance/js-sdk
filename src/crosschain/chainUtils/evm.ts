@@ -167,6 +167,12 @@ function _promiseRaceResolved<T>(promises: Promise<T>[]): Promise<T> {
     const totalPromises = promises.length
 
     return new Promise((resolve, reject) => {
+        if (totalPromises === 0) {
+            // without this guard an empty list would never settle
+            reject(new SdkError('No promises to race.'))
+            return
+        }
+
         const onReject = () => {
             rejectCounter++
             if (rejectCounter === totalPromises) {
@@ -202,7 +208,6 @@ export async function getLogWithTimeout({
     return new Promise((resolve, reject) => {
         const period = 1000 * 10 // 10 seconds
         let pastTime = 0
-        let logs: Log[] = []
 
         const getLogs = async () => {
             pastTime += period
@@ -212,22 +217,34 @@ export async function getLogWithTimeout({
                 return
             }
 
+            let logs: Log[]
             try {
                 logs = await provider.getLogs(activeFilter)
             } catch (error) {
-                logs = await _promiseRaceResolved(
-                    spareProviders.map((spareProvider) => spareProvider.getLogs(activeFilter))
-                )
-            } finally {
-                if (logs.length > 0) {
-                    resolve(logs[0])
-                    clearInterval(interval)
+                try {
+                    logs = await _promiseRaceResolved(
+                        spareProviders.map((spareProvider) => spareProvider.getLogs(activeFilter))
+                    )
+                } catch {
+                    // all providers failed on this tick, the next tick will retry until exceedTimeout
+                    return
                 }
+            }
+
+            if (logs.length > 0) {
+                clearInterval(interval)
+                resolve(logs[0])
             }
         }
 
-        const interval = setInterval(getLogs, period)
-        getLogs()
+        // getLogs never rejects, but guard against an unhandled rejection
+        // killing the consumer process anyway: setInterval callbacks have no caller to catch
+        const getLogsSafe = () => {
+            getLogs().catch(() => undefined)
+        }
+
+        const interval = setInterval(getLogsSafe, period)
+        getLogsSafe()
     })
 }
 

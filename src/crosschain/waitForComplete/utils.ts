@@ -74,8 +74,16 @@ export async function longPolling<T>({
             }
         }
 
-        func()
-        const interval = setInterval(func, pollingInterval)
+        // a rejection of func (e.g. successCondition throwing) has no caller to catch it
+        // inside setInterval and would crash the consumer process as an unhandled rejection
+        const funcSafe = () => {
+            func().catch((error) => {
+                console.error('Long Polling tick error', error)
+            })
+        }
+
+        funcSafe()
+        const interval = setInterval(funcSafe, pollingInterval)
 
         if (abortSignal) {
             if (abortSignal.aborted) {
