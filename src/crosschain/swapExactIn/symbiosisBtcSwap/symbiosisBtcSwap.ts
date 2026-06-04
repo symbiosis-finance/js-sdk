@@ -3,6 +3,7 @@ import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
 import { zappingBtcOnChain } from './zappingBtcOnChain'
 import { ZappingBtcCrossChain } from './zappingBtcCrossChain'
+import { ChainId } from '../../../constants'
 
 export function symbiosisBtcSwap(context: SwapExactInParams): Promise<SwapExactInResult>[] {
     return withPromisesSpan('symbiosisBtcSwap', {}, () => {
@@ -18,8 +19,12 @@ export function symbiosisBtcSwap(context: SwapExactInParams): Promise<SwapExactI
             return onChainSyBtcs.map((syBtc) => zappingBtcOnChain(context, syBtc))
         }
 
+        // Ethereum and BNB chain are allowed only for cross-chain swaps
+        const crossChainSyBtcs = activeSyBtcs.filter((syBtc) =>
+            [ChainId.ETH_MAINNET, ChainId.BSC_MAINNET].includes(syBtc.chainId)
+        )
         const promises: Promise<SwapExactInResult>[] = []
-        activeSyBtcs.forEach((syBtc) => {
+        crossChainSyBtcs.forEach((syBtc) => {
             symbiosis.config.omniPools
                 .filter((i) => i.generalPurpose || i.coinGeckoId === 'bitcoin')
                 .forEach((poolConfig) => {
