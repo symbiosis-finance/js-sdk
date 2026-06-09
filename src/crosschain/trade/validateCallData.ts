@@ -146,21 +146,20 @@ export async function validateOptimisticQuote(check: OptimisticQuoteCheck): Prom
     }
 
     const context =
-        `${providerName} optimistic quote ${tokenAmountIn.token.symbol}->${amountOut.token.symbol} ` +
+        `${providerName} quote ${tokenAmountIn.token.symbol}(${tokenAmountIn.token.address})->${amountOut.token.symbol}(${amountOut.token.address}) ` +
         `chainId=${tokenAmountIn.token.chainId} priceImpact=${priceImpact.toSignificant(4)}% ` +
         `amountIn=${tokenAmountIn.toSignificant()} amountOut=${amountOut.toSignificant()}`
 
     const result = await validateCallData(provider, from, routerAddress, callData, tokenAmountIn)
 
     if (result.status === 'reverted') {
-        logger?.warn(`Calldata validation failed (reverted), discarding ${context}. Reason: ${result.reason}`)
-        throw new Error(`Optimistic quote rejected: calldata reverts on-chain (${result.reason})`)
+        throw new Error(`Optimistic quote rejected for ${context}. Calldata reverts on-chain (${result.reason})`)
     }
     if (result.status === 'skipped') {
-        logger?.info(`Calldata validation skipped for ${context}. Reason: ${result.reason}`)
+        logger?.warn(`Optimistic quote skipped for ${context}. Reason: ${result.reason}`)
         return
     }
-    logger?.info(`Calldata validation passed for ${context}`)
+    logger?.info(`Optimistic quote passed for ${context}`)
 }
 
 // keccak256(abi.encode(holder, slot)) — storage key of balances[holder].
