@@ -150,8 +150,6 @@ export async function validateOptimisticQuote(check: OptimisticQuoteCheck): Prom
         `chainId=${tokenAmountIn.token.chainId} priceImpact=${priceImpact.toSignificant(4)}% ` +
         `amountIn=${tokenAmountIn.toSignificant()} amountOut=${amountOut.toSignificant()}`
 
-    logger?.info(`Validating ${context}`)
-
     const result = await validateCallData(provider, from, routerAddress, callData, tokenAmountIn)
 
     if (result.status === 'reverted') {
