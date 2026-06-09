@@ -10,8 +10,7 @@ import { withTracing } from '../tracing'
 import type { Symbiosis } from '../symbiosis'
 import type { Address, NonEmptyAddress } from '../types'
 import { type SymbiosisTradeParams, SymbiosisTrade, TradeProvider } from './symbiosisTrade'
-
-// import { validateCallData } from './validateCallData'
+import { validateOptimisticQuote } from './validateCallData'
 
 interface OpenOceanTradeParams extends SymbiosisTradeParams {
     symbiosis: Symbiosis
@@ -198,18 +197,28 @@ export class OpenOceanTrade extends SymbiosisTrade {
             const { data, outAmount, to, price_impact: priceImpactString } = response
             const { amountOffset, minReceivedOffset } = this.getOffsets(data)
 
-            // await validateCallData(
-            //     this.symbiosis.getProvider(this.tokenAmountIn.token.chainId),
-            //     this.to,
-            //     to,
-            //     data,
-            //     this.tokenAmountIn
-            // )
-
             const amountOut = new TokenAmount(this.tokenOut, outAmount)
 
             const amountOutMinRaw = getMinAmount(this.slippage, outAmount)
             const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
+
+            const priceImpact = this.convertPriceImpact(priceImpactString)
+
+            // OpenOcean occasionally returns overly optimistic quotes whose calldata
+            // cannot execute on-chain. Simulate it (funding the executing sender) and
+            // reject the quote if it reverts. OpenOcean builds the calldata for the
+            // quoted `account` (this.to), so that is the on-chain sender to simulate.
+            await validateOptimisticQuote({
+                provider: this.symbiosis.getProvider(this.tokenAmountIn.token.chainId),
+                logger: this.symbiosis.logger,
+                providerName: 'OpenOcean',
+                from: this.to,
+                routerAddress: to,
+                callData: data,
+                tokenAmountIn: this.tokenAmountIn,
+                amountOut,
+                priceImpact,
+            })
 
             this.out = {
                 amountOut,
@@ -220,7 +229,7 @@ export class OpenOceanTrade extends SymbiosisTrade {
                 callData: data,
                 callDataOffset: amountOffset,
                 minReceivedOffset,
-                priceImpact: this.convertPriceImpact(priceImpactString),
+                priceImpact,
             }
 
             return this

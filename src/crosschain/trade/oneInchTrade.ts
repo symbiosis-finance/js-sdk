@@ -13,15 +13,9 @@ import { getMulticall } from '../multicall'
 import { OneInchTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { SymbiosisTrade, type SymbiosisTradeParams, TradeProvider } from './symbiosisTrade'
-import { validateCallData } from './validateCallData'
+import { validateOptimisticQuote } from './validateCallData'
 
 export type OneInchProtocols = string[]
-
-// 1inch occasionally returns overly optimistic quotes (the user appears to "profit",
-// i.e. positive price impact) whose calldata cannot execute on-chain. Above this
-// threshold we simulate the calldata and discard the quote if it reverts. A small
-// margin avoids paying for simulation on normal oracle/quote noise.
-const OPTIMISTIC_PRICE_IMPACT_THRESHOLD = new Percent('2', '1000') // 0.2%
 
 interface GetTradePriceImpactParams {
     tokenAmountIn: TokenAmount
@@ -184,34 +178,21 @@ export class OneInchTrade extends SymbiosisTrade {
             tokenAmountOut: amountOut,
         })
 
-        // Positive price impact above the threshold means the quote looks "too good".
-        // Validate the calldata against on-chain state (funding the executing sender)
-        // and reject the quote if it reverts.
-        if (priceImpact.greaterThan(OPTIMISTIC_PRICE_IMPACT_THRESHOLD)) {
-            const logger = this.symbiosis.logger
-            const chainId = this.tokenAmountIn.token.chainId
-            const context =
-                `1inch optimistic quote ${this.tokenAmountIn.token.symbol}->${this.tokenOut.symbol} ` +
-                `chainId=${chainId} priceImpact=${priceImpact.toSignificant(4)}% ` +
-                `amountIn=${this.tokenAmountIn.toSignificant()} amountOut=${amountOut.toSignificant()}`
-
-            const result = await validateCallData(
-                this.symbiosis.getProvider(chainId),
-                this.from,
-                tx.to,
-                callData,
-                this.tokenAmountIn
-            )
-
-            if (result.status === 'reverted') {
-                logger?.warn(`Calldata validation failed (reverted), discarding ${context}. Reason: ${result.reason}`)
-                throw new OneInchTradeError(`Optimistic quote rejected: calldata reverts on-chain (${result.reason})`)
-            } else if (result.status === 'skipped') {
-                logger?.info(`Calldata validation skipped for ${context}. Reason: ${result.reason}`)
-            } else {
-                logger?.info(`Calldata validation passed for ${context}`)
-            }
-        }
+        // 1inch occasionally returns overly optimistic quotes (positive price impact)
+        // whose calldata cannot execute on-chain. Simulate the calldata (funding the
+        // executing sender) and reject the quote if it reverts. 1inch builds the
+        // calldata for the request `from`, so that is the on-chain sender to simulate.
+        await validateOptimisticQuote({
+            provider: this.symbiosis.getProvider(this.tokenAmountIn.token.chainId),
+            logger: this.symbiosis.logger,
+            providerName: '1inch',
+            from: this.from,
+            routerAddress: tx.to,
+            callData,
+            tokenAmountIn: this.tokenAmountIn,
+            amountOut,
+            priceImpact,
+        })
 
         this.out = {
             amountOut,

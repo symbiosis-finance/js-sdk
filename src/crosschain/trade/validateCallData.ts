@@ -1,8 +1,16 @@
 import type { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber, utils } from 'ethers'
 
+import { Percent } from '../../entities'
 import type { TokenAmount } from '../../entities'
 import { ERC20__factory } from '../contracts'
+import type { Logger } from '../types'
+
+// Quotes whose positive price impact (user appears to "profit") exceeds this
+// threshold look "too good to be true" — only those are simulated. A small margin
+// avoids paying for simulation on normal oracle/quote noise. Shared by all aggregator
+// trades so the limit lives in a single place.
+const OPTIMISTIC_PRICE_IMPACT_THRESHOLD = new Percent('2', '1000') // 0.2%
 
 const MAX_UINT256 = '0x' + 'ff'.repeat(32)
 
@@ -106,6 +114,55 @@ export async function validateCallData(
 
 function isRevert(message: string): boolean {
     return message.toLowerCase().includes('revert')
+}
+
+export interface OptimisticQuoteCheck {
+    provider: StaticJsonRpcProvider
+    logger?: Logger
+    // Human-readable provider name for logs (e.g. '1inch', 'OpenOcean').
+    providerName: string
+    // Address the calldata was built to execute as (provider-specific: 1inch uses its
+    // request `from`, OpenOcean uses the `account` it was quoted for).
+    from: string
+    routerAddress: string
+    callData: string
+    tokenAmountIn: TokenAmount
+    amountOut: TokenAmount
+    priceImpact: Percent
+}
+
+/**
+ * Gated calldata validation for aggregator trades. Simulates the calldata only when
+ * the quote's price impact is suspiciously positive, logs the outcome, and throws
+ * when the calldata reverts on-chain (so the caller can drop the quote). Returns
+ * silently when the quote is below the threshold or could not be simulated.
+ */
+export async function validateOptimisticQuote(check: OptimisticQuoteCheck): Promise<void> {
+    const { provider, logger, providerName, from, routerAddress, callData, tokenAmountIn, amountOut, priceImpact } =
+        check
+
+    if (!priceImpact.greaterThan(OPTIMISTIC_PRICE_IMPACT_THRESHOLD)) {
+        return
+    }
+
+    const context =
+        `${providerName} optimistic quote ${tokenAmountIn.token.symbol}->${amountOut.token.symbol} ` +
+        `chainId=${tokenAmountIn.token.chainId} priceImpact=${priceImpact.toSignificant(4)}% ` +
+        `amountIn=${tokenAmountIn.toSignificant()} amountOut=${amountOut.toSignificant()}`
+
+    logger?.info(`Validating ${context}`)
+
+    const result = await validateCallData(provider, from, routerAddress, callData, tokenAmountIn)
+
+    if (result.status === 'reverted') {
+        logger?.warn(`Calldata validation failed (reverted), discarding ${context}. Reason: ${result.reason}`)
+        throw new Error(`Optimistic quote rejected: calldata reverts on-chain (${result.reason})`)
+    }
+    if (result.status === 'skipped') {
+        logger?.info(`Calldata validation skipped for ${context}. Reason: ${result.reason}`)
+        return
+    }
+    logger?.info(`Calldata validation passed for ${context}`)
 }
 
 // keccak256(abi.encode(holder, slot)) — storage key of balances[holder].
