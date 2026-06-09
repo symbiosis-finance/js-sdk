@@ -21,7 +21,7 @@ export type OneInchProtocols = string[]
 // i.e. positive price impact) whose calldata cannot execute on-chain. Above this
 // threshold we simulate the calldata and discard the quote if it reverts. A small
 // margin avoids paying for simulation on normal oracle/quote noise.
-const OPTIMISTIC_PRICE_IMPACT_THRESHOLD = new Percent('5', '1000') // 0.5%
+const OPTIMISTIC_PRICE_IMPACT_THRESHOLD = new Percent('2', '1000') // 0.2%
 
 interface GetTradePriceImpactParams {
     tokenAmountIn: TokenAmount
