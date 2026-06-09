@@ -14,14 +14,28 @@ const OPTIMISTIC_PRICE_IMPACT_THRESHOLD = new Percent('2', '1000') // 0.2%
 
 const MAX_UINT256 = '0x' + 'ff'.repeat(32)
 
+// Value written into the balance storage slot to fund the sender. We deliberately
+// leave the top bit clear (2^255 - 1 instead of MAX_UINT256): FiatTokenV2_2 (e.g.
+// native USDC on Arbitrum/Base) packs the blacklist flag into the high bit of the
+// balance slot (`balanceAndBlacklistStates`), so a full-0xff override would mark the
+// sender as blacklisted and make every `transferFrom` revert (SafeTransferFromFailed,
+// 0xf4059071). 2^255 - 1 is still effectively unlimited balance and is harmless for
+// plain OZ tokens that read the whole 256-bit slot.
+const MAX_BALANCE_OVERRIDE = '0x7f' + 'ff'.repeat(31)
+
 // A recognizable, non-trivial value written into a candidate storage slot during
 // slot detection. If `balanceOf`/`allowance` reads it back, we found the right slot.
+// Like the funding value, its top bit is clear so the FiatToken blacklist flag stays
+// off during detection.
 const SENTINEL = utils.hexZeroPad('0xdeadbeef', 32)
 
 // How many leading storage slots to scan when probing the balances/allowances
-// mappings. Standard OZ tokens use slots 0/1; proxies like USDC sit higher
-// (FiatTokenV2 keeps balances at slot 9, allowances at slot 10).
-const MAX_SLOTS_TO_SCAN = 20
+// mappings. Standard OZ tokens use slots 0/1; proxies sit higher: FiatTokenV2
+// (native USDC) keeps balances at slot 9 / allowances at slot 10, and the
+// Coinbase-bridged token implementation (e.g. USDbC on Base) puts balances at
+// slot 51 / allowances at slot 52. Keep enough headroom above the highest known
+// layout so these tokens are detected instead of skipped.
+const MAX_SLOTS_TO_SCAN = 64
 
 // Lazily created so merely importing this module never touches the `ERC20__factory`
 // export (some tests fully mock `../contracts` without it).
@@ -95,7 +109,7 @@ export async function validateCallData(
             {
                 [tokenAddress]: {
                     stateDiff: {
-                        [balanceSlotKey(from, slots.balanceSlot)]: MAX_UINT256,
+                        [balanceSlotKey(from, slots.balanceSlot)]: MAX_BALANCE_OVERRIDE,
                         [allowanceSlotKey(from, routerAddress, slots.allowanceSlot)]: MAX_UINT256,
                     },
                 },

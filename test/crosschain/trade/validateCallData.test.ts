@@ -8,6 +8,9 @@ import { validateCallData } from '../../../src/crosschain/trade/validateCallData
 import { Token, TokenAmount } from '../../../src/entities'
 
 const MAX_UINT256 = '0x' + 'ff'.repeat(32)
+// Mirror of MAX_BALANCE_OVERRIDE in validateCallData.ts: top bit clear so the
+// FiatToken blacklist flag is not set when funding the sender.
+const MAX_BALANCE_OVERRIDE = '0x7f' + 'ff'.repeat(31)
 const FROM = '0x1111111111111111111111111111111111111111'
 const ROUTER = '0x2222222222222222222222222222222222222222'
 const SWAP_CALLDATA = '0xdeadbeef'
@@ -41,6 +44,10 @@ interface MockOptions {
     // When false, the mock fails any eth_call that carries a state override, simulating
     // an RPC that does not support overrides at all.
     supportsOverride?: boolean
+    // Models FiatTokenV2_2 (USDC), which packs a blacklist flag into the high bit of the
+    // balance slot: if the funding value has the top bit set, the account is "blacklisted"
+    // and the swap's transferFrom reverts (SafeTransferFromFailed).
+    blacklistOnTopBit?: boolean
 }
 
 /**
@@ -50,7 +57,7 @@ interface MockOptions {
  * detection found the right slots.
  */
 function makeProvider(token: string, opts: MockOptions) {
-    const { balanceSlot, allowanceSlot, swapReverts = false, supportsOverride = true } = opts
+    const { balanceSlot, allowanceSlot, swapReverts = false, supportsOverride = true, blacklistOnTopBit = false } = opts
 
     const send = vi.fn(async (method: string, params: unknown[]) => {
         expect(method).toBe('eth_call')
@@ -89,7 +96,12 @@ function makeProvider(token: string, opts: MockOptions) {
             if (swapReverts) {
                 throw new Error('execution reverted: insufficient liquidity')
             }
-            const fundedBalance = stateDiff[balanceSlotKey(FROM, balanceSlot)] === MAX_UINT256
+            const balanceOverride = stateDiff[balanceSlotKey(FROM, balanceSlot)]
+            if (blacklistOnTopBit && balanceOverride && !BigNumber.from(balanceOverride).shr(255).isZero()) {
+                // FiatTokenV2_2: top bit set => blacklisted => transferFrom reverts.
+                throw new Error('execution reverted: SafeTransferFromFailed()')
+            }
+            const fundedBalance = balanceOverride === MAX_BALANCE_OVERRIDE
             const fundedAllowance = stateDiff[allowanceSlotKey(FROM, ROUTER, allowanceSlot)] === MAX_UINT256
             if (!fundedBalance || !fundedAllowance) {
                 throw new Error('execution reverted: ERC20: transfer amount exceeds balance')
@@ -136,9 +148,29 @@ describe('validateCallData slot detection', () => {
         expect(result).toEqual({ status: 'valid' })
     })
 
+    test('detects Coinbase-bridged layout (USDbC-like: balances slot 51, allowances slot 52)', async () => {
+        const token = nextTokenAddress()
+        const provider = makeProvider(token, { balanceSlot: 51, allowanceSlot: 52 })
+
+        const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
+
+        expect(result).toEqual({ status: 'valid' })
+    })
+
+    test('funds with the top bit clear so FiatTokenV2_2 does not flag the sender as blacklisted', async () => {
+        const token = nextTokenAddress()
+        // balances slot 9 mirrors native USDC; blacklistOnTopBit reverts the swap if the
+        // funding value sets the high bit (the bug a MAX_UINT256 override used to trigger).
+        const provider = makeProvider(token, { balanceSlot: 9, allowanceSlot: 10, blacklistOnTopBit: true })
+
+        const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
+
+        expect(result).toEqual({ status: 'valid' })
+    })
+
     test('skips when slots are out of the scan range', async () => {
         const token = nextTokenAddress()
-        const provider = makeProvider(token, { balanceSlot: 50, allowanceSlot: 51 })
+        const provider = makeProvider(token, { balanceSlot: 70, allowanceSlot: 71 })
 
         const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
 
