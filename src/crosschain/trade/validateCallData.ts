@@ -68,6 +68,20 @@ function allowanceSlotCandidates(): BigNumber[] {
     return candidates
 }
 
+// Explicit gas limit for `eth_createAccessList` calls. Without it some nodes default
+// to an enormous limit and reject the request because the (zero-address) sender can't
+// afford `gas * gasPrice`. 2M is plenty for a view call.
+const ACCESS_LIST_GAS = '0x1e8480'
+
+// Concrete storage location of a mapping entry. The holding contract is usually the
+// token itself, but eternal-storage tokens (e.g. KAON on Ethereum) keep balances and
+// allowances in separate dedicated storage contracts — sometimes a different one per
+// mapping — so the address must travel together with the key.
+interface StorageRef {
+    address: string
+    key: string
+}
+
 // Lazily created so merely importing this module never touches the `ERC20__factory`
 // export (some tests fully mock `../contracts` without it).
 let erc20InterfaceCache: ReturnType<typeof ERC20__factory.createInterface> | undefined
@@ -78,10 +92,12 @@ function erc20Interface() {
     return erc20InterfaceCache
 }
 
-// Cache of detected slot indices per token. `null` means "fully scanned, not a
-// standard layout" — we skip validation for it instead of rescanning every time.
+// Cache of detected storage locations. The keys are holder/spender-specific (they are
+// hashed into the storage key), so the cache key includes them; in practice holder and
+// spender are stable per aggregator per chain, keeping cardinality low. `null` means
+// "fully probed, layout not supported" — we skip validation instead of re-probing.
 // Infra failures (RPC without state-override support) are NOT cached, so they retry.
-const slotCache = new Map<string, { balanceSlot: BigNumber; allowanceSlot: BigNumber } | null>()
+const slotCache = new Map<string, { balance: StorageRef; allowance: StorageRef } | null>()
 
 export type CallDataValidationResult =
     | { status: 'valid' }
@@ -128,24 +144,24 @@ export async function validateCallData(
         }
 
         const tokenAddress = tokenAmountIn.token.address
-        const slots = await getSlots(provider, tokenAmountIn.token.chainId, tokenAddress, from, routerAddress)
-        if (!slots) {
+        const refs = await getStorageRefs(provider, tokenAmountIn.token.chainId, tokenAddress, from, routerAddress)
+        if (!refs) {
             // Non-standard storage layout (or RPC can't simulate) — cannot validate.
             return { status: 'skipped', reason: 'unknown token storage layout' }
         }
 
-        await provider.send('eth_call', [
-            { from, to: routerAddress, data: callData },
-            'latest',
-            {
-                [tokenAddress]: {
-                    stateDiff: {
-                        [balanceSlotKey(from, slots.balanceSlot)]: MAX_BALANCE_OVERRIDE,
-                        [allowanceSlotKey(from, routerAddress, slots.allowanceSlot)]: MAX_UINT256,
-                    },
-                },
-            },
-        ])
+        // Balance and allowance may live in different contracts (eternal storage) —
+        // group the overrides by holding contract.
+        const overrides: Record<string, { stateDiff: Record<string, string> }> = {}
+        for (const { ref, value } of [
+            { ref: refs.balance, value: MAX_BALANCE_OVERRIDE },
+            { ref: refs.allowance, value: MAX_UINT256 },
+        ]) {
+            overrides[ref.address] = overrides[ref.address] ?? { stateDiff: {} }
+            overrides[ref.address].stateDiff[ref.key] = value
+        }
+
+        await provider.send('eth_call', [{ from, to: routerAddress, data: callData }, 'latest', overrides])
         return { status: 'valid' }
     } catch (e: unknown) {
         const message = e instanceof Error ? e.message : String(e)
@@ -219,29 +235,29 @@ function allowanceSlotKey(owner: string, spender: string, slot: BigNumber): stri
     return utils.keccak256(utils.defaultAbiCoder.encode(['address', 'bytes32'], [spender, inner]))
 }
 
-async function getSlots(
+async function getStorageRefs(
     provider: StaticJsonRpcProvider,
     chainId: number,
     tokenAddress: string,
     holder: string,
     spender: string
-): Promise<{ balanceSlot: BigNumber; allowanceSlot: BigNumber } | null> {
-    const cacheKey = `${chainId}:${tokenAddress.toLowerCase()}`
+): Promise<{ balance: StorageRef; allowance: StorageRef } | null> {
+    const cacheKey = `${chainId}:${tokenAddress}:${holder}:${spender}`.toLowerCase()
     const cached = slotCache.get(cacheKey)
     if (cached !== undefined) {
         return cached
     }
 
-    let balanceSlot: BigNumber | null
-    let allowanceSlot: BigNumber | null
+    let balance: StorageRef | null
+    let allowance: StorageRef | null
     try {
-        balanceSlot = await findBalanceSlot(provider, tokenAddress, holder)
-        if (balanceSlot === null) {
+        balance = await findBalanceRef(provider, tokenAddress, holder)
+        if (balance === null) {
             slotCache.set(cacheKey, null)
             return null
         }
-        allowanceSlot = await findAllowanceSlot(provider, tokenAddress, holder, spender)
-        if (allowanceSlot === null) {
+        allowance = await findAllowanceRef(provider, tokenAddress, holder, spender)
+        if (allowance === null) {
             slotCache.set(cacheKey, null)
             return null
         }
@@ -250,46 +266,99 @@ async function getSlots(
         return null
     }
 
-    const result = { balanceSlot, allowanceSlot }
+    const result = { balance, allowance }
     slotCache.set(cacheKey, result)
     return result
 }
 
-async function findBalanceSlot(
+// Writes the sentinel into `ref` and checks whether the view call reads it back.
+// Throws propagate (infra/override-unsupported) so the caller can abort detection.
+async function probesBackSentinel(
     provider: StaticJsonRpcProvider,
     tokenAddress: string,
-    holder: string
-): Promise<BigNumber | null> {
-    const data = erc20Interface().encodeFunctionData('balanceOf', [holder])
-    for (const slot of balanceSlotCandidates()) {
-        // A throw here propagates (infra/override-unsupported) and aborts detection.
-        const ret = await provider.send('eth_call', [
-            { to: tokenAddress, data },
+    data: string,
+    ref: StorageRef
+): Promise<boolean> {
+    const ret = await provider.send('eth_call', [
+        { to: tokenAddress, data },
+        'latest',
+        { [ref.address]: { stateDiff: { [ref.key]: SENTINEL } } },
+    ])
+    return readsBackSentinel(ret)
+}
+
+// Asks the node which (contract, slot) pairs the view call actually touches
+// (`eth_createAccessList`), then sentinel-verifies each candidate. This finds the
+// storage location in a handful of calls regardless of layout — including tokens
+// whose balances live in a separate storage contract, which the linear scan over the
+// token's own slots can never reach. Returns null when the method is unsupported or
+// no candidate verifies; the caller then falls back to scanning.
+async function findRefViaAccessList(
+    provider: StaticJsonRpcProvider,
+    tokenAddress: string,
+    data: string
+): Promise<StorageRef | null> {
+    let accessList: { address: string; storageKeys?: string[] }[]
+    try {
+        const res = await provider.send('eth_createAccessList', [
+            { to: tokenAddress, data, gas: ACCESS_LIST_GAS },
             'latest',
-            { [tokenAddress]: { stateDiff: { [balanceSlotKey(holder, slot)]: SENTINEL } } },
         ])
-        if (readsBackSentinel(ret)) {
-            return slot
+        accessList = res?.accessList ?? []
+    } catch {
+        return null
+    }
+    for (const entry of accessList) {
+        for (const key of entry.storageKeys ?? []) {
+            const ref = { address: entry.address, key }
+            try {
+                if (await probesBackSentinel(provider, tokenAddress, data, ref)) {
+                    return ref
+                }
+            } catch {
+                // Overriding this slot broke the call (e.g. it is a proxy/storage
+                // pointer, not a balance) — try the next candidate.
+            }
         }
     }
     return null
 }
 
-async function findAllowanceSlot(
+async function findBalanceRef(
+    provider: StaticJsonRpcProvider,
+    tokenAddress: string,
+    holder: string
+): Promise<StorageRef | null> {
+    const data = erc20Interface().encodeFunctionData('balanceOf', [holder])
+    const viaList = await findRefViaAccessList(provider, tokenAddress, data)
+    if (viaList) {
+        return viaList
+    }
+    for (const slot of balanceSlotCandidates()) {
+        const ref = { address: tokenAddress, key: balanceSlotKey(holder, slot) }
+        // A throw here propagates (infra/override-unsupported) and aborts detection.
+        if (await probesBackSentinel(provider, tokenAddress, data, ref)) {
+            return ref
+        }
+    }
+    return null
+}
+
+async function findAllowanceRef(
     provider: StaticJsonRpcProvider,
     tokenAddress: string,
     owner: string,
     spender: string
-): Promise<BigNumber | null> {
+): Promise<StorageRef | null> {
     const data = erc20Interface().encodeFunctionData('allowance', [owner, spender])
+    const viaList = await findRefViaAccessList(provider, tokenAddress, data)
+    if (viaList) {
+        return viaList
+    }
     for (const slot of allowanceSlotCandidates()) {
-        const ret = await provider.send('eth_call', [
-            { to: tokenAddress, data },
-            'latest',
-            { [tokenAddress]: { stateDiff: { [allowanceSlotKey(owner, spender, slot)]: SENTINEL } } },
-        ])
-        if (readsBackSentinel(ret)) {
-            return slot
+        const ref = { address: tokenAddress, key: allowanceSlotKey(owner, spender, slot) }
+        if (await probesBackSentinel(provider, tokenAddress, data, ref)) {
+            return ref
         }
     }
     return null

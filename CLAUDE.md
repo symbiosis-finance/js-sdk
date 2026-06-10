@@ -64,17 +64,24 @@ re-run the script:
 
 Aggregator trades (1inch, OpenOcean, …) simulate suspiciously-good quotes via
 `eth_call` with state overrides that fund the executing address, to reject quotes
-whose calldata can't actually execute on-chain. Two non-obvious facts the code
+whose calldata can't actually execute on-chain. Non-obvious facts the code
 encodes (learned from production incidents):
 
-- ERC20 balance/allowance storage slots are **detected dynamically** by probing
-  with a sentinel, scanning up to `MAX_SLOTS_TO_SCAN`. Layouts seen in the wild:
-  OZ standard `0/1`, FiatTokenV2/native USDC `9/10`, Coinbase-bridged (e.g. USDbC
-  on Base) `51/52`. Keep headroom above the highest known slot.
+- Balance/allowance storage locations are **detected dynamically**: first via
+  `eth_createAccessList` (which reveals the exact contract+slot a `balanceOf`/
+  `allowance` call reads — this also handles eternal-storage tokens like KAON
+  whose balances live in a separate storage contract), verified with a sentinel
+  write; falls back to a linear scan of the token's own slots (`0..63` plus the
+  ERC-7201 `openzeppelin.storage.ERC20` namespace base used by OZ v5 upgradeable
+  tokens, e.g. oUSDT on Base). Layouts seen in the wild: OZ standard `0/1`,
+  FiatTokenV2/native USDC `9/10`, Coinbase-bridged (USDbC on Base) `51/52`.
 - The balance slot is funded with `2^255 - 1`, **not** `MAX_UINT256`.
   FiatTokenV2_2 (native USDC) packs a blacklist flag into the high bit of the
   balance slot, so a full-`0xff` value flags the sender as blacklisted and makes
   `transferFrom` revert (`SafeTransferFromFailed()`, selector `0xf4059071`).
+- Reflection/fee tokens (`balanceOf` computed from shares, e.g. MCC, Wolf) and
+  tokens whose balance can't be reproduced by writing one slot (e.g. SOLVE)
+  legitimately end up `skipped` — a skip never rejects the quote.
 
 ## Versioning & release
 

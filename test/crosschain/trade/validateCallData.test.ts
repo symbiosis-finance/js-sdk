@@ -41,9 +41,14 @@ function nextTokenAddress(): string {
     return utils.hexZeroPad('0x' + tokenCounter.toString(16), 20)
 }
 
+interface StorageRef {
+    address: string
+    key: string
+}
+
 interface MockOptions {
-    balanceSlot: BigNumberish
-    allowanceSlot: BigNumberish
+    balanceSlot?: BigNumberish
+    allowanceSlot?: BigNumberish
     swapReverts?: boolean
     // When false, the mock fails any eth_call that carries a state override, simulating
     // an RPC that does not support overrides at all.
@@ -52,18 +57,46 @@ interface MockOptions {
     // balance slot: if the funding value has the top bit set, the account is "blacklisted"
     // and the swap's transferFrom reverts (SafeTransferFromFailed).
     blacklistOnTopBit?: boolean
+    // Eternal-storage mode: balances/allowances live at these fixed locations (possibly
+    // in contracts other than the token), instead of slot-derived keys on the token.
+    externalBalance?: StorageRef
+    externalAllowance?: StorageRef
+    // Access list the node reports for view calls. When undefined the mock rejects
+    // eth_createAccessList, exercising the linear-scan fallback.
+    accessList?: { address: string; storageKeys: string[] }[]
 }
 
 /**
  * Builds a provider whose ERC20 storage layout keeps balances at `balanceSlot` and
- * allowances at `allowanceSlot`. The final swap call to the router only succeeds if it
- * was funded at the correctly-derived storage keys — so a `valid` result proves slot
- * detection found the right slots.
+ * allowances at `allowanceSlot` (or at the fixed external locations). The final swap
+ * call to the router only succeeds if it was funded at the correct storage location —
+ * so a `valid` result proves detection found the right slots.
  */
 function makeProvider(token: string, opts: MockOptions) {
-    const { balanceSlot, allowanceSlot, swapReverts = false, supportsOverride = true, blacklistOnTopBit = false } = opts
+    const {
+        balanceSlot = 0,
+        allowanceSlot = 1,
+        swapReverts = false,
+        supportsOverride = true,
+        blacklistOnTopBit = false,
+        externalBalance,
+        externalAllowance,
+        accessList,
+    } = opts
+
+    const balanceLoc = (holder: string): StorageRef =>
+        externalBalance ?? { address: token, key: balanceSlotKey(holder, balanceSlot) }
+    const allowanceLoc = (owner: string, spender: string): StorageRef =>
+        externalAllowance ?? { address: token, key: allowanceSlotKey(owner, spender, allowanceSlot) }
 
     const send = vi.fn(async (method: string, params: unknown[]) => {
+        if (method === 'eth_createAccessList') {
+            if (!accessList) {
+                throw new Error('the method eth_createAccessList does not exist/is not available')
+            }
+            return { accessList }
+        }
+
         expect(method).toBe('eth_call')
         const [tx, block, overrides] = params as [
             { to: string; data: string },
@@ -76,21 +109,29 @@ function makeProvider(token: string, opts: MockOptions) {
             throw new Error('the method eth_call does not support state overrides')
         }
 
-        const stateDiff = overrides?.[token]?.stateDiff ?? {}
+        // Address keys in overrides may be checksummed (EIP-55) — match case-insensitively.
+        const readDiff = (ref: StorageRef): string | undefined => {
+            const entry = Object.entries(overrides ?? {}).find(
+                ([address]) => address.toLowerCase() === ref.address.toLowerCase()
+            )
+            return entry?.[1]?.stateDiff?.[ref.key]
+        }
         const selector = tx.data.slice(0, 10)
+        // The Token entity checksums addresses (EIP-55), the mock's are lowercase.
+        const isToken = tx.to.toLowerCase() === token.toLowerCase()
 
-        // Balance-slot probe: return whatever was written to the true balance key.
-        if (tx.to === token && selector === BALANCE_OF_SIGHASH) {
+        // Balance probe: return whatever was written to the true balance location.
+        if (isToken && selector === BALANCE_OF_SIGHASH) {
             const [holder] = erc20.decodeFunctionData('balanceOf', tx.data)
-            const written = stateDiff[balanceSlotKey(holder, balanceSlot)]
+            const written = readDiff(balanceLoc(holder))
             const value = written ? BigNumber.from(written) : BigNumber.from(0)
             return erc20.encodeFunctionResult('balanceOf', [value])
         }
 
-        // Allowance-slot probe.
-        if (tx.to === token && selector === ALLOWANCE_SIGHASH) {
+        // Allowance probe.
+        if (isToken && selector === ALLOWANCE_SIGHASH) {
             const [owner, spender] = erc20.decodeFunctionData('allowance', tx.data)
-            const written = stateDiff[allowanceSlotKey(owner, spender, allowanceSlot)]
+            const written = readDiff(allowanceLoc(owner, spender))
             const value = written ? BigNumber.from(written) : BigNumber.from(0)
             return erc20.encodeFunctionResult('allowance', [value])
         }
@@ -100,13 +141,13 @@ function makeProvider(token: string, opts: MockOptions) {
             if (swapReverts) {
                 throw new Error('execution reverted: insufficient liquidity')
             }
-            const balanceOverride = stateDiff[balanceSlotKey(FROM, balanceSlot)]
+            const balanceOverride = readDiff(balanceLoc(FROM))
             if (blacklistOnTopBit && balanceOverride && !BigNumber.from(balanceOverride).shr(255).isZero()) {
                 // FiatTokenV2_2: top bit set => blacklisted => transferFrom reverts.
                 throw new Error('execution reverted: SafeTransferFromFailed()')
             }
             const fundedBalance = balanceOverride === MAX_BALANCE_OVERRIDE
-            const fundedAllowance = stateDiff[allowanceSlotKey(FROM, ROUTER, allowanceSlot)] === MAX_UINT256
+            const fundedAllowance = readDiff(allowanceLoc(FROM, ROUTER)) === MAX_UINT256
             if (!fundedBalance || !fundedAllowance) {
                 throw new Error('execution reverted: ERC20: transfer amount exceeds balance')
             }
@@ -191,6 +232,39 @@ describe('validateCallData slot detection', () => {
         const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
 
         expect(result.status).toBe('skipped')
+    })
+
+    test('detects eternal-storage tokens via access list (balances in external contracts)', async () => {
+        const token = nextTokenAddress()
+        // KAON-like: balances and allowances live in two separate storage contracts; the
+        // linear scan over the token's own slots can never find them.
+        const balanceStore = nextTokenAddress()
+        const allowanceStore = nextTokenAddress()
+        const externalBalance = { address: balanceStore, key: utils.keccak256(utils.toUtf8Bytes('balances')) }
+        const externalAllowance = { address: allowanceStore, key: utils.keccak256(utils.toUtf8Bytes('allowed')) }
+        const provider = makeProvider(token, {
+            externalBalance,
+            externalAllowance,
+            accessList: [
+                // Decoy the detector must reject: the token's own storage-pointer slot.
+                { address: token, storageKeys: [utils.hexZeroPad('0x0', 32)] },
+                { address: balanceStore, storageKeys: [externalBalance.key] },
+                { address: allowanceStore, storageKeys: [externalAllowance.key] },
+            ],
+        })
+
+        const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
+
+        expect(result).toEqual({ status: 'valid' })
+    })
+
+    test('falls back to the slot scan when the access list is empty', async () => {
+        const token = nextTokenAddress()
+        const provider = makeProvider(token, { balanceSlot: 9, allowanceSlot: 10, accessList: [] })
+
+        const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
+
+        expect(result).toEqual({ status: 'valid' })
     })
 
     test('reports reverted when the swap reverts despite funding', async () => {
