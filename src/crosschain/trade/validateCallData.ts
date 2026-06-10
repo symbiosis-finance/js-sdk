@@ -37,6 +37,37 @@ const SENTINEL = utils.hexZeroPad('0xdeadbeef', 32)
 // layout so these tokens are detected instead of skipped.
 const MAX_SLOTS_TO_SCAN = 64
 
+// ERC-7201 namespaced storage (OpenZeppelin Contracts v5 `ERC20Upgradeable`, used by
+// e.g. oUSDT on Base and UETH on HyperEVM). The balances/allowances mappings live
+// under a pseudo-random base slot, NOT a small integer, so the linear scan above can
+// never reach them — we probe this known base explicitly. Derivation:
+//   base = keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.ERC20")) - 1)) & ~0xff
+// `ERC20Storage` struct order is `_balances` (base), `_allowances` (base + 1),
+// `_totalSupply`, `_name`, `_symbol`.
+const OZ_ERC20_NAMESPACE_BASE = BigNumber.from('0x52c63247e1f47db19d5ce0460030c497f067ca4cebf71ba98eeadabe20bace00')
+
+// Candidate base slots for the balances mapping: the leading integer slots plus the
+// ERC-7201 namespace base. Ordered so the cheap common layouts win first.
+function balanceSlotCandidates(): BigNumber[] {
+    const candidates: BigNumber[] = []
+    for (let slot = 0; slot < MAX_SLOTS_TO_SCAN; slot++) {
+        candidates.push(BigNumber.from(slot))
+    }
+    candidates.push(OZ_ERC20_NAMESPACE_BASE)
+    return candidates
+}
+
+// Same as above for allowances; under ERC-7201 the allowances mapping sits one slot
+// after balances (base + 1).
+function allowanceSlotCandidates(): BigNumber[] {
+    const candidates: BigNumber[] = []
+    for (let slot = 0; slot < MAX_SLOTS_TO_SCAN; slot++) {
+        candidates.push(BigNumber.from(slot))
+    }
+    candidates.push(OZ_ERC20_NAMESPACE_BASE.add(1))
+    return candidates
+}
+
 // Lazily created so merely importing this module never touches the `ERC20__factory`
 // export (some tests fully mock `../contracts` without it).
 let erc20InterfaceCache: ReturnType<typeof ERC20__factory.createInterface> | undefined
@@ -50,7 +81,7 @@ function erc20Interface() {
 // Cache of detected slot indices per token. `null` means "fully scanned, not a
 // standard layout" — we skip validation for it instead of rescanning every time.
 // Infra failures (RPC without state-override support) are NOT cached, so they retry.
-const slotCache = new Map<string, { balanceSlot: number; allowanceSlot: number } | null>()
+const slotCache = new Map<string, { balanceSlot: BigNumber; allowanceSlot: BigNumber } | null>()
 
 export type CallDataValidationResult =
     | { status: 'valid' }
@@ -177,13 +208,13 @@ export async function validateOptimisticQuote(check: OptimisticQuoteCheck): Prom
 }
 
 // keccak256(abi.encode(holder, slot)) — storage key of balances[holder].
-function balanceSlotKey(holder: string, slot: number): string {
+function balanceSlotKey(holder: string, slot: BigNumber): string {
     return utils.keccak256(utils.defaultAbiCoder.encode(['address', 'uint256'], [holder, slot]))
 }
 
 // keccak256(abi.encode(spender, keccak256(abi.encode(owner, slot)))) — storage key
 // of allowances[owner][spender] (a nested mapping).
-function allowanceSlotKey(owner: string, spender: string, slot: number): string {
+function allowanceSlotKey(owner: string, spender: string, slot: BigNumber): string {
     const inner = utils.keccak256(utils.defaultAbiCoder.encode(['address', 'uint256'], [owner, slot]))
     return utils.keccak256(utils.defaultAbiCoder.encode(['address', 'bytes32'], [spender, inner]))
 }
@@ -194,15 +225,15 @@ async function getSlots(
     tokenAddress: string,
     holder: string,
     spender: string
-): Promise<{ balanceSlot: number; allowanceSlot: number } | null> {
+): Promise<{ balanceSlot: BigNumber; allowanceSlot: BigNumber } | null> {
     const cacheKey = `${chainId}:${tokenAddress.toLowerCase()}`
     const cached = slotCache.get(cacheKey)
     if (cached !== undefined) {
         return cached
     }
 
-    let balanceSlot: number | null
-    let allowanceSlot: number | null
+    let balanceSlot: BigNumber | null
+    let allowanceSlot: BigNumber | null
     try {
         balanceSlot = await findBalanceSlot(provider, tokenAddress, holder)
         if (balanceSlot === null) {
@@ -228,9 +259,9 @@ async function findBalanceSlot(
     provider: StaticJsonRpcProvider,
     tokenAddress: string,
     holder: string
-): Promise<number | null> {
+): Promise<BigNumber | null> {
     const data = erc20Interface().encodeFunctionData('balanceOf', [holder])
-    for (let slot = 0; slot < MAX_SLOTS_TO_SCAN; slot++) {
+    for (const slot of balanceSlotCandidates()) {
         // A throw here propagates (infra/override-unsupported) and aborts detection.
         const ret = await provider.send('eth_call', [
             { to: tokenAddress, data },
@@ -249,9 +280,9 @@ async function findAllowanceSlot(
     tokenAddress: string,
     owner: string,
     spender: string
-): Promise<number | null> {
+): Promise<BigNumber | null> {
     const data = erc20Interface().encodeFunctionData('allowance', [owner, spender])
-    for (let slot = 0; slot < MAX_SLOTS_TO_SCAN; slot++) {
+    for (const slot of allowanceSlotCandidates()) {
         const ret = await provider.send('eth_call', [
             { to: tokenAddress, data },
             'latest',

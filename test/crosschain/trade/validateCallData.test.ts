@@ -1,5 +1,6 @@
 import type { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber, utils } from 'ethers'
+import type { BigNumberish } from 'ethers'
 import { describe, expect, test, vi } from 'vitest'
 
 import { ChainId } from '../../../src/constants'
@@ -11,6 +12,9 @@ const MAX_UINT256 = '0x' + 'ff'.repeat(32)
 // Mirror of MAX_BALANCE_OVERRIDE in validateCallData.ts: top bit clear so the
 // FiatToken blacklist flag is not set when funding the sender.
 const MAX_BALANCE_OVERRIDE = '0x7f' + 'ff'.repeat(31)
+// Mirror of OZ_ERC20_NAMESPACE_BASE in validateCallData.ts: the ERC-7201 base slot of
+// OpenZeppelin v5 `ERC20Upgradeable` (balances at base, allowances at base + 1).
+const OZ_ERC20_NAMESPACE_BASE = BigNumber.from('0x52c63247e1f47db19d5ce0460030c497f067ca4cebf71ba98eeadabe20bace00')
 const FROM = '0x1111111111111111111111111111111111111111'
 const ROUTER = '0x2222222222222222222222222222222222222222'
 const SWAP_CALLDATA = '0xdeadbeef'
@@ -21,10 +25,10 @@ const ALLOWANCE_SIGHASH = erc20.getSighash('allowance')
 
 // Mirror of the (private) storage-key derivation in validateCallData.ts so the mock
 // can pretend balances/allowances live at specific slots.
-function balanceSlotKey(holder: string, slot: number): string {
+function balanceSlotKey(holder: string, slot: BigNumberish): string {
     return utils.keccak256(utils.defaultAbiCoder.encode(['address', 'uint256'], [holder, slot]))
 }
-function allowanceSlotKey(owner: string, spender: string, slot: number): string {
+function allowanceSlotKey(owner: string, spender: string, slot: BigNumberish): string {
     const inner = utils.keccak256(utils.defaultAbiCoder.encode(['address', 'uint256'], [owner, slot]))
     return utils.keccak256(utils.defaultAbiCoder.encode(['address', 'bytes32'], [spender, inner]))
 }
@@ -38,8 +42,8 @@ function nextTokenAddress(): string {
 }
 
 interface MockOptions {
-    balanceSlot: number
-    allowanceSlot: number
+    balanceSlot: BigNumberish
+    allowanceSlot: BigNumberish
     swapReverts?: boolean
     // When false, the mock fails any eth_call that carries a state override, simulating
     // an RPC that does not support overrides at all.
@@ -162,6 +166,18 @@ describe('validateCallData slot detection', () => {
         // balances slot 9 mirrors native USDC; blacklistOnTopBit reverts the swap if the
         // funding value sets the high bit (the bug a MAX_UINT256 override used to trigger).
         const provider = makeProvider(token, { balanceSlot: 9, allowanceSlot: 10, blacklistOnTopBit: true })
+
+        const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
+
+        expect(result).toEqual({ status: 'valid' })
+    })
+
+    test('detects ERC-7201 namespaced layout (OZ v5: balances at base slot, allowances at base+1)', async () => {
+        const token = nextTokenAddress()
+        const provider = makeProvider(token, {
+            balanceSlot: OZ_ERC20_NAMESPACE_BASE,
+            allowanceSlot: OZ_ERC20_NAMESPACE_BASE.add(1),
+        })
 
         const result = await validateCallData(provider, FROM, ROUTER, SWAP_CALLDATA, makeTokenAmount(token))
 
