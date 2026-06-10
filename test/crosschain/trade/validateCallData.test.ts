@@ -5,8 +5,8 @@ import { describe, expect, test, vi } from 'vitest'
 
 import { ChainId } from '../../../src/constants'
 import { ERC20__factory } from '../../../src/crosschain/contracts'
-import { validateCallData } from '../../../src/crosschain/trade/validateCallData'
-import { Token, TokenAmount } from '../../../src/entities'
+import { validateCallData, validateOptimisticQuote } from '../../../src/crosschain/trade/validateCallData'
+import { Percent, Token, TokenAmount } from '../../../src/entities'
 
 const MAX_UINT256 = '0x' + 'ff'.repeat(32)
 // Mirror of MAX_BALANCE_OVERRIDE in validateCallData.ts: top bit clear so the
@@ -90,6 +90,9 @@ function makeProvider(token: string, opts: MockOptions) {
         externalAllowance ?? { address: token, key: allowanceSlotKey(owner, spender, allowanceSlot) }
 
     const send = vi.fn(async (method: string, params: unknown[]) => {
+        if (method === 'eth_blockNumber') {
+            return '0x112a880' // 18_000_000
+        }
         if (method === 'eth_createAccessList') {
             if (!accessList) {
                 throw new Error('the method eth_createAccessList does not exist/is not available')
@@ -298,5 +301,28 @@ describe('validateCallData slot detection', () => {
 
         // Second run reuses cached slots: only the single final swap simulation runs.
         expect(callsAfterSecond - callsAfterFirst).toBe(1)
+    })
+})
+
+describe('validateOptimisticQuote logging', () => {
+    test('log context includes the block number the simulation ran at', async () => {
+        const token = nextTokenAddress()
+        const provider = makeProvider(token, { balanceSlot: 0, allowanceSlot: 1 })
+        const logger = { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() }
+
+        await validateOptimisticQuote({
+            provider,
+            logger,
+            providerName: '1inch',
+            from: FROM,
+            routerAddress: ROUTER,
+            callData: SWAP_CALLDATA,
+            tokenAmountIn: makeTokenAmount(token),
+            amountOut: makeTokenAmount(nextTokenAddress()),
+            priceImpact: new Percent('3', '1000'), // 0.3% > 0.2% threshold
+        })
+
+        expect(logger.info).toHaveBeenCalledTimes(1)
+        expect(logger.info.mock.calls[0][0]).toContain('block=18000000')
     })
 })
