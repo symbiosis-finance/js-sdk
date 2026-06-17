@@ -134,6 +134,7 @@ export class Symbiosis {
     public readonly oneInchConfig: ApiConfig
     public readonly openOceanConfig: ApiConfig
     public readonly zeroXConfig: ApiConfig
+    public readonly flyConfig: ApiConfig
     private readonly changellyConfig: ChangellyConfig
     public readonly changelly: ChangellyClient
 
@@ -302,6 +303,13 @@ export class Symbiosis {
         }
         if (overrideConfig?.zeroXConfig) {
             this.zeroXConfig = { ...this.zeroXConfig, ...overrideConfig.zeroXConfig }
+        }
+        this.flyConfig = {
+            apiUrl: 'https://api.magpiefi.xyz',
+            apiKeys: [], // <PUT_YOUR_API_KEY_HERE>
+        }
+        if (overrideConfig?.flyConfig) {
+            this.flyConfig = { ...this.flyConfig, ...overrideConfig.flyConfig }
         }
         this.changellyConfig = {
             apiUrl: 'https://api.changelly.com/v2',

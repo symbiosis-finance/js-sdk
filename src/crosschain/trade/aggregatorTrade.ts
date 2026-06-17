@@ -5,6 +5,7 @@ import type { Symbiosis } from '../symbiosis'
 import type { Address, FeeItem } from '../types'
 import { IzumiTrade } from './izumiTrade'
 import { KyberSwapTrade } from './kyberSwapTrade'
+import { FlyTrade } from './flyTrade'
 import type { OneInchProtocols } from './oneInchTrade'
 import { OneInchTrade } from './oneInchTrade'
 import { OpenOceanTrade } from './openOceanTrade'
@@ -21,6 +22,7 @@ type Trade =
     | OpenOceanTrade
     | KyberSwapTrade
     | ZeroXTrade
+    | FlyTrade
     | IzumiTrade
     | UniV2Trade
     | UniV3Trade
@@ -199,6 +201,12 @@ export class AggregatorTrade extends SymbiosisTrade {
             !isOneInchClient &&
             !isOpenOceanClient
 
+        const isFlyAvailable =
+            FlyTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            FlyTrade.isAllowed(disabledProviders) &&
+            !isOneInchClient &&
+            !isOpenOceanClient
+
         const abortController = new AbortController()
         const signal = abortController.signal
         const entries: TradeEntry[] = []
@@ -260,6 +268,20 @@ export class AggregatorTrade extends SymbiosisTrade {
                 signal,
             })
             entries.push({ promise: zeroXTrade.init(), label: '0x', priority: true })
+        }
+
+        if (isFlyAvailable) {
+            const flyTrade = new FlyTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin,
+                tokenOut,
+                from,
+                to,
+                slippage,
+                signal,
+            })
+            entries.push({ promise: flyTrade.init(), label: 'Fly', priority: true })
         }
 
         if (
@@ -410,7 +432,7 @@ export class AggregatorTrade extends SymbiosisTrade {
 
     public async applyAmountIn(newAmountIn: TokenAmount, newAmountInMin: TokenAmount) {
         this.assertTradeInitialized('applyAmountIn')
-        this.trade.applyAmountIn(newAmountIn, newAmountInMin)
+        await this.trade.applyAmountIn(newAmountIn, newAmountInMin)
         this.tokenAmountIn = newAmountIn
         this.tokenAmountInMin = newAmountInMin
     }
