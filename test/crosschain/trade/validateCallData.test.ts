@@ -90,9 +90,6 @@ function makeProvider(token: string, opts: MockOptions) {
         externalAllowance ?? { address: token, key: allowanceSlotKey(owner, spender, allowanceSlot) }
 
     const send = vi.fn(async (method: string, params: unknown[]) => {
-        if (method === 'eth_blockNumber') {
-            return '0x112a880' // 18_000_000
-        }
         if (method === 'eth_createAccessList') {
             if (!accessList) {
                 throw new Error('the method eth_createAccessList does not exist/is not available')
@@ -305,7 +302,7 @@ describe('validateCallData slot detection', () => {
 })
 
 describe('validateOptimisticQuote logging', () => {
-    test('log context includes the block number the simulation ran at', async () => {
+    test('log context includes provider/chain/priceImpact and never fetches the block number', async () => {
         const token = nextTokenAddress()
         const provider = makeProvider(token, { balanceSlot: 0, allowanceSlot: 1 })
         const logger = { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() }
@@ -323,6 +320,15 @@ describe('validateOptimisticQuote logging', () => {
         })
 
         expect(logger.info).toHaveBeenCalledTimes(1)
-        expect(logger.info.mock.calls[0][0]).toContain('block=18000000')
+        const context = logger.info.mock.calls[0][0]
+        expect(context).toContain('1inch quote')
+        expect(context).toContain('chainId=')
+        expect(context).toContain('priceImpact=')
+        expect(context).not.toContain('block=')
+
+        // The block number fetch was debug-only and removed — it must not be requested.
+        const send = provider.send as unknown as ReturnType<typeof vi.fn>
+        const methods = send.mock.calls.map((c: unknown[]) => c[0])
+        expect(methods).not.toContain('eth_blockNumber')
     })
 })

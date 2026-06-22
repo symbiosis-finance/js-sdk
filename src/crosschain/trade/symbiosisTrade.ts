@@ -27,6 +27,7 @@ export enum TradeProvider {
     UNI_V4 = 'uni-v4',
     KYBER_SWAP = 'kyber-swap',
     ZERO_X = '0x',
+    BITGET = 'bitget',
     INTENT_SOLVER = 'intent-solver',
 }
 
@@ -46,6 +47,7 @@ export const FILTERABLE_PROVIDERS: TradeProvider[] = [
     TradeProvider.UNI_V4,
     TradeProvider.KYBER_SWAP,
     TradeProvider.ZERO_X,
+    TradeProvider.BITGET,
     TradeProvider.INTENT_SOLVER,
 ]
 

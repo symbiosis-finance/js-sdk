@@ -70,6 +70,7 @@ import { swapExactIn } from './swapExactIn'
 import { ChangellyClient } from './swapExactIn/changellySwap/changellyClient'
 import type {
     ApiConfig,
+    BitgetConfig,
     BtcConfig,
     ChainConfig,
     ChangellyConfig,
@@ -134,6 +135,7 @@ export class Symbiosis {
     public readonly oneInchConfig: ApiConfig
     public readonly openOceanConfig: ApiConfig
     public readonly zeroXConfig: ApiConfig
+    public readonly bitgetConfig: BitgetConfig
     private readonly changellyConfig: ChangellyConfig
     public readonly changelly: ChangellyClient
 
@@ -302,6 +304,14 @@ export class Symbiosis {
         }
         if (overrideConfig?.zeroXConfig) {
             this.zeroXConfig = { ...this.zeroXConfig, ...overrideConfig.zeroXConfig }
+        }
+        this.bitgetConfig = {
+            apiUrl: 'https://bopenapi.bgapi.io',
+            apiKey: '', // <PUT_YOUR_API_KEY_HERE>
+            apiSecret: '', // <PUT_YOUR_API_SECRET_HERE>
+        }
+        if (overrideConfig?.bitgetConfig) {
+            this.bitgetConfig = { ...this.bitgetConfig, ...overrideConfig.bitgetConfig }
         }
         this.changellyConfig = {
             apiUrl: 'https://api.changelly.com/v2',

@@ -1,5 +1,6 @@
 export { AggregatorTrade } from './aggregatorTrade'
 export type { AggregatorTradeParams } from './aggregatorTrade'
+export { BitgetTrade } from './bitgetTrade'
 export {
     isChangellyNativeChainId,
     isChangellySupportedChainId,

@@ -99,6 +99,8 @@ export class OpenOceanTradeError extends TradeError {}
 
 export class OneInchTradeError extends TradeError {}
 
+export class BitgetTradeError extends TradeError {}
+
 export class DedustTradeError extends TradeError {}
 
 export class StonFiTradeError extends TradeError {}
