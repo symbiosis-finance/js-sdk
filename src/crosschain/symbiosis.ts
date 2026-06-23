@@ -306,7 +306,7 @@ export class Symbiosis {
             this.zeroXConfig = { ...this.zeroXConfig, ...overrideConfig.zeroXConfig }
         }
         this.bitgetConfig = {
-            apiUrl: 'https://bopenapi.bgapi.io',
+            apiUrl: 'https://bopenapi.bgwapi.io',
             apiKey: '', // <PUT_YOUR_API_KEY_HERE>
             apiSecret: '', // <PUT_YOUR_API_SECRET_HERE>
         }

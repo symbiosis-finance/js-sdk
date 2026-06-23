@@ -1,10 +1,10 @@
 import crypto from 'crypto'
 import { BigNumber } from 'ethers'
-import JSBI from 'jsbi'
+import { parseUnits } from '@ethersproject/units'
 
 import { ChainId } from '../../constants'
 import { Percent, TokenAmount } from '../../entities'
-import { CoinGecko } from '../coingecko'
+import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { BitgetTradeError } from '../sdkError'
 import { withTracing } from '../tracing'
@@ -36,20 +36,26 @@ interface BitgetTradeParams extends SymbiosisTradeParams {
     origin?: Address
 }
 
-// Channel selection step — returns the optimal `market` that must be fed back into
-// the swap request.
+// Channel-selection step — returns the optimal `market` that must be fed back into
+// the swap request. Amounts are human-readable decimals (e.g. "14092876.440486").
 interface BitgetQuote {
     market: string
     toAmount: string
 }
 
-// `requestMod=rich` swap response carries both the executable calldata and the
-// human-readable amounts.
+// The executable transaction Bitget builds for the swap.
+interface BitgetSwapTransaction {
+    to: string // router address the calldata executes against (also the approve target)
+    data: string // calldata
+    value: string // native token value to send (wei); "0" for ERC20 inputs
+}
+
+// `requestMod=rich` swap response. `outAmount` is a human-readable decimal, NOT raw base
+// units, so it must be parsed against the output token's decimals.
 interface BitgetSwap {
-    contract: string // router address the calldata executes against
-    calldata: string
     outAmount: string
-    minAmount: string
+    priceImpact: string // percent, e.g. "0.8593"
+    swapTransaction: BitgetSwapTransaction
 }
 
 interface BitgetResponse<T> {
@@ -96,7 +102,16 @@ export class BitgetTrade extends SymbiosisTrade {
     public async init() {
         const fromContract = this.tokenAmountIn.token.isNative ? NATIVE_CONTRACT : this.tokenAmountIn.token.address
         const toContract = this.tokenOut.isNative ? NATIVE_CONTRACT : this.tokenOut.address
-        const fromAmount = this.tokenAmountIn.raw.toString()
+        // Bitget's JSON API uses human-readable decimal amounts, not raw base units
+        // (e.g. "1" for 1 USDT, not "1000000").
+        const fromAmount = this.tokenAmountIn.toExact()
+        // The on-chain calldata, however, embeds the raw integer amount — used below to
+        // locate the input-amount slot for applyAmountIn() patching.
+        const fromAmountRaw = this.tokenAmountIn.raw.toString()
+
+        // SDK slippage is in bps; Bitget expects a percent number (e.g. 1 means 1%). Only
+        // the swap request takes slippage — the quote does not.
+        const slippage = this.slippage / 100
 
         const quote = await this.request<BitgetQuote>('/bgw-pro/swapx/pro/quote', {
             fromContract,
@@ -104,6 +119,7 @@ export class BitgetTrade extends SymbiosisTrade {
             fromChain: this.chain,
             toContract,
             toChain: this.chain,
+            fromAddress: this.from,
         })
 
         const swap = await this.request<BitgetSwap>('/bgw-pro/swapx/pro/swap', {
@@ -115,21 +131,32 @@ export class BitgetTrade extends SymbiosisTrade {
             fromAddress: this.from,
             toAddress: this.to,
             txOrigin: this.origin ?? this.from,
-            slippage: this.slippage / 100, // SDK slippage is in bps; Bitget expects percent
+            slippage,
             market: quote.market,
             requestMod: 'rich',
         })
 
-        const callData = swap.calldata
-        const routerAddress = swap.contract as Address
+        const routerAddress = swap.swapTransaction.to as Address
+        const callData = swap.swapTransaction.data
 
-        const amountOut = new TokenAmount(this.tokenOut, swap.outAmount)
-        const amountOutMin = new TokenAmount(this.tokenOut, swap.minAmount)
+        // Bitget returns human-readable decimal amounts; convert to raw base units.
+        const amountOutRaw = BitgetTrade.toRaw(swap.outAmount, this.tokenOut.decimals)
+        const amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
+        // Bitget's minAmount can come back as "0"; derive the guaranteed minimum from
+        // slippage ourselves (same approach as the 1inch/OpenOcean trades).
+        const amountOutMin = new TokenAmount(this.tokenOut, getMinAmount(this.slippage, amountOutRaw))
 
-        const callDataOffset = BitgetTrade.findValueOffset(callData, fromAmount)
-        const minReceivedOffset = BitgetTrade.findValueOffset(callData, swap.minAmount)
+        const callDataOffset = BitgetTrade.findValueOffset(callData, fromAmountRaw)
+        // Locate the minimum-received slot so applyAmountIn() can patch it when the input
+        // changes. Bitget's response minAmount comes back as "0", so we search for the
+        // amountOutMin we computed from slippage — that is the value Bitget embeds in the
+        // calldata (same slippage, same outAmount).
+        // TODO: get the API to return a non-zero minAmount and use it directly to locate
+        // minReceivedOffset, instead of relying on our recomputed amountOutMin matching
+        // Bitget's embedded value byte-for-byte.
+        const minReceivedOffset = BitgetTrade.findValueOffset(callData, amountOutMin.raw.toString())
 
-        const priceImpact = await this.getPriceImpact(this.tokenAmountIn, amountOut)
+        const priceImpact = BitgetTrade.parsePriceImpact(swap.priceImpact)
 
         // Bitget occasionally returns overly optimistic quotes whose calldata cannot
         // execute on-chain. Simulate it (funding the executing sender) and reject the
@@ -220,20 +247,23 @@ export class BitgetTrade extends SymbiosisTrade {
         return crypto.createHmac('sha256', apiSecret).update(payload).digest('base64')
     }
 
-    private async getPriceImpact(tokenAmountIn: TokenAmount, tokenAmountOut: TokenAmount): Promise<Percent> {
-        const coinGecko = this.symbiosis.coinGecko
-        try {
-            const [tokenInPrice, tokenOutPrice] = await Promise.all([
-                coinGecko.getTokenPriceCached(tokenAmountIn.token),
-                coinGecko.getTokenPriceCached(tokenAmountOut.token),
-            ])
-            const inUsd = CoinGecko.getTokenAmountUsd(tokenAmountIn, tokenInPrice)
-            const outUsd = CoinGecko.getTokenAmountUsd(tokenAmountOut, tokenOutPrice)
-            const impact = -(1 - outUsd / inUsd)
-            return new Percent(parseInt(`${impact * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
-        } catch {
+    // Bitget returns price impact as a percent string (e.g. "0.8593" = 0.8593%); convert
+    // it to a Percent over BIPS_BASE. Mirrors OpenOceanTrade.convertPriceImpact.
+    static parsePriceImpact(value: string): Percent {
+        const number = Number(value)
+        if (!Number.isFinite(number)) {
             return new Percent('0', BIPS_BASE)
         }
+        return new Percent(parseInt(`${number * 100}`).toString(), BIPS_BASE)
+    }
+
+    // Converts a Bitget human-readable decimal amount (e.g. "14092957.333021") into a
+    // raw base-unit string for the given token decimals. Fractional digits beyond the
+    // token's precision are truncated so parseUnits never throws.
+    static toRaw(amount: string, decimals: number): string {
+        const [whole, fraction = ''] = amount.split('.')
+        const normalized = fraction ? `${whole}.${fraction.slice(0, decimals)}` : whole
+        return parseUnits(normalized, decimals).toString()
     }
 
     // Searches for a uint256 value in calldata and returns its byte offset (end of the
