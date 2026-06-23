@@ -46,7 +46,7 @@
     },
     "dependencies": {
         "@bitcoinerlab/secp256k1": "^1.1.1",
-        "@chainflip/sdk": "^2.1.1",
+        "@chainflip/sdk": "~2.2.0",
         "@dedust/sdk": "^0.8.7",
         "@ethersproject/abi": "^5.8.0",
         "@ethersproject/address": "^5.8.0",

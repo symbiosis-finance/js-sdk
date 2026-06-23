@@ -118,7 +118,7 @@ async function directSolanaVaultSwap(params: SwapExactInParams, config: ChainFli
     const { tokenAmountIn, from, to, symbiosis } = params
     const { src, dst } = config
 
-    const chainFlipSdk = new SwapSDK({ network: 'mainnet', enabledFeatures: { dca: true } })
+    const chainFlipSdk = new SwapSDK({ network: 'mainnet' })
 
     await checkMinAmount(symbiosis.cache, chainFlipSdk, tokenAmountIn)
 
@@ -218,7 +218,7 @@ async function indirectSolanaVaultSwap(params: SwapExactInParams, config: ChainF
     const swapAmountIn = jupiterTrade.amountOutMin
 
     // Step 2: ChainFlip vault swap for the minimum swap output
-    const chainFlipSdk = new SwapSDK({ network: 'mainnet', enabledFeatures: { dca: true } })
+    const chainFlipSdk = new SwapSDK({ network: 'mainnet' })
 
     await checkMinAmount(symbiosis.cache, chainFlipSdk, swapAmountIn)
 

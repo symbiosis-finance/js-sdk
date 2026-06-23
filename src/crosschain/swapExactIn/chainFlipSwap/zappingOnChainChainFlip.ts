@@ -231,7 +231,6 @@ async function getDepositCall({
     const { src, dst } = config
     const chainFlipSdk = new SwapSDK({
         network: 'mainnet',
-        enabledFeatures: { dca: true },
     })
 
     await checkMinAmount(symbiosis.cache, chainFlipSdk, amountInMin)
