@@ -1,5 +1,6 @@
 import type { Log } from '@ethersproject/providers'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
+import type { Connection } from '@solana/web3.js'
 import { parseUnits } from '@ethersproject/units'
 import { getHttpV4Endpoint } from '@orbs-network/ton-access'
 import { TonClient4 } from '@ton/ton'
@@ -11,12 +12,12 @@ import type { Counter, Histogram } from 'prom-client'
 import type { TransactionInfo } from 'tronweb'
 import TronWeb from 'tronweb'
 
-import type { ChainId } from '../constants'
+import { ChainId } from '../constants'
 import type { Chain } from '../entities'
 import { chains, Token, TokenAmount, wrappedToken } from '../entities'
 import { delay } from '../utils'
 import { Cache } from './cache'
-import { getUnwrapDustLimit, isTonChainId } from './chainUtils'
+import { getSolanaConnection, getUnwrapDustLimit, isTonChainId } from './chainUtils'
 import { getTransactionInfoById, isTronChainId } from './chainUtils/tron'
 import { CoinGecko } from './coingecko'
 import { config as beta } from './config/beta'
@@ -116,6 +117,8 @@ const VOLUME_FEE_COLLECTORS: VolumeFeeCollector[] = []
 
 export class Symbiosis {
     public providers: Map<ChainId, StaticJsonRpcProvider>
+
+    private solanaConnectionInstance?: Connection
 
     public readonly cache: Cache
     public readonly config: Config
@@ -448,6 +451,13 @@ export class Symbiosis {
 
     public newZapping(omniPoolConfig: OmniPoolConfig) {
         return new Zapping(this, omniPoolConfig)
+    }
+
+    public solanaConnection(): Connection {
+        if (!this.solanaConnectionInstance) {
+            this.solanaConnectionInstance = getSolanaConnection(this.chainConfig(ChainId.SOLANA_MAINNET).rpc)
+        }
+        return this.solanaConnectionInstance
     }
 
     public getProvider(chainId: ChainId, rpc?: string): StaticJsonRpcProvider {

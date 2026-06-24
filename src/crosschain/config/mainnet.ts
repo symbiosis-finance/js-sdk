@@ -2018,7 +2018,7 @@ export const config: Config = {
         },
         {
             id: ChainId.SOLANA_MAINNET,
-            rpc: 'https://solana-rpc.publicnode.com',
+            rpc: 'https://api.mainnet-beta.solana.com',
             spareRpcs: [],
             filterBlockOffset: 1000,
             stables: [],

@@ -43,7 +43,6 @@ export class ZappingCrossChainChainFlip extends BaseSwapping {
 
         this.chainFlipSdk = new SwapSDK({
             network: 'mainnet',
-            enabledFeatures: { dca: true },
         })
     }
 

@@ -48,6 +48,8 @@ export function onChainSolanaSwap({
             )
         }
 
+        const connection = symbiosis.solanaConnection()
+
         return tradeInstances.map(async (instance) => {
             const trade = await instance.init().catch((e) => {
                 symbiosis.countAggregatorError({
@@ -58,7 +60,7 @@ export function onChainSolanaSwap({
                 throw e
             })
 
-            const { instructions, fee } = await addSolanaFee(from, trade.instructions)
+            const { instructions, fee } = await addSolanaFee(from, connection, trade.instructions)
 
             return {
                 operationType: 'onchain-swap',

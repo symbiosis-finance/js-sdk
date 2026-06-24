@@ -4,7 +4,6 @@ import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/sp
 import { PublicKey } from '@solana/web3.js'
 
 import { Percent, TokenAmount } from '../../entities'
-import { getSolanaConnection } from '../chainUtils'
 import { RaydiumTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import { withTracing } from '../tracing'
@@ -154,7 +153,7 @@ export class RaydiumTrade extends SymbiosisTrade {
     }
 
     async fetchTokenAccountData(publicKey: PublicKey) {
-        const connection = getSolanaConnection()
+        const connection = this.symbiosis.solanaConnection()
         const [solAccountResp, tokenAccountResp, token2022Resp] = await Promise.all([
             connection.getAccountInfo(publicKey),
             connection.getTokenAccountsByOwner(publicKey, {
