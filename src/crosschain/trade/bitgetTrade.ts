@@ -1,10 +1,10 @@
 import crypto from 'crypto'
 import { BigNumber } from 'ethers'
 import { parseUnits } from '@ethersproject/units'
+import JSBI from 'jsbi'
 
 import { ChainId } from '../../constants'
 import { Percent, TokenAmount } from '../../entities'
-import { getMinAmount } from '../chainUtils'
 import { BIPS_BASE } from '../constants'
 import { BitgetTradeError } from '../sdkError'
 import { withTracing } from '../tracing'
@@ -54,7 +54,9 @@ interface BitgetSwapTransaction {
 // units, so it must be parsed against the output token's decimals.
 interface BitgetSwap {
     outAmount: string
-    priceImpact: string // percent, e.g. "0.8593"
+    minAmount: string // guaranteed minimum received, human-readable decimal; matches the value embedded in calldata
+    fromTokenPrice: string // USD price of the input token
+    toTokenPrice: string // USD price of the output token
     swapTransaction: BitgetSwapTransaction
 }
 
@@ -142,21 +144,24 @@ export class BitgetTrade extends SymbiosisTrade {
         // Bitget returns human-readable decimal amounts; convert to raw base units.
         const amountOutRaw = BitgetTrade.toRaw(swap.outAmount, this.tokenOut.decimals)
         const amountOut = new TokenAmount(this.tokenOut, amountOutRaw)
-        // Bitget's minAmount can come back as "0"; derive the guaranteed minimum from
-        // slippage ourselves (same approach as the 1inch/OpenOcean trades).
-        const amountOutMin = new TokenAmount(this.tokenOut, getMinAmount(this.slippage, amountOutRaw))
+        // Bitget returns the guaranteed minimum directly — use it as-is rather than
+        // recomputing from slippage.
+        const amountOutMinRaw = BitgetTrade.toRaw(swap.minAmount, this.tokenOut.decimals)
+        const amountOutMin = new TokenAmount(this.tokenOut, amountOutMinRaw)
 
         const callDataOffset = BitgetTrade.findValueOffset(callData, fromAmountRaw)
         // Locate the minimum-received slot so applyAmountIn() can patch it when the input
-        // changes. Bitget's response minAmount comes back as "0", so we search for the
-        // amountOutMin we computed from slippage — that is the value Bitget embeds in the
-        // calldata (same slippage, same outAmount).
-        // TODO: get the API to return a non-zero minAmount and use it directly to locate
-        // minReceivedOffset, instead of relying on our recomputed amountOutMin matching
-        // Bitget's embedded value byte-for-byte.
-        const minReceivedOffset = BitgetTrade.findValueOffset(callData, amountOutMin.raw.toString())
+        // changes — Bitget embeds this exact minAmount in the calldata.
+        const minReceivedOffset = BitgetTrade.findValueOffset(callData, amountOutMinRaw)
 
-        const priceImpact = BitgetTrade.parsePriceImpact(swap.priceImpact)
+        // Bitget's returned priceImpact is unreliable; derive it from the USD token prices
+        // in the swap response instead.
+        const priceImpact = BitgetTrade.computePriceImpact(
+            this.tokenAmountIn,
+            swap.fromTokenPrice,
+            amountOut,
+            swap.toTokenPrice
+        )
 
         // Bitget occasionally returns overly optimistic quotes whose calldata cannot
         // execute on-chain. Simulate it (funding the executing sender) and reject the
@@ -247,14 +252,22 @@ export class BitgetTrade extends SymbiosisTrade {
         return crypto.createHmac('sha256', apiSecret).update(payload).digest('base64')
     }
 
-    // Bitget returns price impact as a percent string (e.g. "0.8593" = 0.8593%); convert
-    // it to a Percent over BIPS_BASE. Mirrors OpenOceanTrade.convertPriceImpact.
-    static parsePriceImpact(value: string): Percent {
-        const number = Number(value)
-        if (!Number.isFinite(number)) {
+    // Bitget's own priceImpact field is unreliable, so we compute it from the USD prices
+    // returned alongside the swap: 1 - (amountOut * toTokenPrice) / (amountIn * fromTokenPrice).
+    // Positive = value lost (same sign convention as OneInchTrade.getTradePriceImpact).
+    static computePriceImpact(
+        tokenAmountIn: TokenAmount,
+        fromTokenPrice: string,
+        amountOut: TokenAmount,
+        toTokenPrice: string
+    ): Percent {
+        const inputUsd = Number(tokenAmountIn.toExact()) * Number(fromTokenPrice)
+        const outputUsd = Number(amountOut.toExact()) * Number(toTokenPrice)
+        if (!Number.isFinite(inputUsd) || !Number.isFinite(outputUsd) || inputUsd <= 0) {
             return new Percent('0', BIPS_BASE)
         }
-        return new Percent(parseInt(`${number * 100}`).toString(), BIPS_BASE)
+        const impactNumber = 1 - outputUsd / inputUsd
+        return new Percent(parseInt(`${impactNumber * JSBI.toNumber(BIPS_BASE)}`).toString(), BIPS_BASE)
     }
 
     // Converts a Bitget human-readable decimal amount (e.g. "14092957.333021") into a
