@@ -24,18 +24,21 @@ export const SOL_USDC = new Token({
     },
 })
 
-export function getSolanaConnection() {
-    return new Connection('https://solana-rpc.publicnode.com')
+// Fallback used only when no configured RPC is passed (e.g. standalone tooling).
+// Production paths thread the RPC from symbiosis.chainConfig(SOLANA_MAINNET).rpc.
+const DEFAULT_SOLANA_RPC = 'https://api.mainnet-beta.solana.com'
+
+export function getSolanaConnection(rpcUrl: string = DEFAULT_SOLANA_RPC) {
+    return new Connection(rpcUrl)
 }
 
 const SOL_FEE_COLLECTOR = '7niUN8QFTN8V3y47fqLpAPs5Hq9T79BrSq8CAVjq6YJX'
 const SOL_FEE_AMOUNT = 2000000 // 0.002 SOL (9 decimals)
 
-export async function addSolanaFee(from: string, instructions?: string) {
+export async function addSolanaFee(from: string, connection: Connection, instructions?: string) {
     if (!instructions) {
         throw new Error('Theres is no instructions in solana trade')
     }
-    const connection = getSolanaConnection()
     const transferSolInstruction = SystemProgram.transfer({
         fromPubkey: new PublicKey(from),
         toPubkey: new PublicKey(SOL_FEE_COLLECTOR),

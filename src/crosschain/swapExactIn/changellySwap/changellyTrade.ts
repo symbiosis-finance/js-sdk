@@ -8,14 +8,14 @@ import {
     TOKEN_2022_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
+import type { Connection } from '@solana/web3.js'
 import { PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js'
 import { Address, beginCell } from '@ton/core'
 import { JettonMaster } from '@ton/ton'
 import TronWeb from 'tronweb'
 
 import { GAS_TOKEN, Token, TokenAmount } from '../../../entities'
-import { isEvmChainId, isTonChainId, isTronChainId } from '../../chainUtils'
-import { getSolanaConnection, isSolanaChainId } from '../../chainUtils/solana'
+import { isEvmChainId, isSolanaChainId, isTonChainId, isTronChainId } from '../../chainUtils'
 import {
     AmountTooHighError,
     AmountTooLowError,
@@ -222,7 +222,8 @@ export async function buildChangellyTradeTx(
     }
 
     if (isSolanaChainId(chainId)) {
-        const instructions = await buildSolanaTransfer(params.from, depositAddress, params.tokenAmountIn)
+        const connection = symbiosis.solanaConnection()
+        const instructions = await buildSolanaTransfer(params.from, depositAddress, params.tokenAmountIn, connection)
         return { type: 'solana', tx: { instructions }, changellyData }
     }
 
@@ -362,8 +363,12 @@ function buildTronTransfer(depositAddress: string, token: Token, amount: string,
     }
 }
 
-async function buildSolanaTransfer(from: string, depositAddress: string, tokenAmountIn: TokenAmount): Promise<string> {
-    const connection = getSolanaConnection()
+async function buildSolanaTransfer(
+    from: string,
+    depositAddress: string,
+    tokenAmountIn: TokenAmount,
+    connection: Connection
+): Promise<string> {
     const fromPubkey = new PublicKey(from)
     const toPubkey = new PublicKey(depositAddress)
     const amount = BigInt(tokenAmountIn.raw.toString())

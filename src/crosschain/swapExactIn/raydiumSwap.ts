@@ -31,7 +31,8 @@ export function raydiumSwap(params: SwapExactInParams): Promise<SwapExactInResul
             throw e
         })
 
-        const { instructions, fee } = await addSolanaFee(from, trade.instructions)
+        const connection = symbiosis.solanaConnection()
+        const { instructions, fee } = await addSolanaFee(from, connection, trade.instructions)
 
         return {
             operationType: 'onchain-swap',

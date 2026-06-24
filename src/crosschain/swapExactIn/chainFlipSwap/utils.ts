@@ -35,6 +35,18 @@ const ETH_USDC = new Token({
     },
 })
 
+export const TRON_USDT = new Token({
+    name: 'Tether USDt',
+    symbol: 'USDT',
+    address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
+    chainId: ChainId.TRON_MAINNET,
+    decimals: 6,
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    },
+})
+
 export const CF_BTC_BTC: ChainFlipToken = {
     chainId: ChainFlipChainId.Bitcoin,
     assetId: ChainFlipAssetId.BTC,
@@ -91,6 +103,22 @@ export const CF_SOL_USDC: ChainFlipToken = {
     token: SOL_USDC,
 }
 
+export const CF_TRON_USDT: ChainFlipToken = {
+    chainId: ChainFlipChainId.Tron,
+    assetId: ChainFlipAssetId.TrxUsdt,
+    chain: 'Tron',
+    asset: 'USDT',
+    token: TRON_USDT,
+}
+
+export const CF_TRON_TRX: ChainFlipToken = {
+    chainId: ChainFlipChainId.Tron,
+    assetId: ChainFlipAssetId.Trx,
+    chain: 'Tron',
+    asset: 'TRX',
+    token: GAS_TOKEN[ChainId.TRON_MAINNET],
+}
+
 export const CHAIN_FLIP_TOKENS: ChainFlipToken[] = [
     CF_BTC_BTC,
     CF_ETH_ETH,
@@ -99,6 +127,8 @@ export const CHAIN_FLIP_TOKENS: ChainFlipToken[] = [
     CF_ARB_USDC,
     CF_SOL_SOL,
     CF_SOL_USDC,
+    CF_TRON_USDT,
+    CF_TRON_TRX,
 ]
 
 export async function checkMinAmount(cache: Cache, chainFlipSdk: SwapSDK, amountIn: TokenAmount) {
