@@ -206,18 +206,9 @@ export async function validateOptimisticQuote(check: OptimisticQuoteCheck): Prom
         return
     }
 
-    // The simulation runs at 'latest', which may differ from the state the aggregator
-    // quoted against — record the block number so failures can be replayed precisely.
-    let blockNumber: string
-    try {
-        blockNumber = BigNumber.from(await provider.send('eth_blockNumber', [])).toString()
-    } catch {
-        blockNumber = 'unknown'
-    }
-
     const context =
         `${providerName} quote ${tokenAmountIn.token.symbol}(${tokenAmountIn.token.address})->${amountOut.token.symbol}(${amountOut.token.address}) ` +
-        `chainId=${tokenAmountIn.token.chainId} block=${blockNumber} priceImpact=${priceImpact.toSignificant(4)}% ` +
+        `chainId=${tokenAmountIn.token.chainId} priceImpact=${priceImpact.toSignificant(4)}% ` +
         `amountIn=${tokenAmountIn.toSignificant()} amountOut=${amountOut.toSignificant()}`
 
     const result = await validateCallData(provider, from, routerAddress, callData, tokenAmountIn)

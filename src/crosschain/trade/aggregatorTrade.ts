@@ -3,6 +3,7 @@ import type { Percent, Token, TokenAmount } from '../../entities'
 import { AggregateSdkError, AggregatorTradeError } from '../sdkError'
 import type { Symbiosis } from '../symbiosis'
 import type { Address, FeeItem } from '../types'
+import { BitgetTrade } from './bitgetTrade'
 import { IzumiTrade } from './izumiTrade'
 import { KyberSwapTrade } from './kyberSwapTrade'
 import type { OneInchProtocols } from './oneInchTrade'
@@ -21,6 +22,7 @@ type Trade =
     | OpenOceanTrade
     | KyberSwapTrade
     | ZeroXTrade
+    | BitgetTrade
     | IzumiTrade
     | UniV2Trade
     | UniV3Trade
@@ -199,6 +201,14 @@ export class AggregatorTrade extends SymbiosisTrade {
             !isOneInchClient &&
             !isOpenOceanClient
 
+        const isBitgetAvailable =
+            BitgetTrade.isAvailable(tokenAmountIn.token.chainId) &&
+            BitgetTrade.isAllowed(disabledProviders) &&
+            Boolean(symbiosis.bitgetConfig.apiKey) &&
+            Boolean(symbiosis.bitgetConfig.apiSecret) &&
+            !isOneInchClient &&
+            !isOpenOceanClient
+
         const abortController = new AbortController()
         const signal = abortController.signal
         const entries: TradeEntry[] = []
@@ -260,6 +270,21 @@ export class AggregatorTrade extends SymbiosisTrade {
                 signal,
             })
             entries.push({ promise: zeroXTrade.init(), label: '0x', priority: true })
+        }
+
+        if (isBitgetAvailable) {
+            const bitgetTrade = new BitgetTrade({
+                symbiosis,
+                tokenAmountIn,
+                tokenAmountInMin,
+                tokenOut,
+                from,
+                origin,
+                to,
+                slippage,
+                signal,
+            })
+            entries.push({ promise: bitgetTrade.init(), label: 'Bitget', priority: true })
         }
 
         if (

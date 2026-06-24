@@ -167,6 +167,12 @@ export type ChangellyConfig = {
     privateKey: string
 }
 
+export type BitgetConfig = {
+    apiUrl: string
+    apiKey: string
+    apiSecret: string
+}
+
 export type * from './config/cache/builder'
 
 export interface Logger {
@@ -186,6 +192,7 @@ export type OverrideConfig = {
     oneInchConfig?: Partial<ApiConfig>
     openOceanConfig?: Partial<ApiConfig>
     zeroXConfig?: Partial<ApiConfig>
+    bitgetConfig?: Partial<BitgetConfig>
     changellyConfig?: Partial<ChangellyConfig>
     volumeFeeCollectors?: VolumeFeeCollector[]
     cache?: Cache
