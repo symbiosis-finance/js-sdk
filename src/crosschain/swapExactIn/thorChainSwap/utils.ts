@@ -39,6 +39,9 @@ function toThorChain(chainId: ChainId): string {
 
 function toThorToken(token: Token): string {
     const chain = toThorChain(token.chainId)
+    if (token.isNative) {
+        return `${chain}.${token.symbol}`
+    }
     let tokenAddress: EvmAddress | TronAddress = token.address as EvmAddress
     if (isTronChainId(token.chainId)) {
         tokenAddress = TronWeb.address.fromHex(tokenAddress) as TronAddress
@@ -190,21 +193,62 @@ export const BSC_USDC = new Token({
     },
 })
 
-// export const TRON_USDT = new Token({
-//     name: 'Tether USDt',
-//     symbol: 'USDT',
-//     address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
-//     chainId: ChainId.TRON_MAINNET,
-//     decimals: 6,
-//     icons: {
-//         large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-//         small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-//     },
-// })
+export const ETH_USDT = new Token({
+    name: 'Tether USD',
+    symbol: 'USDT',
+    address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    chainId: ChainId.ETH_MAINNET,
+    decimals: 6,
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    },
+})
+
+export const AVAX_USDT = new Token({
+    name: 'Tether USD',
+    symbol: 'USDT',
+    address: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
+    chainId: ChainId.AVAX_MAINNET,
+    decimals: 6,
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    },
+})
+
+export const BSC_USDT = new Token({
+    name: 'Tether USD',
+    symbol: 'USDT',
+    address: '0x55d398326f99059ff775485246999027b3197955',
+    chainId: ChainId.BSC_MAINNET,
+    decimals: 18,
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    },
+})
 
 export const THOR_TOKENS_IN = [
+    GAS_TOKEN[ChainId.ETH_MAINNET],
     ETH_USDC,
+    ETH_USDT,
+    GAS_TOKEN[ChainId.AVAX_MAINNET],
     AVAX_USDC,
+    AVAX_USDT,
+    GAS_TOKEN[ChainId.BSC_MAINNET],
     BSC_USDC,
-    // TRON_USDT
+    BSC_USDT,
 ]
+
+export function getOnChainThorTokens(tokenIn: Token): Token[] {
+    const directToken = THOR_TOKENS_IN.find((token) => token.equals(tokenIn))
+    if (directToken) {
+        return [directToken]
+    }
+    return THOR_TOKENS_IN.filter((token) => token.chainId === tokenIn.chainId)
+}
+
+export function getCrossChainThorTokens(): Token[] {
+    return THOR_TOKENS_IN.filter((token) => !token.isNative)
+}
