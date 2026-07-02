@@ -142,6 +142,8 @@ export function zappingOnChainThor(
                 offset: 0,
                 isNative: tokenAmountIn.token.isNative,
             }
+        } else if (inTokenAmount.token.isNative) {
+            value = BigNumber.from(value).add(inTokenAmount.raw.toString()).toString()
         }
 
         // Step 2: get ThorChain quote
@@ -168,6 +170,7 @@ export function zappingOnChainThor(
         let onswapCalldata: string
         let onswapRouterAddress: string
         const expiry = Math.floor(Date.now() / 1000) + 60 * 60 // + 1h
+        const thorRouterAsset = thorTokenIn.isNative ? AddressZero : thorTokenIn.address
 
         if (swapItem && multicallRouterV2Address) {
             // Swap + deposit via MulticallRouterV2
@@ -176,15 +179,15 @@ export function zappingOnChainThor(
             const depositItem: MulticallV2Item = {
                 data: ThorRouter__factory.createInterface().encodeFunctionData('depositWithExpiry', [
                     thorVault,
-                    thorTokenIn.address,
+                    thorRouterAsset,
                     '0', // will be patched by MulticallRouter
                     thorQuote.memo,
                     expiry,
                 ]),
                 to: thorQuote.router,
-                path: thorTokenIn.address,
+                path: thorRouterAsset,
                 offset: 100,
-                isNative: false,
+                isNative: thorTokenIn.isNative,
             }
 
             const multicallItems = [swapItem, depositItem]
@@ -203,7 +206,7 @@ export function zappingOnChainThor(
             // Direct deposit via ThorRouter
             onswapCalldata = ThorRouter__factory.createInterface().encodeFunctionData('depositWithExpiry', [
                 thorVault,
-                thorTokenIn.address,
+                thorRouterAsset,
                 inTokenAmount.raw.toString(),
                 thorQuote.memo,
                 expiry,
@@ -236,11 +239,11 @@ export function zappingOnChainThor(
             tokenAmountOutMin: new TokenAmount(BTC, thorQuote.amount_out_min),
             priceImpact,
             amountInUsd: depositAmount,
-            approveTo: approveAddress,
             labels: ['partner-swap'],
             routes,
             fees,
             operationType: 'crosschain-swap',
+            approveTo: inTokenAmount.token.isNative ? AddressZero : approveAddress,
             ...payload,
         }
     })

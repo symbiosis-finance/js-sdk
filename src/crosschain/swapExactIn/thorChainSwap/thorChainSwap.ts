@@ -1,6 +1,6 @@
 import { withPromisesSpan } from '../../tracing'
 import type { SwapExactInParams, SwapExactInResult } from '../../types'
-import { THOR_TOKENS_IN } from './utils'
+import { getCrossChainThorTokens, getOnChainThorTokens } from './utils'
 import { ZappingThor } from './zappingCrossChainThor'
 import { zappingOnChainThor } from './zappingOnChainThor'
 
@@ -13,7 +13,7 @@ export function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInRe
 
         // On-chain zapping: if a user is on the same chain as a ThorChain connector,
         // deposit directly to ThorChain vault without cross-chain bridging
-        const onChainThorTokens = THOR_TOKENS_IN.filter((t) => t.chainId === tokenAmountIn.token.chainId)
+        const onChainThorTokens = getOnChainThorTokens(tokenAmountIn.token)
         if (onChainThorTokens.length > 0) {
             const onChainPromises = onChainThorTokens.map((thorTokenIn) =>
                 zappingOnChainThor(context, thorTokenIn, thorTokenOut)
@@ -28,7 +28,7 @@ export function thorChainSwap(context: SwapExactInParams): Promise<SwapExactInRe
             })
             if (usdPoolConfig) {
                 // Cross-chain zapping: bridge to the connector chain, then deposit to ThorChain
-                const crossChainPromises = THOR_TOKENS_IN.map((thorTokenIn) => {
+                const crossChainPromises = getCrossChainThorTokens().map((thorTokenIn) => {
                     const zappingThor = new ZappingThor(symbiosis, usdPoolConfig)
                     return zappingThor.exactIn(context, thorTokenIn, thorTokenOut)
                 })
