@@ -11,6 +11,7 @@ import {
     getOnChainThorTokens,
     getThorVault,
     THOR_TOKENS_IN,
+    TRON_USDT,
 } from '../../../src/crosschain/swapExactIn/thorChainSwap/utils'
 import { zappingOnChainThor } from '../../../src/crosschain/swapExactIn/thorChainSwap/zappingOnChainThor'
 import { GAS_TOKEN, Token } from '../../../src/entities'
@@ -70,11 +71,12 @@ function thorCache(asset: string, chain: string) {
 }
 
 describe('THORChain input tokens', () => {
-    test('includes native gas tokens and USDT for supported EVM chains', () => {
+    test('includes native gas tokens and USDT for supported THORChain routes', () => {
         expect(THOR_TOKENS_IN.some((token) => token.equals(GAS_TOKEN[ChainId.ETH_MAINNET]))).toBe(true)
         expect(THOR_TOKENS_IN.some((token) => token.equals(GAS_TOKEN[ChainId.AVAX_MAINNET]))).toBe(true)
         expect(THOR_TOKENS_IN.some((token) => token.equals(GAS_TOKEN[ChainId.BSC_MAINNET]))).toBe(true)
         expect(THOR_TOKENS_IN.some((token) => token.equals(ETH_USDT))).toBe(true)
+        expect(THOR_TOKENS_IN.some((token) => token.equals(TRON_USDT))).toBe(true)
     })
 
     test('uses only the direct THORChain token when the source is supported', () => {
@@ -116,6 +118,9 @@ describe('THORChain input tokens', () => {
         ).resolves.toBe(THOR_VAULT)
         await expect(
             getThorVault(thorCache('BSC.USDT-0X55D398326F99059FF775485246999027B3197955', 'BSC') as any, BSC_USDT)
+        ).resolves.toBe(THOR_VAULT)
+        await expect(
+            getThorVault(thorCache('TRON.USDT-TR7NHQJEKQXGTCI8Q8ZY4PL8OTSZGJLJ6T', 'TRON') as any, TRON_USDT)
         ).resolves.toBe(THOR_VAULT)
     })
 

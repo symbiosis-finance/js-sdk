@@ -229,6 +229,18 @@ export const BSC_USDT = new Token({
     },
 })
 
+export const TRON_USDT = new Token({
+    name: 'Tether USDt',
+    symbol: 'USDT',
+    address: '0xa614f803b6fd780986a42c78ec9c7f77e6ded13c',
+    chainId: ChainId.TRON_MAINNET,
+    decimals: 6,
+    icons: {
+        large: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+        small: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    },
+})
+
 export const THOR_TOKENS_IN = [
     GAS_TOKEN[ChainId.ETH_MAINNET],
     ETH_USDC,
@@ -239,6 +251,7 @@ export const THOR_TOKENS_IN = [
     GAS_TOKEN[ChainId.BSC_MAINNET],
     BSC_USDC,
     BSC_USDT,
+    TRON_USDT,
 ]
 
 export function getOnChainThorTokens(tokenIn: Token): Token[] {
